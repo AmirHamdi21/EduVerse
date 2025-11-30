@@ -1,4 +1,5 @@
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
+import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/config/app_router.dart';
@@ -7,6 +8,8 @@ import 'package:edu_verse/services/api_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'generated_l10n/app_localizations.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +26,7 @@ class _MyAppState extends State<MyApp> {
   late StorageService _storageService;
   late ThemeBloc _themeBloc;
   late AuthBloc _authBloc;
+  late LanguageCubit _languageCubit;
 
   @override
   void initState() {
@@ -33,18 +37,25 @@ class _MyAppState extends State<MyApp> {
       apiService: ApiService(),
       storageService: _storageService,
     );
-    // Initialize theme from storage
+    _languageCubit = LanguageCubit();
+    // Initialize theme and language from storage
     _initializeTheme();
+    _initializeLanguage();
   }
 
   Future<void> _initializeTheme() async {
     await _themeBloc.initTheme();
   }
 
+  Future<void> _initializeLanguage() async {
+    await _languageCubit.initialize();
+  }
+
   @override
   void dispose() {
     _themeBloc.close();
     _authBloc.close();
+    _languageCubit.close();
     super.dispose();
   }
 
@@ -54,16 +65,32 @@ class _MyAppState extends State<MyApp> {
       providers: [
         BlocProvider.value(value: _authBloc),
         BlocProvider.value(value: _themeBloc),
+        BlocProvider.value(value: _languageCubit),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {
-          return MaterialApp.router(
-            title: 'EduVerse App',
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: themeState.isDark ? ThemeMode.dark : ThemeMode.light,
-            routerConfig: AppRouter.router,
+          return BlocBuilder<LanguageCubit, Locale>(
+            builder: (context, locale) {
+              return MaterialApp.router(
+                title: 'EduVerse App',
+                debugShowCheckedModeBanner: false,
+                locale: locale,
+                supportedLocales: const [
+                  Locale('en'),
+                  Locale('ar'),
+                ],
+                localizationsDelegates: [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: themeState.isDark ? ThemeMode.dark : ThemeMode.light,
+                routerConfig: AppRouter.router,
+              );
+            },
           );
         },
       ),

@@ -1,7 +1,10 @@
+import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/common/classes/role_feature.dart';
 import 'package:edu_verse/config/app_theme.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FeatureCard extends StatelessWidget {
   String title;
@@ -26,6 +29,7 @@ class FeatureCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = context.read<LanguageCubit>().state.languageCode == 'ar';
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: gradientColors),
@@ -48,21 +52,37 @@ class FeatureCard extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Positioned(
-            top: 0,
-            right: 0,
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: decorGradient),
-                borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(16),
-                  bottomLeft: Radius.circular(100),
+          isArabic
+              ? Positioned(
+                  top: 0,
+                  left: 0,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: decorGradient),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(16),
+                        bottomRight: Radius.circular(100),
+                      ),
+                    ),
+                  ),
+                )
+              : Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: decorGradient),
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(16),
+                        bottomLeft: Radius.circular(100),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -113,7 +133,9 @@ class FeatureCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'AI-Powered',
+                              AppLocalizations.of(
+                                context,
+                              )!.poweredByIntelligence2,
                               style: TextStyle(fontSize: 12, color: badgeColor),
                             ),
                           ],

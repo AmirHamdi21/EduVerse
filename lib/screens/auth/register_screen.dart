@@ -8,7 +8,9 @@ import '../../bloc/auth/auth_state.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_event.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../bloc/language/language_cubit.dart';
 import '../../config/app_theme.dart';
+import '../../generated_l10n/app_localizations.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -44,12 +46,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void _handleRegister() {
+    final l = AppLocalizations.of(context);
+    
     if (!_formKey.currentState!.validate()) return;
 
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Passwords do not match'),
+        SnackBar(
+          content: Text(l!.passwordMismatch),
           backgroundColor: Color(0xFFEF4444),
         ),
       );
@@ -58,8 +62,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     if (!_agreeToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please agree to the terms and conditions'),
+        SnackBar(
+          content: Text('${l!.agree} ${l.termsOfService}'),
           backgroundColor: Color(0xFFEF4444),
         ),
       );
@@ -86,6 +90,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthOperationSuccess) {
@@ -284,7 +290,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   const SizedBox(height: 24),
                                   // Title
                                   Text(
-                                    'Create Account',
+                                    l.signupTitle,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 28,
@@ -295,7 +301,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   const SizedBox(height: 8),
                                   // Subtitle
                                   Text(
-                                    'Join EduVerse and start learning',
+                                    l.signupSubtitle,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 16,
@@ -305,13 +311,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   const SizedBox(height: 24),
                                   // First name field
                                   _buildTextField(
+                                    context: context,
                                     controller: _firstNameController,
-                                    hint: 'First Name',
+                                    hint: l.firstName,
                                     icon: Icons.person_outline,
                                     isDark: isDark,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter your first name';
+                                        return l.fieldRequired;
                                       }
                                       return null;
                                     },
@@ -319,13 +326,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   const SizedBox(height: 16),
                                   // Last name field
                                   _buildTextField(
+                                    context: context,
                                     controller: _lastNameController,
-                                    hint: 'Last Name',
+                                    hint: l.lastName,
                                     icon: Icons.person_outline,
                                     isDark: isDark,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter your last name';
+                                        return l.fieldRequired;
                                       }
                                       return null;
                                     },
@@ -333,16 +341,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   const SizedBox(height: 16),
 
                                   _buildTextField(
+                                    context: context,
                                     controller: _emailController,
-                                    hint: 'Email',
+                                    hint: l.email,
                                     icon: Icons.email_outlined,
                                     isDark: isDark,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter your email';
+                                        return l.fieldRequired;
                                       }
                                       if (!value.contains('@')) {
-                                        return 'Please enter a valid email';
+                                        return l.invalidEmail;
                                       }
                                       return null;
                                     },
@@ -350,8 +359,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   const SizedBox(height: 16),
                                   // Password field
                                   _buildTextField(
+                                    context: context,
                                     controller: _passwordController,
-                                    hint: 'Password',
+                                    hint: l.password,
                                     icon: Icons.lock_outline,
                                     isDark: isDark,
                                     obscureText: _obscurePassword,
@@ -370,10 +380,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter a password';
+                                        return l.fieldRequired;
                                       }
                                       if (value.length < 6) {
-                                        return 'Password must be at least 6 characters';
+                                        return l.passwordTooShort;
                                       }
                                       return null;
                                     },
@@ -381,8 +391,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   const SizedBox(height: 16),
                                   // Confirm password field
                                   _buildTextField(
+                                    context: context,
                                     controller: _confirmPasswordController,
-                                    hint: 'Confirm Password',
+                                    hint: l.confirmPassword,
                                     icon: Icons.lock_outline,
                                     isDark: isDark,
                                     obscureText: _obscureConfirmPassword,
@@ -402,7 +413,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please confirm your password';
+                                        return l.fieldRequired;
                                       }
                                       return null;
                                     },
@@ -410,13 +421,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   const SizedBox(height: 16),
                                   // Phone field
                                   _buildTextField(
+                                    context: context,
                                     controller: _phoneController,
-                                    hint: 'Phone Number',
+                                    hint: l.phoneNumber,
                                     icon: Icons.phone_outlined,
                                     isDark: isDark,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter your phone number';
+                                        return l.fieldRequired;
                                       }
                                       return null;
                                     },
@@ -427,6 +439,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     isDark,
                                     textColor,
                                     textSecondaryColor,
+                                    l,
                                   ),
                                   const SizedBox(height: 16),
                                   // Terms checkbox
@@ -443,7 +456,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                       Expanded(
                                         child: Text(
-                                          'I agree to the Terms and Conditions',
+                                          l.termsOfService,
                                           style: TextStyle(
                                             color: textColor,
                                             fontSize: 14,
@@ -498,9 +511,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                             >(Colors.white),
                                                       ),
                                                     )
-                                                  : const Text(
-                                                      'Create Account',
-                                                      style: TextStyle(
+                                                  : Text(
+                                                      l.signupButton,
+                                                      style: const TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 16,
                                                         fontWeight:
@@ -519,16 +532,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Already have an account? ',
+                                        "${l.alreadyHaveAccount} ",
                                         style: TextStyle(
                                           color: textSecondaryColor,
                                         ),
                                       ),
                                       TextButton(
                                         onPressed: () => context.pop(),
-                                        child: const Text(
-                                          'Sign In',
-                                          style: TextStyle(
+                                        child: Text(
+                                          l.signIn,
+                                          style: const TextStyle(
                                             color: Color(0xFF2B7FFF),
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -549,7 +562,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     top: 48,
                     child: Row(
                       children: [
-                        _buildTopIcon(Icons.language, isDark),
+                        BlocBuilder<LanguageCubit, Locale>(
+                          builder: (context, locale) {
+                            return _buildLanguageSwitchIcon(
+                              context,
+                              locale.languageCode,
+                              isDark,
+                            );
+                          },
+                        ),
                         const SizedBox(width: 12),
                         BlocBuilder<ThemeBloc, ThemeState>(
                           builder: (context, state) {
@@ -576,11 +597,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
     bool isDark,
     Color textColor,
     Color textSecondaryColor,
+    AppLocalizations l,
   ) {
     final fillColor = isDark ? AppTheme.darkCardColor : const Color(0xFFF9FAFB);
     final borderColor = isDark
         ? const Color(0xFF404756)
         : const Color(0xFFE5E7EB);
+
+    final roleLabels = {
+      'student': l.student,
+      'instructor': l.instructor,
+      'ta': l.ta,
+      'admin': l.admin,
+    };
 
     return DropdownButtonFormField<String>(
       value: _selectedRole,
@@ -591,7 +620,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       },
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please select a role';
+          return l.fieldRequired;
         }
         return null;
       },
@@ -599,13 +628,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return DropdownMenuItem(
           value: role,
           child: Text(
-            role[0].toUpperCase() + role.substring(1),
+            roleLabels[role] ?? role,
             style: TextStyle(color: textColor, fontSize: 16),
           ),
         );
       }).toList(),
       decoration: InputDecoration(
-        labelText: 'Select Role',
+        labelText: l.selectRole,
         labelStyle: TextStyle(color: textSecondaryColor, fontSize: 16),
         prefixIcon: Icon(Icons.school_outlined, color: textSecondaryColor),
         filled: true,
@@ -632,6 +661,95 @@ class _RegisterScreenState extends State<RegisterScreen> {
         ),
       ),
       dropdownColor: isDark ? AppTheme.darkCardColor : Colors.white,
+    );
+  }
+
+  Widget _buildLanguageSwitchIcon(
+    BuildContext context,
+    String currentLanguage,
+    bool isDark,
+  ) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkCardColor : Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(1000),
+        border: Border.all(
+          color: isDark ? const Color(0xFF404756) : const Color(0xFFE5E7EB),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: PopupMenuButton<String>(
+          onSelected: (String langCode) {
+            context.read<LanguageCubit>().changeLanguage(langCode);
+          },
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem<String>(
+              value: 'en',
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Text(
+                    'English',
+                    style: TextStyle(
+                      color: currentLanguage == 'en'
+                          ? const Color(0xFF2B7FFF)
+                          : null,
+                      fontWeight: currentLanguage == 'en'
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  if (currentLanguage == 'en')
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    ),
+                ],
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'ar',
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Text(
+                    'العربية',
+                    style: TextStyle(
+                      color: currentLanguage == 'ar'
+                          ? const Color(0xFF2B7FFF)
+                          : null,
+                      fontWeight: currentLanguage == 'ar'
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  if (currentLanguage == 'ar')
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    ),
+                ],
+              ),
+            ),
+          ],
+          child: Icon(
+            Icons.language,
+            size: 20,
+            color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF354152),
+          ),
+        ),
+      ),
     );
   }
 
@@ -709,6 +827,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Widget _buildTextField({
+    required BuildContext context,
     required TextEditingController controller,
     required String hint,
     required IconData icon,

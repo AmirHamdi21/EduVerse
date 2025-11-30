@@ -7,7 +7,9 @@ import '../../bloc/auth/auth_state.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_event.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../bloc/language/language_cubit.dart';
 import '../../config/app_theme.dart';
+import '../../generated_l10n/app_localizations.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String? email;
@@ -30,10 +32,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   void _handleVerifyEmail() {
+    final l = AppLocalizations.of(context);
+    
     if (_tokenController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter the verification code'),
+        SnackBar(
+          content: Text(l!.verificationCodeRequired),
           backgroundColor: Color(0xFFEF4444),
           behavior: SnackBarBehavior.floating,
         ),
@@ -47,10 +51,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   void _handleResendEmail() {
+    final l = AppLocalizations.of(context);
+    
     if (widget.email == null || widget.email!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Email address not found'),
+        SnackBar(
+          content: Text(l!.emailNotFound),
           backgroundColor: Color(0xFFEF4444),
           behavior: SnackBarBehavior.floating,
         ),
@@ -66,12 +72,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Email verified successfully!'),
+            SnackBar(
+              content: Text(l!.emailVerifiedSuccessfully),
               backgroundColor: Color(0xFF10B981),
               behavior: SnackBarBehavior.floating,
             ),
@@ -278,7 +285,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                 const SizedBox(height: 32),
                                 // Title
                                 Text(
-                                  'Verify Your Email',
+                                  l.verifyEmailTitle,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: textColor,
@@ -290,8 +297,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                 // Subtitle
                                 Text(
                                   widget.email != null
-                                      ? 'We sent a verification code to\n${widget.email}'
-                                      : 'Enter the verification code sent to your email',
+                                      ? '${l.verifyEmailSubtitle}\n${widget.email}'
+                                      : l.verifyEmailSubtitle,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: textSecondaryColor,
@@ -303,8 +310,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                 const SizedBox(height: 32),
                                 // Token field
                                 _buildTextField(
+                                  context: context,
                                   controller: _tokenController,
-                                  hint: 'Enter verification code',
+                                  hint: l.verificationCodeHint,
                                   icon: Icons.vpn_key_outlined,
                                   isDark: isDark,
                                 ),
@@ -373,9 +381,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                                           >(Colors.white),
                                                     ),
                                                   )
-                                                : const Text(
-                                                    'Verify Email',
-                                                    style: TextStyle(
+                                                : Text(
+                                                    l.verifyButton,
+                                                    style: const TextStyle(
                                                       color: Colors.white,
                                                       fontSize: 14,
                                                       fontWeight:
@@ -394,7 +402,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "Didn't receive the code? ",
+                                      "${l.enterVerificationCode}? ",
                                       style: TextStyle(
                                         color: textSecondaryColor,
                                         fontSize: 16,
@@ -414,7 +422,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                                 .shrinkWrap,
                                           ),
                                           child: Text(
-                                            'Resend',
+                                            l.resendCodeButton,
                                             style: TextStyle(
                                               color: _isResending
                                                   ? Colors.grey
@@ -458,6 +466,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   Widget _buildTextField({
+    required BuildContext context,
     required TextEditingController controller,
     required String hint,
     required IconData icon,

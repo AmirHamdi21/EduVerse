@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_event.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../bloc/language/language_cubit.dart';
 import '../../config/app_theme.dart';
+import '../../generated_l10n/app_localizations.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -25,6 +27,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   void _handleSendReset() {
+    final l = AppLocalizations.of(context);
+    
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -32,8 +36,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Password reset link sent to your email'),
+      SnackBar(
+        content: Text(l!.passwordResetSent),
         backgroundColor: Color(0xFF10B981),
         behavior: SnackBarBehavior.floating,
       ),
@@ -48,6 +52,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
@@ -240,7 +245,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 const SizedBox(height: 24),
                                 // Title
                                 Text(
-                                  'Reset Password',
+                                  l.forgotPasswordTitle,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 28,
@@ -251,7 +256,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 const SizedBox(height: 8),
                                 // Subtitle
                                 Text(
-                                  'Enter your email address and we\'ll send you a link to reset your password.',
+                                  l.forgotPasswordSubtitle,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 16,
@@ -261,16 +266,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                 const SizedBox(height: 32),
                                 // Email field
                                 _buildTextField(
+                                  context: context,
                                   controller: _emailController,
-                                  hint: 'Email',
+                                  hint: l.email,
                                   icon: Icons.email_outlined,
                                   isDark: isDark,
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Please enter your email';
+                                      return l.fieldRequired;
                                     }
                                     if (!value.contains('@')) {
-                                      return 'Please enter a valid email';
+                                      return l.invalidEmail;
                                     }
                                     return null;
                                   },
@@ -326,9 +332,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                                   ),
                                                 ],
                                               )
-                                            : const Text(
-                                                'Send Reset Link',
-                                                style: TextStyle(
+                                            : Text(
+                                                l.resetPasswordButton,
+                                                style: const TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w600,
@@ -344,16 +350,16 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Remember your password? ',
+                                      '${l.alreadyHaveAccount} ',
                                       style: TextStyle(
                                         color: textSecondaryColor,
                                       ),
                                     ),
                                     TextButton(
                                       onPressed: () => context.pop(),
-                                      child: const Text(
-                                        'Sign In',
-                                        style: TextStyle(
+                                      child: Text(
+                                        l.signIn,
+                                        style: const TextStyle(
                                           color: Color(0xFF2B7FFF),
                                           fontWeight: FontWeight.w600,
                                         ),
@@ -375,7 +381,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   top: 48,
                   child: Row(
                     children: [
-                      _buildTopIcon(Icons.language, isDark),
+                      BlocBuilder<LanguageCubit, Locale>(
+                        builder: (context, locale) {
+                          return _buildLanguageSwitchIcon(
+                            context,
+                            locale.languageCode,
+                            isDark,
+                          );
+                        },
+                      ),
                       const SizedBox(width: 12),
                       BlocBuilder<ThemeBloc, ThemeState>(
                         builder: (context, state) {
@@ -394,6 +408,95 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildLanguageSwitchIcon(
+    BuildContext context,
+    String currentLanguage,
+    bool isDark,
+  ) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkCardColor : Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(1000),
+        border: Border.all(
+          color: isDark ? const Color(0xFF404756) : const Color(0xFFE5E7EB),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: PopupMenuButton<String>(
+          onSelected: (String langCode) {
+            context.read<LanguageCubit>().changeLanguage(langCode);
+          },
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem<String>(
+              value: 'en',
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Text(
+                    'English',
+                    style: TextStyle(
+                      color: currentLanguage == 'en'
+                          ? const Color(0xFF2B7FFF)
+                          : null,
+                      fontWeight: currentLanguage == 'en'
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  if (currentLanguage == 'en')
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    ),
+                ],
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'ar',
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Text(
+                    'العربية',
+                    style: TextStyle(
+                      color: currentLanguage == 'ar'
+                          ? const Color(0xFF2B7FFF)
+                          : null,
+                      fontWeight: currentLanguage == 'ar'
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  if (currentLanguage == 'ar')
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    ),
+                ],
+              ),
+            ),
+          ],
+          child: Icon(
+            Icons.language,
+            size: 20,
+            color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF354152),
+          ),
+        ),
+      ),
     );
   }
 
@@ -471,6 +574,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   }
 
   Widget _buildTextField({
+    required BuildContext context,
     required TextEditingController controller,
     required String hint,
     required IconData icon,

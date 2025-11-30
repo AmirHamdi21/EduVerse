@@ -10,165 +10,257 @@ import 'package:edu_verse/widgets/onBoarding/summary_card.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/config/app_theme.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:edu_verse/bloc/theme/theme_bloc.dart';
+import 'package:edu_verse/bloc/theme/theme_event.dart';
+import 'package:edu_verse/bloc/theme/theme_state.dart';
+import 'package:edu_verse/bloc/language/language_cubit.dart';
 
 class Onboarding3 extends StatelessWidget {
   const Onboarding3({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(gradient: AppTheme.backgroundGradient),
-        child: Stack(
-          children: [
-            BackgroundStars(),
-            DecorativeCircles(),
-            GradientOverlay(),
-            SafeArea(
-              child: Column(
-                children: [
-                  OnboardingHeader(),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 16),
-                          _buildIntroSection(),
-                          const SizedBox(height: 32),
-                          Column(
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState.isDark;
+        final textColor = isDark
+            ? AppTheme.darkTextPrimary
+            : const Color(0xFF1E293B);
+        final textSecondaryColor = isDark
+            ? AppTheme.darkTextSecondary
+            : const Color(0xFF697282);
+
+        return Scaffold(
+          backgroundColor: isDark
+              ? AppTheme.darkSurfaceColor
+              : const Color(0xFFF8FAFC),
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: isDark
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        AppTheme.darkBg1,
+                        AppTheme.darkBg2,
+                        AppTheme.darkBg3,
+                      ],
+                    )
+                  : const LinearGradient(
+                      colors: [
+                        AppTheme.onBoardingbackgroundLight,
+                        Colors.white,
+                        AppTheme.onBoardingbackgroundCyan,
+                      ],
+                    ),
+            ),
+            child: Stack(
+              children: [
+                BackgroundStars(),
+                DecorativeCircles(),
+                GradientOverlay(),
+                SafeArea(
+                  child: Column(
+                    children: [
+                      OnboardingHeader(),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(24),
+                          child: Column(
                             children: [
-                              FeatureCard(
-                                title: 'AI for Students',
-                                badgeColor: AppTheme.onBoardingcyanLight,
-                                borderColor: AppTheme.onBoardingborderCyan,
-                                gradientColors: [
-                                  AppTheme.onBoardingbackgroundCyan,
-                                  AppTheme.onBoardingbackgroundLight,
-                                ],
-                                decorGradient: [
-                                  Color(0xFF00B8DA),
-                                  AppTheme.onBoardingprimary,
-                                ],
-                                features: const [
-                                  RoleFeature(
-                                    emoji: '🧠',
-                                    text:
-                                        'Smart Summaries of lectures and PDFs',
+                              const SizedBox(height: 16),
+                              _buildIntroSection(context, textColor, textSecondaryColor),
+                              const SizedBox(height: 32),
+                              Column(
+                                children: [
+                                  FeatureCard(
+                                    title: AppLocalizations.of(
+                                      context,
+                                    )!.aiForStudents,
+                                    badgeColor: AppTheme.onBoardingcyanLight,
+                                    borderColor: AppTheme.onBoardingborderCyan,
+                                    gradientColors: [
+                                      AppTheme.onBoardingbackgroundCyan,
+                                      AppTheme.onBoardingbackgroundLight,
+                                    ],
+                                    decorGradient: [
+                                      Color(0xFF00B8DA),
+                                      AppTheme.onBoardingprimary,
+                                    ],
+                                    features: [
+                                      RoleFeature(
+                                        emoji: '🧠',
+                                        text: AppLocalizations.of(
+                                          context,
+                                        )!.studentSummaries,
+                                      ),
+                                      RoleFeature(
+                                        emoji: '📊',
+                                        text: AppLocalizations.of(
+                                          context,
+                                        )!.studentAnalytics,
+                                      ),
+                                      RoleFeature(
+                                        emoji: '🎯',
+                                        text: AppLocalizations.of(
+                                          context,
+                                        )!.studentPlans,
+                                      ),
+                                    ],
+                                    tagline: AppLocalizations.of(
+                                      context,
+                                    )!.studentAssistant,
+                                    taglineColor: AppTheme.onBoardingcyanLight,
                                   ),
-                                  RoleFeature(
-                                    emoji: '📊',
-                                    text: 'AI-based Performance Analytics',
+                                  const SizedBox(height: 20),
+                                  FeatureCard(
+                                    title: AppLocalizations.of(
+                                      context,
+                                    )!.aiForInstructors,
+                                    badgeColor: AppTheme.onBoardingprimary,
+                                    borderColor: AppTheme.onBoardingborderBlue,
+                                    gradientColors: const [
+                                      AppTheme.onBoardingbackgroundLight,
+                                      Color(0xFFEEF2FF),
+                                    ],
+                                    decorGradient: [
+                                      AppTheme.onBoardingprimaryLight,
+                                      AppTheme.onBoardingpurple,
+                                    ],
+                                    features: [
+                                      RoleFeature(
+                                        emoji: '📄',
+                                        text: AppLocalizations.of(
+                                          context,
+                                        )!.instructorAssignment,
+                                      ),
+                                      RoleFeature(
+                                        emoji: '💬',
+                                        text: AppLocalizations.of(
+                                          context,
+                                        )!.instructorInsights,
+                                      ),
+                                      RoleFeature(
+                                        emoji: '📘',
+                                        text: AppLocalizations.of(
+                                          context,
+                                        )!.instructorRecommendations,
+                                      ),
+                                    ],
+                                    tagline: AppLocalizations.of(
+                                      context,
+                                    )!.instructorGrading,
+                                    taglineColor: AppTheme.onBoardingprimary,
                                   ),
-                                  RoleFeature(
-                                    emoji: '🎯',
-                                    text:
-                                        'Personalized Study Plans & Flashcards',
+                                  const SizedBox(height: 20),
+                                  FeatureCard(
+                                    title: AppLocalizations.of(
+                                      context,
+                                    )!.aiForAdmins,
+                                    badgeColor: AppTheme.onBoardingpurple,
+                                    borderColor: AppTheme.onBoardingborderPurple,
+                                    gradientColors: const [
+                                      AppTheme.onBoardingbackgroundLight,
+                                      Color(0xFFF3EFFF),
+                                    ],
+                                    decorGradient: [
+                                      AppTheme.onBoardingprimaryLight,
+                                      AppTheme.onBoardingpurple,
+                                    ],
+                                    features: [
+                                      RoleFeature(
+                                        emoji: '📊',
+                                        text: AppLocalizations.of(
+                                          context,
+                                        )!.adminAnalytics,
+                                      ),
+                                      RoleFeature(
+                                        emoji: '🔔',
+                                        text: AppLocalizations.of(
+                                          context,
+                                        )!.adminAttendance,
+                                      ),
+                                      RoleFeature(
+                                        emoji: '🔒',
+                                        text: AppLocalizations.of(
+                                          context,
+                                        )!.adminMonitoring,
+                                      ),
+                                    ],
+                                    tagline: AppLocalizations.of(
+                                      context,
+                                    )!.adminManagement,
+                                    taglineColor: AppTheme.onBoardingpurple,
                                   ),
                                 ],
-                                tagline:
-                                    'Your 24/7 personal learning assistant.',
-                                taglineColor: AppTheme.onBoardingcyanLight,
                               ),
-                              const SizedBox(height: 20),
-                              FeatureCard(
-                                title: 'AI for Instructors',
-                                badgeColor: AppTheme.onBoardingprimary,
-                                borderColor: AppTheme.onBoardingborderBlue,
-                                gradientColors: const [
-                                  AppTheme.onBoardingbackgroundLight,
-                                  Color(0xFFEEF2FF),
-                                ],
-                                decorGradient: [
-                                  AppTheme.onBoardingprimaryLight,
-                                  AppTheme.onBoardingpurple,
-                                ],
-                                features: const [
-                                  RoleFeature(
-                                    emoji: '📄',
-                                    text: 'AI-Assisted Assignment Evaluation',
-                                  ),
-                                  RoleFeature(
-                                    emoji: '💬',
-                                    text: 'Student Progress Insights & Alerts',
-                                  ),
-                                  RoleFeature(
-                                    emoji: '📘',
-                                    text:
-                                        'Auto-Generated Teaching Recommendations',
-                                  ),
-                                ],
-                                tagline:
-                                    'Simplify grading and focus on teaching impact.',
-                                taglineColor: AppTheme.onBoardingprimary,
+                              const SizedBox(height: 24),
+                              SummaryCard(),
+                              const SizedBox(height: 32),
+                              NavigationButtons(
+                                backOnPressed: () {
+                                  context.go('/onboarding2');
+                                },
+                                nextOnPressed: () {
+                                  context.go('/login');
+                                },
                               ),
-                              const SizedBox(height: 20),
-                              FeatureCard(
-                                title: 'AI for Admins',
-                                badgeColor: AppTheme.onBoardingpurple,
-                                borderColor: AppTheme.onBoardingborderPurple,
-                                gradientColors: const [
-                                  Color(0xFFEEF2FF),
-                                  Color(0xFFFAF5FE),
-                                ],
-                                decorGradient: [
-                                  Color(0xFF615EFF),
-                                  Color(0xFF980FFA),
-                                ],
-                                features: const [
-                                  RoleFeature(
-                                    emoji: '📈',
-                                    text: 'Real-Time Institution Analytics',
-                                  ),
-                                  RoleFeature(
-                                    emoji: '⚙️',
-                                    text:
-                                        'Automated Attendance & Report Generation',
-                                  ),
-                                  RoleFeature(
-                                    emoji: '🔒',
-                                    text:
-                                        'AI-Based Performance Monitoring & Insights',
-                                  ),
-                                ],
-                                tagline:
-                                    'Streamline EduVerse management with real-time intelligence.',
-                                taglineColor: AppTheme.onBoardingpurple,
+                              const SizedBox(height: 24),
+                              PageIndicator(
+                                isActive_1: false,
+                                isActive_2: false,
+                                isActive_3: true,
+                                isActive_4: false,
                               ),
                             ],
                           ),
-                          const SizedBox(height: 24),
-                          SummaryCard(),
-                          const SizedBox(height: 32),
-                          NavigationButtons(
-                            backOnPressed: () {
-                              context.go('/onboarding2');
-                            },
-                            nextOnPressed: () {
-                              context.go('/login');
-                            },
-                          ),
-                          const SizedBox(height: 24),
-                          PageIndicator(
-                            isActive_1: false,
-                            isActive_2: false,
-                            isActive_3: true,
-                            isActive_4: false,
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                Positioned(
+                  right: 16,
+                  top: 48,
+                  child: Row(
+                    children: [
+                      BlocBuilder<LanguageCubit, Locale>(
+                        builder: (context, locale) {
+                          return _buildLanguageSwitchIcon(
+                            context,
+                            locale.languageCode,
+                            isDark,
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 12),
+                      BlocBuilder<ThemeBloc, ThemeState>(
+                        builder: (context, state) {
+                          return _buildThemeToggleIcon(
+                            context,
+                            state.isDark,
+                            isDark,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildIntroSection() {
+  Widget _buildIntroSection(
+    BuildContext context,
+    Color textColor,
+    Color textSecondaryColor,
+  ) {
     return Column(
       children: [
         Row(
@@ -204,36 +296,169 @@ class Onboarding3 extends StatelessWidget {
         const SizedBox(height: 16),
         RichText(
           textAlign: TextAlign.center,
-          text: const TextSpan(
+          text: TextSpan(
             style: TextStyle(
               fontSize: 24,
-              color: AppTheme.onBoardingtextDark,
+              color: textColor,
               height: 1.25,
             ),
             children: [
-              TextSpan(text: 'Powered by '),
               TextSpan(
-                text: 'Intelligence.\n',
-                style: TextStyle(
+                text: AppLocalizations.of(context)!.poweredByIntelligence,
+                style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppTheme.onBoardingprimary,
                 ),
               ),
-              TextSpan(text: 'Designed for Education.'),
             ],
           ),
         ),
         const SizedBox(height: 16),
-        const Text(
-          'EduVerse\'s AI engine transforms learning, teaching, and management through automation, insights, and personalization.',
+        Text(
+          AppLocalizations.of(context)!.aiDescription,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
-            color: AppTheme.onBoardingtextLight,
+            color: textSecondaryColor,
             height: 1.62,
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildLanguageSwitchIcon(
+    BuildContext context,
+    String currentLanguage,
+    bool isDark,
+  ) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkCardColor : Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(1000),
+        border: Border.all(
+          color: isDark ? const Color(0xFF404756) : const Color(0xFFE5E7EB),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: PopupMenuButton<String>(
+          onSelected: (String langCode) {
+            context.read<LanguageCubit>().changeLanguage(langCode);
+          },
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem<String>(
+              value: 'en',
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Text(
+                    'English',
+                    style: TextStyle(
+                      color: currentLanguage == 'en'
+                          ? const Color(0xFF2B7FFF)
+                          : null,
+                      fontWeight: currentLanguage == 'en'
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  if (currentLanguage == 'en')
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    ),
+                ],
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'ar',
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Text(
+                    'العربية',
+                    style: TextStyle(
+                      color: currentLanguage == 'ar'
+                          ? const Color(0xFF2B7FFF)
+                          : null,
+                      fontWeight: currentLanguage == 'ar'
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  if (currentLanguage == 'ar')
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    ),
+                ],
+              ),
+            ),
+          ],
+          child: Icon(
+            Icons.language,
+            size: 20,
+            color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF354152),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildThemeToggleIcon(
+    BuildContext context,
+    bool isDark,
+    bool themeIsDark,
+  ) {
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        color: themeIsDark
+            ? AppTheme.darkCardColor
+            : Colors.white.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(1000),
+        border: Border.all(
+          color: themeIsDark
+              ? const Color(0xFF404756)
+              : const Color(0xFFE5E7EB),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 6,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            context.read<ThemeBloc>().add(const ToggleThemeEvent());
+          },
+          borderRadius: BorderRadius.circular(1000),
+          child: Icon(
+            isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+            size: 20,
+            color: themeIsDark
+                ? AppTheme.darkTextPrimary
+                : const Color(0xFF354152),
+          ),
+        ),
+      ),
     );
   }
 }

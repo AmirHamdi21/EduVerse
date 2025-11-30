@@ -4,6 +4,9 @@ import 'package:edu_verse/widgets/onBoarding/page_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/screens/onBoarding/onboarding2.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:edu_verse/bloc/language/language_cubit.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
 
 class Onboarding1 extends StatefulWidget {
   const Onboarding1({super.key});
@@ -102,9 +105,9 @@ class _Onboarding1State extends State<Onboarding1> {
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              const Text(
-                                'EduVerse',
-                                style: TextStyle(
+                              Text(
+                                AppLocalizations.of(context)!.appName,
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontFamily: 'Arimo',
@@ -118,9 +121,9 @@ class _Onboarding1State extends State<Onboarding1> {
                             onPressed: () {
                               context.go('/login');
                             },
-                            child: const Text(
-                              'Skip',
-                              style: TextStyle(
+                            child: Text(
+                              AppLocalizations.of(context)!.skip,
+                              style: const TextStyle(
                                 color: Color(0xCCFFFEFE),
                                 fontSize: 16,
                                 fontFamily: 'Arimo',
@@ -218,12 +221,12 @@ class _Onboarding1State extends State<Onboarding1> {
                     const SizedBox(height: 24),
 
                     // Title
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Text(
-                        'Welcome to\nEduVerse — The Future of Intelligent Learning.',
+                        AppLocalizations.of(context)!.onboarding1MainTitle,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 30,
                           fontFamily: 'Arimo',
@@ -236,12 +239,12 @@ class _Onboarding1State extends State<Onboarding1> {
                     const SizedBox(height: 24),
 
                     // Description
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Text(
-                        'An all-in-one AI-driven education platform built for Students, Instructors, and Institutions. Learn smarter, teach better, and manage seamlessly — all in one connected ecosystem.',
+                        AppLocalizations.of(context)!.onboarding1Description,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFFDAEAFE),
                           fontSize: 16,
                           fontFamily: 'Arimo',
@@ -254,12 +257,12 @@ class _Onboarding1State extends State<Onboarding1> {
                     const SizedBox(height: 16),
 
                     // Tagline
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Text(
-                        'Powered by AI. Designed for growth.',
+                        AppLocalizations.of(context)!.poweredByAI,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Color(0xFF53E9FC),
                           fontSize: 14,
                           fontFamily: 'Arimo',

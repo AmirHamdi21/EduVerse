@@ -1,4 +1,5 @@
 import 'package:edu_verse/config/app_theme.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class SummaryCard extends StatelessWidget {
@@ -29,7 +30,7 @@ class SummaryCard extends StatelessWidget {
       ),
       child: RichText(
         textAlign: TextAlign.center,
-        text: const TextSpan(
+        text: TextSpan(
           style: TextStyle(
             fontSize: 14,
             color: AppTheme.onBoardingtextMedium,
@@ -37,24 +38,25 @@ class SummaryCard extends StatelessWidget {
           ),
           children: [
             TextSpan(
-              text: 'EduVerse AI',
+              text: AppLocalizations.of(context)!.eduverseAi,
               style: TextStyle(
                 color: AppTheme.onBoardingprimary,
                 fontWeight: FontWeight.w600,
               ),
             ),
             TextSpan(
-              text:
-                  ' connects all roles through one intelligent system — ensuring ',
+              text: AppLocalizations.of(
+                context,
+              )!.connectAllRolesThroughOneIntelligentSystem,
             ),
             TextSpan(
-              text: 'personalized experiences',
+              text: AppLocalizations.of(context)!.personalizedExperiences,
               style: TextStyle(
                 color: AppTheme.onBoardingcyanLight,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            TextSpan(text: ' for everyone.'),
+            TextSpan(text: AppLocalizations.of(context)!.forEveryone),
           ],
         ),
       ),

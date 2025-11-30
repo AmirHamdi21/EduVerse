@@ -1,4 +1,5 @@
 import 'package:edu_verse/config/app_theme.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -45,8 +46,8 @@ class OnboardingHeader extends StatelessWidget {
             onPressed: () {
               context.go('/login');
             },
-            child: const Text(
-              'Skip',
+            child: Text(
+              AppLocalizations.of(context)!.skip,
               style: TextStyle(fontSize: 16, color: AppTheme.onBoardingprimary),
             ),
           ),

@@ -8,7 +8,9 @@ import '../../bloc/auth/auth_state.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_event.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../bloc/language/language_cubit.dart';
 import '../../config/app_theme.dart';
+import '../../generated_l10n/app_localizations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -44,12 +46,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Login successful!'),
+            SnackBar(
+              content: Text(l.success),
               backgroundColor: Color(0xFF10B981),
             ),
           );
@@ -62,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 backgroundColor: const Color(0xFFFB923C),
                 behavior: SnackBarBehavior.floating,
                 action: SnackBarAction(
-                  label: 'Resend Email',
+                  label: l.tryAgain,
                   onPressed: () {
                     context.read<AuthBloc>().add(
                       ResendVerificationEmailRequested(
@@ -258,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   const SizedBox(height: 32),
                                   // Title
                                   Text(
-                                    'Welcome to EduVerse',
+                                    l.loginTitle,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 28,
@@ -269,7 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   const SizedBox(height: 8),
                                   // Subtitle
                                   Text(
-                                    'Learn Smarter. Faster. Anywhere.',
+                                    l.loginSubtitle,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 16,
@@ -279,16 +283,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                   const SizedBox(height: 32),
                                   // Email field
                                   _buildTextField(
+                                    context: context,
                                     controller: _emailController,
-                                    hint: 'Email',
+                                    hint: l.email,
                                     icon: Icons.email_outlined,
                                     isDark: isDark,
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter your email';
+                                        return l.fieldRequired;
                                       }
                                       if (!value.contains('@')) {
-                                        return 'Please enter a valid email';
+                                        return l.invalidEmail;
                                       }
                                       return null;
                                     },
@@ -296,8 +301,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   const SizedBox(height: 16),
                                   // Password field
                                   _buildTextField(
+                                    context: context,
                                     controller: _passwordController,
-                                    hint: 'Password',
+                                    hint: l.password,
                                     icon: Icons.lock_outline,
                                     isDark: isDark,
                                     obscureText: _obscurePassword,
@@ -316,7 +322,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter your password';
+                                        return l.fieldRequired;
                                       }
                                       return null;
                                     },
@@ -328,9 +334,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     child: TextButton(
                                       onPressed: () =>
                                           context.push('/forgot-password'),
-                                      child: const Text(
-                                        'Forgot Password?',
-                                        style: TextStyle(
+                                      child: Text(
+                                        l.forgotPassword,
+                                        style: const TextStyle(
                                           color: Color(0xFF2B7FFF),
                                           fontSize: 14,
                                         ),
@@ -383,9 +389,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                                             >(Colors.white),
                                                       ),
                                                     )
-                                                  : const Text(
-                                                      'Sign In',
-                                                      style: TextStyle(
+                                                  : Text(
+                                                      l.loginButton,
+                                                      style: const TextStyle(
                                                         color: Colors.white,
                                                         fontSize: 16,
                                                         fontWeight:
@@ -404,7 +410,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        "Don't have an account? ",
+                                        "${l.dontHaveAccount} ",
                                         style: TextStyle(
                                           color: textSecondaryColor,
                                         ),
@@ -412,9 +418,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       TextButton(
                                         onPressed: () =>
                                             context.push('/register'),
-                                        child: const Text(
-                                          'Sign Up',
-                                          style: TextStyle(
+                                        child: Text(
+                                          l.signUp,
+                                          style: const TextStyle(
                                             color: Color(0xFF2B7FFF),
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -436,7 +442,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     top: 48,
                     child: Row(
                       children: [
-                        _buildTopIcon(Icons.language, isDark),
+                        BlocBuilder<LanguageCubit, Locale>(
+                          builder: (context, locale) {
+                            return _buildLanguageSwitchIcon(
+                              context,
+                              locale.languageCode,
+                              isDark,
+                            );
+                          },
+                        ),
                         const SizedBox(width: 12),
                         BlocBuilder<ThemeBloc, ThemeState>(
                           builder: (context, state) {
@@ -459,7 +473,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildTopIcon(IconData icon, bool isDark) {
+  Widget _buildLanguageSwitchIcon(
+    BuildContext context,
+    String currentLanguage,
+    bool isDark,
+  ) {
     return Container(
       width: 50,
       height: 50,
@@ -478,13 +496,73 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ],
       ),
-      child: Icon(
-        icon,
-        size: 20,
-        color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF354152),
+      child: Material(
+        color: Colors.transparent,
+        child: PopupMenuButton<String>(
+          onSelected: (String langCode) {
+            context.read<LanguageCubit>().changeLanguage(langCode);
+          },
+          itemBuilder: (BuildContext context) => [
+            PopupMenuItem<String>(
+              value: 'en',
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Text(
+                    'English',
+                    style: TextStyle(
+                      color: currentLanguage == 'en'
+                          ? const Color(0xFF2B7FFF)
+                          : null,
+                      fontWeight: currentLanguage == 'en'
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  if (currentLanguage == 'en')
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    ),
+                ],
+              ),
+            ),
+            PopupMenuItem<String>(
+              value: 'ar',
+              child: Row(
+                children: [
+                  const SizedBox(width: 8),
+                  Text(
+                    'العربية',
+                    style: TextStyle(
+                      color: currentLanguage == 'ar'
+                          ? const Color(0xFF2B7FFF)
+                          : null,
+                      fontWeight: currentLanguage == 'ar'
+                          ? FontWeight.w600
+                          : FontWeight.normal,
+                    ),
+                  ),
+                  if (currentLanguage == 'ar')
+                    const Padding(
+                      padding: EdgeInsets.only(left: 8),
+                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    ),
+                ],
+              ),
+            ),
+          ],
+          child: Icon(
+            Icons.language,
+            size: 20,
+            color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF354152),
+          ),
+        ),
       ),
     );
   }
+
+
 
   Widget _buildThemeToggleIcon(
     BuildContext context,
@@ -533,6 +611,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildTextField({
+    required BuildContext context,
     required TextEditingController controller,
     required String hint,
     required IconData icon,

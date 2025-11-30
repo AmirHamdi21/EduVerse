@@ -1,5 +1,8 @@
+import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NavigationButtons extends StatelessWidget {
   void Function()? backOnPressed;
@@ -8,11 +11,13 @@ class NavigationButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isArabic = context.read<LanguageCubit>().state.languageCode == 'ar';
+    final l = AppLocalizations.of(context)!;
     return Row(
       children: [
         if (backOnPressed != null) ...[
           Expanded(
-            child: OutlinedButton.icon(
+            child: ElevatedButton(
               onPressed: backOnPressed,
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -22,10 +27,17 @@ class NavigationButtons extends StatelessWidget {
                 ),
                 backgroundColor: Colors.white.withOpacity(0.3),
               ),
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
-              label: const Text(
-                'Back',
-                style: TextStyle(fontSize: 18, color: Colors.black),
+              child: Row(
+                textDirection: isArabic ? TextDirection.ltr : TextDirection.rtl,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l.back,
+                    style: const TextStyle(color: AppTheme.onBoardingprimary),
+                  ),
+                  SizedBox(width: 8),
+                  Icon(Icons.arrow_back, color: AppTheme.onBoardingprimary),
+                ],
               ),
             ),
           ),
@@ -46,7 +58,7 @@ class NavigationButtons extends StatelessWidget {
                 ),
               ],
             ),
-            child: ElevatedButton.icon(
+            child: ElevatedButton(
               onPressed: nextOnPressed,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
@@ -55,15 +67,15 @@ class NavigationButtons extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100),
                 ),
               ),
-              label: const Text(
-                'Next',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                  letterSpacing: 0.45,
-                ),
+              child: Row(
+                textDirection: isArabic ? TextDirection.rtl : TextDirection.ltr,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(l.next),
+                  SizedBox(width: 8),
+                  Icon(Icons.arrow_forward, color: Colors.white),
+                ],
               ),
-              icon: const Icon(Icons.arrow_forward, color: Colors.white),
             ),
           ),
         ),
