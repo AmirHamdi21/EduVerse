@@ -1,4 +1,6 @@
 import 'package:edu_verse/bloc/language/language_cubit.dart';
+import 'package:edu_verse/bloc/theme/theme_bloc.dart';
+import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/common/classes/role_feature.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
@@ -30,6 +32,37 @@ class FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isArabic = context.read<LanguageCubit>().state.languageCode == 'ar';
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState.isDark;
+        final titleColor = isDark ? AppTheme.darkTextPrimary : AppTheme.onBoardingtextDark;
+        final featureTextColor = isDark ? AppTheme.darkTextSecondary : AppTheme.onBoardingtextMedium;
+        final iconBackgroundColor = isDark ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.5);
+        final iconBorderColor = isDark ? Colors.white.withOpacity(0.2) : Colors.white;
+        final dividerColor = isDark ? Colors.white.withOpacity(0.1) : AppTheme.onBoardingdivider;
+
+        return _buildCard(
+          context,
+          isArabic,
+          titleColor,
+          featureTextColor,
+          iconBackgroundColor,
+          iconBorderColor,
+          dividerColor,
+        );
+      },
+    );
+  }
+
+  Widget _buildCard(
+    BuildContext context,
+    bool isArabic,
+    Color titleColor,
+    Color featureTextColor,
+    Color iconBackgroundColor,
+    Color iconBorderColor,
+    Color dividerColor,
+  ) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: gradientColors),
@@ -94,9 +127,9 @@ class FeatureCard extends StatelessWidget {
                       width: 64,
                       height: 64,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.5),
+                        color: iconBackgroundColor,
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: Colors.white),
+                        border: Border.all(color: iconBorderColor),
                         boxShadow: const [
                           BoxShadow(
                             color: Color(0x19000000),
@@ -117,9 +150,9 @@ class FeatureCard extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
-                            color: AppTheme.onBoardingtextDark,
+                            color: titleColor,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -156,9 +189,9 @@ class FeatureCard extends StatelessWidget {
                         Expanded(
                           child: Text(
                             f.text,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
-                              color: AppTheme.onBoardingtextMedium,
+                              color: featureTextColor,
                               height: 1.43,
                             ),
                           ),
@@ -167,7 +200,7 @@ class FeatureCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Divider(color: AppTheme.onBoardingdivider, height: 24),
+                Divider(color: dividerColor, height: 24),
                 Row(
                   children: [
                     Icon(

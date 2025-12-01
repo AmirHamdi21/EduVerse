@@ -43,9 +43,9 @@ class Onboarding3 extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppTheme.darkBg1,
-                        AppTheme.darkBg2,
-                        AppTheme.darkBg3,
+                        Color(0xff020618),
+                        Color(0xff162456),
+                        Color(0xff0F172B),
                       ],
                     )
                   : const LinearGradient(
@@ -58,9 +58,9 @@ class Onboarding3 extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                BackgroundStars(),
-                DecorativeCircles(),
-                GradientOverlay(),
+                // BackgroundStars(),
+                // DecorativeCircles(),
+                // GradientOverlay(),
                 SafeArea(
                   child: Column(
                     children: [
@@ -71,7 +71,11 @@ class Onboarding3 extends StatelessWidget {
                           child: Column(
                             children: [
                               const SizedBox(height: 16),
-                              _buildIntroSection(context, textColor, textSecondaryColor),
+                              _buildIntroSection(
+                                context,
+                                textColor,
+                                textSecondaryColor,
+                              ),
                               const SizedBox(height: 32),
                               Column(
                                 children: [
@@ -80,11 +84,19 @@ class Onboarding3 extends StatelessWidget {
                                       context,
                                     )!.aiForStudents,
                                     badgeColor: AppTheme.onBoardingcyanLight,
-                                    borderColor: AppTheme.onBoardingborderCyan,
-                                    gradientColors: [
-                                      AppTheme.onBoardingbackgroundCyan,
-                                      AppTheme.onBoardingbackgroundLight,
-                                    ],
+                                    borderColor: isDark
+                                        ? AppTheme.onBoardingcyan
+                                        : AppTheme.onBoardingborderCyan,
+                                    gradientColors: isDark
+                                        ? [
+                                            AppTheme.onBoardingCardCyanDark,
+                                            AppTheme.onBoardingCardCyanDark
+                                                .withOpacity(0.6),
+                                          ]
+                                        : [
+                                            AppTheme.onBoardingbackgroundCyan,
+                                            AppTheme.onBoardingbackgroundLight,
+                                          ],
                                     decorGradient: [
                                       Color(0xFF00B8DA),
                                       AppTheme.onBoardingprimary,
@@ -120,11 +132,19 @@ class Onboarding3 extends StatelessWidget {
                                       context,
                                     )!.aiForInstructors,
                                     badgeColor: AppTheme.onBoardingprimary,
-                                    borderColor: AppTheme.onBoardingborderBlue,
-                                    gradientColors: const [
-                                      AppTheme.onBoardingbackgroundLight,
-                                      Color(0xFFEEF2FF),
-                                    ],
+                                    borderColor: isDark
+                                        ? AppTheme.onBoardingprimary
+                                        : AppTheme.onBoardingborderBlue,
+                                    gradientColors: isDark
+                                        ? [
+                                            AppTheme.onBoardingCardBlueDark,
+                                            AppTheme.onBoardingCardBlueDark
+                                                .withOpacity(0.6),
+                                          ]
+                                        : const [
+                                            AppTheme.onBoardingbackgroundLight,
+                                            Color(0xFFEEF2FF),
+                                          ],
                                     decorGradient: [
                                       AppTheme.onBoardingprimaryLight,
                                       AppTheme.onBoardingpurple,
@@ -160,11 +180,19 @@ class Onboarding3 extends StatelessWidget {
                                       context,
                                     )!.aiForAdmins,
                                     badgeColor: AppTheme.onBoardingpurple,
-                                    borderColor: AppTheme.onBoardingborderPurple,
-                                    gradientColors: const [
-                                      AppTheme.onBoardingbackgroundLight,
-                                      Color(0xFFF3EFFF),
-                                    ],
+                                    borderColor: isDark
+                                        ? AppTheme.onBoardingpurple
+                                        : AppTheme.onBoardingborderPurple,
+                                    gradientColors: isDark
+                                        ? [
+                                            AppTheme.onBoardingCardPurpleDark,
+                                            AppTheme.onBoardingCardPurpleDark
+                                                .withOpacity(0.6),
+                                          ]
+                                        : const [
+                                            AppTheme.onBoardingbackgroundLight,
+                                            Color(0xFFF3EFFF),
+                                          ],
                                     decorGradient: [
                                       AppTheme.onBoardingprimaryLight,
                                       AppTheme.onBoardingpurple,
@@ -223,7 +251,7 @@ class Onboarding3 extends StatelessWidget {
                 ),
                 Positioned(
                   right: 16,
-                  top: 48,
+                  top: 120,
                   child: Row(
                     children: [
                       BlocBuilder<LanguageCubit, Locale>(
@@ -297,11 +325,7 @@ class Onboarding3 extends StatelessWidget {
         RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
-            style: TextStyle(
-              fontSize: 24,
-              color: textColor,
-              height: 1.25,
-            ),
+            style: TextStyle(fontSize: 24, color: textColor, height: 1.25),
             children: [
               TextSpan(
                 text: AppLocalizations.of(context)!.poweredByIntelligence,

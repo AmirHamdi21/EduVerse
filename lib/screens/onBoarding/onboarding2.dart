@@ -48,9 +48,9 @@ class _Onboarding2State extends State<Onboarding2> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppTheme.darkBg1,
-                        AppTheme.darkBg2,
-                        AppTheme.darkBg3,
+                        Color(0xff020618),
+                        Color(0xff162456),
+                        Color(0xff0F172B),
                       ],
                     )
                   : const LinearGradient(
@@ -63,9 +63,9 @@ class _Onboarding2State extends State<Onboarding2> {
             ),
             child: Stack(
               children: [
-                BackgroundStars(),
-                DecorativeCircles(),
-                GradientOverlay(),
+                // BackgroundStars(),
+                // DecorativeCircles(),
+                // GradientOverlay(),
                 SafeArea(
                   child: Column(
                     children: [
@@ -85,11 +85,19 @@ class _Onboarding2State extends State<Onboarding2> {
                                       context,
                                     )!.studentRole,
                                     badgeColor: AppTheme.onBoardingcyanLight,
-                                    borderColor: AppTheme.onBoardingborderCyan,
-                                    gradientColors: [
-                                      AppTheme.onBoardingbackgroundCyan,
-                                      AppTheme.onBoardingbackgroundLight,
-                                    ],
+                                    borderColor: isDark
+                                        ? AppTheme.onBoardingcyan
+                                        : AppTheme.onBoardingborderCyan,
+                                    gradientColors: isDark
+                                        ? [
+                                            AppTheme.onBoardingCardCyanDark,
+                                            AppTheme.onBoardingCardCyanDark
+                                                .withOpacity(0.6),
+                                          ]
+                                        : [
+                                            AppTheme.onBoardingbackgroundCyan,
+                                            AppTheme.onBoardingbackgroundLight,
+                                          ],
                                     decorGradient: [
                                       Color(0xFF00B8DA),
                                       AppTheme.onBoardingprimary,
@@ -125,11 +133,19 @@ class _Onboarding2State extends State<Onboarding2> {
                                       context,
                                     )!.instructorRole,
                                     badgeColor: AppTheme.onBoardingprimary,
-                                    borderColor: AppTheme.onBoardingborderBlue,
-                                    gradientColors: const [
-                                      AppTheme.onBoardingbackgroundLight,
-                                      Color(0xFFEEF2FF),
-                                    ],
+                                    borderColor: isDark
+                                        ? AppTheme.onBoardingprimary
+                                        : AppTheme.onBoardingborderBlue,
+                                    gradientColors: isDark
+                                        ? [
+                                            AppTheme.onBoardingCardBlueDark,
+                                            AppTheme.onBoardingCardBlueDark
+                                                .withOpacity(0.6),
+                                          ]
+                                        : const [
+                                            AppTheme.onBoardingbackgroundLight,
+                                            Color(0xFFEEF2FF),
+                                          ],
                                     decorGradient: [
                                       AppTheme.onBoardingprimaryLight,
                                       AppTheme.onBoardingpurple,
@@ -161,13 +177,23 @@ class _Onboarding2State extends State<Onboarding2> {
                                   ),
                                   const SizedBox(height: 20),
                                   FeatureCard(
-                                    title: AppLocalizations.of(context)!.adminRole,
+                                    title: AppLocalizations.of(
+                                      context,
+                                    )!.adminRole,
                                     badgeColor: AppTheme.onBoardingpurple,
-                                    borderColor: AppTheme.onBoardingborderPurple,
-                                    gradientColors: const [
-                                      Color(0xFFEEF2FF),
-                                      Color(0xFFFAF5FE),
-                                    ],
+                                    borderColor: isDark
+                                        ? AppTheme.onBoardingpurple
+                                        : AppTheme.onBoardingborderPurple,
+                                    gradientColors: isDark
+                                        ? [
+                                            AppTheme.onBoardingCardPurpleDark,
+                                            AppTheme.onBoardingCardPurpleDark
+                                                .withOpacity(0.6),
+                                          ]
+                                        : const [
+                                            Color(0xFFEEF2FF),
+                                            Color(0xFFFAF5FE),
+                                          ],
                                     decorGradient: [
                                       Color(0xFF615EFF),
                                       Color(0xFF980FFA),
@@ -231,7 +257,7 @@ class _Onboarding2State extends State<Onboarding2> {
                 ),
                 Positioned(
                   right: 16,
-                  top: 48,
+                  top: 120,
                   child: Row(
                     children: [
                       BlocBuilder<LanguageCubit, Locale>(

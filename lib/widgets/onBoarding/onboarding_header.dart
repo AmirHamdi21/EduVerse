@@ -1,6 +1,9 @@
+import 'package:edu_verse/bloc/theme/theme_bloc.dart';
+import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class OnboardingHeader extends StatelessWidget {
@@ -8,51 +11,59 @@ class OnboardingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState.isDark;
+        final textColor = isDark ? AppTheme.darkTextPrimary : AppTheme.onBoardingtextDark;
+        final skipColor = isDark ? AppTheme.onBoardingcyan : AppTheme.onBoardingprimary;
+
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  gradient: AppTheme.onBoardingprimaryGradient,
-                  borderRadius: BorderRadius.circular(14),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x683B82F6),
-                      blurRadius: 25,
-                      offset: Offset(0, 4),
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      gradient: AppTheme.onBoardingprimaryGradient,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x683B82F6),
+                          blurRadius: 25,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: const Icon(Icons.school, color: Colors.white, size: 24),
+                    child: const Icon(Icons.school, color: Colors.white, size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'EduVerse',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400,
+                      color: textColor,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 12),
-              const Text(
-                'EduVerse',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                  color: AppTheme.onBoardingtextDark,
+              TextButton(
+                onPressed: () {
+                  context.go('/login');
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.skip,
+                  style: TextStyle(fontSize: 16, color: skipColor),
                 ),
               ),
             ],
           ),
-          TextButton(
-            onPressed: () {
-              context.go('/login');
-            },
-            child: Text(
-              AppLocalizations.of(context)!.skip,
-              style: TextStyle(fontSize: 16, color: AppTheme.onBoardingprimary),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

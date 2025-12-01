@@ -25,6 +25,11 @@ class AppTheme {
     colors: [Color(0xFF2B7FFF), Color(0xFF0092B8)],
   );
 
+  // Onboarding dark mode card colors
+  static const onBoardingCardCyanDark = Color(0xFF0D3B47);
+  static const onBoardingCardBlueDark = Color(0xFF1A2E5C);
+  static const onBoardingCardPurpleDark = Color(0xFF2D1B4E);
+
   static const blueGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,

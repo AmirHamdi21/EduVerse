@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         // Add a minimum display time for splash screen
-        await Future.delayed(const Duration(seconds: 2));
+        await Future.delayed(const Duration(seconds: 4));
 
         if (!mounted) return;
 
@@ -49,6 +49,9 @@ class _SplashScreenState extends State<SplashScreen> {
               ? AppTheme.darkTextSecondary
               : const Color(0xFF697282);
           return Scaffold(
+            backgroundColor: isDark
+                ? AppTheme.darkSurfaceColor
+                : const Color(0xFFF8FAFC),
             body: Container(
               decoration: BoxDecoration(
                 gradient: isDark
@@ -56,18 +59,18 @@ class _SplashScreenState extends State<SplashScreen> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          AppTheme.darkBg1,
-                          AppTheme.darkBg2,
-                          AppTheme.darkBg3,
+                          Color(0xff020618),
+                          Color(0xff162456),
+                          Color(0xff0F172B),
                         ],
                       )
                     : const LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Color.fromARGB(255, 201, 207, 215),
+                          AppTheme.onBoardingbackgroundLight,
                           Colors.white,
-                          Color(0xFFFAF5FE),
+                          AppTheme.onBoardingbackgroundCyan,
                         ],
                       ),
               ),
@@ -78,20 +81,24 @@ class _SplashScreenState extends State<SplashScreen> {
                     Container(
                       padding: const EdgeInsets.all(32),
                       decoration: BoxDecoration(
-                        color: AppTheme.darkBg3.withOpacity(0.2),
+                        color: isDark
+                            ? AppTheme.onBoardingcyan.withOpacity(0.15)
+                            : AppTheme.onBoardingprimary.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.school_rounded,
                         size: 80,
-                        color: AppTheme.darkBg1,
+                        color: isDark
+                            ? AppTheme.onBoardingcyan
+                            : AppTheme.onBoardingprimary,
                       ),
                     ),
                     const SizedBox(height: 24),
-                    const Text(
+                    Text(
                       'EduVerse Platform',
                       style: TextStyle(
-                        color: AppTheme.darkBg1,
+                        color: textColor,
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                       ),
@@ -99,15 +106,14 @@ class _SplashScreenState extends State<SplashScreen> {
                     const SizedBox(height: 8),
                     Text(
                       'Learning Management System',
-                      style: TextStyle(
-                        color: AppTheme.darkBg2.withOpacity(0.9),
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(color: textSecondaryColor, fontSize: 16),
                     ),
                     const SizedBox(height: 48),
-                    const CircularProgressIndicator(
+                    CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
-                        AppTheme.darkBg1,
+                        isDark
+                            ? AppTheme.onBoardingcyan
+                            : AppTheme.onBoardingprimary,
                       ),
                     ),
                   ],
