@@ -16,14 +16,155 @@ class ForgotPasswordScreen extends StatefulWidget {
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   bool _emailSent = false;
 
+  late AnimationController _logoController;
+  late AnimationController _titleController;
+  late AnimationController _subtitleController;
+  late AnimationController _emailFieldController;
+  late AnimationController _buttonController;
+  late AnimationController _backLinkController;
+
+  late Animation<double> _logoFadeAnimation;
+  late Animation<double> _logoScaleAnimation;
+  late Animation<double> _titleFadeAnimation;
+  late Animation<Offset> _titleSlideAnimation;
+  late Animation<double> _subtitleFadeAnimation;
+  late Animation<Offset> _subtitleSlideAnimation;
+  late Animation<double> _emailFadeAnimation;
+  late Animation<Offset> _emailSlideAnimation;
+  late Animation<double> _buttonFadeAnimation;
+  late Animation<Offset> _buttonSlideAnimation;
+  late Animation<double> _backLinkFadeAnimation;
+  late Animation<Offset> _backLinkSlideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Logo animation
+    _logoController = AnimationController(
+      duration: const Duration(milliseconds: 700),
+      vsync: this,
+    );
+    _logoFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _logoController, curve: Curves.easeOut));
+    _logoScaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.easeOutBack),
+    );
+
+    // Title animation
+    _titleController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _titleFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _titleController, curve: Curves.easeOut));
+    _titleSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _titleController, curve: Curves.easeOutCubic),
+        );
+
+    // Subtitle animation
+    _subtitleController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _subtitleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _subtitleController, curve: Curves.easeOut),
+    );
+    _subtitleSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _subtitleController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
+    // Email field animation
+    _emailFieldController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _emailFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _emailFieldController, curve: Curves.easeOut),
+    );
+    _emailSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _emailFieldController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
+    // Button animation
+    _buttonController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _buttonFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _buttonController, curve: Curves.easeOut),
+    );
+    _buttonSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _buttonController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
+    // Back link animation
+    _backLinkController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _backLinkFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _backLinkController, curve: Curves.easeOut),
+    );
+    _backLinkSlideAnimation =
+        Tween<Offset>(begin: const Offset(-0.3, 0), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _backLinkController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
+    // Start cascading animations
+    _logoController.forward();
+    Future.delayed(const Duration(milliseconds: 150), () {
+      if (mounted) _titleController.forward();
+    });
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _subtitleController.forward();
+    });
+    Future.delayed(const Duration(milliseconds: 450), () {
+      if (mounted) _emailFieldController.forward();
+    });
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (mounted) _buttonController.forward();
+    });
+    Future.delayed(const Duration(milliseconds: 750), () {
+      if (mounted) _backLinkController.forward();
+    });
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
+    _logoController.dispose();
+    _titleController.dispose();
+    _subtitleController.dispose();
+    _emailFieldController.dispose();
+    _buttonController.dispose();
+    _backLinkController.dispose();
     super.dispose();
   }
 
@@ -209,113 +350,157 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 // Logo
-                                Container(
-                                  width: responsive.aspectRatioWidth(100),
-                                  height: responsive.aspectRatioHeight(100),
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(
-                                      responsive.aspectRatioWidth(40),
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 15,
+                                FadeTransition(
+                                  opacity: _logoFadeAnimation,
+                                  child: ScaleTransition(
+                                    scale: _logoScaleAnimation,
+                                    child: Container(
+                                      width: responsive.aspectRatioWidth(100),
+                                      height: responsive.aspectRatioHeight(100),
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          responsive.aspectRatioWidth(40),
+                                        ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.1,
+                                            ),
+                                            blurRadius: 15,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                  child: Image.asset(
-                                    "assets/images/logo.png",
-                                    fit: BoxFit.cover,
+                                      child: Image.asset(
+                                        "assets/images/logo.png",
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 SizedBox(height: responsive.p24),
                                 // Title
-                                Text(
-                                  l.forgotPasswordTitle,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: responsive.fontSize28,
-                                    fontWeight: FontWeight.w700,
-                                    color: textColor,
+                                FadeTransition(
+                                  opacity: _titleFadeAnimation,
+                                  child: SlideTransition(
+                                    position: _titleSlideAnimation,
+                                    child: Text(
+                                      l.forgotPasswordTitle,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: responsive.fontSize28,
+                                        fontWeight: FontWeight.w700,
+                                        color: textColor,
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 SizedBox(height: responsive.p8),
                                 // Subtitle
-                                Text(
-                                  l.forgotPasswordSubtitle,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: responsive.fontSize16,
-                                    color: textSecondaryColor,
+                                FadeTransition(
+                                  opacity: _subtitleFadeAnimation,
+                                  child: SlideTransition(
+                                    position: _subtitleSlideAnimation,
+                                    child: Text(
+                                      l.forgotPasswordSubtitle,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: responsive.fontSize16,
+                                        color: textSecondaryColor,
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 SizedBox(height: responsive.p32),
                                 // Email field
-                                _buildTextField(
-                                  context: context,
-                                  controller: _emailController,
-                                  hint: l.email,
-                                  icon: Icons.email_outlined,
-                                  isDark: isDark,
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return l.fieldRequired;
-                                    }
-                                    if (!value.contains('@')) {
-                                      return l.invalidEmail;
-                                    }
-                                    return null;
-                                  },
+                                FadeTransition(
+                                  opacity: _emailFadeAnimation,
+                                  child: SlideTransition(
+                                    position: _emailSlideAnimation,
+                                    child: _buildTextField(
+                                      context: context,
+                                      controller: _emailController,
+                                      hint: l.email,
+                                      icon: Icons.email_outlined,
+                                      isDark: isDark,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return l.fieldRequired;
+                                        }
+                                        if (!value.contains('@')) {
+                                          return l.invalidEmail;
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
                                 ),
                                 SizedBox(height: responsive.p32),
                                 // Send reset link button
-                                SizedBox(
-                                  width: double.infinity,
-                                  height: responsive.buttonHeight,
-                                  child: ElevatedButton(
-                                    onPressed: _emailSent
-                                        ? null
-                                        : _handleSendReset,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.transparent,
-                                      shadowColor: Colors.transparent,
-                                      padding: EdgeInsets.zero,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          responsive.radius12,
+                                FadeTransition(
+                                  opacity: _buttonFadeAnimation,
+                                  child: SlideTransition(
+                                    position: _buttonSlideAnimation,
+                                    child: SizedBox(
+                                      width: double.infinity,
+                                      height: responsive.buttonHeight,
+                                      child: ElevatedButton(
+                                        onPressed: _emailSent
+                                            ? null
+                                            : _handleSendReset,
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.transparent,
+                                          shadowColor: Colors.transparent,
+                                          padding: EdgeInsets.zero,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              responsive.radius12,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                    child: Ink(
-                                      decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Color(0xFF00D2F2),
-                                            Color(0xFF2B7FFF),
-                                            Color(0xFF1347E5),
-                                          ],
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                          responsive.radius12,
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: _emailSent
-                                            ? Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(
-                                                    Icons.check_circle,
-                                                    color: Colors.white,
-                                                    size: responsive.iconSmall,
-                                                  ),
-                                                  SizedBox(
-                                                    width: responsive.p8,
-                                                  ),
-                                                  Text(
-                                                    'Link Sent!',
+                                        child: Ink(
+                                          decoration: BoxDecoration(
+                                            gradient: const LinearGradient(
+                                              colors: [
+                                                Color(0xFF00D2F2),
+                                                Color(0xFF2B7FFF),
+                                                Color(0xFF1347E5),
+                                              ],
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              responsive.radius12,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: _emailSent
+                                                ? Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Icon(
+                                                        Icons.check_circle,
+                                                        color: Colors.white,
+                                                        size: responsive
+                                                            .iconSmall,
+                                                      ),
+                                                      SizedBox(
+                                                        width: responsive.p8,
+                                                      ),
+                                                      Text(
+                                                        'Link Sent!',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: responsive
+                                                              .fontSize16,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                : Text(
+                                                    l.resetPasswordButton,
                                                     style: TextStyle(
                                                       color: Colors.white,
                                                       fontSize:
@@ -324,43 +509,42 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                                                           FontWeight.w600,
                                                     ),
                                                   ),
-                                                ],
-                                              )
-                                            : Text(
-                                                l.resetPasswordButton,
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize:
-                                                      responsive.fontSize16,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
                                 SizedBox(height: responsive.p24),
                                 // Back to login
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      '${l.alreadyHaveAccount} ',
-                                      style: TextStyle(
-                                        color: textSecondaryColor,
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () => context.pop(),
-                                      child: Text(
-                                        l.signIn,
-                                        style: const TextStyle(
-                                          color: Color(0xFF2B7FFF),
-                                          fontWeight: FontWeight.w600,
+                                FadeTransition(
+                                  opacity: _backLinkFadeAnimation,
+                                  child: SlideTransition(
+                                    position: _backLinkSlideAnimation,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          '${l.alreadyHaveAccount} ',
+                                          style: TextStyle(
+                                            color: textSecondaryColor,
+                                            fontSize: responsive.fontSize14,
+                                          ),
                                         ),
-                                      ),
+                                        TextButton(
+                                          onPressed: () => context.pop(),
+                                          child: Text(
+                                            l.signIn,
+                                            style: const TextStyle(
+                                              color: Color(0xFF2B7FFF),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ],
+                                  ),
                                 ),
                               ],
                             ),
@@ -370,7 +554,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ),
                   ),
                 ),
-                // Top right icons
                 Positioned(
                   right: 16,
                   top: 48,

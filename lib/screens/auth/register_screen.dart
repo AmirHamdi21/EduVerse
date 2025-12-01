@@ -20,7 +20,7 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> {
+class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -35,6 +35,231 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   final List<String> _roles = ['student', 'instructor', 'ta', 'admin'];
 
+  late AnimationController _logoController;
+  late AnimationController _titleController;
+  late AnimationController _firstNameController_anim;
+  late AnimationController _lastNameController_anim;
+  late AnimationController _emailFieldController;
+  late AnimationController _phoneFieldController;
+  late AnimationController _roleFieldController;
+  late AnimationController _passwordFieldController;
+  late AnimationController _confirmPasswordController_anim;
+  late AnimationController _termsController;
+  late AnimationController _registerButtonController;
+
+  late Animation<double> _logoFadeAnimation;
+  late Animation<double> _logoScaleAnimation;
+  late Animation<double> _titleFadeAnimation;
+  late Animation<Offset> _titleSlideAnimation;
+  late Animation<double> _firstNameFadeAnimation;
+  late Animation<Offset> _firstNameSlideAnimation;
+  late Animation<double> _lastNameFadeAnimation;
+  late Animation<Offset> _lastNameSlideAnimation;
+  late Animation<double> _emailFadeAnimation;
+  late Animation<Offset> _emailSlideAnimation;
+  late Animation<double> _phoneFadeAnimation;
+  late Animation<Offset> _phoneSlideAnimation;
+  late Animation<double> _roleFadeAnimation;
+  late Animation<Offset> _roleSlideAnimation;
+  late Animation<double> _passwordFadeAnimation;
+  late Animation<Offset> _passwordSlideAnimation;
+  late Animation<double> _confirmPasswordFadeAnimation;
+  late Animation<Offset> _confirmPasswordSlideAnimation;
+  late Animation<double> _termsFadeAnimation;
+  late Animation<Offset> _termsSlideAnimation;
+  late Animation<double> _registerButtonFadeAnimation;
+  late Animation<Offset> _registerButtonSlideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Logo animation
+    _logoController = AnimationController(
+      duration: const Duration(milliseconds: 700),
+      vsync: this,
+    );
+    _logoFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.easeOut),
+    );
+    _logoScaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.easeOutBack),
+    );
+
+    // Title animation
+    _titleController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _titleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _titleController, curve: Curves.easeOut),
+    );
+    _titleSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _titleController, curve: Curves.easeOutCubic));
+
+    // First name field animation
+    _firstNameController_anim = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _firstNameFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _firstNameController_anim, curve: Curves.easeOut),
+    );
+    _firstNameSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _firstNameController_anim, curve: Curves.easeOutCubic));
+
+    // Last name field animation
+    _lastNameController_anim = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _lastNameFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _lastNameController_anim, curve: Curves.easeOut),
+    );
+    _lastNameSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _lastNameController_anim, curve: Curves.easeOutCubic));
+
+    // Email field animation
+    _emailFieldController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _emailFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _emailFieldController, curve: Curves.easeOut),
+    );
+    _emailSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _emailFieldController, curve: Curves.easeOutCubic));
+
+    // Phone field animation
+    _phoneFieldController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _phoneFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _phoneFieldController, curve: Curves.easeOut),
+    );
+    _phoneSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _phoneFieldController, curve: Curves.easeOutCubic));
+
+    // Role field animation
+    _roleFieldController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _roleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _roleFieldController, curve: Curves.easeOut),
+    );
+    _roleSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _roleFieldController, curve: Curves.easeOutCubic));
+
+    // Password field animation
+    _passwordFieldController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _passwordFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _passwordFieldController, curve: Curves.easeOut),
+    );
+    _passwordSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _passwordFieldController, curve: Curves.easeOutCubic));
+
+    // Confirm password field animation
+    _confirmPasswordController_anim = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _confirmPasswordFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _confirmPasswordController_anim, curve: Curves.easeOut),
+    );
+    _confirmPasswordSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _confirmPasswordController_anim, curve: Curves.easeOutCubic));
+
+    // Terms checkbox animation
+    _termsController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _termsFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _termsController, curve: Curves.easeOut),
+    );
+    _termsSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _termsController, curve: Curves.easeOutCubic));
+
+    // Register button animation
+    _registerButtonController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _registerButtonFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _registerButtonController, curve: Curves.easeOut),
+    );
+    _registerButtonSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _registerButtonController, curve: Curves.easeOutCubic));
+
+    // Start cascading animations
+    _logoController.forward();
+    
+    Future.delayed(const Duration(milliseconds: 150), () {
+      if (mounted) _titleController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _firstNameController_anim.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 450), () {
+      if (mounted) _lastNameController_anim.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (mounted) _emailFieldController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 750), () {
+      if (mounted) _phoneFieldController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 900), () {
+      if (mounted) _roleFieldController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 1050), () {
+      if (mounted) _passwordFieldController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 1200), () {
+      if (mounted) _confirmPasswordController_anim.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 1350), () {
+      if (mounted) _termsController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      if (mounted) _registerButtonController.forward();
+    });
+  }
+
   @override
   void dispose() {
     _firstNameController.dispose();
@@ -43,6 +268,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _logoController.dispose();
+    _titleController.dispose();
+    _firstNameController_anim.dispose();
+    _lastNameController_anim.dispose();
+    _emailFieldController.dispose();
+    _phoneFieldController.dispose();
+    _roleFieldController.dispose();
+    _passwordFieldController.dispose();
+    _confirmPasswordController_anim.dispose();
+    _termsController.dispose();
+    _registerButtonController.dispose();
     super.dispose();
   }
 
@@ -277,35 +513,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   // Logo
-                                  Container(
-                                    width: responsive.aspectRatioWidth(100),
-                                    height: responsive.aspectRatioHeight(100),
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        responsive.aspectRatioWidth(40),
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          blurRadius: 15,
+                                  FadeTransition(
+                                    opacity: _logoFadeAnimation,
+                                    child: ScaleTransition(
+                                      scale: _logoScaleAnimation,
+                                      child: Container(
+                                        width: responsive.aspectRatioWidth(100),
+                                        height: responsive.aspectRatioHeight(100),
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            responsive.aspectRatioWidth(40),
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.1),
+                                              blurRadius: 15,
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                    child: Image.asset(
-                                      "assets/images/logo.png",
-                                      fit: BoxFit.cover,
+                                        child: Image.asset(
+                                          "assets/images/logo.png",
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: responsive.p24),
                                   // Title
-                                  Text(
-                                    l.signupTitle,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: responsive.fontSize28,
-                                      fontWeight: FontWeight.w700,
-                                      color: textColor,
+                                  FadeTransition(
+                                    opacity: _titleFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _titleSlideAnimation,
+                                      child: Text(
+                                        l.signupTitle,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: responsive.fontSize28,
+                                          fontWeight: FontWeight.w700,
+                                          color: textColor,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: responsive.p8),
@@ -320,142 +568,178 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   ),
                                   SizedBox(height: responsive.p24),
                                   // First name field
-                                  _buildTextField(
-                                    context: context,
-                                    controller: _firstNameController,
-                                    hint: l.firstName,
-                                    icon: Icons.person_outline,
-                                    isDark: isDark,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return l.fieldRequired;
-                                      }
-                                      return null;
-                                    },
+                                  FadeTransition(
+                                    opacity: _firstNameFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _firstNameSlideAnimation,
+                                      child: _buildTextField(
+                                        context: context,
+                                        controller: _firstNameController,
+                                        hint: l.firstName,
+                                        icon: Icons.person_outline,
+                                        isDark: isDark,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return l.fieldRequired;
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(height: responsive.p16),
                                   // Last name field
-                                  _buildTextField(
-                                    context: context,
-                                    controller: _lastNameController,
-                                    hint: l.lastName,
-                                    icon: Icons.person_outline,
-                                    isDark: isDark,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return l.fieldRequired;
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: responsive.p16),
-
-                                  _buildTextField(
-                                    context: context,
-                                    controller: _emailController,
-                                    hint: l.email,
-                                    icon: Icons.email_outlined,
-                                    isDark: isDark,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return l.fieldRequired;
-                                      }
-                                      if (!value.contains('@')) {
-                                        return l.invalidEmail;
-                                      }
-                                      return null;
-                                    },
-                                  ),
-                                  SizedBox(height: responsive.p16),
-                                  // Password field
-                                  _buildTextField(
-                                    context: context,
-                                    controller: _passwordController,
-                                    hint: l.password,
-                                    icon: Icons.lock_outline,
-                                    isDark: isDark,
-                                    obscureText: _obscurePassword,
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        _obscurePassword
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
-                                        color: textSecondaryColor,
-                                        size: responsive.iconMedium,
+                                  FadeTransition(
+                                    opacity: _lastNameFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _lastNameSlideAnimation,
+                                      child: _buildTextField(
+                                        context: context,
+                                        controller: _lastNameController,
+                                        hint: l.lastName,
+                                        icon: Icons.person_outline,
+                                        isDark: isDark,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return l.fieldRequired;
+                                          }
+                                          return null;
+                                        },
                                       ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _obscurePassword = !_obscurePassword;
-                                        });
-                                      },
                                     ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return l.fieldRequired;
-                                      }
-                                      if (value.length < 6) {
-                                        return l.passwordTooShort;
-                                      }
-                                      return null;
-                                    },
                                   ),
                                   SizedBox(height: responsive.p16),
-                                  // Confirm password field
-                                  _buildTextField(
-                                    context: context,
-                                    controller: _confirmPasswordController,
-                                    hint: l.confirmPassword,
-                                    icon: Icons.lock_outline,
-                                    isDark: isDark,
-                                    obscureText: _obscureConfirmPassword,
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        _obscureConfirmPassword
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
-                                        color: textSecondaryColor,
-                                        size: responsive.iconMedium,
+                                  // Email field
+                                  FadeTransition(
+                                    opacity: _emailFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _emailSlideAnimation,
+                                      child: _buildTextField(
+                                        context: context,
+                                        controller: _emailController,
+                                        hint: l.email,
+                                        icon: Icons.email_outlined,
+                                        isDark: isDark,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return l.fieldRequired;
+                                          }
+                                          if (!value.contains('@')) {
+                                            return l.invalidEmail;
+                                          }
+                                          return null;
+                                        },
                                       ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _obscureConfirmPassword =
-                                              !_obscureConfirmPassword;
-                                        });
-                                      },
                                     ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return l.fieldRequired;
-                                      }
-                                      return null;
-                                    },
                                   ),
                                   SizedBox(height: responsive.p16),
                                   // Phone field
-                                  _buildTextField(
-                                    context: context,
-                                    controller: _phoneController,
-                                    hint: l.phoneNumber,
-                                    icon: Icons.phone_outlined,
-                                    isDark: isDark,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return l.fieldRequired;
-                                      }
-                                      return null;
-                                    },
+                                  FadeTransition(
+                                    opacity: _phoneFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _phoneSlideAnimation,
+                                      child: _buildTextField(
+                                        context: context,
+                                        controller: _phoneController,
+                                        hint: l.phoneNumber,
+                                        icon: Icons.phone_outlined,
+                                        isDark: isDark,
+                                        validator: (value) => null,
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(height: responsive.p16),
-                                  // Role selection dropdown
-                                  _buildRoleDropdown(
-                                    isDark,
-                                    textColor,
-                                    textSecondaryColor,
-                                    l,
+                                  // Role field
+                                  FadeTransition(
+                                    opacity: _roleFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _roleSlideAnimation,
+                                      child: _buildRoleDropdown(isDark, textColor, textSecondaryColor, l),
+                                    ),
+                                  ),
+                                  SizedBox(height: responsive.p16),
+                                  // Password field
+                                  FadeTransition(
+                                    opacity: _passwordFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _passwordSlideAnimation,
+                                      child: _buildTextField(
+                                        context: context,
+                                        controller: _passwordController,
+                                        hint: l.password,
+                                        icon: Icons.lock_outline,
+                                        isDark: isDark,
+                                        obscureText: _obscurePassword,
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            _obscurePassword
+                                                ? Icons.visibility_outlined
+                                                : Icons.visibility_off_outlined,
+                                            color: textSecondaryColor,
+                                            size: responsive.iconMedium,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _obscurePassword = !_obscurePassword;
+                                            });
+                                          },
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return l.fieldRequired;
+                                          }
+                                          if (value.length < 6) {
+                                            return l.passwordTooShort;
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: responsive.p16),
+                                  // Confirm password field
+                                  FadeTransition(
+                                    opacity: _confirmPasswordFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _confirmPasswordSlideAnimation,
+                                      child: _buildTextField(
+                                        context: context,
+                                        controller: _confirmPasswordController,
+                                        hint: l.confirmPassword,
+                                        icon: Icons.lock_outline,
+                                        isDark: isDark,
+                                        obscureText: _obscureConfirmPassword,
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            _obscureConfirmPassword
+                                                ? Icons.visibility_outlined
+                                                : Icons.visibility_off_outlined,
+                                            color: textSecondaryColor,
+                                            size: responsive.iconMedium,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _obscureConfirmPassword =
+                                                  !_obscureConfirmPassword;
+                                            });
+                                          },
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return l.fieldRequired;
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(height: responsive.p16),
                                   // Terms checkbox
-                                  Row(
+                                  FadeTransition(
+                                    opacity: _termsFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _termsSlideAnimation,
+                                      child: Row(
                                     children: [
                                       Checkbox(
                                         value: _agreeToTerms,
@@ -477,9 +761,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       ),
                                     ],
                                   ),
+                                    ),
+                                  ),
                                   SizedBox(height: responsive.p24),
                                   // Register button
-                                  BlocBuilder<AuthBloc, AuthState>(
+                                  FadeTransition(
+                                    opacity: _registerButtonFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _registerButtonSlideAnimation,
+                                      child: BlocBuilder<AuthBloc, AuthState>(
                                     builder: (context, state) {
                                       final isLoading = state is AuthLoading;
                                       return SizedBox(
@@ -544,6 +834,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         ),
                                       );
                                     },
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(height: responsive.p16),
                                   // Sign in

@@ -25,7 +25,117 @@ class Onboarding2 extends StatefulWidget {
   State<Onboarding2> createState() => _Onboarding2State();
 }
 
-class _Onboarding2State extends State<Onboarding2> {
+class _Onboarding2State extends State<Onboarding2> with TickerProviderStateMixin {
+  late AnimationController _headerController;
+  late AnimationController _card1Controller;
+  late AnimationController _card2Controller;
+  late AnimationController _card3Controller;
+  late AnimationController _infoController;
+  
+  late Animation<double> _headerFadeAnimation;
+  late Animation<Offset> _headerSlideAnimation;
+  
+  final ScrollController _scrollController = ScrollController();
+  bool _card1Visible = false;
+  bool _card2Visible = false;
+  bool _card3Visible = false;
+  
+  @override
+  void initState() {
+    super.initState();
+    
+    // Header animations
+    _headerController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    
+    _headerFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _headerController, curve: Curves.easeOut),
+    );
+    
+    _headerSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, -0.5),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _headerController, curve: Curves.easeOutCubic));
+    
+    // Card controllers
+    _card1Controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _card2Controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _card3Controller = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _infoController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    
+    // Start header animation
+    _headerController.forward();
+    
+    // Start first two cards immediately with staggered delay
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (mounted) {
+        setState(() => _card1Visible = true);
+        _card1Controller.forward();
+      }
+    });
+    
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (mounted) {
+        setState(() => _card2Visible = true);
+        _card2Controller.forward();
+      }
+    });
+    
+    // Scroll listener for remaining card animations
+    _scrollController.addListener(_onScroll);
+    
+    // Trigger initial check after build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _onScroll();
+    });
+  }
+  
+  void _onScroll() {
+    if (!mounted) return;
+    
+    final scrollOffset = _scrollController.offset;
+    final screenHeight = MediaQuery.of(context).size.height;
+    
+    // Trigger animations based on scroll position for remaining cards
+    if (scrollOffset > screenHeight * 0.2 && !_card3Visible) {
+      setState(() => _card3Visible = true);
+      _card3Controller.forward();
+    }
+    
+    // Info card appears after scrolling
+    if (scrollOffset > screenHeight * 0.35) {
+      _infoController.forward();
+    }
+  }
+  
+  @override
+  void dispose() {
+    _headerController.dispose();
+    _card1Controller.dispose();
+    _card2Controller.dispose();
+    _card3Controller.dispose();
+    _infoController.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
@@ -74,15 +184,25 @@ class _Onboarding2State extends State<Onboarding2> {
                       OnboardingHeader(),
                       Expanded(
                         child: SingleChildScrollView(
+                          controller: _scrollController,
                           padding: EdgeInsets.symmetric(horizontal: responsive.p24),
                           child: Column(
                             children: [
                               SizedBox(height: responsive.p16),
-                              _buildTitleSection(textColor, textSecondaryColor),
+                              FadeTransition(
+                                opacity: _headerFadeAnimation,
+                                child: SlideTransition(
+                                  position: _headerSlideAnimation,
+                                  child: _buildTitleSection(textColor, textSecondaryColor),
+                                ),
+                              ),
                               SizedBox(height: responsive.p32),
                               Column(
                                 children: [
-                                  FeatureCard(
+                                  _buildAnimatedCard(
+                                    controller: _card1Controller,
+                                    delay: 0,
+                                    child: FeatureCard(
                                     title: AppLocalizations.of(
                                       context,
                                     )!.studentRole,
@@ -129,8 +249,12 @@ class _Onboarding2State extends State<Onboarding2> {
                                     )!.studentTagline,
                                     taglineColor: AppTheme.onBoardingcyanLight,
                                   ),
+                                  ),
                                   const SizedBox(height: 20),
-                                  FeatureCard(
+                                  _buildAnimatedCard(
+                                    controller: _card2Controller,
+                                    delay: 150,
+                                    child: FeatureCard(
                                     title: AppLocalizations.of(
                                       context,
                                     )!.instructorRole,
@@ -177,8 +301,12 @@ class _Onboarding2State extends State<Onboarding2> {
                                     )!.instructorTagline,
                                     taglineColor: AppTheme.onBoardingprimary,
                                   ),
+                                  ),
                                   const SizedBox(height: 20),
-                                  FeatureCard(
+                                  _buildAnimatedCard(
+                                    controller: _card3Controller,
+                                    delay: 300,
+                                    child: FeatureCard(
                                     title: AppLocalizations.of(
                                       context,
                                     )!.adminRole,
@@ -225,13 +353,22 @@ class _Onboarding2State extends State<Onboarding2> {
                                     )!.adminTagline,
                                     taglineColor: AppTheme.onBoardingpurple,
                                   ),
+                                  ),
                                 ],
                               ),
                               SizedBox(height: responsive.p32),
-                              InfoCard(
+                              FadeTransition(
+                                opacity: _infoController,
+                                child: ScaleTransition(
+                                  scale: Tween<double>(begin: 0.8, end: 1.0).animate(
+                                    CurvedAnimation(parent: _infoController, curve: Curves.easeOutBack),
+                                  ),
+                                  child: InfoCard(
                                 text: AppLocalizations.of(
                                   context,
                                 )!.onboarding2InfoText,
+                              ),
+                                ),
                               ),
                               SizedBox(height: responsive.p40),
                               NavigationButtons(
@@ -289,6 +426,36 @@ class _Onboarding2State extends State<Onboarding2> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildAnimatedCard({
+    required AnimationController controller,
+    required int delay,
+    required Widget child,
+  }) {
+    final fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: controller, curve: Curves.easeOut),
+    );
+    
+    final slideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeOutCubic));
+    
+    final scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
+      CurvedAnimation(parent: controller, curve: Curves.easeOutBack),
+    );
+    
+    return FadeTransition(
+      opacity: fadeAnimation,
+      child: SlideTransition(
+        position: slideAnimation,
+        child: ScaleTransition(
+          scale: scaleAnimation,
+          child: child,
+        ),
+      ),
     );
   }
 

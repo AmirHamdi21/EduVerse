@@ -23,7 +23,142 @@ class Onboarding1 extends StatefulWidget {
   State<Onboarding1> createState() => _Onboarding1State();
 }
 
-class _Onboarding1State extends State<Onboarding1> {
+class _Onboarding1State extends State<Onboarding1> with TickerProviderStateMixin {
+  late AnimationController _imageController;
+  late AnimationController _titleController;
+  late AnimationController _descriptionController;
+  late AnimationController _taglineController;
+  late AnimationController _buttonsController;
+  
+  late Animation<double> _imageFadeAnimation;
+  late Animation<Offset> _imageSlideAnimation;
+  late Animation<double> _imageScaleAnimation;
+  
+  late Animation<double> _titleFadeAnimation;
+  late Animation<Offset> _titleSlideAnimation;
+  
+  late Animation<double> _descriptionFadeAnimation;
+  late Animation<Offset> _descriptionSlideAnimation;
+  
+  late Animation<double> _taglineFadeAnimation;
+  late Animation<Offset> _taglineSlideAnimation;
+  
+  late Animation<double> _buttonsFadeAnimation;
+  late Animation<Offset> _buttonsSlideAnimation;
+  
+  @override
+  void initState() {
+    super.initState();
+    
+    // Image card animation
+    _imageController = AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    
+    _imageFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _imageController, curve: Curves.easeOut),
+    );
+    
+    _imageSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, -0.4),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _imageController, curve: Curves.easeOutCubic));
+    
+    _imageScaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _imageController, curve: Curves.easeOutBack),
+    );
+    
+    // Title animation
+    _titleController = AnimationController(
+      duration: const Duration(milliseconds: 700),
+      vsync: this,
+    );
+    
+    _titleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _titleController, curve: Curves.easeOut),
+    );
+    
+    _titleSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.2),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _titleController, curve: Curves.easeOutCubic));
+    
+    // Description animation
+    _descriptionController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _descriptionFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _descriptionController, curve: Curves.easeOut),
+    );
+    
+    _descriptionSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.2),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _descriptionController, curve: Curves.easeOutCubic));
+    
+    // Tagline animation
+    _taglineController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _taglineFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _taglineController, curve: Curves.easeOut),
+    );
+    
+    _taglineSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.2),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _taglineController, curve: Curves.easeOutCubic));
+    
+    // Buttons animation
+    _buttonsController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _buttonsFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _buttonsController, curve: Curves.easeOut),
+    );
+    
+    _buttonsSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _buttonsController, curve: Curves.easeOutCubic));
+    
+    // Start cascading animations
+    _imageController.forward();
+    
+    Future.delayed(const Duration(milliseconds: 200), () {
+      if (mounted) _titleController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 400), () {
+      if (mounted) _descriptionController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (mounted) _taglineController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 800), () {
+      if (mounted) _buttonsController.forward();
+    });
+  }
+  
+  @override
+  void dispose() {
+    _imageController.dispose();
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _taglineController.dispose();
+    _buttonsController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
@@ -83,7 +218,13 @@ class _Onboarding1State extends State<Onboarding1> {
                             children: [
                               SizedBox(height: responsive.p16),
                               // Image card
-                              Container(
+                              FadeTransition(
+                                opacity: _imageFadeAnimation,
+                                child: SlideTransition(
+                                  position: _imageSlideAnimation,
+                                  child: ScaleTransition(
+                                    scale: _imageScaleAnimation,
+                                    child: Container(
                                 width: double.infinity,
                                 height: responsive.responsiveHeight(30),
                                 clipBehavior: Clip.antiAlias,
@@ -177,9 +318,16 @@ class _Onboarding1State extends State<Onboarding1> {
                                   ],
                                 ),
                               ),
+                            ),
+                          ),
+                        ),
                               SizedBox(height: responsive.p24),
                               // Title
-                              Text(
+                              FadeTransition(
+                                opacity: _titleFadeAnimation,
+                                child: SlideTransition(
+                                  position: _titleSlideAnimation,
+                                  child: Text(
                                 AppLocalizations.of(
                                   context,
                                 )!.onboarding1MainTitle,
@@ -192,9 +340,15 @@ class _Onboarding1State extends State<Onboarding1> {
                                   height: 1.25,
                                 ),
                               ),
+                              ),
+                              ),
                               SizedBox(height: responsive.p24),
                               // Description
-                              Text(
+                              FadeTransition(
+                                opacity: _descriptionFadeAnimation,
+                                child: SlideTransition(
+                                  position: _descriptionSlideAnimation,
+                                  child: Text(
                                 AppLocalizations.of(
                                   context,
                                 )!.onboarding1Description,
@@ -207,9 +361,15 @@ class _Onboarding1State extends State<Onboarding1> {
                                   height: 1.62,
                                 ),
                               ),
+                              ),
+                              ),
                               SizedBox(height: responsive.p20),
                               // Tagline
-                              Text(
+                              FadeTransition(
+                                opacity: _taglineFadeAnimation,
+                                child: SlideTransition(
+                                  position: _taglineSlideAnimation,
+                                  child: Text(
                                 AppLocalizations.of(context)!.poweredByAI,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
@@ -222,18 +382,30 @@ class _Onboarding1State extends State<Onboarding1> {
                                   height: 1.43,
                                 ),
                               ),
-                              SizedBox(height: responsive.p32),
-                              NavigationButtons(
-                                nextOnPressed: () {
-                                  context.go('/onboarding2');
-                                },
                               ),
-                              SizedBox(height: responsive.p16),
-                              PageIndicator(
-                                isActive_1: true,
-                                isActive_2: false,
-                                isActive_3: false,
-                                isActive_4: false,
+                              ),
+                              SizedBox(height: responsive.p32),
+                              FadeTransition(
+                                opacity: _buttonsFadeAnimation,
+                                child: SlideTransition(
+                                  position: _buttonsSlideAnimation,
+                                  child: Column(
+                                    children: [
+                                      NavigationButtons(
+                                        nextOnPressed: () {
+                                          context.go('/onboarding2');
+                                        },
+                                      ),
+                                      SizedBox(height: responsive.p16),
+                                      PageIndicator(
+                                        isActive_1: true,
+                                        isActive_2: false,
+                                        isActive_3: false,
+                                        isActive_4: false,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                               // SizedBox(height: responsive.p32),
                             ],

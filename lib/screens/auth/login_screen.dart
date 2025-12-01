@@ -20,16 +20,205 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
+  late AnimationController _logoController;
+  late AnimationController _titleController;
+  late AnimationController _subtitleController;
+  late AnimationController _emailFieldController;
+  late AnimationController _passwordFieldController;
+  late AnimationController _forgotController;
+  late AnimationController _buttonController;
+  late AnimationController _signupController;
+
+  late Animation<double> _logoFadeAnimation;
+  late Animation<double> _logoScaleAnimation;
+  late Animation<double> _titleFadeAnimation;
+  late Animation<Offset> _titleSlideAnimation;
+  late Animation<double> _subtitleFadeAnimation;
+  late Animation<Offset> _subtitleSlideAnimation;
+  late Animation<double> _emailFadeAnimation;
+  late Animation<Offset> _emailSlideAnimation;
+  late Animation<double> _passwordFadeAnimation;
+  late Animation<Offset> _passwordSlideAnimation;
+  late Animation<double> _forgotFadeAnimation;
+  late Animation<Offset> _forgotSlideAnimation;
+  late Animation<double> _buttonFadeAnimation;
+  late Animation<Offset> _buttonSlideAnimation;
+  late Animation<double> _signupFadeAnimation;
+  late Animation<Offset> _signupSlideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // Logo animation
+    _logoController = AnimationController(
+      duration: const Duration(milliseconds: 700),
+      vsync: this,
+    );
+    
+    _logoFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.easeOut),
+    );
+    
+    _logoScaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
+      CurvedAnimation(parent: _logoController, curve: Curves.easeOutBack),
+    );
+    
+    // Title animation
+    _titleController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _titleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _titleController, curve: Curves.easeOut),
+    );
+    
+    _titleSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _titleController, curve: Curves.easeOutCubic));
+    
+    // Subtitle animation
+    _subtitleController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _subtitleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _subtitleController, curve: Curves.easeOut),
+    );
+    
+    _subtitleSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _subtitleController, curve: Curves.easeOutCubic));
+    
+    // Email field animation
+    _emailFieldController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _emailFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _emailFieldController, curve: Curves.easeOut),
+    );
+    
+    _emailSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _emailFieldController, curve: Curves.easeOutCubic));
+    
+    // Password field animation
+    _passwordFieldController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _passwordFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _passwordFieldController, curve: Curves.easeOut),
+    );
+    
+    _passwordSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _passwordFieldController, curve: Curves.easeOutCubic));
+    
+    // Forgot password animation
+    _forgotController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    
+    _forgotFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _forgotController, curve: Curves.easeOut),
+    );
+    
+    _forgotSlideAnimation = Tween<Offset>(
+      begin: const Offset(0.2, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _forgotController, curve: Curves.easeOutCubic));
+    
+    // Button animation
+    _buttonController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _buttonFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _buttonController, curve: Curves.easeOut),
+    );
+    
+    _buttonSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _buttonController, curve: Curves.easeOutCubic));
+    
+    // Sign up animation
+    _signupController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    
+    _signupFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _signupController, curve: Curves.easeOut),
+    );
+    
+    _signupSlideAnimation = Tween<Offset>(
+      begin: const Offset(0, 0.3),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _signupController, curve: Curves.easeOutCubic));
+    
+    // Start cascading animations
+    _logoController.forward();
+    
+    Future.delayed(const Duration(milliseconds: 150), () {
+      if (mounted) _titleController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) _subtitleController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 450), () {
+      if (mounted) _emailFieldController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 600), () {
+      if (mounted) _passwordFieldController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 750), () {
+      if (mounted) _forgotController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 900), () {
+      if (mounted) _buttonController.forward();
+    });
+    
+    Future.delayed(const Duration(milliseconds: 1050), () {
+      if (mounted) _signupController.forward();
+    });
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _logoController.dispose();
+    _titleController.dispose();
+    _subtitleController.dispose();
+    _emailFieldController.dispose();
+    _passwordFieldController.dispose();
+    _forgotController.dispose();
+    _buttonController.dispose();
+    _signupController.dispose();
     super.dispose();
   }
 
@@ -245,68 +434,96 @@ class _LoginScreenState extends State<LoginScreen> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   // Logo
-                                  Container(
-                                    width: responsive.aspectRatioWidth(100),
-                                    height: responsive.aspectRatioHeight(100),
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        responsive.aspectRatioWidth(40),
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          blurRadius: 15,
+                                  FadeTransition(
+                                    opacity: _logoFadeAnimation,
+                                    child: ScaleTransition(
+                                      scale: _logoScaleAnimation,
+                                      child: Container(
+                                        width: responsive.aspectRatioWidth(100),
+                                        height: responsive.aspectRatioHeight(100),
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            responsive.aspectRatioWidth(40),
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.1),
+                                              blurRadius: 15,
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                    child: Image.asset(
-                                      "assets/images/logo.png",
-                                      fit: BoxFit.cover,
+                                        child: Image.asset(
+                                          "assets/images/logo.png",
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: responsive.p32),
                                   // Title
-                                  Text(
-                                    l.loginTitle,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: responsive.fontSize28,
-                                      fontWeight: FontWeight.w700,
-                                      color: textColor,
+                                  FadeTransition(
+                                    opacity: _titleFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _titleSlideAnimation,
+                                      child: Text(
+                                        l.loginTitle,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: responsive.fontSize28,
+                                          fontWeight: FontWeight.w700,
+                                          color: textColor,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: responsive.p8),
                                   // Subtitle
-                                  Text(
-                                    l.loginSubtitle,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: responsive.fontSize16,
-                                      color: textSecondaryColor,
+                                  FadeTransition(
+                                    opacity: _subtitleFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _subtitleSlideAnimation,
+                                      child: Text(
+                                        l.loginSubtitle,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: responsive.fontSize16,
+                                          color: textSecondaryColor,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: responsive.p32),
                                   // Email field
-                                  _buildTextField(
-                                    context: context,
-                                    controller: _emailController,
-                                    hint: l.email,
-                                    icon: Icons.email_outlined,
-                                    isDark: isDark,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return l.fieldRequired;
-                                      }
-                                      if (!value.contains('@')) {
-                                        return l.invalidEmail;
-                                      }
-                                      return null;
-                                    },
+                                  FadeTransition(
+                                    opacity: _emailFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _emailSlideAnimation,
+                                      child: _buildTextField(
+                                        context: context,
+                                        controller: _emailController,
+                                        hint: l.email,
+                                        icon: Icons.email_outlined,
+                                        isDark: isDark,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return l.fieldRequired;
+                                          }
+                                          if (!value.contains('@')) {
+                                            return l.invalidEmail;
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(height: responsive.p16),
                                   // Password field
-                                  _buildTextField(
+                                  FadeTransition(
+                                    opacity: _passwordFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _passwordSlideAnimation,
+                                      child: _buildTextField(
                                     context: context,
                                     controller: _passwordController,
                                     hint: l.password,
@@ -333,25 +550,37 @@ class _LoginScreenState extends State<LoginScreen> {
                                       return null;
                                     },
                                   ),
+                                    ),
+                                  ),
                                   SizedBox(height: responsive.p8),
                                   // Forgot password
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: TextButton(
-                                      onPressed: () =>
-                                          context.push('/forgot-password'),
-                                      child: Text(
-                                        l.forgotPassword,
-                                        style: TextStyle(
-                                          color: Color(0xFF2B7FFF),
-                                          fontSize: responsive.fontSize14,
+                                  FadeTransition(
+                                    opacity: _forgotFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _forgotSlideAnimation,
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: TextButton(
+                                          onPressed: () =>
+                                              context.push('/forgot-password'),
+                                          child: Text(
+                                            l.forgotPassword,
+                                            style: TextStyle(
+                                              color: Color(0xFF2B7FFF),
+                                              fontSize: responsive.fontSize14,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                   SizedBox(height: responsive.p16),
                                   // Login button
-                                  BlocBuilder<AuthBloc, AuthState>(
+                                  FadeTransition(
+                                    opacity: _buttonFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _buttonSlideAnimation,
+                                      child: BlocBuilder<AuthBloc, AuthState>(
                                     builder: (context, state) {
                                       final isLoading = state is AuthLoading;
                                       return SizedBox(
@@ -416,11 +645,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       );
                                     },
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(height: responsive.p24),
                                   // Sign up
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                  FadeTransition(
+                                    opacity: _signupFadeAnimation,
+                                    child: SlideTransition(
+                                      position: _signupSlideAnimation,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
                                         "${l.dontHaveAccount} ",
@@ -442,6 +677,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ),
                                       ),
                                     ],
+                                  ),
+                                    ),
                                   ),
                                 ],
                               ),
