@@ -16,12 +16,14 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_event.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/language/language_cubit.dart';
+import 'package:edu_verse/common/utils/responsive.dart';
 
 class Onboarding3 extends StatelessWidget {
   const Onboarding3({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
@@ -67,16 +69,16 @@ class Onboarding3 extends StatelessWidget {
                       OnboardingHeader(),
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: const EdgeInsets.all(24),
+                          padding: EdgeInsets.all(responsive.p24),
                           child: Column(
                             children: [
-                              const SizedBox(height: 16),
+                              SizedBox(height: responsive.p16),
                               _buildIntroSection(
                                 context,
                                 textColor,
                                 textSecondaryColor,
                               ),
-                              const SizedBox(height: 32),
+                              SizedBox(height: responsive.p32),
                               Column(
                                 children: [
                                   FeatureCard(
@@ -289,43 +291,44 @@ class Onboarding3 extends StatelessWidget {
     Color textColor,
     Color textSecondaryColor,
   ) {
+    final responsive = context.responsive;
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(responsive.p8),
               decoration: BoxDecoration(
                 color: AppTheme.onBoardingprimary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(responsive.radius12),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.psychology,
                 color: AppTheme.onBoardingprimary,
-                size: 32,
+                size: responsive.iconLarge,
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: responsive.p8),
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(responsive.p8),
               decoration: BoxDecoration(
                 color: AppTheme.onBoardingcyan.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(responsive.radius12),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.auto_awesome,
                 color: AppTheme.onBoardingcyan,
-                size: 24,
+                size: responsive.iconMedium,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: responsive.p16),
         RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
-            style: TextStyle(fontSize: 24, color: textColor, height: 1.25),
+            style: TextStyle(fontSize: responsive.fontSize24, color: textColor, height: 1.25),
             children: [
               TextSpan(
                 text: AppLocalizations.of(context)!.poweredByIntelligence,
@@ -337,12 +340,12 @@ class Onboarding3 extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: responsive.p16),
         Text(
           AppLocalizations.of(context)!.aiDescription,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: responsive.fontSize14,
             color: textSecondaryColor,
             height: 1.62,
           ),

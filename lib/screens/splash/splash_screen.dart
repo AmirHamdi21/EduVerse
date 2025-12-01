@@ -7,6 +7,8 @@ import 'package:edu_verse/config/app_theme.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
+import '../../common/utils/responsive.dart';
+import '../../generated_l10n/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -25,6 +27,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
+    final l = AppLocalizations.of(context);
+    
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         // Add a minimum display time for splash screen
@@ -79,7 +84,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(32),
+                      padding: EdgeInsets.all(responsive.p32),
                       decoration: BoxDecoration(
                         color: isDark
                             ? AppTheme.onBoardingcyan.withOpacity(0.15)
@@ -88,27 +93,30 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                       child: Icon(
                         Icons.school_rounded,
-                        size: 80,
+                        size: responsive.iconExtraLarge,
                         color: isDark
                             ? AppTheme.onBoardingcyan
                             : AppTheme.onBoardingprimary,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    SizedBox(height: responsive.p24),
                     Text(
-                      'EduVerse Platform',
+                      l!.splashTitle,
                       style: TextStyle(
                         color: textColor,
-                        fontSize: 32,
+                        fontSize: responsive.fontSize32,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: responsive.p8),
                     Text(
-                      'Learning Management System',
-                      style: TextStyle(color: textSecondaryColor, fontSize: 16),
+                      l.splashSubtitle,
+                      style: TextStyle(
+                        color: textSecondaryColor,
+                        fontSize: responsive.fontSize16,
+                      ),
                     ),
-                    const SizedBox(height: 48),
+                    SizedBox(height: responsive.p48),
                     CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
                         isDark

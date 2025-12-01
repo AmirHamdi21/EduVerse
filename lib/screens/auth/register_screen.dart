@@ -11,6 +11,7 @@ import '../../bloc/theme/theme_state.dart';
 import '../../bloc/language/language_cubit.dart';
 import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
+import '../../common/utils/responsive.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -47,7 +48,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _handleRegister() {
     final l = AppLocalizations.of(context);
-    
+
     if (!_formKey.currentState!.validate()) return;
 
     if (_passwordController.text != _confirmPasswordController.text) {
@@ -91,7 +92,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    
+    final responsive = context.responsive;
+
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthOperationSuccess) {
@@ -159,13 +161,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // Decorative circles (only in light mode)
                   // if (!isDark) ...[
                   Positioned(
-                    left: 40,
-                    top: 80,
+                    left: responsive.p40,
+                    top: responsive.p80,
                     child: Opacity(
                       opacity: 0.3,
                       child: Container(
-                        width: 286,
-                        height: 286,
+                        width: responsive.aspectRatioWidth(286),
+                        height: responsive.aspectRatioHeight(286),
                         decoration: BoxDecoration(
                           color: const Color(0xFF8EC5FF),
                           borderRadius: BorderRadius.circular(1000),
@@ -174,13 +176,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   Positioned(
-                    left: 45,
-                    top: 193,
+                    left: responsive.p48,
+                    top: responsive.p192,
                     child: Opacity(
                       opacity: 0.3,
                       child: Container(
-                        width: 260,
-                        height: 260,
+                        width: responsive.aspectRatioWidth(260),
+                        height: responsive.aspectRatioHeight(260),
                         decoration: BoxDecoration(
                           color: const Color(0xFFDAB2FF),
                           borderRadius: BorderRadius.circular(1000),
@@ -189,13 +191,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   Positioned(
-                    left: 96,
-                    top: 531,
+                    left: responsive.p96,
+                    top: responsive.p536,
                     child: Opacity(
                       opacity: 0.3,
                       child: Container(
-                        width: 317,
-                        height: 317,
+                        width: responsive.aspectRatioWidth(317),
+                        height: responsive.aspectRatioHeight(317),
                         decoration: BoxDecoration(
                           color: const Color(0xFFA3B3FF),
                           borderRadius: BorderRadius.circular(1000),
@@ -204,13 +206,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   Positioned(
-                    left: 107,
-                    top: 372,
+                    left: responsive.p104,
+                    top: responsive.p376,
                     child: Opacity(
                       opacity: 0.2,
                       child: Container(
-                        width: 178,
-                        height: 178,
+                        width: responsive.aspectRatioWidth(178),
+                        height: responsive.aspectRatioHeight(178),
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: const Color(0xFFBDDAFF),
@@ -222,13 +224,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                   ),
                   Positioned(
-                    left: 179,
-                    top: 456,
+                    left: responsive.p176,
+                    top: responsive.p456,
                     child: Opacity(
                       opacity: 0.2,
                       child: Container(
-                        width: 116,
-                        height: 116,
+                        width: responsive.aspectRatioWidth(116),
+                        height: responsive.aspectRatioHeight(116),
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: const Color(0xFFE9D4FF),
@@ -244,16 +246,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   // Main content
                   SafeArea(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.symmetric(horizontal: responsive.p16),
                       child: Center(
                         child: SingleChildScrollView(
                           child: Container(
-                            padding: const EdgeInsets.all(32),
+                            margin: EdgeInsets.only(
+                              top: responsive.p20,
+                              bottom: responsive.p20,
+                            ),
+                            padding: EdgeInsets.all(responsive.p24),
                             decoration: BoxDecoration(
                               color: isDark
                                   ? AppTheme.darkCardColor.withOpacity(0.6)
                                   : Colors.white.withOpacity(0.6),
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: BorderRadius.circular(
+                                responsive.radius24,
+                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.15),
@@ -270,11 +278,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 children: [
                                   // Logo
                                   Container(
-                                    width: 100,
-                                    height: 100,
+                                    width: responsive.aspectRatioWidth(100),
+                                    height: responsive.aspectRatioHeight(100),
                                     clipBehavior: Clip.antiAlias,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(40),
+                                      borderRadius: BorderRadius.circular(
+                                        responsive.aspectRatioWidth(40),
+                                      ),
                                       boxShadow: [
                                         BoxShadow(
                                           color: Colors.black.withOpacity(0.1),
@@ -287,28 +297,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       fit: BoxFit.cover,
                                     ),
                                   ),
-                                  const SizedBox(height: 24),
+                                  SizedBox(height: responsive.p24),
                                   // Title
                                   Text(
                                     l.signupTitle,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 28,
+                                      fontSize: responsive.fontSize28,
                                       fontWeight: FontWeight.w700,
                                       color: textColor,
                                     ),
                                   ),
-                                  const SizedBox(height: 8),
+                                  SizedBox(height: responsive.p8),
                                   // Subtitle
                                   Text(
                                     l.signupSubtitle,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 16,
+                                      fontSize: responsive.fontSize16,
                                       color: textSecondaryColor,
                                     ),
                                   ),
-                                  const SizedBox(height: 24),
+                                  SizedBox(height: responsive.p24),
                                   // First name field
                                   _buildTextField(
                                     context: context,
@@ -323,7 +333,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: responsive.p16),
                                   // Last name field
                                   _buildTextField(
                                     context: context,
@@ -338,7 +348,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: responsive.p16),
 
                                   _buildTextField(
                                     context: context,
@@ -356,7 +366,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: responsive.p16),
                                   // Password field
                                   _buildTextField(
                                     context: context,
@@ -371,6 +381,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             ? Icons.visibility_outlined
                                             : Icons.visibility_off_outlined,
                                         color: textSecondaryColor,
+                                        size: responsive.iconMedium,
                                       ),
                                       onPressed: () {
                                         setState(() {
@@ -388,7 +399,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: responsive.p16),
                                   // Confirm password field
                                   _buildTextField(
                                     context: context,
@@ -403,6 +414,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             ? Icons.visibility_outlined
                                             : Icons.visibility_off_outlined,
                                         color: textSecondaryColor,
+                                        size: responsive.iconMedium,
                                       ),
                                       onPressed: () {
                                         setState(() {
@@ -418,7 +430,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: responsive.p16),
                                   // Phone field
                                   _buildTextField(
                                     context: context,
@@ -433,7 +445,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       return null;
                                     },
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: responsive.p16),
                                   // Role selection dropdown
                                   _buildRoleDropdown(
                                     isDark,
@@ -441,7 +453,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     textSecondaryColor,
                                     l,
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: responsive.p16),
                                   // Terms checkbox
                                   Row(
                                     children: [
@@ -459,20 +471,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           l.termsOfService,
                                           style: TextStyle(
                                             color: textColor,
-                                            fontSize: 14,
+                                            fontSize: responsive.fontSize14,
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 24),
+                                  SizedBox(height: responsive.p24),
                                   // Register button
                                   BlocBuilder<AuthBloc, AuthState>(
                                     builder: (context, state) {
                                       final isLoading = state is AuthLoading;
                                       return SizedBox(
                                         width: double.infinity,
-                                        height: 56,
+                                        height: responsive.buttonHeight,
                                         child: ElevatedButton(
                                           onPressed: isLoading
                                               ? null
@@ -483,7 +495,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                             padding: EdgeInsets.zero,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(14),
+                                                  BorderRadius.circular(
+                                                    responsive.radius12,
+                                                  ),
                                             ),
                                           ),
                                           child: Ink(
@@ -496,14 +510,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                 ],
                                               ),
                                               borderRadius:
-                                                  BorderRadius.circular(14),
+                                                  BorderRadius.circular(
+                                                    responsive.radius12,
+                                                  ),
                                             ),
                                             child: Center(
                                               child: isLoading
-                                                  ? const SizedBox(
-                                                      height: 20,
-                                                      width: 20,
-                                                      child: CircularProgressIndicator(
+                                                  ? SizedBox(
+                                                      height:
+                                                          responsive.iconSmall,
+                                                      width:
+                                                          responsive.iconSmall,
+                                                      child: const CircularProgressIndicator(
                                                         strokeWidth: 2,
                                                         valueColor:
                                                             AlwaysStoppedAnimation<
@@ -513,9 +531,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                     )
                                                   : Text(
                                                       l.signupButton,
-                                                      style: const TextStyle(
+                                                      style: TextStyle(
                                                         color: Colors.white,
-                                                        fontSize: 16,
+                                                        fontSize: responsive
+                                                            .fontSize16,
                                                         fontWeight:
                                                             FontWeight.w600,
                                                       ),
@@ -526,7 +545,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       );
                                     },
                                   ),
-                                  const SizedBox(height: 16),
+                                  SizedBox(height: responsive.p16),
                                   // Sign in
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
@@ -535,15 +554,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         "${l.alreadyHaveAccount} ",
                                         style: TextStyle(
                                           color: textSecondaryColor,
+                                          fontSize: responsive.fontSize14,
                                         ),
                                       ),
                                       TextButton(
                                         onPressed: () => context.pop(),
                                         child: Text(
                                           l.signIn,
-                                          style: const TextStyle(
-                                            color: Color(0xFF2B7FFF),
+                                          style: TextStyle(
+                                            color: const Color(0xFF2B7FFF),
                                             fontWeight: FontWeight.w600,
+                                            fontSize: responsive.fontSize14,
                                           ),
                                         ),
                                       ),
@@ -599,6 +620,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Color textSecondaryColor,
     AppLocalizations l,
   ) {
+    final responsive = context.responsive;
     final fillColor = isDark ? AppTheme.darkCardColor : const Color(0xFFF9FAFB);
     final borderColor = isDark
         ? const Color(0xFF404756)
@@ -629,35 +651,42 @@ class _RegisterScreenState extends State<RegisterScreen> {
           value: role,
           child: Text(
             roleLabels[role] ?? role,
-            style: TextStyle(color: textColor, fontSize: 16),
+            style: TextStyle(color: textColor, fontSize: responsive.fontSize16),
           ),
         );
       }).toList(),
       decoration: InputDecoration(
         labelText: l.selectRole,
-        labelStyle: TextStyle(color: textSecondaryColor, fontSize: 16),
-        prefixIcon: Icon(Icons.school_outlined, color: textSecondaryColor),
+        labelStyle: TextStyle(
+          color: textSecondaryColor,
+          fontSize: responsive.fontSize16,
+        ),
+        prefixIcon: Icon(
+          Icons.school_outlined,
+          color: textSecondaryColor,
+          size: responsive.iconSmall,
+        ),
         filled: true,
         fillColor: fillColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(responsive.radius12),
           borderSide: BorderSide(color: borderColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(responsive.radius12),
           borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(responsive.radius12),
           borderSide: const BorderSide(color: Color(0xFF2B7FFF), width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(responsive.radius12),
           borderSide: const BorderSide(color: Color(0xFFEF4444)),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: responsive.p16,
+          vertical: responsive.p16,
         ),
       ),
       dropdownColor: isDark ? AppTheme.darkCardColor : Colors.white,
@@ -669,9 +698,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
     String currentLanguage,
     bool isDark,
   ) {
+    final responsive = context.responsive;
     return Container(
-      width: 50,
-      height: 50,
+      width: responsive.aspectRatioWidth(50),
+      height: responsive.aspectRatioHeight(50),
       decoration: BoxDecoration(
         color: isDark ? AppTheme.darkCardColor : Colors.white.withOpacity(0.8),
         borderRadius: BorderRadius.circular(1000),
@@ -836,6 +866,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     Widget? suffixIcon,
     String? Function(String?)? validator,
   }) {
+    final responsive = context.responsive;
     final textColor = isDark
         ? AppTheme.darkTextPrimary
         : const Color(0xFF354152);
@@ -853,35 +884,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
       validator: validator,
       style: TextStyle(
         color: textColor,
-        fontSize: 16,
+        fontSize: responsive.fontSize16,
         fontWeight: FontWeight.w400,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: hintColor, fontSize: 16),
-        prefixIcon: Icon(icon, color: hintColor, size: 20),
+        hintStyle: TextStyle(color: hintColor, fontSize: responsive.fontSize16),
+        prefixIcon: Icon(icon, color: hintColor, size: responsive.iconSmall),
         suffixIcon: suffixIcon,
         filled: true,
         fillColor: fillColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(responsive.radius12),
           borderSide: BorderSide(color: borderColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(responsive.radius12),
           borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(responsive.radius12),
           borderSide: const BorderSide(color: Color(0xFF2B7FFF), width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(responsive.radius12),
           borderSide: const BorderSide(color: Color(0xFFEF4444)),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: responsive.p16,
+          vertical: responsive.p16,
         ),
       ),
     );

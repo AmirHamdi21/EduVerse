@@ -14,6 +14,7 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_event.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:edu_verse/common/utils/responsive.dart';
 
 class Onboarding1 extends StatefulWidget {
   const Onboarding1({super.key});
@@ -25,6 +26,7 @@ class Onboarding1 extends StatefulWidget {
 class _Onboarding1State extends State<Onboarding1> {
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
@@ -74,14 +76,16 @@ class _Onboarding1State extends State<Onboarding1> {
                       OnboardingHeader(),
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: responsive.p24,
+                          ),
                           child: Column(
                             children: [
-                              const SizedBox(height: 16),
+                              SizedBox(height: responsive.p16),
                               // Image card
                               Container(
                                 width: double.infinity,
-                                height: 298,
+                                height: responsive.responsiveHeight(30),
                                 clipBehavior: Clip.antiAlias,
                                 decoration: ShapeDecoration(
                                   gradient: const LinearGradient(
@@ -99,7 +103,9 @@ class _Onboarding1State extends State<Onboarding1> {
                                           ? Colors.white.withOpacity(0.1)
                                           : const Color(0x33FFFEFE),
                                     ),
-                                    borderRadius: BorderRadius.circular(24),
+                                    borderRadius: BorderRadius.circular(
+                                      responsive.radius24,
+                                    ),
                                   ),
                                   shadows: const [
                                     BoxShadow(
@@ -118,8 +124,12 @@ class _Onboarding1State extends State<Onboarding1> {
                                       child: Opacity(
                                         opacity: 0.37,
                                         child: Container(
-                                          width: 213.02,
-                                          height: 213.02,
+                                          width: responsive.aspectRatioWidth(
+                                            213.02,
+                                          ),
+                                          height: responsive.aspectRatioHeight(
+                                            213.02,
+                                          ),
                                           decoration: ShapeDecoration(
                                             gradient: const LinearGradient(
                                               begin: Alignment.centerLeft,
@@ -140,9 +150,11 @@ class _Onboarding1State extends State<Onboarding1> {
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.all(25),
+                                      padding: EdgeInsets.all(responsive.p24),
                                       child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(
+                                          responsive.radius16,
+                                        ),
                                         child: Image.asset(
                                           "assets/images/panda.png",
                                           fit: BoxFit.cover,
@@ -165,7 +177,7 @@ class _Onboarding1State extends State<Onboarding1> {
                                   ],
                                 ),
                               ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: responsive.p24),
                               // Title
                               Text(
                                 AppLocalizations.of(
@@ -174,13 +186,13 @@ class _Onboarding1State extends State<Onboarding1> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: textColor,
-                                  fontSize: 30,
+                                  fontSize: responsive.fontSize28,
                                   fontFamily: 'Arimo',
                                   fontWeight: FontWeight.w400,
                                   height: 1.25,
                                 ),
                               ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: responsive.p24),
                               // Description
                               Text(
                                 AppLocalizations.of(
@@ -189,13 +201,13 @@ class _Onboarding1State extends State<Onboarding1> {
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   color: textSecondaryColor,
-                                  fontSize: 16,
+                                  fontSize: responsive.fontSize16,
                                   fontFamily: 'Arimo',
                                   fontWeight: FontWeight.w400,
                                   height: 1.62,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              SizedBox(height: responsive.p20),
                               // Tagline
                               Text(
                                 AppLocalizations.of(context)!.poweredByAI,
@@ -204,26 +216,26 @@ class _Onboarding1State extends State<Onboarding1> {
                                   color: isDark
                                       ? AppTheme.onBoardingcyan
                                       : const Color(0xFF53E9FC),
-                                  fontSize: 14,
+                                  fontSize: responsive.fontSize14,
                                   fontFamily: 'Arimo',
                                   fontWeight: FontWeight.w400,
                                   height: 1.43,
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: responsive.p32),
                               NavigationButtons(
                                 nextOnPressed: () {
                                   context.go('/onboarding2');
                                 },
                               ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: responsive.p16),
                               PageIndicator(
                                 isActive_1: true,
                                 isActive_2: false,
                                 isActive_3: false,
                                 isActive_4: false,
                               ),
-                              // const SizedBox(height: 32),
+                              // SizedBox(height: responsive.p32),
                             ],
                           ),
                         ),
@@ -232,8 +244,8 @@ class _Onboarding1State extends State<Onboarding1> {
                   ),
                 ),
                 Positioned(
-                  right: 16,
-                  top: 120,
+                  right: responsive.p16,
+                  top: responsive.safeAreaTop + responsive.p16,
                   child: Row(
                     children: [
                       BlocBuilder<LanguageCubit, Locale>(
@@ -245,7 +257,7 @@ class _Onboarding1State extends State<Onboarding1> {
                           );
                         },
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: responsive.p12),
                       BlocBuilder<ThemeBloc, ThemeState>(
                         builder: (context, state) {
                           return _buildThemeToggleIcon(
@@ -271,9 +283,10 @@ class _Onboarding1State extends State<Onboarding1> {
     String currentLanguage,
     bool isDark,
   ) {
+    final responsive = context.responsive;
     return Container(
-      width: 50,
-      height: 50,
+      width: responsive.aspectRatioWidth(50),
+      height: responsive.aspectRatioHeight(50),
       decoration: BoxDecoration(
         color: isDark ? AppTheme.darkCardColor : Colors.white.withOpacity(0.8),
         borderRadius: BorderRadius.circular(1000),
@@ -300,10 +313,11 @@ class _Onboarding1State extends State<Onboarding1> {
               value: 'en',
               child: Row(
                 children: [
-                  const SizedBox(width: 8),
+                  SizedBox(width: responsive.p8),
                   Text(
                     'English',
                     style: TextStyle(
+                      fontSize: responsive.fontSize14,
                       color: currentLanguage == 'en'
                           ? const Color(0xFF2B7FFF)
                           : null,
@@ -313,9 +327,13 @@ class _Onboarding1State extends State<Onboarding1> {
                     ),
                   ),
                   if (currentLanguage == 'en')
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    Padding(
+                      padding: EdgeInsets.only(left: responsive.p8),
+                      child: Icon(
+                        Icons.check,
+                        color: Color(0xFF2B7FFF),
+                        size: responsive.iconSmall,
+                      ),
                     ),
                 ],
               ),
@@ -324,10 +342,11 @@ class _Onboarding1State extends State<Onboarding1> {
               value: 'ar',
               child: Row(
                 children: [
-                  const SizedBox(width: 8),
+                  SizedBox(width: responsive.p8),
                   Text(
                     'العربية',
                     style: TextStyle(
+                      fontSize: responsive.fontSize14,
                       color: currentLanguage == 'ar'
                           ? const Color(0xFF2B7FFF)
                           : null,
@@ -337,9 +356,13 @@ class _Onboarding1State extends State<Onboarding1> {
                     ),
                   ),
                   if (currentLanguage == 'ar')
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    Padding(
+                      padding: EdgeInsets.only(left: responsive.p8),
+                      child: Icon(
+                        Icons.check,
+                        color: Color(0xFF2B7FFF),
+                        size: responsive.iconSmall,
+                      ),
                     ),
                 ],
               ),
@@ -347,7 +370,7 @@ class _Onboarding1State extends State<Onboarding1> {
           ],
           child: Icon(
             Icons.language,
-            size: 20,
+            size: responsive.iconSmall,
             color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF354152),
           ),
         ),
@@ -360,9 +383,10 @@ class _Onboarding1State extends State<Onboarding1> {
     bool isDark,
     bool themeIsDark,
   ) {
+    final responsive = context.responsive;
     return Container(
-      width: 50,
-      height: 50,
+      width: responsive.aspectRatioWidth(50),
+      height: responsive.aspectRatioHeight(50),
       decoration: BoxDecoration(
         color: themeIsDark
             ? AppTheme.darkCardColor
@@ -391,7 +415,7 @@ class _Onboarding1State extends State<Onboarding1> {
           borderRadius: BorderRadius.circular(1000),
           child: Icon(
             isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-            size: 20,
+            size: responsive.iconSmall,
             color: themeIsDark
                 ? AppTheme.darkTextPrimary
                 : const Color(0xFF354152),

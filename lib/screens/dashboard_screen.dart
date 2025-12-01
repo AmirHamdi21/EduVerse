@@ -346,6 +346,7 @@ import '../bloc/auth/auth_state.dart';
 import '../bloc/theme/theme_bloc.dart';
 import '../bloc/theme/theme_state.dart';
 import '../config/app_theme.dart';
+import '../common/utils/responsive.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -406,6 +407,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthUnauthenticated) {
@@ -433,11 +435,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
               elevation: 0,
               title: Text(
                 'Dashboard',
-                style: TextStyle(color: textColor, fontWeight: FontWeight.w600),
+                style: TextStyle(color: textColor, fontWeight: FontWeight.w600, fontSize: responsive.fontSize18),
               ),
               actions: [
                 IconButton(
-                  icon: Icon(Icons.logout, color: textColor),
+                  icon: Icon(Icons.logout, color: textColor, size: responsive.iconMedium),
                   onPressed: _handleLogout,
                 ),
               ],
@@ -453,7 +455,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   return Center(
                     child: Text(
                       'Please login to continue',
-                      style: TextStyle(color: textColor),
+                      style: TextStyle(color: textColor, fontSize: responsive.fontSize16),
                     ),
                   );
                 }
@@ -467,14 +469,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     child: Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: EdgeInsets.all(responsive.p20),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Profile Card
                           Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.all(24),
+                            padding: EdgeInsets.all(responsive.p24),
                             decoration: BoxDecoration(
                               gradient: isDark
                                   ? LinearGradient(
@@ -495,57 +497,57 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         Color(0xFFFAF5FE),
                                       ],
                                     ),
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(responsive.radius20),
                             ),
                             child: Column(
                               children: [
                                 CircleAvatar(
-                                  radius: 50,
+                                  radius: responsive.aspectRatioWidth(50),
                                   backgroundColor: Colors.white,
                                   child: user.profilePictureUrl != null
                                       ? ClipOval(
                                           child: Image.network(
                                             user.profilePictureUrl!,
-                                            width: 100,
-                                            height: 100,
+                                            width: responsive.aspectRatioWidth(100),
+                                            height: responsive.aspectRatioHeight(100),
                                             fit: BoxFit.cover,
                                           ),
                                         )
                                       : Text(
                                           user.initials,
-                                          style: const TextStyle(
-                                            fontSize: 32,
+                                          style: TextStyle(
+                                            fontSize: responsive.fontSize32,
                                             fontWeight: FontWeight.bold,
                                             color: Color(0xFF6366F1),
                                           ),
                                         ),
                                 ),
-                                const SizedBox(height: 16),
+                                SizedBox(height: responsive.p16),
                                 Text(
                                   user.fullName,
-                                  style: const TextStyle(
-                                    fontSize: 24,
+                                  style: TextStyle(
+                                    fontSize: responsive.fontSize24,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
+                                SizedBox(height: responsive.p4),
                                 Text(
                                   user.email,
                                   style: TextStyle(
-                                    fontSize: 14,
+                                    fontSize: responsive.fontSize14,
                                     color: Colors.white.withOpacity(0.9),
                                   ),
                                 ),
-                                const SizedBox(height: 12),
+                                SizedBox(height: responsive.p12),
                                 Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: responsive.p12,
+                                    vertical: responsive.p8,
                                   ),
                                   decoration: BoxDecoration(
                                     color: Colors.white.withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(20),
+                                    borderRadius: BorderRadius.circular(responsive.radius20),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -554,17 +556,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         user.emailVerified
                                             ? Icons.verified
                                             : Icons.warning,
-                                        size: 16,
+                                        size: responsive.iconSmall,
                                         color: Colors.white,
                                       ),
-                                      const SizedBox(width: 4),
+                                      SizedBox(width: responsive.p4),
                                       Text(
                                         user.emailVerified
                                             ? 'Verified'
                                             : 'Not Verified',
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: Colors.white,
-                                          fontSize: 12,
+                                          fontSize: responsive.fontSize12,
                                         ),
                                       ),
                                     ],
@@ -573,18 +575,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               ],
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: responsive.p24),
 
                           // User Information
                           Text(
                             'Account Information',
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: responsive.fontSize20,
                               fontWeight: FontWeight.bold,
                               color: textColor,
                             ),
                           ),
-                          const SizedBox(height: 16),
+                          SizedBox(height: responsive.p16),
                           _buildInfoCard(
                             'User ID',
                             '#${user.userId}',
@@ -592,6 +594,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             cardBgColor,
                             textColor,
                             textSecondaryColor,
+                            responsive,
                           ),
                           _buildInfoCard(
                             'Email',
@@ -600,6 +603,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             cardBgColor,
                             textColor,
                             textSecondaryColor,
+                            responsive,
                           ),
                           _buildInfoCard(
                             'Phone',
@@ -608,6 +612,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             cardBgColor,
                             textColor,
                             textSecondaryColor,
+                            responsive,
                           ),
                           _buildInfoCard(
                             'Status',
@@ -616,6 +621,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             cardBgColor,
                             textColor,
                             textSecondaryColor,
+                            responsive,
                           ),
                           _buildInfoCard(
                             'Member Since',
@@ -624,6 +630,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             cardBgColor,
                             textColor,
                             textSecondaryColor,
+                            responsive,
                           ),
                           if (user.lastLoginAt != null)
                             _buildInfoCard(
@@ -633,51 +640,56 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               cardBgColor,
                               textColor,
                               textSecondaryColor,
+                              responsive,
                             ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: responsive.p24),
 
                           // Roles
                           Text(
                             'Roles',
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: responsive.fontSize20,
                               fontWeight: FontWeight.bold,
                               color: textColor,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          SizedBox(height: responsive.p12),
                           Wrap(
-                            spacing: 8,
-                            runSpacing: 8,
+                            spacing: responsive.p8,
+                            runSpacing: responsive.p8,
                             children: user.roles.map((role) {
                               return Chip(
                                 label: Text(
                                   role.toUpperCase(),
-                                  style: const TextStyle(color: Colors.white),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: responsive.fontSize14,
+                                  ),
                                 ),
                                 backgroundColor: const Color(0xFF6366F1),
                               );
                             }).toList(),
                           ),
-                          const SizedBox(height: 24),
+                          SizedBox(height: responsive.p24),
 
                           // Logout Button
                           SizedBox(
                             width: double.infinity,
                             child: OutlinedButton.icon(
                               onPressed: _handleLogout,
-                              icon: const Icon(Icons.logout),
-                              label: const Text('Logout'),
+                              icon: Icon(Icons.logout, size: responsive.iconMedium),
+                              label: Text('Logout', style: TextStyle(fontSize: responsive.fontSize16)),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: const Color(0xFFEF4444),
                                 side: const BorderSide(
                                   color: Color(0xFFEF4444),
                                   width: 1.5,
                                 ),
+                                padding: EdgeInsets.symmetric(vertical: responsive.p12),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: responsive.p20),
                         ],
                       ),
                     ),
@@ -698,13 +710,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     Color cardBgColor,
     Color textColor,
     Color textSecondaryColor,
+    ResponsiveUtil responsive,
   ) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: responsive.p12),
+      padding: EdgeInsets.all(responsive.p16),
       decoration: BoxDecoration(
         color: cardBgColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(responsive.radius12),
         border: Border.all(
           color: isDark ? const Color(0xFF404756) : const Color(0xFFE5E7EB),
         ),
@@ -715,7 +728,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Text(
             label,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: responsive.fontSize14,
               color: textSecondaryColor,
               fontWeight: FontWeight.w500,
             ),
@@ -725,7 +738,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               value,
               textAlign: TextAlign.right,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: responsive.fontSize14,
                 fontWeight: FontWeight.w600,
                 color: textColor,
               ),

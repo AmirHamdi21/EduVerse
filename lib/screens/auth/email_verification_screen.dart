@@ -10,6 +10,7 @@ import '../../bloc/theme/theme_state.dart';
 import '../../bloc/language/language_cubit.dart';
 import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
+import '../../common/utils/responsive.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   final String? email;
@@ -33,7 +34,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   void _handleVerifyEmail() {
     final l = AppLocalizations.of(context);
-    
+
     if (_tokenController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -52,7 +53,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   void _handleResendEmail() {
     final l = AppLocalizations.of(context);
-    
+
     if (widget.email == null || widget.email!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -73,6 +74,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final responsive = context.responsive;
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
@@ -147,13 +149,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   // Decorative circles (only in light mode)
                   // if (!isDark) ...[
                   Positioned(
-                    left: 40,
-                    top: 80,
+                    left: responsive.p40,
+                    top: responsive.p80,
                     child: Opacity(
                       opacity: 0.3,
                       child: Container(
-                        width: 286,
-                        height: 286,
+                        width: responsive.aspectRatioWidth(286),
+                        height: responsive.aspectRatioHeight(286),
                         decoration: BoxDecoration(
                           color: const Color(0xFF8EC5FF),
                           borderRadius: BorderRadius.circular(1000),
@@ -162,13 +164,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     ),
                   ),
                   Positioned(
-                    left: 45,
-                    top: 193,
+                    left: responsive.p48,
+                    top: responsive.p192,
                     child: Opacity(
                       opacity: 0.3,
                       child: Container(
-                        width: 260,
-                        height: 260,
+                        width: responsive.aspectRatioWidth(260),
+                        height: responsive.aspectRatioHeight(260),
                         decoration: BoxDecoration(
                           color: const Color(0xFFDAB2FF),
                           borderRadius: BorderRadius.circular(1000),
@@ -177,13 +179,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     ),
                   ),
                   Positioned(
-                    left: 96,
-                    top: 531,
+                    left: responsive.p96,
+                    top: responsive.p536,
                     child: Opacity(
                       opacity: 0.3,
                       child: Container(
-                        width: 317,
-                        height: 317,
+                        width: responsive.aspectRatioWidth(317),
+                        height: responsive.aspectRatioHeight(317),
                         decoration: BoxDecoration(
                           color: const Color(0xFFA3B3FF),
                           borderRadius: BorderRadius.circular(1000),
@@ -192,13 +194,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     ),
                   ),
                   Positioned(
-                    left: 107,
-                    top: 372,
+                    left: responsive.p104,
+                    top: responsive.p376,
                     child: Opacity(
                       opacity: 0.2,
                       child: Container(
-                        width: 178,
-                        height: 178,
+                        width: responsive.aspectRatioWidth(178),
+                        height: responsive.aspectRatioHeight(178),
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: const Color(0xFFBDDAFF),
@@ -210,13 +212,13 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                     ),
                   ),
                   Positioned(
-                    left: 179,
-                    top: 456,
+                    left: responsive.p176,
+                    top: responsive.p456,
                     child: Opacity(
                       opacity: 0.2,
                       child: Container(
-                        width: 116,
-                        height: 116,
+                        width: responsive.aspectRatioWidth(116),
+                        height: responsive.aspectRatioHeight(116),
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: const Color(0xFFE9D4FF),
@@ -231,16 +233,18 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   // Main content
                   SafeArea(
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: EdgeInsets.symmetric(horizontal: responsive.p16),
                       child: Center(
                         child: SingleChildScrollView(
                           child: Container(
-                            padding: const EdgeInsets.all(32),
+                            padding: EdgeInsets.all(responsive.p24),
                             decoration: BoxDecoration(
                               color: isDark
                                   ? AppTheme.darkCardColor.withOpacity(0.7)
                                   : Colors.white.withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: BorderRadius.circular(
+                                responsive.radius24,
+                              ),
                               boxShadow: [
                                 BoxShadow(
                                   color: Colors.black.withOpacity(0.15),
@@ -255,8 +259,8 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                               children: [
                                 // Icon
                                 Container(
-                                  width: 80,
-                                  height: 80,
+                                  width: responsive.aspectRatioWidth(80),
+                                  height: responsive.aspectRatioHeight(80),
                                   decoration: BoxDecoration(
                                     gradient: const LinearGradient(
                                       begin: Alignment.topLeft,
@@ -276,24 +280,24 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                       ),
                                     ],
                                   ),
-                                  child: const Icon(
+                                  child: Icon(
                                     Icons.mail_outline,
                                     color: Colors.white,
-                                    size: 40,
+                                    size: responsive.iconLarge,
                                   ),
                                 ),
-                                const SizedBox(height: 32),
+                                SizedBox(height: responsive.p32),
                                 // Title
                                 Text(
                                   l.verifyEmailTitle,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: textColor,
-                                    fontSize: 24,
+                                    fontSize: responsive.fontSize24,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                const SizedBox(height: 12),
+                                SizedBox(height: responsive.p12),
                                 // Subtitle
                                 Text(
                                   widget.email != null
@@ -302,12 +306,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: textSecondaryColor,
-                                    fontSize: 16,
+                                    fontSize: responsive.fontSize16,
                                     fontWeight: FontWeight.w400,
                                     height: 1.5,
                                   ),
                                 ),
-                                const SizedBox(height: 32),
+                                SizedBox(height: responsive.p32),
                                 // Token field
                                 _buildTextField(
                                   context: context,
@@ -316,14 +320,14 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                   icon: Icons.vpn_key_outlined,
                                   isDark: isDark,
                                 ),
-                                const SizedBox(height: 24),
+                                SizedBox(height: responsive.p24),
                                 // Verify button
                                 BlocBuilder<AuthBloc, AuthState>(
                                   builder: (context, state) {
                                     final isLoading = state is AuthLoading;
                                     return SizedBox(
                                       width: double.infinity,
-                                      height: 56,
+                                      height: responsive.buttonHeight,
                                       child: ElevatedButton(
                                         onPressed: isLoading
                                             ? null
@@ -370,10 +374,11 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                           child: Container(
                                             alignment: Alignment.center,
                                             child: isLoading
-                                                ? const SizedBox(
-                                                    height: 20,
-                                                    width: 20,
-                                                    child: CircularProgressIndicator(
+                                                ? SizedBox(
+                                                    height:
+                                                        responsive.iconSmall,
+                                                    width: responsive.iconSmall,
+                                                    child: const CircularProgressIndicator(
                                                       strokeWidth: 2,
                                                       valueColor:
                                                           AlwaysStoppedAnimation<
@@ -383,9 +388,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                                   )
                                                 : Text(
                                                     l.verifyButton,
-                                                    style: const TextStyle(
+                                                    style: TextStyle(
                                                       color: Colors.white,
-                                                      fontSize: 14,
+                                                      fontSize:
+                                                          responsive.fontSize16,
                                                       fontWeight:
                                                           FontWeight.w400,
                                                     ),
@@ -396,7 +402,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                     );
                                   },
                                 ),
-                                const SizedBox(height: 24),
+                                SizedBox(height: responsive.p24),
                                 // Resend button
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -405,7 +411,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                       "${l.enterVerificationCode}? ",
                                       style: TextStyle(
                                         color: textSecondaryColor,
-                                        fontSize: 16,
+                                        fontSize: responsive.fontSize16,
                                         fontWeight: FontWeight.w400,
                                       ),
                                     ),
@@ -427,7 +433,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                               color: _isResending
                                                   ? Colors.grey
                                                   : const Color(0xFF2B7FFF),
-                                              fontSize: 16,
+                                              fontSize: responsive.fontSize16,
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
@@ -436,7 +442,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 16),
+                                SizedBox(height: responsive.p16),
                                 // Back to login
                                 TextButton(
                                   onPressed: () => context.go('/login'),
@@ -444,7 +450,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                                     'Back to Login',
                                     style: TextStyle(
                                       color: textSecondaryColor,
-                                      fontSize: 14,
+                                      fontSize: responsive.fontSize14,
                                       fontWeight: FontWeight.w400,
                                     ),
                                   ),
@@ -472,6 +478,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     required IconData icon,
     required bool isDark,
   }) {
+    final responsive = context.responsive;
     final textColor = isDark
         ? AppTheme.darkTextPrimary
         : const Color(0xFF354152);
@@ -487,30 +494,30 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
       controller: controller,
       style: TextStyle(
         color: textColor,
-        fontSize: 16,
+        fontSize: responsive.fontSize16,
         fontWeight: FontWeight.w400,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: TextStyle(color: hintColor, fontSize: 16),
-        prefixIcon: Icon(icon, color: hintColor, size: 20),
+        hintStyle: TextStyle(color: hintColor, fontSize: responsive.fontSize16),
+        prefixIcon: Icon(icon, color: hintColor, size: responsive.iconSmall),
         filled: true,
         fillColor: fillColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(responsive.radius12),
           borderSide: BorderSide(color: borderColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(responsive.radius12),
           borderSide: BorderSide(color: borderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(responsive.radius12),
           borderSide: const BorderSide(color: Color(0xFF2B7FFF), width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: responsive.p16,
+          vertical: responsive.p16,
         ),
       ),
     );

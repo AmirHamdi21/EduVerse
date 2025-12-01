@@ -430,4 +430,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forEveryone => ' for everyone.';
+
+  @override
+  String get splashTitle => 'EduVerse Platform';
+
+  @override
+  String get splashSubtitle => 'Learning Management System';
 }

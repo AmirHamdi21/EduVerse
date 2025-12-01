@@ -429,4 +429,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forEveryone => ' للجميع.';
+
+  @override
+  String get splashTitle => 'منصة إديفيرس';
+
+  @override
+  String get splashSubtitle => 'نظام إدارة التعلم';
 }

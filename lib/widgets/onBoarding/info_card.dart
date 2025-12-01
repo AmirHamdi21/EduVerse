@@ -2,6 +2,7 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class InfoCard extends StatelessWidget {
@@ -10,6 +11,7 @@ class InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
@@ -19,10 +21,10 @@ class InfoCard extends StatelessWidget {
 
         return Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(responsive.p16),
           decoration: BoxDecoration(
             color: cardColor,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(responsive.radius12),
             border: Border.all(color: borderColor, width: 1.01),
             boxShadow: const [
               BoxShadow(
@@ -42,8 +44,8 @@ class InfoCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: responsive.aspectRatioWidth(40),
+                height: responsive.aspectRatioHeight(40),
                 decoration: const BoxDecoration(
                   gradient: AppTheme.iconGradient,
                   shape: BoxShape.circle,
@@ -56,19 +58,19 @@ class InfoCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.info_outline,
                   color: Colors.white,
-                  size: 20,
+                  size: responsive.iconSmall,
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: responsive.p12),
               Expanded(
                 child: Text(
                   text,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 14,
+                    fontSize: responsive.fontSize14,
                     height: 1.62,
                   ),
                 ),

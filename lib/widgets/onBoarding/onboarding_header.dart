@@ -3,6 +3,7 @@ import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -11,6 +12,7 @@ class OnboardingHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
@@ -18,18 +20,18 @@ class OnboardingHeader extends StatelessWidget {
         final skipColor = isDark ? AppTheme.onBoardingcyan : AppTheme.onBoardingprimary;
 
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: EdgeInsets.symmetric(horizontal: responsive.p24, vertical: responsive.p20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
                 children: [
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: responsive.aspectRatioWidth(40),
+                    height: responsive.aspectRatioHeight(40),
                     decoration: BoxDecoration(
                       gradient: AppTheme.onBoardingprimaryGradient,
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(responsive.radius12),
                       boxShadow: const [
                         BoxShadow(
                           color: Color(0x683B82F6),
@@ -38,13 +40,13 @@ class OnboardingHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: const Icon(Icons.school, color: Colors.white, size: 24),
+                    child: Icon(Icons.school, color: Colors.white, size: responsive.iconMedium),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: responsive.p12),
                   Text(
                     'EduVerse',
                     style: TextStyle(
-                      fontSize: 20,
+                      fontSize: responsive.fontSize20,
                       fontWeight: FontWeight.w400,
                       color: textColor,
                     ),
@@ -57,7 +59,7 @@ class OnboardingHeader extends StatelessWidget {
                 },
                 child: Text(
                   AppLocalizations.of(context)!.skip,
-                  style: TextStyle(fontSize: 16, color: skipColor),
+                  style: TextStyle(fontSize: responsive.fontSize16, color: skipColor),
                 ),
               ),
             ],

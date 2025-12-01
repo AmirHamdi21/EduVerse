@@ -3,6 +3,7 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,6 +16,7 @@ class NavigationButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     final isArabic = context.read<LanguageCubit>().state.languageCode == 'ar';
     final l = AppLocalizations.of(context)!;
+    final responsive = context.responsive;
 
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
@@ -36,7 +38,7 @@ class NavigationButtons extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: backOnPressed,
                   style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: EdgeInsets.symmetric(vertical: responsive.p16),
                     side: BorderSide(color: backBorderColor),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(100),
@@ -51,19 +53,26 @@ class NavigationButtons extends StatelessWidget {
                     children: [
                       Text(
                         l.back,
-                        style: TextStyle(color: backTextAndIconColor),
+                        style: TextStyle(
+                          color: backTextAndIconColor,
+                          fontSize: responsive.fontSize16,
+                        ),
                       ),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_back, color: backTextAndIconColor),
+                      SizedBox(width: responsive.p8),
+                      Icon(
+                        Icons.arrow_back,
+                        color: backTextAndIconColor,
+                        size: responsive.iconMedium,
+                      ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: responsive.p12),
             ],
             Expanded(
               child: Container(
-                height: 56,
+                height: responsive.buttonHeight,
                 decoration: BoxDecoration(
                   gradient: AppTheme.buttonGradient,
                   borderRadius: BorderRadius.circular(100),
@@ -91,9 +100,16 @@ class NavigationButtons extends StatelessWidget {
                         : TextDirection.ltr,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(l.next),
-                      SizedBox(width: 8),
-                      Icon(Icons.arrow_forward, color: Colors.white),
+                      Text(
+                        l.next,
+                        style: TextStyle(fontSize: responsive.fontSize16),
+                      ),
+                      SizedBox(width: responsive.p8),
+                      Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                        size: responsive.iconMedium,
+                      ),
                     ],
                   ),
                 ),

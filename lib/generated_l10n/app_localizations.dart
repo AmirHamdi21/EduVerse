@@ -919,6 +919,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **' for everyone.'**
   String get forEveryone;
+
+  /// No description provided for @splashTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'EduVerse Platform'**
+  String get splashTitle;
+
+  /// No description provided for @splashSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Management System'**
+  String get splashSubtitle;
 }
 
 class _AppLocalizationsDelegate

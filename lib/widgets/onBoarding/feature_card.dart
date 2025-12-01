@@ -5,6 +5,7 @@ import 'package:edu_verse/common/classes/role_feature.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -63,10 +64,11 @@ class FeatureCard extends StatelessWidget {
     Color iconBorderColor,
     Color dividerColor,
   ) {
+    final responsive = context.responsive;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: gradientColors),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(responsive.radius16),
         border: Border.all(color: borderColor),
         boxShadow: const [
           BoxShadow(
@@ -90,12 +92,12 @@ class FeatureCard extends StatelessWidget {
                   top: 0,
                   left: 0,
                   child: Container(
-                    width: 80,
-                    height: 80,
+                    width: responsive.aspectRatioWidth(80),
+                    height: responsive.aspectRatioHeight(80),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(colors: decorGradient),
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(16),
+                        topLeft: Radius.circular(responsive.radius16),
                         bottomRight: Radius.circular(100),
                       ),
                     ),
@@ -105,30 +107,30 @@ class FeatureCard extends StatelessWidget {
                   top: 0,
                   right: 0,
                   child: Container(
-                    width: 80,
-                    height: 80,
+                    width: responsive.aspectRatioWidth(80),
+                    height: responsive.aspectRatioHeight(80),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(colors: decorGradient),
                       borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(16),
+                        topRight: Radius.circular(responsive.radius16),
                         bottomLeft: Radius.circular(100),
                       ),
                     ),
                   ),
                 ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(responsive.p20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
                     Container(
-                      width: 64,
-                      height: 64,
+                      width: responsive.aspectRatioWidth(64),
+                      height: responsive.aspectRatioHeight(64),
                       decoration: BoxDecoration(
                         color: iconBackgroundColor,
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(responsive.radius12),
                         border: Border.all(color: iconBorderColor),
                         boxShadow: const [
                           BoxShadow(
@@ -138,38 +140,38 @@ class FeatureCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.person,
-                        size: 32,
+                        size: responsive.iconLarge,
                         color: AppTheme.onBoardingprimary,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    SizedBox(width: responsive.p16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           title,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: responsive.fontSize18,
                             color: titleColor,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(height: responsive.p4),
                         Row(
                           children: [
                             Icon(
                               Icons.auto_awesome,
-                              size: 14,
+                              size: responsive.fontSize14,
                               color: badgeColor,
                             ),
-                            const SizedBox(width: 4),
+                            SizedBox(width: responsive.p4),
                             Text(
                               AppLocalizations.of(
                                 context,
                               )!.poweredByIntelligence2,
-                              style: TextStyle(fontSize: 12, color: badgeColor),
+                              style: TextStyle(fontSize: responsive.fontSize12, color: badgeColor),
                             ),
                           ],
                         ),
@@ -177,20 +179,20 @@ class FeatureCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: responsive.p16),
                 ...features.map(
                   (f) => Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
+                    padding: EdgeInsets.only(bottom: responsive.p8),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(f.emoji, style: const TextStyle(fontSize: 16)),
-                        const SizedBox(width: 8),
+                        Text(f.emoji, style: TextStyle(fontSize: responsive.fontSize16)),
+                        SizedBox(width: responsive.p8),
                         Expanded(
                           child: Text(
                             f.text,
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: responsive.fontSize14,
                               color: featureTextColor,
                               height: 1.43,
                             ),
@@ -200,20 +202,20 @@ class FeatureCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Divider(color: dividerColor, height: 24),
+                Divider(color: dividerColor, height: responsive.p24),
                 Row(
                   children: [
                     Icon(
                       Icons.lightbulb_outline,
-                      size: 12,
+                      size: responsive.fontSize12,
                       color: taglineColor,
                     ),
-                    const SizedBox(width: 8),
+                    SizedBox(width: responsive.p8),
                     Expanded(
                       child: Text(
                         tagline,
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: responsive.fontSize12,
                           color: taglineColor,
                           fontStyle: FontStyle.italic,
                           height: 1.33,

@@ -1,5 +1,6 @@
 import 'package:edu_verse/widgets/onBoarding/page_dot.dart';
 import 'package:flutter/material.dart';
+import 'package:edu_verse/common/utils/responsive.dart';
 
 class PageIndicator extends StatelessWidget {
   bool isActive_1;
@@ -16,15 +17,16 @@ class PageIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         PageDot(isActive: isActive_1),
-        const SizedBox(width: 8),
+        SizedBox(width: responsive.p8),
         PageDot(isActive: isActive_2),
-        const SizedBox(width: 8),
+        SizedBox(width: responsive.p8),
         PageDot(isActive: isActive_3),
-        const SizedBox(width: 8),
+        SizedBox(width: responsive.p8),
         PageDot(isActive: isActive_4),
       ],
     );

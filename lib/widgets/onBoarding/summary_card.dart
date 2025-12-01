@@ -3,6 +3,7 @@ import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SummaryCard extends StatelessWidget {
@@ -10,6 +11,7 @@ class SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
@@ -34,10 +36,10 @@ class SummaryCard extends StatelessWidget {
         final textColor = isDark ? AppTheme.darkTextSecondary : AppTheme.onBoardingtextMedium;
 
         return Container(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.all(responsive.p20),
           decoration: BoxDecoration(
             gradient: cardGradient,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(responsive.radius12),
             border: Border.all(color: borderColor),
             boxShadow: const [
               BoxShadow(
@@ -51,7 +53,7 @@ class SummaryCard extends StatelessWidget {
             textAlign: TextAlign.center,
             text: TextSpan(
               style: TextStyle(
-                fontSize: 14,
+                fontSize: responsive.fontSize14,
                 color: textColor,
                 height: 1.62,
               ),

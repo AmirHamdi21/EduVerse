@@ -16,6 +16,7 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_event.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/language/language_cubit.dart';
+import 'package:edu_verse/common/utils/responsive.dart';
 
 class Onboarding2 extends StatefulWidget {
   const Onboarding2({super.key});
@@ -27,6 +28,7 @@ class Onboarding2 extends StatefulWidget {
 class _Onboarding2State extends State<Onboarding2> {
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
@@ -72,12 +74,12 @@ class _Onboarding2State extends State<Onboarding2> {
                       OnboardingHeader(),
                       Expanded(
                         child: SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: EdgeInsets.symmetric(horizontal: responsive.p24),
                           child: Column(
                             children: [
-                              const SizedBox(height: 16),
+                              SizedBox(height: responsive.p16),
                               _buildTitleSection(textColor, textSecondaryColor),
-                              const SizedBox(height: 32),
+                              SizedBox(height: responsive.p32),
                               Column(
                                 children: [
                                   FeatureCard(
@@ -225,13 +227,13 @@ class _Onboarding2State extends State<Onboarding2> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 32),
+                              SizedBox(height: responsive.p32),
                               InfoCard(
                                 text: AppLocalizations.of(
                                   context,
                                 )!.onboarding2InfoText,
                               ),
-                              const SizedBox(height: 40),
+                              SizedBox(height: responsive.p40),
                               NavigationButtons(
                                 backOnPressed: () {
                                   context.go('/onboarding1');
@@ -240,14 +242,14 @@ class _Onboarding2State extends State<Onboarding2> {
                                   context.go('/onboarding3');
                                 },
                               ),
-                              const SizedBox(height: 24),
+                              SizedBox(height: responsive.p24),
                               PageIndicator(
                                 isActive_1: false,
                                 isActive_2: true,
                                 isActive_3: false,
                                 isActive_4: false,
                               ),
-                              const SizedBox(height: 32),
+                              SizedBox(height: responsive.p32),
                             ],
                           ),
                         ),
@@ -256,8 +258,8 @@ class _Onboarding2State extends State<Onboarding2> {
                   ),
                 ),
                 Positioned(
-                  right: 16,
-                  top: 120,
+                  right: responsive.p16,
+                  top: responsive.safeAreaTop + responsive.p16,
                   child: Row(
                     children: [
                       BlocBuilder<LanguageCubit, Locale>(
@@ -269,7 +271,7 @@ class _Onboarding2State extends State<Onboarding2> {
                           );
                         },
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: responsive.p12),
                       BlocBuilder<ThemeBloc, ThemeState>(
                         builder: (context, state) {
                           return _buildThemeToggleIcon(
@@ -291,55 +293,56 @@ class _Onboarding2State extends State<Onboarding2> {
   }
 
   Widget _buildTitleSection(Color textColor, Color textSecondaryColor) {
+    final responsive = context.responsive;
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(responsive.p8),
               decoration: BoxDecoration(
                 color: AppTheme.onBoardingprimary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(responsive.radius12),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.psychology,
                 color: AppTheme.onBoardingprimary,
-                size: 32,
+                size: responsive.iconLarge,
               ),
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: responsive.p8),
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(responsive.p8),
               decoration: BoxDecoration(
                 color: AppTheme.onBoardingcyan.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(responsive.radius12),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.auto_awesome,
                 color: AppTheme.onBoardingcyan,
-                size: 24,
+                size: responsive.iconMedium,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: responsive.p16),
         Text(
           AppLocalizations.of(context)!.onboarding2Title,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 24,
+            fontSize: responsive.fontSize24,
             color: textColor,
             height: 1.25,
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: responsive.p16),
         Text(
           AppLocalizations.of(context)!.onboarding2Subtitle,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: responsive.fontSize14,
             color: textSecondaryColor,
             height: 1.62,
           ),
@@ -353,9 +356,10 @@ class _Onboarding2State extends State<Onboarding2> {
     String currentLanguage,
     bool isDark,
   ) {
+    final responsive = context.responsive;
     return Container(
-      width: 50,
-      height: 50,
+      width: responsive.aspectRatioWidth(50),
+      height: responsive.aspectRatioHeight(50),
       decoration: BoxDecoration(
         color: isDark ? AppTheme.darkCardColor : Colors.white.withOpacity(0.8),
         borderRadius: BorderRadius.circular(1000),
@@ -382,10 +386,11 @@ class _Onboarding2State extends State<Onboarding2> {
               value: 'en',
               child: Row(
                 children: [
-                  const SizedBox(width: 8),
+                  SizedBox(width: responsive.p8),
                   Text(
                     'English',
                     style: TextStyle(
+                      fontSize: responsive.fontSize14,
                       color: currentLanguage == 'en'
                           ? const Color(0xFF2B7FFF)
                           : null,
@@ -395,9 +400,9 @@ class _Onboarding2State extends State<Onboarding2> {
                     ),
                   ),
                   if (currentLanguage == 'en')
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    Padding(
+                      padding: EdgeInsets.only(left: responsive.p8),
+                      child: Icon(Icons.check, color: Color(0xFF2B7FFF), size: responsive.iconSmall),
                     ),
                 ],
               ),
@@ -406,10 +411,11 @@ class _Onboarding2State extends State<Onboarding2> {
               value: 'ar',
               child: Row(
                 children: [
-                  const SizedBox(width: 8),
+                  SizedBox(width: responsive.p8),
                   Text(
                     'العربية',
                     style: TextStyle(
+                      fontSize: responsive.fontSize14,
                       color: currentLanguage == 'ar'
                           ? const Color(0xFF2B7FFF)
                           : null,
@@ -419,9 +425,9 @@ class _Onboarding2State extends State<Onboarding2> {
                     ),
                   ),
                   if (currentLanguage == 'ar')
-                    const Padding(
-                      padding: EdgeInsets.only(left: 8),
-                      child: Icon(Icons.check, color: Color(0xFF2B7FFF)),
+                    Padding(
+                      padding: EdgeInsets.only(left: responsive.p8),
+                      child: Icon(Icons.check, color: Color(0xFF2B7FFF), size: responsive.iconSmall),
                     ),
                 ],
               ),
@@ -429,7 +435,7 @@ class _Onboarding2State extends State<Onboarding2> {
           ],
           child: Icon(
             Icons.language,
-            size: 20,
+            size: responsive.iconSmall,
             color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF354152),
           ),
         ),
@@ -442,9 +448,10 @@ class _Onboarding2State extends State<Onboarding2> {
     bool isDark,
     bool themeIsDark,
   ) {
+    final responsive = context.responsive;
     return Container(
-      width: 50,
-      height: 50,
+      width: responsive.aspectRatioWidth(50),
+      height: responsive.aspectRatioHeight(50),
       decoration: BoxDecoration(
         color: themeIsDark
             ? AppTheme.darkCardColor
@@ -473,7 +480,7 @@ class _Onboarding2State extends State<Onboarding2> {
           borderRadius: BorderRadius.circular(1000),
           child: Icon(
             isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-            size: 20,
+            size: responsive.iconSmall,
             color: themeIsDark
                 ? AppTheme.darkTextPrimary
                 : const Color(0xFF354152),
