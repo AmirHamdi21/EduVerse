@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import '../../models/auth_models.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -12,6 +13,7 @@ import '../../bloc/language/language_cubit.dart';
 import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../common/utils/responsive.dart';
+import '../../services/api_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -282,47 +284,77 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     super.dispose();
   }
 
-  void _handleRegister() {
-    final l = AppLocalizations.of(context);
-
+  Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
+    final l = AppLocalizations.of(context);
+
     if (_passwordController.text != _confirmPasswordController.text) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l!.passwordMismatch),
-          backgroundColor: Color(0xFFEF4444),
-        ),
-      );
+      _showErrorDialog(l.passwordMismatch);
       return;
     }
 
     if (!_agreeToTerms) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${l!.agree} ${l.termsOfService}'),
-          backgroundColor: Color(0xFFEF4444),
-        ),
-      );
+      _showErrorDialog('${l.agree} ${l.termsOfService}');
       return;
     }
 
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    // Prepare registration request
     final request = RegisterRequest(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
+      email: email,
+      password: password,
       firstName: _firstNameController.text.trim(),
       lastName: _lastNameController.text.trim(),
     );
 
-    context.read<AuthBloc>().add(RegisterRequested(request));
-    _formKey.currentState!.save();
-    _firstNameController.clear();
-    _lastNameController.clear();
-    _emailController.clear();
-    _phoneController.clear();
-    _passwordController.clear();
-    _confirmPasswordController.clear();
-    context.go('/verify-email');
+    // Try to register - backend will handle email already exists check
+    try {
+      final apiService = ApiService();
+      await apiService.registerAndCheckEmail(request);
+      
+      if (!mounted) return;
+
+      // If registration succeeds, proceed with BLoC
+      if (mounted) {
+        context.read<AuthBloc>().add(RegisterRequested(request));
+        _formKey.currentState!.save();
+      }
+    } catch (e) {
+      if (!mounted) return;
+      
+      final errorMsg = e.toString();
+      
+      if (errorMsg.contains('Email already registered')) {
+        _showErrorDialog(l.emailAlreadyRegistered);
+      } else {
+        _showErrorDialog(l.operationFailed);
+      }
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.error,
+      animType: AnimType.scale,
+      title: AppLocalizations.of(context).error,
+      desc: message,
+      btnOkOnPress: () {},
+    ).show();
+  }
+
+  void _showInfoDialog(String title, String message) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.info,
+      animType: AnimType.scale,
+      title: title,
+      desc: message,
+      btnOkOnPress: () {},
+    ).show();
   }
 
   @override

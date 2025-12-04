@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_event.dart';
 import '../../bloc/theme/theme_state.dart';
@@ -8,6 +9,7 @@ import '../../bloc/language/language_cubit.dart';
 import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../common/utils/responsive.dart';
+import '../../services/api_service.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -168,28 +170,74 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     super.dispose();
   }
 
-  void _handleSendReset() {
-    final l = AppLocalizations.of(context);
-
+  Future<void> _handleSendReset() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() {
-      _emailSent = true;
-    });
+    final email = _emailController.text.trim();
+    final l = AppLocalizations.of(context);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l!.passwordResetSent),
-        backgroundColor: Color(0xFF10B981),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    // Check if email exists by attempting to trigger password reset
+    try {
+      final apiService = ApiService();
 
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        context.pop();
+      // This call checks if email exists - backend's resend endpoint
+      // will return error if email not found
+      final exists = await apiService.emailExistsForPasswordReset(email);
+
+      if (!mounted) return;
+
+      if (!exists) {
+        _showErrorDialog(l.emailNotFound);
+        return;
       }
-    });
+
+      // Proceed with password reset
+      setState(() {
+        _emailSent = true;
+      });
+
+      if (mounted) {
+        _showSuccessDialog(
+          l.success,
+          l.passwordResetSent,
+          onDismiss: () {
+            if (mounted) {
+              context.pop();
+            }
+          },
+        );
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      _showErrorDialog(l.operationFailed);
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.error,
+      animType: AnimType.scale,
+      title: AppLocalizations.of(context).error,
+      desc: message,
+      btnOkOnPress: () {},
+    ).show();
+  }
+
+  void _showSuccessDialog(
+    String title,
+    String message, {
+    VoidCallback? onDismiss,
+  }) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.success,
+      animType: AnimType.scale,
+      title: title,
+      desc: message,
+      btnOkOnPress: onDismiss ?? () {},
+    ).show();
   }
 
   @override

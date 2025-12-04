@@ -273,7 +273,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get verificationCodeRequired => 'يرجى إدخال رمز التحقق';
 
   @override
-  String get emailNotFound => 'عنوان البريد الإلكتروني غير موجود';
+  String get emailNotFound =>
+      'لم يتم العثور على عنوان البريد الإلكتروني. يرجى التحقق والمحاولة مرة أخرى.';
 
   @override
   String get resendingCode => 'جاري إعادة إرسال الرمز...';
@@ -435,4 +436,151 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get splashSubtitle => 'نظام إدارة التعلم';
+
+  @override
+  String get noInternetConnection =>
+      'لا يوجد اتصال بالإنترنت. يرجى التحقق من شبكتك والمحاولة مرة أخرى.';
+
+  @override
+  String get emailNotVerified =>
+      'لم يتم التحقق من بريدك الإلكتروني بعد. يرجى التحقق من بريدك الإلكتروني للمتابعة.';
+
+  @override
+  String get emailAlreadyRegistered =>
+      'هذا البريد الإلكتروني مسجل بالفعل. يرجى استخدام بريد إلكتروني مختلف أو حاول تسجيل الدخول.';
+
+  @override
+  String get operationFailed => 'فشلت العملية. يرجى المحاولة مرة أخرى لاحقًا.';
+
+  @override
+  String get goodEvening => 'مساء الخير';
+
+  @override
+  String get gpa => 'المعدل التراكمي';
+
+  @override
+  String get semesterProgress => 'تقدم الفصل الدراسي';
+
+  @override
+  String get upcomingDeadline => 'آخر موعد قادم';
+
+  @override
+  String get attendance => 'الحضور';
+
+  @override
+  String get myCoursesSection => 'دوراتي';
+
+  @override
+  String get toDoSmartReminders => 'قائمة المهام / التذكيرات الذكية';
+
+  @override
+  String get performanceInsights => 'رؤى الأداء';
+
+  @override
+  String get courses => 'الدورات';
+
+  @override
+  String get aiQuiz => 'اختبار الذكاء الاصطناعي';
+
+  @override
+  String get flashcards => 'بطاقات الذاكرة';
+
+  @override
+  String get tasks => 'المهام';
+
+  @override
+  String get leaderboard => 'لوحة المتصدرين';
+
+  @override
+  String get messages => 'الرسائل';
+
+  @override
+  String get continueButton => 'متابعة';
+
+  @override
+  String get materials => 'المواد';
+
+  @override
+  String get complete => 'إكمال';
+
+  @override
+  String get weakTopic => 'الموضوع الضعيف';
+
+  @override
+  String get studySuggestion => 'اقتراح الدراسة';
+
+  @override
+  String get tryReviewing => 'حاول مراجعة';
+
+  @override
+  String get chapter => 'الفصل';
+
+  @override
+  String get problems => 'المشاكل';
+
+  @override
+  String get peakLearningTime => 'وقت التعلم الأمثل';
+
+  @override
+  String get youPerform => 'أنت تؤدي بشكل أفضل عندما تكون';
+
+  @override
+  String get studying => 'الدراسة';
+
+  @override
+  String get inTheMorning => 'في الصباح. حاول جدولة المزيد من جلسات الدراسة.';
+
+  @override
+  String get getPersonalizedStudyHelp => 'احصل على مساعدة دراسية مخصصة';
+
+  @override
+  String get askAI => 'اسأل الذكاء الاصطناعي';
+
+  @override
+  String get dashboard => 'لوحة المعلومات';
+
+  @override
+  String get algorithmAssignment => 'مهمة الخوارزمية';
+
+  @override
+  String get aiEthicsPaperOutline => 'مخطط ورقة أخلاقيات الذكاء الاصطناعي';
+
+  @override
+  String get prepareDataStructuresQuiz => 'الاستعداد لاختبار هياكل البيانات';
+
+  @override
+  String get due => 'الموعد النهائي';
+
+  @override
+  String get introductionToAI => 'مقدمة إلى الذكاء الاصطناعي';
+
+  @override
+  String get dataStructures => 'هياكل البيانات';
+
+  @override
+  String get calculusII => 'حساب التفاضل والتكامل الثاني';
+
+  @override
+  String get drSarahFarley => 'د. سارة فارلي';
+
+  @override
+  String get drMarkGoldberg => 'د. مارك جولدبرج';
+
+  @override
+  String get drJessicaPeterson => 'د. جيسيكا بيترسون';
+
+  @override
+  String get recursion => 'العودية';
+
+  @override
+  String get grades => 'درجات';
+
+  @override
+  String get calendar => 'تقويم';
+
+  @override
+  String get exam => 'اختبار';
+
+  @override
+  String get aiAssistant => 'مساعد ذكاء اصطناعي';
 }

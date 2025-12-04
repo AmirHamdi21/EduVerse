@@ -271,7 +271,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verificationCodeRequired => 'Please enter the verification code';
 
   @override
-  String get emailNotFound => 'Email address not found';
+  String get emailNotFound =>
+      'Email address not found. Please check and try again.';
 
   @override
   String get resendingCode => 'Resending code...';
@@ -436,4 +437,152 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get splashSubtitle => 'Learning Management System';
+
+  @override
+  String get noInternetConnection =>
+      'No internet connection. Please check your network and try again.';
+
+  @override
+  String get emailNotVerified =>
+      'Your email has not been verified yet. Please verify your email to continue.';
+
+  @override
+  String get emailAlreadyRegistered =>
+      'This email is already registered. Please use a different email or try logging in.';
+
+  @override
+  String get operationFailed => 'Operation failed. Please try again later.';
+
+  @override
+  String get goodEvening => 'Good Evening';
+
+  @override
+  String get gpa => 'GPA';
+
+  @override
+  String get semesterProgress => 'Semester Progress';
+
+  @override
+  String get upcomingDeadline => 'Upcoming Deadline';
+
+  @override
+  String get attendance => 'Attendance';
+
+  @override
+  String get myCoursesSection => 'My Courses';
+
+  @override
+  String get toDoSmartReminders => 'To-Do / Smart Reminders';
+
+  @override
+  String get performanceInsights => 'Performance Insights';
+
+  @override
+  String get courses => 'Courses';
+
+  @override
+  String get aiQuiz => 'AI Quiz';
+
+  @override
+  String get flashcards => 'Flashcards';
+
+  @override
+  String get tasks => 'Tasks';
+
+  @override
+  String get leaderboard => 'Leaderboard';
+
+  @override
+  String get messages => 'Messages';
+
+  @override
+  String get continueButton => 'Continue';
+
+  @override
+  String get materials => 'Materials';
+
+  @override
+  String get complete => 'Complete';
+
+  @override
+  String get weakTopic => 'Weak Topic';
+
+  @override
+  String get studySuggestion => 'Study Suggestion';
+
+  @override
+  String get tryReviewing => 'Try reviewing';
+
+  @override
+  String get chapter => 'Chapter';
+
+  @override
+  String get problems => 'problems';
+
+  @override
+  String get peakLearningTime => 'Peak Learning Time';
+
+  @override
+  String get youPerform => 'You perform best when';
+
+  @override
+  String get studying => 'studying';
+
+  @override
+  String get inTheMorning =>
+      'in the morning. Try scheduling more study sessions.';
+
+  @override
+  String get getPersonalizedStudyHelp => 'Get personalized study help';
+
+  @override
+  String get askAI => 'Ask AI';
+
+  @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get algorithmAssignment => 'Algorithm Assignment';
+
+  @override
+  String get aiEthicsPaperOutline => 'AI Ethics Paper Outline';
+
+  @override
+  String get prepareDataStructuresQuiz => 'Prepare for Data Structures Quiz';
+
+  @override
+  String get due => 'Due';
+
+  @override
+  String get introductionToAI => 'Introduction to AI';
+
+  @override
+  String get dataStructures => 'Data Structures';
+
+  @override
+  String get calculusII => 'Calculus II';
+
+  @override
+  String get drSarahFarley => 'Dr. Sarah Farley';
+
+  @override
+  String get drMarkGoldberg => 'Dr. Mark Goldberg';
+
+  @override
+  String get drJessicaPeterson => 'Dr. Jessica Peterson';
+
+  @override
+  String get recursion => 'Recursion';
+
+  @override
+  String get grades => 'Grades';
+
+  @override
+  String get calendar => 'Calendar';
+
+  @override
+  String get exam => 'Exam';
+
+  @override
+  String get aiAssistant => 'AI Assistant';
 }

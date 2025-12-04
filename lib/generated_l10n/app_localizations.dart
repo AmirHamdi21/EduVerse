@@ -623,7 +623,7 @@ abstract class AppLocalizations {
   /// No description provided for @emailNotFound.
   ///
   /// In en, this message translates to:
-  /// **'Email address not found'**
+  /// **'Email address not found. Please check and try again.'**
   String get emailNotFound;
 
   /// No description provided for @resendingCode.
@@ -931,6 +931,294 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Learning Management System'**
   String get splashSubtitle;
+
+  /// No description provided for @noInternetConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Please check your network and try again.'**
+  String get noInternetConnection;
+
+  /// No description provided for @emailNotVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Your email has not been verified yet. Please verify your email to continue.'**
+  String get emailNotVerified;
+
+  /// No description provided for @emailAlreadyRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already registered. Please use a different email or try logging in.'**
+  String get emailAlreadyRegistered;
+
+  /// No description provided for @operationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation failed. Please try again later.'**
+  String get operationFailed;
+
+  /// No description provided for @goodEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Evening'**
+  String get goodEvening;
+
+  /// No description provided for @gpa.
+  ///
+  /// In en, this message translates to:
+  /// **'GPA'**
+  String get gpa;
+
+  /// No description provided for @semesterProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Semester Progress'**
+  String get semesterProgress;
+
+  /// No description provided for @upcomingDeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Deadline'**
+  String get upcomingDeadline;
+
+  /// No description provided for @attendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
+  String get attendance;
+
+  /// No description provided for @myCoursesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'My Courses'**
+  String get myCoursesSection;
+
+  /// No description provided for @toDoSmartReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'To-Do / Smart Reminders'**
+  String get toDoSmartReminders;
+
+  /// No description provided for @performanceInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Insights'**
+  String get performanceInsights;
+
+  /// No description provided for @courses.
+  ///
+  /// In en, this message translates to:
+  /// **'Courses'**
+  String get courses;
+
+  /// No description provided for @aiQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Quiz'**
+  String get aiQuiz;
+
+  /// No description provided for @flashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Flashcards'**
+  String get flashcards;
+
+  /// No description provided for @tasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get tasks;
+
+  /// No description provided for @leaderboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Leaderboard'**
+  String get leaderboard;
+
+  /// No description provided for @messages.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get messages;
+
+  /// No description provided for @continueButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueButton;
+
+  /// No description provided for @materials.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials'**
+  String get materials;
+
+  /// No description provided for @complete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get complete;
+
+  /// No description provided for @weakTopic.
+  ///
+  /// In en, this message translates to:
+  /// **'Weak Topic'**
+  String get weakTopic;
+
+  /// No description provided for @studySuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Suggestion'**
+  String get studySuggestion;
+
+  /// No description provided for @tryReviewing.
+  ///
+  /// In en, this message translates to:
+  /// **'Try reviewing'**
+  String get tryReviewing;
+
+  /// No description provided for @chapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter'**
+  String get chapter;
+
+  /// No description provided for @problems.
+  ///
+  /// In en, this message translates to:
+  /// **'problems'**
+  String get problems;
+
+  /// No description provided for @peakLearningTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Peak Learning Time'**
+  String get peakLearningTime;
+
+  /// No description provided for @youPerform.
+  ///
+  /// In en, this message translates to:
+  /// **'You perform best when'**
+  String get youPerform;
+
+  /// No description provided for @studying.
+  ///
+  /// In en, this message translates to:
+  /// **'studying'**
+  String get studying;
+
+  /// No description provided for @inTheMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'in the morning. Try scheduling more study sessions.'**
+  String get inTheMorning;
+
+  /// No description provided for @getPersonalizedStudyHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Get personalized study help'**
+  String get getPersonalizedStudyHelp;
+
+  /// No description provided for @askAI.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI'**
+  String get askAI;
+
+  /// No description provided for @dashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get dashboard;
+
+  /// No description provided for @algorithmAssignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Algorithm Assignment'**
+  String get algorithmAssignment;
+
+  /// No description provided for @aiEthicsPaperOutline.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Ethics Paper Outline'**
+  String get aiEthicsPaperOutline;
+
+  /// No description provided for @prepareDataStructuresQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare for Data Structures Quiz'**
+  String get prepareDataStructuresQuiz;
+
+  /// No description provided for @due.
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get due;
+
+  /// No description provided for @introductionToAI.
+  ///
+  /// In en, this message translates to:
+  /// **'Introduction to AI'**
+  String get introductionToAI;
+
+  /// No description provided for @dataStructures.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Structures'**
+  String get dataStructures;
+
+  /// No description provided for @calculusII.
+  ///
+  /// In en, this message translates to:
+  /// **'Calculus II'**
+  String get calculusII;
+
+  /// No description provided for @drSarahFarley.
+  ///
+  /// In en, this message translates to:
+  /// **'Dr. Sarah Farley'**
+  String get drSarahFarley;
+
+  /// No description provided for @drMarkGoldberg.
+  ///
+  /// In en, this message translates to:
+  /// **'Dr. Mark Goldberg'**
+  String get drMarkGoldberg;
+
+  /// No description provided for @drJessicaPeterson.
+  ///
+  /// In en, this message translates to:
+  /// **'Dr. Jessica Peterson'**
+  String get drJessicaPeterson;
+
+  /// No description provided for @recursion.
+  ///
+  /// In en, this message translates to:
+  /// **'Recursion'**
+  String get recursion;
+
+  /// No description provided for @grades.
+  ///
+  /// In en, this message translates to:
+  /// **'Grades'**
+  String get grades;
+
+  /// No description provided for @calendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendar;
+
+  /// No description provided for @exam.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam'**
+  String get exam;
+
+  /// No description provided for @aiAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
+  String get aiAssistant;
 }
 
 class _AppLocalizationsDelegate

@@ -399,4 +399,89 @@ class ApiService {
       throw Exception('Network error: ${e.toString()}');
     }
   }
+
+  // Try to login to verify email is registered and verified
+  // If login fails due to unverified email, returns specific error
+  // This leverages the backend's existing login validation
+  Future<bool> isEmailVerifiedAndExists(String email, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/login'),
+        headers: await _getHeaders(),
+        body: jsonEncode({'email': email, 'password': password}),
+      );
+
+      if (response.statusCode == 200) {
+        return true; // Email exists and is verified
+      } else {
+        final error = jsonDecode(response.body);
+        final message = error['message'] ?? '';
+        
+        // Check if error is specifically about verification
+        if (message.toLowerCase().contains('verify')) {
+          throw Exception('Email not verified');
+        } else {
+          throw Exception(message);
+        }
+      }
+    } catch (e) {
+      throw Exception('${e.toString()}');
+    }
+  }
+
+  // Register and check if email already exists during response
+  Future<RegistrationResponse> registerAndCheckEmail(RegisterRequest request) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/register'),
+        headers: await _getHeaders(),
+        body: jsonEncode(request.toJson()),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return RegistrationResponse.fromJson(jsonDecode(response.body));
+      } else {
+        final error = jsonDecode(response.body);
+        final message = error['message'] ?? 'Registration failed';
+        
+        // Check for email already exists error
+        if (message.toLowerCase().contains('already exists') || 
+            message.toLowerCase().contains('already registered')) {
+          throw Exception('Email already registered');
+        } else {
+          throw Exception(message);
+        }
+      }
+    } catch (e) {
+      throw Exception('${e.toString()}');
+    }
+  }
+
+  // Check if email exists for password reset
+  // Since backend doesn't have a dedicated endpoint, we'll use register check
+  // or return a generic message if the resend endpoint fails
+  Future<bool> emailExistsForPasswordReset(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/auth/resend-verification-email'),
+        headers: await _getHeaders(),
+        body: jsonEncode({'email': email}),
+      );
+
+      if (response.statusCode == 200) {
+        return true; // Email exists in system
+      } else {
+        final error = jsonDecode(response.body);
+        final message = error['message'] ?? '';
+        
+        if (message.toLowerCase().contains('not found')) {
+          return false; // Email doesn't exist
+        } else {
+          throw Exception(message);
+        }
+      }
+    } catch (e) {
+      throw Exception('${e.toString()}');
+    }
+  }
 }

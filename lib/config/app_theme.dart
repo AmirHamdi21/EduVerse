@@ -67,12 +67,18 @@ class AppTheme {
   );
 
   // Light mode colors
-  static const primaryColor = Color(0xFF6366F1); // Indigo
+  static const primaryColor = Color(0xFF155DFC); // Blue
+  static const primaryLight = Color(0xFF2B7FFF);
   static const secondaryColor = Color(0xFF8B5CF6); // Purple
   static const accentColor = Color(0xFF06B6D4); // Cyan
   static const errorColor = Color(0xFFEF4444);
   static const successColor = Color(0xFF10B981);
   static const warningColor = Color(0xFFF59E0B);
+  static const greenSuccess = Color(0xFF00C950);
+  static const cardBorder = Color(0xFFE5E7EB);
+  static const textLight = Color(0xFF495565);
+  static const textMedium = Color(0xFF354152);
+  static const textDark = Color(0xFF1D2838);
 
   // Dark mode colors
   static const darkBg1 = Color(0xFF030712);

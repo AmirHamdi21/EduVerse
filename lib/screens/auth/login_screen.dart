@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import '../../models/auth_models.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -12,6 +13,7 @@ import '../../bloc/language/language_cubit.dart';
 import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../common/utils/responsive.dart';
+import '../../services/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -222,16 +224,95 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     super.dispose();
   }
 
-  void _handleLogin() {
+  Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final request = LoginRequest(
-      email: _emailController.text.trim(),
-      password: _passwordController.text,
-      rememberMe: false,
-    );
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+    final l = AppLocalizations.of(context);
 
-    context.read<AuthBloc>().add(LoginRequested(request));
+    // Validate email and password format before API call
+    if (email.isEmpty || password.isEmpty) {
+      _showErrorDialog(l.fieldRequired);
+      return;
+    }
+
+    // Pre-check: Try to authenticate to see if email is verified
+    try {
+      final apiService = ApiService();
+      // This will throw if email is not verified or doesn't exist
+      await apiService.isEmailVerifiedAndExists(email, password);
+      
+      if (!mounted) return;
+
+      // If we reach here, email is verified and credentials are correct
+      // Proceed with normal login through BLoC
+      final request = LoginRequest(
+        email: email,
+        password: password,
+        rememberMe: false,
+      );
+
+      if (mounted) {
+        context.read<AuthBloc>().add(LoginRequested(request));
+      }
+    } catch (e) {
+      if (!mounted) return;
+      
+      final errorMsg = e.toString();
+      
+      if (errorMsg.contains('Email not verified')) {
+        // Email is not verified - show verification warning
+        _showWarningDialog(
+          l.emailNotVerified,
+          l.emailNotVerified,
+          onRetry: () {
+            context.read<AuthBloc>().add(
+              ResendVerificationEmailRequested(email),
+            );
+          },
+        );
+      } else {
+        // Generic error - could be invalid credentials, server error, etc
+        _showErrorDialog(l.operationFailed);
+      }
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.error,
+      animType: AnimType.scale,
+      title: AppLocalizations.of(context).error,
+      desc: message,
+      btnOkOnPress: () {},
+    ).show();
+  }
+
+  void _showWarningDialog(String title, String message, {VoidCallback? onRetry}) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.warning,
+      animType: AnimType.scale,
+      title: title,
+      desc: message,
+      btnOkText: AppLocalizations.of(context).tryAgain,
+      btnOkOnPress: onRetry ?? () {},
+      btnCancelText: AppLocalizations.of(context).cancel,
+      btnCancelOnPress: () {},
+    ).show();
+  }
+
+  void _showInfoDialog(String title, String message) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.info,
+      animType: AnimType.scale,
+      title: title,
+      desc: message,
+      btnOkOnPress: () {},
+    ).show();
   }
 
   @override
