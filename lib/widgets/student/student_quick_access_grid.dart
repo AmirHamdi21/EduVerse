@@ -123,29 +123,7 @@ class StudentQuickAccessGrid extends StatelessWidget {
     final isDark = context.read<ThemeBloc>().state.isDark;
 
     return GestureDetector(
-      onTap: () {
-        // Handle navigation based on title
-        // switch (title) {
-        //   case 'Courses':
-        //     context.go('/courses');
-        //     break;
-        //   case 'AI Quiz':
-        //     context.go('/ai-quiz');
-        //     break;
-        //   case 'Flashcards':
-        //     context.go('/flashcards');
-        //     break;
-        //   case 'Tasks':
-        //     context.go('/tasks');
-        //     break;
-        //   case 'Leaderboard':
-        //     context.go('/leaderboard');
-        //     break;
-        //   case 'Messages':
-        //     context.go('/messages');
-        //     break;
-        // }
-      },
+      onTap: () {},
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

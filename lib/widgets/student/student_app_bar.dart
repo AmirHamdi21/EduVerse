@@ -31,7 +31,6 @@ class StudentAppBar extends StatelessWidget {
             ),
           ),
           title: Row(
-            // mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                 width: 40,
@@ -56,7 +55,6 @@ class StudentAppBar extends StatelessWidget {
             ],
           ),
           actions: [
-            // Language toggle button
             BlocBuilder<LanguageCubit, Locale>(
               builder: (context, locale) {
                 return PopupMenuButton<String>(
@@ -106,15 +104,12 @@ class StudentAppBar extends StatelessWidget {
                 );
               },
             ),
-            // Notifications button
             IconButton(
               icon: Icon(
                 Icons.notifications_none,
                 color: isDark ? Colors.white : const Color(0xFF101727),
               ),
-              onPressed: () {
-                // Handle notification button press
-              },
+              onPressed: () {},
             ),
             const SizedBox(width: 8),
             IconButton(
