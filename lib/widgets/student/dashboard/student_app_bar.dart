@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../bloc/theme/theme_bloc.dart';
-import '../../bloc/theme/theme_state.dart';
-import '../../bloc/theme/theme_event.dart';
-import '../../bloc/language/language_cubit.dart';
-import '../../generated_l10n/app_localizations.dart';
+import '../../../bloc/theme/theme_bloc.dart';
+import '../../../bloc/theme/theme_state.dart';
+import '../../../bloc/theme/theme_event.dart';
+import '../../../bloc/language/language_cubit.dart';
+import '../../../generated_l10n/app_localizations.dart';
 
 class StudentAppBar extends StatelessWidget {
   const StudentAppBar({super.key});

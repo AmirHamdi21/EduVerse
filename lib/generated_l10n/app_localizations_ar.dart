@@ -583,4 +583,92 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get aiAssistant => 'مساعد ذكاء اصطناعي';
+
+  @override
+  String get myCoursesHeader => 'دوراتي';
+
+  @override
+  String get allEnrolledCoursesThisSemester =>
+      'جميع الدورات المسجلة هذا الفصل الدراسي';
+
+  @override
+  String get searchCourseNameOrInstructor => 'ابحث عن اسم المقرر أو المدرس';
+
+  @override
+  String get filter => 'تصفية';
+
+  @override
+  String get sort => 'ترتيب';
+
+  @override
+  String get all => 'الكل';
+
+  @override
+  String get lectures => 'محاضرات';
+
+  @override
+  String get labs => 'معامل';
+
+  @override
+  String get completed => 'مكتملة';
+
+  @override
+  String get joinCourse => 'الانضمام إلى دورة';
+
+  @override
+  String get nextLecture => 'المحاضرة التالية';
+
+  @override
+  String get aiLab => 'مختبر الذكاء الاصطناعي';
+
+  @override
+  String get nextAssignment => 'المهمة التالية';
+
+  @override
+  String get finalExam => 'الامتحان النهائي';
+
+  @override
+  String get projectDue => 'المشروع المستحق';
+
+  @override
+  String get nextLab => 'المختبر التالي';
+
+  @override
+  String get review => 'مراجعة';
+
+  @override
+  String get introductionToAIDesc => 'مقدمة إلى الذكاء الاصطناعي';
+
+  @override
+  String get drAlanTuring => 'د. آلان تورينج';
+
+  @override
+  String get drGraceHopper => 'د. جريس هوبر';
+
+  @override
+  String get drYannLeCun => 'د. يان لوكون';
+
+  @override
+  String get drAdaLovelace => 'د. آدا لافليس';
+
+  @override
+  String get drAndrewNg => 'د. أندرو نج';
+
+  @override
+  String get drTimBernersLee => 'د. تيم بيرنرز لي';
+
+  @override
+  String get dataStructuresTitle => 'هياكل البيانات';
+
+  @override
+  String get neuralNetworksTitle => 'الشبكات العصبية';
+
+  @override
+  String get cybersecurityEthicsTitle => 'أخلاقيات الأمن السيبراني';
+
+  @override
+  String get machineLearningFundamentalsTitle => 'أساسيات التعلم الآلي';
+
+  @override
+  String get webDevelopmentTitle => 'تطوير الويب';
 }

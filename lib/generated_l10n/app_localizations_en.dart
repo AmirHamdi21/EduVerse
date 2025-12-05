@@ -585,4 +585,93 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get aiAssistant => 'AI Assistant';
+
+  @override
+  String get myCoursesHeader => 'My Courses';
+
+  @override
+  String get allEnrolledCoursesThisSemester =>
+      'All enrolled courses this semester';
+
+  @override
+  String get searchCourseNameOrInstructor => 'Search course name or instructor';
+
+  @override
+  String get filter => 'Filter';
+
+  @override
+  String get sort => 'Sort';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get lectures => 'Lectures';
+
+  @override
+  String get labs => 'Labs';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get joinCourse => 'Join Course';
+
+  @override
+  String get nextLecture => 'Next Lecture';
+
+  @override
+  String get aiLab => 'AI Lab';
+
+  @override
+  String get nextAssignment => 'Next Assignment';
+
+  @override
+  String get finalExam => 'Final Exam';
+
+  @override
+  String get projectDue => 'Project Due';
+
+  @override
+  String get nextLab => 'Next Lab';
+
+  @override
+  String get review => 'Review';
+
+  @override
+  String get introductionToAIDesc => 'Introduction to AI';
+
+  @override
+  String get drAlanTuring => 'Dr. Alan Turing';
+
+  @override
+  String get drGraceHopper => 'Dr. Grace Hopper';
+
+  @override
+  String get drYannLeCun => 'Dr. Yann LeCun';
+
+  @override
+  String get drAdaLovelace => 'Dr. Ada Lovelace';
+
+  @override
+  String get drAndrewNg => 'Dr. Andrew Ng';
+
+  @override
+  String get drTimBernersLee => 'Dr. Tim Berners-Lee';
+
+  @override
+  String get dataStructuresTitle => 'Data Structures';
+
+  @override
+  String get neuralNetworksTitle => 'Neural Networks';
+
+  @override
+  String get cybersecurityEthicsTitle => 'Cybersecurity Ethics';
+
+  @override
+  String get machineLearningFundamentalsTitle =>
+      'Machine Learning Fundamentals';
+
+  @override
+  String get webDevelopmentTitle => 'Web Development';
 }

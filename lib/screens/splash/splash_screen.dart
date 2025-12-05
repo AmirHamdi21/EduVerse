@@ -29,7 +29,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     final responsive = context.responsive;
     final l = AppLocalizations.of(context);
-    
+
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         // Add a minimum display time for splash screen
@@ -41,7 +41,8 @@ class _SplashScreenState extends State<SplashScreen> {
           context.go('/dashboard');
         } else if (state is AuthUnauthenticated) {
           // context.go('/login');
-          context.go('/onboarding1');
+          // context.go('/onboarding1');
+          context.go('/dashboard');
         }
       },
       child: BlocBuilder<ThemeBloc, ThemeState>(

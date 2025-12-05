@@ -1,9 +1,9 @@
-import 'package:edu_verse/widgets/student/student_todo_item.dart';
+import 'package:edu_verse/widgets/student/dashboard/student_todo_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../bloc/theme/theme_bloc.dart';
-import '../../bloc/theme/theme_state.dart';
-import '../../generated_l10n/app_localizations.dart';
+import '../../../bloc/theme/theme_bloc.dart';
+import '../../../bloc/theme/theme_state.dart';
+import '../../../generated_l10n/app_localizations.dart';
 
 class StudentTodoSection extends StatelessWidget {
   const StudentTodoSection({super.key});

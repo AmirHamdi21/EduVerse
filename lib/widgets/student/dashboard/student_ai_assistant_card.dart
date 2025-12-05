@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../bloc/theme/theme_bloc.dart';
-import '../../bloc/theme/theme_state.dart';
-import '../../generated_l10n/app_localizations.dart';
+import '../../../bloc/theme/theme_bloc.dart';
+import '../../../bloc/theme/theme_state.dart';
+import '../../../generated_l10n/app_localizations.dart';
 
 class StudentAiAssistantCard extends StatelessWidget {
   const StudentAiAssistantCard({super.key});

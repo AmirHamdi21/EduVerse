@@ -4,14 +4,14 @@ import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../bloc/language/language_cubit.dart';
 import '../../generated_l10n/app_localizations.dart';
-import '../../widgets/student/student_app_bar.dart';
-import '../../widgets/student/student_stats_section.dart';
-import '../../widgets/student/student_quick_access_grid.dart';
-import '../../widgets/student/student_courses_section.dart';
-import '../../widgets/student/student_todo_section.dart';
-import '../../widgets/student/student_performance_section.dart';
-import '../../widgets/student/student_ai_assistant_card.dart';
-import '../../widgets/student/student_drawer.dart';
+import '../../widgets/student/dashboard/student_app_bar.dart';
+import '../../widgets/student/dashboard/student_stats_section.dart';
+import '../../widgets/student/dashboard/student_quick_access_grid.dart';
+import '../../widgets/student/dashboard/student_courses_section.dart';
+import '../../widgets/student/dashboard/student_todo_section.dart';
+import '../../widgets/student/dashboard/student_performance_section.dart';
+import '../../widgets/student/dashboard/student_ai_assistant_card.dart';
+import '../../widgets/student/dashboard/student_drawer.dart';
 
 class StudentDashboardScreen extends StatelessWidget {
   const StudentDashboardScreen({super.key});

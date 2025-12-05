@@ -1219,6 +1219,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'AI Assistant'**
   String get aiAssistant;
+
+  /// No description provided for @myCoursesHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'My Courses'**
+  String get myCoursesHeader;
+
+  /// No description provided for @allEnrolledCoursesThisSemester.
+  ///
+  /// In en, this message translates to:
+  /// **'All enrolled courses this semester'**
+  String get allEnrolledCoursesThisSemester;
+
+  /// No description provided for @searchCourseNameOrInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Search course name or instructor'**
+  String get searchCourseNameOrInstructor;
+
+  /// No description provided for @filter.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter'**
+  String get filter;
+
+  /// No description provided for @sort.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort'**
+  String get sort;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @lectures.
+  ///
+  /// In en, this message translates to:
+  /// **'Lectures'**
+  String get lectures;
+
+  /// No description provided for @labs.
+  ///
+  /// In en, this message translates to:
+  /// **'Labs'**
+  String get labs;
+
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
+
+  /// No description provided for @joinCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Join Course'**
+  String get joinCourse;
+
+  /// No description provided for @nextLecture.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Lecture'**
+  String get nextLecture;
+
+  /// No description provided for @aiLab.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Lab'**
+  String get aiLab;
+
+  /// No description provided for @nextAssignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Assignment'**
+  String get nextAssignment;
+
+  /// No description provided for @finalExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Final Exam'**
+  String get finalExam;
+
+  /// No description provided for @projectDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Project Due'**
+  String get projectDue;
+
+  /// No description provided for @nextLab.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Lab'**
+  String get nextLab;
+
+  /// No description provided for @review.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get review;
+
+  /// No description provided for @introductionToAIDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Introduction to AI'**
+  String get introductionToAIDesc;
+
+  /// No description provided for @drAlanTuring.
+  ///
+  /// In en, this message translates to:
+  /// **'Dr. Alan Turing'**
+  String get drAlanTuring;
+
+  /// No description provided for @drGraceHopper.
+  ///
+  /// In en, this message translates to:
+  /// **'Dr. Grace Hopper'**
+  String get drGraceHopper;
+
+  /// No description provided for @drYannLeCun.
+  ///
+  /// In en, this message translates to:
+  /// **'Dr. Yann LeCun'**
+  String get drYannLeCun;
+
+  /// No description provided for @drAdaLovelace.
+  ///
+  /// In en, this message translates to:
+  /// **'Dr. Ada Lovelace'**
+  String get drAdaLovelace;
+
+  /// No description provided for @drAndrewNg.
+  ///
+  /// In en, this message translates to:
+  /// **'Dr. Andrew Ng'**
+  String get drAndrewNg;
+
+  /// No description provided for @drTimBernersLee.
+  ///
+  /// In en, this message translates to:
+  /// **'Dr. Tim Berners-Lee'**
+  String get drTimBernersLee;
+
+  /// No description provided for @dataStructuresTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Structures'**
+  String get dataStructuresTitle;
+
+  /// No description provided for @neuralNetworksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Neural Networks'**
+  String get neuralNetworksTitle;
+
+  /// No description provided for @cybersecurityEthicsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cybersecurity Ethics'**
+  String get cybersecurityEthicsTitle;
+
+  /// No description provided for @machineLearningFundamentalsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Machine Learning Fundamentals'**
+  String get machineLearningFundamentalsTitle;
+
+  /// No description provided for @webDevelopmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Web Development'**
+  String get webDevelopmentTitle;
 }
 
 class _AppLocalizationsDelegate

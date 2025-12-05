@@ -1,4 +1,5 @@
 import 'package:edu_verse/screens/student/student_dashboard_screen.dart';
+import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
@@ -15,10 +16,7 @@ class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/',
     routes: [
-      GoRoute(
-        path: '/splash',
-        builder: (context, state) => const SplashScreen(),
-      ),
+      GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
       GoRoute(
         path: '/onboarding1',
         builder: (context, state) => const Onboarding1(),
@@ -47,13 +45,17 @@ class AppRouter {
         path: '/forgot-password',
         builder: (context, state) => const ForgotPasswordScreen(),
       ),
+      // GoRoute(
+      //   path: '/dashboard',
+      //   builder: (context, state) => const DashboardScreen(),
+      // ),
       GoRoute(
         path: '/dashboard',
-        builder: (context, state) => const DashboardScreen(),
+        builder: (context, state) => const StudentDashboardScreen(),
       ),
       GoRoute(
-        path: '/',
-        builder: (context, state) => const StudentDashboardScreen(),
+        path: '/courses',
+        builder: (context, state) => const CoursesScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

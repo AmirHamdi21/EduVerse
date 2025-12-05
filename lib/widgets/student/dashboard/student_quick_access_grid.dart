@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../bloc/theme/theme_bloc.dart';
-import '../../bloc/theme/theme_state.dart';
-import '../../generated_l10n/app_localizations.dart';
+import '../../../bloc/theme/theme_bloc.dart';
+import '../../../bloc/theme/theme_state.dart';
+import '../../../generated_l10n/app_localizations.dart';
 
 class StudentQuickAccessGrid extends StatelessWidget {
   const StudentQuickAccessGrid({super.key});
@@ -56,6 +56,9 @@ class StudentQuickAccessGrid extends StatelessWidget {
                   colors: [Color(0xFF50A2FF), Color(0xFF155CFB)],
                 ),
                 icon: Icons.book_outlined,
+                onTap: () {
+                  context.push('/courses');
+                },
               ),
               _buildQuickAccessItem(
                 context,
@@ -66,6 +69,7 @@ class StudentQuickAccessGrid extends StatelessWidget {
                   colors: [Color(0xFFC17AFF), Color(0xFF980FFA)],
                 ),
                 icon: Icons.quiz_outlined,
+                onTap: () {},
               ),
               _buildQuickAccessItem(
                 context,
@@ -76,6 +80,7 @@ class StudentQuickAccessGrid extends StatelessWidget {
                   colors: [Color(0xFF00D2F2), Color(0xFF0092B8)],
                 ),
                 icon: Icons.layers_outlined,
+                onTap: () {},
               ),
               _buildQuickAccessItem(
                 context,
@@ -86,6 +91,7 @@ class StudentQuickAccessGrid extends StatelessWidget {
                   colors: [Color(0xFF05DF72), Color(0xFF00A63D)],
                 ),
                 icon: Icons.checklist_outlined,
+                onTap: () {},
               ),
               _buildQuickAccessItem(
                 context,
@@ -96,6 +102,7 @@ class StudentQuickAccessGrid extends StatelessWidget {
                   colors: [Color(0xFFFDC700), Color(0xFFD08700)],
                 ),
                 icon: Icons.leaderboard_outlined,
+                onTap: () {},
               ),
               _buildQuickAccessItem(
                 context,
@@ -106,6 +113,7 @@ class StudentQuickAccessGrid extends StatelessWidget {
                   colors: [Color(0xFFFB63B6), Color(0xFFE50076)],
                 ),
                 icon: Icons.message_outlined,
+                onTap: () {},
               ),
             ],
           ),
@@ -119,11 +127,12 @@ class StudentQuickAccessGrid extends StatelessWidget {
     required String title,
     required LinearGradient gradient,
     required IconData icon,
+    required Function() onTap,
   }) {
     final isDark = context.read<ThemeBloc>().state.isDark;
 
     return GestureDetector(
-      onTap: () {},
+      onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
