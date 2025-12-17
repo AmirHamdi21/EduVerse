@@ -1,0 +1,14 @@
+export 'course_details_header.dart';
+export 'course_instructor_info.dart';
+export 'course_action_buttons.dart';
+export 'course_completion_bar.dart';
+export 'course_tabs.dart';
+export 'course_tab_content.dart';
+export 'course_module_card.dart';
+export 'lab_card.dart';
+export 'labs_tab_content.dart';
+export 'assignment_card.dart';
+export 'assignments_tab_content.dart';
+export 'statistics_tab_content.dart';
+export 'discussion_card.dart';
+export 'discussion_tab_content.dart';

@@ -69,7 +69,9 @@ class StudentQuickAccessGrid extends StatelessWidget {
                   colors: [Color(0xFFC17AFF), Color(0xFF980FFA)],
                 ),
                 icon: Icons.quiz_outlined,
-                onTap: () {},
+                onTap: () {
+                  context.push('/ai-quiz-generator');
+                },
               ),
               _buildQuickAccessItem(
                 context,
@@ -80,7 +82,9 @@ class StudentQuickAccessGrid extends StatelessWidget {
                   colors: [Color(0xFF00D2F2), Color(0xFF0092B8)],
                 ),
                 icon: Icons.layers_outlined,
-                onTap: () {},
+                onTap: () {
+                  context.push('/flashcards');
+                },
               ),
               _buildQuickAccessItem(
                 context,

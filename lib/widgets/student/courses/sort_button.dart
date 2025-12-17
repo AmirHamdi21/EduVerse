@@ -8,11 +8,7 @@ class SortButton extends StatelessWidget {
   final String? selectedSort;
   final ValueChanged<String> onSortChanged;
 
-  const SortButton({
-    required this.onSortChanged,
-    this.selectedSort,
-    super.key,
-  });
+  const SortButton({required this.onSortChanged, this.selectedSort, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -36,21 +32,17 @@ class SortButton extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 6),
                   Icon(
                     Icons.swap_vert,
-                    color: isDark
-                        ? Colors.white54
-                        : const Color(0xFF495565),
+                    color: isDark ? Colors.white54 : const Color(0xFF495565),
                     size: 20,
                   ),
                   const SizedBox(width: 8),
                   Text(
                     l10n.sort,
                     style: TextStyle(
-                      color: isDark
-                          ? Colors.white70
-                          : const Color(0xFF364153),
+                      color: isDark ? Colors.white70 : const Color(0xFF364153),
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -117,24 +109,9 @@ class SortButton extends StatelessWidget {
               'Lowest Progress',
               isDark,
             ),
-            _buildSortOption(
-              context,
-              'title_asc',
-              'Title (A-Z)',
-              isDark,
-            ),
-            _buildSortOption(
-              context,
-              'title_desc',
-              'Title (Z-A)',
-              isDark,
-            ),
-            _buildSortOption(
-              context,
-              'event_date',
-              'Next Event',
-              isDark,
-            ),
+            _buildSortOption(context, 'title_asc', 'Title (A-Z)', isDark),
+            _buildSortOption(context, 'title_desc', 'Title (Z-A)', isDark),
+            _buildSortOption(context, 'event_date', 'Next Event', isDark),
           ],
         ),
       ),
@@ -156,10 +133,7 @@ class SortButton extends StatelessWidget {
         ),
       ),
       trailing: selectedSort == value
-          ? Icon(
-              Icons.check,
-              color: const Color(0xFF155DFC),
-            )
+          ? Icon(Icons.check, color: const Color(0xFF155DFC))
           : null,
       onTap: () {
         onSortChanged(value);

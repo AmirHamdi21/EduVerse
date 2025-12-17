@@ -1393,6 +1393,180 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Web Development'**
   String get webDevelopmentTitle;
+
+  /// No description provided for @aiQuizGenerator.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Quiz Generator'**
+  String get aiQuizGenerator;
+
+  /// No description provided for @createPersonalizedQuizzes.
+  ///
+  /// In en, this message translates to:
+  /// **'Create personalized quizzes from your study materials.'**
+  String get createPersonalizedQuizzes;
+
+  /// No description provided for @selectCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Course'**
+  String get selectCourse;
+
+  /// No description provided for @quizType.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Type'**
+  String get quizType;
+
+  /// No description provided for @mcq.
+  ///
+  /// In en, this message translates to:
+  /// **'MCQ'**
+  String get mcq;
+
+  /// No description provided for @trueFalse.
+  ///
+  /// In en, this message translates to:
+  /// **'True/False'**
+  String get trueFalse;
+
+  /// No description provided for @shortAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Short Answer'**
+  String get shortAnswer;
+
+  /// No description provided for @difficultyLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty Level'**
+  String get difficultyLevel;
+
+  /// No description provided for @easy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get easy;
+
+  /// No description provided for @medium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get medium;
+
+  /// No description provided for @hard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get hard;
+
+  /// No description provided for @numberOfQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Questions:'**
+  String get numberOfQuestions;
+
+  /// No description provided for @includeWeakTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Include weak topics (recommended by AI)'**
+  String get includeWeakTopics;
+
+  /// No description provided for @generateQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Quiz'**
+  String get generateQuiz;
+
+  /// No description provided for @quiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz'**
+  String get quiz;
+
+  /// No description provided for @question.
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get question;
+
+  /// No description provided for @selectAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an answer'**
+  String get selectAnswer;
+
+  /// No description provided for @selectAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Select answers'**
+  String get selectAnswers;
+
+  /// No description provided for @submitQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Quiz'**
+  String get submitQuiz;
+
+  /// No description provided for @submit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// No description provided for @correct.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct!'**
+  String get correct;
+
+  /// No description provided for @incorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect!'**
+  String get incorrect;
+
+  /// No description provided for @score.
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get score;
+
+  /// No description provided for @quizCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Completed'**
+  String get quizCompleted;
+
+  /// No description provided for @yourScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Score'**
+  String get yourScore;
+
+  /// No description provided for @youAnswered.
+  ///
+  /// In en, this message translates to:
+  /// **'You answered'**
+  String get youAnswered;
+
+  /// No description provided for @correctAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'correct answers'**
+  String get correctAnswers;
+
+  /// No description provided for @retakeQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Retake Quiz'**
+  String get retakeQuiz;
+
+  /// No description provided for @backToQuizScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Quiz Screen'**
+  String get backToQuizScreen;
 }
 
 class _AppLocalizationsDelegate

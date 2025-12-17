@@ -29,11 +29,14 @@ class ResponsiveUtil {
   /// Responsive padding/margin (base 4dp unit system)
   double get p4 => 4;
   double get p8 => 8;
+  double get p10 => 10;
   double get p12 => 12;
+  double get p14 => 14;
   double get p16 => 16 * scaleFactor;
   double get p20 => 20 * scaleFactor;
   double get p24 => 24 * scaleFactor;
   double get p32 => 32 * scaleFactor;
+  double get p36 => 36 * scaleFactor;
   double get p40 => 40 * scaleFactor;
   double get p48 => 48 * scaleFactor;
   double get p56 => 56 * scaleFactor;
@@ -109,11 +112,15 @@ class ResponsiveUtil {
   double get fontSize24 => 24 * fontScaleFactor;
   double get fontSize28 => 28 * fontScaleFactor;
   double get fontSize32 => 32 * fontScaleFactor;
+  double get fontSize40 => 40 * fontScaleFactor;
+  double get fontSize48 => 48 * fontScaleFactor;
+  double get fontSize56 => 56 * fontScaleFactor;
 
   /// Responsive border radius
   double get radius4 => 4;
   double get radius8 => 8;
   double get radius12 => 12 * radiusScaleFactor;
+  double get radius14 => 14 * radiusScaleFactor;
   double get radius16 => 16 * radiusScaleFactor;
   double get radius20 => 20 * radiusScaleFactor;
   double get radius24 => 24 * radiusScaleFactor;

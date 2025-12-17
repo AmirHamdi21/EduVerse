@@ -2,6 +2,7 @@ import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/widgets/common/animated_circular_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../widgets/common/animated_progress_bar.dart';
@@ -276,7 +277,11 @@ class _CourseCardState extends State<CourseCard>
               ],
             ),
             child: ElevatedButton(
-              onPressed: widget.course.onPrimaryButtonPressed ?? () {},
+              onPressed: () {
+                widget.course.onPrimaryButtonPressed?.call();
+                // Navigate to course details
+                context.push('/course-details', extra: widget.course);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 foregroundColor: Colors.white,
@@ -306,18 +311,20 @@ class _CourseCardState extends State<CourseCard>
               elevation: 0,
               padding: const EdgeInsets.symmetric(vertical: 12),
               side: BorderSide(
-                color: isDark
-                    ? Colors.white.withOpacity(0.3)
-                    : const Color(0xFF155DFC),
+                color: isDark ? Color(0xff8EC5FF) : const Color(0xFF155DFC),
                 width: 1.5,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            child: const Text(
+            child: Text(
               'Materials',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Color(0xff8EC5FF) : Color(0xFF155DFC),
+              ),
             ),
           ),
         ),

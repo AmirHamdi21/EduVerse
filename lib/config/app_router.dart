@@ -1,4 +1,10 @@
+import 'package:edu_verse/models/quiz_models.dart';
+import 'package:edu_verse/screens/student/ai_quiz_generator_screen.dart';
+import 'package:edu_verse/screens/student/flashcards_screen.dart';
+import 'package:edu_verse/screens/student/quiz_questions_screen.dart';
 import 'package:edu_verse/screens/student/student_dashboard_screen.dart';
+import 'package:edu_verse/screens/student/course_details_screen.dart';
+import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +16,7 @@ import '../screens/splash/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
-import '../screens/dashboard_screen.dart';
+import '../widgets/student/courses/course_model.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -45,10 +51,6 @@ class AppRouter {
         path: '/forgot-password',
         builder: (context, state) => const ForgotPasswordScreen(),
       ),
-      // GoRoute(
-      //   path: '/dashboard',
-      //   builder: (context, state) => const DashboardScreen(),
-      // ),
       GoRoute(
         path: '/dashboard',
         builder: (context, state) => const StudentDashboardScreen(),
@@ -56,6 +58,50 @@ class AppRouter {
       GoRoute(
         path: '/courses',
         builder: (context, state) => const CoursesScreen(),
+      ),
+      GoRoute(
+        path: '/flashcards',
+        builder: (context, state) => const FlashcardsScreen(),
+      ),
+      GoRoute(
+        path: '/ai-quiz-generator',
+        builder: (context, state) => const AiQuizGeneratorScreen(),
+      ),
+      GoRoute(
+        path: '/quiz-questions',
+        builder: (context, state) {
+          final quizSession = state.extra as QuizSession?;
+          if (quizSession == null) {
+            return const Scaffold(
+              body: Center(child: Text('Course not found')),
+            );
+          }
+          return QuizQuestionsScreen(quizSession: quizSession);
+        }, // Placeholder
+      ),
+      GoRoute(
+        path: '/quiz-result',
+        builder: (context, state) {
+          final quizSession = state.extra as QuizSession?;
+          if (quizSession == null) {
+            return const Scaffold(
+              body: Center(child: Text('Course not found')),
+            );
+          }
+          return QuizResultScreen(quizSession: quizSession);
+        }, // Placeholder
+      ),
+      GoRoute(
+        path: '/course-details',
+        builder: (context, state) {
+          final course = state.extra as CourseModel?;
+          if (course == null) {
+            return const Scaffold(
+              body: Center(child: Text('Course not found')),
+            );
+          }
+          return CourseDetailsScreen(course: course);
+        },
       ),
     ],
     errorBuilder: (context, state) =>

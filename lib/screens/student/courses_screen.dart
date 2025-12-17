@@ -176,6 +176,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                       ),
                       const SizedBox(height: 16),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           FilterButton(
                             selectedFilter: _selectedFilter,

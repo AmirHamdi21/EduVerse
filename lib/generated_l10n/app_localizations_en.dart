@@ -674,4 +674,92 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get webDevelopmentTitle => 'Web Development';
+
+  @override
+  String get aiQuizGenerator => 'AI Quiz Generator';
+
+  @override
+  String get createPersonalizedQuizzes =>
+      'Create personalized quizzes from your study materials.';
+
+  @override
+  String get selectCourse => 'Select Course';
+
+  @override
+  String get quizType => 'Quiz Type';
+
+  @override
+  String get mcq => 'MCQ';
+
+  @override
+  String get trueFalse => 'True/False';
+
+  @override
+  String get shortAnswer => 'Short Answer';
+
+  @override
+  String get difficultyLevel => 'Difficulty Level';
+
+  @override
+  String get easy => 'Easy';
+
+  @override
+  String get medium => 'Medium';
+
+  @override
+  String get hard => 'Hard';
+
+  @override
+  String get numberOfQuestions => 'Number of Questions:';
+
+  @override
+  String get includeWeakTopics => 'Include weak topics (recommended by AI)';
+
+  @override
+  String get generateQuiz => 'Generate Quiz';
+
+  @override
+  String get quiz => 'Quiz';
+
+  @override
+  String get question => 'Question';
+
+  @override
+  String get selectAnswer => 'Select an answer';
+
+  @override
+  String get selectAnswers => 'Select answers';
+
+  @override
+  String get submitQuiz => 'Submit Quiz';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get correct => 'Correct!';
+
+  @override
+  String get incorrect => 'Incorrect!';
+
+  @override
+  String get score => 'Score';
+
+  @override
+  String get quizCompleted => 'Quiz Completed';
+
+  @override
+  String get yourScore => 'Your Score';
+
+  @override
+  String get youAnswered => 'You answered';
+
+  @override
+  String get correctAnswers => 'correct answers';
+
+  @override
+  String get retakeQuiz => 'Retake Quiz';
+
+  @override
+  String get backToQuizScreen => 'Back to Quiz Screen';
 }

@@ -671,4 +671,93 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get webDevelopmentTitle => 'تطوير الويب';
+
+  @override
+  String get aiQuizGenerator => 'مولد الاختبارات بالذكاء الاصطناعي';
+
+  @override
+  String get createPersonalizedQuizzes =>
+      'إنشاء اختبارات مخصصة من مواد دراستك.';
+
+  @override
+  String get selectCourse => 'اختر الدورة';
+
+  @override
+  String get quizType => 'نوع الاختبار';
+
+  @override
+  String get mcq => 'اختيار متعدد';
+
+  @override
+  String get trueFalse => 'صحيح/خطأ';
+
+  @override
+  String get shortAnswer => 'إجابة قصيرة';
+
+  @override
+  String get difficultyLevel => 'مستوى الصعوبة';
+
+  @override
+  String get easy => 'سهل';
+
+  @override
+  String get medium => 'متوسط';
+
+  @override
+  String get hard => 'صعب';
+
+  @override
+  String get numberOfQuestions => 'عدد الأسئلة:';
+
+  @override
+  String get includeWeakTopics =>
+      'تضمين المواضيع الضعيفة (موصى به من قبل الذكاء الاصطناعي)';
+
+  @override
+  String get generateQuiz => 'إنشاء اختبار';
+
+  @override
+  String get quiz => 'اختبار';
+
+  @override
+  String get question => 'سؤال';
+
+  @override
+  String get selectAnswer => 'اختر إجابة';
+
+  @override
+  String get selectAnswers => 'اختر إجابات';
+
+  @override
+  String get submitQuiz => 'إرسال الاختبار';
+
+  @override
+  String get submit => 'إرسال';
+
+  @override
+  String get correct => 'صحيح!';
+
+  @override
+  String get incorrect => 'غير صحيح!';
+
+  @override
+  String get score => 'النتيجة';
+
+  @override
+  String get quizCompleted => 'تم إكمال الاختبار';
+
+  @override
+  String get yourScore => 'درجتك';
+
+  @override
+  String get youAnswered => 'لقد أجبت على';
+
+  @override
+  String get correctAnswers => 'إجابات صحيحة';
+
+  @override
+  String get retakeQuiz => 'إعادة الاختبار';
+
+  @override
+  String get backToQuizScreen => 'العودة إلى شاشة الاختبار';
 }

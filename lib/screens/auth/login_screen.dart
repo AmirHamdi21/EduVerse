@@ -22,7 +22,8 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -57,153 +58,173 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   @override
   void initState() {
     super.initState();
-    
+
     // Logo animation
     _logoController = AnimationController(
       duration: const Duration(milliseconds: 700),
       vsync: this,
     );
-    
-    _logoFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeOut),
-    );
-    
+
+    _logoFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _logoController, curve: Curves.easeOut));
+
     _logoScaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
       CurvedAnimation(parent: _logoController, curve: Curves.easeOutBack),
     );
-    
+
     // Title animation
     _titleController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
-    _titleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _titleController, curve: Curves.easeOut),
-    );
-    
-    _titleSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _titleController, curve: Curves.easeOutCubic));
-    
+
+    _titleFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _titleController, curve: Curves.easeOut));
+
+    _titleSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _titleController, curve: Curves.easeOutCubic),
+        );
+
     // Subtitle animation
     _subtitleController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _subtitleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _subtitleController, curve: Curves.easeOut),
     );
-    
-    _subtitleSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _subtitleController, curve: Curves.easeOutCubic));
-    
+
+    _subtitleSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _subtitleController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     // Email field animation
     _emailFieldController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _emailFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _emailFieldController, curve: Curves.easeOut),
     );
-    
-    _emailSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _emailFieldController, curve: Curves.easeOutCubic));
-    
+
+    _emailSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _emailFieldController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     // Password field animation
     _passwordFieldController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _passwordFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _passwordFieldController, curve: Curves.easeOut),
     );
-    
-    _passwordSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _passwordFieldController, curve: Curves.easeOutCubic));
-    
+
+    _passwordSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _passwordFieldController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     // Forgot password animation
     _forgotController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    
+
     _forgotFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _forgotController, curve: Curves.easeOut),
     );
-    
-    _forgotSlideAnimation = Tween<Offset>(
-      begin: const Offset(0.2, 0),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _forgotController, curve: Curves.easeOutCubic));
-    
+
+    _forgotSlideAnimation =
+        Tween<Offset>(begin: const Offset(0.2, 0), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _forgotController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     // Button animation
     _buttonController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _buttonFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _buttonController, curve: Curves.easeOut),
     );
-    
-    _buttonSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _buttonController, curve: Curves.easeOutCubic));
-    
+
+    _buttonSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _buttonController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     // Sign up animation
     _signupController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _signupFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _signupController, curve: Curves.easeOut),
     );
-    
-    _signupSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _signupController, curve: Curves.easeOutCubic));
-    
+
+    _signupSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _signupController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     // Start cascading animations
     _logoController.forward();
-    
+
     Future.delayed(const Duration(milliseconds: 150), () {
       if (mounted) _titleController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) _subtitleController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 450), () {
       if (mounted) _emailFieldController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 600), () {
       if (mounted) _passwordFieldController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 750), () {
       if (mounted) _forgotController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 900), () {
       if (mounted) _buttonController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 1050), () {
       if (mounted) _signupController.forward();
     });
@@ -242,7 +263,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       final apiService = ApiService();
       // This will throw if email is not verified or doesn't exist
       await apiService.isEmailVerifiedAndExists(email, password);
-      
+
       if (!mounted) return;
 
       // If we reach here, email is verified and credentials are correct
@@ -258,9 +279,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       final errorMsg = e.toString();
-      
+
       if (errorMsg.contains('Email not verified')) {
         // Email is not verified - show verification warning
         _showWarningDialog(
@@ -290,7 +311,11 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     ).show();
   }
 
-  void _showWarningDialog(String title, String message, {VoidCallback? onRetry}) {
+  void _showWarningDialog(
+    String title,
+    String message, {
+    VoidCallback? onRetry,
+  }) {
     AwesomeDialog(
       context: context,
       dialogType: DialogType.warning,
@@ -521,7 +546,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                       scale: _logoScaleAnimation,
                                       child: Container(
                                         width: responsive.aspectRatioWidth(100),
-                                        height: responsive.aspectRatioHeight(100),
+                                        height: responsive.aspectRatioHeight(
+                                          100,
+                                        ),
                                         clipBehavior: Clip.antiAlias,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(
@@ -529,7 +556,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withOpacity(0.1),
+                                              color: Colors.black.withOpacity(
+                                                0.1,
+                                              ),
                                               blurRadius: 15,
                                             ),
                                           ],
@@ -605,32 +634,33 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                     child: SlideTransition(
                                       position: _passwordSlideAnimation,
                                       child: _buildTextField(
-                                    context: context,
-                                    controller: _passwordController,
-                                    hint: l.password,
-                                    icon: Icons.lock_outline,
-                                    isDark: isDark,
-                                    obscureText: _obscurePassword,
-                                    suffixIcon: IconButton(
-                                      icon: Icon(
-                                        _obscurePassword
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
-                                        color: textSecondaryColor,
+                                        context: context,
+                                        controller: _passwordController,
+                                        hint: l.password,
+                                        icon: Icons.lock_outline,
+                                        isDark: isDark,
+                                        obscureText: _obscurePassword,
+                                        suffixIcon: IconButton(
+                                          icon: Icon(
+                                            _obscurePassword
+                                                ? Icons.visibility_outlined
+                                                : Icons.visibility_off_outlined,
+                                            color: textSecondaryColor,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              _obscurePassword =
+                                                  !_obscurePassword;
+                                            });
+                                          },
+                                        ),
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return l.fieldRequired;
+                                          }
+                                          return null;
+                                        },
                                       ),
-                                      onPressed: () {
-                                        setState(() {
-                                          _obscurePassword = !_obscurePassword;
-                                        });
-                                      },
-                                    ),
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return l.fieldRequired;
-                                      }
-                                      return null;
-                                    },
-                                  ),
                                     ),
                                   ),
                                   SizedBox(height: responsive.p8),
@@ -662,70 +692,73 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                     child: SlideTransition(
                                       position: _buttonSlideAnimation,
                                       child: BlocBuilder<AuthBloc, AuthState>(
-                                    builder: (context, state) {
-                                      final isLoading = state is AuthLoading;
-                                      return SizedBox(
-                                        width: double.infinity,
-                                        height: responsive.buttonHeight,
-                                        child: ElevatedButton(
-                                          onPressed: isLoading
-                                              ? null
-                                              : _handleLogin,
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.transparent,
-                                            shadowColor: Colors.transparent,
-                                            padding: EdgeInsets.zero,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    responsive.radius16,
-                                                  ),
-                                            ),
-                                          ),
-                                          child: Ink(
-                                            decoration: BoxDecoration(
-                                              gradient: const LinearGradient(
-                                                colors: [
-                                                  Color(0xFF00D2F2),
-                                                  Color(0xFF2B7FFF),
-                                                  Color(0xFF1347E5),
-                                                ],
+                                        builder: (context, state) {
+                                          final isLoading =
+                                              state is AuthLoading;
+                                          return SizedBox(
+                                            width: double.infinity,
+                                            height: responsive.buttonHeight,
+                                            child: ElevatedButton(
+                                              onPressed: isLoading
+                                                  ? null
+                                                  : _handleLogin,
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                shadowColor: Colors.transparent,
+                                                padding: EdgeInsets.zero,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        responsive.radius16,
+                                                      ),
+                                                ),
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    responsive.radius16,
-                                                  ),
-                                            ),
-                                            child: Center(
-                                              child: isLoading
-                                                  ? SizedBox(
-                                                      height:
-                                                          responsive.iconMedium,
-                                                      width:
-                                                          responsive.iconMedium,
-                                                      child: const CircularProgressIndicator(
-                                                        strokeWidth: 2,
-                                                        valueColor:
-                                                            AlwaysStoppedAnimation<
-                                                              Color
-                                                            >(Colors.white),
+                                              child: Ink(
+                                                decoration: BoxDecoration(
+                                                  gradient:
+                                                      const LinearGradient(
+                                                        colors: [
+                                                          Color(0xFF00D2F2),
+                                                          Color(0xFF2B7FFF),
+                                                          Color(0xFF1347E5),
+                                                        ],
                                                       ),
-                                                    )
-                                                  : Text(
-                                                      l.loginButton,
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: responsive
-                                                            .fontSize16,
-                                                        fontWeight:
-                                                            FontWeight.w600,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        responsive.radius16,
                                                       ),
-                                                    ),
+                                                ),
+                                                child: Center(
+                                                  child: isLoading
+                                                      ? SizedBox(
+                                                          height: responsive
+                                                              .iconMedium,
+                                                          width: responsive
+                                                              .iconMedium,
+                                                          child: const CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                            valueColor:
+                                                                AlwaysStoppedAnimation<
+                                                                  Color
+                                                                >(Colors.white),
+                                                          ),
+                                                        )
+                                                      : Text(
+                                                          l.loginButton,
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: responsive
+                                                                .fontSize16,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                          );
+                                        },
                                       ),
                                     ),
                                   ),
@@ -736,29 +769,30 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                                     child: SlideTransition(
                                       position: _signupSlideAnimation,
                                       child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "${l.dontHaveAccount} ",
-                                        style: TextStyle(
-                                          color: textSecondaryColor,
-                                          fontSize: responsive.fontSize14,
-                                        ),
-                                      ),
-                                      TextButton(
-                                        onPressed: () =>
-                                            context.push('/register'),
-                                        child: Text(
-                                          l.signUp,
-                                          style: TextStyle(
-                                            color: Color(0xFF2B7FFF),
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: responsive.fontSize14,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            "${l.dontHaveAccount} ",
+                                            style: TextStyle(
+                                              color: textSecondaryColor,
+                                              fontSize: responsive.fontSize14,
+                                            ),
                                           ),
-                                        ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                context.push('/register'),
+                                            child: Text(
+                                              l.signUp,
+                                              style: TextStyle(
+                                                color: Color(0xFF2B7FFF),
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: responsive.fontSize14,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
                                     ),
                                   ),
                                 ],
@@ -767,6 +801,17 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           ),
                         ),
                       ),
+                    ),
+                  ),
+                  // Top left icon
+                  Positioned(
+                    left: responsive.p16,
+                    top: responsive.safeAreaTop + responsive.p8,
+                    child: IconButton(
+                      onPressed: () {
+                        context.go('/dashboard');
+                      },
+                      icon: Icon(Icons.home),
                     ),
                   ),
                   // Top right icons
