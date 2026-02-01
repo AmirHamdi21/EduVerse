@@ -79,22 +79,25 @@ class _FlipCardState extends State<FlipCard>
             alignment: Alignment.center,
             transform: transform,
             child: Container(
-              height: 400,
+              height: 420,
               decoration: BoxDecoration(
                 gradient: !isFront
                     ? const LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
-                        colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
+                        colors: [Color(0xFF2B7FFF), Color(0xFF1E5FCC)],
                       )
                     : null,
                 color: !isFront ? null : surfaceColor,
                 borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
+                    color: isFront
+                        ? Colors.black.withOpacity(widget.isDark ? 0.3 : 0.08)
+                        : const Color(0xFF2B7FFF).withOpacity(0.3),
+                    blurRadius: 24,
+                    spreadRadius: 0,
+                    offset: const Offset(0, 12),
                   ),
                 ],
               ),
@@ -113,28 +116,73 @@ class _FlipCardState extends State<FlipCard>
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // Question badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF2B7FFF), Color(0xFF1E5FCC)],
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.help_outline, color: Colors.white, size: 16),
+                const SizedBox(width: 8),
+                Text(
+                  'Question',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Arimo',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Spacer(),
+          // Question text
           Text(
             widget.card.question,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: textColor,
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
               fontFamily: 'Arimo',
               height: 1.5,
             ),
           ),
-          const SizedBox(height: 24),
-          Text(
-            'Click to reveal answer',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: secondaryTextColor,
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Arimo',
+          const Spacer(),
+          // Hint with icon
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              color: const Color(0xFF2B7FFF).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.touch_app,
+                  color: const Color(0xFF2B7FFF),
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Tap to reveal answer',
+                  style: TextStyle(
+                    color: const Color(0xFF2B7FFF),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Arimo',
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -146,36 +194,77 @@ class _FlipCardState extends State<FlipCard>
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  Text(
-                    widget.card.answer,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'Arimo',
-                      height: 1.6,
-                    ),
+          // Answer badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.lightbulb_outline, color: Colors.white, size: 16),
+                const SizedBox(width: 8),
+                Text(
+                  'Answer',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Arimo',
                   ),
-                ],
+                ),
+              ],
+            ),
+          ),
+          const Spacer(),
+          // Answer text with scrollable area
+          Expanded(
+            child: Center(
+              child: SingleChildScrollView(
+                child: Text(
+                  widget.card.answer,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: 'Arimo',
+                    height: 1.6,
+                  ),
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 24),
-          Text(
-            'Click to flip back',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
-              fontSize: 14,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Arimo',
+          const Spacer(),
+          // Hint to flip back
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.touch_app,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Tap to flip back',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Arimo',
+                  ),
+                ),
+              ],
             ),
           ),
         ],

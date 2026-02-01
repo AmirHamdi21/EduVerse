@@ -22,95 +22,185 @@ class CardProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Card counter
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Text(
-            'Card ${currentIndex + 1} of $totalCards',
-            style: TextStyle(
-              color: isDark ? const Color(0xFFB0B0B0) : const Color(0xFF4A5565),
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              fontFamily: 'Arimo',
-            ),
+    final progress = (currentIndex + 1) / totalCards;
+    
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2D2D44) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        ),
-        // Navigation buttons and progress dots
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+        ],
+      ),
+      child: Column(
+        children: [
+          // Progress bar with percentage
+          Row(
             children: [
-              // Previous button
-              GestureDetector(
-                onTap: canGoPrevious ? onPrevious : null,
-                child: Container(
-                  height: 48,
-                  width: 48,
-                  decoration: BoxDecoration(
-                    color: const Color(
-                      0xFF2B7FFF,
-                    ).withValues(alpha: canGoPrevious ? 0.2 : 0.1),
-                    borderRadius: BorderRadius.circular(50),
+              // Circular progress indicator
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  SizedBox(
+                    width: 48,
+                    height: 48,
+                    child: CircularProgressIndicator(
+                      value: progress,
+                      strokeWidth: 4,
+                      backgroundColor: const Color(0xFF2B7FFF).withOpacity(0.2),
+                      valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF2B7FFF)),
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Color(0xFF2B7FFF),
-                    size: 18,
+                  Text(
+                    '${(progress * 100).toInt()}%',
+                    style: TextStyle(
+                      color: isDark ? Colors.white : const Color(0xFF101828),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Arimo',
+                    ),
                   ),
-                ),
+                ],
               ),
               const SizedBox(width: 16),
-              // Progress dots
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    totalCards,
-                    (index) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: Container(
-                        height: 8,
-                        width: index == currentIndex ? 32 : 8,
-                        decoration: BoxDecoration(
-                          color: index == currentIndex
-                              ? const Color(0xFF2B7FFF)
-                              : const Color(0xFF2B7FFF).withValues(alpha: 0.4),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
+              // Progress text
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Progress',
+                      style: TextStyle(
+                        color: isDark ? const Color(0xFFB0B0B0) : const Color(0xFF6B7280),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Arimo',
                       ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Card ${currentIndex + 1} of $totalCards',
+                      style: TextStyle(
+                        color: isDark ? Colors.white : const Color(0xFF101828),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Arimo',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // Navigation buttons
+          Row(
+            children: [
+              // Previous button
+              Expanded(
+                child: GestureDetector(
+                  onTap: canGoPrevious ? onPrevious : null,
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: canGoPrevious
+                          ? const Color(0xFF2B7FFF).withOpacity(0.1)
+                          : (isDark ? const Color(0xFF1A1A2E) : const Color(0xFFF3F4F6)),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: canGoPrevious
+                            ? const Color(0xFF2B7FFF).withOpacity(0.3)
+                            : Colors.transparent,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.arrow_back_ios_new,
+                          color: canGoPrevious
+                              ? const Color(0xFF2B7FFF)
+                              : (isDark ? const Color(0xFF4D4D64) : const Color(0xFFD1D5DB)),
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Previous',
+                          style: TextStyle(
+                            color: canGoPrevious
+                                ? const Color(0xFF2B7FFF)
+                                : (isDark ? const Color(0xFF4D4D64) : const Color(0xFFD1D5DB)),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Arimo',
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               // Next button
-              GestureDetector(
-                onTap: canGoNext ? onNext : null,
-                child: Container(
-                  height: 48,
-                  width: 48,
-                  decoration: BoxDecoration(
-                    color: const Color(
-                      0xFF2B7FFF,
-                    ).withValues(alpha: canGoNext ? 0.2 : 0.1),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Color(0xFF2B7FFF),
-                    size: 18,
+              Expanded(
+                child: GestureDetector(
+                  onTap: canGoNext ? onNext : null,
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: canGoNext
+                          ? const LinearGradient(
+                              colors: [Color(0xFF2B7FFF), Color(0xFF1E5FCC)],
+                            )
+                          : null,
+                      color: canGoNext ? null : (isDark ? const Color(0xFF1A1A2E) : const Color(0xFFF3F4F6)),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: canGoNext
+                          ? [
+                              BoxShadow(
+                                color: const Color(0xFF2B7FFF).withOpacity(0.3),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                          : [],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Next',
+                          style: TextStyle(
+                            color: canGoNext
+                                ? Colors.white
+                                : (isDark ? const Color(0xFF4D4D64) : const Color(0xFFD1D5DB)),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Arimo',
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: canGoNext
+                              ? Colors.white
+                              : (isDark ? const Color(0xFF4D4D64) : const Color(0xFFD1D5DB)),
+                          size: 18,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

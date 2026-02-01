@@ -34,9 +34,10 @@ class _FlashcardsScreenState extends State<FlashcardsScreen>
       vsync: this,
     );
 
-    _pageAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _pageController, curve: Curves.easeOut),
-    );
+    _pageAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _pageController, curve: Curves.easeOut));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _pageController.forward();
@@ -176,104 +177,579 @@ class _FlashcardsScreenState extends State<FlashcardsScreen>
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
-        final bgColor = isDark ? const Color(0xFF1A1A2E) : const Color(0xFFFAFAFA);
+        final bgColor = isDark
+            ? const Color(0xFF1A1A2E)
+            : const Color(0xFFF8F9FA);
 
         return Scaffold(
           backgroundColor: bgColor,
           body: SafeArea(
-            child: CustomScrollView(
-              slivers: [
-                // Header
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: FlashcardsHeader(
-                      isDark: isDark,
-                      onBackPressed: () => Navigator.pop(context),
-                      onRegeneratePressed: _generateNewSet,
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(child: const SizedBox(height: 24)),
-                // Course selector
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: CourseSelector(
-                      courses: courses,
-                      selectedCourse: selectedCourse,
-                      onCourseChanged: _changeCourse,
-                      isDark: isDark,
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(child: const SizedBox(height: 32)),
-                // Flashcard
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: FadeTransition(
-                      opacity: _pageAnimation,
-                      child: FlipCard(
-                        card: cards[_currentCardIndex],
-                        isDark: isDark,
-                        onFlip: () {},
+            child: Stack(
+              children: [
+                // Main scrollable content
+                CustomScrollView(
+                  slivers: [
+                    // Hero Header with gradient
+                    SliverToBoxAdapter(child: _buildHeroHeader(isDark)),
+                    const SliverToBoxAdapter(child: SizedBox(height: 46)),
+                    // Main content card with overlap
+                    SliverToBoxAdapter(
+                      child: Transform.translate(
+                        offset: const Offset(0, -30),
+                        child: Column(
+                          children: [
+                            // Stats cards row
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: _buildStatsRow(isDark),
+                            ),
+                            const SizedBox(height: 24),
+
+                            // Course selector
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: _buildModernCourseSelector(isDark),
+                            ),
+                            const SizedBox(height: 24),
+
+                            // Flashcard
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: FadeTransition(
+                                opacity: _pageAnimation,
+                                child: FlipCard(
+                                  card: cards[_currentCardIndex],
+                                  isDark: isDark,
+                                  onFlip: () {},
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            // Progress indicator
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: CardProgressIndicator(
+                                currentIndex: _currentCardIndex,
+                                totalCards: cards.length,
+                                isDark: isDark,
+                                onPrevious: _previousCard,
+                                onNext: _nextCard,
+                                canGoPrevious: _currentCardIndex > 0,
+                                canGoNext: _currentCardIndex < cards.length - 1,
+                              ),
+                            ),
+                            const SizedBox(height: 24),
+
+                            // Action buttons
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: _buildModernActionButtons(isDark),
+                            ),
+                            const SizedBox(height: 24),
+
+                            // Generate new set panel
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child: GenerateNewSetPanel(
+                                isDark: isDark,
+                                includeWeakTopics: _includeWeakTopics,
+                                onIncludeWeakTopicsChanged: (value) {
+                                  setState(() {
+                                    _includeWeakTopics = value;
+                                  });
+                                },
+                                onGeneratePressed: _generateNewSet,
+                              ),
+                            ),
+                            const SizedBox(height: 32),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-                SliverToBoxAdapter(child: const SizedBox(height: 20)),
-                // Progress indicator
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: CardProgressIndicator(
-                      currentIndex: _currentCardIndex,
-                      totalCards: cards.length,
-                      isDark: isDark,
-                      onPrevious: _previousCard,
-                      onNext: _nextCard,
-                      canGoPrevious: _currentCardIndex > 0,
-                      canGoNext: _currentCardIndex < cards.length - 1,
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(child: const SizedBox(height: 24)),
-                // Action buttons
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: CardActionButtons(
-                      isDark: isDark,
-                      onMarkAsKnown: _markAsKnown,
-                      onReviewLater: _reviewLater,
-                      onShuffleDeck: _shuffleDeck,
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(child: const SizedBox(height: 32)),
-                // Generate new set panel
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: GenerateNewSetPanel(
-                      isDark: isDark,
-                      includeWeakTopics: _includeWeakTopics,
-                      onIncludeWeakTopicsChanged: (value) {
-                        setState(() {
-                          _includeWeakTopics = value;
-                        });
-                      },
-                      onGeneratePressed: _generateNewSet,
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(child: const SizedBox(height: 32)),
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildHeroHeader(bool isDark) {
+    return Container(
+      height: 200,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+              : [const Color(0xFF2B7FFF), const Color(0xFF1E5FCC)],
+        ),
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(24),
+          bottomRight: Radius.circular(24),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Back button and regenerate button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: _shuffleDeck,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.shuffle,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Shuffle',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Arimo',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            // Title and icon
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.style_outlined,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'AI Flashcards',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Arimo',
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Review key concepts smartly',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Arimo',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatsRow(bool isDark) {
+    final knownCount = cards.where((c) => c.isMarkedAsKnown).length;
+    final reviewCount = cards.where((c) => c.isMarkedForReview).length;
+    final progress = cards.isNotEmpty ? (knownCount / cards.length) : 0.0;
+
+    return Row(
+      children: [
+        Expanded(
+          child: _buildStatCard(
+            isDark,
+            'Progress',
+            '${(progress * 100).toInt()}%',
+            Icons.trending_up,
+            const Color(0xFF10B981),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildStatCard(
+            isDark,
+            'Known',
+            '$knownCount',
+            Icons.check_circle_outline,
+            const Color(0xFF3B82F6),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildStatCard(
+            isDark,
+            'Review',
+            '$reviewCount',
+            Icons.refresh,
+            const Color(0xFFF59E0B),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatCard(
+    bool isDark,
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2D2D44) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              color: isDark ? Colors.white : const Color(0xFF101828),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Arimo',
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: TextStyle(
+              color: isDark ? const Color(0xFFB0B0B0) : const Color(0xFF6B7280),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              fontFamily: 'Arimo',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildModernCourseSelector(bool isDark) {
+    return GestureDetector(
+      onTap: () => _showCourseBottomSheet(isDark),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF2D2D44) : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFF2B7FFF), Color(0xFF1E5FCC)],
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.school, color: Colors.white, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Current Course',
+                    style: TextStyle(
+                      color: isDark
+                          ? const Color(0xFFB0B0B0)
+                          : const Color(0xFF6B7280),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Arimo',
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    selectedCourse.name,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : const Color(0xFF101828),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Arimo',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: isDark ? const Color(0xFFB0B0B0) : const Color(0xFF6B7280),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCourseBottomSheet(bool isDark) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF2D2D44) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF4D4D64)
+                      : const Color(0xFFE5E7EB),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Select Course',
+              style: TextStyle(
+                color: isDark ? Colors.white : const Color(0xFF101828),
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Arimo',
+              ),
+            ),
+            const SizedBox(height: 20),
+            ...courses.map(
+              (course) => GestureDetector(
+                onTap: () {
+                  _changeCourse(course);
+                  Navigator.pop(context);
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: selectedCourse.id == course.id
+                        ? const Color(0xFF2B7FFF).withOpacity(0.1)
+                        : (isDark
+                              ? const Color(0xFF1A1A2E)
+                              : const Color(0xFFF8F9FA)),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: selectedCourse.id == course.id
+                          ? const Color(0xFF2B7FFF)
+                          : Colors.transparent,
+                      width: 2,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: selectedCourse.id == course.id
+                              ? const Color(0xFF2B7FFF)
+                              : (isDark
+                                    ? const Color(0xFF2D2D44)
+                                    : Colors.white),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(
+                          Icons.book,
+                          color: selectedCourse.id == course.id
+                              ? Colors.white
+                              : const Color(0xFF6B7280),
+                          size: 20,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          course.name,
+                          style: TextStyle(
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF101828),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: 'Arimo',
+                          ),
+                        ),
+                      ),
+                      if (selectedCourse.id == course.id)
+                        const Icon(
+                          Icons.check_circle,
+                          color: Color(0xFF2B7FFF),
+                          size: 24,
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernActionButtons(bool isDark) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildActionButton(
+            isDark: isDark,
+            label: 'Known',
+            icon: Icons.check_circle,
+            color: const Color(0xFF10B981),
+            onTap: _markAsKnown,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: _buildActionButton(
+            isDark: isDark,
+            label: 'Review',
+            icon: Icons.refresh,
+            color: const Color(0xFFF59E0B),
+            onTap: _reviewLater,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButton({
+    required bool isDark,
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(colors: [color, color.withOpacity(0.8)]),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Arimo',
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
