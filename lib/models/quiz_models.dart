@@ -22,6 +22,7 @@ class QuizQuestion {
   final String? correctAnswer;
   String? userAnswer;
   List<String>? userAnswers;
+  bool isSkipped;
 
   QuizQuestion({
     required this.id,
@@ -31,16 +32,28 @@ class QuizQuestion {
     this.correctAnswer,
     this.userAnswer,
     this.userAnswers,
+    this.isSkipped = false,
   });
 
-  bool get isAnswered =>
-      userAnswer != null || (userAnswers != null && userAnswers!.isNotEmpty);
+  bool get isAnswered {
+    if (isSkipped) return false;
+    if (type == QuizType.shortAnswer) {
+      return userAnswer != null && userAnswer!.trim().isNotEmpty;
+    }
+    return userAnswer != null || (userAnswers != null && userAnswers!.isNotEmpty);
+  }
 
   bool get isCorrect {
     if (type == QuizType.trueFalse || type == QuizType.mcq) {
       return userAnswer == correctAnswer;
     }
     return false;
+  }
+
+  void clearAnswer() {
+    userAnswer = null;
+    userAnswers = null;
+    isSkipped = false;
   }
 }
 
@@ -77,9 +90,13 @@ class QuizSession {
 
   int get answeredCount => questions.where((q) => q.isAnswered).length;
 
+  int get skippedCount => questions.where((q) => q.isSkipped).length;
+
+  int get unansweredCount => questions.length - answeredCount - skippedCount;
+
   int get correctCount => questions.where((q) => q.isCorrect).length;
 
-  double get score => (correctCount / questions.length) * 100;
+  double get score => questions.isEmpty ? 0 : (correctCount / questions.length) * 100;
 
   void nextQuestion() {
     if (canGoNext) {
@@ -95,15 +112,25 @@ class QuizSession {
 
   void submitAnswer(String answer) {
     currentQuestion.userAnswer = answer;
+    currentQuestion.isSkipped = false;
   }
 
   void submitMultipleAnswers(List<String> answers) {
     currentQuestion.userAnswers = answers;
+    currentQuestion.isSkipped = false;
   }
 
   void skipQuestion() {
+    // Mark current question as skipped only if not already answered
+    if (!currentQuestion.isAnswered) {
+      currentQuestion.isSkipped = true;
+    }
     if (canGoNext) {
       nextQuestion();
     }
+  }
+
+  void clearCurrentAnswer() {
+    currentQuestion.clearAnswer();
   }
 }

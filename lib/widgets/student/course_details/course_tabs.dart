@@ -26,7 +26,13 @@ class CourseTabs extends StatefulWidget {
 
 class _CourseTabsState extends State<CourseTabs>
     with TickerProviderStateMixin {
-  final List<String> tabs = ['🧠', '🧪', '📝', '📈', '💬'];
+  final List<Map<String, dynamic>> tabs = [
+    {'icon': Icons.video_library_outlined, 'label': 'Lectures'},
+    {'icon': Icons.science_outlined, 'label': 'Labs'},
+    {'icon': Icons.assignment_outlined, 'label': 'Assignments'},
+    {'icon': Icons.analytics_outlined, 'label': 'Statistics'},
+    {'icon': Icons.forum_outlined, 'label': 'Discussion'},
+  ];
   late AnimationController _contentController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -35,7 +41,7 @@ class _CourseTabsState extends State<CourseTabs>
   void initState() {
     super.initState();
     _contentController = AnimationController(
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
 
@@ -44,7 +50,7 @@ class _CourseTabsState extends State<CourseTabs>
     );
 
     _slideAnimation =
-        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+        Tween<Offset>(begin: const Offset(0, 0.05), end: Offset.zero).animate(
       CurvedAnimation(parent: _contentController, curve: Curves.easeOut),
     );
 
@@ -68,12 +74,19 @@ class _CourseTabsState extends State<CourseTabs>
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = widget.isDark ? const Color(0xFF2D2D44) : Colors.white;
-    final textColor = widget.isDark ? Colors.white : const Color(0xFF364153);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Section title
+        Text(
+          'Course Content',
+          style: TextStyle(
+            color: widget.isDark ? Colors.white : const Color(0xFF101828),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
         // Tab buttons with horizontal scroll
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -81,18 +94,13 @@ class _CourseTabsState extends State<CourseTabs>
             children: List.generate(
               tabs.length,
               (index) => Padding(
-                padding: EdgeInsets.only(right: index == tabs.length - 1 ? 0 : 8),
-                child: _buildTabButton(
-                  index,
-                  tabs[index],
-                  bgColor,
-                  textColor,
-                ),
+                padding: EdgeInsets.only(right: index == tabs.length - 1 ? 0 : 10),
+                child: _buildTabButton(index),
               ),
             ),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 20),
         // Tab content with animation
         FadeTransition(
           opacity: _fadeAnimation,
@@ -148,33 +156,34 @@ class _CourseTabsState extends State<CourseTabs>
     }
   }
 
-  Widget _buildTabButton(
-    int index,
-    String emoji,
-    Color bgColor,
-    Color textColor,
-  ) {
+  Widget _buildTabButton(int index) {
     final isSelected = index == widget.selectedIndex;
+    final tabData = tabs[index];
+    final bgColor = widget.isDark ? const Color(0xFF2D2D44) : Colors.white;
 
     return AnimatedContainer(
-      height: 36,
-      width: 68,
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 250),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFF155DFC) : bgColor,
+        gradient: isSelected
+            ? const LinearGradient(
+                colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
+              )
+            : null,
+        color: isSelected ? null : bgColor,
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isSelected ? Colors.transparent : const Color(0xFFE5E7EB),
+          color: isSelected
+              ? Colors.transparent
+              : (widget.isDark ? Colors.white10 : const Color(0xFFE5E7EB)),
           width: 1,
         ),
-        borderRadius: BorderRadius.circular(14),
         boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: const Color(0xFF155DFC).withValues(alpha: 0.25),
-                  blurRadius: 12,
+                  color: const Color(0xFF155DFC).withOpacity(0.3),
+                  blurRadius: 10,
                   offset: const Offset(0, 4),
-                  spreadRadius: 0,
                 ),
               ]
             : [],
@@ -183,18 +192,31 @@ class _CourseTabsState extends State<CourseTabs>
         color: Colors.transparent,
         child: InkWell(
           onTap: () => widget.onTabChanged(index),
-          borderRadius: BorderRadius.circular(14),
-          splashColor: isSelected
-              ? Colors.white.withValues(alpha: 0.2)
-              : const Color(0xFF155DFC).withValues(alpha: 0.1),
-          child: Center(
-            child: AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 300),
-              style: TextStyle(
-                fontSize: 18,
-                color: isSelected ? Colors.white : textColor,
-              ),
-              child: Text(emoji),
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  tabData['icon'],
+                  color: isSelected
+                      ? Colors.white
+                      : (widget.isDark ? Colors.white54 : const Color(0xFF667085)),
+                  size: 20,
+                ),
+                if (isSelected) ...[
+                  const SizedBox(width: 8),
+                  Text(
+                    tabData['label'],
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ),

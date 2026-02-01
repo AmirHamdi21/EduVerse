@@ -24,16 +24,23 @@ class QuizQuestionCard extends StatefulWidget {
 class _QuizQuestionCardState extends State<QuizQuestionCard> {
   late List<bool> selectedAnswers;
   String? singleSelectedAnswer;
+  late TextEditingController _shortAnswerController;
 
   @override
   void initState() {
     super.initState();
+    _shortAnswerController = TextEditingController();
     _initializeAnswers();
   }
 
   void _initializeAnswers() {
     selectedAnswers = List.filled(widget.question.options.length, false);
     singleSelectedAnswer = widget.question.userAnswer;
+    
+    // Initialize short answer controller with saved answer
+    if (widget.question.type == QuizType.shortAnswer) {
+      _shortAnswerController.text = widget.question.userAnswer ?? '';
+    }
   }
 
   @override
@@ -42,6 +49,12 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
     if (oldWidget.question.id != widget.question.id) {
       _initializeAnswers();
     }
+  }
+
+  @override
+  void dispose() {
+    _shortAnswerController.dispose();
+    super.dispose();
   }
 
   @override
@@ -58,11 +71,55 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(responsive.radius24),
-        border: Border.all(color: borderColor, width: 1),
+        border: Border.all(
+          color: widget.question.isSkipped 
+              ? const Color(0xFFF59E0B) 
+              : (widget.question.isAnswered 
+                  ? const Color(0xFF10B981) 
+                  : borderColor),
+          width: widget.question.isSkipped || widget.question.isAnswered ? 2 : 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Status badge
+          if (widget.question.isSkipped || widget.question.isAnswered)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: widget.question.isSkipped
+                    ? const Color(0xFFF59E0B).withOpacity(0.1)
+                    : const Color(0xFF10B981).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    widget.question.isSkipped
+                        ? Icons.skip_next_rounded
+                        : Icons.check_circle_rounded,
+                    size: 16,
+                    color: widget.question.isSkipped
+                        ? const Color(0xFFF59E0B)
+                        : const Color(0xFF10B981),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    widget.question.isSkipped ? 'Skipped' : 'Answered',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: widget.question.isSkipped
+                          ? const Color(0xFFF59E0B)
+                          : const Color(0xFF10B981),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           Text(
             widget.question.question,
             style: TextStyle(
@@ -90,6 +147,7 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
     Color borderColor,
   ) {
     return TextField(
+      controller: _shortAnswerController,
       onChanged: (value) {
         widget.onAnswerSelected(value);
       },

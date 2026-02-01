@@ -88,13 +88,35 @@ class _QuizQuestionsScreenState extends State<QuizQuestionsScreen>
   }
 
   void _submitQuiz() {
+    final answeredCount = widget.quizSession.answeredCount;
+    final skippedCount = widget.quizSession.skippedCount;
+    final totalQuestions = widget.quizSession.questions.length;
+    
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text(AppLocalizations.of(context)!.submitQuiz),
-        content: Text(
-          '${AppLocalizations.of(context)!.youAnswered} ${widget.quizSession.answeredCount} questions.',
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${AppLocalizations.of(context)!.youAnswered} $answeredCount/$totalQuestions questions.'),
+            if (skippedCount > 0) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Skipped: $skippedCount question${skippedCount > 1 ? 's' : ''}',
+                style: const TextStyle(color: Color(0xFFF59E0B)),
+              ),
+            ],
+            if (answeredCount < totalQuestions) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Unanswered: ${totalQuestions - answeredCount - skippedCount} question${(totalQuestions - answeredCount - skippedCount) > 1 ? 's' : ''}',
+                style: const TextStyle(color: Color(0xFFEF4444)),
+              ),
+            ],
+          ],
         ),
         actions: [
           TextButton(
@@ -106,7 +128,13 @@ class _QuizQuestionsScreenState extends State<QuizQuestionsScreen>
               Navigator.pop(context);
               context.push('/quiz-result', extra: widget.quizSession);
             },
-            child: Text(AppLocalizations.of(context)!.submit),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF155DFC),
+            ),
+            child: Text(
+              AppLocalizations.of(context)!.submit,
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
