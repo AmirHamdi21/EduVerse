@@ -10,6 +10,24 @@ class SortButton extends StatelessWidget {
 
   const SortButton({required this.onSortChanged, this.selectedSort, super.key});
 
+  String _getSortLabel(String? sort, AppLocalizations l10n) {
+    if (sort == null) return l10n.sort;
+    switch (sort) {
+      case 'progress_desc':
+        return 'Progress ↓';
+      case 'progress_asc':
+        return 'Progress ↑';
+      case 'title_asc':
+        return 'A-Z';
+      case 'title_desc':
+        return 'Z-A';
+      case 'event_date':
+        return 'Date';
+      default:
+        return l10n.sort;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
@@ -26,8 +44,10 @@ class SortButton extends StatelessWidget {
                 color: isDark ? const Color(0xFF16213E) : Colors.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isDark ? Colors.white10 : const Color(0xFFD1D5DC),
-                  width: 1,
+                  color: selectedSort != null && selectedSort != 'progress_desc'
+                      ? const Color(0xFF155DFC)
+                      : (isDark ? Colors.white10 : const Color(0xFFD1D5DC)),
+                  width: selectedSort != null && selectedSort != 'progress_desc' ? 1.5 : 1,
                 ),
               ),
               child: Row(
@@ -35,34 +55,28 @@ class SortButton extends StatelessWidget {
                   const SizedBox(width: 6),
                   Icon(
                     Icons.swap_vert,
-                    color: isDark ? Colors.white54 : const Color(0xFF495565),
+                    color: selectedSort != null && selectedSort != 'progress_desc'
+                        ? const Color(0xFF155DFC)
+                        : (isDark ? Colors.white54 : const Color(0xFF495565)),
                     size: 20,
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    l10n.sort,
-                    style: TextStyle(
-                      color: isDark ? Colors.white70 : const Color(0xFF364153),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                  Flexible(
+                    child: Text(
+                      _getSortLabel(selectedSort, l10n),
+                      style: TextStyle(
+                        color: selectedSort != null && selectedSort != 'progress_desc'
+                            ? const Color(0xFF155DFC)
+                            : (isDark ? Colors.white70 : const Color(0xFF364153)),
+                        fontSize: 14,
+                        fontWeight: selectedSort != null && selectedSort != 'progress_desc'
+                            ? FontWeight.w600
+                            : FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  if (selectedSort != null) ...[
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        selectedSort!,
-                        style: TextStyle(
-                          color: isDark
-                              ? const Color(0xFF155DFC)
-                              : const Color(0xFF155DFC),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
+                  const SizedBox(width: 8),
                 ],
               ),
             ),

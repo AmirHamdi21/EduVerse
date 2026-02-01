@@ -1,3 +1,4 @@
+import 'package:edu_verse/widgets/student/course_details/course_details_header.dart';
 import 'package:edu_verse/widgets/student/courses/courses_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,11 +30,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
         final bgColor = isDark
             ? const Color(0xFF1A1A2E)
             : const Color(0xFFFAFAFA);
-        final surfaceColor = isDark ? const Color(0xFF2D2D44) : Colors.white;
+        // final surfaceColor = isDark ? const Color(0xFF2D2D44) : Colors.white;
         final textColor = isDark ? Colors.white : const Color(0xFF101828);
-        final secondaryTextColor = isDark
-            ? const Color(0xFFB0B0B0)
-            : const Color(0xFF4A5565);
+        // final secondaryTextColor = isDark
+        //     ? const Color(0xFFB0B0B0)
+        //     : const Color(0xFF4A5565);
 
         return Scaffold(
           backgroundColor: bgColor,
@@ -68,8 +69,6 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                 // Main content
                 CustomScrollView(
                   slivers: [
-                    // Header
-                    const CoursesAppBar(),
                     // Course title and instructor
                     SliverToBoxAdapter(
                       child: Padding(
@@ -80,14 +79,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              widget.course.title,
-                              style: TextStyle(
-                                color: textColor,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Arimo',
-                              ),
+                            // Header
+                            CourseDetailsHeader(
+                              isDark: isDark,
+                              onBackPressed: () => Navigator.pop(context),
+                              title: widget.course.title,
                             ),
                             const SizedBox(height: 16),
                             CourseInstructorInfo(

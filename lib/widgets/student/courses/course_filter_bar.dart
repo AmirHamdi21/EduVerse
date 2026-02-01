@@ -74,8 +74,9 @@ class _CourseFilterBarState extends State<CourseFilterBar> {
         setState(() => _selectedFilter = value);
         widget.onFilterChanged(value);
       },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
           gradient: isSelected && isGradient
               ? const LinearGradient(
@@ -87,19 +88,19 @@ class _CourseFilterBarState extends State<CourseFilterBar> {
           color: isSelected && !isGradient
               ? (isDark ? const Color(0xFF2A3F5F) : const Color(0xFFF0F4FF))
               : (isDark ? const Color(0xFF16213E) : Colors.white),
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected && !isGradient
                 ? const Color(0xFF155DFC)
                 : (isDark ? Colors.white10 : const Color(0xFFD1D5DC)),
-            width: 1,
+            width: 1.5,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
+                    color: const Color(0xFF155DFC).withOpacity(0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
                   )
                 ]
               : null,
@@ -112,7 +113,7 @@ class _CourseFilterBarState extends State<CourseFilterBar> {
                 : (isSelected
                     ? const Color(0xFF155DFC)
                     : (isDark ? Colors.white70 : const Color(0xFF364153))),
-            fontSize: 14,
+            fontSize: 13,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           ),
         ),

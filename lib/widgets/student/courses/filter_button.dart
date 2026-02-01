@@ -14,6 +14,20 @@ class FilterButton extends StatelessWidget {
     super.key,
   });
 
+  String _getFilterLabel(String? filter, AppLocalizations l10n) {
+    if (filter == null || filter == 'all') return l10n.filter;
+    switch (filter) {
+      case 'completed':
+        return l10n.completed;
+      case 'lectures':
+        return l10n.lectures;
+      case 'labs':
+        return l10n.labs;
+      default:
+        return l10n.filter;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
@@ -30,8 +44,10 @@ class FilterButton extends StatelessWidget {
                 color: isDark ? const Color(0xFF16213E) : Colors.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isDark ? Colors.white10 : const Color(0xFFD1D5DC),
-                  width: 1,
+                  color: selectedFilter != null && selectedFilter != 'all'
+                      ? const Color(0xFF155DFC)
+                      : (isDark ? Colors.white10 : const Color(0xFFD1D5DC)),
+                  width: selectedFilter != null && selectedFilter != 'all' ? 1.5 : 1,
                 ),
               ),
               child: Row(
@@ -39,38 +55,28 @@ class FilterButton extends StatelessWidget {
                   const SizedBox(width: 12),
                   Icon(
                     Icons.tune,
-                    color: isDark
-                        ? Colors.white54
-                        : const Color(0xFF495565),
+                    color: selectedFilter != null && selectedFilter != 'all'
+                        ? const Color(0xFF155DFC)
+                        : (isDark ? Colors.white54 : const Color(0xFF495565)),
                     size: 20,
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    l10n.filter,
-                    style: TextStyle(
-                      color: isDark
-                          ? Colors.white70
-                          : const Color(0xFF364153),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                  Flexible(
+                    child: Text(
+                      _getFilterLabel(selectedFilter, l10n),
+                      style: TextStyle(
+                        color: selectedFilter != null && selectedFilter != 'all'
+                            ? const Color(0xFF155DFC)
+                            : (isDark ? Colors.white70 : const Color(0xFF364153)),
+                        fontSize: 14,
+                        fontWeight: selectedFilter != null && selectedFilter != 'all'
+                            ? FontWeight.w600
+                            : FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  if (selectedFilter != null && selectedFilter != 'all') ...[
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: Text(
-                        selectedFilter!,
-                        style: TextStyle(
-                          color: isDark
-                              ? const Color(0xFF155DFC)
-                              : const Color(0xFF155DFC),
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ],
+                  const SizedBox(width: 8),
                 ],
               ),
             ),
@@ -108,25 +114,25 @@ class FilterButton extends StatelessWidget {
             _buildFilterOption(
               context,
               'all',
-              'All Courses',
+              l10n.all,
               isDark,
             ),
             _buildFilterOption(
               context,
               'completed',
-              'Completed (80%+)',
+              '${l10n.completed} (80%+)',
               isDark,
             ),
             _buildFilterOption(
               context,
               'lectures',
-              'In Progress (<80%)',
+              '${l10n.lectures} (<80%)',
               isDark,
             ),
             _buildFilterOption(
               context,
               'labs',
-              'Active (50%+)',
+              '${l10n.labs} (50-80%)',
               isDark,
             ),
           ],

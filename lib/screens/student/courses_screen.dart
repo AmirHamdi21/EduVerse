@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../generated_l10n/app_localizations.dart';
-import '../../widgets/student/courses/courses_app_bar.dart';
 import '../../widgets/student/courses/course_filter_bar.dart';
 import '../../widgets/student/courses/course_search_bar.dart';
 import '../../widgets/student/courses/courses_list_view.dart';
@@ -101,22 +100,24 @@ class _CoursesScreenState extends State<CoursesScreen> {
   }
 
   void _applyFilters() {
-    _filteredCourses = _allCourses.where((course) {
-      final matchesSearch =
-          _searchQuery.isEmpty ||
-          course.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          course.instructor.toLowerCase().contains(_searchQuery.toLowerCase());
+    setState(() {
+      _filteredCourses = _allCourses.where((course) {
+        final matchesSearch =
+            _searchQuery.isEmpty ||
+            course.title.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            course.instructor.toLowerCase().contains(_searchQuery.toLowerCase());
 
-      final matchesFilter =
-          _selectedFilter == 'all' ||
-          (_selectedFilter == 'completed' && course.progress >= 0.8) ||
-          (_selectedFilter == 'lectures' && course.progress < 0.8) ||
-          (_selectedFilter == 'labs' && course.progress >= 0.5);
+        final matchesFilter =
+            _selectedFilter == 'all' ||
+            (_selectedFilter == 'completed' && course.progress >= 0.8) ||
+            (_selectedFilter == 'lectures' && course.progress < 0.8 && course.progress > 0) ||
+            (_selectedFilter == 'labs' && course.progress >= 0.5 && course.progress < 0.8);
 
-      return matchesSearch && matchesFilter;
-    }).toList();
+        return matchesSearch && matchesFilter;
+      }).toList();
 
-    _sortCourses();
+      _sortCourses();
+    });
   }
 
   void _sortCourses() {
@@ -156,7 +157,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
           body: SafeArea(
             child: CustomScrollView(
               slivers: [
-                const CoursesAppBar(),
+                // const CoursesAppBar(),
                 SliverPadding(
                   padding: const EdgeInsets.all(16),
                   sliver: SliverList(
@@ -165,7 +166,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                         title: l10n.myCoursesHeader,
                         subtitle: l10n.allEnrolledCoursesThisSemester,
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
                       CourseSearchBar(
                         onSearchChanged: (query) {
                           setState(() {
@@ -174,7 +175,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                           });
                         },
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -199,7 +200,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 16),
                       CourseFilterBar(
                         onFilterChanged: (filter) {
                           setState(() {
@@ -208,7 +209,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                           });
                         },
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
                       CoursesListView(courses: _filteredCourses),
                       const SizedBox(height: 32),
                       // const JoinCourseButton(),

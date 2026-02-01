@@ -54,7 +54,10 @@ class _CourseSearchBarState extends State<CourseSearchBar> {
           ),
           child: TextField(
             controller: _controller,
-            // onChanged: widget.onSearchChanged,
+            onChanged: (value) {
+              setState(() {});
+              widget.onSearchChanged(value);
+            },
             cursorColor: const Color(0xFF155DFC),
             style: TextStyle(
               color: isDark ? Colors.white : const Color(0xFF101727),
@@ -93,10 +96,6 @@ class _CourseSearchBarState extends State<CourseSearchBar> {
                 horizontal: 16,
               ),
             ),
-            onChanged: (value) {
-              setState(() {});
-              widget.onSearchChanged(value);
-            },
           ),
         );
       },

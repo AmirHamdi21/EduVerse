@@ -21,6 +21,7 @@ class CoursesListView extends StatefulWidget {
 class _CoursesListViewState extends State<CoursesListView>
     with TickerProviderStateMixin {
   late List<AnimationController> _animationControllers;
+  List<Future<void>>? _pendingAnimations;
 
   @override
   void initState() {
@@ -40,12 +41,14 @@ class _CoursesListViewState extends State<CoursesListView>
   }
 
   void _startStaggeredAnimations() {
+    _pendingAnimations = [];
     for (int i = 0; i < _animationControllers.length; i++) {
-      Future.delayed(Duration(milliseconds: i * 120), () {
-        if (mounted) {
+      final animation = Future.delayed(Duration(milliseconds: i * 120), () {
+        if (mounted && i < _animationControllers.length) {
           _animationControllers[i].forward();
         }
       });
+      _pendingAnimations?.add(animation);
     }
   }
 
@@ -53,6 +56,7 @@ class _CoursesListViewState extends State<CoursesListView>
   void didUpdateWidget(CoursesListView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.courses.length != widget.courses.length) {
+      _pendingAnimations = null;
       _disposeAnimations();
       _initializeAnimations();
     }
@@ -66,6 +70,7 @@ class _CoursesListViewState extends State<CoursesListView>
 
   @override
   void dispose() {
+    _pendingAnimations = null;
     _disposeAnimations();
     super.dispose();
   }
