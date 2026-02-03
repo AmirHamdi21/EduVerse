@@ -615,6 +615,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get completed => 'Completed';
 
   @override
+  String get missed => 'Missed';
+
+  @override
   String get joinCourse => 'Join Course';
 
   @override
@@ -912,4 +915,467 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationYesterday => 'Yesterday';
+
+  @override
+  String get swipeActions => 'Swipe Actions';
+
+  @override
+  String get customizeSwipeGestures => 'Customize notification swipe gestures';
+
+  @override
+  String get preview => 'Preview';
+
+  @override
+  String get swipeLeftAction => 'Swipe Left Action';
+
+  @override
+  String get swipeRightAction => 'Swipe Right Action';
+
+  @override
+  String get additionalSettings => 'Additional Settings';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get markAsRead => 'Mark as Read';
+
+  @override
+  String get markAsUnread => 'Mark as Unread';
+
+  @override
+  String get archive => 'Archive';
+
+  @override
+  String get bookmark => 'Bookmark';
+
+  @override
+  String get noAction => 'No Action';
+
+  @override
+  String get deleteActionDesc => 'Permanently remove the notification';
+
+  @override
+  String get markReadActionDesc => 'Mark the notification as read';
+
+  @override
+  String get markUnreadActionDesc => 'Mark the notification as unread';
+
+  @override
+  String get archiveActionDesc => 'Archive the notification for later';
+
+  @override
+  String get bookmarkActionDesc => 'Save notification for quick access';
+
+  @override
+  String get noActionDesc => 'Disable this swipe direction';
+
+  @override
+  String get confirmBeforeAction => 'Confirm Before Action';
+
+  @override
+  String get confirmBeforeActionDesc =>
+      'Show confirmation for destructive actions';
+
+  @override
+  String get swipeSensitivity => 'Swipe Sensitivity';
+
+  @override
+  String get swipeSensitivityDesc => 'Adjust how far you need to swipe';
+
+  @override
+  String get low => 'Low';
+
+  @override
+  String get high => 'High';
+
+  @override
+  String get sampleNotificationTitle => 'Sample Notification';
+
+  @override
+  String get sampleNotificationBody => 'Swipe left or right to see actions';
+
+  @override
+  String get swipeToPreview => 'Swipe on notifications to test';
+
+  @override
+  String get searchTasks => 'Search tasks...';
+
+  @override
+  String get addTask => 'Add Task';
+
+  @override
+  String get editTask => 'Edit Task';
+
+  @override
+  String get deleteTask => 'Delete Task';
+
+  @override
+  String get deleteTaskConfirmation =>
+      'Are you sure you want to delete this task?';
+
+  @override
+  String get taskDeleted => 'Task deleted';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String get todayTasks => 'Today';
+
+  @override
+  String get pending => 'Pending';
+
+  @override
+  String get overdue => 'Overdue';
+
+  @override
+  String get completedTasks => 'Completed';
+
+  @override
+  String get inProgress => 'In Progress';
+
+  @override
+  String get upcoming => 'Upcoming';
+
+  @override
+  String get allTasks => 'All';
+
+  @override
+  String get noTasksFound => 'No Tasks Found';
+
+  @override
+  String get noTasksDescription =>
+      'You don\'t have any tasks yet. Add a new task to get started!';
+
+  @override
+  String get sortBy => 'Sort By';
+
+  @override
+  String get viewMode => 'View Mode';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get dueDate => 'Due Date';
+
+  @override
+  String get priority => 'Priority';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get createdAt => 'Created At';
+
+  @override
+  String get listView => 'List';
+
+  @override
+  String get calendarView => 'Calendar';
+
+  @override
+  String get kanbanView => 'Kanban';
+
+  @override
+  String get clearAll => 'Clear All';
+
+  @override
+  String get applyFilters => 'Apply Filters';
+
+  @override
+  String get bookmarked => 'Bookmarked';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get subtasks => 'Subtasks';
+
+  @override
+  String get taskTitle => 'Task Title';
+
+  @override
+  String get enterTaskTitle => 'Enter task title';
+
+  @override
+  String get enterDescription => 'Enter description (optional)';
+
+  @override
+  String get saveChanges => 'Save Changes';
+
+  @override
+  String get pleaseEnterTaskTitle => 'Please enter a task title';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get tomorrow => 'Tomorrow';
+
+  @override
+  String get daysAgo => 'days ago';
+
+  @override
+  String get labsToday => 'labs scheduled today';
+
+  @override
+  String get labsScheduled => 'labs scheduled';
+
+  @override
+  String get searchLabs => 'Search labs by title, course...';
+
+  @override
+  String get noLabsFound => 'No Labs Found';
+
+  @override
+  String get noLabsDescription => 'There are no labs matching your criteria.';
+
+  @override
+  String get labType => 'Lab Type';
+
+  @override
+  String get virtual => 'Virtual';
+
+  @override
+  String get physical => 'Physical';
+
+  @override
+  String get hybrid => 'Hybrid';
+
+  @override
+  String get assignments => 'Assignments';
+
+  @override
+  String get assignmentsDue => 'assignments due';
+
+  @override
+  String get thisWeek => 'this week';
+
+  @override
+  String get searchAssignments => 'Search assignments by title, course...';
+
+  @override
+  String get noAssignmentsFound => 'No Assignments Found';
+
+  @override
+  String get noAssignmentsDescription =>
+      'There are no assignments matching your criteria.';
+
+  @override
+  String get dueToday => 'due today';
+
+  @override
+  String get apply => 'Apply';
+
+  @override
+  String get clearFilters => 'Clear Filters';
+
+  @override
+  String get submitted => 'Submitted';
+
+  @override
+  String get graded => 'Graded';
+
+  @override
+  String get gradedAssignments => 'graded assignments';
+
+  @override
+  String get late => 'Late';
+
+  @override
+  String get assignmentType => 'Assignment Type';
+
+  @override
+  String get document => 'Document';
+
+  @override
+  String get code => 'Code';
+
+  @override
+  String get presentation => 'Presentation';
+
+  @override
+  String get project => 'Project';
+
+  @override
+  String get other => 'Other';
+
+  @override
+  String get academicPerformance => 'Academic Performance';
+
+  @override
+  String get cumulativeGPA => 'Cumulative GPA';
+
+  @override
+  String get semesterGPA => 'Semester GPA';
+
+  @override
+  String get credits => 'Credits';
+
+  @override
+  String get searchCourses => 'Search courses...';
+
+  @override
+  String get allSemesters => 'All Semesters';
+
+  @override
+  String get current => 'Current';
+
+  @override
+  String get needsAttention => 'Attention';
+
+  @override
+  String get noCoursesFound => 'No Courses Found';
+
+  @override
+  String get tryAdjustingFilters => 'Try adjusting your filters';
+
+  @override
+  String get filterByGrade => 'Filter by Grade';
+
+  @override
+  String get filterAndSort => 'Filter & Sort';
+
+  @override
+  String get gradeReport => 'Grade Report';
+
+  @override
+  String get generatingReport => 'Generating report...';
+
+  @override
+  String get reportGenerated => 'Report generated successfully';
+
+  @override
+  String get assessments => 'Assessments';
+
+  @override
+  String get breakdown => 'Breakdown';
+
+  @override
+  String get analysis => 'Analysis';
+
+  @override
+  String get byCategory => 'By Category';
+
+  @override
+  String get weightDistribution => 'Weight Distribution';
+
+  @override
+  String get performanceTrend => 'Performance Trend';
+
+  @override
+  String get strengths => 'Strengths';
+
+  @override
+  String get areasForImprovement => 'Areas for Improvement';
+
+  @override
+  String get gradeProjections => 'Grade Projections';
+
+  @override
+  String get gradeAnalysis => 'Grade Analysis';
+
+  @override
+  String get detailedPerformanceInsights => 'Detailed Performance Insights';
+
+  @override
+  String get overview => 'Overview';
+
+  @override
+  String get trends => 'Trends';
+
+  @override
+  String get comparison => 'Comparison';
+
+  @override
+  String get insights => 'Insights';
+
+  @override
+  String get academicStanding => 'Academic Standing';
+
+  @override
+  String get passRate => 'Pass Rate';
+
+  @override
+  String get highestGrade => 'Highest Grade';
+
+  @override
+  String get avgPercentage => 'Avg Percentage';
+
+  @override
+  String get gradeDistribution => 'Grade Distribution';
+
+  @override
+  String get performanceMetrics => 'Performance Metrics';
+
+  @override
+  String get totalCourses => 'Total Courses';
+
+  @override
+  String get passed => 'Passed';
+
+  @override
+  String get highest => 'Highest';
+
+  @override
+  String get lowest => 'Lowest';
+
+  @override
+  String get creditProgress => 'Credit Progress';
+
+  @override
+  String get gpaTrend => 'GPA Trend';
+
+  @override
+  String get semesterComparison => 'Semester Comparison';
+
+  @override
+  String get courseRanking => 'Course Ranking';
+
+  @override
+  String get topPerformers => 'Top Performers';
+
+  @override
+  String get needsFocus => 'Needs Focus';
+
+  @override
+  String get aiInsights => 'AI Insights';
+
+  @override
+  String get personalizedRecommendations => 'Personalized recommendations';
+
+  @override
+  String get studyRecommendations => 'Study Recommendations';
+
+  @override
+  String get greatJob => 'Great Job!';
+
+  @override
+  String get keepUpTheGoodWork => 'Keep up the good work!';
+
+  @override
+  String get academicGoals => 'Academic Goals';
+
+  @override
+  String get targetGPA => 'Target GPA';
+
+  @override
+  String get creditGoal => 'Credit Goal';
+
+  @override
+  String get setNewGoals => 'Set New Goals';
 }

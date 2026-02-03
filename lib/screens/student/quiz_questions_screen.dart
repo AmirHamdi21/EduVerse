@@ -36,19 +36,19 @@ class _QuizQuestionsScreenState extends State<QuizQuestionsScreen>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
-    
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0.05, 0),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
-    
+
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0.05, 0), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     _animationController.forward();
   }
 
@@ -166,7 +166,7 @@ class _QuizQuestionsScreenState extends State<QuizQuestionsScreen>
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
-    
+
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
@@ -193,7 +193,7 @@ class _QuizQuestionsScreenState extends State<QuizQuestionsScreen>
                   onClose: () => _showExitDialog(isDark),
                   onQuestionNavigator: () => _showQuestionNavigator(isDark),
                 ),
-                
+
                 // Main content
                 Expanded(
                   child: SingleChildScrollView(
@@ -203,23 +203,27 @@ class _QuizQuestionsScreenState extends State<QuizQuestionsScreen>
                       children: [
                         // Progress indicator
                         ModernProgressIndicator(
-                          currentQuestion: widget.quizSession.currentQuestionIndex + 1,
+                          currentQuestion:
+                              widget.quizSession.currentQuestionIndex + 1,
                           totalQuestions: widget.quizSession.questions.length,
                           answeredCount: widget.quizSession.answeredCount,
                           skippedCount: widget.quizSession.skippedCount,
                           isDark: isDark,
                         ),
                         SizedBox(height: responsive.p16),
-                        
+
                         // Question card with animation
                         FadeTransition(
                           opacity: _fadeAnimation,
                           child: SlideTransition(
                             position: _slideAnimation,
                             child: ModernQuestionCard(
-                              key: ValueKey(widget.quizSession.currentQuestion.id),
+                              key: ValueKey(
+                                widget.quizSession.currentQuestion.id,
+                              ),
                               question: widget.quizSession.currentQuestion,
-                              questionNumber: widget.quizSession.currentQuestionIndex + 1,
+                              questionNumber:
+                                  widget.quizSession.currentQuestionIndex + 1,
                               isDark: isDark,
                               onAnswerSelected: _submitAnswer,
                               onMultipleAnswersSelected: _submitMultipleAnswers,
@@ -231,14 +235,15 @@ class _QuizQuestionsScreenState extends State<QuizQuestionsScreen>
                     ),
                   ),
                 ),
-                
+
                 // Action buttons
                 ModernActionButtons(
                   isDark: isDark,
                   canGoPrevious: widget.quizSession.canGoPrevious,
                   canGoNext: widget.quizSession.canGoNext,
                   isLastQuestion: widget.quizSession.isLastQuestion,
-                  isCurrentAnswered: widget.quizSession.currentQuestion.isAnswered,
+                  isCurrentAnswered:
+                      widget.quizSession.currentQuestion.isAnswered,
                   onPrevious: _previousQuestion,
                   onNext: _nextQuestion,
                   onSkip: _skipQuestion,

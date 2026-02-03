@@ -477,7 +477,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get performanceInsights => 'رؤى الأداء';
 
   @override
-  String get courses => 'الدورات';
+  String get courses => 'المقررات';
 
   @override
   String get aiQuiz => 'اختبار الذكاء الاصطناعي';
@@ -573,7 +573,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get recursion => 'العودية';
 
   @override
-  String get grades => 'درجات';
+  String get grades => 'الدرجات';
 
   @override
   String get calendar => 'تقويم';
@@ -607,10 +607,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get lectures => 'محاضرات';
 
   @override
-  String get labs => 'معامل';
+  String get labs => 'المعامل';
 
   @override
   String get completed => 'مكتملة';
+
+  @override
+  String get missed => 'فائت';
 
   @override
   String get joinCourse => 'الانضمام إلى دورة';
@@ -910,4 +913,464 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notificationYesterday => 'أمس';
+
+  @override
+  String get swipeActions => 'إجراءات السحب';
+
+  @override
+  String get customizeSwipeGestures => 'تخصيص إيماءات سحب الإشعارات';
+
+  @override
+  String get preview => 'معاينة';
+
+  @override
+  String get swipeLeftAction => 'إجراء السحب لليسار';
+
+  @override
+  String get swipeRightAction => 'إجراء السحب لليمين';
+
+  @override
+  String get additionalSettings => 'إعدادات إضافية';
+
+  @override
+  String get reset => 'إعادة تعيين';
+
+  @override
+  String get markAsRead => 'تحديد كمقروء';
+
+  @override
+  String get markAsUnread => 'تحديد كغير مقروء';
+
+  @override
+  String get archive => 'أرشفة';
+
+  @override
+  String get bookmark => 'حفظ';
+
+  @override
+  String get noAction => 'بدون إجراء';
+
+  @override
+  String get deleteActionDesc => 'حذف الإشعار نهائياً';
+
+  @override
+  String get markReadActionDesc => 'تحديد الإشعار كمقروء';
+
+  @override
+  String get markUnreadActionDesc => 'تحديد الإشعار كغير مقروء';
+
+  @override
+  String get archiveActionDesc => 'أرشفة الإشعار لوقت لاحق';
+
+  @override
+  String get bookmarkActionDesc => 'حفظ الإشعار للوصول السريع';
+
+  @override
+  String get noActionDesc => 'تعطيل اتجاه السحب هذا';
+
+  @override
+  String get confirmBeforeAction => 'تأكيد قبل الإجراء';
+
+  @override
+  String get confirmBeforeActionDesc => 'إظهار تأكيد للإجراءات الحذف';
+
+  @override
+  String get swipeSensitivity => 'حساسية السحب';
+
+  @override
+  String get swipeSensitivityDesc => 'ضبط مسافة السحب المطلوبة';
+
+  @override
+  String get low => 'منخفض';
+
+  @override
+  String get high => 'مرتفع';
+
+  @override
+  String get sampleNotificationTitle => 'إشعار تجريبي';
+
+  @override
+  String get sampleNotificationBody => 'اسحب يساراً أو يميناً لرؤية الإجراءات';
+
+  @override
+  String get swipeToPreview => 'اسحب على الإشعارات للاختبار';
+
+  @override
+  String get searchTasks => 'البحث في المهام...';
+
+  @override
+  String get addTask => 'إضافة مهمة';
+
+  @override
+  String get editTask => 'تعديل المهمة';
+
+  @override
+  String get deleteTask => 'حذف المهمة';
+
+  @override
+  String get deleteTaskConfirmation => 'هل أنت متأكد من حذف هذه المهمة؟';
+
+  @override
+  String get taskDeleted => 'تم حذف المهمة';
+
+  @override
+  String get undo => 'تراجع';
+
+  @override
+  String get todayTasks => 'اليوم';
+
+  @override
+  String get pending => 'قيد الانتظار';
+
+  @override
+  String get overdue => 'متأخر';
+
+  @override
+  String get completedTasks => 'مكتمل';
+
+  @override
+  String get inProgress => 'قيد التقدم';
+
+  @override
+  String get upcoming => 'قادمة';
+
+  @override
+  String get allTasks => 'الكل';
+
+  @override
+  String get noTasksFound => 'لا توجد مهام';
+
+  @override
+  String get noTasksDescription =>
+      'ليس لديك أي مهام بعد. أضف مهمة جديدة للبدء!';
+
+  @override
+  String get sortBy => 'ترتيب حسب';
+
+  @override
+  String get viewMode => 'وضع العرض';
+
+  @override
+  String get refresh => 'تحديث';
+
+  @override
+  String get search => 'بحث';
+
+  @override
+  String get dueDate => 'تاريخ الاستحقاق';
+
+  @override
+  String get priority => 'الأولوية';
+
+  @override
+  String get category => 'الفئة';
+
+  @override
+  String get status => 'الحالة';
+
+  @override
+  String get createdAt => 'تاريخ الإنشاء';
+
+  @override
+  String get listView => 'قائمة';
+
+  @override
+  String get calendarView => 'تقويم';
+
+  @override
+  String get kanbanView => 'كانبان';
+
+  @override
+  String get clearAll => 'مسح الكل';
+
+  @override
+  String get applyFilters => 'تطبيق الفلاتر';
+
+  @override
+  String get bookmarked => 'محفوظ';
+
+  @override
+  String get yes => 'نعم';
+
+  @override
+  String get no => 'لا';
+
+  @override
+  String get description => 'الوصف';
+
+  @override
+  String get subtasks => 'المهام الفرعية';
+
+  @override
+  String get taskTitle => 'عنوان المهمة';
+
+  @override
+  String get enterTaskTitle => 'أدخل عنوان المهمة';
+
+  @override
+  String get enterDescription => 'أدخل الوصف (اختياري)';
+
+  @override
+  String get saveChanges => 'حفظ التغييرات';
+
+  @override
+  String get pleaseEnterTaskTitle => 'يرجى إدخال عنوان المهمة';
+
+  @override
+  String get today => 'اليوم';
+
+  @override
+  String get tomorrow => 'غداً';
+
+  @override
+  String get daysAgo => 'أيام مضت';
+
+  @override
+  String get labsToday => 'معامل مجدولة اليوم';
+
+  @override
+  String get labsScheduled => 'معامل مجدولة';
+
+  @override
+  String get searchLabs => 'البحث في المعامل حسب العنوان أو المادة...';
+
+  @override
+  String get noLabsFound => 'لا توجد معامل';
+
+  @override
+  String get noLabsDescription => 'لا توجد معامل تطابق معايير البحث.';
+
+  @override
+  String get labType => 'نوع المعمل';
+
+  @override
+  String get virtual => 'افتراضي';
+
+  @override
+  String get physical => 'حضوري';
+
+  @override
+  String get hybrid => 'مدمج';
+
+  @override
+  String get assignments => 'الواجبات';
+
+  @override
+  String get assignmentsDue => 'واجبات مستحقة';
+
+  @override
+  String get thisWeek => 'هذا الأسبوع';
+
+  @override
+  String get searchAssignments => 'البحث في الواجبات حسب العنوان أو المادة...';
+
+  @override
+  String get noAssignmentsFound => 'لا توجد واجبات';
+
+  @override
+  String get noAssignmentsDescription => 'لا توجد واجبات تطابق معايير البحث.';
+
+  @override
+  String get dueToday => 'مستحق اليوم';
+
+  @override
+  String get apply => 'تطبيق';
+
+  @override
+  String get clearFilters => 'مسح الفلاتر';
+
+  @override
+  String get submitted => 'مُسلَّم';
+
+  @override
+  String get graded => 'مُصحح';
+
+  @override
+  String get gradedAssignments => 'واجبات مصححة';
+
+  @override
+  String get late => 'متأخر';
+
+  @override
+  String get assignmentType => 'نوع الواجب';
+
+  @override
+  String get document => 'مستند';
+
+  @override
+  String get code => 'كود';
+
+  @override
+  String get presentation => 'عرض تقديمي';
+
+  @override
+  String get project => 'مشروع';
+
+  @override
+  String get other => 'أخرى';
+
+  @override
+  String get academicPerformance => 'الأداء الأكاديمي';
+
+  @override
+  String get cumulativeGPA => 'المعدل التراكمي';
+
+  @override
+  String get semesterGPA => 'معدل الفصل';
+
+  @override
+  String get credits => 'الساعات';
+
+  @override
+  String get searchCourses => 'البحث في المقررات...';
+
+  @override
+  String get allSemesters => 'جميع الفصول';
+
+  @override
+  String get current => 'الحالي';
+
+  @override
+  String get needsAttention => 'يحتاج اهتمام';
+
+  @override
+  String get noCoursesFound => 'لا توجد مقررات';
+
+  @override
+  String get tryAdjustingFilters => 'حاول تعديل الفلاتر';
+
+  @override
+  String get filterByGrade => 'تصفية حسب التقدير';
+
+  @override
+  String get filterAndSort => 'التصفية والترتيب';
+
+  @override
+  String get gradeReport => 'تقرير الدرجات';
+
+  @override
+  String get generatingReport => 'جاري إنشاء التقرير...';
+
+  @override
+  String get reportGenerated => 'تم إنشاء التقرير بنجاح';
+
+  @override
+  String get assessments => 'التقييمات';
+
+  @override
+  String get breakdown => 'التفاصيل';
+
+  @override
+  String get analysis => 'التحليل';
+
+  @override
+  String get byCategory => 'حسب الفئة';
+
+  @override
+  String get weightDistribution => 'توزيع الأوزان';
+
+  @override
+  String get performanceTrend => 'اتجاه الأداء';
+
+  @override
+  String get strengths => 'نقاط القوة';
+
+  @override
+  String get areasForImprovement => 'مجالات التحسين';
+
+  @override
+  String get gradeProjections => 'توقعات الدرجات';
+
+  @override
+  String get gradeAnalysis => 'تحليل الدرجات';
+
+  @override
+  String get detailedPerformanceInsights => 'رؤى تفصيلية للأداء';
+
+  @override
+  String get overview => 'نظرة عامة';
+
+  @override
+  String get trends => 'الاتجاهات';
+
+  @override
+  String get comparison => 'المقارنة';
+
+  @override
+  String get insights => 'الرؤى';
+
+  @override
+  String get academicStanding => 'الوضع الأكاديمي';
+
+  @override
+  String get passRate => 'نسبة النجاح';
+
+  @override
+  String get highestGrade => 'أعلى تقدير';
+
+  @override
+  String get avgPercentage => 'متوسط النسبة';
+
+  @override
+  String get gradeDistribution => 'توزيع الدرجات';
+
+  @override
+  String get performanceMetrics => 'مقاييس الأداء';
+
+  @override
+  String get totalCourses => 'إجمالي المقررات';
+
+  @override
+  String get passed => 'ناجح';
+
+  @override
+  String get highest => 'الأعلى';
+
+  @override
+  String get lowest => 'الأدنى';
+
+  @override
+  String get creditProgress => 'تقدم الساعات';
+
+  @override
+  String get gpaTrend => 'اتجاه المعدل';
+
+  @override
+  String get semesterComparison => 'مقارنة الفصول';
+
+  @override
+  String get courseRanking => 'ترتيب المقررات';
+
+  @override
+  String get topPerformers => 'الأفضل أداءً';
+
+  @override
+  String get needsFocus => 'يحتاج تركيز';
+
+  @override
+  String get aiInsights => 'رؤى الذكاء الاصطناعي';
+
+  @override
+  String get personalizedRecommendations => 'توصيات مخصصة';
+
+  @override
+  String get studyRecommendations => 'توصيات الدراسة';
+
+  @override
+  String get greatJob => 'عمل رائع!';
+
+  @override
+  String get keepUpTheGoodWork => 'استمر في العمل الجيد!';
+
+  @override
+  String get academicGoals => 'الأهداف الأكاديمية';
+
+  @override
+  String get targetGPA => 'المعدل المستهدف';
+
+  @override
+  String get creditGoal => 'هدف الساعات';
+
+  @override
+  String get setNewGoals => 'تحديد أهداف جديدة';
 }

@@ -27,18 +27,29 @@ class ResponsiveUtil {
   bool get isDesktop => screenWidth >= tabletBreakpoint;
 
   /// Responsive padding/margin (base 4dp unit system)
+  double get p2 => 2;
+  double get p3 => 3;
   double get p4 => 4;
+  double get p5 => 5;
+  double get p6 => 6;
+  double get p7 => 7;
   double get p8 => 8;
+  double get p9 => 9;
   double get p10 => 10;
+  double get p11 => 11;
   double get p12 => 12;
+  double get p13 => 13;
   double get p14 => 14;
   double get p16 => 16 * scaleFactor;
+  double get p18 => 18 * scaleFactor;
   double get p20 => 20 * scaleFactor;
   double get p24 => 24 * scaleFactor;
   double get p32 => 32 * scaleFactor;
   double get p36 => 36 * scaleFactor;
   double get p40 => 40 * scaleFactor;
+  double get p44 => 44 * scaleFactor;
   double get p48 => 48 * scaleFactor;
+  double get p50 => 50 * scaleFactor;
   double get p56 => 56 * scaleFactor;
   double get p64 => 64 * scaleFactor;
   double get p72 => 72 * scaleFactor;
@@ -104,7 +115,11 @@ class ResponsiveUtil {
   double get p560 => 560 * scaleFactor;
 
   /// Responsive font sizes
+  double get fontSize8 => 8 * fontScaleFactor;
+  double get fontSize10 => 10 * fontScaleFactor;
+  double get fontSize11 => 11 * fontScaleFactor;
   double get fontSize12 => 12 * fontScaleFactor;
+  double get fontSize13 => 13 * fontScaleFactor;
   double get fontSize14 => 14 * fontScaleFactor;
   double get fontSize16 => 16 * fontScaleFactor;
   double get fontSize18 => 18 * fontScaleFactor;
@@ -118,7 +133,9 @@ class ResponsiveUtil {
 
   /// Responsive border radius
   double get radius4 => 4;
+  double get radius6 => 6;
   double get radius8 => 8;
+  double get radius10 => 10 * radiusScaleFactor;
   double get radius12 => 12 * radiusScaleFactor;
   double get radius14 => 14 * radiusScaleFactor;
   double get radius16 => 16 * radiusScaleFactor;

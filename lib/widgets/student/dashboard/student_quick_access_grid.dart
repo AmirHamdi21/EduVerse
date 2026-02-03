@@ -95,29 +95,35 @@ class StudentQuickAccessGrid extends StatelessWidget {
                   colors: [Color(0xFF05DF72), Color(0xFF00A63D)],
                 ),
                 icon: Icons.checklist_outlined,
-                onTap: () {},
+                onTap: () {
+                  context.push('/tasks');
+                },
               ),
               _buildQuickAccessItem(
                 context,
-                title: l10n.leaderboard,
+                title: l10n.labs,
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [Color(0xFFFDC700), Color(0xFFD08700)],
                 ),
-                icon: Icons.leaderboard_outlined,
-                onTap: () {},
+                icon: Icons.science_outlined,
+                onTap: () {
+                  context.push('/labs');
+                },
               ),
               _buildQuickAccessItem(
                 context,
-                title: l10n.messages,
+                title: l10n.assignments,
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [Color(0xFFFB63B6), Color(0xFFE50076)],
                 ),
-                icon: Icons.message_outlined,
-                onTap: () {},
+                icon: Icons.assignment_outlined,
+                onTap: () {
+                  context.push('/assignments');
+                },
               ),
             ],
           ),

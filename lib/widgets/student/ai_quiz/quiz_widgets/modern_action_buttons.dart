@@ -58,15 +58,17 @@ class ModernActionButtons extends StatelessWidget {
         // Previous button
         _buildCircleButton(
           icon: Icons.arrow_back_rounded,
-          onTap: canGoPrevious ? () {
-            HapticFeedback.lightImpact();
-            onPrevious();
-          } : null,
+          onTap: canGoPrevious
+              ? () {
+                  HapticFeedback.lightImpact();
+                  onPrevious();
+                }
+              : null,
           isEnabled: canGoPrevious,
           responsive: responsive,
         ),
         SizedBox(width: responsive.p12),
-        
+
         // Skip button
         Expanded(
           child: _buildSecondaryButton(
@@ -81,7 +83,7 @@ class ModernActionButtons extends StatelessWidget {
           ),
         ),
         SizedBox(width: responsive.p12),
-        
+
         // Next button
         Expanded(
           flex: 2,
@@ -89,10 +91,12 @@ class ModernActionButtons extends StatelessWidget {
             context: context,
             label: AppLocalizations.of(context).next,
             icon: Icons.arrow_forward_rounded,
-            onTap: canGoNext ? () {
-              HapticFeedback.mediumImpact();
-              onNext();
-            } : null,
+            onTap: canGoNext
+                ? () {
+                    HapticFeedback.mediumImpact();
+                    onNext();
+                  }
+                : null,
             isEnabled: canGoNext,
             color: const Color(0xFF6366F1),
             responsive: responsive,
@@ -102,21 +106,26 @@ class ModernActionButtons extends StatelessWidget {
     );
   }
 
-  Widget _buildLastQuestionLayout(BuildContext context, ResponsiveUtil responsive) {
+  Widget _buildLastQuestionLayout(
+    BuildContext context,
+    ResponsiveUtil responsive,
+  ) {
     return Row(
       children: [
         // Previous button
         _buildCircleButton(
           icon: Icons.arrow_back_rounded,
-          onTap: canGoPrevious ? () {
-            HapticFeedback.lightImpact();
-            onPrevious();
-          } : null,
+          onTap: canGoPrevious
+              ? () {
+                  HapticFeedback.lightImpact();
+                  onPrevious();
+                }
+              : null,
           isEnabled: canGoPrevious,
           responsive: responsive,
         ),
         SizedBox(width: responsive.p12),
-        
+
         // Skip button (smaller)
         _buildSecondaryButton(
           context: context,
@@ -130,7 +139,7 @@ class ModernActionButtons extends StatelessWidget {
           isCompact: true,
         ),
         SizedBox(width: responsive.p12),
-        
+
         // Submit button (larger)
         Expanded(
           flex: 3,
@@ -166,21 +175,13 @@ class ModernActionButtons extends StatelessWidget {
         height: 52,
         decoration: BoxDecoration(
           color: isEnabled
-              ? (isDark
-                  ? const Color(0xFF252D48)
-                  : const Color(0xFFF3F4F6))
-              : (isDark
-                  ? const Color(0xFF1E1E2D)
-                  : const Color(0xFFFAFAFB)),
+              ? (isDark ? const Color(0xFF252D48) : const Color(0xFFF3F4F6))
+              : (isDark ? const Color(0xFF1E1E2D) : const Color(0xFFFAFAFB)),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isEnabled
-                ? (isDark
-                    ? const Color(0xFF3A4456)
-                    : const Color(0xFFE5E7EB))
-                : (isDark
-                    ? const Color(0xFF252D48)
-                    : const Color(0xFFF3F4F6)),
+                ? (isDark ? const Color(0xFF3A4456) : const Color(0xFFE5E7EB))
+                : (isDark ? const Color(0xFF252D48) : const Color(0xFFF3F4F6)),
             width: 2,
           ),
         ),
@@ -188,9 +189,7 @@ class ModernActionButtons extends StatelessWidget {
           icon,
           color: isEnabled
               ? (isDark ? Colors.white : const Color(0xFF6B7280))
-              : (isDark
-                  ? const Color(0xFF3A4456)
-                  : const Color(0xFFD1D5DB)),
+              : (isDark ? const Color(0xFF3A4456) : const Color(0xFFD1D5DB)),
           size: 22,
         ),
       ),
@@ -210,12 +209,10 @@ class ModernActionButtons extends StatelessWidget {
       child: Container(
         height: 52,
         padding: EdgeInsets.symmetric(
-          horizontal: isCompact ? responsive.p12 : responsive.p16,
+          horizontal: isCompact ? responsive.p8 : responsive.p8,
         ),
         decoration: BoxDecoration(
-          color: isDark
-              ? const Color(0xFF252D48)
-              : Colors.white,
+          color: isDark ? const Color(0xFF252D48) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: const Color(0xFFF59E0B).withOpacity(0.5),
@@ -226,11 +223,7 @@ class ModernActionButtons extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: isCompact ? MainAxisSize.min : MainAxisSize.max,
           children: [
-            Icon(
-              icon,
-              color: const Color(0xFFF59E0B),
-              size: 20,
-            ),
+            Icon(icon, color: const Color(0xFFF59E0B), size: 20),
             if (!isCompact) ...[
               const SizedBox(width: 8),
               Text(
@@ -274,9 +267,7 @@ class ModernActionButtons extends StatelessWidget {
               : null,
           color: isEnabled
               ? null
-              : (isDark
-                  ? const Color(0xFF252D48)
-                  : const Color(0xFFF3F4F6)),
+              : (isDark ? const Color(0xFF252D48) : const Color(0xFFF3F4F6)),
           borderRadius: BorderRadius.circular(16),
           boxShadow: isEnabled
               ? [
@@ -299,8 +290,8 @@ class ModernActionButtons extends StatelessWidget {
                 color: isEnabled
                     ? Colors.white
                     : (isDark
-                        ? const Color(0xFF6B7280)
-                        : const Color(0xFF9CA3AF)),
+                          ? const Color(0xFF6B7280)
+                          : const Color(0xFF9CA3AF)),
                 fontFamily: 'Arimo',
               ),
             ),
@@ -310,8 +301,8 @@ class ModernActionButtons extends StatelessWidget {
               color: isEnabled
                   ? Colors.white
                   : (isDark
-                      ? const Color(0xFF6B7280)
-                      : const Color(0xFF9CA3AF)),
+                        ? const Color(0xFF6B7280)
+                        : const Color(0xFF9CA3AF)),
               size: 20,
             ),
           ],

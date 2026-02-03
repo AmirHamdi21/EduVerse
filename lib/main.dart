@@ -1,6 +1,10 @@
+import 'package:edu_verse/bloc/assignments/assignments_cubit.dart';
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
+import 'package:edu_verse/bloc/grades/grades_cubit.dart';
+import 'package:edu_verse/bloc/labs/labs_cubit.dart';
 import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/bloc/notifications/notification_cubit.dart';
+import 'package:edu_verse/bloc/tasks/tasks_cubit.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/config/app_router.dart';
@@ -29,6 +33,10 @@ class _MyAppState extends State<MyApp> {
   late AuthBloc _authBloc;
   late LanguageCubit _languageCubit;
   late NotificationCubit _notificationCubit;
+  late TasksCubit _tasksCubit;
+  late LabsCubit _labsCubit;
+  late AssignmentsCubit _assignmentsCubit;
+  late GradesCubit _gradesCubit;
 
   @override
   void initState() {
@@ -41,6 +49,10 @@ class _MyAppState extends State<MyApp> {
     );
     _languageCubit = LanguageCubit();
     _notificationCubit = NotificationCubit()..loadNotifications();
+    _tasksCubit = TasksCubit()..loadTasks();
+    _labsCubit = LabsCubit()..loadLabs();
+    _assignmentsCubit = AssignmentsCubit()..loadAssignments();
+    _gradesCubit = GradesCubit()..loadGrades();
     // Initialize theme and language from storage
     _initializeTheme();
     _initializeLanguage();
@@ -71,6 +83,10 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _themeBloc),
         BlocProvider.value(value: _languageCubit),
         BlocProvider.value(value: _notificationCubit),
+        BlocProvider.value(value: _tasksCubit),
+        BlocProvider.value(value: _labsCubit),
+        BlocProvider.value(value: _assignmentsCubit),
+        BlocProvider.value(value: _gradesCubit),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {
@@ -80,10 +96,7 @@ class _MyAppState extends State<MyApp> {
                 title: 'EduVerse App',
                 debugShowCheckedModeBanner: false,
                 locale: locale,
-                supportedLocales: const [
-                  Locale('en'),
-                  Locale('ar'),
-                ],
+                supportedLocales: const [Locale('en'), Locale('ar')],
                 localizationsDelegates: [
                   AppLocalizations.delegate,
                   GlobalMaterialLocalizations.delegate,

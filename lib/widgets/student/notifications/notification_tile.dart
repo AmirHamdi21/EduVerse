@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../config/app_theme.dart';
 import '../../../models/notifications/notification_model.dart';
+import '../../../models/notifications/swipe_action_model.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../services/notification_swipe_settings_service.dart';
 
-class NotificationTile extends StatelessWidget {
+class NotificationTile extends StatefulWidget {
   final NotificationModel notification;
   final bool isDarkMode;
   final VoidCallback? onTap;
   final VoidCallback? onBookmark;
   final VoidCallback? onDelete;
   final VoidCallback? onMarkRead;
+  final VoidCallback? onArchive;
 
   const NotificationTile({
     super.key,
@@ -20,41 +23,219 @@ class NotificationTile extends StatelessWidget {
     this.onBookmark,
     this.onDelete,
     this.onMarkRead,
+    this.onArchive,
   });
+
+  @override
+  State<NotificationTile> createState() => _NotificationTileState();
+}
+
+class _NotificationTileState extends State<NotificationTile> with WidgetsBindingObserver {
+  NotificationSwipeSettings _swipeSettings = const NotificationSwipeSettings();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _loadSwipeSettings();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadSwipeSettings();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Reload settings when returning to this screen
+    _loadSwipeSettings();
+  }
+
+  Future<void> _loadSwipeSettings() async {
+    // Clear cache to get fresh settings
+    NotificationSwipeSettingsService.instance.clearCache();
+    final settings = await NotificationSwipeSettingsService.instance.getSwipeSettings();
+    if (mounted) {
+      setState(() {
+        _swipeSettings = settings;
+      });
+    }
+  }
+
+  void _executeAction(SwipeAction action) {
+    switch (action) {
+      case SwipeAction.delete:
+        widget.onDelete?.call();
+        break;
+      case SwipeAction.markRead:
+        widget.onMarkRead?.call();
+        break;
+      case SwipeAction.markUnread:
+        widget.onMarkRead?.call();
+        break;
+      case SwipeAction.archive:
+        widget.onArchive?.call();
+        break;
+      case SwipeAction.bookmark:
+        widget.onBookmark?.call();
+        break;
+      case SwipeAction.none:
+        break;
+    }
+  }
+
+  Future<bool> _confirmAction(BuildContext context, SwipeAction action) async {
+    if (!_swipeSettings.confirmBeforeAction || !action.requiresConfirmation) {
+      return true;
+    }
+
+    final l10n = AppLocalizations.of(context);
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: widget.isDarkMode ? const Color(0xFF1E293B) : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          l10n.notificationConfirm,
+          style: TextStyle(
+            color: widget.isDarkMode ? Colors.white : const Color(0xFF1E293B),
+          ),
+        ),
+        content: Text(
+          action == SwipeAction.delete
+              ? 'Are you sure you want to delete this notification?'
+              : 'Are you sure you want to archive this notification?',
+          style: TextStyle(
+            color: widget.isDarkMode ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: action.color,
+            ),
+            child: Text(l10n.notificationConfirm),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  String _getActionLabel(SwipeAction action, AppLocalizations l10n) {
+    switch (action) {
+      case SwipeAction.delete:
+        return l10n.delete;
+      case SwipeAction.markRead:
+        return widget.notification.isRead ? l10n.markAsUnread : l10n.markAsRead;
+      case SwipeAction.markUnread:
+        return l10n.markAsUnread;
+      case SwipeAction.archive:
+        return l10n.archive;
+      case SwipeAction.bookmark:
+        return l10n.bookmark;
+      case SwipeAction.none:
+        return '';
+    }
+  }
+
+  IconData _getActionIcon(SwipeAction action) {
+    switch (action) {
+      case SwipeAction.delete:
+        return Icons.delete_outline_rounded;
+      case SwipeAction.markRead:
+        return widget.notification.isRead 
+            ? Icons.mark_email_unread_outlined 
+            : Icons.mark_email_read_outlined;
+      case SwipeAction.markUnread:
+        return Icons.mark_email_unread_outlined;
+      case SwipeAction.archive:
+        return Icons.archive_outlined;
+      case SwipeAction.bookmark:
+        return widget.notification.isBookmarked
+            ? Icons.bookmark
+            : Icons.bookmark_outline_rounded;
+      case SwipeAction.none:
+        return Icons.block_outlined;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    
+    final leftAction = _swipeSettings.leftAction;
+    final rightAction = _swipeSettings.rightAction;
+    
+    // Determine dismiss direction based on settings
+    DismissDirection direction;
+    if (leftAction == SwipeAction.none && rightAction == SwipeAction.none) {
+      direction = DismissDirection.none;
+    } else if (leftAction == SwipeAction.none) {
+      direction = DismissDirection.startToEnd;
+    } else if (rightAction == SwipeAction.none) {
+      direction = DismissDirection.endToStart;
+    } else {
+      direction = DismissDirection.horizontal;
+    }
 
     return Dismissible(
-      key: Key('notification_${notification.id}'),
-      direction: DismissDirection.horizontal,
-      confirmDismiss: (direction) async {
-        HapticFeedback.lightImpact();
-        if (direction == DismissDirection.endToStart) {
-          // Delete
-          onDelete?.call();
-          return true;
-        } else {
-          // Mark as read/unread
-          onMarkRead?.call();
-          return false;
-        }
+      key: Key('notification_${widget.notification.id}'),
+      direction: direction,
+      dismissThresholds: {
+        DismissDirection.startToEnd: _swipeSettings.swipeSensitivity,
+        DismissDirection.endToStart: _swipeSettings.swipeSensitivity,
       },
-      background: _buildSwipeBackground(
-        alignment: Alignment.centerLeft,
-        color: AppTheme.primaryColor,
-        icon: notification.isRead ? Icons.mark_email_unread : Icons.done,
-        label: notification.isRead
-            ? l10n.notificationMarkUnread
-            : l10n.notificationMarkRead,
-      ),
-      secondaryBackground: _buildSwipeBackground(
-        alignment: Alignment.centerRight,
-        color: AppTheme.errorColor,
-        icon: Icons.delete_outline,
-        label: l10n.delete,
-      ),
+      confirmDismiss: (dir) async {
+        HapticFeedback.lightImpact();
+        
+        SwipeAction action;
+        if (dir == DismissDirection.endToStart) {
+          action = leftAction;
+        } else {
+          action = rightAction;
+        }
+        
+        if (action == SwipeAction.none) return false;
+        
+        final confirmed = await _confirmAction(context, action);
+        if (confirmed) {
+          _executeAction(action);
+          // Return true only for delete to actually dismiss
+          return action == SwipeAction.delete;
+        }
+        return false;
+      },
+      background: rightAction != SwipeAction.none
+          ? _buildSwipeBackground(
+              alignment: Alignment.centerLeft,
+              color: rightAction.color,
+              icon: _getActionIcon(rightAction),
+              label: _getActionLabel(rightAction, l10n),
+            )
+          : const SizedBox.shrink(),
+      secondaryBackground: leftAction != SwipeAction.none
+          ? _buildSwipeBackground(
+              alignment: Alignment.centerRight,
+              color: leftAction.color,
+              icon: _getActionIcon(leftAction),
+              label: _getActionLabel(leftAction, l10n),
+            )
+          : const SizedBox.shrink(),
       child: _buildTileContent(context, l10n),
     );
   }
@@ -106,28 +287,28 @@ class NotificationTile extends StatelessWidget {
 
   Widget _buildTileContent(BuildContext context, AppLocalizations l10n) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: widget.onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDarkMode
-              ? (notification.isRead
+          color: widget.isDarkMode
+              ? (widget.notification.isRead
                   ? AppTheme.darkCardColor
                   : AppTheme.darkCardColor.withValues(alpha: 0.9))
-              : (notification.isRead
+              : (widget.notification.isRead
                   ? Colors.white
                   : Colors.white),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: notification.isRead
-                ? (isDarkMode
+            color: widget.notification.isRead
+                ? (widget.isDarkMode
                     ? Colors.white.withValues(alpha: 0.08)
                     : Colors.grey.withValues(alpha: 0.15))
-                : _getPriorityColor(notification.priority).withValues(alpha: 0.4),
-            width: notification.isRead ? 1 : 1.5,
+                : _getPriorityColor(widget.notification.priority).withValues(alpha: 0.4),
+            width: widget.notification.isRead ? 1 : 1.5,
           ),
-          boxShadow: isDarkMode
+          boxShadow: widget.isDarkMode
               ? null
               : [
                   BoxShadow(
@@ -153,12 +334,12 @@ class NotificationTile extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          notification.title,
+                          widget.notification.title,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight:
-                                notification.isRead ? FontWeight.w500 : FontWeight.w600,
-                            color: isDarkMode
+                                widget.notification.isRead ? FontWeight.w500 : FontWeight.w600,
+                            color: widget.isDarkMode
                                 ? AppTheme.darkTextPrimary
                                 : AppTheme.textDark,
                           ),
@@ -171,27 +352,27 @@ class NotificationTile extends StatelessWidget {
                       GestureDetector(
                         onTap: () {
                           HapticFeedback.lightImpact();
-                          onBookmark?.call();
+                          widget.onBookmark?.call();
                         },
                         child: Icon(
-                          notification.isBookmarked
+                          widget.notification.isBookmarked
                               ? Icons.bookmark
                               : Icons.bookmark_outline,
                           size: 20,
-                          color: notification.isBookmarked
+                          color: widget.notification.isBookmarked
                               ? AppTheme.primaryColor
-                              : (isDarkMode
+                              : (widget.isDarkMode
                                   ? AppTheme.darkTextSecondary
                                   : AppTheme.textLight),
                         ),
                       ),
-                      if (!notification.isRead) ...[
+                      if (!widget.notification.isRead) ...[
                         const SizedBox(width: 8),
                         Container(
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: _getPriorityColor(notification.priority),
+                            color: _getPriorityColor(widget.notification.priority),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -201,10 +382,10 @@ class NotificationTile extends StatelessWidget {
                   const SizedBox(height: 6),
                   // Message
                   Text(
-                    notification.message,
+                    widget.notification.message,
                     style: TextStyle(
                       fontSize: 13,
-                      color: isDarkMode
+                      color: widget.isDarkMode
                           ? AppTheme.darkTextSecondary
                           : AppTheme.textLight,
                       height: 1.4,
@@ -231,15 +412,15 @@ class NotificationTile extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            _getTypeColor(notification.type).withValues(alpha: 0.2),
-            _getTypeColor(notification.type).withValues(alpha: 0.1),
+            _getTypeColor(widget.notification.type).withValues(alpha: 0.2),
+            _getTypeColor(widget.notification.type).withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
-        _getTypeIcon(notification.type),
-        color: _getTypeColor(notification.type),
+        _getTypeIcon(widget.notification.type),
+        color: _getTypeColor(widget.notification.type),
         size: 22,
       ),
     );
@@ -258,16 +439,16 @@ class NotificationTile extends StatelessWidget {
             Icon(
               Icons.access_time,
               size: 12,
-              color: isDarkMode
+              color: widget.isDarkMode
                   ? AppTheme.darkTextSecondary.withValues(alpha: 0.7)
                   : AppTheme.textLight.withValues(alpha: 0.7),
             ),
             const SizedBox(width: 4),
             Text(
-              _formatTime(notification.createdAt, l10n),
+              _formatTime(widget.notification.createdAt, l10n),
               style: TextStyle(
                 fontSize: 11,
-                color: isDarkMode
+                color: widget.isDarkMode
                     ? AppTheme.darkTextSecondary.withValues(alpha: 0.7)
                     : AppTheme.textLight.withValues(alpha: 0.7),
               ),
@@ -275,12 +456,12 @@ class NotificationTile extends StatelessWidget {
           ],
         ),
         // Instructor name if available
-        if (notification.instructorName != null) ...[
+        if (widget.notification.instructorName != null) ...[
           Text(
             '•',
             style: TextStyle(
               fontSize: 11,
-              color: isDarkMode
+              color: widget.isDarkMode
                   ? AppTheme.darkTextSecondary.withValues(alpha: 0.5)
                   : AppTheme.textLight.withValues(alpha: 0.5),
             ),
@@ -291,16 +472,16 @@ class NotificationTile extends StatelessWidget {
               Icon(
                 Icons.person_outline,
                 size: 12,
-                color: isDarkMode
+                color: widget.isDarkMode
                     ? AppTheme.darkTextSecondary.withValues(alpha: 0.7)
                     : AppTheme.textLight.withValues(alpha: 0.7),
               ),
               const SizedBox(width: 4),
               Text(
-                notification.instructorName!,
+                widget.notification.instructorName!,
                 style: TextStyle(
                   fontSize: 11,
-                  color: isDarkMode
+                  color: widget.isDarkMode
                       ? AppTheme.darkTextSecondary.withValues(alpha: 0.7)
                       : AppTheme.textLight.withValues(alpha: 0.7),
                 ),
@@ -311,11 +492,11 @@ class NotificationTile extends StatelessWidget {
           ),
         ],
         // Tags
-        if (notification.tags != null)
-          ...notification.tags!.keys.take(2).map((tag) => Container(
+        if (widget.notification.tags != null)
+          ...widget.notification.tags!.keys.take(2).map((tag) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: _getTypeColor(notification.type).withValues(alpha: 0.12),
+                  color: _getTypeColor(widget.notification.type).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(
@@ -323,7 +504,7 @@ class NotificationTile extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
-                    color: _getTypeColor(notification.type),
+                    color: _getTypeColor(widget.notification.type),
                   ),
                 ),
               )),

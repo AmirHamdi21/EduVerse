@@ -1,12 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
-import '../../../bloc/language/language_cubit.dart';
+import '../../../bloc/theme/theme_event.dart';
 import '../../../generated_l10n/app_localizations.dart';
 
-class StudentDrawer extends StatelessWidget {
+class StudentDrawer extends StatefulWidget {
   const StudentDrawer({super.key});
+
+  @override
+  State<StudentDrawer> createState() => _StudentDrawerState();
+}
+
+class _StudentDrawerState extends State<StudentDrawer>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,229 +41,629 @@ class StudentDrawer extends StatelessWidget {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
+        final menuItems = _buildMenuItems(l10n);
+
         return Drawer(
-          backgroundColor: isDark ? const Color(0xFF16213E) : Colors.white,
-          child: Column(
-            children: [
-              SizedBox(height: 30),
-              // Header
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 24,
-                ),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.1)
-                          : const Color(0xFFE5E7EB),
-                    ),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isDark
+                    ? [const Color(0xFF0F172A), const Color(0xFF1E293B)]
+                    : [Colors.white, const Color(0xFFF8FAFC)],
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  // User Profile Header
+                  _buildProfileHeader(isDark, l10n),
+                  
+                  // Quick Stats Row
+                  _buildQuickStats(isDark),
+                  
+                  const SizedBox(height: 8),
+                  
+                  // Navigation Menu
+                  Expanded(
+                    child: _buildNavigationMenu(isDark, menuItems),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF50A2FF), Color(0xFF155CFB)],
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: const Icon(
-                        Icons.school,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      l10n.appTitle,
-                      style: TextStyle(
-                        color: isDark ? Colors.white : const Color(0xFF101727),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
+                  
+                  // Theme Toggle & Settings
+                  _buildBottomSection(isDark, l10n),
+                ],
               ),
-
-              // Menu Items
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  children: [
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.dashboard,
-                      title: l10n.dashboard,
-                      isDark: isDark,
-                      isSelected: true,
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.menu_book_outlined,
-                      title: l10n.courses,
-                      isDark: isDark,
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.calendar_today,
-                      title: l10n.calendar,
-                      isDark: isDark,
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.grade,
-                      title: l10n.grades,
-                      isDark: isDark,
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.message,
-                      title: l10n.messages,
-                      isDark: isDark,
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.smart_toy,
-                      title: l10n.aiAssistant,
-                      isDark: isDark,
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.messenger_outline_rounded,
-                      title: l10n.messages,
-                      isDark: isDark,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                      child: const Divider(
-                        thickness: 1,
-                        color: Color(0xFF155CFB),
-                      ),
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.person,
-                      title: l10n.profile,
-                      isDark: isDark,
-                    ),
-                    _buildMenuItem(
-                      context,
-                      icon: Icons.settings,
-                      title: l10n.settings,
-                      isDark: isDark,
-                    ),
-                  ],
-                ),
-              ),
-
-              // AI Assistant Card at bottom
-              Container(
-                margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF2B7FFF), Color(0xFF155CFB)],
-                  ),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.smart_toy,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          l10n.aiAssistant,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      l10n.getPersonalizedStudyHelp,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 14,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF155CFB),
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: Text(l10n.askAI),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
         );
       },
     );
   }
 
-  Widget _buildMenuItem(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required bool isDark,
-    bool isSelected = false,
-  }) {
+  Widget _buildProfileHeader(bool isDark, AppLocalizations l10n) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? (isDark
-                  ? const Color(0xFF155CFB).withOpacity(0.2)
-                  : const Color(0xFF155CFB).withOpacity(0.1))
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: isSelected
-              ? const Color(0xFF155CFB)
-              : (isDark ? Colors.white70 : const Color(0xFF495565)),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: isSelected
-                ? const Color(0xFF155CFB)
-                : (isDark ? Colors.white : const Color(0xFF101727)),
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+      child: Row(
+        children: [
+          // Profile Avatar with Status
+          Stack(
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                  ),
+                  borderRadius: BorderRadius.circular(18),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF6366F1).withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Text(
+                    'S',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  width: 16,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF10B981),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF0F172A) : Colors.white,
+                      width: 2,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ),
-        onTap: () {
-          Navigator.pop(context);
-        },
+          const SizedBox(width: 14),
+          // User Info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Student User',
+                  style: TextStyle(
+                    color: isDark ? Colors.white : const Color(0xFF1E293B),
+                    fontSize: 17,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF10B981).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Text(
+                    '🎓 Active Learner',
+                    style: TextStyle(
+                      color: Color(0xFF10B981),
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Close Button
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () => Navigator.pop(context),
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.05)
+                      : Colors.black.withOpacity(0.03),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.close_rounded,
+                  color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
+  Widget _buildQuickStats(bool isDark) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [const Color(0xFF1E293B), const Color(0xFF334155)]
+              : [const Color(0xFFF1F5F9), const Color(0xFFE2E8F0)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : Colors.black.withOpacity(0.03),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildStatItem(isDark, '12', 'Courses', Icons.book_rounded),
+          _buildStatDivider(isDark),
+          _buildStatItem(isDark, '89%', 'Progress', Icons.trending_up_rounded),
+          _buildStatDivider(isDark),
+          _buildStatItem(isDark, '24', 'Tasks', Icons.task_alt_rounded),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(bool isDark, String value, String label, IconData icon) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          color: const Color(0xFF6366F1),
+          size: 20,
+        ),
+        const SizedBox(height: 6),
+        Text(
+          value,
+          style: TextStyle(
+            color: isDark ? Colors.white : const Color(0xFF1E293B),
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+            fontSize: 11,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatDivider(bool isDark) {
+    return Container(
+      width: 1,
+      height: 36,
+      color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.06),
+    );
+  }
+
+  List<_MenuItem> _buildMenuItems(AppLocalizations l10n) {
+    return [
+      _MenuItem(
+        icon: Icons.space_dashboard_rounded,
+        activeIcon: Icons.space_dashboard,
+        title: l10n.dashboard,
+        route: '/student-dashboard',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.auto_stories_outlined,
+        activeIcon: Icons.auto_stories,
+        title: l10n.courses,
+        route: '/courses',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.calendar_month_outlined,
+        activeIcon: Icons.calendar_month,
+        title: l10n.calendar,
+        route: '/calendar',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.emoji_events_outlined,
+        activeIcon: Icons.emoji_events,
+        title: l10n.grades,
+        route: '/grades',
+        badge: '3',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.chat_bubble_outline_rounded,
+        activeIcon: Icons.chat_bubble_rounded,
+        title: l10n.messages,
+        route: '/messages',
+        badge: '5',
+        category: 'communication',
+      ),
+      _MenuItem(
+        icon: Icons.psychology_outlined,
+        activeIcon: Icons.psychology,
+        title: l10n.aiAssistant,
+        route: '/ai-assistant',
+        isHighlighted: true,
+        category: 'ai',
+      ),
+      _MenuItem(
+        icon: Icons.person_outline_rounded,
+        activeIcon: Icons.person,
+        title: l10n.profile,
+        route: '/profile',
+        category: 'account',
+      ),
+      _MenuItem(
+        icon: Icons.settings_outlined,
+        activeIcon: Icons.settings,
+        title: l10n.settings,
+        route: '/settings',
+        category: 'account',
+      ),
+    ];
+  }
+
+  Widget _buildNavigationMenu(bool isDark, List<_MenuItem> items) {
+    final mainItems = items.where((i) => i.category == 'main').toList();
+    final communicationItems = items.where((i) => i.category == 'communication' || i.category == 'ai').toList();
+    final accountItems = items.where((i) => i.category == 'account').toList();
+
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      physics: const BouncingScrollPhysics(),
+      children: [
+        _buildSectionLabel(isDark, 'MAIN MENU'),
+        ...mainItems.asMap().entries.map((e) => 
+          _buildNavItem(isDark, e.value, items.indexOf(e.value))),
+        
+        const SizedBox(height: 16),
+        _buildSectionLabel(isDark, 'CONNECT'),
+        ...communicationItems.asMap().entries.map((e) => 
+          _buildNavItem(isDark, e.value, items.indexOf(e.value))),
+        
+        const SizedBox(height: 16),
+        _buildSectionLabel(isDark, 'ACCOUNT'),
+        ...accountItems.asMap().entries.map((e) => 
+          _buildNavItem(isDark, e.value, items.indexOf(e.value))),
+      ],
+    );
+  }
+
+  Widget _buildSectionLabel(bool isDark, String label) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.2,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem(bool isDark, _MenuItem item, int index) {
+    final isSelected = _selectedIndex == index;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            setState(() => _selectedIndex = index);
+            Navigator.pop(context);
+            // Navigate to the route
+            if (item.route.isNotEmpty && item.route != '/student-dashboard') {
+              context.push(item.route);
+            }
+          },
+          borderRadius: BorderRadius.circular(14),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              gradient: isSelected
+                  ? LinearGradient(
+                      colors: item.isHighlighted
+                          ? [const Color(0xFF8B5CF6), const Color(0xFF6366F1)]
+                          : [const Color(0xFF3B82F6).withValues(alpha: 0.15), const Color(0xFF6366F1).withValues(alpha: 0.1)],
+                    )
+                  : item.isHighlighted
+                      ? LinearGradient(
+                          colors: [
+                            const Color(0xFF8B5CF6).withOpacity(0.1),
+                            const Color(0xFF6366F1).withOpacity(0.05),
+                          ],
+                        )
+                      : null,
+              borderRadius: BorderRadius.circular(14),
+              border: item.isHighlighted && !isSelected
+                  ? Border.all(
+                      color: const Color(0xFF8B5CF6).withOpacity(0.3),
+                    )
+                  : null,
+            ),
+            child: Row(
+              children: [
+                // Icon Container
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? (item.isHighlighted 
+                            ? Colors.white.withOpacity(0.2) 
+                            : const Color(0xFF3B82F6).withOpacity(0.1))
+                        : (isDark 
+                            ? Colors.white.withOpacity(0.05) 
+                            : Colors.black.withOpacity(0.03)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    isSelected ? item.activeIcon : item.icon,
+                    color: isSelected
+                        ? (item.isHighlighted ? Colors.white : const Color(0xFF3B82F6))
+                        : item.isHighlighted
+                            ? const Color(0xFF8B5CF6)
+                            : (isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B)),
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Title
+                Expanded(
+                  child: Text(
+                    item.title,
+                    style: TextStyle(
+                      color: isSelected
+                          ? (item.isHighlighted ? Colors.white : const Color(0xFF3B82F6))
+                          : item.isHighlighted
+                              ? const Color(0xFF8B5CF6)
+                              : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                      fontSize: 14,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
+                ),
+                // Badge
+                if (item.badge != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? Colors.white.withOpacity(0.2)
+                          : const Color(0xFFEF4444),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      item.badge!,
+                      style: TextStyle(
+                        color: isSelected
+                            ? (item.isHighlighted ? Colors.white : const Color(0xFF3B82F6))
+                            : Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                // Highlighted indicator
+                if (item.isHighlighted && !isSelected)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF8B5CF6),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      'AI',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBottomSection(bool isDark, AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          // Theme Toggle
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withOpacity(0.05)
+                  : Colors.black.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildThemeOption(
+                    isDark,
+                    icon: Icons.light_mode_rounded,
+                    label: 'Light',
+                    isActive: !isDark,
+                    onTap: () {
+                      if (isDark) {
+                        context.read<ThemeBloc>().add(ToggleThemeEvent());
+                      }
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: _buildThemeOption(
+                    isDark,
+                    icon: Icons.dark_mode_rounded,
+                    label: 'Dark',
+                    isActive: isDark,
+                    onTap: () {
+                      if (!isDark) {
+                        context.read<ThemeBloc>().add(ToggleThemeEvent());
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Logout Button
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                // Handle logout
+                Navigator.pop(context);
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: const Color(0xFFEF4444).withOpacity(0.3),
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.logout_rounded,
+                      color: Color(0xFFEF4444),
+                      size: 18,
+                    ),
+                    SizedBox(width: 8),
+                    Text(
+                      'Sign Out',
+                      style: TextStyle(
+                        color: Color(0xFFEF4444),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThemeOption(
+    bool isDark, {
+    required IconData icon,
+    required String label,
+    required bool isActive,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: isActive
+              ? (isDark ? const Color(0xFF3B82F6) : Colors.white)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: (isDark ? const Color(0xFF3B82F6) : Colors.black)
+                        .withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isActive
+                  ? (isDark ? Colors.white : const Color(0xFF3B82F6))
+                  : (isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8)),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                color: isActive
+                    ? (isDark ? Colors.white : const Color(0xFF3B82F6))
+                    : (isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8)),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MenuItem {
+  final IconData icon;
+  final IconData activeIcon;
+  final String title;
+  final String route;
+  final String? badge;
+  final bool isHighlighted;
+  final String category;
+
+  _MenuItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.title,
+    required this.route,
+    this.badge,
+    this.isHighlighted = false,
+    required this.category,
+  });
 }

@@ -116,7 +116,7 @@ class QuizActionButtons extends StatelessWidget {
       onTap: isEnabled ? onTap : null,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: responsive.p16, vertical: 16),
+        padding: EdgeInsets.symmetric(horizontal: responsive.p8, vertical: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           gradient: isPrimary && isEnabled

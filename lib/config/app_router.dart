@@ -1,10 +1,15 @@
 import 'package:edu_verse/models/quiz_models.dart';
 import 'package:edu_verse/screens/student/ai_quiz_generator_screen.dart';
+import 'package:edu_verse/screens/student/assignments_screen.dart';
 import 'package:edu_verse/screens/student/flashcards_screen.dart';
+import 'package:edu_verse/screens/student/grades_screen.dart';
+import 'package:edu_verse/screens/student/grade_analysis_screen.dart';
+import 'package:edu_verse/screens/student/labs_screen.dart';
 import 'package:edu_verse/screens/student/notifications/notifications_screen.dart';
 import 'package:edu_verse/screens/student/quiz_questions_screen.dart';
 import 'package:edu_verse/screens/student/student_dashboard_screen.dart';
 import 'package:edu_verse/screens/student/course_details_screen.dart';
+import 'package:edu_verse/screens/student/tasks_screen.dart';
 import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +69,12 @@ class AppRouter {
         path: '/flashcards',
         builder: (context, state) => const FlashcardsScreen(),
       ),
+      GoRoute(path: '/labs', builder: (context, state) => const LabsScreen()),
+      GoRoute(
+        path: '/assignments',
+        builder: (context, state) => const AssignmentsScreen(),
+      ),
+      GoRoute(path: '/tasks', builder: (context, state) => const TasksScreen()),
       GoRoute(
         path: '/ai-quiz-generator',
         builder: (context, state) => const AiQuizGeneratorScreen(),
@@ -107,6 +118,14 @@ class AppRouter {
       GoRoute(
         path: '/notifications',
         builder: (context, state) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/grades',
+        builder: (context, state) => const GradesScreen(),
+      ),
+      GoRoute(
+        path: '/grade-analysis',
+        builder: (context, state) => const GradeAnalysisScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

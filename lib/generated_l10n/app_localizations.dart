@@ -1274,6 +1274,12 @@ abstract class AppLocalizations {
   /// **'Completed'**
   String get completed;
 
+  /// No description provided for @missed.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed'**
+  String get missed;
+
   /// No description provided for @joinCourse.
   ///
   /// In en, this message translates to:
@@ -1807,6 +1813,924 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Yesterday'**
   String get notificationYesterday;
+
+  /// No description provided for @swipeActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe Actions'**
+  String get swipeActions;
+
+  /// No description provided for @customizeSwipeGestures.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize notification swipe gestures'**
+  String get customizeSwipeGestures;
+
+  /// No description provided for @preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get preview;
+
+  /// No description provided for @swipeLeftAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe Left Action'**
+  String get swipeLeftAction;
+
+  /// No description provided for @swipeRightAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe Right Action'**
+  String get swipeRightAction;
+
+  /// No description provided for @additionalSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Settings'**
+  String get additionalSettings;
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// No description provided for @markAsRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Read'**
+  String get markAsRead;
+
+  /// No description provided for @markAsUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Unread'**
+  String get markAsUnread;
+
+  /// No description provided for @archive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get archive;
+
+  /// No description provided for @bookmark.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmark'**
+  String get bookmark;
+
+  /// No description provided for @noAction.
+  ///
+  /// In en, this message translates to:
+  /// **'No Action'**
+  String get noAction;
+
+  /// No description provided for @deleteActionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently remove the notification'**
+  String get deleteActionDesc;
+
+  /// No description provided for @markReadActionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark the notification as read'**
+  String get markReadActionDesc;
+
+  /// No description provided for @markUnreadActionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark the notification as unread'**
+  String get markUnreadActionDesc;
+
+  /// No description provided for @archiveActionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive the notification for later'**
+  String get archiveActionDesc;
+
+  /// No description provided for @bookmarkActionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Save notification for quick access'**
+  String get bookmarkActionDesc;
+
+  /// No description provided for @noActionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable this swipe direction'**
+  String get noActionDesc;
+
+  /// No description provided for @confirmBeforeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Before Action'**
+  String get confirmBeforeAction;
+
+  /// No description provided for @confirmBeforeActionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Show confirmation for destructive actions'**
+  String get confirmBeforeActionDesc;
+
+  /// No description provided for @swipeSensitivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe Sensitivity'**
+  String get swipeSensitivity;
+
+  /// No description provided for @swipeSensitivityDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust how far you need to swipe'**
+  String get swipeSensitivityDesc;
+
+  /// No description provided for @low.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get low;
+
+  /// No description provided for @high.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get high;
+
+  /// No description provided for @sampleNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Notification'**
+  String get sampleNotificationTitle;
+
+  /// No description provided for @sampleNotificationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe left or right to see actions'**
+  String get sampleNotificationBody;
+
+  /// No description provided for @swipeToPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe on notifications to test'**
+  String get swipeToPreview;
+
+  /// No description provided for @searchTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Search tasks...'**
+  String get searchTasks;
+
+  /// No description provided for @addTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Task'**
+  String get addTask;
+
+  /// No description provided for @editTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Task'**
+  String get editTask;
+
+  /// No description provided for @deleteTask.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Task'**
+  String get deleteTask;
+
+  /// No description provided for @deleteTaskConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this task?'**
+  String get deleteTaskConfirmation;
+
+  /// No description provided for @taskDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Task deleted'**
+  String get taskDeleted;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @todayTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get todayTasks;
+
+  /// No description provided for @pending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pending;
+
+  /// No description provided for @overdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Overdue'**
+  String get overdue;
+
+  /// No description provided for @completedTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completedTasks;
+
+  /// No description provided for @inProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get inProgress;
+
+  /// No description provided for @upcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get upcoming;
+
+  /// No description provided for @allTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allTasks;
+
+  /// No description provided for @noTasksFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Tasks Found'**
+  String get noTasksFound;
+
+  /// No description provided for @noTasksDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have any tasks yet. Add a new task to get started!'**
+  String get noTasksDescription;
+
+  /// No description provided for @sortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort By'**
+  String get sortBy;
+
+  /// No description provided for @viewMode.
+  ///
+  /// In en, this message translates to:
+  /// **'View Mode'**
+  String get viewMode;
+
+  /// No description provided for @refresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// No description provided for @search.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get search;
+
+  /// No description provided for @dueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due Date'**
+  String get dueDate;
+
+  /// No description provided for @priority.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get priority;
+
+  /// No description provided for @category.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// No description provided for @status.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// No description provided for @createdAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Created At'**
+  String get createdAt;
+
+  /// No description provided for @listView.
+  ///
+  /// In en, this message translates to:
+  /// **'List'**
+  String get listView;
+
+  /// No description provided for @calendarView.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar'**
+  String get calendarView;
+
+  /// No description provided for @kanbanView.
+  ///
+  /// In en, this message translates to:
+  /// **'Kanban'**
+  String get kanbanView;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All'**
+  String get clearAll;
+
+  /// No description provided for @applyFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Filters'**
+  String get applyFilters;
+
+  /// No description provided for @bookmarked.
+  ///
+  /// In en, this message translates to:
+  /// **'Bookmarked'**
+  String get bookmarked;
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// No description provided for @description.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// No description provided for @subtasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtasks'**
+  String get subtasks;
+
+  /// No description provided for @taskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Task Title'**
+  String get taskTitle;
+
+  /// No description provided for @enterTaskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter task title'**
+  String get enterTaskTitle;
+
+  /// No description provided for @enterDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter description (optional)'**
+  String get enterDescription;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get saveChanges;
+
+  /// No description provided for @pleaseEnterTaskTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a task title'**
+  String get pleaseEnterTaskTitle;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @tomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Tomorrow'**
+  String get tomorrow;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'days ago'**
+  String get daysAgo;
+
+  /// No description provided for @labsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'labs scheduled today'**
+  String get labsToday;
+
+  /// No description provided for @labsScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'labs scheduled'**
+  String get labsScheduled;
+
+  /// No description provided for @searchLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Search labs by title, course...'**
+  String get searchLabs;
+
+  /// No description provided for @noLabsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Labs Found'**
+  String get noLabsFound;
+
+  /// No description provided for @noLabsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no labs matching your criteria.'**
+  String get noLabsDescription;
+
+  /// No description provided for @labType.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Type'**
+  String get labType;
+
+  /// No description provided for @virtual.
+  ///
+  /// In en, this message translates to:
+  /// **'Virtual'**
+  String get virtual;
+
+  /// No description provided for @physical.
+  ///
+  /// In en, this message translates to:
+  /// **'Physical'**
+  String get physical;
+
+  /// No description provided for @hybrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Hybrid'**
+  String get hybrid;
+
+  /// No description provided for @assignments.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments'**
+  String get assignments;
+
+  /// No description provided for @assignmentsDue.
+  ///
+  /// In en, this message translates to:
+  /// **'assignments due'**
+  String get assignmentsDue;
+
+  /// No description provided for @thisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'this week'**
+  String get thisWeek;
+
+  /// No description provided for @searchAssignments.
+  ///
+  /// In en, this message translates to:
+  /// **'Search assignments by title, course...'**
+  String get searchAssignments;
+
+  /// No description provided for @noAssignmentsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Assignments Found'**
+  String get noAssignmentsFound;
+
+  /// No description provided for @noAssignmentsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no assignments matching your criteria.'**
+  String get noAssignmentsDescription;
+
+  /// No description provided for @dueToday.
+  ///
+  /// In en, this message translates to:
+  /// **'due today'**
+  String get dueToday;
+
+  /// No description provided for @apply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get apply;
+
+  /// No description provided for @clearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filters'**
+  String get clearFilters;
+
+  /// No description provided for @submitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get submitted;
+
+  /// No description provided for @graded.
+  ///
+  /// In en, this message translates to:
+  /// **'Graded'**
+  String get graded;
+
+  /// No description provided for @gradedAssignments.
+  ///
+  /// In en, this message translates to:
+  /// **'graded assignments'**
+  String get gradedAssignments;
+
+  /// No description provided for @late.
+  ///
+  /// In en, this message translates to:
+  /// **'Late'**
+  String get late;
+
+  /// No description provided for @assignmentType.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment Type'**
+  String get assignmentType;
+
+  /// No description provided for @document.
+  ///
+  /// In en, this message translates to:
+  /// **'Document'**
+  String get document;
+
+  /// No description provided for @code.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get code;
+
+  /// No description provided for @presentation.
+  ///
+  /// In en, this message translates to:
+  /// **'Presentation'**
+  String get presentation;
+
+  /// No description provided for @project.
+  ///
+  /// In en, this message translates to:
+  /// **'Project'**
+  String get project;
+
+  /// No description provided for @other.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
+  /// No description provided for @academicPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic Performance'**
+  String get academicPerformance;
+
+  /// No description provided for @cumulativeGPA.
+  ///
+  /// In en, this message translates to:
+  /// **'Cumulative GPA'**
+  String get cumulativeGPA;
+
+  /// No description provided for @semesterGPA.
+  ///
+  /// In en, this message translates to:
+  /// **'Semester GPA'**
+  String get semesterGPA;
+
+  /// No description provided for @credits.
+  ///
+  /// In en, this message translates to:
+  /// **'Credits'**
+  String get credits;
+
+  /// No description provided for @searchCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Search courses...'**
+  String get searchCourses;
+
+  /// No description provided for @allSemesters.
+  ///
+  /// In en, this message translates to:
+  /// **'All Semesters'**
+  String get allSemesters;
+
+  /// No description provided for @current.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get current;
+
+  /// No description provided for @needsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Attention'**
+  String get needsAttention;
+
+  /// No description provided for @noCoursesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Courses Found'**
+  String get noCoursesFound;
+
+  /// No description provided for @tryAdjustingFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your filters'**
+  String get tryAdjustingFilters;
+
+  /// No description provided for @filterByGrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by Grade'**
+  String get filterByGrade;
+
+  /// No description provided for @filterAndSort.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter & Sort'**
+  String get filterAndSort;
+
+  /// No description provided for @gradeReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade Report'**
+  String get gradeReport;
+
+  /// No description provided for @generatingReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating report...'**
+  String get generatingReport;
+
+  /// No description provided for @reportGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Report generated successfully'**
+  String get reportGenerated;
+
+  /// No description provided for @assessments.
+  ///
+  /// In en, this message translates to:
+  /// **'Assessments'**
+  String get assessments;
+
+  /// No description provided for @breakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Breakdown'**
+  String get breakdown;
+
+  /// No description provided for @analysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Analysis'**
+  String get analysis;
+
+  /// No description provided for @byCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'By Category'**
+  String get byCategory;
+
+  /// No description provided for @weightDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight Distribution'**
+  String get weightDistribution;
+
+  /// No description provided for @performanceTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Trend'**
+  String get performanceTrend;
+
+  /// No description provided for @strengths.
+  ///
+  /// In en, this message translates to:
+  /// **'Strengths'**
+  String get strengths;
+
+  /// No description provided for @areasForImprovement.
+  ///
+  /// In en, this message translates to:
+  /// **'Areas for Improvement'**
+  String get areasForImprovement;
+
+  /// No description provided for @gradeProjections.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade Projections'**
+  String get gradeProjections;
+
+  /// No description provided for @gradeAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade Analysis'**
+  String get gradeAnalysis;
+
+  /// No description provided for @detailedPerformanceInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed Performance Insights'**
+  String get detailedPerformanceInsights;
+
+  /// No description provided for @overview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get overview;
+
+  /// No description provided for @trends.
+  ///
+  /// In en, this message translates to:
+  /// **'Trends'**
+  String get trends;
+
+  /// No description provided for @comparison.
+  ///
+  /// In en, this message translates to:
+  /// **'Comparison'**
+  String get comparison;
+
+  /// No description provided for @insights.
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get insights;
+
+  /// No description provided for @academicStanding.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic Standing'**
+  String get academicStanding;
+
+  /// No description provided for @passRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pass Rate'**
+  String get passRate;
+
+  /// No description provided for @highestGrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Grade'**
+  String get highestGrade;
+
+  /// No description provided for @avgPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Percentage'**
+  String get avgPercentage;
+
+  /// No description provided for @gradeDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade Distribution'**
+  String get gradeDistribution;
+
+  /// No description provided for @performanceMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Metrics'**
+  String get performanceMetrics;
+
+  /// No description provided for @totalCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Courses'**
+  String get totalCourses;
+
+  /// No description provided for @passed.
+  ///
+  /// In en, this message translates to:
+  /// **'Passed'**
+  String get passed;
+
+  /// No description provided for @highest.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest'**
+  String get highest;
+
+  /// No description provided for @lowest.
+  ///
+  /// In en, this message translates to:
+  /// **'Lowest'**
+  String get lowest;
+
+  /// No description provided for @creditProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit Progress'**
+  String get creditProgress;
+
+  /// No description provided for @gpaTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'GPA Trend'**
+  String get gpaTrend;
+
+  /// No description provided for @semesterComparison.
+  ///
+  /// In en, this message translates to:
+  /// **'Semester Comparison'**
+  String get semesterComparison;
+
+  /// No description provided for @courseRanking.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Ranking'**
+  String get courseRanking;
+
+  /// No description provided for @topPerformers.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Performers'**
+  String get topPerformers;
+
+  /// No description provided for @needsFocus.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Focus'**
+  String get needsFocus;
+
+  /// No description provided for @aiInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights'**
+  String get aiInsights;
+
+  /// No description provided for @personalizedRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized recommendations'**
+  String get personalizedRecommendations;
+
+  /// No description provided for @studyRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Recommendations'**
+  String get studyRecommendations;
+
+  /// No description provided for @greatJob.
+  ///
+  /// In en, this message translates to:
+  /// **'Great Job!'**
+  String get greatJob;
+
+  /// No description provided for @keepUpTheGoodWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep up the good work!'**
+  String get keepUpTheGoodWork;
+
+  /// No description provided for @academicGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic Goals'**
+  String get academicGoals;
+
+  /// No description provided for @targetGPA.
+  ///
+  /// In en, this message translates to:
+  /// **'Target GPA'**
+  String get targetGPA;
+
+  /// No description provided for @creditGoal.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit Goal'**
+  String get creditGoal;
+
+  /// No description provided for @setNewGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Set New Goals'**
+  String get setNewGoals;
 }
 
 class _AppLocalizationsDelegate

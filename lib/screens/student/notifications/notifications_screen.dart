@@ -12,6 +12,7 @@ import '../../../widgets/student/notifications/ai_insight_card.dart';
 import '../../../widgets/student/notifications/notification_filter_chips.dart';
 import '../../../widgets/student/notifications/notification_tile.dart';
 import '../../../widgets/student/notifications/system_alert_card.dart';
+import 'notification_swipe_settings_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -353,6 +354,13 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           _handleMenuAction(context, value, isDarkMode, l10n),
       itemBuilder: (context) => [
         _buildMenuItem(
+          icon: Icons.swipe,
+          label: l10n.swipeActions,
+          value: 'swipe_settings',
+          isDarkMode: isDarkMode,
+        ),
+        const PopupMenuDivider(),
+        _buildMenuItem(
           icon: Icons.done_all,
           label: l10n.notificationMarkAllRead,
           value: 'mark_all_read',
@@ -413,6 +421,16 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     AppLocalizations l10n,
   ) {
     switch (value) {
+      case 'swipe_settings':
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const NotificationSwipeSettingsScreen(),
+          ),
+        ).then((_) {
+          // Force rebuild to reload swipe settings
+          if (mounted) setState(() {});
+        });
+        break;
       case 'mark_all_read':
         context.read<NotificationCubit>().markAllAsRead();
         _showSnackBar(context, l10n.notificationMarkedAllRead, isDarkMode);
