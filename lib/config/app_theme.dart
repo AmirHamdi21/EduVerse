@@ -79,6 +79,7 @@ class AppTheme {
   static const textLight = Color(0xFF495565);
   static const textMedium = Color(0xFF354152);
   static const textDark = Color(0xFF1D2838);
+  static const lightTextSecondary = Color.fromARGB(255, 45, 63, 90);
 
   // Dark mode colors
   static const darkBg1 = Color(0xFF030712);

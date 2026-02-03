@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
-import 'package:edu_verse/generated_l10n/app_localizations.dart';
-import 'package:edu_verse/models/quiz_models.dart';
 import 'package:edu_verse/common/utils/responsive.dart';
+import 'package:edu_verse/models/quiz_models.dart';
 import 'package:go_router/go_router.dart';
-import '../../../widgets/student/ai_quiz/quiz_widgets/quiz_question_card.dart';
-import '../../../widgets/student/ai_quiz/quiz_widgets/quiz_progress_bar.dart';
-import '../../../widgets/student/ai_quiz/quiz_widgets/quiz_action_buttons.dart';
+import '../../../widgets/student/ai_quiz/quiz_widgets/quiz_header.dart';
+import '../../../widgets/student/ai_quiz/quiz_widgets/quiz_question_navigator.dart';
+import '../../../widgets/student/ai_quiz/quiz_widgets/modern_progress_indicator.dart';
+import '../../../widgets/student/ai_quiz/quiz_widgets/modern_question_card.dart';
+import '../../../widgets/student/ai_quiz/quiz_widgets/modern_action_buttons.dart';
+import '../../../widgets/student/ai_quiz/quiz_widgets/quiz_submit_dialog.dart';
+import '../../../widgets/student/ai_quiz/quiz_widgets/quiz_exit_dialog.dart';
 
 class QuizQuestionsScreen extends StatefulWidget {
   final QuizSession quizSession;
@@ -20,49 +24,66 @@ class QuizQuestionsScreen extends StatefulWidget {
 }
 
 class _QuizQuestionsScreenState extends State<QuizQuestionsScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _pageController;
-  late Animation<double> _pageAnimation;
-  late List<String> selectedAnswers;
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _fadeAnimation;
+  late Animation<Offset> _slideAnimation;
 
   @override
   void initState() {
     super.initState();
-    selectedAnswers = List.filled(widget.quizSession.questions.length, '');
-
-    _pageController = AnimationController(
-      duration: const Duration(milliseconds: 400),
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 300),
       vsync: this,
     );
+    
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    );
+    
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(0.05, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOutCubic,
+    ));
+    
+    _animationController.forward();
+  }
 
-    _pageAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _pageController, curve: Curves.easeOut));
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _pageController.forward();
-    });
+  void _animateQuestionChange() {
+    _animationController.reset();
+    _animationController.forward();
   }
 
   void _nextQuestion() {
     if (widget.quizSession.canGoNext) {
-      _pageController.reset();
+      HapticFeedback.lightImpact();
       setState(() {
         widget.quizSession.nextQuestion();
       });
-      _pageController.forward();
+      _animateQuestionChange();
     }
   }
 
   void _previousQuestion() {
     if (widget.quizSession.canGoPrevious) {
-      _pageController.reset();
+      HapticFeedback.lightImpact();
       setState(() {
         widget.quizSession.previousQuestion();
       });
-      _pageController.forward();
+      _animateQuestionChange();
     }
+  }
+
+  void _goToQuestion(int index) {
+    if (index == widget.quizSession.currentQuestionIndex) return;
+    HapticFeedback.lightImpact();
+    setState(() {
+      widget.quizSession.currentQuestionIndex = index;
+    });
+    _animateQuestionChange();
   }
 
   void _submitAnswer(String answerId) {
@@ -79,207 +100,151 @@ class _QuizQuestionsScreenState extends State<QuizQuestionsScreen>
 
   void _skipQuestion() {
     if (widget.quizSession.canGoNext) {
-      _pageController.reset();
+      HapticFeedback.lightImpact();
       setState(() {
         widget.quizSession.skipQuestion();
       });
-      _pageController.forward();
+      _animateQuestionChange();
     }
   }
 
-  void _submitQuiz() {
-    final answeredCount = widget.quizSession.answeredCount;
-    final skippedCount = widget.quizSession.skippedCount;
-    final totalQuestions = widget.quizSession.questions.length;
-    
-    showDialog(
+  void _showQuestionNavigator(bool isDark) {
+    HapticFeedback.mediumImpact();
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context)!.submitQuiz),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('${AppLocalizations.of(context)!.youAnswered} $answeredCount/$totalQuestions questions.'),
-            if (skippedCount > 0) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Skipped: $skippedCount question${skippedCount > 1 ? 's' : ''}',
-                style: const TextStyle(color: Color(0xFFF59E0B)),
-              ),
-            ],
-            if (answeredCount < totalQuestions) ...[
-              const SizedBox(height: 8),
-              Text(
-                'Unanswered: ${totalQuestions - answeredCount - skippedCount} question${(totalQuestions - answeredCount - skippedCount) > 1 ? 's' : ''}',
-                style: const TextStyle(color: Color(0xFFEF4444)),
-              ),
-            ],
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppLocalizations.of(context)!.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.push('/quiz-result', extra: widget.quizSession);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF155DFC),
-            ),
-            child: Text(
-              AppLocalizations.of(context)!.submit,
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
-        ],
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => QuizQuestionNavigator(
+        questions: widget.quizSession.questions,
+        currentIndex: widget.quizSession.currentQuestionIndex,
+        isDark: isDark,
+        onQuestionSelected: _goToQuestion,
       ),
     );
   }
 
+  void _showSubmitDialog(bool isDark) {
+    HapticFeedback.mediumImpact();
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => QuizSubmitDialog(
+        answeredCount: widget.quizSession.answeredCount,
+        skippedCount: widget.quizSession.skippedCount,
+        totalQuestions: widget.quizSession.questions.length,
+        isDark: isDark,
+        onCancel: () => Navigator.pop(context),
+        onSubmit: () {
+          Navigator.pop(context);
+          context.push('/quiz-result', extra: widget.quizSession);
+        },
+      ),
+    );
+  }
 
+  void _showExitDialog(bool isDark) {
+    HapticFeedback.mediumImpact();
+    showDialog(
+      context: context,
+      builder: (context) => QuizExitDialog(
+        isDark: isDark,
+        onCancel: () => Navigator.pop(context),
+        onExit: () {
+          Navigator.pop(context);
+          Navigator.pop(context);
+        },
+      ),
+    );
+  }
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
+    
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final bgColor = isDark
-            ? const Color(0xFF1A1A2E)
-            : const Color(0xFFFAFAFA);
-        final cardColor = isDark ? const Color(0xFF252D48) : Colors.white;
+            ? const Color(0xFF121218)
+            : const Color(0xFFF5F5F7);
 
         return PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, result) {
             if (didPop) return;
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text('Exit Quiz'),
-                content: const Text('Are you sure you want to exit the quiz?'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Exit'),
-                  ),
-                ],
-              ),
-            );
+            _showExitDialog(isDark);
           },
           child: Scaffold(
             backgroundColor: bgColor,
-            body: SafeArea(
-              child: CustomScrollView(
-                slivers: [
-                  // Header
-                  SliverAppBar(
-                    backgroundColor: cardColor,
-                    elevation: 0,
-                    pinned: true,
-                    automaticallyImplyLeading: false,
-                    title: Row(
+            body: Column(
+              children: [
+                // Header
+                QuizHeader(
+                  courseName: widget.quizSession.courseName,
+                  currentQuestion: widget.quizSession.currentQuestionIndex + 1,
+                  totalQuestions: widget.quizSession.questions.length,
+                  isDark: isDark,
+                  onClose: () => _showExitDialog(isDark),
+                  onQuestionNavigator: () => _showQuestionNavigator(isDark),
+                ),
+                
+                // Main content
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(responsive.p16),
+                    physics: const BouncingScrollPhysics(),
+                    child: Column(
                       children: [
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: Icon(
-                            Icons.arrow_back,
-                            color: isDark ? Colors.white : Colors.black,
+                        // Progress indicator
+                        ModernProgressIndicator(
+                          currentQuestion: widget.quizSession.currentQuestionIndex + 1,
+                          totalQuestions: widget.quizSession.questions.length,
+                          answeredCount: widget.quizSession.answeredCount,
+                          skippedCount: widget.quizSession.skippedCount,
+                          isDark: isDark,
+                        ),
+                        SizedBox(height: responsive.p16),
+                        
+                        // Question card with animation
+                        FadeTransition(
+                          opacity: _fadeAnimation,
+                          child: SlideTransition(
+                            position: _slideAnimation,
+                            child: ModernQuestionCard(
+                              key: ValueKey(widget.quizSession.currentQuestion.id),
+                              question: widget.quizSession.currentQuestion,
+                              questionNumber: widget.quizSession.currentQuestionIndex + 1,
+                              isDark: isDark,
+                              onAnswerSelected: _submitAnswer,
+                              onMultipleAnswersSelected: _submitMultipleAnswers,
+                            ),
                           ),
                         ),
-                        SizedBox(width: responsive.p12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.quizSession.courseName,
-                                style: TextStyle(
-                                  fontSize: responsive.fontSize16,
-                                  fontWeight: FontWeight.w600,
-                                  color: isDark ? Colors.white : Colors.black,
-                                ),
-                              ),
-                              Text(
-                                '${AppLocalizations.of(context).question} ${widget.quizSession.currentQuestionIndex + 1} of ${widget.quizSession.questions.length}',
-                                style: TextStyle(
-                                  fontSize: responsive.fontSize12,
-                                  color: isDark
-                                      ? const Color(0xFFB0B3C1)
-                                      : const Color(0xFF6A7282),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        SizedBox(height: responsive.p24),
                       ],
                     ),
                   ),
-                  // Progress Bar
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(responsive.p16),
-                      child: QuizProgressBar(
-                        currentQuestion:
-                            widget.quizSession.currentQuestionIndex + 1,
-                        totalQuestions: widget.quizSession.questions.length,
-                        isDark: isDark,
-                      ),
-                    ),
-                  ),
-                  // Question Card
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: responsive.p16),
-                      child: FadeTransition(
-                        opacity: _pageAnimation,
-                        child: QuizQuestionCard(
-                          question: widget.quizSession.currentQuestion,
-                          isDark: isDark,
-                          onAnswerSelected: _submitAnswer,
-                          onMultipleAnswersSelected: _submitMultipleAnswers,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SliverToBoxAdapter(child: SizedBox(height: responsive.p32)),
-                  // Action Buttons
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: responsive.p16),
-                      child: QuizActionButtons(
-                        isDark: isDark,
-                        canGoPrevious: widget.quizSession.canGoPrevious,
-                        canGoNext: widget.quizSession.canGoNext,
-                        isLastQuestion: widget.quizSession.isLastQuestion,
-                        onPrevious: _previousQuestion,
-                        onNext: _nextQuestion,
-                        onSkip: _skipQuestion,
-                        onSubmit: _submitQuiz,
-                      ),
-                    ),
-                  ),
-                  SliverToBoxAdapter(child: SizedBox(height: responsive.p32)),
-                ],
-              ),
+                ),
+                
+                // Action buttons
+                ModernActionButtons(
+                  isDark: isDark,
+                  canGoPrevious: widget.quizSession.canGoPrevious,
+                  canGoNext: widget.quizSession.canGoNext,
+                  isLastQuestion: widget.quizSession.isLastQuestion,
+                  isCurrentAnswered: widget.quizSession.currentQuestion.isAnswered,
+                  onPrevious: _previousQuestion,
+                  onNext: _nextQuestion,
+                  onSkip: _skipQuestion,
+                  onSubmit: () => _showSubmitDialog(isDark),
+                ),
+              ],
             ),
           ),
         );

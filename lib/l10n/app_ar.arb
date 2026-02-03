@@ -252,5 +252,67 @@
   "youAnswered": "لقد أجبت على",
   "correctAnswers": "إجابات صحيحة",
   "retakeQuiz": "إعادة الاختبار",
-  "backToQuizScreen": "العودة إلى شاشة الاختبار"
+  "backToQuizScreen": "العودة إلى شاشة الاختبار",
+  
+  "notificationsTitle": "الإشعارات",
+  "notificationSubtitle": "ابق على اطلاع بدوراتك ومواعيدك النهائية وتنبيهات الذكاء الاصطناعي",
+  "notificationSearchHint": "البحث عن الإعلانات بالكلمات المفتاحية أو الدورة",
+  "notificationDeadlines": "المواعيد النهائية",
+  "notificationAIInsights": "رؤى الذكاء الاصطناعي",
+  "notificationSmartAIInsights": "رؤى الذكاء الاصطناعي الذكية",
+  "notificationSystemAlerts": "تنبيهات النظام",
+  "notificationRecentNotifications": "الإشعارات الأخيرة",
+  "notificationItems": "إشعارات",
+  "notificationToday": "اليوم",
+  "notificationThisWeek": "هذا الأسبوع",
+  "notificationEarlier": "سابقاً",
+  "notificationNoNotifications": "لا توجد إشعارات",
+  "notificationNoNotificationsDesc": "أنت على اطلاع! تحقق لاحقاً للحصول على التحديثات.",
+  "notificationNoFiltered": "لا توجد إشعارات مطابقة",
+  "notificationNoFilteredDesc": "حاول ضبط عوامل التصفية أو استعلام البحث.",
+  "notificationClearFilters": "مسح الفلاتر",
+  "notificationMarkRead": "تحديد كمقروء",
+  "notificationMarkUnread": "تحديد كغير مقروء",
+  "notificationMarkAllRead": "تحديد الكل كمقروء",
+  "notificationMarkedAllRead": "تم تحديد جميع الإشعارات كمقروءة",
+  "notificationMarkedRead": "تم التحديد كمقروء",
+  "notificationMarkedUnread": "تم التحديد كغير مقروء",
+  "notificationClearRead": "مسح الإشعارات المقروءة",
+  "notificationClearReadConfirm": "هل أنت متأكد من أنك تريد مسح جميع الإشعارات المقروءة؟",
+  "notificationReadCleared": "تم مسح الإشعارات المقروءة",
+  "notificationClearAll": "مسح جميع الإشعارات",
+  "notificationClearAllConfirm": "هل أنت متأكد من أنك تريد مسح جميع الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.",
+  "notificationAllCleared": "تم مسح جميع الإشعارات",
+  "notificationDeleted": "تم حذف الإشعار",
+  "notificationConfirm": "تأكيد",
+  "notificationPerformanceAlert": "تنبيه الأداء",
+  "notificationAIRecommendation": "توصية الذكاء الاصطناعي",
+  "notificationStudyTip": "نصيحة دراسية",
+  "notificationReminder": "تذكير",
+  "notificationJustNow": "الآن",
+  "notificationMinutesAgo": "{count, plural, =1{منذ دقيقة} other{منذ {count} دقائق}}",
+  "@notificationMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationHoursAgo": "{count, plural, =1{منذ ساعة} other{منذ {count} ساعات}}",
+  "@notificationHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationDaysAgo": "{count, plural, =1{منذ يوم} other{منذ {count} أيام}}",
+  "@notificationDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationYesterday": "أمس"
 }

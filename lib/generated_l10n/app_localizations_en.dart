@@ -762,4 +762,154 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backToQuizScreen => 'Back to Quiz Screen';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationSubtitle =>
+      'Stay updated with your courses, deadlines, and AI alerts';
+
+  @override
+  String get notificationSearchHint =>
+      'Search announcements by keyword or course';
+
+  @override
+  String get notificationDeadlines => 'Deadlines';
+
+  @override
+  String get notificationAIInsights => 'AI Insights';
+
+  @override
+  String get notificationSmartAIInsights => 'Smart AI Insights';
+
+  @override
+  String get notificationSystemAlerts => 'System Alerts';
+
+  @override
+  String get notificationRecentNotifications => 'Recent Notifications';
+
+  @override
+  String get notificationItems => 'notifications';
+
+  @override
+  String get notificationToday => 'Today';
+
+  @override
+  String get notificationThisWeek => 'This Week';
+
+  @override
+  String get notificationEarlier => 'Earlier';
+
+  @override
+  String get notificationNoNotifications => 'No Notifications';
+
+  @override
+  String get notificationNoNotificationsDesc =>
+      'You\'re all caught up! Check back later for updates.';
+
+  @override
+  String get notificationNoFiltered => 'No Matching Notifications';
+
+  @override
+  String get notificationNoFilteredDesc =>
+      'Try adjusting your filters or search query.';
+
+  @override
+  String get notificationClearFilters => 'Clear Filters';
+
+  @override
+  String get notificationMarkRead => 'Mark as Read';
+
+  @override
+  String get notificationMarkUnread => 'Mark as Unread';
+
+  @override
+  String get notificationMarkAllRead => 'Mark All as Read';
+
+  @override
+  String get notificationMarkedAllRead => 'All notifications marked as read';
+
+  @override
+  String get notificationMarkedRead => 'Marked as read';
+
+  @override
+  String get notificationMarkedUnread => 'Marked as unread';
+
+  @override
+  String get notificationClearRead => 'Clear Read Notifications';
+
+  @override
+  String get notificationClearReadConfirm =>
+      'Are you sure you want to clear all read notifications?';
+
+  @override
+  String get notificationReadCleared => 'Read notifications cleared';
+
+  @override
+  String get notificationClearAll => 'Clear All Notifications';
+
+  @override
+  String get notificationClearAllConfirm =>
+      'Are you sure you want to clear all notifications? This action cannot be undone.';
+
+  @override
+  String get notificationAllCleared => 'All notifications cleared';
+
+  @override
+  String get notificationDeleted => 'Notification deleted';
+
+  @override
+  String get notificationConfirm => 'Confirm';
+
+  @override
+  String get notificationPerformanceAlert => 'Performance Alert';
+
+  @override
+  String get notificationAIRecommendation => 'AI Recommendation';
+
+  @override
+  String get notificationStudyTip => 'Study Tip';
+
+  @override
+  String get notificationReminder => 'Reminder';
+
+  @override
+  String get notificationJustNow => 'Just now';
+
+  @override
+  String notificationMinutesAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minutes ago',
+      one: '1 minute ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String notificationHoursAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hours ago',
+      one: '1 hour ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String notificationDaysAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days ago',
+      one: '1 day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notificationYesterday => 'Yesterday';
 }

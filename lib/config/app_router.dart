@@ -1,6 +1,7 @@
 import 'package:edu_verse/models/quiz_models.dart';
 import 'package:edu_verse/screens/student/ai_quiz_generator_screen.dart';
 import 'package:edu_verse/screens/student/flashcards_screen.dart';
+import 'package:edu_verse/screens/student/notifications/notifications_screen.dart';
 import 'package:edu_verse/screens/student/quiz_questions_screen.dart';
 import 'package:edu_verse/screens/student/student_dashboard_screen.dart';
 import 'package:edu_verse/screens/student/course_details_screen.dart';
@@ -102,6 +103,10 @@ class AppRouter {
           }
           return CourseDetailsScreen(course: course);
         },
+      ),
+      GoRoute(
+        path: '/notifications',
+        builder: (context, state) => const NotificationsScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

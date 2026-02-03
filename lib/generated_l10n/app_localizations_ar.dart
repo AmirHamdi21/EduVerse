@@ -760,4 +760,154 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get backToQuizScreen => 'العودة إلى شاشة الاختبار';
+
+  @override
+  String get notificationsTitle => 'الإشعارات';
+
+  @override
+  String get notificationSubtitle =>
+      'ابق على اطلاع بدوراتك ومواعيدك النهائية وتنبيهات الذكاء الاصطناعي';
+
+  @override
+  String get notificationSearchHint =>
+      'البحث عن الإعلانات بالكلمات المفتاحية أو الدورة';
+
+  @override
+  String get notificationDeadlines => 'المواعيد النهائية';
+
+  @override
+  String get notificationAIInsights => 'رؤى الذكاء الاصطناعي';
+
+  @override
+  String get notificationSmartAIInsights => 'رؤى الذكاء الاصطناعي الذكية';
+
+  @override
+  String get notificationSystemAlerts => 'تنبيهات النظام';
+
+  @override
+  String get notificationRecentNotifications => 'الإشعارات الأخيرة';
+
+  @override
+  String get notificationItems => 'إشعارات';
+
+  @override
+  String get notificationToday => 'اليوم';
+
+  @override
+  String get notificationThisWeek => 'هذا الأسبوع';
+
+  @override
+  String get notificationEarlier => 'سابقاً';
+
+  @override
+  String get notificationNoNotifications => 'لا توجد إشعارات';
+
+  @override
+  String get notificationNoNotificationsDesc =>
+      'أنت على اطلاع! تحقق لاحقاً للحصول على التحديثات.';
+
+  @override
+  String get notificationNoFiltered => 'لا توجد إشعارات مطابقة';
+
+  @override
+  String get notificationNoFilteredDesc =>
+      'حاول ضبط عوامل التصفية أو استعلام البحث.';
+
+  @override
+  String get notificationClearFilters => 'مسح الفلاتر';
+
+  @override
+  String get notificationMarkRead => 'تحديد كمقروء';
+
+  @override
+  String get notificationMarkUnread => 'تحديد كغير مقروء';
+
+  @override
+  String get notificationMarkAllRead => 'تحديد الكل كمقروء';
+
+  @override
+  String get notificationMarkedAllRead => 'تم تحديد جميع الإشعارات كمقروءة';
+
+  @override
+  String get notificationMarkedRead => 'تم التحديد كمقروء';
+
+  @override
+  String get notificationMarkedUnread => 'تم التحديد كغير مقروء';
+
+  @override
+  String get notificationClearRead => 'مسح الإشعارات المقروءة';
+
+  @override
+  String get notificationClearReadConfirm =>
+      'هل أنت متأكد من أنك تريد مسح جميع الإشعارات المقروءة؟';
+
+  @override
+  String get notificationReadCleared => 'تم مسح الإشعارات المقروءة';
+
+  @override
+  String get notificationClearAll => 'مسح جميع الإشعارات';
+
+  @override
+  String get notificationClearAllConfirm =>
+      'هل أنت متأكد من أنك تريد مسح جميع الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get notificationAllCleared => 'تم مسح جميع الإشعارات';
+
+  @override
+  String get notificationDeleted => 'تم حذف الإشعار';
+
+  @override
+  String get notificationConfirm => 'تأكيد';
+
+  @override
+  String get notificationPerformanceAlert => 'تنبيه الأداء';
+
+  @override
+  String get notificationAIRecommendation => 'توصية الذكاء الاصطناعي';
+
+  @override
+  String get notificationStudyTip => 'نصيحة دراسية';
+
+  @override
+  String get notificationReminder => 'تذكير';
+
+  @override
+  String get notificationJustNow => 'الآن';
+
+  @override
+  String notificationMinutesAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'منذ $count دقائق',
+      one: 'منذ دقيقة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String notificationHoursAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'منذ $count ساعات',
+      one: 'منذ ساعة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String notificationDaysAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'منذ $count أيام',
+      one: 'منذ يوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notificationYesterday => 'أمس';
 }

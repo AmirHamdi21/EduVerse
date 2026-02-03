@@ -27,9 +27,6 @@ class QuizActionButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
-    final borderColor = isDark
-        ? const Color(0xFF3A4456)
-        : const Color(0xFFD1D5DC);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -38,57 +35,26 @@ class QuizActionButtons extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: GestureDetector(
+                child: _buildButton(
+                  label: AppLocalizations.of(context).skip,
                   onTap: onSkip,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: responsive.p16,
-                      vertical: responsive.p12,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(responsive.radius12),
-                      border: Border.all(color: borderColor, width: 1),
-                      color: isDark ? const Color(0xFF252D48) : Colors.white,
-                    ),
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context).skip,
-                        style: TextStyle(
-                          fontSize: responsive.fontSize14,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
+                  isEnabled: true,
+                  isPrimary: false,
+                  icon: Icons.skip_next,
+                  responsive: responsive,
                 ),
               ),
               SizedBox(width: responsive.p12),
               Expanded(
-                child: GestureDetector(
+                flex: 2,
+                child: _buildButton(
+                  label: AppLocalizations.of(context).submitQuiz,
                   onTap: onSubmit,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: responsive.p16,
-                      vertical: responsive.p12,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(responsive.radius12),
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF2B7FFF), Color(0xFF1447E6)],
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context).submitQuiz,
-                        style: TextStyle(
-                          fontSize: responsive.fontSize14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
+                  isEnabled: true,
+                  isPrimary: true,
+                  icon: Icons.check_circle,
+                  color: const Color(0xFF10B981),
+                  responsive: responsive,
                 ),
               ),
             ],
@@ -97,105 +63,139 @@ class QuizActionButtons extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: GestureDetector(
+                child: _buildButton(
+                  label: AppLocalizations.of(context).back,
                   onTap: canGoPrevious ? onPrevious : null,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: responsive.p16,
-                      vertical: responsive.p12,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(responsive.radius12),
-                      border: Border.all(
-                        color: canGoPrevious
-                            ? borderColor
-                            : borderColor.withOpacity(0.5),
-                        width: 1,
-                      ),
-                      color: isDark ? const Color(0xFF252D48) : Colors.white,
-                    ),
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context).back,
-                        style: TextStyle(
-                          fontSize: responsive.fontSize14,
-                          fontWeight: FontWeight.w600,
-                          color: canGoPrevious
-                              ? (isDark ? Colors.white : Colors.black)
-                              : (isDark
-                                    ? const Color(0xFF8A8E96)
-                                    : const Color(0xFFB0B3C1)),
-                        ),
-                      ),
-                    ),
-                  ),
+                  isEnabled: canGoPrevious,
+                  isPrimary: false,
+                  icon: Icons.arrow_back_ios_new,
+                  responsive: responsive,
                 ),
               ),
               SizedBox(width: responsive.p12),
               Expanded(
-                child: GestureDetector(
+                child: _buildButton(
+                  label: AppLocalizations.of(context).skip,
                   onTap: onSkip,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: responsive.p16,
-                      vertical: responsive.p12,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(responsive.radius12),
-                      border: Border.all(color: borderColor, width: 1),
-                      color: isDark ? const Color(0xFF252D48) : Colors.white,
-                    ),
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context).skip,
-                        style: TextStyle(
-                          fontSize: responsive.fontSize14,
-                          fontWeight: FontWeight.w600,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
+                  isEnabled: true,
+                  isPrimary: false,
+                  icon: Icons.skip_next,
+                  responsive: responsive,
                 ),
               ),
               SizedBox(width: responsive.p12),
               Expanded(
-                child: GestureDetector(
+                flex: 2,
+                child: _buildButton(
+                  label: AppLocalizations.of(context).next,
                   onTap: canGoNext ? onNext : null,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: responsive.p16,
-                      vertical: responsive.p12,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(responsive.radius12),
-                      gradient: canGoNext
-                          ? const LinearGradient(
-                              colors: [Color(0xFF2B7FFF), Color(0xFF1447E6)],
-                            )
-                          : LinearGradient(
-                              colors: [
-                                const Color(0xFF8A8E96).withOpacity(0.5),
-                                const Color(0xFF8A8E96).withOpacity(0.5),
-                              ],
-                            ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        AppLocalizations.of(context).next,
-                        style: TextStyle(
-                          fontSize: responsive.fontSize14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
+                  isEnabled: canGoNext,
+                  isPrimary: true,
+                  icon: Icons.arrow_forward_ios,
+                  responsive: responsive,
                 ),
               ),
             ],
           ),
       ],
+    );
+  }
+
+  Widget _buildButton({
+    required String label,
+    required VoidCallback? onTap,
+    required bool isEnabled,
+    required bool isPrimary,
+    required IconData icon,
+    required ResponsiveUtil responsive,
+    Color? color,
+  }) {
+    final buttonColor = color ?? const Color(0xFF2B7FFF);
+
+    return GestureDetector(
+      onTap: isEnabled ? onTap : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(horizontal: responsive.p16, vertical: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: isPrimary && isEnabled
+              ? LinearGradient(
+                  colors: [buttonColor, buttonColor.withOpacity(0.8)],
+                )
+              : null,
+          color: isPrimary && isEnabled
+              ? null
+              : (isPrimary
+                    ? (isDark
+                          ? const Color(0xFF3A4456)
+                          : const Color(0xFFE5E7EB))
+                    : (isDark ? const Color(0xFF2D2D44) : Colors.white)),
+          border: isPrimary
+              ? null
+              : Border.all(
+                  color: isEnabled
+                      ? (isDark
+                            ? const Color(0xFF3A4456)
+                            : const Color(0xFFE5E7EB))
+                      : (isDark
+                            ? const Color(0xFF2D2D44)
+                            : const Color(0xFFF3F4F6)),
+                  width: 2,
+                ),
+          boxShadow: isPrimary && isEnabled
+              ? [
+                  BoxShadow(
+                    color: buttonColor.withOpacity(0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon == Icons.arrow_back_ios_new) ...[
+              Icon(
+                icon,
+                color: isPrimary && isEnabled
+                    ? Colors.white
+                    : (isEnabled
+                          ? (isDark ? Colors.white : const Color(0xFF6B7280))
+                          : const Color(0xFF9CA3AF)),
+                size: 14,
+              ),
+              // const SizedBox(width: 8),
+            ],
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: isPrimary && isEnabled
+                    ? Colors.white
+                    : (isEnabled
+                          ? (isDark ? Colors.white : const Color(0xFF6B7280))
+                          : const Color(0xFF9CA3AF)),
+                fontFamily: 'Arimo',
+              ),
+            ),
+            if (icon != Icons.arrow_back_ios_new) ...[
+              // const SizedBox(width: 8),
+              Icon(
+                icon,
+                color: isPrimary && isEnabled
+                    ? Colors.white
+                    : (isEnabled
+                          ? (isDark ? Colors.white : const Color(0xFF6B7280))
+                          : const Color(0xFF9CA3AF)),
+                size: 16,
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

@@ -252,5 +252,67 @@
   "youAnswered": "You answered",
   "correctAnswers": "correct answers",
   "retakeQuiz": "Retake Quiz",
-  "backToQuizScreen": "Back to Quiz Screen"
+  "backToQuizScreen": "Back to Quiz Screen",
+  
+  "notificationsTitle": "Notifications",
+  "notificationSubtitle": "Stay updated with your courses, deadlines, and AI alerts",
+  "notificationSearchHint": "Search announcements by keyword or course",
+  "notificationDeadlines": "Deadlines",
+  "notificationAIInsights": "AI Insights",
+  "notificationSmartAIInsights": "Smart AI Insights",
+  "notificationSystemAlerts": "System Alerts",
+  "notificationRecentNotifications": "Recent Notifications",
+  "notificationItems": "notifications",
+  "notificationToday": "Today",
+  "notificationThisWeek": "This Week",
+  "notificationEarlier": "Earlier",
+  "notificationNoNotifications": "No Notifications",
+  "notificationNoNotificationsDesc": "You're all caught up! Check back later for updates.",
+  "notificationNoFiltered": "No Matching Notifications",
+  "notificationNoFilteredDesc": "Try adjusting your filters or search query.",
+  "notificationClearFilters": "Clear Filters",
+  "notificationMarkRead": "Mark as Read",
+  "notificationMarkUnread": "Mark as Unread",
+  "notificationMarkAllRead": "Mark All as Read",
+  "notificationMarkedAllRead": "All notifications marked as read",
+  "notificationMarkedRead": "Marked as read",
+  "notificationMarkedUnread": "Marked as unread",
+  "notificationClearRead": "Clear Read Notifications",
+  "notificationClearReadConfirm": "Are you sure you want to clear all read notifications?",
+  "notificationReadCleared": "Read notifications cleared",
+  "notificationClearAll": "Clear All Notifications",
+  "notificationClearAllConfirm": "Are you sure you want to clear all notifications? This action cannot be undone.",
+  "notificationAllCleared": "All notifications cleared",
+  "notificationDeleted": "Notification deleted",
+  "notificationConfirm": "Confirm",
+  "notificationPerformanceAlert": "Performance Alert",
+  "notificationAIRecommendation": "AI Recommendation",
+  "notificationStudyTip": "Study Tip",
+  "notificationReminder": "Reminder",
+  "notificationJustNow": "Just now",
+  "notificationMinutesAgo": "{count, plural, =1{1 minute ago} other{{count} minutes ago}}",
+  "@notificationMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationHoursAgo": "{count, plural, =1{1 hour ago} other{{count} hours ago}}",
+  "@notificationHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationDaysAgo": "{count, plural, =1{1 day ago} other{{count} days ago}}",
+  "@notificationDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notificationYesterday": "Yesterday"
 }

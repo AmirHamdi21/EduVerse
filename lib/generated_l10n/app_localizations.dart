@@ -1567,6 +1567,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to Quiz Screen'**
   String get backToQuizScreen;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay updated with your courses, deadlines, and AI alerts'**
+  String get notificationSubtitle;
+
+  /// No description provided for @notificationSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search announcements by keyword or course'**
+  String get notificationSearchHint;
+
+  /// No description provided for @notificationDeadlines.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadlines'**
+  String get notificationDeadlines;
+
+  /// No description provided for @notificationAIInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights'**
+  String get notificationAIInsights;
+
+  /// No description provided for @notificationSmartAIInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart AI Insights'**
+  String get notificationSmartAIInsights;
+
+  /// No description provided for @notificationSystemAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'System Alerts'**
+  String get notificationSystemAlerts;
+
+  /// No description provided for @notificationRecentNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Notifications'**
+  String get notificationRecentNotifications;
+
+  /// No description provided for @notificationItems.
+  ///
+  /// In en, this message translates to:
+  /// **'notifications'**
+  String get notificationItems;
+
+  /// No description provided for @notificationToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get notificationToday;
+
+  /// No description provided for @notificationThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get notificationThisWeek;
+
+  /// No description provided for @notificationEarlier.
+  ///
+  /// In en, this message translates to:
+  /// **'Earlier'**
+  String get notificationEarlier;
+
+  /// No description provided for @notificationNoNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No Notifications'**
+  String get notificationNoNotifications;
+
+  /// No description provided for @notificationNoNotificationsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up! Check back later for updates.'**
+  String get notificationNoNotificationsDesc;
+
+  /// No description provided for @notificationNoFiltered.
+  ///
+  /// In en, this message translates to:
+  /// **'No Matching Notifications'**
+  String get notificationNoFiltered;
+
+  /// No description provided for @notificationNoFilteredDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your filters or search query.'**
+  String get notificationNoFilteredDesc;
+
+  /// No description provided for @notificationClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filters'**
+  String get notificationClearFilters;
+
+  /// No description provided for @notificationMarkRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Read'**
+  String get notificationMarkRead;
+
+  /// No description provided for @notificationMarkUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Unread'**
+  String get notificationMarkUnread;
+
+  /// No description provided for @notificationMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark All as Read'**
+  String get notificationMarkAllRead;
+
+  /// No description provided for @notificationMarkedAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'All notifications marked as read'**
+  String get notificationMarkedAllRead;
+
+  /// No description provided for @notificationMarkedRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as read'**
+  String get notificationMarkedRead;
+
+  /// No description provided for @notificationMarkedUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as unread'**
+  String get notificationMarkedUnread;
+
+  /// No description provided for @notificationClearRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Read Notifications'**
+  String get notificationClearRead;
+
+  /// No description provided for @notificationClearReadConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear all read notifications?'**
+  String get notificationClearReadConfirm;
+
+  /// No description provided for @notificationReadCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Read notifications cleared'**
+  String get notificationReadCleared;
+
+  /// No description provided for @notificationClearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear All Notifications'**
+  String get notificationClearAll;
+
+  /// No description provided for @notificationClearAllConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear all notifications? This action cannot be undone.'**
+  String get notificationClearAllConfirm;
+
+  /// No description provided for @notificationAllCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'All notifications cleared'**
+  String get notificationAllCleared;
+
+  /// No description provided for @notificationDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification deleted'**
+  String get notificationDeleted;
+
+  /// No description provided for @notificationConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get notificationConfirm;
+
+  /// No description provided for @notificationPerformanceAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Alert'**
+  String get notificationPerformanceAlert;
+
+  /// No description provided for @notificationAIRecommendation.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Recommendation'**
+  String get notificationAIRecommendation;
+
+  /// No description provided for @notificationStudyTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Tip'**
+  String get notificationStudyTip;
+
+  /// No description provided for @notificationReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder'**
+  String get notificationReminder;
+
+  /// No description provided for @notificationJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get notificationJustNow;
+
+  /// No description provided for @notificationMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 minute ago} other{{count} minutes ago}}'**
+  String notificationMinutesAgo(int count);
+
+  /// No description provided for @notificationHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 hour ago} other{{count} hours ago}}'**
+  String notificationHoursAgo(int count);
+
+  /// No description provided for @notificationDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 day ago} other{{count} days ago}}'**
+  String notificationDaysAgo(int count);
+
+  /// No description provided for @notificationYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get notificationYesterday;
 }
 
 class _AppLocalizationsDelegate
