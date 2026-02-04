@@ -1,4 +1,5 @@
 import 'package:edu_verse/bloc/assignments/assignments_cubit.dart';
+import 'package:edu_verse/bloc/attendance/attendance_cubit.dart';
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
 import 'package:edu_verse/bloc/grades/grades_cubit.dart';
 import 'package:edu_verse/bloc/labs/labs_cubit.dart';
@@ -37,6 +38,7 @@ class _MyAppState extends State<MyApp> {
   late LabsCubit _labsCubit;
   late AssignmentsCubit _assignmentsCubit;
   late GradesCubit _gradesCubit;
+  late AttendanceCubit _attendanceCubit;
 
   @override
   void initState() {
@@ -53,6 +55,7 @@ class _MyAppState extends State<MyApp> {
     _labsCubit = LabsCubit()..loadLabs();
     _assignmentsCubit = AssignmentsCubit()..loadAssignments();
     _gradesCubit = GradesCubit()..loadGrades();
+    _attendanceCubit = AttendanceCubit()..loadAttendance();
     // Initialize theme and language from storage
     _initializeTheme();
     _initializeLanguage();
@@ -87,6 +90,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _labsCubit),
         BlocProvider.value(value: _assignmentsCubit),
         BlocProvider.value(value: _gradesCubit),
+        BlocProvider.value(value: _attendanceCubit),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {

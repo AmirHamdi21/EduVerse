@@ -5,11 +5,14 @@ import 'package:edu_verse/screens/student/flashcards_screen.dart';
 import 'package:edu_verse/screens/student/grades_screen.dart';
 import 'package:edu_verse/screens/student/grade_analysis_screen.dart';
 import 'package:edu_verse/screens/student/labs_screen.dart';
+import 'package:edu_verse/screens/student/my_files/my_files_screen.dart';
 import 'package:edu_verse/screens/student/notifications/notifications_screen.dart';
 import 'package:edu_verse/screens/student/quiz_questions_screen.dart';
 import 'package:edu_verse/screens/student/student_dashboard_screen.dart';
 import 'package:edu_verse/screens/student/course_details_screen.dart';
 import 'package:edu_verse/screens/student/tasks_screen.dart';
+import 'package:edu_verse/screens/student/voice_to_text/voice_to_text_screen.dart';
+import 'package:edu_verse/screens/student/attendance/attendance_screen.dart';
 import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
 import 'package:flutter/material.dart';
@@ -126,6 +129,18 @@ class AppRouter {
       GoRoute(
         path: '/grade-analysis',
         builder: (context, state) => const GradeAnalysisScreen(),
+      ),
+      GoRoute(
+        path: '/voice-to-text',
+        builder: (context, state) => const VoiceToTextScreen(),
+      ),
+      GoRoute(
+        path: '/attendance',
+        builder: (context, state) => const AttendanceScreen(),
+      ),
+      GoRoute(
+        path: '/my-files',
+        builder: (context, state) => const MyFilesScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

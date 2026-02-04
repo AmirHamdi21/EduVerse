@@ -2731,6 +2731,714 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Set New Goals'**
   String get setNewGoals;
+
+  /// No description provided for @voiceToTextTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice to Text'**
+  String get voiceToTextTitle;
+
+  /// No description provided for @voiceToTextSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Speak freely — EduVerse AI will turn your voice into structured notes'**
+  String get voiceToTextSubtitle;
+
+  /// No description provided for @voiceToTextTranscription.
+  ///
+  /// In en, this message translates to:
+  /// **'Transcription'**
+  String get voiceToTextTranscription;
+
+  /// No description provided for @voiceToTextRecentRecordings.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Recordings'**
+  String get voiceToTextRecentRecordings;
+
+  /// No description provided for @voiceToTextNoRecordings.
+  ///
+  /// In en, this message translates to:
+  /// **'No Recordings Yet'**
+  String get voiceToTextNoRecordings;
+
+  /// No description provided for @voiceToTextNoRecordingsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Start recording to capture your voice and convert it to text.'**
+  String get voiceToTextNoRecordingsDesc;
+
+  /// No description provided for @voiceToTextListening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening...'**
+  String get voiceToTextListening;
+
+  /// No description provided for @voiceToTextStartSpeaking.
+  ///
+  /// In en, this message translates to:
+  /// **'Start speaking...'**
+  String get voiceToTextStartSpeaking;
+
+  /// No description provided for @voiceToTextWords.
+  ///
+  /// In en, this message translates to:
+  /// **'words'**
+  String get voiceToTextWords;
+
+  /// No description provided for @voiceToTextCharacters.
+  ///
+  /// In en, this message translates to:
+  /// **'characters'**
+  String get voiceToTextCharacters;
+
+  /// No description provided for @voiceToTextSaveRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Recording'**
+  String get voiceToTextSaveRecording;
+
+  /// No description provided for @voiceToTextEnterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title for this recording'**
+  String get voiceToTextEnterTitle;
+
+  /// No description provided for @voiceToTextDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get voiceToTextDiscard;
+
+  /// No description provided for @voiceToTextSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get voiceToTextSave;
+
+  /// No description provided for @voiceToTextSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get voiceToTextSaving;
+
+  /// No description provided for @voiceToTextCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get voiceToTextCopy;
+
+  /// No description provided for @voiceToTextSummarize.
+  ///
+  /// In en, this message translates to:
+  /// **'Summarize'**
+  String get voiceToTextSummarize;
+
+  /// No description provided for @voiceToTextSummarizeComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Summarization coming soon!'**
+  String get voiceToTextSummarizeComingSoon;
+
+  /// No description provided for @voiceToTextFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get voiceToTextFavorites;
+
+  /// No description provided for @voiceToTextThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get voiceToTextThisMonth;
+
+  /// No description provided for @voiceToTextNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest First'**
+  String get voiceToTextNewest;
+
+  /// No description provided for @voiceToTextOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest First'**
+  String get voiceToTextOldest;
+
+  /// No description provided for @voiceToTextLongest.
+  ///
+  /// In en, this message translates to:
+  /// **'Longest First'**
+  String get voiceToTextLongest;
+
+  /// No description provided for @voiceToTextShortest.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortest First'**
+  String get voiceToTextShortest;
+
+  /// No description provided for @voiceToTextAlphabetical.
+  ///
+  /// In en, this message translates to:
+  /// **'Alphabetical'**
+  String get voiceToTextAlphabetical;
+
+  /// No description provided for @voiceToTextAddFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to Favorites'**
+  String get voiceToTextAddFavorite;
+
+  /// No description provided for @voiceToTextRemoveFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from Favorites'**
+  String get voiceToTextRemoveFavorite;
+
+  /// No description provided for @voiceToTextDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this recording? This action cannot be undone.'**
+  String get voiceToTextDeleteConfirm;
+
+  /// No description provided for @voiceToTextSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice to Text Settings'**
+  String get voiceToTextSettings;
+
+  /// No description provided for @voiceToTextLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Recognition Language'**
+  String get voiceToTextLanguage;
+
+  /// No description provided for @voiceToTextLanguageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Language for speech recognition'**
+  String get voiceToTextLanguageDesc;
+
+  /// No description provided for @voiceToTextAutoPunctuation.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Punctuation'**
+  String get voiceToTextAutoPunctuation;
+
+  /// No description provided for @voiceToTextAutoPunctuationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically add punctuation marks'**
+  String get voiceToTextAutoPunctuationDesc;
+
+  /// No description provided for @voiceToTextContinuousRecording.
+  ///
+  /// In en, this message translates to:
+  /// **'Continuous Recording'**
+  String get voiceToTextContinuousRecording;
+
+  /// No description provided for @voiceToTextContinuousRecordingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep recording until manually stopped'**
+  String get voiceToTextContinuousRecordingDesc;
+
+  /// No description provided for @trackYourAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your class attendance'**
+  String get trackYourAttendance;
+
+  /// No description provided for @attendanceOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance Overview'**
+  String get attendanceOverview;
+
+  /// No description provided for @totalClasses.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Classes'**
+  String get totalClasses;
+
+  /// No description provided for @present.
+  ///
+  /// In en, this message translates to:
+  /// **'Present'**
+  String get present;
+
+  /// No description provided for @absent.
+  ///
+  /// In en, this message translates to:
+  /// **'Absent'**
+  String get absent;
+
+  /// No description provided for @excused.
+  ///
+  /// In en, this message translates to:
+  /// **'Excused'**
+  String get excused;
+
+  /// No description provided for @distribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Distribution'**
+  String get distribution;
+
+  /// No description provided for @courseAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Attendance'**
+  String get courseAttendance;
+
+  /// No description provided for @noClassesOnThisDay.
+  ///
+  /// In en, this message translates to:
+  /// **'No classes on this day'**
+  String get noClassesOnThisDay;
+
+  /// No description provided for @classesOnThisDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Classes on this day'**
+  String get classesOnThisDay;
+
+  /// No description provided for @noRecordsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Records Found'**
+  String get noRecordsFound;
+
+  /// No description provided for @noRecordsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No attendance records match your current filters.'**
+  String get noRecordsDescription;
+
+  /// No description provided for @records.
+  ///
+  /// In en, this message translates to:
+  /// **'Records'**
+  String get records;
+
+  /// No description provided for @january.
+  ///
+  /// In en, this message translates to:
+  /// **'January'**
+  String get january;
+
+  /// No description provided for @february.
+  ///
+  /// In en, this message translates to:
+  /// **'February'**
+  String get february;
+
+  /// No description provided for @march.
+  ///
+  /// In en, this message translates to:
+  /// **'March'**
+  String get march;
+
+  /// No description provided for @april.
+  ///
+  /// In en, this message translates to:
+  /// **'April'**
+  String get april;
+
+  /// No description provided for @may.
+  ///
+  /// In en, this message translates to:
+  /// **'May'**
+  String get may;
+
+  /// No description provided for @june.
+  ///
+  /// In en, this message translates to:
+  /// **'June'**
+  String get june;
+
+  /// No description provided for @july.
+  ///
+  /// In en, this message translates to:
+  /// **'July'**
+  String get july;
+
+  /// No description provided for @august.
+  ///
+  /// In en, this message translates to:
+  /// **'August'**
+  String get august;
+
+  /// No description provided for @september.
+  ///
+  /// In en, this message translates to:
+  /// **'September'**
+  String get september;
+
+  /// No description provided for @october.
+  ///
+  /// In en, this message translates to:
+  /// **'October'**
+  String get october;
+
+  /// No description provided for @november.
+  ///
+  /// In en, this message translates to:
+  /// **'November'**
+  String get november;
+
+  /// No description provided for @december.
+  ///
+  /// In en, this message translates to:
+  /// **'December'**
+  String get december;
+
+  /// No description provided for @sun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get sun;
+
+  /// No description provided for @mon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get mon;
+
+  /// No description provided for @tue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get tue;
+
+  /// No description provided for @wed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get wed;
+
+  /// No description provided for @thu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get thu;
+
+  /// No description provided for @fri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get fri;
+
+  /// No description provided for @sat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get sat;
+
+  /// No description provided for @weeklyTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Trend'**
+  String get weeklyTrend;
+
+  /// No description provided for @attendanceRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance Rate'**
+  String get attendanceRate;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
+
+  /// No description provided for @myFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'My Files'**
+  String get myFiles;
+
+  /// No description provided for @files.
+  ///
+  /// In en, this message translates to:
+  /// **'files'**
+  String get files;
+
+  /// No description provided for @storage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get storage;
+
+  /// No description provided for @used.
+  ///
+  /// In en, this message translates to:
+  /// **'used'**
+  String get used;
+
+  /// No description provided for @upload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get upload;
+
+  /// No description provided for @uploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading'**
+  String get uploading;
+
+  /// No description provided for @uploadComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Complete'**
+  String get uploadComplete;
+
+  /// No description provided for @uploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Failed'**
+  String get uploadFailed;
+
+  /// No description provided for @selectingFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Selecting files...'**
+  String get selectingFiles;
+
+  /// No description provided for @searchFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Search files...'**
+  String get searchFiles;
+
+  /// No description provided for @selectFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Files'**
+  String get selectFiles;
+
+  /// No description provided for @nameAZ.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (A-Z)'**
+  String get nameAZ;
+
+  /// No description provided for @nameZA.
+  ///
+  /// In en, this message translates to:
+  /// **'Name (Z-A)'**
+  String get nameZA;
+
+  /// No description provided for @dateNewest.
+  ///
+  /// In en, this message translates to:
+  /// **'Date (Newest)'**
+  String get dateNewest;
+
+  /// No description provided for @dateOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Date (Oldest)'**
+  String get dateOldest;
+
+  /// No description provided for @sizeSmallest.
+  ///
+  /// In en, this message translates to:
+  /// **'Size (Smallest)'**
+  String get sizeSmallest;
+
+  /// No description provided for @sizeLargest.
+  ///
+  /// In en, this message translates to:
+  /// **'Size (Largest)'**
+  String get sizeLargest;
+
+  /// No description provided for @recent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get recent;
+
+  /// No description provided for @favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favorites;
+
+  /// No description provided for @documents.
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get documents;
+
+  /// No description provided for @images.
+  ///
+  /// In en, this message translates to:
+  /// **'Images'**
+  String get images;
+
+  /// No description provided for @videos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get videos;
+
+  /// No description provided for @audio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get audio;
+
+  /// No description provided for @noFilesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No Files Yet'**
+  String get noFilesYet;
+
+  /// No description provided for @uploadFilesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload your documents, images, videos and more. They\'ll be stored securely for easy access.'**
+  String get uploadFilesDescription;
+
+  /// No description provided for @uploadFirstFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Your First File'**
+  String get uploadFirstFile;
+
+  /// No description provided for @supportedFormats.
+  ///
+  /// In en, this message translates to:
+  /// **'Supported formats:'**
+  String get supportedFormats;
+
+  /// No description provided for @open.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get open;
+
+  /// No description provided for @favorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite'**
+  String get favorite;
+
+  /// No description provided for @unfavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfavorite'**
+  String get unfavorite;
+
+  /// No description provided for @fileDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'File Details'**
+  String get fileDetails;
+
+  /// No description provided for @fileType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get fileType;
+
+  /// No description provided for @size.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get size;
+
+  /// No description provided for @created.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get created;
+
+  /// No description provided for @modified.
+  ///
+  /// In en, this message translates to:
+  /// **'Modified'**
+  String get modified;
+
+  /// No description provided for @location.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// No description provided for @deleteFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete File'**
+  String get deleteFile;
+
+  /// No description provided for @deleteFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Files'**
+  String get deleteFiles;
+
+  /// No description provided for @deleteFileConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete'**
+  String get deleteFileConfirmation;
+
+  /// No description provided for @deleteFilesConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the selected files?'**
+  String get deleteFilesConfirmation;
+
+  /// No description provided for @filesSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'files selected'**
+  String get filesSelected;
+
+  /// No description provided for @fileSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'file selected'**
+  String get fileSelected;
+
+  /// No description provided for @image.
+  ///
+  /// In en, this message translates to:
+  /// **'Image'**
+  String get image;
+
+  /// No description provided for @video.
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get video;
+
+  /// No description provided for @audioFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio File'**
+  String get audioFile;
+
+  /// No description provided for @spreadsheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Spreadsheet'**
+  String get spreadsheet;
+
+  /// No description provided for @codeFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Code File'**
+  String get codeFile;
+
+  /// No description provided for @file.
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get file;
 }
 
 class _AppLocalizationsDelegate

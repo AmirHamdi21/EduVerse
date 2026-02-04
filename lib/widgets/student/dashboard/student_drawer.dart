@@ -299,6 +299,28 @@ class _StudentDrawerState extends State<StudentDrawer>
         category: 'main',
       ),
       _MenuItem(
+        icon: Icons.checklist_outlined,
+        activeIcon: Icons.checklist,
+        title: l10n.attendance,
+        route: '/attendance',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.folder_outlined,
+        activeIcon: Icons.folder,
+        title: l10n.myFiles,
+        route: '/my-files',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.mic_none_rounded,
+        activeIcon: Icons.mic_rounded,
+        title: l10n.voiceToTextTitle,
+        route: '/voice-to-text',
+        category: 'ai',
+        isHighlighted: true,
+      ),
+      _MenuItem(
         icon: Icons.chat_bubble_outline_rounded,
         activeIcon: Icons.chat_bubble_rounded,
         title: l10n.messages,

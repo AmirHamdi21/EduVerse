@@ -401,6 +401,7 @@
 /* other design */
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
@@ -434,6 +435,7 @@ class StudentStatsSection extends StatelessWidget {
                       Color(0xFF8B5CF6),
                       Color(0xFFEC4899),
                     ],
+                    onTap: () => context.push('/grades'),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -448,6 +450,7 @@ class StudentStatsSection extends StatelessWidget {
                       Color(0xFF10B981),
                       Color(0xFF059669),
                     ],
+                    onTap: () => context.push('/attendance'),
                   ),
                 ),
               ],
@@ -485,6 +488,7 @@ class _CompactStatCard extends StatelessWidget {
   final bool isDark;
   final IconData icon;
   final List<Color> gradientColors;
+  final VoidCallback? onTap;
 
   const _CompactStatCard({
     required this.title,
@@ -493,6 +497,7 @@ class _CompactStatCard extends StatelessWidget {
     required this.isDark,
     required this.icon,
     required this.gradientColors,
+    this.onTap,
   });
 
   @override
@@ -501,111 +506,114 @@ class _CompactStatCard extends StatelessWidget {
     final progressValue = numericValue / maxValue;
     final isMaxed = progressValue >= 1.0;
 
-    return Container(
-      height: 140,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [
-                  gradientColors[0].withValues(alpha: 0.15),
-                  gradientColors[1].withValues(alpha: 0.1),
-                ]
-              : [
-                  gradientColors[0].withValues(alpha: 0.08),
-                  gradientColors[1].withValues(alpha: 0.05),
-                ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isDark
-              ? gradientColors[0].withValues(alpha: 0.2)
-              : gradientColors[0].withValues(alpha: 0.15),
-          width: 1.5,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: gradientColors,
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: gradientColors[0].withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 140,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: isDark
+                ? [
+                    gradientColors[0].withValues(alpha: 0.15),
+                    gradientColors[1].withValues(alpha: 0.1),
+                  ]
+                : [
+                    gradientColors[0].withValues(alpha: 0.08),
+                    gradientColors[1].withValues(alpha: 0.05),
                   ],
-                ),
-                child: Icon(icon, color: Colors.white, size: 20),
-              ),
-              if (isMaxed)
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDark
+                ? gradientColors[0].withValues(alpha: 0.2)
+                : gradientColors[0].withValues(alpha: 0.15),
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 4,
-                  ),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
+                    gradient: LinearGradient(
+                      colors: gradientColors,
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: gradientColors[0].withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  child: const Icon(
-                    Icons.stars_rounded,
-                    color: Color(0xFF10B981),
-                    size: 16,
-                  ),
+                  child: Icon(icon, color: Colors.white, size: 20),
                 ),
-            ],
-          ),
-          const Spacer(),
-          Text(
-            value,
-            style: TextStyle(
-              color: isDark ? Colors.white : const Color(0xFF0F172A),
-              fontSize: 28,
-              fontWeight: FontWeight.w800,
-              letterSpacing: -1,
-              height: 1,
+                if (isMaxed)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF10B981).withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.stars_rounded,
+                      color: Color(0xFF10B981),
+                      size: 16,
+                    ),
+                  ),
+              ],
             ),
-          ),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: isDark ? Colors.white70 : const Color(0xFF64748B),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+            const Spacer(),
+            Text(
+              value,
+              style: TextStyle(
+                color: isDark ? Colors.white : const Color(0xFF0F172A),
+                fontSize: 28,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -1,
+                height: 1,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : const Color(0xFF64748B),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              Text(
-                '${(progressValue * 100).toInt()}%',
-                style: TextStyle(
-                  color: gradientColors[0],
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
+                Text(
+                  '${(progressValue * 100).toInt()}%',
+                  style: TextStyle(
+                    color: gradientColors[0],
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

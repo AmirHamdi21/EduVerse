@@ -942,7 +942,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get markAsUnread => 'تحديد كغير مقروء';
 
   @override
-  String get archive => 'أرشفة';
+  String get archive => 'أرشيف';
 
   @override
   String get bookmark => 'حفظ';
@@ -1373,4 +1373,365 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get setNewGoals => 'تحديد أهداف جديدة';
+
+  @override
+  String get voiceToTextTitle => 'تحويل الصوت إلى نص';
+
+  @override
+  String get voiceToTextSubtitle =>
+      'تحدث بحرية — سيحول EduVerse AI صوتك إلى ملاحظات منظمة';
+
+  @override
+  String get voiceToTextTranscription => 'النص المكتوب';
+
+  @override
+  String get voiceToTextRecentRecordings => 'التسجيلات الأخيرة';
+
+  @override
+  String get voiceToTextNoRecordings => 'لا توجد تسجيلات بعد';
+
+  @override
+  String get voiceToTextNoRecordingsDesc =>
+      'ابدأ التسجيل لالتقاط صوتك وتحويله إلى نص.';
+
+  @override
+  String get voiceToTextListening => 'جارٍ الاستماع...';
+
+  @override
+  String get voiceToTextStartSpeaking => 'ابدأ التحدث...';
+
+  @override
+  String get voiceToTextWords => 'كلمات';
+
+  @override
+  String get voiceToTextCharacters => 'حروف';
+
+  @override
+  String get voiceToTextSaveRecording => 'حفظ التسجيل';
+
+  @override
+  String get voiceToTextEnterTitle => 'أدخل عنواناً لهذا التسجيل';
+
+  @override
+  String get voiceToTextDiscard => 'تجاهل';
+
+  @override
+  String get voiceToTextSave => 'حفظ';
+
+  @override
+  String get voiceToTextSaving => 'جارٍ الحفظ...';
+
+  @override
+  String get voiceToTextCopy => 'نسخ';
+
+  @override
+  String get voiceToTextSummarize => 'تلخيص';
+
+  @override
+  String get voiceToTextSummarizeComingSoon =>
+      'ميزة التلخيص بالذكاء الاصطناعي قريباً!';
+
+  @override
+  String get voiceToTextFavorites => 'المفضلة';
+
+  @override
+  String get voiceToTextThisMonth => 'هذا الشهر';
+
+  @override
+  String get voiceToTextNewest => 'الأحدث أولاً';
+
+  @override
+  String get voiceToTextOldest => 'الأقدم أولاً';
+
+  @override
+  String get voiceToTextLongest => 'الأطول أولاً';
+
+  @override
+  String get voiceToTextShortest => 'الأقصر أولاً';
+
+  @override
+  String get voiceToTextAlphabetical => 'أبجدياً';
+
+  @override
+  String get voiceToTextAddFavorite => 'إضافة إلى المفضلة';
+
+  @override
+  String get voiceToTextRemoveFavorite => 'إزالة من المفضلة';
+
+  @override
+  String get voiceToTextDeleteConfirm =>
+      'هل أنت متأكد من حذف هذا التسجيل؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get voiceToTextSettings => 'إعدادات تحويل الصوت إلى نص';
+
+  @override
+  String get voiceToTextLanguage => 'لغة التعرف';
+
+  @override
+  String get voiceToTextLanguageDesc => 'لغة التعرف على الكلام';
+
+  @override
+  String get voiceToTextAutoPunctuation => 'علامات الترقيم التلقائية';
+
+  @override
+  String get voiceToTextAutoPunctuationDesc => 'إضافة علامات الترقيم تلقائياً';
+
+  @override
+  String get voiceToTextContinuousRecording => 'التسجيل المستمر';
+
+  @override
+  String get voiceToTextContinuousRecordingDesc =>
+      'الاستمرار في التسجيل حتى الإيقاف يدوياً';
+
+  @override
+  String get trackYourAttendance => 'تتبع حضورك للحصص';
+
+  @override
+  String get attendanceOverview => 'نظرة عامة على الحضور';
+
+  @override
+  String get totalClasses => 'إجمالي الحصص';
+
+  @override
+  String get present => 'حاضر';
+
+  @override
+  String get absent => 'غائب';
+
+  @override
+  String get excused => 'معذور';
+
+  @override
+  String get distribution => 'التوزيع';
+
+  @override
+  String get courseAttendance => 'حضور المقرر';
+
+  @override
+  String get noClassesOnThisDay => 'لا توجد حصص في هذا اليوم';
+
+  @override
+  String get classesOnThisDay => 'حصص هذا اليوم';
+
+  @override
+  String get noRecordsFound => 'لم يتم العثور على سجلات';
+
+  @override
+  String get noRecordsDescription =>
+      'لا توجد سجلات حضور تطابق الفلاتر الحالية.';
+
+  @override
+  String get records => 'السجلات';
+
+  @override
+  String get january => 'يناير';
+
+  @override
+  String get february => 'فبراير';
+
+  @override
+  String get march => 'مارس';
+
+  @override
+  String get april => 'أبريل';
+
+  @override
+  String get may => 'مايو';
+
+  @override
+  String get june => 'يونيو';
+
+  @override
+  String get july => 'يوليو';
+
+  @override
+  String get august => 'أغسطس';
+
+  @override
+  String get september => 'سبتمبر';
+
+  @override
+  String get october => 'أكتوبر';
+
+  @override
+  String get november => 'نوفمبر';
+
+  @override
+  String get december => 'ديسمبر';
+
+  @override
+  String get sun => 'أحد';
+
+  @override
+  String get mon => 'اثنين';
+
+  @override
+  String get tue => 'ثلاثاء';
+
+  @override
+  String get wed => 'أربعاء';
+
+  @override
+  String get thu => 'خميس';
+
+  @override
+  String get fri => 'جمعة';
+
+  @override
+  String get sat => 'سبت';
+
+  @override
+  String get weeklyTrend => 'الاتجاه الأسبوعي';
+
+  @override
+  String get attendanceRate => 'معدل الحضور';
+
+  @override
+  String get viewAll => 'عرض الكل';
+
+  @override
+  String get myFiles => 'ملفاتي';
+
+  @override
+  String get files => 'ملفات';
+
+  @override
+  String get storage => 'التخزين';
+
+  @override
+  String get used => 'مستخدم';
+
+  @override
+  String get upload => 'رفع';
+
+  @override
+  String get uploading => 'جاري الرفع';
+
+  @override
+  String get uploadComplete => 'اكتمل الرفع';
+
+  @override
+  String get uploadFailed => 'فشل الرفع';
+
+  @override
+  String get selectingFiles => 'اختيار الملفات...';
+
+  @override
+  String get searchFiles => 'البحث في الملفات...';
+
+  @override
+  String get selectFiles => 'تحديد الملفات';
+
+  @override
+  String get nameAZ => 'الاسم (أ-ي)';
+
+  @override
+  String get nameZA => 'الاسم (ي-أ)';
+
+  @override
+  String get dateNewest => 'التاريخ (الأحدث)';
+
+  @override
+  String get dateOldest => 'التاريخ (الأقدم)';
+
+  @override
+  String get sizeSmallest => 'الحجم (الأصغر)';
+
+  @override
+  String get sizeLargest => 'الحجم (الأكبر)';
+
+  @override
+  String get recent => 'الأخيرة';
+
+  @override
+  String get favorites => 'المفضلة';
+
+  @override
+  String get documents => 'المستندات';
+
+  @override
+  String get images => 'الصور';
+
+  @override
+  String get videos => 'الفيديوهات';
+
+  @override
+  String get audio => 'الصوتيات';
+
+  @override
+  String get noFilesYet => 'لا توجد ملفات بعد';
+
+  @override
+  String get uploadFilesDescription =>
+      'ارفع مستنداتك وصورك وفيديوهاتك والمزيد. سيتم تخزينها بشكل آمن للوصول السهل.';
+
+  @override
+  String get uploadFirstFile => 'ارفع ملفك الأول';
+
+  @override
+  String get supportedFormats => 'الصيغ المدعومة:';
+
+  @override
+  String get open => 'فتح';
+
+  @override
+  String get favorite => 'مفضلة';
+
+  @override
+  String get unfavorite => 'إلغاء المفضلة';
+
+  @override
+  String get fileDetails => 'تفاصيل الملف';
+
+  @override
+  String get fileType => 'النوع';
+
+  @override
+  String get size => 'الحجم';
+
+  @override
+  String get created => 'تاريخ الإنشاء';
+
+  @override
+  String get modified => 'تاريخ التعديل';
+
+  @override
+  String get location => 'الموقع';
+
+  @override
+  String get deleteFile => 'حذف الملف';
+
+  @override
+  String get deleteFiles => 'حذف الملفات';
+
+  @override
+  String get deleteFileConfirmation => 'هل أنت متأكد من حذف';
+
+  @override
+  String get deleteFilesConfirmation => 'هل أنت متأكد من حذف الملفات المحددة؟';
+
+  @override
+  String get filesSelected => 'ملفات محددة';
+
+  @override
+  String get fileSelected => 'ملف محدد';
+
+  @override
+  String get image => 'صورة';
+
+  @override
+  String get video => 'فيديو';
+
+  @override
+  String get audioFile => 'ملف صوتي';
+
+  @override
+  String get spreadsheet => 'جدول بيانات';
+
+  @override
+  String get codeFile => 'ملف برمجي';
+
+  @override
+  String get file => 'ملف';
 }

@@ -1378,4 +1378,366 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get setNewGoals => 'Set New Goals';
+
+  @override
+  String get voiceToTextTitle => 'Voice to Text';
+
+  @override
+  String get voiceToTextSubtitle =>
+      'Speak freely — EduVerse AI will turn your voice into structured notes';
+
+  @override
+  String get voiceToTextTranscription => 'Transcription';
+
+  @override
+  String get voiceToTextRecentRecordings => 'Recent Recordings';
+
+  @override
+  String get voiceToTextNoRecordings => 'No Recordings Yet';
+
+  @override
+  String get voiceToTextNoRecordingsDesc =>
+      'Start recording to capture your voice and convert it to text.';
+
+  @override
+  String get voiceToTextListening => 'Listening...';
+
+  @override
+  String get voiceToTextStartSpeaking => 'Start speaking...';
+
+  @override
+  String get voiceToTextWords => 'words';
+
+  @override
+  String get voiceToTextCharacters => 'characters';
+
+  @override
+  String get voiceToTextSaveRecording => 'Save Recording';
+
+  @override
+  String get voiceToTextEnterTitle => 'Enter a title for this recording';
+
+  @override
+  String get voiceToTextDiscard => 'Discard';
+
+  @override
+  String get voiceToTextSave => 'Save';
+
+  @override
+  String get voiceToTextSaving => 'Saving...';
+
+  @override
+  String get voiceToTextCopy => 'Copy';
+
+  @override
+  String get voiceToTextSummarize => 'Summarize';
+
+  @override
+  String get voiceToTextSummarizeComingSoon => 'AI Summarization coming soon!';
+
+  @override
+  String get voiceToTextFavorites => 'Favorites';
+
+  @override
+  String get voiceToTextThisMonth => 'This Month';
+
+  @override
+  String get voiceToTextNewest => 'Newest First';
+
+  @override
+  String get voiceToTextOldest => 'Oldest First';
+
+  @override
+  String get voiceToTextLongest => 'Longest First';
+
+  @override
+  String get voiceToTextShortest => 'Shortest First';
+
+  @override
+  String get voiceToTextAlphabetical => 'Alphabetical';
+
+  @override
+  String get voiceToTextAddFavorite => 'Add to Favorites';
+
+  @override
+  String get voiceToTextRemoveFavorite => 'Remove from Favorites';
+
+  @override
+  String get voiceToTextDeleteConfirm =>
+      'Are you sure you want to delete this recording? This action cannot be undone.';
+
+  @override
+  String get voiceToTextSettings => 'Voice to Text Settings';
+
+  @override
+  String get voiceToTextLanguage => 'Recognition Language';
+
+  @override
+  String get voiceToTextLanguageDesc => 'Language for speech recognition';
+
+  @override
+  String get voiceToTextAutoPunctuation => 'Auto-Punctuation';
+
+  @override
+  String get voiceToTextAutoPunctuationDesc =>
+      'Automatically add punctuation marks';
+
+  @override
+  String get voiceToTextContinuousRecording => 'Continuous Recording';
+
+  @override
+  String get voiceToTextContinuousRecordingDesc =>
+      'Keep recording until manually stopped';
+
+  @override
+  String get trackYourAttendance => 'Track your class attendance';
+
+  @override
+  String get attendanceOverview => 'Attendance Overview';
+
+  @override
+  String get totalClasses => 'Total Classes';
+
+  @override
+  String get present => 'Present';
+
+  @override
+  String get absent => 'Absent';
+
+  @override
+  String get excused => 'Excused';
+
+  @override
+  String get distribution => 'Distribution';
+
+  @override
+  String get courseAttendance => 'Course Attendance';
+
+  @override
+  String get noClassesOnThisDay => 'No classes on this day';
+
+  @override
+  String get classesOnThisDay => 'Classes on this day';
+
+  @override
+  String get noRecordsFound => 'No Records Found';
+
+  @override
+  String get noRecordsDescription =>
+      'No attendance records match your current filters.';
+
+  @override
+  String get records => 'Records';
+
+  @override
+  String get january => 'January';
+
+  @override
+  String get february => 'February';
+
+  @override
+  String get march => 'March';
+
+  @override
+  String get april => 'April';
+
+  @override
+  String get may => 'May';
+
+  @override
+  String get june => 'June';
+
+  @override
+  String get july => 'July';
+
+  @override
+  String get august => 'August';
+
+  @override
+  String get september => 'September';
+
+  @override
+  String get october => 'October';
+
+  @override
+  String get november => 'November';
+
+  @override
+  String get december => 'December';
+
+  @override
+  String get sun => 'Sun';
+
+  @override
+  String get mon => 'Mon';
+
+  @override
+  String get tue => 'Tue';
+
+  @override
+  String get wed => 'Wed';
+
+  @override
+  String get thu => 'Thu';
+
+  @override
+  String get fri => 'Fri';
+
+  @override
+  String get sat => 'Sat';
+
+  @override
+  String get weeklyTrend => 'Weekly Trend';
+
+  @override
+  String get attendanceRate => 'Attendance Rate';
+
+  @override
+  String get viewAll => 'View All';
+
+  @override
+  String get myFiles => 'My Files';
+
+  @override
+  String get files => 'files';
+
+  @override
+  String get storage => 'Storage';
+
+  @override
+  String get used => 'used';
+
+  @override
+  String get upload => 'Upload';
+
+  @override
+  String get uploading => 'Uploading';
+
+  @override
+  String get uploadComplete => 'Upload Complete';
+
+  @override
+  String get uploadFailed => 'Upload Failed';
+
+  @override
+  String get selectingFiles => 'Selecting files...';
+
+  @override
+  String get searchFiles => 'Search files...';
+
+  @override
+  String get selectFiles => 'Select Files';
+
+  @override
+  String get nameAZ => 'Name (A-Z)';
+
+  @override
+  String get nameZA => 'Name (Z-A)';
+
+  @override
+  String get dateNewest => 'Date (Newest)';
+
+  @override
+  String get dateOldest => 'Date (Oldest)';
+
+  @override
+  String get sizeSmallest => 'Size (Smallest)';
+
+  @override
+  String get sizeLargest => 'Size (Largest)';
+
+  @override
+  String get recent => 'Recent';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get documents => 'Documents';
+
+  @override
+  String get images => 'Images';
+
+  @override
+  String get videos => 'Videos';
+
+  @override
+  String get audio => 'Audio';
+
+  @override
+  String get noFilesYet => 'No Files Yet';
+
+  @override
+  String get uploadFilesDescription =>
+      'Upload your documents, images, videos and more. They\'ll be stored securely for easy access.';
+
+  @override
+  String get uploadFirstFile => 'Upload Your First File';
+
+  @override
+  String get supportedFormats => 'Supported formats:';
+
+  @override
+  String get open => 'Open';
+
+  @override
+  String get favorite => 'Favorite';
+
+  @override
+  String get unfavorite => 'Unfavorite';
+
+  @override
+  String get fileDetails => 'File Details';
+
+  @override
+  String get fileType => 'Type';
+
+  @override
+  String get size => 'Size';
+
+  @override
+  String get created => 'Created';
+
+  @override
+  String get modified => 'Modified';
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get deleteFile => 'Delete File';
+
+  @override
+  String get deleteFiles => 'Delete Files';
+
+  @override
+  String get deleteFileConfirmation => 'Are you sure you want to delete';
+
+  @override
+  String get deleteFilesConfirmation =>
+      'Are you sure you want to delete the selected files?';
+
+  @override
+  String get filesSelected => 'files selected';
+
+  @override
+  String get fileSelected => 'file selected';
+
+  @override
+  String get image => 'Image';
+
+  @override
+  String get video => 'Video';
+
+  @override
+  String get audioFile => 'Audio File';
+
+  @override
+  String get spreadsheet => 'Spreadsheet';
+
+  @override
+  String get codeFile => 'Code File';
+
+  @override
+  String get file => 'File';
 }
