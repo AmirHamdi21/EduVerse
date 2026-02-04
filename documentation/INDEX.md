@@ -1,10 +1,39 @@
-# Courses Screen Documentation Index
+# EduVerse Documentation Index
 
 ## Welcome to the Complete Documentation
 
-This folder contains comprehensive documentation for the Courses Screen implementation in the EduVerse application.
+This folder contains comprehensive documentation for EduVerse application features and implementations.
 
 ## 📚 Documentation Structure
+
+### Student Features
+
+#### Voice to Text Feature
+- **[VOICE_TO_TEXT_FEATURE.md](VOICE_TO_TEXT_FEATURE.md)** - Complete voice to text documentation
+  - Audio recording and playback
+  - Speech-to-text transcription
+  - Recording management
+  - Search and filter
+  - Local storage
+  - Permissions and packages
+
+#### Attendance Feature
+- **[ATTENDANCE_FEATURE.md](ATTENDANCE_FEATURE.md)** - Complete attendance documentation
+  - Overview and course statistics
+  - Course detail view
+  - Lecture history
+  - Search and filter
+  - Theme support
+  - Navigation flow
+
+#### My Files Feature
+- **[MY_FILES_FEATURE.md](MY_FILES_FEATURE.md)** - Complete file management documentation
+  - File upload and management
+  - Grid and list views
+  - Multi-select operations
+  - Storage statistics
+  - Favorites system
+  - Delete confirmation dialog
 
 ### 1. Courses Screen (`courses_screen/`)
 Complete documentation about the Courses Screen implementation and architecture.
@@ -85,16 +114,22 @@ Detailed reference guides for specific topics.
   - Usage examples
   - Accessibility considerations
 
+### 5. Student Stats
+- **[STUDENT_STATS_IMPROVEMENTS.md](STUDENT_STATS_IMPROVEMENTS.md)** - Stats improvements
+- **[STUDENT_STATS_REDESIGN.md](STUDENT_STATS_REDESIGN.md)** - Redesign documentation
+- **[STUDENT_STATS_REDESIGN_SUMMARY.md](STUDENT_STATS_REDESIGN_SUMMARY.md)** - Redesign summary
+- **[STUDENT_STATS_VISUAL_MOCKUP.md](STUDENT_STATS_VISUAL_MOCKUP.md)** - Visual mockups
+
 ## 🚀 Quick Navigation
 
 ### For First-Time Users
-1. Start with [IMPLEMENTATION_SUMMARY.md](implementation/IMPLEMENTATION_SUMMARY.md)
+1. Start with feature documentation you need
 2. Read [INTEGRATION_GUIDE.md](implementation/INTEGRATION_GUIDE.md)
 3. Check [courses_screen/QUICK_REFERENCE.md](courses_screen/QUICK_REFERENCE.md)
 
 ### For Developers
-1. Review [courses_screen/ARCHITECTURE.md](courses_screen/ARCHITECTURE.md)
-2. Study [courses_screen/README.md](courses_screen/README.md)
+1. Review feature-specific documentation
+2. Study [courses_screen/ARCHITECTURE.md](courses_screen/ARCHITECTURE.md)
 3. Reference [guides/COLOR_PALETTE.md](guides/COLOR_PALETTE.md)
 
 ### For Localization Team
@@ -103,16 +138,23 @@ Detailed reference guides for specific topics.
 3. Test using provided examples
 
 ### For Quick Lookup
+- Voice to Text → [VOICE_TO_TEXT_FEATURE.md](VOICE_TO_TEXT_FEATURE.md)
+- Attendance → [ATTENDANCE_FEATURE.md](ATTENDANCE_FEATURE.md)
+- My Files → [MY_FILES_FEATURE.md](MY_FILES_FEATURE.md)
 - Colors → [COLOR_PALETTE.md](guides/COLOR_PALETTE.md)
 - Components → [QUICK_REFERENCE.md](courses_screen/QUICK_REFERENCE.md)
-- Navigation → [INTEGRATION_GUIDE.md](implementation/INTEGRATION_GUIDE.md)
-- Architecture → [ARCHITECTURE.md](courses_screen/ARCHITECTURE.md)
 
 ## 📁 File Organization
 
 ```
 documentation/
 ├── INDEX.md (this file)
+│
+├── VOICE_TO_TEXT_FEATURE.md      # Voice to text feature docs
+├── ATTENDANCE_FEATURE.md          # Attendance feature docs
+├── MY_FILES_FEATURE.md            # My files feature docs
+│
+├── STUDENT_STATS_*.md             # Student stats documentation
 │
 ├── courses_screen/
 │   ├── README.md
@@ -126,167 +168,113 @@ documentation/
 │   ├── IMPLEMENTATION_SUMMARY.md
 │   └── INTEGRATION_GUIDE.md
 │
-└── guides/
-    └── COLOR_PALETTE.md
+├── guides/
+│   └── COLOR_PALETTE.md
+│
+└── student screen/
+    └── (student screen docs)
 ```
 
-## 🎯 Key Information at a Glance
+## 🎯 Feature Summary
 
-### Route
-```dart
-context.go('/courses');
-```
+### Voice to Text
+| Route | `/voice-to-text` |
+|-------|------------------|
+| Key Features | Recording, Playback, Transcription, Search, Favorites |
+| Packages | record, audioplayers, speech_to_text |
+| Storage | Local (SharedPreferences + Files) |
 
-### Key Features
-✅ Display multiple courses
-✅ Real-time search
-✅ Dynamic filtering
-✅ Progress tracking
-✅ Dark mode support
-✅ Multi-language (EN/AR)
-✅ Smooth animations
-✅ Mobile responsive
+### Attendance
+| Route | `/attendance` |
+|-------|---------------|
+| Key Features | Overview, Course Detail, Search, Filter, Statistics |
+| Components | Stats Card, Course Card, Lecture Item |
+| Theme | Light/Dark mode support |
 
-### Key Colors
-- **Primary**: #2B7FFF → #155DFC (gradient)
-- **Accent**: #155DFC
-- **Text**: #101828 (light), White (dark)
-- **Borders**: #D1D5DC (light), white.withOpacity(0.1) (dark)
-
-### Localization Keys
-- `myCoursesHeader`
-- `searchCourseNameOrInstructor`
-- `filter`, `sort`
-- `all`, `lectures`, `labs`, `completed`
-- `joinCourse`
-- + 20 more keys
-
-### Main Components
-- CoursesScreen
-- CourseCard
-- CourseSearchBar
-- CourseFilterBar
-- CoursesAppBar
-- CoursesListView
-- JoinCourseButton
+### My Files
+| Route | `/my-files` |
+|-------|-------------|
+| Key Features | Upload, Grid/List View, Multi-select, Favorites, Delete |
+| Packages | file_picker, open_file |
+| Storage | Local (app documents directory) |
 
 ## 📊 Statistics
 
-- **Total Files**: 9 widget files + 3 documentation files
-- **Localization Keys**: 27 (English & Arabic)
-- **Color Definitions**: 15+ custom colors
-- **Components**: 9 main components
-- **Lines of Code**: ~1,500 (well-documented)
-- **Documentation Pages**: 7 comprehensive guides
+### Documentation Coverage
+- **Voice to Text**: Complete ✅
+- **Attendance**: Complete ✅
+- **My Files**: Complete ✅
+- **Courses Screen**: Complete ✅
+- **Student Stats**: Complete ✅
+
+### Total Documentation
+- **Feature Docs**: 3 comprehensive guides
+- **Architecture Docs**: 2 detailed guides
+- **Reference Docs**: 4 quick reference guides
+- **Localization Keys**: 100+ (English & Arabic)
 
 ## ✅ Implementation Status
 
-- [x] All widgets implemented
-- [x] Theme integration complete
-- [x] Localization (EN + AR) complete
-- [x] Router configuration done
-- [x] Performance optimized
-- [x] Documentation complete
-- [x] Testing guidelines provided
-- [x] Production ready
+### Voice to Text
+- [x] Audio recording
+- [x] Audio playback
+- [x] Waveform visualization
+- [x] Recording list management
+- [x] Search and filter
+- [x] Local storage
+- [x] Dark/Light theme
+- [x] EN/AR localization
+
+### Attendance
+- [x] Overview statistics
+- [x] Course list with attendance
+- [x] Course detail view
+- [x] Lecture history
+- [x] Search functionality
+- [x] Filter options
+- [x] Dark/Light theme
+- [x] EN/AR localization
+
+### My Files
+- [x] File upload
+- [x] Grid/List views
+- [x] File details sheet
+- [x] Favorites system
+- [x] Multi-select delete
+- [x] Storage statistics
+- [x] Delete confirmation dialog
+- [x] Dark/Light theme
+- [x] EN/AR localization
 
 ## 🔗 Related Resources
 
 ### In Project Root
-- `lib/widgets/student/courses/` - All widget files
+- `lib/bloc/` - All Cubit state management
+- `lib/screens/student/` - All screen files
+- `lib/widgets/student/` - All widget files
 - `lib/config/app_router.dart` - Router configuration
 - `lib/l10n/app_en.arb` - English strings
 - `lib/l10n/app_ar.arb` - Arabic strings
-
-### Original Documentation Files (Root)
-These files remain in the project root for quick reference:
-- `COURSES_SCREEN_README.md`
-- `COURSES_INTEGRATION_GUIDE.md`
-- `COURSES_IMPLEMENTATION_SUMMARY.md`
-- `COURSES_QUICK_REFERENCE.md`
-
-## 🆘 Troubleshooting
-
-### Can't Find Information?
-1. Check the file organization chart above
-2. Use Ctrl+F to search within a document
-3. Check QUICK_REFERENCE.md for common questions
-
-### Common Issues
-- **Route not working** → See INTEGRATION_GUIDE.md
-- **Colors look wrong** → See COLOR_PALETTE.md
-- **Translations missing** → See LOCALIZATION_GUIDE.md
-- **Architecture questions** → See ARCHITECTURE.md
-
-## 📝 Documentation Guidelines
-
-### When to Update Documentation
-- When adding new features
-- When modifying existing components
-- When changing colors or layout
-- When updating localization strings
-- When fixing bugs related to UI
-
-### How to Update
-1. Update the relevant documentation file
-2. Update the summary in this INDEX
-3. Commit with clear message
-4. Tag release if major change
-
-## 🎓 Learning Paths
-
-### Path 1: Implementation Overview (30 min)
-1. IMPLEMENTATION_SUMMARY.md (10 min)
-2. INTEGRATION_GUIDE.md (10 min)
-3. QUICK_REFERENCE.md (10 min)
-
-### Path 2: Deep Technical Dive (1 hour)
-1. README.md (15 min)
-2. ARCHITECTURE.md (20 min)
-3. COLOR_PALETTE.md (10 min)
-4. CODE REVIEW (15 min)
-
-### Path 3: Customization (45 min)
-1. QUICK_REFERENCE.md (15 min)
-2. COLOR_PALETTE.md (10 min)
-3. LOCALIZATION_GUIDE.md (10 min)
-4. Hands-on customization (10 min)
-
-### Path 4: Localization & i18n (1 hour)
-1. LOCALIZATION_GUIDE.md (30 min)
-2. Follow adding new language steps (20 min)
-3. Test implementation (10 min)
-
-## 📞 Support & Questions
-
-### Documentation Issues
-- Unclear instructions?
-- Missing information?
-- Found an error?
-
-Please check:
-1. Is this covered in another doc?
-2. Does this need a new page?
-3. Should this be clearer?
 
 ## 🔄 Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
-| 1.0.0 | 2025-12-05 | Initial complete documentation |
+| 1.0.0 | 2025-12-05 | Initial courses screen documentation |
+| 1.1.0 | 2026-02-04 | Added Voice to Text, Attendance, My Files documentation |
 
 ## 📄 Document Metadata
 
 - **Created**: 2025-12-05
-- **Last Updated**: 2025-12-05
+- **Last Updated**: 2026-02-04
 - **Status**: Complete & Production Ready ✅
-- **Coverage**: 100% of implementation
+- **Coverage**: Voice to Text, Attendance, My Files, Courses
 - **Languages**: English
 - **Audience**: Developers, Designers, Product Team
 
 ---
 
-**Start with**: [IMPLEMENTATION_SUMMARY.md](implementation/IMPLEMENTATION_SUMMARY.md)
+**Feature Docs**: [Voice to Text](VOICE_TO_TEXT_FEATURE.md) | [Attendance](ATTENDANCE_FEATURE.md) | [My Files](MY_FILES_FEATURE.md)
 
 **Quick Reference**: [COLOR_PALETTE.md](guides/COLOR_PALETTE.md) | [QUICK_REFERENCE.md](courses_screen/QUICK_REFERENCE.md)
 
@@ -294,4 +282,4 @@ Please check:
 
 ---
 
-Thank you for using this documentation! For the best experience, read documents in the recommended order or follow one of the learning paths above.
+Thank you for using this documentation!
