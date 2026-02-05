@@ -201,7 +201,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get firstName => 'الاسم الأول';
 
   @override
-  String get lastName => 'الاسم الأخير';
+  String get lastName => 'اسم العائلة';
 
   @override
   String get enterFirstName => 'أدخل اسمك الأول';
@@ -456,7 +456,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get goodEvening => 'مساء الخير';
 
   @override
-  String get gpa => 'المعدل التراكمي';
+  String get gpa => 'المعدل';
 
   @override
   String get semesterProgress => 'تقدم الفصل الدراسي';
@@ -477,7 +477,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get performanceInsights => 'رؤى الأداء';
 
   @override
-  String get courses => 'المقررات';
+  String get courses => 'المواد';
 
   @override
   String get aiQuiz => 'اختبار الذكاء الاصطناعي';
@@ -582,7 +582,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get exam => 'اختبار';
 
   @override
-  String get aiAssistant => 'مساعد ذكاء اصطناعي';
+  String get aiAssistant => 'مساعد الذكاء الاصطناعي';
 
   @override
   String get myCoursesHeader => 'دوراتي';
@@ -683,7 +683,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'إنشاء اختبارات مخصصة من مواد دراستك.';
 
   @override
-  String get selectCourse => 'اختر المقرر';
+  String get selectCourse => 'اختر المادة';
 
   @override
   String get quizType => 'اختبار قصير';
@@ -704,7 +704,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get easy => 'سهل';
 
   @override
-  String get medium => 'متوسط';
+  String get medium => 'متوسطة';
 
   @override
   String get hard => 'صعب';
@@ -981,10 +981,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get swipeSensitivityDesc => 'ضبط مسافة السحب المطلوبة';
 
   @override
-  String get low => 'منخفض';
+  String get low => 'منخفضة';
 
   @override
-  String get high => 'مرتفع';
+  String get high => 'عالية';
 
   @override
   String get sampleNotificationTitle => 'إشعار تجريبي';
@@ -1123,7 +1123,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tomorrow => 'غداً';
 
   @override
-  String get daysAgo => 'أيام مضت';
+  String daysAgo(int count) {
+    return 'منذ $count يوم';
+  }
 
   @override
   String get labsToday => 'معامل مجدولة اليوم';
@@ -2159,7 +2161,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get attachFile => 'إرفاق ملف';
 
   @override
-  String get camera => 'كاميرا';
+  String get camera => 'الكاميرا';
 
   @override
   String get typeMessageHint => 'اكتب رسالتك...';
@@ -2276,4 +2278,1856 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get personalTaskType => 'مهمة شخصية';
+
+  @override
+  String get chatTitle => 'الرسائل';
+
+  @override
+  String get chatSubtitle => 'تواصل مع المعلمين وزملاء الدراسة';
+
+  @override
+  String get newChat => 'محادثة جديدة';
+
+  @override
+  String get newConversation => 'محادثة جديدة';
+
+  @override
+  String get searchConversations => 'البحث في المحادثات...';
+
+  @override
+  String get searchByNameOrEmail => 'البحث بالاسم أو البريد الإلكتروني...';
+
+  @override
+  String get noConversations => 'لا توجد محادثات بعد';
+
+  @override
+  String get noConversationsDesc =>
+      'ابدأ محادثة جديدة مع المعلمين أو الطلاب أو انضم إلى مناقشات المقررات.';
+
+  @override
+  String get noMatchingConversations => 'لا توجد محادثات مطابقة';
+
+  @override
+  String get noMatchingConversationsDesc =>
+      'حاول تعديل الفلاتر أو استعلام البحث للعثور على المحادثات.';
+
+  @override
+  String get startNewChat => 'بدء محادثة جديدة';
+
+  @override
+  String get pinned => 'المثبتة';
+
+  @override
+  String get conversations => 'المحادثات';
+
+  @override
+  String get unread => 'غير مقروءة';
+
+  @override
+  String get groups => 'المجموعات';
+
+  @override
+  String get createGroup => 'إنشاء مجموعة';
+
+  @override
+  String get joinCourseChat => 'انضم لمحادثة المقرر';
+
+  @override
+  String get suggestedContacts => 'جهات الاتصال المقترحة';
+
+  @override
+  String get noUsersFound => 'لم يتم العثور على مستخدمين';
+
+  @override
+  String get online => 'متصل';
+
+  @override
+  String get offline => 'غير متصل';
+
+  @override
+  String get away => 'بعيد';
+
+  @override
+  String get busy => 'مشغول';
+
+  @override
+  String get loadingMessages => 'جارٍ تحميل الرسائل...';
+
+  @override
+  String get noMessagesYet => 'لا توجد رسائل بعد';
+
+  @override
+  String get startConversation => 'ابدأ المحادثة بإرسال رسالة';
+
+  @override
+  String get replyingTo => 'الرد على';
+
+  @override
+  String get reply => 'رد';
+
+  @override
+  String get copy => 'نسخ';
+
+  @override
+  String get forward => 'إعادة توجيه';
+
+  @override
+  String get copiedToClipboard => 'تم النسخ إلى الحافظة';
+
+  @override
+  String get searchInConversation => 'البحث في المحادثة';
+
+  @override
+  String get muteNotifications => 'كتم الإشعارات';
+
+  @override
+  String get unmute => 'إلغاء الكتم';
+
+  @override
+  String get blockUser => 'حظر المستخدم';
+
+  @override
+  String get pinChat => 'تثبيت المحادثة';
+
+  @override
+  String get deleteConversation => 'حذف المحادثة';
+
+  @override
+  String get deleteConversationConfirm =>
+      'سيتم حذف المحادثة نهائياً. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get photo => 'صورة';
+
+  @override
+  String get featureComingSoon => 'الميزة قادمة قريباً!';
+
+  @override
+  String get groupCreationComingSoon => 'إنشاء المجموعات قادم قريباً!';
+
+  @override
+  String get courseChatComingSoon => 'ميزة محادثة المقرر قادمة قريباً!';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get justNow => 'الآن';
+
+  @override
+  String get chatSwipeActions => 'إجراءات السحب';
+
+  @override
+  String get chatSwipeActionsSubtitle => 'تخصيص إيماءات السحب للمحادثات';
+
+  @override
+  String get chatPin => 'تثبيت';
+
+  @override
+  String get chatUnpin => 'إلغاء التثبيت';
+
+  @override
+  String get chatMute => 'كتم';
+
+  @override
+  String get chatUnmute => 'إلغاء الكتم';
+
+  @override
+  String get chatDeleteConversation => 'حذف المحادثة';
+
+  @override
+  String get chatArchiveConversation => 'أرشفة المحادثة';
+
+  @override
+  String get chatDeleteConfirmMessage =>
+      'هل أنت متأكد من حذف هذه المحادثة؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get chatArchiveConfirmMessage =>
+      'سيتم نقل هذه المحادثة إلى الأرشيف. يمكنك استعادتها في أي وقت.';
+
+  @override
+  String get chatSampleTitle => 'محادثة نموذجية';
+
+  @override
+  String get chatSampleMessage => 'اسحب يساراً أو يميناً لرؤية الإجراءات';
+
+  @override
+  String get chatDeleteDesc => 'إزالة المحادثة نهائياً';
+
+  @override
+  String get chatArchiveDesc => 'نقل إلى مجلد الأرشيف';
+
+  @override
+  String get chatPinDesc => 'الاحتفاظ في أعلى قائمة المحادثات';
+
+  @override
+  String get chatMuteDesc => 'تعطيل الإشعارات';
+
+  @override
+  String get chatMarkReadDesc => 'تحديد المحادثة كمقروءة';
+
+  @override
+  String get chatMarkUnreadDesc => 'تحديد المحادثة كغير مقروءة';
+
+  @override
+  String get chatNoneDesc => 'لا إجراء في هذا الاتجاه';
+
+  @override
+  String get none => 'لا شيء';
+
+  @override
+  String get aiNotesSummaries => 'الملاحظات والملخصات الذكية';
+
+  @override
+  String get aiNotesSubtitle => 'ملاحظات مدعومة بالذكاء الاصطناعي من محاضراتك';
+
+  @override
+  String get searchNotesHint =>
+      'ابحث في الملاحظات حسب المادة أو الموضوع أو الكلمة...';
+
+  @override
+  String get allNotes => 'كل الملاحظات';
+
+  @override
+  String get byCourse => 'حسب المادة';
+
+  @override
+  String get byDate => 'حسب التاريخ';
+
+  @override
+  String get newestFirst => 'الأحدث أولاً';
+
+  @override
+  String get oldestFirst => 'الأقدم أولاً';
+
+  @override
+  String get titleAZ => 'العنوان أ-ي';
+
+  @override
+  String get titleZA => 'العنوان ي-أ';
+
+  @override
+  String get courseAZ => 'المادة أ-ي';
+
+  @override
+  String get quickStats => 'إحصائيات سريعة';
+
+  @override
+  String get totalNotes => 'إجمالي الملاحظات';
+
+  @override
+  String get favorited => 'المفضلة';
+
+  @override
+  String get aiStudyRecommendations => 'توصيات الدراسة الذكية';
+
+  @override
+  String get reviewTopic => 'مراجعة الموضوع';
+
+  @override
+  String get relatedConcept => 'مفهوم ذو صلة';
+
+  @override
+  String get upcomingQuiz => 'اختبار قادم';
+
+  @override
+  String get generateFlashcards => 'إنشاء بطاقات تعليمية';
+
+  @override
+  String get fromYourNotes => 'من ملاحظاتك';
+
+  @override
+  String get newLabel => 'جديد';
+
+  @override
+  String get inDays => 'خلال';
+
+  @override
+  String get yourNotes => 'ملاحظاتك';
+
+  @override
+  String get notes => 'ملاحظات';
+
+  @override
+  String get topics => 'مواضيع';
+
+  @override
+  String get viewStructure => 'عرض الهيكل';
+
+  @override
+  String get showLess => 'عرض أقل';
+
+  @override
+  String get shareNotePreparing => 'جاري تحضير الملاحظة للمشاركة...';
+
+  @override
+  String get copyToClipboard => 'نسخ إلى الحافظة';
+
+  @override
+  String get downloadPdf => 'تحميل PDF';
+
+  @override
+  String get pdfDownloadStarted => 'بدأ تحميل PDF';
+
+  @override
+  String get translateNote => 'ترجمة الملاحظة';
+
+  @override
+  String get translationInProgress => 'الترجمة قيد التنفيذ...';
+
+  @override
+  String get deleteNote => 'حذف الملاحظة';
+
+  @override
+  String get deleteNoteConfirmation =>
+      'هل أنت متأكد من حذف هذه الملاحظة؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get noteDetails => 'تفاصيل الملاحظة';
+
+  @override
+  String get keyTopics => 'المواضيع الرئيسية';
+
+  @override
+  String get updated => 'تم التحديث';
+
+  @override
+  String get translate => 'ترجمة';
+
+  @override
+  String get regenerate => 'إعادة توليد';
+
+  @override
+  String get summarize => 'تلخيص';
+
+  @override
+  String get errorLoadingNotes => 'خطأ في تحميل الملاحظات';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get dismiss => 'تجاهل';
+
+  @override
+  String get generateNotes => 'إنشاء ملاحظات';
+
+  @override
+  String get generateNewNotes => 'إنشاء ملاحظات جديدة';
+
+  @override
+  String get generateNotesDescription => 'أنشئ ملاحظات ذكية من مصادر متعددة';
+
+  @override
+  String get uploadDocument => 'رفع مستند';
+
+  @override
+  String get uploadDocumentDescription => 'ملفات PDF أو Word أو نصية';
+
+  @override
+  String get fromVideo => 'من فيديو';
+
+  @override
+  String get fromVideoDescription => 'يوتيوب أو فيديو مرفوع';
+
+  @override
+  String get fromUrl => 'من رابط';
+
+  @override
+  String get fromUrlDescription => 'مقال أو مدونة على الويب';
+
+  @override
+  String get fromAudio => 'من صوت';
+
+  @override
+  String get fromAudioDescription => 'تسجيل أو رفع ملف صوتي';
+
+  @override
+  String get notesSettings => 'إعدادات الملاحظات';
+
+  @override
+  String get exportAllNotes => 'تصدير كل الملاحظات';
+
+  @override
+  String get exportStarted => 'بدأ التصدير';
+
+  @override
+  String get syncWithCloud => 'مزامنة مع السحابة';
+
+  @override
+  String get syncInProgress => 'المزامنة قيد التنفيذ...';
+
+  @override
+  String get defaultLanguage => 'اللغة الافتراضية';
+
+  @override
+  String get aboutAiNotes => 'حول الملاحظات الذكية';
+
+  @override
+  String get aiNotesAboutDescription =>
+      'تستخدم الملاحظات الذكية التعلم الآلي المتقدم لإنشاء ملخصات شاملة من محاضراتك وكتبك ومواد التعلم الأخرى. تساعدك على الدراسة بذكاء وليس بجهد.';
+
+  @override
+  String get gotIt => 'فهمت';
+
+  @override
+  String get noNotesFoundSearch => 'لم يتم العثور على ملاحظات';
+
+  @override
+  String get tryDifferentSearch => 'جرب كلمة بحث مختلفة أو عدّل الفلاتر';
+
+  @override
+  String get noFavoriteNotes => 'لا توجد ملاحظات مفضلة';
+
+  @override
+  String get favoriteNotesWillAppear => 'الملاحظات المفضلة ستظهر هنا';
+
+  @override
+  String get noNotesYet => 'لا توجد ملاحظات بعد';
+
+  @override
+  String get generateFirstNote => 'أنشئ أول ملاحظة ذكية للبدء!';
+
+  @override
+  String get profileSettings => 'الملف الشخصي والإعدادات';
+
+  @override
+  String get editProfile => 'تعديل الملف الشخصي';
+
+  @override
+  String get editProfileDesc => 'تحديث معلوماتك الشخصية';
+
+  @override
+  String get personalInformation => 'المعلومات الشخصية';
+
+  @override
+  String get phone => 'الهاتف';
+
+  @override
+  String get dateOfBirth => 'تاريخ الميلاد';
+
+  @override
+  String get bio => 'نبذة شخصية';
+
+  @override
+  String get coursesEnrolled => 'المقررات';
+
+  @override
+  String get assignmentsCompleted => 'المكتملة';
+
+  @override
+  String get change => 'تغيير';
+
+  @override
+  String get selectLanguage => 'اختر اللغة';
+
+  @override
+  String get currentPassword => 'كلمة المرور الحالية';
+
+  @override
+  String get newPassword => 'كلمة المرور الجديدة';
+
+  @override
+  String get changePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get changePasswordDesc => 'تحديث كلمة مرور حسابك';
+
+  @override
+  String get passwordChangedSuccess => 'تم تغيير كلمة المرور بنجاح';
+
+  @override
+  String get preferencesNotifications => 'التفضيلات والإشعارات';
+
+  @override
+  String get pushNotifications => 'إشعارات الدفع';
+
+  @override
+  String get pushNotificationsDesc => 'استلام إشعارات الدفع';
+
+  @override
+  String get emailAlerts => 'تنبيهات البريد الإلكتروني';
+
+  @override
+  String get emailAlertsDesc => 'استلام التحديثات المهمة عبر البريد';
+
+  @override
+  String get aiSuggestions => 'اقتراحات الذكاء الاصطناعي';
+
+  @override
+  String get aiSuggestionsDesc => 'استلام نصائح دراسية ذكية';
+
+  @override
+  String get autoDarkMode => 'الوضع الداكن التلقائي';
+
+  @override
+  String get autoDarkModeDesc => 'تبديل السمة حسب إعدادات النظام';
+
+  @override
+  String get weeklyPerformanceSummary => 'ملخص الأداء الأسبوعي';
+
+  @override
+  String get weeklyPerformanceSummaryDesc => 'استلام تقارير التقدم الأسبوعية';
+
+  @override
+  String get appearanceTheme => 'المظهر والسمة';
+
+  @override
+  String get themeMode => 'وضع السمة';
+
+  @override
+  String get light => 'فاتح';
+
+  @override
+  String get dark => 'داكن';
+
+  @override
+  String get primaryColorAccent => 'لون التمييز الأساسي';
+
+  @override
+  String get securityAccount => 'الأمان والحساب';
+
+  @override
+  String get twoFactorAuth => 'المصادقة الثنائية';
+
+  @override
+  String get twoFactorAuthDesc => 'إضافة أمان إضافي لحسابك';
+
+  @override
+  String get deviceManagement => 'إدارة الأجهزة';
+
+  @override
+  String get manage => 'إدارة';
+
+  @override
+  String connectedDevicesCount(int count) {
+    return '$count أجهزة متصلة';
+  }
+
+  @override
+  String get connectedDevices => 'الأجهزة المتصلة';
+
+  @override
+  String get currentDevice => 'الحالي';
+
+  @override
+  String get activeNow => 'نشط الآن';
+
+  @override
+  String minutesAgo(int count) {
+    return 'منذ $count دقيقة';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return 'منذ $count ساعة';
+  }
+
+  @override
+  String get removeDevice => 'إزالة الجهاز';
+
+  @override
+  String get downloadMyData => 'تحميل بياناتي';
+
+  @override
+  String get downloadMyDataDesc => 'تصدير نسخة من بياناتك';
+
+  @override
+  String get downloadDataConfirmation =>
+      'سنقوم بتحضير تحميل لجميع بياناتك الشخصية. قد يستغرق هذا بضع دقائق.';
+
+  @override
+  String get dataExportStarted =>
+      'بدأ تصدير البيانات. سيتم إعلامك عند الجاهزية.';
+
+  @override
+  String get download => 'تحميل';
+
+  @override
+  String get deleteMyAccount => 'حذف حسابي';
+
+  @override
+  String get deleteMyAccountDesc => 'حذف حسابك نهائياً';
+
+  @override
+  String get deleteAccountWarning =>
+      'هذا الإجراء نهائي. سيتم حذف جميع بياناتك ومقرراتك وتقدمك للأبد.';
+
+  @override
+  String get typeDeleteToConfirm => 'اكتب DELETE للتأكيد';
+
+  @override
+  String get deleteAccount => 'حذف الحساب';
+
+  @override
+  String get about => 'حول';
+
+  @override
+  String get faq => 'الأسئلة الشائعة';
+
+  @override
+  String get faqDesc => 'الأسئلة المتكررة';
+
+  @override
+  String get contactSupport => 'اتصل بالدعم';
+
+  @override
+  String get reportBug => 'الإبلاغ عن خطأ';
+
+  @override
+  String get reportBugDesc => 'ساعدنا في التحسين بالإبلاغ عن المشاكل';
+
+  @override
+  String get sendFeedback => 'إرسال ملاحظات';
+
+  @override
+  String get sendFeedbackDesc => 'شاركنا أفكارك';
+
+  @override
+  String get documentation => 'التوثيق';
+
+  @override
+  String get documentationDesc => 'تعلم كيفية استخدام إيدوفيرس';
+
+  @override
+  String get dataCollection => 'جمع البيانات';
+
+  @override
+  String get dataCollectionDesc => 'السماح بجمع بيانات الاستخدام';
+
+  @override
+  String get dataUsage => 'استخدام البيانات';
+
+  @override
+  String get dataUsageDesc =>
+      'تساعدنا بياناتك في تخصيص تجربة التعلم وتحسين توصيات الذكاء الاصطناعي وتقديم محتوى تعليمي أفضل.';
+
+  @override
+  String get dataSecurity => 'أمان البيانات';
+
+  @override
+  String get dataSecurityDesc =>
+      'ننفذ إجراءات أمان بمعايير الصناعة لحماية معلوماتك الشخصية من الوصول غير المصرح به.';
+
+  @override
+  String get thirdPartyServices => 'خدمات الطرف الثالث';
+
+  @override
+  String get thirdPartyServicesDesc =>
+      'قد نشارك البيانات مع شركاء موثوقين لتحسين خدماتنا، دائماً بما يتوافق مع لوائح الخصوصية.';
+
+  @override
+  String get yourRights => 'حقوقك';
+
+  @override
+  String get yourRightsDesc =>
+      'لديك الحق في الوصول إلى بياناتك الشخصية أو تصحيحها أو حذفها في أي وقت من خلال إعدادات حسابك.';
+
+  @override
+  String get academicInformation => 'المعلومات الأكاديمية';
+
+  @override
+  String get university => 'الجامعة';
+
+  @override
+  String get studentId => 'رقم الطالب';
+
+  @override
+  String get major => 'التخصص الرئيسي';
+
+  @override
+  String get minor => 'التخصص الفرعي';
+
+  @override
+  String get year => 'السنة';
+
+  @override
+  String get expectedGraduation => 'التخرج المتوقع';
+
+  @override
+  String get socialProfessionalLinks => 'الروابط الاجتماعية والمهنية';
+
+  @override
+  String get personalWebsite => 'الموقع الشخصي';
+
+  @override
+  String get changeCover => 'تغيير الغلاف';
+
+  @override
+  String get changePhoto => 'تغيير الصورة';
+
+  @override
+  String get gallery => 'المعرض';
+
+  @override
+  String get remove => 'إزالة';
+
+  @override
+  String get discardChanges => 'تجاهل التغييرات؟';
+
+  @override
+  String get discardChangesMessage =>
+      'لديك تغييرات غير محفوظة. هل أنت متأكد من تجاهلها؟';
+
+  @override
+  String get keepEditing => 'متابعة التعديل';
+
+  @override
+  String get discard => 'تجاهل';
+
+  @override
+  String get profileUpdated => 'تم تحديث الملف الشخصي بنجاح';
+
+  @override
+  String get account => 'الحساب';
+
+  @override
+  String get emailPreferences => 'تفضيلات البريد الإلكتروني';
+
+  @override
+  String get emailPreferencesDesc => 'إدارة اتصالات البريد الإلكتروني';
+
+  @override
+  String get notSet => 'غير محدد';
+
+  @override
+  String get phoneUpdated => 'تم تحديث رقم الهاتف';
+
+  @override
+  String get appearance => 'المظهر';
+
+  @override
+  String get currentLanguage => 'العربية';
+
+  @override
+  String get fontSize => 'حجم الخط';
+
+  @override
+  String get small => 'صغير';
+
+  @override
+  String get large => 'كبير';
+
+  @override
+  String get privacySecurity => 'الخصوصية والأمان';
+
+  @override
+  String get enabled => 'مفعّل';
+
+  @override
+  String get disabled => 'معطّل';
+
+  @override
+  String devicesConnected(int count) {
+    return '$count أجهزة';
+  }
+
+  @override
+  String get privacySettings => 'إعدادات الخصوصية';
+
+  @override
+  String get privacySettingsDesc => 'التحكم في تفضيلات الخصوصية';
+
+  @override
+  String get loginHistory => 'سجل تسجيل الدخول';
+
+  @override
+  String get loginHistoryDesc => 'عرض نشاط تسجيل الدخول الأخير';
+
+  @override
+  String get learning => 'التعلم';
+
+  @override
+  String get aiSettings => 'إعدادات الذكاء الاصطناعي';
+
+  @override
+  String get aiSettingsDesc => 'تكوين ميزات الذكاء الاصطناعي';
+
+  @override
+  String get downloadSettings => 'إعدادات التحميل';
+
+  @override
+  String get downloadSettingsDesc => 'إدارة المحتوى غير المتصل';
+
+  @override
+  String get swipeActionsDesc => 'تخصيص إيماءات السحب';
+
+  @override
+  String get storageData => 'التخزين والبيانات';
+
+  @override
+  String get clearCache => 'مسح ذاكرة التخزين المؤقت';
+
+  @override
+  String get clearCacheDesc => 'تحرير مساحة التخزين';
+
+  @override
+  String get clearCacheConfirmation =>
+      'سيؤدي هذا إلى مسح الملفات المؤقتة والبيانات المخزنة مؤقتاً. لن تتأثر بياناتك الشخصية.';
+
+  @override
+  String get cacheCleared => 'تم مسح ذاكرة التخزين المؤقت بنجاح';
+
+  @override
+  String get clear => 'مسح';
+
+  @override
+  String get downloadMyDataSettingsDesc => 'تصدير بياناتك الشخصية';
+
+  @override
+  String get backup => 'نسخ احتياطي';
+
+  @override
+  String get backupDesc => 'نسخ بياناتك احتياطياً إلى السحابة';
+
+  @override
+  String get support => 'الدعم';
+
+  @override
+  String get helpCenterDesc => 'الحصول على المساعدة والدعم';
+
+  @override
+  String get sendFeedbackSettingsDesc => 'شارك تجربتك';
+
+  @override
+  String get reportBugSettingsDesc => 'الإبلاغ عن المشاكل التي وجدتها';
+
+  @override
+  String get rateApp => 'تقييم التطبيق';
+
+  @override
+  String get rateAppDesc => 'قيّمنا على متجر التطبيقات';
+
+  @override
+  String get licenses => 'تراخيص المصدر المفتوح';
+
+  @override
+  String get appVersion => 'إصدار التطبيق';
+
+  @override
+  String get dangerZone => 'منطقة الخطر';
+
+  @override
+  String get signOut => 'تسجيل الخروج';
+
+  @override
+  String get signOutConfirmation => 'هل أنت متأكد من تسجيل الخروج؟';
+
+  @override
+  String get searchSettings => 'البحث في الإعدادات...';
+
+  @override
+  String get noResultsFound => 'لم يتم العثور على نتائج';
+
+  @override
+  String get updatePassword => 'تحديث كلمة المرور';
+
+  @override
+  String get feedbackPlaceholder => 'أخبرنا برأيك...';
+
+  @override
+  String get feedbackSent => 'شكراً على ملاحظاتك!';
+
+  @override
+  String get bugTitle => 'عنوان الخطأ';
+
+  @override
+  String get bugDescription => 'وصف الخطأ';
+
+  @override
+  String get bugReportSent => 'تم إرسال تقرير الخطأ. شكراً لك!';
+
+  @override
+  String get rateAppMessage =>
+      'إذا كنت تستمتع باستخدام إيدوفيرس، هل يمكنك تخصيص لحظة لتقييمنا؟';
+
+  @override
+  String get notNow => 'ليس الآن';
+
+  @override
+  String get thankYouForRating => 'شكراً لتقييمك!';
+
+  @override
+  String get pushNotificationsSettingsDesc => 'تكوين إشعارات الدفع';
+
+  @override
+  String get emailNotifications => 'إشعارات البريد الإلكتروني';
+
+  @override
+  String get emailNotificationsDesc => 'تكوين إشعارات البريد الإلكتروني';
+
+  @override
+  String get doNotDisturb => 'عدم الإزعاج';
+
+  @override
+  String get doNotDisturbDesc => 'جدولة ساعات الهدوء';
+
+  @override
+  String get notificationTypes => 'أنواع الإشعارات';
+
+  @override
+  String get courseUpdates => 'تحديثات المقررات';
+
+  @override
+  String get courseUpdatesDesc => 'محتوى جديد ومحاضرات ومواد';
+
+  @override
+  String get assignmentReminders => 'تذكيرات الواجبات';
+
+  @override
+  String get assignmentRemindersDesc => 'مواعيد التسليم وتذكيرات الإرسال';
+
+  @override
+  String get gradeNotifications => 'إشعارات الدرجات';
+
+  @override
+  String get gradeNotificationsDesc => 'درجات وتعليقات جديدة';
+
+  @override
+  String get chatMessages => 'رسائل المحادثة';
+
+  @override
+  String get chatMessagesDesc => 'رسائل من المدرسين والزملاء';
+
+  @override
+  String get announcements => 'الإعلانات';
+
+  @override
+  String get announcementsDesc => 'إعلانات مهمة';
+
+  @override
+  String get scheduleChanges => 'تغييرات الجدول';
+
+  @override
+  String get scheduleChangesDesc => 'تغييرات وقت ومكان الحصص';
+
+  @override
+  String get soundVibration => 'الصوت والاهتزاز';
+
+  @override
+  String get notificationSound => 'صوت الإشعار';
+
+  @override
+  String get notificationSoundDesc => 'تشغيل صوت للإشعارات';
+
+  @override
+  String get vibration => 'الاهتزاز';
+
+  @override
+  String get vibrationDesc => 'اهتزاز للإشعارات';
+
+  @override
+  String get enableDoNotDisturb => 'تفعيل عدم الإزعاج';
+
+  @override
+  String get enableDoNotDisturbDesc => 'كتم الإشعارات خلال ساعات محددة';
+
+  @override
+  String get startTime => 'وقت البدء';
+
+  @override
+  String get endTime => 'وقت الانتهاء';
+
+  @override
+  String get enableAll => 'تفعيل الكل';
+
+  @override
+  String get disableAll => 'إلغاء الكل';
+
+  @override
+  String get emailDigest => 'ملخص البريد';
+
+  @override
+  String get emailDigestDesc => 'استلام ملخص للإشعارات';
+
+  @override
+  String get frequency => 'التكرار';
+
+  @override
+  String get daily => 'يومي';
+
+  @override
+  String get weeklyProgress => 'التقدم الأسبوعي';
+
+  @override
+  String get weeklyProgressDesc => 'تقارير التقدم الأسبوعية';
+
+  @override
+  String get promotionalEmails => 'رسائل ترويجية';
+
+  @override
+  String get promotionalEmailsDesc => 'عروض وميزات جديدة';
+
+  @override
+  String get unsubscribeAll => 'إلغاء الاشتراك من الكل';
+
+  @override
+  String get unsubscribedAll => 'تم إلغاء الاشتراك من جميع الرسائل';
+
+  @override
+  String get unsubscribeAllConfirm =>
+      'سيتوقف وصول جميع الإشعارات عبر البريد. يمكنك إعادة تفعيلها في أي وقت.';
+
+  @override
+  String get unsubscribe => 'إلغاء الاشتراك';
+
+  @override
+  String get authenticationMethod => 'طريقة المصادقة';
+
+  @override
+  String get authenticatorApp => 'تطبيق المصادقة';
+
+  @override
+  String get authenticatorAppDesc => 'استخدم Google أو Microsoft Authenticator';
+
+  @override
+  String get smsCode => 'رمز SMS';
+
+  @override
+  String get smsCodeDesc => 'استلام رموز عبر الرسائل النصية';
+
+  @override
+  String get emailCode => 'رمز البريد';
+
+  @override
+  String get emailCodeDesc => 'استلام رموز عبر البريد الإلكتروني';
+
+  @override
+  String get backupCodes => 'رموز النسخ الاحتياطي';
+
+  @override
+  String get viewBackupCodes => 'عرض رموز النسخ الاحتياطي';
+
+  @override
+  String get codesRemaining => 'رموز متبقية';
+
+  @override
+  String get codesCopied => 'تم نسخ الرموز';
+
+  @override
+  String get copyCodes => 'نسخ الرموز';
+
+  @override
+  String get setup2FA => 'إعداد المصادقة الثنائية';
+
+  @override
+  String get setup2FADesc =>
+      'أضف طبقة أمان إضافية لحماية حسابك من الوصول غير المصرح به.';
+
+  @override
+  String get enable2FA => 'تفعيل المصادقة الثنائية';
+
+  @override
+  String get why2FA => 'لماذا نستخدم المصادقة الثنائية؟';
+
+  @override
+  String get protectAccount => 'حماية حسابك من الوصول غير المصرح به';
+
+  @override
+  String get preventUnauthorized => 'منع الآخرين من تسجيل الدخول بدون إذنك';
+
+  @override
+  String get verifyIdentity => 'التحقق من هويتك بشيء تملكه';
+
+  @override
+  String get disable2FA => 'إلغاء المصادقة الثنائية';
+
+  @override
+  String get disable2FAWarning =>
+      'إلغاء المصادقة الثنائية سيجعل حسابك أقل أماناً. هل أنت متأكد؟';
+
+  @override
+  String get disable => 'إلغاء';
+
+  @override
+  String get twoFactorDisabled => 'تم إلغاء المصادقة الثنائية';
+
+  @override
+  String get active => 'نشط';
+
+  @override
+  String get inactive => 'غير نشط';
+
+  @override
+  String get otherDevices => 'أجهزة أخرى';
+
+  @override
+  String get thisDevice => 'هذا الجهاز';
+
+  @override
+  String get signOutAllDevices => 'تسجيل الخروج من جميع الأجهزة';
+
+  @override
+  String get deviceRemoved => 'تم إزالة الجهاز بنجاح';
+
+  @override
+  String get allDevicesRemoved => 'تم تسجيل الخروج من جميع الأجهزة الأخرى';
+
+  @override
+  String get removeDeviceWarning => 'سيتم تسجيل الخروج من هذا الجهاز فوراً.';
+
+  @override
+  String get signOutAllWarning => 'سيتم تسجيل الخروج من جميع الأجهزة الأخرى';
+
+  @override
+  String get devices => 'أجهزة';
+
+  @override
+  String get securityTip =>
+      'إذا رأيت جهازاً لا تعرفه، قم بإزالته وتغيير كلمة المرور فوراً.';
+
+  @override
+  String get profilePrivacy => 'خصوصية الملف الشخصي';
+
+  @override
+  String get profileVisibility => 'ظهور الملف الشخصي';
+
+  @override
+  String get profileVisibilityDesc => 'من يمكنه رؤية ملفك الشخصي';
+
+  @override
+  String get activityStatus => 'حالة النشاط';
+
+  @override
+  String get activityStatusDesc => 'من يمكنه رؤية نشاطك';
+
+  @override
+  String get everyone => 'الجميع';
+
+  @override
+  String get friendsOnly => 'الأصدقاء فقط';
+
+  @override
+  String get onlyMe => 'أنا فقط';
+
+  @override
+  String get nobody => 'لا أحد';
+
+  @override
+  String get onlineStatus => 'حالة الاتصال';
+
+  @override
+  String get showOnlineStatus => 'إظهار حالة الاتصال';
+
+  @override
+  String get showOnlineStatusDesc => 'السماح للآخرين برؤية متى تكون متصلاً';
+
+  @override
+  String get showLastSeen => 'إظهار آخر ظهور';
+
+  @override
+  String get showLastSeenDesc => 'السماح للآخرين برؤية آخر نشاط لك';
+
+  @override
+  String get interactions => 'التفاعلات';
+
+  @override
+  String get allowTagging => 'السماح بالإشارة';
+
+  @override
+  String get allowTaggingDesc => 'السماح للآخرين بالإشارة إليك في المنشورات';
+
+  @override
+  String get allowMentions => 'السماح بالذكر';
+
+  @override
+  String get allowMentionsDesc => 'السماح للآخرين بذكرك في التعليقات';
+
+  @override
+  String get dataAnalytics => 'البيانات والتحليلات';
+
+  @override
+  String get personalization => 'التخصيص';
+
+  @override
+  String get personalizationDesc => 'السماح بالتوصيات المخصصة';
+
+  @override
+  String get analytics => 'التحليلات';
+
+  @override
+  String get analyticsDesc => 'مشاركة التحليلات لتحسين خدمتنا';
+
+  @override
+  String get blockedUsers => 'المستخدمون المحظورون';
+
+  @override
+  String get dataRequestSent =>
+      'تم إرسال طلب البيانات. ستصلك رسالة بريد قريباً.';
+
+  @override
+  String get recentActivity => 'النشاط الأخير';
+
+  @override
+  String get loginActivity => 'نشاط تسجيل الدخول';
+
+  @override
+  String get last30Days => 'آخر 30 يوماً';
+
+  @override
+  String get successful => 'ناجح';
+
+  @override
+  String get failed => 'فاشل';
+
+  @override
+  String get blocked => 'محظور';
+
+  @override
+  String get coreFeatures => 'الميزات الأساسية';
+
+  @override
+  String get aiAssistantDesc => 'تفعيل مساعد التعلم بالذكاء الاصطناعي';
+
+  @override
+  String get smartSuggestions => 'اقتراحات ذكية';
+
+  @override
+  String get smartSuggestionsDesc => 'الحصول على اقتراحات AI أثناء الدراسة';
+
+  @override
+  String get autoComplete => 'الإكمال التلقائي';
+
+  @override
+  String get autoCompleteDesc => 'إكمال النص بالذكاء الاصطناعي';
+
+  @override
+  String get contextualHelp => 'مساعدة سياقية';
+
+  @override
+  String get contextualHelpDesc => 'عرض نصائح مفيدة بناءً على السياق';
+
+  @override
+  String get learningAnalytics => 'التعلم والتحليلات';
+
+  @override
+  String get learningAnalyticsFeature => 'تحليلات التعلم';
+
+  @override
+  String get learningAnalyticsDesc => 'تتبع أنماط تعلمك بالذكاء الاصطناعي';
+
+  @override
+  String get voiceInteraction => 'التفاعل الصوتي';
+
+  @override
+  String get voiceInteractionDesc => 'التحدث مع AI باستخدام صوتك';
+
+  @override
+  String get responseSettings => 'إعدادات الاستجابة';
+
+  @override
+  String get responseLength => 'طول الاستجابة';
+
+  @override
+  String get concise => 'موجز';
+
+  @override
+  String get balanced => 'متوازن';
+
+  @override
+  String get detailed => 'مفصّل';
+
+  @override
+  String get aiPersonality => 'شخصية AI';
+
+  @override
+  String get professional => 'مهني';
+
+  @override
+  String get friendly => 'ودود';
+
+  @override
+  String get academic => 'أكاديمي';
+
+  @override
+  String get responseSpeed => 'سرعة الاستجابة';
+
+  @override
+  String get responseSpeedDesc => 'التوازن بين السرعة والدقة';
+
+  @override
+  String get fast => 'سريع';
+
+  @override
+  String get accurate => 'دقيق';
+
+  @override
+  String get usageStats => 'إحصائيات الاستخدام';
+
+  @override
+  String get timeSaved => 'الوقت الموفر';
+
+  @override
+  String get accuracy => 'الدقة';
+
+  @override
+  String get storageBreakdown => 'تفاصيل التخزين';
+
+  @override
+  String get cache => 'ذاكرة التخزين المؤقت';
+
+  @override
+  String get autoDownload => 'التحميل التلقائي';
+
+  @override
+  String get autoDownloadDesc => 'تحميل مواد المقررات تلقائياً';
+
+  @override
+  String get downloadOnWifi => 'التحميل على Wi-Fi فقط';
+
+  @override
+  String get downloadOnWifiDesc => 'التحميل فقط عند الاتصال بـ Wi-Fi';
+
+  @override
+  String get downloadQuality => 'جودة التحميل';
+
+  @override
+  String get backupSettings => 'إعدادات النسخ الاحتياطي';
+
+  @override
+  String get autoBackup => 'النسخ الاحتياطي التلقائي';
+
+  @override
+  String get autoBackupDesc => 'نسخ بياناتك احتياطياً تلقائياً';
+
+  @override
+  String get backupFrequency => 'تكرار النسخ الاحتياطي';
+
+  @override
+  String get backupNow => 'نسخ احتياطي الآن';
+
+  @override
+  String get lastBackup => 'آخر نسخ احتياطي: اليوم';
+
+  @override
+  String get backupStarted => 'بدأ النسخ الاحتياطي';
+
+  @override
+  String get storageUsed => 'التخزين المستخدم';
+
+  @override
+  String get free => 'متاح';
+
+  @override
+  String get clearDownloads => 'مسح التحميلات';
+
+  @override
+  String get clearDownloadsConfirm =>
+      'سيتم حذف جميع مواد المقررات المحملة. يمكنك إعادة تحميلها في أي وقت.';
+
+  @override
+  String get downloadsCleared => 'تم مسح التحميلات بنجاح';
+
+  @override
+  String get clearCacheConfirm =>
+      'سيتم مسح الملفات المؤقتة والبيانات المخزنة مؤقتاً.';
+
+  @override
+  String get quickHelp => 'مساعدة سريعة';
+
+  @override
+  String get frequentlyAsked => 'الأسئلة الشائعة';
+
+  @override
+  String get howCanWeHelp => 'كيف يمكننا مساعدتك؟';
+
+  @override
+  String get searchHelpDesc => 'ابحث عن إجابات لأسئلتك';
+
+  @override
+  String get searchHelp => 'ابحث عن المساعدة...';
+
+  @override
+  String get gettingStarted => 'البدء';
+
+  @override
+  String get accountHelp => 'مساعدة الحساب';
+
+  @override
+  String get coursesHelp => 'مساعدة المقررات';
+
+  @override
+  String get billingHelp => 'مساعدة الفوترة';
+
+  @override
+  String get stillNeedHelp => 'هل تحتاج مزيداً من المساعدة؟';
+
+  @override
+  String get contactSupportDesc => 'فريق الدعم هنا لمساعدتك';
+
+  @override
+  String get liveChat => 'محادثة مباشرة';
+
+  @override
+  String get emailUs => 'راسلنا';
+
+  @override
+  String get faqQuestion1 => 'كيف أعيد تعيين كلمة المرور؟';
+
+  @override
+  String get faqAnswer1 =>
+      'اذهب إلى الإعدادات > الأمان > تغيير كلمة المرور أو استخدم رابط \'نسيت كلمة المرور\' في صفحة تسجيل الدخول.';
+
+  @override
+  String get faqQuestion2 => 'كيف أفعّل المصادقة الثنائية؟';
+
+  @override
+  String get faqAnswer2 =>
+      'انتقل إلى الإعدادات > الخصوصية والأمان > المصادقة الثنائية واتبع معالج الإعداد.';
+
+  @override
+  String get faqQuestion3 => 'هل يمكنني تحميل المقررات للمشاهدة بدون اتصال؟';
+
+  @override
+  String get faqAnswer3 =>
+      'نعم! ابحث عن أيقونة التحميل في أي صفحة مقرر. سيكون المحتوى المحمل متاحاً بدون اتصال.';
+
+  @override
+  String get faqQuestion4 => 'كيف أتواصل مع المدرس؟';
+
+  @override
+  String get faqAnswer4 =>
+      'استخدم علامة تبويب الرسائل في صفحة المقرر أو ميزة المحادثة للتواصل مع المدرسين.';
+
+  @override
+  String get faqQuestion5 => 'لماذا لا أتلقى إشعارات؟';
+
+  @override
+  String get faqAnswer5 =>
+      'تحقق من الإعدادات > الإشعارات للتأكد من تفعيل الإشعارات. تحقق أيضاً من إعدادات جهازك.';
+
+  @override
+  String get legal => 'قانوني';
+
+  @override
+  String get team => 'الفريق';
+
+  @override
+  String get allRightsReserved => 'جميع الحقوق محفوظة';
+
+  @override
+  String get appDescription =>
+      'منصة التعلم الشاملة المدعومة بالذكاء الاصطناعي. تعلم بذكاء وحقق المزيد.';
+
+  @override
+  String get followUs => 'تابعنا';
+
+  @override
+  String get showingResultsFor => 'عرض النتائج لـ:';
+
+  @override
+  String get clearSearch => 'مسح البحث';
+
+  @override
+  String get emailCopied => 'تم نسخ البريد الإلكتروني';
+
+  @override
+  String get supportGreeting =>
+      'مرحباً! أنا مساعد الدعم الخاص بك. كيف يمكنني مساعدتك اليوم؟';
+
+  @override
+  String get supportAutoReply =>
+      'شكراً لرسالتك. سيرد عليك وكيل الدعم قريباً. في هذه الأثناء، راجع قسم الأسئلة الشائعة للحصول على إجابات سريعة.';
+
+  @override
+  String get liveSupport => 'الدعم المباشر';
+
+  @override
+  String get connectingToSupport => 'جارٍ الاتصال بالدعم...';
+
+  @override
+  String get pleaseWait => 'يرجى الانتظار';
+
+  @override
+  String get typeMessage => 'اكتب رسالة...';
+
+  @override
+  String get accessibility => 'إمكانية الوصول';
+
+  @override
+  String get reduceMotion => 'تقليل الحركة';
+
+  @override
+  String get reduceMotionDesc => 'يقلل الرسوم المتحركة في التطبيق';
+
+  @override
+  String get highContrast => 'تباين عالي';
+
+  @override
+  String get highContrastDesc => 'يزيد التباين لرؤية أفضل';
+
+  @override
+  String get system => 'النظام';
+
+  @override
+  String get noBlockedUsers => 'لا يوجد مستخدمين محظورين';
+
+  @override
+  String get noBlockedUsersDesc => 'المستخدمون الذين تحظرهم سيظهرون هنا';
+
+  @override
+  String get blockedUsersInfo =>
+      'المستخدمون المحظورون لا يمكنهم مراسلتك أو رؤية ملفك الشخصي';
+
+  @override
+  String get unblock => 'إلغاء الحظر';
+
+  @override
+  String userUnblocked(String name) {
+    return 'تم إلغاء حظر $name';
+  }
+
+  @override
+  String get unblockUser => 'إلغاء حظر المستخدم';
+
+  @override
+  String unblockUserConfirm(String name) {
+    return 'هل أنت متأكد من إلغاء حظر $name؟';
+  }
+
+  @override
+  String get chatSwipeSettings => 'إعدادات سحب المحادثات';
+
+  @override
+  String get general => 'عام';
+
+  @override
+  String get enableSwipe => 'تفعيل إجراءات السحب';
+
+  @override
+  String get enableSwipeDesc => 'السماح بالسحب للإجراءات السريعة';
+
+  @override
+  String get confirmDelete => 'تأكيد الحذف';
+
+  @override
+  String get confirmDeleteDesc => 'إظهار تأكيد قبل الحذف';
+
+  @override
+  String get swipeDirections => 'اتجاهات السحب';
+
+  @override
+  String get swipeLeft => 'سحب لليسار';
+
+  @override
+  String get swipeRight => 'سحب لليمين';
+
+  @override
+  String get sampleChat => 'محادثة نموذجية';
+
+  @override
+  String get swipeToSeeActions => 'اسحب لرؤية الإجراءات';
+
+  @override
+  String get pin => 'تثبيت';
+
+  @override
+  String get mute => 'كتم';
+
+  @override
+  String get schedule => 'الجدول';
+
+  @override
+  String get repeatDays => 'أيام التكرار';
+
+  @override
+  String get exceptions => 'استثناءات';
+
+  @override
+  String get allowCalls => 'السماح بالمكالمات';
+
+  @override
+  String get allowCallsDesc => 'السماح بالمكالمات من جهات الاتصال';
+
+  @override
+  String get allowImportant => 'السماح بالمهم';
+
+  @override
+  String get allowImportantDesc => 'السماح بالإشعارات المهمة';
+
+  @override
+  String get dndEnabled => 'عدم الإزعاج مفعّل';
+
+  @override
+  String get dndDisabled => 'عدم الإزعاج معطّل';
+
+  @override
+  String get monday => 'الإثنين';
+
+  @override
+  String get tuesday => 'الثلاثاء';
+
+  @override
+  String get wednesday => 'الأربعاء';
+
+  @override
+  String get thursday => 'الخميس';
+
+  @override
+  String get friday => 'الجمعة';
+
+  @override
+  String get saturday => 'السبت';
+
+  @override
+  String get sunday => 'الأحد';
+
+  @override
+  String get oneHour => 'ساعة واحدة';
+
+  @override
+  String dndEnabledFor(String duration) {
+    return 'عدم الإزعاج مفعّل لمدة $duration';
+  }
+
+  @override
+  String get hour => 'ساعة';
+
+  @override
+  String get untilTomorrow => 'حتى الغد';
+
+  @override
+  String get dndEnabledUntilTomorrow => 'عدم الإزعاج مفعّل حتى الغد';
+
+  @override
+  String get primaryEmail => 'البريد الرئيسي';
+
+  @override
+  String get recoveryEmail => 'بريد الاسترداد';
+
+  @override
+  String get marketingEmails => 'رسائل تسويقية';
+
+  @override
+  String get marketingEmailsDesc => 'استلام رسائل ترويجية وتحديثات';
+
+  @override
+  String get securityAlerts => 'تنبيهات الأمان';
+
+  @override
+  String get securityAlertsDesc => 'الإشعار بأحداث الأمان';
+
+  @override
+  String get accountUpdates => 'تحديثات الحساب';
+
+  @override
+  String get accountUpdatesDesc => 'استلام إشعارات متعلقة بالحساب';
+
+  @override
+  String get verified => 'موثّق';
+
+  @override
+  String get notVerified => 'غير موثّق';
+
+  @override
+  String get recoveryEmailDesc => 'يستخدم لاسترداد حسابك';
+
+  @override
+  String get add => 'إضافة';
+
+  @override
+  String get changeEmail => 'تغيير البريد';
+
+  @override
+  String get newEmail => 'بريد جديد';
+
+  @override
+  String get verificationEmailSent => 'تم إرسال بريد التحقق';
+
+  @override
+  String get addRecoveryEmail => 'إضافة بريد استرداد';
+
+  @override
+  String get recoveryEmailAdded => 'تم إضافة بريد الاسترداد';
+
+  @override
+  String get fileSwipeSettings => 'إعدادات سحب الملفات';
+
+  @override
+  String get sampleFile => 'ملف نموذجي';
+
+  @override
+  String get share => 'مشاركة';
+
+  @override
+  String get move => 'نقل';
+
+  @override
+  String get noteSwipeSettings => 'إعدادات سحب الملاحظات';
+
+  @override
+  String get sampleNote => 'ملاحظة نموذجية';
+
+  @override
+  String get notificationSwipeSettings => 'إعدادات سحب الإشعارات';
+
+  @override
+  String get sampleNotification => 'إشعار نموذجي';
+
+  @override
+  String get informationWeCollect => 'المعلومات التي نجمعها';
+
+  @override
+  String get informationWeCollectContent =>
+      'نجمع المعلومات التي تقدمها لنا مباشرة، مثل عند إنشاء حساب أو إجراء عملية شراء أو الاتصال بنا للحصول على الدعم.';
+
+  @override
+  String get howWeUseInfo => 'كيف نستخدم معلوماتك';
+
+  @override
+  String get howWeUseInfoContent =>
+      'نستخدم المعلومات التي نجمعها لتوفير خدماتنا وصيانتها وتحسينها ومعالجة المعاملات وإرسال المعلومات ذات الصلة.';
+
+  @override
+  String get informationSharing => 'مشاركة المعلومات';
+
+  @override
+  String get informationSharingContent =>
+      'لا نشارك معلوماتك الشخصية مع أطراف ثالثة إلا كما هو موضح في هذه السياسة أو بموافقتك.';
+
+  @override
+  String get dataSecurityContent =>
+      'نتخذ تدابير معقولة للمساعدة في حماية معلوماتك الشخصية من الفقدان والسرقة وسوء الاستخدام والوصول غير المصرح به.';
+
+  @override
+  String get cookiesTracking => 'ملفات تعريف الارتباط والتتبع';
+
+  @override
+  String get cookiesTrackingContent =>
+      'نستخدم ملفات تعريف الارتباط وتقنيات التتبع المماثلة لتتبع النشاط على خدمتنا والاحتفاظ بمعلومات معينة.';
+
+  @override
+  String get yourRightsContent =>
+      'لديك الحق في الوصول إلى معلوماتك الشخصية أو تصحيحها أو حذفها. يمكنك أيضًا إلغاء الاشتراك في ممارسات جمع البيانات المعينة.';
+
+  @override
+  String get childrenPrivacy => 'خصوصية الأطفال';
+
+  @override
+  String get childrenPrivacyContent =>
+      'خدمتنا غير موجهة للأطفال دون 13 عامًا. لا نجمع عن عمد معلومات شخصية من الأطفال دون 13 عامًا.';
+
+  @override
+  String get internationalTransfers => 'التحويلات الدولية';
+
+  @override
+  String get internationalTransfersContent =>
+      'قد يتم نقل معلوماتك والاحتفاظ بها على خوادم تقع خارج بلدك.';
+
+  @override
+  String get policyChanges => 'تغييرات على هذه السياسة';
+
+  @override
+  String get policyChangesContent =>
+      'قد نقوم بتحديث هذه السياسة من وقت لآخر. سنخطرك بأي تغييرات عن طريق نشر السياسة الجديدة على هذه الصفحة.';
+
+  @override
+  String get privacyContactContent =>
+      'إذا كان لديك أي أسئلة حول سياسة الخصوصية هذه، يرجى الاتصال بنا على privacy@eduverse.com';
+
+  @override
+  String lastUpdated(String date) {
+    return 'آخر تحديث: $date';
+  }
+
+  @override
+  String get privacyIntro =>
+      'خصوصيتك مهمة بالنسبة لنا. توضح سياسة الخصوصية هذه كيفية جمع معلوماتك واستخدامها والكشف عنها وحمايتها.';
+
+  @override
+  String get notificationSwipeDesc => 'تكوين إجراءات سحب الإشعارات';
+
+  @override
+  String get chats => 'المحادثات';
+
+  @override
+  String get chatSwipeDesc => 'تكوين إجراءات سحب المحادثات';
+
+  @override
+  String get fileSwipeDesc => 'تكوين إجراءات سحب الملفات';
+
+  @override
+  String get noteSwipeDesc => 'تكوين إجراءات سحب الملاحظات';
+
+  @override
+  String get swipeActionsInfo => 'تخصيص إجراءات السحب للميزات المختلفة';
+
+  @override
+  String get acceptanceOfTerms => 'قبول الشروط';
+
+  @override
+  String get acceptanceOfTermsContent =>
+      'بالوصول إلى EduVerse أو استخدامه، فإنك توافق على الالتزام بشروط الخدمة هذه وجميع القوانين واللوائح المعمول بها.';
+
+  @override
+  String get useOfService => 'استخدام الخدمة';
+
+  @override
+  String get useOfServiceContent =>
+      'يمكنك استخدام خدمتنا فقط للأغراض القانونية ووفقًا لهذه الشروط. توافق على عدم استخدام الخدمة بأي طريقة تنتهك أي قانون معمول به.';
+
+  @override
+  String get userAccounts => 'حسابات المستخدمين';
+
+  @override
+  String get userAccountsContent =>
+      'أنت مسؤول عن الحفاظ على سرية حسابك وكلمة المرور. توافق على قبول المسؤولية عن جميع الأنشطة التي تحدث تحت حسابك.';
+
+  @override
+  String get intellectualProperty => 'الملكية الفكرية';
+
+  @override
+  String get intellectualPropertyContent =>
+      'الخدمة ومحتواها الأصلي وميزاتها ووظائفها مملوكة لـ EduVerse ومحمية بموجب قوانين حقوق الطبع والنشر والعلامات التجارية الدولية.';
+
+  @override
+  String get userContent => 'محتوى المستخدم';
+
+  @override
+  String get userContentContent =>
+      'تحتفظ بملكية المحتوى الذي تنشئه. بنشر المحتوى، تمنحنا ترخيصًا لاستخدام هذا المحتوى وتعديله وعرضه فيما يتعلق بالخدمة.';
+
+  @override
+  String get prohibitedActivities => 'الأنشطة المحظورة';
+
+  @override
+  String get prohibitedActivitiesContent =>
+      'لا يجوز لك الانخراط في وصول غير مصرح به أو تعدين البيانات أو أي نشاط يتداخل مع العمل السليم للخدمة.';
+
+  @override
+  String get termination => 'الإنهاء';
+
+  @override
+  String get terminationContent =>
+      'قد ننهي أو نعلق حسابك في أي وقت دون إشعار مسبق إذا انتهكت هذه الشروط أو انخرطت في سلوك ضار.';
+
+  @override
+  String get disclaimers => 'إخلاء المسؤولية';
+
+  @override
+  String get disclaimersContent =>
+      'يتم توفير الخدمة \"كما هي\" دون ضمانات من أي نوع، سواء كانت صريحة أو ضمنية، بما في ذلك على سبيل المثال لا الحصر الضمانات الضمنية لقابلية التسويق.';
+
+  @override
+  String get limitationOfLiability => 'تحديد المسؤولية';
+
+  @override
+  String get limitationOfLiabilityContent =>
+      'لن تكون EduVerse مسؤولة عن أي أضرار غير مباشرة أو عرضية أو خاصة أو تبعية أو عقابية ناتجة عن استخدامك للخدمة.';
+
+  @override
+  String get changesToTerms => 'تغييرات على الشروط';
+
+  @override
+  String get changesToTermsContent =>
+      'نحتفظ بالحق في تعديل هذه الشروط في أي وقت. سنقدم إشعارًا بالتغييرات الهامة عن طريق نشر الشروط الجديدة على الخدمة.';
+
+  @override
+  String get contactUsContent =>
+      'إذا كان لديك أي أسئلة حول هذه الشروط، يرجى الاتصال بنا على legal@eduverse.com';
+
+  @override
+  String get termsIntro =>
+      'يرجى قراءة شروط الخدمة هذه بعناية قبل استخدام EduVerse. يخضع وصولك إلى الخدمة واستخدامها لقبولك لهذه الشروط.';
 }

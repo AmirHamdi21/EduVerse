@@ -9,6 +9,7 @@ class StorageService {
   static const String _refreshTokenKey = 'refresh_token';
   static const String _userDataKey = 'user_data';
   static const String _darkModeKey = 'dark_mode';
+  static const String _fontSizeKey = 'font_size';
 
   // Save tokens
   Future<void> saveTokens(String accessToken, String refreshToken) async {
@@ -67,5 +68,16 @@ class StorageService {
   Future<bool> getDarkMode() async {
     final isDark = await _storage.read(key: _darkModeKey);
     return isDark == 'true' ? true : false;
+  }
+
+  // Set font size preference (0: small, 1: medium, 2: large)
+  Future<void> setFontSize(int sizeIndex) async {
+    await _storage.write(key: _fontSizeKey, value: sizeIndex.toString());
+  }
+
+  // Get font size preference
+  Future<int> getFontSize() async {
+    final size = await _storage.read(key: _fontSizeKey);
+    return size != null ? int.tryParse(size) ?? 1 : 1;
   }
 }

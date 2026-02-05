@@ -1,6 +1,9 @@
 import 'package:edu_verse/bloc/assignments/assignments_cubit.dart';
 import 'package:edu_verse/bloc/attendance/attendance_cubit.dart';
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
+import 'package:edu_verse/bloc/chat/chat_cubit.dart';
+import 'package:edu_verse/bloc/ai_notes/ai_notes_cubit.dart';
+import 'package:edu_verse/bloc/profile/profile_cubit.dart';
 import 'package:edu_verse/bloc/grades/grades_cubit.dart';
 import 'package:edu_verse/bloc/labs/labs_cubit.dart';
 import 'package:edu_verse/bloc/language/language_cubit.dart';
@@ -43,6 +46,9 @@ class _MyAppState extends State<MyApp> {
   late AttendanceCubit _attendanceCubit;
   late SummarizerCubit _summarizerCubit;
   late SmartStudyCubit _smartStudyCubit;
+  late ChatCubit _chatCubit;
+  late AINoteCubit _aiNoteCubit;
+  late ProfileCubit _profileCubit;
 
   @override
   void initState() {
@@ -62,6 +68,9 @@ class _MyAppState extends State<MyApp> {
     _attendanceCubit = AttendanceCubit()..loadAttendance();
     _summarizerCubit = SummarizerCubit();
     _smartStudyCubit = SmartStudyCubit();
+    _chatCubit = ChatCubit();
+    _aiNoteCubit = AINoteCubit();
+    _profileCubit = ProfileCubit()..loadProfile();
     // Initialize theme and language from storage
     _initializeTheme();
     _initializeLanguage();
@@ -88,6 +97,9 @@ class _MyAppState extends State<MyApp> {
     _attendanceCubit.close();
     _summarizerCubit.close();
     _smartStudyCubit.close();
+    _chatCubit.close();
+    _aiNoteCubit.close();
+    _profileCubit.close();
     super.dispose();
   }
 
@@ -106,6 +118,9 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _attendanceCubit),
         BlocProvider.value(value: _summarizerCubit),
         BlocProvider.value(value: _smartStudyCubit),
+        BlocProvider.value(value: _chatCubit),
+        BlocProvider.value(value: _aiNoteCubit),
+        BlocProvider.value(value: _profileCubit),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {

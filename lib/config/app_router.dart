@@ -1,6 +1,34 @@
 import 'package:edu_verse/models/quiz_models.dart';
 import 'package:edu_verse/screens/student/ai_quiz_generator_screen.dart';
 import 'package:edu_verse/screens/student/assignments_screen.dart';
+import 'package:edu_verse/screens/student/chat/chat_screen.dart';
+import 'package:edu_verse/screens/student/chat/chat_swipe_settings_screen.dart';
+import 'package:edu_verse/screens/student/ai_notes/ai_notes_screen.dart';
+import 'package:edu_verse/screens/student/profile/profile_screen.dart';
+import 'package:edu_verse/screens/student/profile/edit_profile_screen.dart';
+import 'package:edu_verse/screens/student/settings/settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/appearance_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/language_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/notifications_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/email_notifications_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/two_factor_auth_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/connected_devices_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/privacy_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/login_history_screen.dart';
+import 'package:edu_verse/screens/student/settings/ai_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/storage_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/help_center_screen.dart';
+import 'package:edu_verse/screens/student/settings/about_screen.dart';
+import 'package:edu_verse/screens/student/settings/email_preferences_screen.dart';
+import 'package:edu_verse/screens/student/settings/do_not_disturb_screen.dart';
+import 'package:edu_verse/screens/student/settings/terms_of_service_screen.dart';
+import 'package:edu_verse/screens/student/settings/privacy_policy_screen.dart';
+import 'package:edu_verse/screens/student/settings/blocked_users_screen.dart';
+import 'package:edu_verse/screens/student/settings/swipe_actions_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/notification_swipe_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/chat_swipe_settings_screen.dart' as settings_chat;
+import 'package:edu_verse/screens/student/settings/file_swipe_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/note_swipe_settings_screen.dart';
 import 'package:edu_verse/screens/student/flashcards_screen.dart';
 import 'package:edu_verse/screens/student/grades_screen.dart';
 import 'package:edu_verse/screens/student/grade_analysis_screen.dart';
@@ -166,6 +194,118 @@ class AppRouter {
       GoRoute(
         path: '/calendar',
         builder: (context, state) => const CalendarScreen(),
+      ),
+      GoRoute(
+        path: '/messages',
+        builder: (context, state) => const ChatScreen(),
+      ),
+      GoRoute(
+        path: '/messages/swipe-settings',
+        builder: (context, state) => const ChatSwipeSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/ai-notes',
+        builder: (context, state) => const AiNotesScreen(),
+      ),
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
+        path: '/edit-profile',
+        builder: (context, state) => const EditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/settings',
+        builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/appearance',
+        builder: (context, state) => const AppearanceSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/language',
+        builder: (context, state) => const LanguageSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/notifications',
+        builder: (context, state) => const NotificationsSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/email-notifications',
+        builder: (context, state) => const EmailNotificationsSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/two-factor-auth',
+        builder: (context, state) => const TwoFactorAuthSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/connected-devices',
+        builder: (context, state) => const ConnectedDevicesSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/privacy',
+        builder: (context, state) => const PrivacySettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/login-history',
+        builder: (context, state) => const LoginHistoryScreen(),
+      ),
+      GoRoute(
+        path: '/settings/ai',
+        builder: (context, state) => const AISettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/storage',
+        builder: (context, state) => const StorageSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/help',
+        builder: (context, state) => const HelpCenterScreen(),
+      ),
+      GoRoute(
+        path: '/settings/about',
+        builder: (context, state) => const AboutScreen(),
+      ),
+      GoRoute(
+        path: '/settings/email',
+        builder: (context, state) => const EmailPreferencesScreen(),
+      ),
+      GoRoute(
+        path: '/settings/dnd',
+        builder: (context, state) => const DoNotDisturbScreen(),
+      ),
+      GoRoute(
+        path: '/settings/terms',
+        builder: (context, state) => const TermsOfServiceScreen(),
+      ),
+      GoRoute(
+        path: '/settings/privacy-policy',
+        builder: (context, state) => const PrivacyPolicyScreen(),
+      ),
+      GoRoute(
+        path: '/settings/blocked-users',
+        builder: (context, state) => const BlockedUsersScreen(),
+      ),
+      GoRoute(
+        path: '/settings/swipe-actions',
+        builder: (context, state) => const SwipeActionsSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/swipe-actions/notifications',
+        builder: (context, state) => const NotificationSwipeSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/swipe-actions/chats',
+        builder: (context, state) => const settings_chat.ChatSwipeSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/swipe-actions/files',
+        builder: (context, state) => const FileSwipeSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/swipe-actions/notes',
+        builder: (context, state) => const NoteSwipeSettingsScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

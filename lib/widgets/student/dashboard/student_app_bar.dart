@@ -206,7 +206,7 @@ class StudentAppBar extends StatelessWidget {
                               ],
                             ),
                           ),
-                          _buildProfileAvatar(isDark),
+                          _buildProfileAvatar(isDark, context),
                         ],
                       ),
                     ],
@@ -351,38 +351,43 @@ class StudentAppBar extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileAvatar(bool isDark) {
-    return Container(
-      width: 56,
-      height: 56,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.15)
-              : Colors.black.withValues(alpha: 0.08),
-          width: 2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+  Widget _buildProfileAvatar(bool isDark, BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        context.push('/profile');
+      },
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-        ],
-      ),
-      child: const Center(
-        child: Text(
-          'A',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.15)
+                : Colors.black.withValues(alpha: 0.08),
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: const Center(
+          child: Text(
+            'A',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ),

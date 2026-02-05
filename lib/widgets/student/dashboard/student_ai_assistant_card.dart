@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
@@ -53,7 +54,9 @@ class StudentAiAssistantCard extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    context.push('/ai-chat');
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: const Color(0xFF155CFB),

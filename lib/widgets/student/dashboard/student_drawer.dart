@@ -61,17 +61,15 @@ class _StudentDrawerState extends State<StudentDrawer>
                 children: [
                   // User Profile Header
                   _buildProfileHeader(isDark, l10n),
-                  
+
                   // Quick Stats Row
                   _buildQuickStats(isDark),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   // Navigation Menu
-                  Expanded(
-                    child: _buildNavigationMenu(isDark, menuItems),
-                  ),
-                  
+                  Expanded(child: _buildNavigationMenu(isDark, menuItems)),
+
                   // Theme Toggle & Settings
                   _buildBottomSection(isDark, l10n),
                 ],
@@ -91,31 +89,37 @@ class _StudentDrawerState extends State<StudentDrawer>
           // Profile Avatar with Status
           Stack(
             children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                  ),
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFF6366F1).withOpacity(0.3),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  context.push('/profile');
+                },
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
                     ),
-                  ],
-                ),
-                child: const Center(
-                  child: Text(
-                    'S',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w700,
+                    borderRadius: BorderRadius.circular(18),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF6366F1).withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'S',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
@@ -154,7 +158,10 @@ class _StudentDrawerState extends State<StudentDrawer>
                 ),
                 const SizedBox(height: 2),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF10B981).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -187,7 +194,9 @@ class _StudentDrawerState extends State<StudentDrawer>
                 ),
                 child: Icon(
                   Icons.close_rounded,
-                  color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                  color: isDark
+                      ? const Color(0xFF94A3B8)
+                      : const Color(0xFF64748B),
                   size: 20,
                 ),
               ),
@@ -230,15 +239,16 @@ class _StudentDrawerState extends State<StudentDrawer>
     );
   }
 
-  Widget _buildStatItem(bool isDark, String value, String label, IconData icon) {
+  Widget _buildStatItem(
+    bool isDark,
+    String value,
+    String label,
+    IconData icon,
+  ) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          color: const Color(0xFF6366F1),
-          size: 20,
-        ),
+        Icon(icon, color: const Color(0xFF6366F1), size: 20),
         const SizedBox(height: 6),
         Text(
           value,
@@ -263,7 +273,9 @@ class _StudentDrawerState extends State<StudentDrawer>
     return Container(
       width: 1,
       height: 36,
-      color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.06),
+      color: isDark
+          ? Colors.white.withOpacity(0.1)
+          : Colors.black.withOpacity(0.06),
     );
   }
 
@@ -353,6 +365,14 @@ class _StudentDrawerState extends State<StudentDrawer>
         category: 'communication',
       ),
       _MenuItem(
+        icon: Icons.auto_awesome_outlined,
+        activeIcon: Icons.auto_awesome,
+        title: l10n.aiNotesSummaries,
+        route: '/ai-notes',
+        isHighlighted: true,
+        category: 'ai',
+      ),
+      _MenuItem(
         icon: Icons.psychology_outlined,
         activeIcon: Icons.psychology,
         title: l10n.aiAssistant,
@@ -379,7 +399,9 @@ class _StudentDrawerState extends State<StudentDrawer>
 
   Widget _buildNavigationMenu(bool isDark, List<_MenuItem> items) {
     final mainItems = items.where((i) => i.category == 'main').toList();
-    final communicationItems = items.where((i) => i.category == 'communication' || i.category == 'ai').toList();
+    final communicationItems = items
+        .where((i) => i.category == 'communication' || i.category == 'ai')
+        .toList();
     final accountItems = items.where((i) => i.category == 'account').toList();
 
     return ListView(
@@ -387,18 +409,21 @@ class _StudentDrawerState extends State<StudentDrawer>
       physics: const BouncingScrollPhysics(),
       children: [
         _buildSectionLabel(isDark, 'MAIN MENU'),
-        ...mainItems.asMap().entries.map((e) => 
-          _buildNavItem(isDark, e.value, items.indexOf(e.value))),
-        
+        ...mainItems.asMap().entries.map(
+          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+        ),
+
         const SizedBox(height: 16),
         _buildSectionLabel(isDark, 'CONNECT'),
-        ...communicationItems.asMap().entries.map((e) => 
-          _buildNavItem(isDark, e.value, items.indexOf(e.value))),
-        
+        ...communicationItems.asMap().entries.map(
+          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+        ),
+
         const SizedBox(height: 16),
         _buildSectionLabel(isDark, 'ACCOUNT'),
-        ...accountItems.asMap().entries.map((e) => 
-          _buildNavItem(isDark, e.value, items.indexOf(e.value))),
+        ...accountItems.asMap().entries.map(
+          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+        ),
       ],
     );
   }
@@ -443,21 +468,22 @@ class _StudentDrawerState extends State<StudentDrawer>
                   ? LinearGradient(
                       colors: item.isHighlighted
                           ? [const Color(0xFF8B5CF6), const Color(0xFF6366F1)]
-                          : [const Color(0xFF3B82F6).withValues(alpha: 0.15), const Color(0xFF6366F1).withValues(alpha: 0.1)],
+                          : [
+                              const Color(0xFF3B82F6).withValues(alpha: 0.15),
+                              const Color(0xFF6366F1).withValues(alpha: 0.1),
+                            ],
                     )
                   : item.isHighlighted
-                      ? LinearGradient(
-                          colors: [
-                            const Color(0xFF8B5CF6).withOpacity(0.1),
-                            const Color(0xFF6366F1).withOpacity(0.05),
-                          ],
-                        )
-                      : null,
+                  ? LinearGradient(
+                      colors: [
+                        const Color(0xFF8B5CF6).withOpacity(0.1),
+                        const Color(0xFF6366F1).withOpacity(0.05),
+                      ],
+                    )
+                  : null,
               borderRadius: BorderRadius.circular(14),
               border: item.isHighlighted && !isSelected
-                  ? Border.all(
-                      color: const Color(0xFF8B5CF6).withOpacity(0.3),
-                    )
+                  ? Border.all(color: const Color(0xFF8B5CF6).withOpacity(0.3))
                   : null,
             ),
             child: Row(
@@ -468,21 +494,25 @@ class _StudentDrawerState extends State<StudentDrawer>
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? (item.isHighlighted 
-                            ? Colors.white.withOpacity(0.2) 
-                            : const Color(0xFF3B82F6).withOpacity(0.1))
-                        : (isDark 
-                            ? Colors.white.withOpacity(0.05) 
-                            : Colors.black.withOpacity(0.03)),
+                        ? (item.isHighlighted
+                              ? Colors.white.withOpacity(0.2)
+                              : const Color(0xFF3B82F6).withOpacity(0.1))
+                        : (isDark
+                              ? Colors.white.withOpacity(0.05)
+                              : Colors.black.withOpacity(0.03)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     isSelected ? item.activeIcon : item.icon,
                     color: isSelected
-                        ? (item.isHighlighted ? Colors.white : const Color(0xFF3B82F6))
+                        ? (item.isHighlighted
+                              ? Colors.white
+                              : const Color(0xFF3B82F6))
                         : item.isHighlighted
-                            ? const Color(0xFF8B5CF6)
-                            : (isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B)),
+                        ? const Color(0xFF8B5CF6)
+                        : (isDark
+                              ? const Color(0xFF94A3B8)
+                              : const Color(0xFF64748B)),
                     size: 20,
                   ),
                 ),
@@ -493,19 +523,26 @@ class _StudentDrawerState extends State<StudentDrawer>
                     item.title,
                     style: TextStyle(
                       color: isSelected
-                          ? (item.isHighlighted ? Colors.white : const Color(0xFF3B82F6))
+                          ? (item.isHighlighted
+                                ? Colors.white
+                                : const Color(0xFF3B82F6))
                           : item.isHighlighted
-                              ? const Color(0xFF8B5CF6)
-                              : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                          ? const Color(0xFF8B5CF6)
+                          : (isDark ? Colors.white : const Color(0xFF1E293B)),
                       fontSize: 14,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
                     ),
                   ),
                 ),
                 // Badge
                 if (item.badge != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? Colors.white.withOpacity(0.2)
@@ -516,7 +553,9 @@ class _StudentDrawerState extends State<StudentDrawer>
                       item.badge!,
                       style: TextStyle(
                         color: isSelected
-                            ? (item.isHighlighted ? Colors.white : const Color(0xFF3B82F6))
+                            ? (item.isHighlighted
+                                  ? Colors.white
+                                  : const Color(0xFF3B82F6))
                             : Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -526,7 +565,10 @@ class _StudentDrawerState extends State<StudentDrawer>
                 // Highlighted indicator
                 if (item.isHighlighted && !isSelected)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF8B5CF6),
                       borderRadius: BorderRadius.circular(4),
@@ -674,7 +716,9 @@ class _StudentDrawerState extends State<StudentDrawer>
               size: 16,
               color: isActive
                   ? (isDark ? Colors.white : const Color(0xFF3B82F6))
-                  : (isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8)),
+                  : (isDark
+                        ? const Color(0xFF64748B)
+                        : const Color(0xFF94A3B8)),
             ),
             const SizedBox(width: 6),
             Text(
@@ -684,7 +728,9 @@ class _StudentDrawerState extends State<StudentDrawer>
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                 color: isActive
                     ? (isDark ? Colors.white : const Color(0xFF3B82F6))
-                    : (isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8)),
+                    : (isDark
+                          ? const Color(0xFF64748B)
+                          : const Color(0xFF94A3B8)),
               ),
             ),
           ],
