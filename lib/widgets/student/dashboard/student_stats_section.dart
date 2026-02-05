@@ -472,6 +472,7 @@ class StudentStatsSection extends StatelessWidget {
               year: '2026',
               courseName: '${l10n.calculusII} ${l10n.exam}',
               isDark: isDark,
+              onTap: () => context.push('/tasks'),
             ),
           ],
         );
@@ -855,6 +856,7 @@ class _CompactDeadlineCard extends StatelessWidget {
   final String year;
   final String courseName;
   final bool isDark;
+  final VoidCallback? onTap;
 
   const _CompactDeadlineCard({
     required this.title,
@@ -862,124 +864,130 @@ class _CompactDeadlineCard extends StatelessWidget {
     required this.year,
     required this.courseName,
     required this.isDark,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isDark
-              ? [
-                  const Color(0xFFEF4444).withValues(alpha: 0.12),
-                  const Color(0xFFDC2626).withValues(alpha: 0.08),
-                ]
-              : [
-                  const Color(0xFFEF4444).withValues(alpha: 0.06),
-                  const Color(0xFFFEE2E2),
-                ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0xFFEF4444).withValues(alpha: isDark ? 0.3 : 0.2),
-          width: 1.5,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFEF4444).withValues(alpha: 0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  date,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    height: 1,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  year,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.access_time_rounded,
-                      color: Color(0xFFEF4444),
-                      size: 14,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        color: isDark
-                            ? Colors.white70
-                            : const Color(0xFF64748B),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: isDark
+                ? [
+                    const Color(0xFFEF4444).withValues(alpha: 0.12),
+                    const Color(0xFFDC2626).withValues(alpha: 0.08),
+                  ]
+                : [
+                    const Color(0xFFEF4444).withValues(alpha: 0.06),
+                    const Color(0xFFFEE2E2),
                   ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: const Color(
+              0xFFEF4444,
+            ).withValues(alpha: isDark ? 0.3 : 0.2),
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  courseName,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : const Color(0xFF0F172A),
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    date,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      height: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    year,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Icon(
-            Icons.arrow_forward_ios_rounded,
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.3)
-                : const Color(0xFF94A3B8),
-            size: 16,
-          ),
-        ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.access_time_rounded,
+                        color: Color(0xFFEF4444),
+                        size: 14,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        title,
+                        style: TextStyle(
+                          color: isDark
+                              ? Colors.white70
+                              : const Color(0xFF64748B),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    courseName,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : const Color(0xFF0F172A),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.3)
+                  : const Color(0xFF94A3B8),
+              size: 16,
+            ),
+          ],
+        ),
       ),
     );
   }

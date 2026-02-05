@@ -689,7 +689,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectCourse => 'Select Course';
 
   @override
-  String get quizType => 'Quiz Type';
+  String get quizType => 'Quiz';
 
   @override
   String get mcq => 'MCQ';
@@ -1145,7 +1145,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noLabsDescription => 'There are no labs matching your criteria.';
 
   @override
-  String get labType => 'Lab Type';
+  String get labType => 'Lab';
 
   @override
   String get virtual => 'Virtual';
@@ -1197,7 +1197,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get late => 'Late';
 
   @override
-  String get assignmentType => 'Assignment Type';
+  String get assignmentType => 'Assignment';
 
   @override
   String get document => 'Document';
@@ -1740,4 +1740,548 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get file => 'File';
+
+  @override
+  String get summarizerTitle => 'AI Lecture Summarizer';
+
+  @override
+  String get summarizerSubtitle =>
+      'Generate short summaries from your uploaded materials or notes.';
+
+  @override
+  String get summarizerUploadFile => 'Upload File';
+
+  @override
+  String get summarizerPasteText => 'Paste Text';
+
+  @override
+  String get summarizerUploadTitle => 'Upload lecture PDF or notes';
+
+  @override
+  String get summarizerDragDrop => 'or drag and drop here';
+
+  @override
+  String get summarizerBrowseFiles => 'Browse files';
+
+  @override
+  String get summarizerSupportedFormats => 'PDF, DOC, DOCX, TXT, PPT, PPTX';
+
+  @override
+  String get summarizerFileReady => 'Ready to summarize';
+
+  @override
+  String get summarizerPasteHint => 'Paste your notes or content here...';
+
+  @override
+  String get summarizerCharacters => 'characters';
+
+  @override
+  String get summarizerWords => 'words';
+
+  @override
+  String get summarizerClear => 'Clear';
+
+  @override
+  String get summarizerType => 'Summarization Type';
+
+  @override
+  String get summarizerSelectType => 'Select Summary Type';
+
+  @override
+  String get summarizerKeyPoints => 'Key Points';
+
+  @override
+  String get summarizerKeyPointsDesc => 'Extract main ideas and highlights';
+
+  @override
+  String get summarizerBrief => 'Brief Summary';
+
+  @override
+  String get summarizerBriefDesc => 'Concise overview in a paragraph';
+
+  @override
+  String get summarizerDetailed => 'Detailed Summary';
+
+  @override
+  String get summarizerDetailedDesc => 'Comprehensive summary with sections';
+
+  @override
+  String get summarizerBulletPoints => 'Bullet Points';
+
+  @override
+  String get summarizerBulletPointsDesc => 'Organized list format';
+
+  @override
+  String get summarizerMindMap => 'Mind Map';
+
+  @override
+  String get summarizerMindMapDesc => 'Hierarchical structure format';
+
+  @override
+  String get summarizerGenerate => 'Generate Summary';
+
+  @override
+  String get summarizerGenerating => 'Generating...';
+
+  @override
+  String get summarizerNoSummary => 'No Summary Yet';
+
+  @override
+  String get summarizerNoSummaryDesc =>
+      'Upload a file or paste your content, then click \"Generate Summary\" to get started.';
+
+  @override
+  String get summarizerResult => 'Summary Generated';
+
+  @override
+  String get summarizerCopy => 'Copy';
+
+  @override
+  String get summarizerShare => 'Share';
+
+  @override
+  String get summarizerSave => 'Save';
+
+  @override
+  String get summarizerCopied => 'Copied to clipboard';
+
+  @override
+  String get summarizerSaved => 'Summary saved successfully';
+
+  @override
+  String get summarizerHistory => 'Recent Summaries';
+
+  @override
+  String get summarizerItems => 'items';
+
+  @override
+  String get summarizerViewAll => 'View All';
+
+  @override
+  String get summarizerAllHistory => 'All Summaries';
+
+  @override
+  String get summarizerDeleteConfirm => 'Delete Summary?';
+
+  @override
+  String get summarizerDeleteConfirmDesc => 'This action cannot be undone.';
+
+  @override
+  String get summarizerUploading => 'Uploading...';
+
+  @override
+  String get summarizerUploadFailed => 'Upload Failed';
+
+  @override
+  String get smartStudyTitle => 'Your Smart Study Plan';
+
+  @override
+  String get smartStudySubtitle =>
+      'AI recommendations to help you focus on what matters most.';
+
+  @override
+  String get smartStudyTopicsToReview => 'Topics to Review';
+
+  @override
+  String get smartStudySchedule => 'Study Schedule';
+
+  @override
+  String get smartStudyRegenerate => 'Regenerate';
+
+  @override
+  String get smartStudyAllCourses => 'All Courses';
+
+  @override
+  String get smartStudyAllDifficulty => 'All Difficulty';
+
+  @override
+  String get smartStudyAllUrgency => 'All Urgency';
+
+  @override
+  String get smartStudySelectCourse => 'Select Course';
+
+  @override
+  String get smartStudySelectDifficulty => 'Select Difficulty';
+
+  @override
+  String get smartStudySelectUrgency => 'Select Urgency';
+
+  @override
+  String get smartStudyEasy => 'Easy';
+
+  @override
+  String get smartStudyMedium => 'Medium';
+
+  @override
+  String get smartStudyHard => 'Hard';
+
+  @override
+  String get smartStudyHighUrgency => 'High Urgency';
+
+  @override
+  String get smartStudyMediumUrgency => 'Medium Urgency';
+
+  @override
+  String get smartStudyLowUrgency => 'Low Urgency';
+
+  @override
+  String get smartStudyNoTopics => 'No Topics Found';
+
+  @override
+  String get smartStudyNoTopicsHint =>
+      'Try adjusting your filters or regenerate the plan.';
+
+  @override
+  String get smartStudyThisWeek => 'This Week\'s Plan';
+
+  @override
+  String get smartStudySyncCalendar => 'Sync Calendar';
+
+  @override
+  String get smartStudyExportPdf => 'Export PDF';
+
+  @override
+  String get smartStudyOptimize => 'Optimize Plan';
+
+  @override
+  String get smartStudyToday => 'Today';
+
+  @override
+  String get smartStudyNoSchedule => 'No Schedule Yet';
+
+  @override
+  String get smartStudyNoScheduleHint =>
+      'Regenerate your plan to get a personalized schedule.';
+
+  @override
+  String get smartStudySyncCalendarDesc =>
+      'Sync your study schedule with your device calendar?';
+
+  @override
+  String get smartStudyExportPdfDesc =>
+      'Export your weekly study plan as a PDF document?';
+
+  @override
+  String get smartStudySyncSuccess => 'Calendar synced successfully!';
+
+  @override
+  String get smartStudyExportSuccess => 'PDF exported successfully!';
+
+  @override
+  String get smartStudyAiInsight => 'AI Insight';
+
+  @override
+  String get smartStudyApplySuggestion => 'Apply Suggestion';
+
+  @override
+  String get smartStudyInsightSaved => 'Insight saved to bookmarks';
+
+  @override
+  String get smartStudyQuickActions => 'Quick Actions';
+
+  @override
+  String get smartStudyStartSession => 'Start Study Session';
+
+  @override
+  String get smartStudyStartSessionDesc => 'Begin a focused learning session';
+
+  @override
+  String get smartStudyQuickQuiz => 'Quick Quiz';
+
+  @override
+  String get smartStudyQuickQuizDesc => 'Test your knowledge in 5 minutes';
+
+  @override
+  String get smartStudyFlashcards => 'Flashcards';
+
+  @override
+  String get smartStudyFlashcardsDesc => 'Review key concepts quickly';
+
+  @override
+  String get gamificationTitle => 'Gamification & Leaderboard';
+
+  @override
+  String get gamificationSubtitle =>
+      'Earn points, unlock badges, and climb the ranks with your peers.';
+
+  @override
+  String get weekly => 'Weekly';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
+  String get allTime => 'All';
+
+  @override
+  String get level => 'Level';
+
+  @override
+  String get progressToNextRank => 'Progress to next rank';
+
+  @override
+  String get inYourCourse => 'in your course';
+
+  @override
+  String get achievementsAndBadges => 'Achievements & Badges';
+
+  @override
+  String get allBadges => 'All Badges';
+
+  @override
+  String get badgesDescription => 'Unlock badges by completing achievements';
+
+  @override
+  String get unlocked => 'Unlocked';
+
+  @override
+  String get required => 'required';
+
+  @override
+  String get global => 'Global';
+
+  @override
+  String get perCourse => 'Per Course';
+
+  @override
+  String get friends => 'Friends';
+
+  @override
+  String get findClassmate => 'Find classmate';
+
+  @override
+  String get compareProgress => 'Compare Progress';
+
+  @override
+  String get noResults => 'No results found';
+
+  @override
+  String get compare => 'Compare';
+
+  @override
+  String get users => 'users';
+
+  @override
+  String get progressComparison => 'Progress Comparison';
+
+  @override
+  String get keepItUp => 'Keep it up!';
+
+  @override
+  String get youreOnly => 'You\'re only';
+
+  @override
+  String get awayFromSurpassing => 'away from surpassing';
+
+  @override
+  String get viewRewardsShop => 'View Rewards & Shop';
+
+  @override
+  String get rewardsShop => 'Rewards & Shop';
+
+  @override
+  String get rewards => 'Rewards';
+
+  @override
+  String get dailyRewards => 'Daily Rewards';
+
+  @override
+  String get dailyReward => 'Daily Reward';
+
+  @override
+  String get claimYourDailyReward =>
+      'Claim your daily reward to earn coins and XP!';
+
+  @override
+  String get coins => 'Coins';
+
+  @override
+  String get claimReward => 'Claim Reward';
+
+  @override
+  String get currentStreak => 'Current Streak';
+
+  @override
+  String get days => 'days';
+
+  @override
+  String get nextBonus => 'Next Bonus';
+
+  @override
+  String get weeklyBonus => 'Weekly Bonus';
+
+  @override
+  String get completeWeeklyGoals => 'Complete weekly goals for bonus rewards';
+
+  @override
+  String get goalsCompleted => 'goals completed';
+
+  @override
+  String get noRewardsAvailable => 'No rewards available';
+
+  @override
+  String get notEnoughCoins => 'Not enough coins';
+
+  @override
+  String get purchase => 'Purchase';
+
+  @override
+  String get owned => 'Owned';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get privacy => 'Privacy';
+
+  @override
+  String get help => 'Help';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get aiAssistantTitle => 'EduVerse AI Assistant';
+
+  @override
+  String get aiAssistantSubtitle =>
+      'Ask questions, generate quizzes, or get personalized help anytime.';
+
+  @override
+  String get generalHelp => 'General Help';
+
+  @override
+  String get courseSpecificMode => 'Course-Specific';
+
+  @override
+  String get aiTutorMode => 'AI Tutor';
+
+  @override
+  String get clearChat => 'Clear Chat';
+
+  @override
+  String get clearChatConfirm =>
+      'Are you sure you want to clear the chat history? This action cannot be undone.';
+
+  @override
+  String get attachFile => 'Attach File';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get typeMessageHint => 'Type your message...';
+
+  @override
+  String get listeningHint => 'Listening...';
+
+  @override
+  String get aiChatWelcome => 'Hello! I\'m your AI Assistant';
+
+  @override
+  String get aiChatWelcomeSubtitle =>
+      'Ask me anything about your courses, generate quizzes, or get help with concepts.';
+
+  @override
+  String get aiSuggestion1 => 'Summarize my last lecture';
+
+  @override
+  String get aiSuggestion2 => 'Generate practice quiz questions';
+
+  @override
+  String get aiSuggestion3 => 'Explain a complex concept simply';
+
+  @override
+  String get calendarTitle => 'Smart Calendar & Schedule';
+
+  @override
+  String get calendarSubtitle =>
+      'View all your lectures, labs, quizzes, and deadlines in one place.';
+
+  @override
+  String get addEvent => 'Add Event';
+
+  @override
+  String get filters => 'Filters';
+
+  @override
+  String get lecturesFilter => 'Lectures';
+
+  @override
+  String get labsFilter => 'Labs';
+
+  @override
+  String get assignmentsFilter => 'Assignments';
+
+  @override
+  String get examsFilter => 'Exams';
+
+  @override
+  String get personalTasksFilter => 'Personal Tasks';
+
+  @override
+  String get monthView => 'Month';
+
+  @override
+  String get weekView => 'Week';
+
+  @override
+  String get dayView => 'Day';
+
+  @override
+  String get upcomingEvents => 'Upcoming Events';
+
+  @override
+  String get noUpcomingEvents => 'No upcoming events';
+
+  @override
+  String get addYourFirstEvent => 'Add Your First Event';
+
+  @override
+  String get addNewEvent => 'Add New Event';
+
+  @override
+  String get getAiSuggestedTime => 'Get AI-Suggested Time Slot';
+
+  @override
+  String get aiSuggestedTime => 'AI Suggested Time';
+
+  @override
+  String get eventTitle => 'Event Title';
+
+  @override
+  String get eventTitleHint => 'e.g., Operating Systems Lecture';
+
+  @override
+  String get eventType => 'Event Type';
+
+  @override
+  String get course => 'Course';
+
+  @override
+  String get courseHint => 'e.g., Operating Systems';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get time => 'Time';
+
+  @override
+  String get locationHint => 'e.g., Room 301, Building A';
+
+  @override
+  String get descriptionHint => 'Add notes or details about this event...';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get lectureType => 'Lecture';
+
+  @override
+  String get examType => 'Exam';
+
+  @override
+  String get personalTaskType => 'Personal Task';
 }

@@ -5,6 +5,8 @@ import 'package:edu_verse/bloc/grades/grades_cubit.dart';
 import 'package:edu_verse/bloc/labs/labs_cubit.dart';
 import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/bloc/notifications/notification_cubit.dart';
+import 'package:edu_verse/bloc/smart_study/smart_study_cubit.dart';
+import 'package:edu_verse/bloc/summarizer/summarizer_cubit.dart';
 import 'package:edu_verse/bloc/tasks/tasks_cubit.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
@@ -39,6 +41,8 @@ class _MyAppState extends State<MyApp> {
   late AssignmentsCubit _assignmentsCubit;
   late GradesCubit _gradesCubit;
   late AttendanceCubit _attendanceCubit;
+  late SummarizerCubit _summarizerCubit;
+  late SmartStudyCubit _smartStudyCubit;
 
   @override
   void initState() {
@@ -56,6 +60,8 @@ class _MyAppState extends State<MyApp> {
     _assignmentsCubit = AssignmentsCubit()..loadAssignments();
     _gradesCubit = GradesCubit()..loadGrades();
     _attendanceCubit = AttendanceCubit()..loadAttendance();
+    _summarizerCubit = SummarizerCubit();
+    _smartStudyCubit = SmartStudyCubit();
     // Initialize theme and language from storage
     _initializeTheme();
     _initializeLanguage();
@@ -75,6 +81,13 @@ class _MyAppState extends State<MyApp> {
     _authBloc.close();
     _languageCubit.close();
     _notificationCubit.close();
+    _tasksCubit.close();
+    _labsCubit.close();
+    _assignmentsCubit.close();
+    _gradesCubit.close();
+    _attendanceCubit.close();
+    _summarizerCubit.close();
+    _smartStudyCubit.close();
     super.dispose();
   }
 
@@ -91,6 +104,8 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _assignmentsCubit),
         BlocProvider.value(value: _gradesCubit),
         BlocProvider.value(value: _attendanceCubit),
+        BlocProvider.value(value: _summarizerCubit),
+        BlocProvider.value(value: _smartStudyCubit),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {

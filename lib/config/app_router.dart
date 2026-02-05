@@ -13,6 +13,11 @@ import 'package:edu_verse/screens/student/course_details_screen.dart';
 import 'package:edu_verse/screens/student/tasks_screen.dart';
 import 'package:edu_verse/screens/student/voice_to_text/voice_to_text_screen.dart';
 import 'package:edu_verse/screens/student/attendance/attendance_screen.dart';
+import 'package:edu_verse/screens/student/summarizer/summarizer_screen.dart';
+import 'package:edu_verse/screens/student/smart_study/smart_study_screen.dart';
+import 'package:edu_verse/screens/student/gamification/gamification_screen.dart';
+import 'package:edu_verse/screens/student/ai_chat/ai_chat_screen.dart';
+import 'package:edu_verse/screens/student/calendar/calendar_screen.dart';
 import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
 import 'package:flutter/material.dart';
@@ -141,6 +146,26 @@ class AppRouter {
       GoRoute(
         path: '/my-files',
         builder: (context, state) => const MyFilesScreen(),
+      ),
+      GoRoute(
+        path: '/summarizer',
+        builder: (context, state) => const SummarizerScreen(),
+      ),
+      GoRoute(
+        path: '/smart-study',
+        builder: (context, state) => const SmartStudyScreen(),
+      ),
+      GoRoute(
+        path: '/gamification',
+        builder: (context, state) => const GamificationScreen(),
+      ),
+      GoRoute(
+        path: '/ai-chat',
+        builder: (context, state) => const AiChatScreen(),
+      ),
+      GoRoute(
+        path: '/calendar',
+        builder: (context, state) => const CalendarScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

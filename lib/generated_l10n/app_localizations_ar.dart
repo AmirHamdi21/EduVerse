@@ -683,10 +683,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'إنشاء اختبارات مخصصة من مواد دراستك.';
 
   @override
-  String get selectCourse => 'اختر الدورة';
+  String get selectCourse => 'اختر المقرر';
 
   @override
-  String get quizType => 'نوع الاختبار';
+  String get quizType => 'اختبار قصير';
 
   @override
   String get mcq => 'اختيار متعدد';
@@ -1141,7 +1141,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noLabsDescription => 'لا توجد معامل تطابق معايير البحث.';
 
   @override
-  String get labType => 'نوع المعمل';
+  String get labType => 'معمل';
 
   @override
   String get virtual => 'افتراضي';
@@ -1192,7 +1192,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get late => 'متأخر';
 
   @override
-  String get assignmentType => 'نوع الواجب';
+  String get assignmentType => 'واجب';
 
   @override
   String get document => 'مستند';
@@ -1734,4 +1734,546 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get file => 'ملف';
+
+  @override
+  String get summarizerTitle => 'ملخص المحاضرات بالذكاء الاصطناعي';
+
+  @override
+  String get summarizerSubtitle =>
+      'قم بإنشاء ملخصات قصيرة من المواد أو الملاحظات المرفوعة.';
+
+  @override
+  String get summarizerUploadFile => 'رفع ملف';
+
+  @override
+  String get summarizerPasteText => 'لصق نص';
+
+  @override
+  String get summarizerUploadTitle => 'ارفع ملف PDF أو ملاحظات المحاضرة';
+
+  @override
+  String get summarizerDragDrop => 'أو اسحب وأفلت هنا';
+
+  @override
+  String get summarizerBrowseFiles => 'تصفح الملفات';
+
+  @override
+  String get summarizerSupportedFormats => 'PDF, DOC, DOCX, TXT, PPT, PPTX';
+
+  @override
+  String get summarizerFileReady => 'جاهز للتلخيص';
+
+  @override
+  String get summarizerPasteHint => 'الصق ملاحظاتك أو المحتوى هنا...';
+
+  @override
+  String get summarizerCharacters => 'حرف';
+
+  @override
+  String get summarizerWords => 'كلمة';
+
+  @override
+  String get summarizerClear => 'مسح';
+
+  @override
+  String get summarizerType => 'نوع التلخيص';
+
+  @override
+  String get summarizerSelectType => 'اختر نوع الملخص';
+
+  @override
+  String get summarizerKeyPoints => 'النقاط الرئيسية';
+
+  @override
+  String get summarizerKeyPointsDesc =>
+      'استخراج الأفكار الرئيسية والنقاط البارزة';
+
+  @override
+  String get summarizerBrief => 'ملخص موجز';
+
+  @override
+  String get summarizerBriefDesc => 'نظرة عامة موجزة في فقرة';
+
+  @override
+  String get summarizerDetailed => 'ملخص مفصل';
+
+  @override
+  String get summarizerDetailedDesc => 'ملخص شامل مع أقسام';
+
+  @override
+  String get summarizerBulletPoints => 'نقاط مرقمة';
+
+  @override
+  String get summarizerBulletPointsDesc => 'تنسيق قائمة منظمة';
+
+  @override
+  String get summarizerMindMap => 'خريطة ذهنية';
+
+  @override
+  String get summarizerMindMapDesc => 'تنسيق هيكلي هرمي';
+
+  @override
+  String get summarizerGenerate => 'إنشاء الملخص';
+
+  @override
+  String get summarizerGenerating => 'جاري الإنشاء...';
+
+  @override
+  String get summarizerNoSummary => 'لا يوجد ملخص حتى الآن';
+
+  @override
+  String get summarizerNoSummaryDesc =>
+      'ارفع ملفاً أو الصق المحتوى، ثم انقر على \"إنشاء الملخص\" للبدء.';
+
+  @override
+  String get summarizerResult => 'تم إنشاء الملخص';
+
+  @override
+  String get summarizerCopy => 'نسخ';
+
+  @override
+  String get summarizerShare => 'مشاركة';
+
+  @override
+  String get summarizerSave => 'حفظ';
+
+  @override
+  String get summarizerCopied => 'تم النسخ إلى الحافظة';
+
+  @override
+  String get summarizerSaved => 'تم حفظ الملخص بنجاح';
+
+  @override
+  String get summarizerHistory => 'الملخصات الأخيرة';
+
+  @override
+  String get summarizerItems => 'عنصر';
+
+  @override
+  String get summarizerViewAll => 'عرض الكل';
+
+  @override
+  String get summarizerAllHistory => 'جميع الملخصات';
+
+  @override
+  String get summarizerDeleteConfirm => 'حذف الملخص؟';
+
+  @override
+  String get summarizerDeleteConfirmDesc => 'لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get summarizerUploading => 'جاري الرفع...';
+
+  @override
+  String get summarizerUploadFailed => 'فشل الرفع';
+
+  @override
+  String get smartStudyTitle => 'خطة الدراسة الذكية';
+
+  @override
+  String get smartStudySubtitle =>
+      'توصيات الذكاء الاصطناعي لمساعدتك على التركيز على ما يهم.';
+
+  @override
+  String get smartStudyTopicsToReview => 'مواضيع للمراجعة';
+
+  @override
+  String get smartStudySchedule => 'جدول الدراسة';
+
+  @override
+  String get smartStudyRegenerate => 'إعادة إنشاء';
+
+  @override
+  String get smartStudyAllCourses => 'جميع المقررات';
+
+  @override
+  String get smartStudyAllDifficulty => 'جميع المستويات';
+
+  @override
+  String get smartStudyAllUrgency => 'جميع الأولويات';
+
+  @override
+  String get smartStudySelectCourse => 'اختر المقرر';
+
+  @override
+  String get smartStudySelectDifficulty => 'اختر المستوى';
+
+  @override
+  String get smartStudySelectUrgency => 'اختر الأولوية';
+
+  @override
+  String get smartStudyEasy => 'سهل';
+
+  @override
+  String get smartStudyMedium => 'متوسط';
+
+  @override
+  String get smartStudyHard => 'صعب';
+
+  @override
+  String get smartStudyHighUrgency => 'أولوية عالية';
+
+  @override
+  String get smartStudyMediumUrgency => 'أولوية متوسطة';
+
+  @override
+  String get smartStudyLowUrgency => 'أولوية منخفضة';
+
+  @override
+  String get smartStudyNoTopics => 'لم يتم العثور على مواضيع';
+
+  @override
+  String get smartStudyNoTopicsHint => 'جرب تعديل الفلاتر أو أعد إنشاء الخطة.';
+
+  @override
+  String get smartStudyThisWeek => 'خطة هذا الأسبوع';
+
+  @override
+  String get smartStudySyncCalendar => 'مزامنة التقويم';
+
+  @override
+  String get smartStudyExportPdf => 'تصدير PDF';
+
+  @override
+  String get smartStudyOptimize => 'تحسين الخطة';
+
+  @override
+  String get smartStudyToday => 'اليوم';
+
+  @override
+  String get smartStudyNoSchedule => 'لا يوجد جدول حتى الآن';
+
+  @override
+  String get smartStudyNoScheduleHint => 'أعد إنشاء خطتك للحصول على جدول مخصص.';
+
+  @override
+  String get smartStudySyncCalendarDesc => 'مزامنة جدول دراستك مع تقويم جهازك؟';
+
+  @override
+  String get smartStudyExportPdfDesc => 'تصدير خطة الدراسة الأسبوعية كملف PDF؟';
+
+  @override
+  String get smartStudySyncSuccess => 'تمت مزامنة التقويم بنجاح!';
+
+  @override
+  String get smartStudyExportSuccess => 'تم تصدير PDF بنجاح!';
+
+  @override
+  String get smartStudyAiInsight => 'رؤية الذكاء الاصطناعي';
+
+  @override
+  String get smartStudyApplySuggestion => 'تطبيق الاقتراح';
+
+  @override
+  String get smartStudyInsightSaved => 'تم حفظ الرؤية في الإشارات المرجعية';
+
+  @override
+  String get smartStudyQuickActions => 'إجراءات سريعة';
+
+  @override
+  String get smartStudyStartSession => 'بدء جلسة دراسية';
+
+  @override
+  String get smartStudyStartSessionDesc => 'ابدأ جلسة تعلم مركزة';
+
+  @override
+  String get smartStudyQuickQuiz => 'اختبار سريع';
+
+  @override
+  String get smartStudyQuickQuizDesc => 'اختبر معرفتك في 5 دقائق';
+
+  @override
+  String get smartStudyFlashcards => 'بطاقات تعليمية';
+
+  @override
+  String get smartStudyFlashcardsDesc => 'راجع المفاهيم الأساسية بسرعة';
+
+  @override
+  String get gamificationTitle => 'التحفيز والمنافسة';
+
+  @override
+  String get gamificationSubtitle =>
+      'اكسب نقاطاً، افتح شارات، وتنافس مع زملائك.';
+
+  @override
+  String get weekly => 'أسبوعي';
+
+  @override
+  String get monthly => 'شهري';
+
+  @override
+  String get allTime => 'الكل';
+
+  @override
+  String get level => 'المستوى';
+
+  @override
+  String get progressToNextRank => 'التقدم للمرتبة التالية';
+
+  @override
+  String get inYourCourse => 'في مقررك';
+
+  @override
+  String get achievementsAndBadges => 'الإنجازات والشارات';
+
+  @override
+  String get allBadges => 'جميع الشارات';
+
+  @override
+  String get badgesDescription => 'افتح الشارات بإكمال الإنجازات';
+
+  @override
+  String get unlocked => 'مفتوح';
+
+  @override
+  String get required => 'مطلوب';
+
+  @override
+  String get global => 'عالمي';
+
+  @override
+  String get perCourse => 'حسب المقرر';
+
+  @override
+  String get friends => 'الأصدقاء';
+
+  @override
+  String get findClassmate => 'ابحث عن زميل';
+
+  @override
+  String get compareProgress => 'قارن التقدم';
+
+  @override
+  String get noResults => 'لا توجد نتائج';
+
+  @override
+  String get compare => 'قارن';
+
+  @override
+  String get users => 'مستخدمين';
+
+  @override
+  String get progressComparison => 'مقارنة التقدم';
+
+  @override
+  String get keepItUp => 'استمر!';
+
+  @override
+  String get youreOnly => 'أنت فقط';
+
+  @override
+  String get awayFromSurpassing => 'بعيد عن تجاوز';
+
+  @override
+  String get viewRewardsShop => 'عرض المكافآت والمتجر';
+
+  @override
+  String get rewardsShop => 'المكافآت والمتجر';
+
+  @override
+  String get rewards => 'المكافآت';
+
+  @override
+  String get dailyRewards => 'المكافآت اليومية';
+
+  @override
+  String get dailyReward => 'المكافأة اليومية';
+
+  @override
+  String get claimYourDailyReward =>
+      'اطلب مكافأتك اليومية للحصول على عملات ونقاط خبرة!';
+
+  @override
+  String get coins => 'عملات';
+
+  @override
+  String get claimReward => 'اطلب المكافأة';
+
+  @override
+  String get currentStreak => 'السلسلة الحالية';
+
+  @override
+  String get days => 'أيام';
+
+  @override
+  String get nextBonus => 'المكافأة التالية';
+
+  @override
+  String get weeklyBonus => 'المكافأة الأسبوعية';
+
+  @override
+  String get completeWeeklyGoals =>
+      'أكمل الأهداف الأسبوعية للحصول على مكافآت إضافية';
+
+  @override
+  String get goalsCompleted => 'أهداف مكتملة';
+
+  @override
+  String get noRewardsAvailable => 'لا توجد مكافآت متاحة';
+
+  @override
+  String get notEnoughCoins => 'عملات غير كافية';
+
+  @override
+  String get purchase => 'شراء';
+
+  @override
+  String get owned => 'مملوك';
+
+  @override
+  String get notifications => 'الإشعارات';
+
+  @override
+  String get privacy => 'الخصوصية';
+
+  @override
+  String get help => 'المساعدة';
+
+  @override
+  String get close => 'إغلاق';
+
+  @override
+  String get aiAssistantTitle => 'مساعد EduVerse الذكي';
+
+  @override
+  String get aiAssistantSubtitle =>
+      'اطرح أسئلة، أنشئ اختبارات، أو احصل على مساعدة مخصصة في أي وقت.';
+
+  @override
+  String get generalHelp => 'مساعدة عامة';
+
+  @override
+  String get courseSpecificMode => 'مساعدة للمقرر';
+
+  @override
+  String get aiTutorMode => 'معلم ذكي';
+
+  @override
+  String get clearChat => 'مسح المحادثة';
+
+  @override
+  String get clearChatConfirm =>
+      'هل أنت متأكد من حذف سجل المحادثة؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get attachFile => 'إرفاق ملف';
+
+  @override
+  String get camera => 'كاميرا';
+
+  @override
+  String get typeMessageHint => 'اكتب رسالتك...';
+
+  @override
+  String get listeningHint => 'جاري الاستماع...';
+
+  @override
+  String get aiChatWelcome => 'مرحباً! أنا مساعدك الذكي';
+
+  @override
+  String get aiChatWelcomeSubtitle =>
+      'اسألني أي شيء عن مقرراتك، أنشئ اختبارات، أو احصل على مساعدة في المفاهيم.';
+
+  @override
+  String get aiSuggestion1 => 'لخص محاضرتي الأخيرة';
+
+  @override
+  String get aiSuggestion2 => 'أنشئ أسئلة اختبار للتدريب';
+
+  @override
+  String get aiSuggestion3 => 'اشرح مفهوماً معقداً ببساطة';
+
+  @override
+  String get calendarTitle => 'التقويم الذكي والجدول';
+
+  @override
+  String get calendarSubtitle =>
+      'اعرض جميع محاضراتك ومعاملك واختباراتك ومواعيدك النهائية في مكان واحد.';
+
+  @override
+  String get addEvent => 'إضافة حدث';
+
+  @override
+  String get filters => 'الفلاتر';
+
+  @override
+  String get lecturesFilter => 'المحاضرات';
+
+  @override
+  String get labsFilter => 'المعامل';
+
+  @override
+  String get assignmentsFilter => 'الواجبات';
+
+  @override
+  String get examsFilter => 'الاختبارات';
+
+  @override
+  String get personalTasksFilter => 'المهام الشخصية';
+
+  @override
+  String get monthView => 'شهر';
+
+  @override
+  String get weekView => 'أسبوع';
+
+  @override
+  String get dayView => 'يوم';
+
+  @override
+  String get upcomingEvents => 'الأحداث القادمة';
+
+  @override
+  String get noUpcomingEvents => 'لا توجد أحداث قادمة';
+
+  @override
+  String get addYourFirstEvent => 'أضف أول حدث لك';
+
+  @override
+  String get addNewEvent => 'إضافة حدث جديد';
+
+  @override
+  String get getAiSuggestedTime => 'احصل على وقت مقترح من الذكاء الاصطناعي';
+
+  @override
+  String get aiSuggestedTime => 'الوقت المقترح';
+
+  @override
+  String get eventTitle => 'عنوان الحدث';
+
+  @override
+  String get eventTitleHint => 'مثال: محاضرة نظم التشغيل';
+
+  @override
+  String get eventType => 'نوع الحدث';
+
+  @override
+  String get course => 'المقرر';
+
+  @override
+  String get courseHint => 'مثال: نظم التشغيل';
+
+  @override
+  String get date => 'التاريخ';
+
+  @override
+  String get time => 'الوقت';
+
+  @override
+  String get locationHint => 'مثال: قاعة 301، المبنى أ';
+
+  @override
+  String get descriptionHint => 'أضف ملاحظات أو تفاصيل عن هذا الحدث...';
+
+  @override
+  String get optional => 'اختياري';
+
+  @override
+  String get lectureType => 'محاضرة';
+
+  @override
+  String get examType => 'اختبار';
+
+  @override
+  String get personalTaskType => 'مهمة شخصية';
 }

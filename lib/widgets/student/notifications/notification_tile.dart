@@ -101,37 +101,20 @@ class _NotificationTileState extends State<NotificationTile> with WidgetsBinding
     final l10n = AppLocalizations.of(context);
     final result = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: widget.isDarkMode ? const Color(0xFF1E293B) : Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          l10n.notificationConfirm,
-          style: TextStyle(
-            color: widget.isDarkMode ? Colors.white : const Color(0xFF1E293B),
-          ),
-        ),
-        content: Text(
-          action == SwipeAction.delete
-              ? 'Are you sure you want to delete this notification?'
-              : 'Are you sure you want to archive this notification?',
-          style: TextStyle(
-            color: widget.isDarkMode ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: TextButton.styleFrom(
-              foregroundColor: action.color,
+      barrierDismissible: false,
+      builder: (ctx) => action == SwipeAction.delete
+          ? _DeleteNotificationDialog(
+              isDark: widget.isDarkMode,
+              l10n: l10n,
+              onCancel: () => Navigator.of(ctx).pop(false),
+              onDelete: () => Navigator.of(ctx).pop(true),
+            )
+          : _ArchiveNotificationDialog(
+              isDark: widget.isDarkMode,
+              l10n: l10n,
+              onCancel: () => Navigator.of(ctx).pop(false),
+              onArchive: () => Navigator.of(ctx).pop(true),
             ),
-            child: Text(l10n.notificationConfirm),
-          ),
-        ],
-      ),
     );
     return result ?? false;
   }
@@ -592,5 +575,577 @@ class _NotificationTileState extends State<NotificationTile> with WidgetsBinding
     } else {
       return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
     }
+  }
+}
+
+// Delete Notification Dialog
+class _DeleteNotificationDialog extends StatefulWidget {
+  final bool isDark;
+  final AppLocalizations l10n;
+  final VoidCallback onCancel;
+  final VoidCallback onDelete;
+
+  const _DeleteNotificationDialog({
+    required this.isDark,
+    required this.l10n,
+    required this.onCancel,
+    required this.onDelete,
+  });
+
+  @override
+  State<_DeleteNotificationDialog> createState() => _DeleteNotificationDialogState();
+}
+
+class _DeleteNotificationDialogState extends State<_DeleteNotificationDialog>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 340),
+            decoration: BoxDecoration(
+              color: widget.isDark ? const Color(0xFF1E1E2D) : Colors.white,
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 40,
+                  offset: const Offset(0, 16),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with icon
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 32),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFFEF4444).withValues(alpha: 0.15),
+                        const Color(0xFFDC2626).withValues(alpha: 0.08),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(28),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0.0, end: 1.0),
+                        duration: const Duration(milliseconds: 600),
+                        builder: (context, value, child) {
+                          return Transform.scale(
+                            scale: 0.8 + (0.2 * value),
+                            child: Container(
+                              width: 88,
+                              height: 88,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+                                    blurRadius: 24,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.delete_forever_rounded,
+                                color: Colors.white,
+                                size: 44,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        widget.l10n.delete,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: widget.isDark ? Colors.white : const Color(0xFF1A1A2E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Content section
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      // Warning card
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: widget.isDark
+                              ? const Color(0xFF252D48)
+                              : const Color(0xFFFEF2F2),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.warning_amber_rounded,
+                                color: Color(0xFFEF4444),
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Text(
+                                'Are you sure you want to delete this notification? This action cannot be undone.',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: widget.isDark
+                                      ? const Color(0xFF9CA3AF)
+                                      : const Color(0xFF6B7280),
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Action buttons
+                      Row(
+                        children: [
+                          // Cancel button
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: widget.onCancel,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                decoration: BoxDecoration(
+                                  color: widget.isDark
+                                      ? const Color(0xFF252D48)
+                                      : const Color(0xFFF3F4F6),
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: widget.isDark
+                                        ? const Color(0xFF374151)
+                                        : const Color(0xFFE5E7EB),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.close_rounded,
+                                      color: widget.isDark
+                                          ? const Color(0xFF9CA3AF)
+                                          : const Color(0xFF6B7280),
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      widget.l10n.cancel,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: widget.isDark
+                                            ? const Color(0xFF9CA3AF)
+                                            : const Color(0xFF6B7280),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          // Delete button
+                          Expanded(
+                            flex: 2,
+                            child: GestureDetector(
+                              onTap: widget.onDelete,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                                  ),
+                                  borderRadius: BorderRadius.circular(14),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.delete_rounded,
+                                      color: Colors.white,
+                                      size: 22,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      widget.l10n.delete,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// Archive Notification Dialog
+class _ArchiveNotificationDialog extends StatefulWidget {
+  final bool isDark;
+  final AppLocalizations l10n;
+  final VoidCallback onCancel;
+  final VoidCallback onArchive;
+
+  const _ArchiveNotificationDialog({
+    required this.isDark,
+    required this.l10n,
+    required this.onCancel,
+    required this.onArchive,
+  });
+
+  @override
+  State<_ArchiveNotificationDialog> createState() => _ArchiveNotificationDialogState();
+}
+
+class _ArchiveNotificationDialogState extends State<_ArchiveNotificationDialog>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+    );
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Dialog(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 340),
+            decoration: BoxDecoration(
+              color: widget.isDark ? const Color(0xFF1E1E2D) : Colors.white,
+              borderRadius: BorderRadius.circular(28),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 40,
+                  offset: const Offset(0, 16),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header with icon
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 32),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                        const Color(0xFFD97706).withValues(alpha: 0.08),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(28),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0.0, end: 1.0),
+                        duration: const Duration(milliseconds: 600),
+                        builder: (context, value, child) {
+                          return Transform.scale(
+                            scale: 0.8 + (0.2 * value),
+                            child: Container(
+                              width: 88,
+                              height: 88,
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+                                    blurRadius: 24,
+                                    offset: const Offset(0, 8),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.archive_rounded,
+                                color: Colors.white,
+                                size: 44,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        widget.l10n.archive,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: widget.isDark ? Colors.white : const Color(0xFF1A1A2E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Content section
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      // Info card
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: widget.isDark
+                              ? const Color(0xFF252D48)
+                              : const Color(0xFFFFFBEB),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: const Color(0xFFF59E0B).withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF59E0B).withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.info_outline_rounded,
+                                color: Color(0xFFF59E0B),
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Text(
+                                'Archive this notification? You can find it later in the archived section.',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: widget.isDark
+                                      ? const Color(0xFF9CA3AF)
+                                      : const Color(0xFF6B7280),
+                                  height: 1.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Action buttons
+                      Row(
+                        children: [
+                          // Cancel button
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: widget.onCancel,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                decoration: BoxDecoration(
+                                  color: widget.isDark
+                                      ? const Color(0xFF252D48)
+                                      : const Color(0xFFF3F4F6),
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(
+                                    color: widget.isDark
+                                        ? const Color(0xFF374151)
+                                        : const Color(0xFFE5E7EB),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.close_rounded,
+                                      color: widget.isDark
+                                          ? const Color(0xFF9CA3AF)
+                                          : const Color(0xFF6B7280),
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      widget.l10n.cancel,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: widget.isDark
+                                            ? const Color(0xFF9CA3AF)
+                                            : const Color(0xFF6B7280),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          // Archive button
+                          Expanded(
+                            flex: 2,
+                            child: GestureDetector(
+                              onTap: widget.onArchive,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                                  ),
+                                  borderRadius: BorderRadius.circular(14),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+                                      blurRadius: 12,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.archive_rounded,
+                                      color: Colors.white,
+                                      size: 22,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      widget.l10n.archive,
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

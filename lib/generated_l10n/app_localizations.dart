@@ -1421,7 +1421,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizType.
   ///
   /// In en, this message translates to:
-  /// **'Quiz Type'**
+  /// **'Quiz'**
   String get quizType;
 
   /// No description provided for @mcq.
@@ -2267,7 +2267,7 @@ abstract class AppLocalizations {
   /// No description provided for @labType.
   ///
   /// In en, this message translates to:
-  /// **'Lab Type'**
+  /// **'Lab'**
   String get labType;
 
   /// No description provided for @virtual.
@@ -2369,7 +2369,7 @@ abstract class AppLocalizations {
   /// No description provided for @assignmentType.
   ///
   /// In en, this message translates to:
-  /// **'Assignment Type'**
+  /// **'Assignment'**
   String get assignmentType;
 
   /// No description provided for @document.
@@ -3439,6 +3439,1068 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'File'**
   String get file;
+
+  /// No description provided for @summarizerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Lecture Summarizer'**
+  String get summarizerTitle;
+
+  /// No description provided for @summarizerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate short summaries from your uploaded materials or notes.'**
+  String get summarizerSubtitle;
+
+  /// No description provided for @summarizerUploadFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload File'**
+  String get summarizerUploadFile;
+
+  /// No description provided for @summarizerPasteText.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste Text'**
+  String get summarizerPasteText;
+
+  /// No description provided for @summarizerUploadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload lecture PDF or notes'**
+  String get summarizerUploadTitle;
+
+  /// No description provided for @summarizerDragDrop.
+  ///
+  /// In en, this message translates to:
+  /// **'or drag and drop here'**
+  String get summarizerDragDrop;
+
+  /// No description provided for @summarizerBrowseFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse files'**
+  String get summarizerBrowseFiles;
+
+  /// No description provided for @summarizerSupportedFormats.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF, DOC, DOCX, TXT, PPT, PPTX'**
+  String get summarizerSupportedFormats;
+
+  /// No description provided for @summarizerFileReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to summarize'**
+  String get summarizerFileReady;
+
+  /// No description provided for @summarizerPasteHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste your notes or content here...'**
+  String get summarizerPasteHint;
+
+  /// No description provided for @summarizerCharacters.
+  ///
+  /// In en, this message translates to:
+  /// **'characters'**
+  String get summarizerCharacters;
+
+  /// No description provided for @summarizerWords.
+  ///
+  /// In en, this message translates to:
+  /// **'words'**
+  String get summarizerWords;
+
+  /// No description provided for @summarizerClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get summarizerClear;
+
+  /// No description provided for @summarizerType.
+  ///
+  /// In en, this message translates to:
+  /// **'Summarization Type'**
+  String get summarizerType;
+
+  /// No description provided for @summarizerSelectType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Summary Type'**
+  String get summarizerSelectType;
+
+  /// No description provided for @summarizerKeyPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Points'**
+  String get summarizerKeyPoints;
+
+  /// No description provided for @summarizerKeyPointsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Extract main ideas and highlights'**
+  String get summarizerKeyPointsDesc;
+
+  /// No description provided for @summarizerBrief.
+  ///
+  /// In en, this message translates to:
+  /// **'Brief Summary'**
+  String get summarizerBrief;
+
+  /// No description provided for @summarizerBriefDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Concise overview in a paragraph'**
+  String get summarizerBriefDesc;
+
+  /// No description provided for @summarizerDetailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed Summary'**
+  String get summarizerDetailed;
+
+  /// No description provided for @summarizerDetailedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Comprehensive summary with sections'**
+  String get summarizerDetailedDesc;
+
+  /// No description provided for @summarizerBulletPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Bullet Points'**
+  String get summarizerBulletPoints;
+
+  /// No description provided for @summarizerBulletPointsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Organized list format'**
+  String get summarizerBulletPointsDesc;
+
+  /// No description provided for @summarizerMindMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Mind Map'**
+  String get summarizerMindMap;
+
+  /// No description provided for @summarizerMindMapDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Hierarchical structure format'**
+  String get summarizerMindMapDesc;
+
+  /// No description provided for @summarizerGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Summary'**
+  String get summarizerGenerate;
+
+  /// No description provided for @summarizerGenerating.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating...'**
+  String get summarizerGenerating;
+
+  /// No description provided for @summarizerNoSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'No Summary Yet'**
+  String get summarizerNoSummary;
+
+  /// No description provided for @summarizerNoSummaryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload a file or paste your content, then click \"Generate Summary\" to get started.'**
+  String get summarizerNoSummaryDesc;
+
+  /// No description provided for @summarizerResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary Generated'**
+  String get summarizerResult;
+
+  /// No description provided for @summarizerCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get summarizerCopy;
+
+  /// No description provided for @summarizerShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get summarizerShare;
+
+  /// No description provided for @summarizerSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get summarizerSave;
+
+  /// No description provided for @summarizerCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Copied to clipboard'**
+  String get summarizerCopied;
+
+  /// No description provided for @summarizerSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Summary saved successfully'**
+  String get summarizerSaved;
+
+  /// No description provided for @summarizerHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Summaries'**
+  String get summarizerHistory;
+
+  /// No description provided for @summarizerItems.
+  ///
+  /// In en, this message translates to:
+  /// **'items'**
+  String get summarizerItems;
+
+  /// No description provided for @summarizerViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get summarizerViewAll;
+
+  /// No description provided for @summarizerAllHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'All Summaries'**
+  String get summarizerAllHistory;
+
+  /// No description provided for @summarizerDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Summary?'**
+  String get summarizerDeleteConfirm;
+
+  /// No description provided for @summarizerDeleteConfirmDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone.'**
+  String get summarizerDeleteConfirmDesc;
+
+  /// No description provided for @summarizerUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading...'**
+  String get summarizerUploading;
+
+  /// No description provided for @summarizerUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Failed'**
+  String get summarizerUploadFailed;
+
+  /// No description provided for @smartStudyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Smart Study Plan'**
+  String get smartStudyTitle;
+
+  /// No description provided for @smartStudySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI recommendations to help you focus on what matters most.'**
+  String get smartStudySubtitle;
+
+  /// No description provided for @smartStudyTopicsToReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Topics to Review'**
+  String get smartStudyTopicsToReview;
+
+  /// No description provided for @smartStudySchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Study Schedule'**
+  String get smartStudySchedule;
+
+  /// No description provided for @smartStudyRegenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate'**
+  String get smartStudyRegenerate;
+
+  /// No description provided for @smartStudyAllCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'All Courses'**
+  String get smartStudyAllCourses;
+
+  /// No description provided for @smartStudyAllDifficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'All Difficulty'**
+  String get smartStudyAllDifficulty;
+
+  /// No description provided for @smartStudyAllUrgency.
+  ///
+  /// In en, this message translates to:
+  /// **'All Urgency'**
+  String get smartStudyAllUrgency;
+
+  /// No description provided for @smartStudySelectCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Course'**
+  String get smartStudySelectCourse;
+
+  /// No description provided for @smartStudySelectDifficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Difficulty'**
+  String get smartStudySelectDifficulty;
+
+  /// No description provided for @smartStudySelectUrgency.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Urgency'**
+  String get smartStudySelectUrgency;
+
+  /// No description provided for @smartStudyEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get smartStudyEasy;
+
+  /// No description provided for @smartStudyMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get smartStudyMedium;
+
+  /// No description provided for @smartStudyHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get smartStudyHard;
+
+  /// No description provided for @smartStudyHighUrgency.
+  ///
+  /// In en, this message translates to:
+  /// **'High Urgency'**
+  String get smartStudyHighUrgency;
+
+  /// No description provided for @smartStudyMediumUrgency.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium Urgency'**
+  String get smartStudyMediumUrgency;
+
+  /// No description provided for @smartStudyLowUrgency.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Urgency'**
+  String get smartStudyLowUrgency;
+
+  /// No description provided for @smartStudyNoTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'No Topics Found'**
+  String get smartStudyNoTopics;
+
+  /// No description provided for @smartStudyNoTopicsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your filters or regenerate the plan.'**
+  String get smartStudyNoTopicsHint;
+
+  /// No description provided for @smartStudyThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week\'s Plan'**
+  String get smartStudyThisWeek;
+
+  /// No description provided for @smartStudySyncCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Calendar'**
+  String get smartStudySyncCalendar;
+
+  /// No description provided for @smartStudyExportPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF'**
+  String get smartStudyExportPdf;
+
+  /// No description provided for @smartStudyOptimize.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimize Plan'**
+  String get smartStudyOptimize;
+
+  /// No description provided for @smartStudyToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get smartStudyToday;
+
+  /// No description provided for @smartStudyNoSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'No Schedule Yet'**
+  String get smartStudyNoSchedule;
+
+  /// No description provided for @smartStudyNoScheduleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate your plan to get a personalized schedule.'**
+  String get smartStudyNoScheduleHint;
+
+  /// No description provided for @smartStudySyncCalendarDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync your study schedule with your device calendar?'**
+  String get smartStudySyncCalendarDesc;
+
+  /// No description provided for @smartStudyExportPdfDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Export your weekly study plan as a PDF document?'**
+  String get smartStudyExportPdfDesc;
+
+  /// No description provided for @smartStudySyncSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar synced successfully!'**
+  String get smartStudySyncSuccess;
+
+  /// No description provided for @smartStudyExportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF exported successfully!'**
+  String get smartStudyExportSuccess;
+
+  /// No description provided for @smartStudyAiInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insight'**
+  String get smartStudyAiInsight;
+
+  /// No description provided for @smartStudyApplySuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Suggestion'**
+  String get smartStudyApplySuggestion;
+
+  /// No description provided for @smartStudyInsightSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Insight saved to bookmarks'**
+  String get smartStudyInsightSaved;
+
+  /// No description provided for @smartStudyQuickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get smartStudyQuickActions;
+
+  /// No description provided for @smartStudyStartSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Study Session'**
+  String get smartStudyStartSession;
+
+  /// No description provided for @smartStudyStartSessionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Begin a focused learning session'**
+  String get smartStudyStartSessionDesc;
+
+  /// No description provided for @smartStudyQuickQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Quiz'**
+  String get smartStudyQuickQuiz;
+
+  /// No description provided for @smartStudyQuickQuizDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Test your knowledge in 5 minutes'**
+  String get smartStudyQuickQuizDesc;
+
+  /// No description provided for @smartStudyFlashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Flashcards'**
+  String get smartStudyFlashcards;
+
+  /// No description provided for @smartStudyFlashcardsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Review key concepts quickly'**
+  String get smartStudyFlashcardsDesc;
+
+  /// No description provided for @gamificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gamification & Leaderboard'**
+  String get gamificationTitle;
+
+  /// No description provided for @gamificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Earn points, unlock badges, and climb the ranks with your peers.'**
+  String get gamificationSubtitle;
+
+  /// No description provided for @weekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weekly;
+
+  /// No description provided for @monthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthly;
+
+  /// No description provided for @allTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allTime;
+
+  /// No description provided for @level.
+  ///
+  /// In en, this message translates to:
+  /// **'Level'**
+  String get level;
+
+  /// No description provided for @progressToNextRank.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress to next rank'**
+  String get progressToNextRank;
+
+  /// No description provided for @inYourCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'in your course'**
+  String get inYourCourse;
+
+  /// No description provided for @achievementsAndBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievements & Badges'**
+  String get achievementsAndBadges;
+
+  /// No description provided for @allBadges.
+  ///
+  /// In en, this message translates to:
+  /// **'All Badges'**
+  String get allBadges;
+
+  /// No description provided for @badgesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock badges by completing achievements'**
+  String get badgesDescription;
+
+  /// No description provided for @unlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlocked'**
+  String get unlocked;
+
+  /// No description provided for @required.
+  ///
+  /// In en, this message translates to:
+  /// **'required'**
+  String get required;
+
+  /// No description provided for @global.
+  ///
+  /// In en, this message translates to:
+  /// **'Global'**
+  String get global;
+
+  /// No description provided for @perCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Per Course'**
+  String get perCourse;
+
+  /// No description provided for @friends.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends'**
+  String get friends;
+
+  /// No description provided for @findClassmate.
+  ///
+  /// In en, this message translates to:
+  /// **'Find classmate'**
+  String get findClassmate;
+
+  /// No description provided for @compareProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare Progress'**
+  String get compareProgress;
+
+  /// No description provided for @noResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get noResults;
+
+  /// No description provided for @compare.
+  ///
+  /// In en, this message translates to:
+  /// **'Compare'**
+  String get compare;
+
+  /// No description provided for @users.
+  ///
+  /// In en, this message translates to:
+  /// **'users'**
+  String get users;
+
+  /// No description provided for @progressComparison.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress Comparison'**
+  String get progressComparison;
+
+  /// No description provided for @keepItUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep it up!'**
+  String get keepItUp;
+
+  /// No description provided for @youreOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re only'**
+  String get youreOnly;
+
+  /// No description provided for @awayFromSurpassing.
+  ///
+  /// In en, this message translates to:
+  /// **'away from surpassing'**
+  String get awayFromSurpassing;
+
+  /// No description provided for @viewRewardsShop.
+  ///
+  /// In en, this message translates to:
+  /// **'View Rewards & Shop'**
+  String get viewRewardsShop;
+
+  /// No description provided for @rewardsShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards & Shop'**
+  String get rewardsShop;
+
+  /// No description provided for @rewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewards'**
+  String get rewards;
+
+  /// No description provided for @dailyRewards.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Rewards'**
+  String get dailyRewards;
+
+  /// No description provided for @dailyReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Reward'**
+  String get dailyReward;
+
+  /// No description provided for @claimYourDailyReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim your daily reward to earn coins and XP!'**
+  String get claimYourDailyReward;
+
+  /// No description provided for @coins.
+  ///
+  /// In en, this message translates to:
+  /// **'Coins'**
+  String get coins;
+
+  /// No description provided for @claimReward.
+  ///
+  /// In en, this message translates to:
+  /// **'Claim Reward'**
+  String get claimReward;
+
+  /// No description provided for @currentStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Streak'**
+  String get currentStreak;
+
+  /// No description provided for @days.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get days;
+
+  /// No description provided for @nextBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Bonus'**
+  String get nextBonus;
+
+  /// No description provided for @weeklyBonus.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Bonus'**
+  String get weeklyBonus;
+
+  /// No description provided for @completeWeeklyGoals.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete weekly goals for bonus rewards'**
+  String get completeWeeklyGoals;
+
+  /// No description provided for @goalsCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'goals completed'**
+  String get goalsCompleted;
+
+  /// No description provided for @noRewardsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No rewards available'**
+  String get noRewardsAvailable;
+
+  /// No description provided for @notEnoughCoins.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough coins'**
+  String get notEnoughCoins;
+
+  /// No description provided for @purchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase'**
+  String get purchase;
+
+  /// No description provided for @owned.
+  ///
+  /// In en, this message translates to:
+  /// **'Owned'**
+  String get owned;
+
+  /// No description provided for @notifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// No description provided for @privacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get privacy;
+
+  /// No description provided for @help.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get help;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// No description provided for @aiAssistantTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'EduVerse AI Assistant'**
+  String get aiAssistantTitle;
+
+  /// No description provided for @aiAssistantSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask questions, generate quizzes, or get personalized help anytime.'**
+  String get aiAssistantSubtitle;
+
+  /// No description provided for @generalHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'General Help'**
+  String get generalHelp;
+
+  /// No description provided for @courseSpecificMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Course-Specific'**
+  String get courseSpecificMode;
+
+  /// No description provided for @aiTutorMode.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Tutor'**
+  String get aiTutorMode;
+
+  /// No description provided for @clearChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Chat'**
+  String get clearChat;
+
+  /// No description provided for @clearChatConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear the chat history? This action cannot be undone.'**
+  String get clearChatConfirm;
+
+  /// No description provided for @attachFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach File'**
+  String get attachFile;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @typeMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your message...'**
+  String get typeMessageHint;
+
+  /// No description provided for @listeningHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening...'**
+  String get listeningHint;
+
+  /// No description provided for @aiChatWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello! I\'m your AI Assistant'**
+  String get aiChatWelcome;
+
+  /// No description provided for @aiChatWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask me anything about your courses, generate quizzes, or get help with concepts.'**
+  String get aiChatWelcomeSubtitle;
+
+  /// No description provided for @aiSuggestion1.
+  ///
+  /// In en, this message translates to:
+  /// **'Summarize my last lecture'**
+  String get aiSuggestion1;
+
+  /// No description provided for @aiSuggestion2.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate practice quiz questions'**
+  String get aiSuggestion2;
+
+  /// No description provided for @aiSuggestion3.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain a complex concept simply'**
+  String get aiSuggestion3;
+
+  /// No description provided for @calendarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Calendar & Schedule'**
+  String get calendarTitle;
+
+  /// No description provided for @calendarSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'View all your lectures, labs, quizzes, and deadlines in one place.'**
+  String get calendarSubtitle;
+
+  /// No description provided for @addEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Event'**
+  String get addEvent;
+
+  /// No description provided for @filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get filters;
+
+  /// No description provided for @lecturesFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Lectures'**
+  String get lecturesFilter;
+
+  /// No description provided for @labsFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Labs'**
+  String get labsFilter;
+
+  /// No description provided for @assignmentsFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments'**
+  String get assignmentsFilter;
+
+  /// No description provided for @examsFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Exams'**
+  String get examsFilter;
+
+  /// No description provided for @personalTasksFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Tasks'**
+  String get personalTasksFilter;
+
+  /// No description provided for @monthView.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get monthView;
+
+  /// No description provided for @weekView.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get weekView;
+
+  /// No description provided for @dayView.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get dayView;
+
+  /// No description provided for @upcomingEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming Events'**
+  String get upcomingEvents;
+
+  /// No description provided for @noUpcomingEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming events'**
+  String get noUpcomingEvents;
+
+  /// No description provided for @addYourFirstEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Your First Event'**
+  String get addYourFirstEvent;
+
+  /// No description provided for @addNewEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Event'**
+  String get addNewEvent;
+
+  /// No description provided for @getAiSuggestedTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Get AI-Suggested Time Slot'**
+  String get getAiSuggestedTime;
+
+  /// No description provided for @aiSuggestedTime.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Suggested Time'**
+  String get aiSuggestedTime;
+
+  /// No description provided for @eventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Title'**
+  String get eventTitle;
+
+  /// No description provided for @eventTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Operating Systems Lecture'**
+  String get eventTitleHint;
+
+  /// No description provided for @eventType.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Type'**
+  String get eventType;
+
+  /// No description provided for @course.
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get course;
+
+  /// No description provided for @courseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Operating Systems'**
+  String get courseHint;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @time.
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get time;
+
+  /// No description provided for @locationHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Room 301, Building A'**
+  String get locationHint;
+
+  /// No description provided for @descriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add notes or details about this event...'**
+  String get descriptionHint;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// No description provided for @lectureType.
+  ///
+  /// In en, this message translates to:
+  /// **'Lecture'**
+  String get lectureType;
+
+  /// No description provided for @examType.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam'**
+  String get examType;
+
+  /// No description provided for @personalTaskType.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Task'**
+  String get personalTaskType;
 }
 
 class _AppLocalizationsDelegate
