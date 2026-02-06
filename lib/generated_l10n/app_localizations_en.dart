@@ -4142,4 +4142,89 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get termsIntro =>
       'Please read these Terms of Service carefully before using EduVerse. Your access to and use of the service is conditioned on your acceptance of these terms.';
+
+  @override
+  String get searchHintText => 'Search courses, tasks, features...';
+
+  @override
+  String get searchRecentSearches => 'RECENT SEARCHES';
+
+  @override
+  String get searchQuickActions => 'QUICK ACTIONS';
+
+  @override
+  String get searchResultsFound => 'results found';
+
+  @override
+  String get searchNoResults => 'No Results Found';
+
+  @override
+  String get searchNoResultsFor => 'No results for';
+
+  @override
+  String get searchTryDifferent =>
+      'Try a different search term or adjust your filters';
+
+  @override
+  String get searchFilters => 'Filters';
+
+  @override
+  String get searchSortByName => 'Name';
+
+  @override
+  String get searchSortByDate => 'Date';
+
+  @override
+  String get searchSortByType => 'Type';
+
+  @override
+  String get searchSortDirection => 'Sort Direction';
+
+  @override
+  String get searchAscending => 'Ascending';
+
+  @override
+  String get searchDescending => 'Descending';
+
+  @override
+  String get searchTipsTitle => 'Search Tips';
+
+  @override
+  String get searchTip1 => 'Search by course name, instructor, or code';
+
+  @override
+  String get searchTip2 => 'Find tasks, assignments, and labs by title';
+
+  @override
+  String get searchTip3 => 'Type a feature name to navigate quickly';
+
+  @override
+  String get searchCategoryAll => 'All';
+
+  @override
+  String get searchCategoryCourses => 'Courses';
+
+  @override
+  String get searchCategoryTasks => 'Tasks';
+
+  @override
+  String get searchCategoryAssignments => 'Assignments';
+
+  @override
+  String get searchCategoryLabs => 'Labs';
+
+  @override
+  String get searchCategoryGrades => 'Grades';
+
+  @override
+  String get searchCategoryFlashcards => 'Flashcards';
+
+  @override
+  String get searchCategoryNotes => 'Notes';
+
+  @override
+  String get searchCategoryMessages => 'Messages';
+
+  @override
+  String get searchCategoryFeatures => 'Features';
 }

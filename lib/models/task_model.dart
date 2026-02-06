@@ -6,6 +6,8 @@ enum TaskCategory { assignment, exam, project, lab, reading, other }
 
 enum TaskStatus { pending, inProgress, completed, overdue }
 
+enum TaskSource { manual, aiGenerated, courseSchedule, system }
+
 extension TaskPriorityExtension on TaskPriority {
   String get label {
     switch (this) {
@@ -145,6 +147,7 @@ class TaskModel {
   final List<String>? completedSubtasks;
   final bool isBookmarked;
   final String? attachmentUrl;
+  final TaskSource source;
 
   const TaskModel({
     required this.id,
@@ -163,6 +166,7 @@ class TaskModel {
     this.completedSubtasks,
     this.isBookmarked = false,
     this.attachmentUrl,
+    this.source = TaskSource.manual,
   });
 
   TaskModel copyWith({
@@ -183,6 +187,7 @@ class TaskModel {
     List<String>? completedSubtasks,
     bool? isBookmarked,
     String? attachmentUrl,
+    TaskSource? source,
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -201,6 +206,7 @@ class TaskModel {
       completedSubtasks: completedSubtasks ?? this.completedSubtasks,
       isBookmarked: isBookmarked ?? this.isBookmarked,
       attachmentUrl: attachmentUrl ?? this.attachmentUrl,
+      source: source ?? this.source,
     );
   }
 
@@ -233,6 +239,7 @@ class TaskModel {
       'completedSubtasks': completedSubtasks,
       'isBookmarked': isBookmarked,
       'attachmentUrl': attachmentUrl,
+      'source': source.index,
     };
   }
 
@@ -257,6 +264,9 @@ class TaskModel {
           (map['completedSubtasks'] as List<dynamic>?)?.cast<String>(),
       isBookmarked: map['isBookmarked'] as bool? ?? false,
       attachmentUrl: map['attachmentUrl'] as String?,
+      source: map['source'] != null 
+          ? TaskSource.values[map['source'] as int]
+          : TaskSource.manual,
     );
   }
 }

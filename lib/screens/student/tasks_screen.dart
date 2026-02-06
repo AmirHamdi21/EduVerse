@@ -306,18 +306,33 @@ class _TasksScreenState extends State<TasksScreen>
                     Expanded(
                       child: _isSearching
                           ? _buildSearchField(isDark, l10n, responsive)
-                          : Text(
-                              l10n.tasks,
-                              style: TextStyle(
-                                fontSize: responsive.fontSize24,
-                                fontWeight: FontWeight.bold,
-                                color: isDark ? Colors.white : Colors.black87,
-                              ),
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.tasks,
+                                  style: TextStyle(
+                                    fontSize: responsive.fontSize24,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark ? Colors.white : Colors.black87,
+                                  ),
+                                ),
+                                Text(
+                                  'Track assignments, labs, quizzes, and study tasks',
+                                  style: TextStyle(
+                                    fontSize: responsive.fontSize12,
+                                    color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                                  ),
+                                ),
+                              ],
                             ),
                     ),
                     _buildHeaderActions(context, isDark, l10n, responsive),
                   ],
                 ),
+                SizedBox(height: responsive.p8),
+                // AI Suggestions Banner
+                _buildAiSuggestionsBanner(isDark, responsive),
                 SizedBox(height: responsive.p8),
                 _buildQuickStats(context, isDark, l10n, responsive),
               ],
@@ -325,6 +340,50 @@ class _TasksScreenState extends State<TasksScreen>
           ),
         );
       },
+    );
+  }
+
+  Widget _buildAiSuggestionsBanner(bool isDark, ResponsiveUtil responsive) {
+    return Container(
+      padding: EdgeInsets.all(responsive.p12),
+      decoration: BoxDecoration(
+        color: isDark 
+            ? const Color(0xFF162456).withOpacity(0.2) 
+            : const Color(0xFFEFF6FF),
+        borderRadius: BorderRadius.circular(responsive.radius12),
+        border: Border.all(
+          color: isDark ? const Color(0xFF193CB8) : const Color(0xFFBEDBFF),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.auto_awesome_rounded,
+            size: 20,
+            color: isDark ? const Color(0xFFBEDBFF) : const Color(0xFF193CB8),
+          ),
+          SizedBox(width: responsive.p8),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: responsive.fontSize14,
+                  color: isDark ? const Color(0xFFBEDBFF) : const Color(0xFF193CB8),
+                ),
+                children: [
+                  TextSpan(
+                    text: 'AI Suggestions ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const TextSpan(
+                    text: 'are automatically added based on your upcoming deadlines and weak areas.',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -638,12 +697,38 @@ class _TasksScreenState extends State<TasksScreen>
       child: ListView.builder(
         controller: _scrollController,
         padding: EdgeInsets.all(responsive.p16),
-        itemCount: tasks.length,
+        // Add 2 for the header cards (weekly progress + AI tip)
+        itemCount: tasks.length + 2,
         itemBuilder: (context, index) {
-          final task = tasks[index];
+          // Weekly Progress Card
+          if (index == 0) {
+            return BlocBuilder<TasksCubit, TasksState>(
+              builder: (context, state) {
+                return _buildWeeklyProgressCard(
+                  context,
+                  state,
+                  isDark,
+                  l10n,
+                  responsive,
+                );
+              },
+            );
+          }
+          
+          // AI Tip Card
+          if (index == 1) {
+            return BlocBuilder<TasksCubit, TasksState>(
+              builder: (context, state) {
+                return _buildAiTipCard(context, state, isDark, responsive);
+              },
+            );
+          }
+
+          // Task items (offset by 2 for header cards)
+          final task = tasks[index - 2];
           return TweenAnimationBuilder<double>(
             tween: Tween(begin: 0.0, end: 1.0),
-            duration: Duration(milliseconds: 300 + (index * 50)),
+            duration: Duration(milliseconds: 300 + ((index - 2) * 50)),
             curve: Curves.easeOutCubic,
             builder: (context, value, child) {
               return Transform.translate(
@@ -701,6 +786,286 @@ class _TasksScreenState extends State<TasksScreen>
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildWeeklyProgressCard(
+    BuildContext context,
+    TasksState state,
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
+    final totalTasks = state.tasks.length;
+    final completedTasks = state.completedTasks.length;
+    final progress = totalTasks > 0 ? completedTasks / totalTasks : 0.0;
+    final progressPercent = (progress * 100).round();
+    final todayRemaining = state.todayTasks.where((t) => t.status != TaskStatus.completed).length;
+    
+    // Check if ahead or behind schedule
+    final overdueCount = state.overdueTasks.length;
+    final isAhead = overdueCount == 0 && completedTasks > 0;
+    
+    return Padding(
+      padding: EdgeInsets.only(bottom: responsive.p12),
+      child: Container(
+        padding: EdgeInsets.all(responsive.p16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [const Color(0xFF1E3A5F), const Color(0xFF162456)]
+                : [const Color(0xFFEFF6FF), const Color(0xFFDBEAFE)],
+          ),
+          borderRadius: BorderRadius.circular(responsive.radius16),
+          border: Border.all(
+            color: isDark ? const Color(0xFF3B82F6).withOpacity(0.3) : const Color(0xFFBEDBFF),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: (isDark ? Colors.black : const Color(0xFF3B82F6)).withOpacity(0.1),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Circular Progress
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 72,
+                  height: 72,
+                  child: CircularProgressIndicator(
+                    value: progress,
+                    strokeWidth: 6,
+                    backgroundColor: isDark 
+                        ? Colors.white.withOpacity(0.1) 
+                        : const Color(0xFF3B82F6).withOpacity(0.15),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isDark ? const Color(0xFF60A5FA) : const Color(0xFF3B82F6),
+                    ),
+                    strokeCap: StrokeCap.round,
+                  ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '$progressPercent%',
+                      style: TextStyle(
+                        fontSize: responsive.fontSize18,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : const Color(0xFF1E40AF),
+                      ),
+                    ),
+                    Text(
+                      'Done',
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF3B82F6),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(width: responsive.p16),
+            // Progress Details
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Weekly Progress',
+                    style: TextStyle(
+                      fontSize: responsive.fontSize16,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white : const Color(0xFF1E40AF),
+                    ),
+                  ),
+                  SizedBox(height: responsive.p4),
+                  Text(
+                    '$todayRemaining Tasks Remaining for Today',
+                    style: TextStyle(
+                      fontSize: responsive.fontSize14,
+                      color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF3B82F6),
+                    ),
+                  ),
+                  SizedBox(height: responsive.p8),
+                  // Status Message
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: responsive.p8,
+                      vertical: responsive.p4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isAhead 
+                          ? const Color(0xFF10B981).withOpacity(0.15)
+                          : overdueCount > 0 
+                              ? const Color(0xFFEF4444).withOpacity(0.15)
+                              : const Color(0xFFF59E0B).withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(responsive.radius8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          isAhead 
+                              ? Icons.check_circle_outline_rounded
+                              : overdueCount > 0 
+                                  ? Icons.warning_amber_rounded
+                                  : Icons.schedule_rounded,
+                          size: 14,
+                          color: isAhead 
+                              ? const Color(0xFF10B981)
+                              : overdueCount > 0 
+                                  ? const Color(0xFFEF4444)
+                                  : const Color(0xFFF59E0B),
+                        ),
+                        SizedBox(width: responsive.p4),
+                        Flexible(
+                          child: Text(
+                            isAhead 
+                                ? 'Great job! You\'re ahead of schedule'
+                                : overdueCount > 0 
+                                    ? '$overdueCount tasks overdue'
+                                    : 'Keep up the momentum!',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: isAhead 
+                                  ? const Color(0xFF10B981)
+                                  : overdueCount > 0 
+                                      ? const Color(0xFFEF4444)
+                                      : const Color(0xFFF59E0B),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAiTipCard(
+    BuildContext context,
+    TasksState state,
+    bool isDark,
+    ResponsiveUtil responsive,
+  ) {
+    // Generate AI tip based on task state
+    String aiTip;
+    IconData tipIcon;
+    
+    final pendingLabs = state.pendingTasks.where((t) => 
+        t.category == TaskCategory.lab || 
+        t.title.toLowerCase().contains('lab')
+    ).toList();
+    
+    final pendingAssignments = state.pendingTasks.where((t) => 
+        t.category == TaskCategory.assignment || 
+        t.title.toLowerCase().contains('assignment')
+    ).toList();
+    
+    final overdueCount = state.overdueTasks.length;
+    
+    if (overdueCount > 0) {
+      aiTip = 'Focus on your $overdueCount overdue tasks first to avoid grade penalties.';
+      tipIcon = Icons.priority_high_rounded;
+    } else if (pendingLabs.isNotEmpty) {
+      aiTip = 'Finish your Lab first for maximum grade impact.';
+      tipIcon = Icons.science_rounded;
+    } else if (pendingAssignments.isNotEmpty) {
+      aiTip = 'Complete your assignments early to allow time for revisions.';
+      tipIcon = Icons.assignment_rounded;
+    } else if (state.todayTasks.isEmpty) {
+      aiTip = 'No tasks due today. Great time to get ahead on upcoming work!';
+      tipIcon = Icons.celebration_rounded;
+    } else {
+      aiTip = 'Stay consistent with your study schedule for best results.';
+      tipIcon = Icons.tips_and_updates_rounded;
+    }
+    
+    return Padding(
+      padding: EdgeInsets.only(bottom: responsive.p16),
+      child: Container(
+        padding: EdgeInsets.all(responsive.p12),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: isDark
+                ? [const Color(0xFF4C1D95).withOpacity(0.3), const Color(0xFF7C3AED).withOpacity(0.2)]
+                : [const Color(0xFFF5F3FF), const Color(0xFFEDE9FE)],
+          ),
+          borderRadius: BorderRadius.circular(responsive.radius12),
+          border: Border.all(
+            color: isDark ? const Color(0xFF7C3AED).withOpacity(0.4) : const Color(0xFFDDD6FE),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(responsive.p8),
+              decoration: BoxDecoration(
+                color: isDark 
+                    ? const Color(0xFF7C3AED).withOpacity(0.3)
+                    : const Color(0xFF7C3AED).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(responsive.radius8),
+              ),
+              child: Icon(
+                tipIcon,
+                size: 20,
+                color: isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
+              ),
+            ),
+            SizedBox(width: responsive.p12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.auto_awesome_rounded,
+                        size: 14,
+                        color: isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
+                      ),
+                      SizedBox(width: responsive.p4),
+                      Text(
+                        'AI Tip',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: responsive.p4),
+                  Text(
+                    aiTip,
+                    style: TextStyle(
+                      fontSize: responsive.fontSize14,
+                      color: isDark ? const Color(0xFFE9D5FF) : const Color(0xFF5B21B6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1222,6 +1587,9 @@ class _TaskCard extends StatelessWidget {
     required this.onDelete,
   });
 
+  // Check if task is AI suggested (based on task source or metadata)
+  bool get isAiSuggested => task.source == TaskSource.aiGenerated;
+
   @override
   Widget build(BuildContext context) {
     final isCompleted = task.status == TaskStatus.completed;
@@ -1270,8 +1638,10 @@ class _TaskCard extends StatelessWidget {
             border: Border.all(
               color: isOverdue
                   ? const Color(0xFFEF4444).withValues(alpha: 0.5)
-                  : Colors.transparent,
-              width: isOverdue ? 2 : 0,
+                  : isAiSuggested
+                      ? (isDark ? const Color(0xFF7C3AED).withOpacity(0.4) : const Color(0xFFDDD6FE))
+                      : Colors.transparent,
+              width: (isOverdue || isAiSuggested) ? 2 : 0,
             ),
             boxShadow: [
               BoxShadow(
@@ -1359,6 +1729,77 @@ class _TaskCard extends StatelessWidget {
                         ],
                       ),
                     ),
+                    // AI Suggested badge
+                    if (isAiSuggested) ...[
+                      SizedBox(width: responsive.p8),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: responsive.p8,
+                          vertical: responsive.p4,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              const Color(0xFF7C3AED),
+                              const Color(0xFFA855F7),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(responsive.radius8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.auto_awesome_rounded,
+                              size: 10,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: responsive.p4),
+                            const Text(
+                              'AI',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                    // Overdue badge
+                    if (isOverdue && !isCompleted) ...[
+                      SizedBox(width: responsive.p8),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: responsive.p8,
+                          vertical: responsive.p4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEF4444).withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(responsive.radius8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.warning_amber_rounded,
+                              size: 10,
+                              color: Color(0xFFEF4444),
+                            ),
+                            SizedBox(width: responsive.p4),
+                            const Text(
+                              'Overdue',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFFEF4444),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     const Spacer(),
                     // Bookmark
                     IconButton(
@@ -1577,7 +2018,7 @@ class _TaskCard extends StatelessWidget {
     } else if (taskDate == tomorrow) {
       return '${l10n.tomorrow}, ${_formatTime(date)}';
     } else if (date.isBefore(now)) {
-      return '${l10n.overdue} ${-task.daysUntilDue} ${l10n.daysAgo}';
+      return '${l10n.overdue} ${l10n.daysAgo(-task.daysUntilDue)}';
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }

@@ -8059,6 +8059,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please read these Terms of Service carefully before using EduVerse. Your access to and use of the service is conditioned on your acceptance of these terms.'**
   String get termsIntro;
+
+  /// No description provided for @searchHintText.
+  ///
+  /// In en, this message translates to:
+  /// **'Search courses, tasks, features...'**
+  String get searchHintText;
+
+  /// No description provided for @searchRecentSearches.
+  ///
+  /// In en, this message translates to:
+  /// **'RECENT SEARCHES'**
+  String get searchRecentSearches;
+
+  /// No description provided for @searchQuickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'QUICK ACTIONS'**
+  String get searchQuickActions;
+
+  /// No description provided for @searchResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'results found'**
+  String get searchResultsFound;
+
+  /// No description provided for @searchNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No Results Found'**
+  String get searchNoResults;
+
+  /// No description provided for @searchNoResultsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'No results for'**
+  String get searchNoResultsFor;
+
+  /// No description provided for @searchTryDifferent.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term or adjust your filters'**
+  String get searchTryDifferent;
+
+  /// No description provided for @searchFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get searchFilters;
+
+  /// No description provided for @searchSortByName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get searchSortByName;
+
+  /// No description provided for @searchSortByDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get searchSortByDate;
+
+  /// No description provided for @searchSortByType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get searchSortByType;
+
+  /// No description provided for @searchSortDirection.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort Direction'**
+  String get searchSortDirection;
+
+  /// No description provided for @searchAscending.
+  ///
+  /// In en, this message translates to:
+  /// **'Ascending'**
+  String get searchAscending;
+
+  /// No description provided for @searchDescending.
+  ///
+  /// In en, this message translates to:
+  /// **'Descending'**
+  String get searchDescending;
+
+  /// No description provided for @searchTipsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search Tips'**
+  String get searchTipsTitle;
+
+  /// No description provided for @searchTip1.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by course name, instructor, or code'**
+  String get searchTip1;
+
+  /// No description provided for @searchTip2.
+  ///
+  /// In en, this message translates to:
+  /// **'Find tasks, assignments, and labs by title'**
+  String get searchTip2;
+
+  /// No description provided for @searchTip3.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a feature name to navigate quickly'**
+  String get searchTip3;
+
+  /// No description provided for @searchCategoryAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get searchCategoryAll;
+
+  /// No description provided for @searchCategoryCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Courses'**
+  String get searchCategoryCourses;
+
+  /// No description provided for @searchCategoryTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get searchCategoryTasks;
+
+  /// No description provided for @searchCategoryAssignments.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments'**
+  String get searchCategoryAssignments;
+
+  /// No description provided for @searchCategoryLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Labs'**
+  String get searchCategoryLabs;
+
+  /// No description provided for @searchCategoryGrades.
+  ///
+  /// In en, this message translates to:
+  /// **'Grades'**
+  String get searchCategoryGrades;
+
+  /// No description provided for @searchCategoryFlashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Flashcards'**
+  String get searchCategoryFlashcards;
+
+  /// No description provided for @searchCategoryNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get searchCategoryNotes;
+
+  /// No description provided for @searchCategoryMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get searchCategoryMessages;
+
+  /// No description provided for @searchCategoryFeatures.
+  ///
+  /// In en, this message translates to:
+  /// **'Features'**
+  String get searchCategoryFeatures;
 }
 
 class _AppLocalizationsDelegate

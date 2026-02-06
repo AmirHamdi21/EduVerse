@@ -45,6 +45,7 @@ import 'package:edu_verse/screens/student/summarizer/summarizer_screen.dart';
 import 'package:edu_verse/screens/student/smart_study/smart_study_screen.dart';
 import 'package:edu_verse/screens/student/gamification/gamification_screen.dart';
 import 'package:edu_verse/screens/student/ai_chat/ai_chat_screen.dart';
+import 'package:edu_verse/screens/student/search/overall_search_screen.dart';
 import 'package:edu_verse/screens/student/calendar/calendar_screen.dart';
 import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
@@ -142,13 +143,23 @@ class AppRouter {
       GoRoute(
         path: '/course-details',
         builder: (context, state) {
-          final course = state.extra as CourseModel?;
+          final extra = state.extra;
+          CourseModel? course;
+          int initialTab = 0;
+          
+          if (extra is Map<String, dynamic>) {
+            course = extra['course'] as CourseModel?;
+            initialTab = extra['initialTab'] as int? ?? 0;
+          } else if (extra is CourseModel) {
+            course = extra;
+          }
+          
           if (course == null) {
             return const Scaffold(
               body: Center(child: Text('Course not found')),
             );
           }
-          return CourseDetailsScreen(course: course);
+          return CourseDetailsScreen(course: course, initialTab: initialTab);
         },
       ),
       GoRoute(
@@ -194,6 +205,10 @@ class AppRouter {
       GoRoute(
         path: '/calendar',
         builder: (context, state) => const CalendarScreen(),
+      ),
+      GoRoute(
+        path: '/search',
+        builder: (context, state) => const OverallSearchScreen(),
       ),
       GoRoute(
         path: '/messages',

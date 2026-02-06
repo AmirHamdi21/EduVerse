@@ -4130,4 +4130,88 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get termsIntro =>
       'يرجى قراءة شروط الخدمة هذه بعناية قبل استخدام EduVerse. يخضع وصولك إلى الخدمة واستخدامها لقبولك لهذه الشروط.';
+
+  @override
+  String get searchHintText => 'ابحث عن الدورات، المهام، الميزات...';
+
+  @override
+  String get searchRecentSearches => 'عمليات البحث الأخيرة';
+
+  @override
+  String get searchQuickActions => 'إجراءات سريعة';
+
+  @override
+  String get searchResultsFound => 'نتائج تم العثور عليها';
+
+  @override
+  String get searchNoResults => 'لا توجد نتائج';
+
+  @override
+  String get searchNoResultsFor => 'لا توجد نتائج لـ';
+
+  @override
+  String get searchTryDifferent => 'جرب مصطلح بحث مختلف أو عدّل الفلاتر';
+
+  @override
+  String get searchFilters => 'الفلاتر';
+
+  @override
+  String get searchSortByName => 'الاسم';
+
+  @override
+  String get searchSortByDate => 'التاريخ';
+
+  @override
+  String get searchSortByType => 'النوع';
+
+  @override
+  String get searchSortDirection => 'اتجاه الترتيب';
+
+  @override
+  String get searchAscending => 'تصاعدي';
+
+  @override
+  String get searchDescending => 'تنازلي';
+
+  @override
+  String get searchTipsTitle => 'نصائح البحث';
+
+  @override
+  String get searchTip1 => 'ابحث باسم الدورة أو المحاضر أو الرمز';
+
+  @override
+  String get searchTip2 => 'ابحث عن المهام والواجبات والمعامل بالعنوان';
+
+  @override
+  String get searchTip3 => 'اكتب اسم ميزة للتنقل السريع';
+
+  @override
+  String get searchCategoryAll => 'الكل';
+
+  @override
+  String get searchCategoryCourses => 'الدورات';
+
+  @override
+  String get searchCategoryTasks => 'المهام';
+
+  @override
+  String get searchCategoryAssignments => 'الواجبات';
+
+  @override
+  String get searchCategoryLabs => 'المعامل';
+
+  @override
+  String get searchCategoryGrades => 'الدرجات';
+
+  @override
+  String get searchCategoryFlashcards => 'البطاقات';
+
+  @override
+  String get searchCategoryNotes => 'الملاحظات';
+
+  @override
+  String get searchCategoryMessages => 'الرسائل';
+
+  @override
+  String get searchCategoryFeatures => 'الميزات';
 }

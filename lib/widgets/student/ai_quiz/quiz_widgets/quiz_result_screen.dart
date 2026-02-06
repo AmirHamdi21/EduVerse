@@ -11,8 +11,13 @@ import 'quiz_question_review_card.dart';
 
 class QuizResultScreen extends StatefulWidget {
   final QuizSession quizSession;
+  final Duration? timeTaken;
 
-  const QuizResultScreen({super.key, required this.quizSession});
+  const QuizResultScreen({
+    super.key, 
+    required this.quizSession,
+    this.timeTaken,
+  });
 
   @override
   State<QuizResultScreen> createState() => _QuizResultScreenState();
@@ -98,6 +103,33 @@ class _QuizResultScreenState extends State<QuizResultScreen>
     if (score >= 70) return const Color(0xFF3B82F6);
     if (score >= 50) return const Color(0xFFF59E0B);
     return const Color(0xFFEF4444);
+  }
+
+  String _getRankingBadge() {
+    final score = widget.quizSession.score;
+    if (score >= 90) return 'Top 5%';
+    if (score >= 80) return 'Top 20%';
+    if (score >= 70) return 'Top 30%';
+    if (score >= 60) return 'Top 50%';
+    return 'Keep Going!';
+  }
+
+  String _formatTimeTaken() {
+    if (widget.timeTaken == null) return '';
+    final duration = widget.timeTaken!;
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+    if (minutes > 0) {
+      return '$minutes min ${seconds}s';
+    }
+    return '${seconds}s';
+  }
+
+  int _getAvgTimePerQuestion() {
+    if (widget.timeTaken == null) return 0;
+    final totalQuestions = widget.quizSession.questions.length;
+    if (totalQuestions == 0) return 0;
+    return (widget.timeTaken!.inSeconds / totalQuestions).round();
   }
 
   @override
@@ -230,10 +262,14 @@ class _QuizResultScreenState extends State<QuizResultScreen>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: isDark
-                  ? [const Color(0xFF1E293B), const Color(0xFF334155)]
-                  : [Colors.white, const Color(0xFFF1F5F9)],
+                  ? [const Color(0xFF162456).withOpacity(0.3), const Color(0xFF053345).withOpacity(0.3)]
+                  : [const Color(0xFFEFF6FF), const Color(0xFFECFEFF)],
             ),
             borderRadius: BorderRadius.circular(responsive.radius24),
+            border: Border.all(
+              color: isDark ? const Color(0xFF193CB8) : const Color(0xFFBEDBFF),
+              width: 1,
+            ),
             boxShadow: [
               BoxShadow(
                 color: scoreColor.withOpacity(0.2),
@@ -244,32 +280,6 @@ class _QuizResultScreenState extends State<QuizResultScreen>
           ),
           child: Column(
             children: [
-              // Emoji with bounce effect
-              TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0, end: 1),
-                duration: const Duration(milliseconds: 800),
-                curve: Curves.elasticOut,
-                builder: (context, value, child) {
-                  return Transform.scale(
-                    scale: value,
-                    child: Text(
-                      _getPerformanceEmoji(),
-                      style: TextStyle(fontSize: responsive.fontSize56),
-                    ),
-                  );
-                },
-              ),
-              SizedBox(height: responsive.p16),
-              // Performance message
-              Text(
-                _getPerformanceMessage(l10n),
-                style: TextStyle(
-                  fontSize: responsive.fontSize20,
-                  fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF1E293B),
-                ),
-              ),
-              SizedBox(height: responsive.p24),
               // Circular Score
               SizedBox(
                 width: responsive.p160,
@@ -280,7 +290,7 @@ class _QuizResultScreenState extends State<QuizResultScreen>
                     return CustomPaint(
                       painter: _ScoreRingPainter(
                         progress: _scoreAnimation.value,
-                        scoreColor: scoreColor,
+                        scoreColor: isDark ? const Color(0xFF51A2FF) : const Color(0xFF155DFC),
                         isDark: isDark,
                       ),
                       child: Center(
@@ -292,7 +302,7 @@ class _QuizResultScreenState extends State<QuizResultScreen>
                               style: TextStyle(
                                 fontSize: responsive.fontSize40,
                                 fontWeight: FontWeight.w800,
-                                color: scoreColor,
+                                color: isDark ? const Color(0xFF51A2FF) : const Color(0xFF155DFC),
                               ),
                             ),
                             Text(
@@ -313,23 +323,92 @@ class _QuizResultScreenState extends State<QuizResultScreen>
                 ),
               ),
               SizedBox(height: responsive.p16),
-              // Questions summary
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: responsive.p16,
-                  vertical: responsive.p8,
+              // Quiz Title
+              Text(
+                widget.quizSession.courseName,
+                style: TextStyle(
+                  fontSize: responsive.fontSize20,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
                 ),
-                decoration: BoxDecoration(
-                  color: scoreColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(responsive.radius20),
-                ),
-                child: Text(
-                  '${widget.quizSession.correctCount} / ${widget.quizSession.questions.length} Correct',
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: responsive.p12),
+              // Time taken and Ranking badge row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Time taken
+                  if (widget.timeTaken != null) ...[
+                    Icon(
+                      Icons.access_time_rounded,
+                      size: 16,
+                      color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                    ),
+                    SizedBox(width: responsive.p4),
+                    Text(
+                      _formatTimeTaken(),
+                      style: TextStyle(
+                        fontSize: responsive.fontSize14,
+                        color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                      ),
+                    ),
+                    SizedBox(width: responsive.p12),
+                  ],
+                  // Ranking Badge with gradient
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: responsive.p12,
+                      vertical: responsive.p4,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF9810FA), Color(0xFFE60076)],
+                      ),
+                      borderRadius: BorderRadius.circular(responsive.radius8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.stars_rounded,
+                          size: 12,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: responsive.p4),
+                        Text(
+                          _getRankingBadge(),
+                          style: TextStyle(
+                            fontSize: responsive.fontSize12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: responsive.p12),
+              // Questions summary text
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
                   style: TextStyle(
                     fontSize: responsive.fontSize14,
-                    fontWeight: FontWeight.w600,
-                    color: scoreColor,
+                    color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
                   ),
+                  children: [
+                    const TextSpan(text: 'Great job! You answered '),
+                    TextSpan(
+                      text: '${widget.quizSession.correctCount} out of ${widget.quizSession.questions.length}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? const Color(0xFF51A2FF) : const Color(0xFF155DFC),
+                      ),
+                    ),
+                    const TextSpan(text: ' questions correctly.'),
+                  ],
                 ),
               ),
             ],
@@ -343,60 +422,67 @@ class _QuizResultScreenState extends State<QuizResultScreen>
     final correct = widget.quizSession.correctCount;
     final total = widget.quizSession.questions.length;
     final incorrect = total - correct - (total - widget.quizSession.answeredCount);
-    final skipped = total - widget.quizSession.answeredCount;
+    final avgTimePerQuestion = _getAvgTimePerQuestion();
 
     return Padding(
       padding: EdgeInsets.all(responsive.p20),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: _buildStatCard(
+          // Row 1: Correct and Incorrect
+          Row(
+            children: [
+              Expanded(
+                child: _buildEnhancedStatCard(
+                  responsive,
+                  isDark,
+                  icon: Icons.check_circle_rounded,
+                  label: 'Correct Answers',
+                  value: '$correct/$total',
+                  color: const Color(0xFF10B981),
+                  progress: total > 0 ? correct / total : 0,
+                ),
+              ),
+              SizedBox(width: responsive.p12),
+              Expanded(
+                child: _buildEnhancedStatCard(
+                  responsive,
+                  isDark,
+                  icon: Icons.cancel_rounded,
+                  label: 'Incorrect Answers',
+                  value: '$incorrect/$total',
+                  color: const Color(0xFFEF4444),
+                  progress: total > 0 ? incorrect / total : 0,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: responsive.p12),
+          // Row 2: Avg Time per Question
+          if (widget.timeTaken != null)
+            _buildEnhancedStatCard(
               responsive,
               isDark,
-              icon: Icons.check_circle_rounded,
-              label: 'Correct',
-              value: correct.toString(),
-              color: const Color(0xFF10B981),
-              delay: 0,
+              icon: Icons.timer_outlined,
+              label: 'Avg Time / Question',
+              value: '${avgTimePerQuestion}s',
+              color: const Color(0xFF3B82F6),
+              progress: avgTimePerQuestion > 0 ? (avgTimePerQuestion / 60).clamp(0.0, 1.0) : 0.4,
+              isFullWidth: true,
             ),
-          ),
-          SizedBox(width: responsive.p12),
-          Expanded(
-            child: _buildStatCard(
-              responsive,
-              isDark,
-              icon: Icons.cancel_rounded,
-              label: 'Wrong',
-              value: incorrect.toString(),
-              color: const Color(0xFFEF4444),
-              delay: 100,
-            ),
-          ),
-          SizedBox(width: responsive.p12),
-          Expanded(
-            child: _buildStatCard(
-              responsive,
-              isDark,
-              icon: Icons.skip_next_rounded,
-              label: 'Skipped',
-              value: skipped.toString(),
-              color: const Color(0xFFF59E0B),
-              delay: 200,
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildStatCard(
+  Widget _buildEnhancedStatCard(
     ResponsiveUtil responsive,
     bool isDark, {
     required IconData icon,
     required String label,
     required String value,
     required Color color,
-    required int delay,
+    required double progress,
+    bool isFullWidth = false,
   }) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
@@ -410,48 +496,69 @@ class _QuizResultScreenState extends State<QuizResultScreen>
             child: Container(
               padding: EdgeInsets.all(responsive.p16),
               decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF1E293B)
-                    : Colors.white,
+                color: isDark ? const Color(0xFF101828) : Colors.white,
                 borderRadius: BorderRadius.circular(responsive.radius16),
                 border: Border.all(
-                  color: color.withOpacity(0.3),
+                  color: isDark ? const Color(0xFF1E2939) : const Color(0xFFE5E7EB),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: color.withOpacity(0.1),
+                    color: Colors.black.withOpacity(0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
                 ],
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(responsive.p8),
-                    decoration: BoxDecoration(
-                      color: color.withOpacity(0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(icon, color: color, size: 20),
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(responsive.p10),
+                        decoration: BoxDecoration(
+                          color: color.withOpacity(isDark ? 0.15 : 0.1),
+                          borderRadius: BorderRadius.circular(responsive.radius12),
+                        ),
+                        child: Icon(icon, color: color, size: 20),
+                      ),
+                      SizedBox(width: responsive.p12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              label,
+                              style: TextStyle(
+                                fontSize: responsive.fontSize14,
+                                color: isDark 
+                                    ? const Color(0xFF94A3B8) 
+                                    : const Color(0xFF4A5565),
+                              ),
+                            ),
+                            Text(
+                              value,
+                              style: TextStyle(
+                                fontSize: responsive.fontSize24,
+                                fontWeight: FontWeight.w700,
+                                color: color,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: responsive.p8),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: responsive.fontSize24,
-                      fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : const Color(0xFF1E293B),
-                    ),
-                  ),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: responsive.fontSize12,
-                      color: isDark 
-                          ? const Color(0xFF94A3B8) 
-                          : const Color(0xFF64748B),
+                  SizedBox(height: responsive.p12),
+                  // Progress bar
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(responsive.radius8),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      backgroundColor: const Color(0xFF3B82F6).withOpacity(0.2),
+                      valueColor: AlwaysStoppedAnimation(color),
+                      minHeight: 8,
                     ),
                   ),
                 ],

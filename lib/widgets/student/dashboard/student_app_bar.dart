@@ -102,6 +102,13 @@ class StudentAppBar extends StatelessWidget {
             ),
           ),
           actions: [
+            _buildActionButton(
+              context,
+              icon: Icons.search_rounded,
+              isDark: isDark,
+              onTap: () => context.push('/search'),
+            ),
+            const SizedBox(width: 6),
             BlocBuilder<NotificationCubit, NotificationState>(
               builder: (context, notificationState) {
                 return _buildNotificationButton(
@@ -115,24 +122,24 @@ class StudentAppBar extends StatelessWidget {
               },
             ),
             const SizedBox(width: 6),
-            BlocBuilder<LanguageCubit, Locale>(
-              buildWhen: (previous, current) => previous != current,
-              builder: (context, locale) {
-                return _buildActionButton(
-                  context,
-                  icon: Icons.language_rounded,
-                  isDark: isDark,
-                  onTap: () => _showLanguageMenu(context, locale, l10n),
-                );
-              },
-            ),
-            const SizedBox(width: 6),
-            _buildActionButton(
-              context,
-              icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-              isDark: isDark,
-              onTap: () => context.read<ThemeBloc>().add(ToggleThemeEvent()),
-            ),
+            // BlocBuilder<LanguageCubit, Locale>(
+            //   buildWhen: (previous, current) => previous != current,
+            //   builder: (context, locale) {
+            //     return _buildActionButton(
+            //       context,
+            //       icon: Icons.language_rounded,
+            //       isDark: isDark,
+            //       onTap: () => _showLanguageMenu(context, locale, l10n),
+            //     );
+            //   },
+            // ),
+            // const SizedBox(width: 6),
+            // _buildActionButton(
+            //   context,
+            //   icon: isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+            //   isDark: isDark,
+            //   onTap: () => context.read<ThemeBloc>().add(ToggleThemeEvent()),
+            // ),
             const SizedBox(width: 12),
           ],
           flexibleSpace: FlexibleSpaceBar(

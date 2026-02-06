@@ -11,6 +11,7 @@ import 'package:edu_verse/bloc/notifications/notification_cubit.dart';
 import 'package:edu_verse/bloc/smart_study/smart_study_cubit.dart';
 import 'package:edu_verse/bloc/summarizer/summarizer_cubit.dart';
 import 'package:edu_verse/bloc/tasks/tasks_cubit.dart';
+import 'package:edu_verse/bloc/search/search_cubit.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/config/app_router.dart';
@@ -49,6 +50,7 @@ class _MyAppState extends State<MyApp> {
   late ChatCubit _chatCubit;
   late AINoteCubit _aiNoteCubit;
   late ProfileCubit _profileCubit;
+  late SearchCubit _searchCubit;
 
   @override
   void initState() {
@@ -71,6 +73,7 @@ class _MyAppState extends State<MyApp> {
     _chatCubit = ChatCubit();
     _aiNoteCubit = AINoteCubit();
     _profileCubit = ProfileCubit()..loadProfile();
+    _searchCubit = SearchCubit();
     // Initialize theme and language from storage
     _initializeTheme();
     _initializeLanguage();
@@ -100,6 +103,7 @@ class _MyAppState extends State<MyApp> {
     _chatCubit.close();
     _aiNoteCubit.close();
     _profileCubit.close();
+    _searchCubit.close();
     super.dispose();
   }
 
@@ -121,6 +125,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _chatCubit),
         BlocProvider.value(value: _aiNoteCubit),
         BlocProvider.value(value: _profileCubit),
+        BlocProvider.value(value: _searchCubit),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {

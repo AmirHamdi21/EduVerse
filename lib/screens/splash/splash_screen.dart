@@ -159,8 +159,8 @@ class _SplashScreenState extends State<SplashScreen>
             context.go('/dashboard');
           } else if (state is AuthUnauthenticated) {
             // context.go('/login');
-            // context.go('/onboarding1');
-            context.go('/dashboard');
+            context.go('/onboarding1');
+            // context.go('/dashboard');
           }
         });
       },

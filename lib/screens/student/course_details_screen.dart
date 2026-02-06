@@ -8,8 +8,13 @@ import '../../widgets/student/course_details/course_tabs.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
   final CourseModel course;
+  final int initialTab;
 
-  const CourseDetailsScreen({super.key, required this.course});
+  const CourseDetailsScreen({
+    super.key, 
+    required this.course,
+    this.initialTab = 0,
+  });
 
   @override
   State<CourseDetailsScreen> createState() => _CourseDetailsScreenState();
@@ -17,7 +22,7 @@ class CourseDetailsScreen extends StatefulWidget {
 
 class _CourseDetailsScreenState extends State<CourseDetailsScreen>
     with SingleTickerProviderStateMixin {
-  int _selectedTabIndex = 0;
+  late int _selectedTabIndex;
   late AnimationController _headerAnimationController;
   final ScrollController _scrollController = ScrollController();
   bool _isHeaderCollapsed = false;
@@ -25,6 +30,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   @override
   void initState() {
     super.initState();
+    _selectedTabIndex = widget.initialTab;
     _headerAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
