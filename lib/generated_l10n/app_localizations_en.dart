@@ -4227,4 +4227,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchCategoryFeatures => 'Features';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get onboardingTitle1 => 'Welcome to EduVerse';
+
+  @override
+  String get onboardingDescription1 =>
+      'Your AI-powered learning companion. Experience smarter education with personalized study plans, intelligent quizzes, and comprehensive progress tracking.';
+
+  @override
+  String get onboardingTitle2 => 'AI-Powered Learning';
+
+  @override
+  String get onboardingDescription2 =>
+      'Unlock powerful AI tools that adapt to your learning style. Generate quizzes, create flashcards, and get smart summaries automatically.';
+
+  @override
+  String get onboardingTitle3 => 'Track Your Progress';
+
+  @override
+  String get onboardingDescription3 =>
+      'Monitor your performance with detailed analytics. Track attendance, grades, and achievements all in one place.';
+
+  @override
+  String get onboardingTitle4 => 'Ready to Begin?';
+
+  @override
+  String get onboardingDescription4 =>
+      'Join thousands of students achieving their academic goals. Your journey to smarter learning starts now.';
 }

@@ -565,7 +565,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
                                           ],
                                         ),
                                         child: Image.asset(
-                                          "assets/images/logo.png",
+                                          "assets/logo/logo.png",
                                           fit: BoxFit.cover,
                                         ),
                                       ),

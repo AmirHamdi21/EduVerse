@@ -4214,4 +4214,35 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get searchCategoryFeatures => 'الميزات';
+
+  @override
+  String get getStarted => 'ابدأ الآن';
+
+  @override
+  String get onboardingTitle1 => 'مرحباً بك في EduVerse';
+
+  @override
+  String get onboardingDescription1 =>
+      'رفيقك التعليمي المدعوم بالذكاء الاصطناعي. استمتع بتعليم أذكى مع خطط دراسية مخصصة واختبارات ذكية وتتبع شامل للتقدم.';
+
+  @override
+  String get onboardingTitle2 => 'تعلم بالذكاء الاصطناعي';
+
+  @override
+  String get onboardingDescription2 =>
+      'اكتشف أدوات الذكاء الاصطناعي القوية التي تتكيف مع أسلوب تعلمك. أنشئ اختبارات وبطاقات تعليمية واحصل على ملخصات ذكية تلقائياً.';
+
+  @override
+  String get onboardingTitle3 => 'تتبع تقدمك';
+
+  @override
+  String get onboardingDescription3 =>
+      'راقب أداءك مع تحليلات مفصلة. تتبع الحضور والدرجات والإنجازات في مكان واحد.';
+
+  @override
+  String get onboardingTitle4 => 'مستعد للبدء؟';
+
+  @override
+  String get onboardingDescription4 =>
+      'انضم إلى آلاف الطلاب الذين يحققون أهدافهم الأكاديمية. رحلتك نحو تعلم أذكى تبدأ الآن.';
 }

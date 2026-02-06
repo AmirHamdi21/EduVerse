@@ -1547,5 +1547,15 @@
   "searchCategoryFlashcards": "Flashcards",
   "searchCategoryNotes": "Notes",
   "searchCategoryMessages": "Messages",
-  "searchCategoryFeatures": "Features"
+  "searchCategoryFeatures": "Features",
+
+  "getStarted": "Get Started",
+  "onboardingTitle1": "Welcome to EduVerse",
+  "onboardingDescription1": "Your AI-powered learning companion. Experience smarter education with personalized study plans, intelligent quizzes, and comprehensive progress tracking.",
+  "onboardingTitle2": "AI-Powered Learning",
+  "onboardingDescription2": "Unlock powerful AI tools that adapt to your learning style. Generate quizzes, create flashcards, and get smart summaries automatically.",
+  "onboardingTitle3": "Track Your Progress",
+  "onboardingDescription3": "Monitor your performance with detailed analytics. Track attendance, grades, and achievements all in one place.",
+  "onboardingTitle4": "Ready to Begin?",
+  "onboardingDescription4": "Join thousands of students achieving their academic goals. Your journey to smarter learning starts now."
 }

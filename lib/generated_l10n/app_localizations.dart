@@ -8227,6 +8227,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Features'**
   String get searchCategoryFeatures;
+
+  /// No description provided for @getStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// No description provided for @onboardingTitle1.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to EduVerse'**
+  String get onboardingTitle1;
+
+  /// No description provided for @onboardingDescription1.
+  ///
+  /// In en, this message translates to:
+  /// **'Your AI-powered learning companion. Experience smarter education with personalized study plans, intelligent quizzes, and comprehensive progress tracking.'**
+  String get onboardingDescription1;
+
+  /// No description provided for @onboardingTitle2.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-Powered Learning'**
+  String get onboardingTitle2;
+
+  /// No description provided for @onboardingDescription2.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock powerful AI tools that adapt to your learning style. Generate quizzes, create flashcards, and get smart summaries automatically.'**
+  String get onboardingDescription2;
+
+  /// No description provided for @onboardingTitle3.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Your Progress'**
+  String get onboardingTitle3;
+
+  /// No description provided for @onboardingDescription3.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor your performance with detailed analytics. Track attendance, grades, and achievements all in one place.'**
+  String get onboardingDescription3;
+
+  /// No description provided for @onboardingTitle4.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to Begin?'**
+  String get onboardingTitle4;
+
+  /// No description provided for @onboardingDescription4.
+  ///
+  /// In en, this message translates to:
+  /// **'Join thousands of students achieving their academic goals. Your journey to smarter learning starts now.'**
+  String get onboardingDescription4;
 }
 
 class _AppLocalizationsDelegate

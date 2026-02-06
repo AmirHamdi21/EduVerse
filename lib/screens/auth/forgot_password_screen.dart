@@ -420,7 +420,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
                                         ],
                                       ),
                                       child: Image.asset(
-                                        "assets/images/logo.png",
+                                        "assets/logo/logo.png",
                                         fit: BoxFit.cover,
                                       ),
                                     ),

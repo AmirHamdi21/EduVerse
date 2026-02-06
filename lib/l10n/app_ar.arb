@@ -1543,5 +1543,15 @@
   "searchCategoryFlashcards": "البطاقات",
   "searchCategoryNotes": "الملاحظات",
   "searchCategoryMessages": "الرسائل",
-  "searchCategoryFeatures": "الميزات"
+  "searchCategoryFeatures": "الميزات",
+
+  "getStarted": "ابدأ الآن",
+  "onboardingTitle1": "مرحباً بك في EduVerse",
+  "onboardingDescription1": "رفيقك التعليمي المدعوم بالذكاء الاصطناعي. استمتع بتعليم أذكى مع خطط دراسية مخصصة واختبارات ذكية وتتبع شامل للتقدم.",
+  "onboardingTitle2": "تعلم بالذكاء الاصطناعي",
+  "onboardingDescription2": "اكتشف أدوات الذكاء الاصطناعي القوية التي تتكيف مع أسلوب تعلمك. أنشئ اختبارات وبطاقات تعليمية واحصل على ملخصات ذكية تلقائياً.",
+  "onboardingTitle3": "تتبع تقدمك",
+  "onboardingDescription3": "راقب أداءك مع تحليلات مفصلة. تتبع الحضور والدرجات والإنجازات في مكان واحد.",
+  "onboardingTitle4": "مستعد للبدء؟",
+  "onboardingDescription4": "انضم إلى آلاف الطلاب الذين يحققون أهدافهم الأكاديمية. رحلتك نحو تعلم أذكى تبدأ الآن."
 }

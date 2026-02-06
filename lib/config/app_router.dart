@@ -52,9 +52,7 @@ import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
-import 'package:edu_verse/screens/onBoarding/onboarding1.dart';
-import 'package:edu_verse/screens/onBoarding/onboarding2.dart';
-import 'package:edu_verse/screens/onBoarding/onboarding_3.dart';
+import 'package:edu_verse/screens/onBoarding/onboarding_screen.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
@@ -67,16 +65,8 @@ class AppRouter {
     routes: [
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
       GoRoute(
-        path: '/onboarding1',
-        builder: (context, state) => const Onboarding1(),
-      ),
-      GoRoute(
-        path: '/onboarding2',
-        builder: (context, state) => const Onboarding2(),
-      ),
-      GoRoute(
-        path: '/onboarding3',
-        builder: (context, state) => const Onboarding3(),
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
       ),
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       GoRoute(

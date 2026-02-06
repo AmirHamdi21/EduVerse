@@ -158,9 +158,7 @@ class _SplashScreenState extends State<SplashScreen>
           if (state is AuthAuthenticated) {
             context.go('/dashboard');
           } else if (state is AuthUnauthenticated) {
-            // context.go('/login');
-            context.go('/onboarding1');
-            // context.go('/dashboard');
+            context.go('/onboarding');
           }
         });
       },
@@ -306,7 +304,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                 ),
               ),
-              // Logo container
+              // Logo container with app logo
               Transform.scale(
                 scale: _logoScale.value,
                 child: Opacity(
@@ -315,18 +313,7 @@ class _SplashScreenState extends State<SplashScreen>
                     width: 110,
                     height: 110,
                     decoration: BoxDecoration(
-                      color: isDarkMode
-                          ? AppTheme.onBoardingcyan.withOpacity(0.15)
-                          : AppTheme.onBoardingprimary.withOpacity(0.1),
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          primaryColor,
-                          primaryColor.withValues(alpha: 0.7),
-                        ],
-                      ),
                       boxShadow: [
                         BoxShadow(
                           color: primaryColor.withValues(alpha: 0.4),
@@ -335,10 +322,11 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                       ],
                     ),
-                    child: Icon(
-                      Icons.school_rounded,
-                      size: responsive.iconLarge,
-                      color: Colors.white,
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/logo/launcher_logo.png',
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
