@@ -264,11 +264,15 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
           backgroundColor: GradingColors.background(isDark),
           body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [_buildSliverAppBar(isDark, l10n, innerBoxIsScrolled)];
+              return [
+                _buildSliverAppBar(isDark, l10n),
+                // Header scrolls away with the header
+                SliverToBoxAdapter(child: _buildHeaderSection(isDark, l10n)),
+              ];
             },
             body: Column(
               children: [
-                // Search and filter bar
+                // Search and filter bar stays pinned
                 _buildSearchFilterBar(isDark, l10n),
                 // Tab bar
                 _buildTabBar(isDark, l10n),
@@ -292,219 +296,299 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
     );
   }
 
-  Widget _buildSliverAppBar(
-    bool isDark,
-    AppLocalizations l10n,
-    bool innerBoxIsScrolled,
-  ) {
+  Widget _buildSliverAppBar(bool isDark, AppLocalizations l10n) {
     return SliverAppBar(
-      expandedHeight: 280,
-      floating: false,
+      floating: true,
       pinned: true,
       elevation: 0,
-      backgroundColor: innerBoxIsScrolled
-          ? GradingColors.cardColor(isDark)
-          : Colors.transparent,
-      surfaceTintColor: Colors.transparent,
-      forceElevated: innerBoxIsScrolled,
+      backgroundColor: isDark ? GradingColors.darkBg : GradingColors.primary,
+      surfaceTintColor: isDark ? GradingColors.darkBg : GradingColors.primary,
+      leading: null,
+      leadingWidth: 0,
+      titleSpacing: 8,
+      automaticallyImplyLeading: false,
 
-      leading: Padding(
-        padding: const EdgeInsets.only(left: 8),
-        child: Center(
-          child: Container(
+      title: Row(
+        children: [
+          // Back button
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: Container(
+              width: 32,
+              height: 32,
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: isDark
+                      ? [
+                          Colors.white.withValues(alpha: 0.15),
+                          Colors.white.withValues(alpha: 0.1),
+                        ]
+                      : [
+                          Colors.white.withValues(alpha: 0.25),
+                          Colors.white.withValues(alpha: 0.15),
+                        ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: isDark ? 0.2 : 0.3),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.1 : 0.15),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: Colors.white,
+                size: 16,
+              ),
+            ),
+            onPressed: () => context.pop(),
+          ),
+          const SizedBox(width: 8),
+          // Grading Center title with icon
+          Container(
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: isDark
                     ? [
+                        Colors.white.withValues(alpha: 0.2),
                         Colors.white.withValues(alpha: 0.15),
-                        Colors.white.withValues(alpha: 0.08),
                       ]
                     : [
-                        Colors.white.withValues(alpha: 0.9),
-                        Colors.white.withValues(alpha: 0.7),
+                        Colors.white.withValues(alpha: 0.25),
+                        Colors.white.withValues(alpha: 0.15),
                       ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
               ),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(Icons.grading_rounded, color: Colors.white, size: 16),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              l10n.gradingCenter,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isDark
+                  ? [GradingColors.darkBg, GradingColors.darkCard]
+                  : [GradingColors.primary, GradingColors.primaryLight],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Stack(
+            children: [
+              // Decorative circles
+              Positioned(
+                top: -50,
+                right: -30,
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        Colors.white.withValues(alpha: 0.08),
+                        Colors.white.withValues(alpha: 0.0),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
-            ),
-            child: IconButton(
-              icon: Icon(
-                Icons.arrow_back_rounded,
-                color: isDark ? Colors.white : GradingColors.primary,
               ),
-              onPressed: () => context.pop(),
-            ),
+              Positioned(
+                top: 40,
+                left: -40,
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        Colors.white.withValues(alpha: 0.06),
+                        Colors.white.withValues(alpha: 0.0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              // Subtle pattern overlay
+              Positioned.fill(
+                child: CustomPaint(
+                  painter: _GradingPatternPainter(
+                    color: Colors.white.withValues(alpha: 0.03),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
+    );
+  }
 
-      // Add title for collapsed state
-      title: innerBoxIsScrolled
-          ? Text(
-              l10n.gradingCenter,
-              style: TextStyle(
-                color: GradingColors.textPrimaryColor(isDark),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            )
-          : null,
-
-      flexibleSpace: FlexibleSpaceBar(
-        background: Stack(
-          children: [
-            // Gradient background
-            Container(
+  Widget _buildHeaderSection(bool isDark, AppLocalizations l10n) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: isDark
+            ? GradingColors.darkHeaderGradient
+            : GradingColors.headerGradient,
+      ),
+      child: Stack(
+        children: [
+          // Decorative circles
+          Positioned(
+            top: -60,
+            right: -40,
+            child: Container(
+              width: 200,
+              height: 200,
               decoration: BoxDecoration(
-                gradient: isDark
-                    ? GradingColors.darkHeaderGradient
-                    : GradingColors.headerGradient,
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.05),
               ),
             ),
-            // Decorative circles
-            Positioned(
-              top: -60,
-              right: -40,
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.05),
-                ),
+          ),
+          Positioned(
+            top: 80,
+            left: -60,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.03),
               ),
             ),
-            Positioned(
-              top: 80,
-              left: -60,
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withValues(alpha: 0.03),
-                ),
+          ),
+          // Pattern overlay
+          Positioned.fill(
+            child: CustomPaint(
+              painter: _GradingPatternPainter(
+                color: Colors.white.withValues(alpha: 0.03),
               ),
             ),
-            // Pattern overlay
-            Positioned.fill(
-              child: CustomPaint(
-                painter: _GradingPatternPainter(
-                  color: Colors.white.withValues(alpha: 0.03),
-                ),
-              ),
-            ),
-            // Content
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Column(
-                children: [
-                  // Title section
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.white.withValues(alpha: 0.25),
-                                Colors.white.withValues(alpha: 0.1),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.grading_rounded,
-                            color: Colors.white,
-                            size: 28,
-                          ),
+          ),
+          // Content
+          Column(
+            children: [
+              // Title section
+              // Row(
+              //   children: [
+              //     Container(
+              //       padding: const EdgeInsets.all(14),
+              //       decoration: BoxDecoration(
+              //         gradient: LinearGradient(
+              //           colors: [
+              //             Colors.white.withValues(alpha: 0.25),
+              //             Colors.white.withValues(alpha: 0.1),
+              //           ],
+              //           begin: Alignment.topLeft,
+              //           end: Alignment.bottomRight,
+              //         ),
+              //         borderRadius: BorderRadius.circular(16),
+              //         boxShadow: [
+              //           BoxShadow(
+              //             color: Colors.black.withValues(alpha: 0.1),
+              //             blurRadius: 10,
+              //             offset: const Offset(0, 4),
+              //           ),
+              //         ],
+              //       ),
+              //       child: const Icon(
+              //         Icons.grading_rounded,
+              //         color: Colors.white,
+              //         size: 28,
+              //       ),
+              //     ),
+              //     const SizedBox(width: 16),
+              //     Expanded(
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           Text(
+              //             l10n.gradingCenter,
+              //             style: const TextStyle(
+              //               color: Colors.white,
+              //               fontSize: 26,
+              //               fontWeight: FontWeight.bold,
+              //               letterSpacing: -0.5,
+              //             ),
+              //           ),
+              //           const SizedBox(height: 4),
+              //           Text(
+              //             '${_submissions.length} submissions to review',
+              //             style: TextStyle(
+              //               color: Colors.white.withValues(alpha: 0.8),
+              //               fontSize: 14,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              // const SizedBox(height: 16),
+              // Stats dashboard
+              FadeTransition(
+                opacity: _statsAnimation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.2),
+                    end: Offset.zero,
+                  ).animate(_statsAnimation),
+                  child: _isLoading
+                      ? StatsSkeletonDashboard(isDark: isDark)
+                      : StatsDashboard(
+                          pendingCount: _pendingCount,
+                          gradedCount: _gradedCount,
+                          lateCount: _lateCount,
+                          totalCount: _submissions.length,
+                          isDark: isDark,
+                          onStatTap: (status) {
+                            switch (status) {
+                              case 'pending':
+                                _tabController.animateTo(1);
+                                break;
+                              case 'graded':
+                                _tabController.animateTo(2);
+                                break;
+                              case 'late':
+                                _tabController.animateTo(3);
+                                break;
+                            }
+                          },
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l10n.gradingCenter,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 26,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: -0.5,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '${_submissions.length} submissions to review',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  // Stats dashboard
-                  FadeTransition(
-                    opacity: _statsAnimation,
-                    child: SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(0, 0.2),
-                        end: Offset.zero,
-                      ).animate(_statsAnimation),
-                      child: _isLoading
-                          ? StatsSkeletonDashboard(isDark: isDark)
-                          : StatsDashboard(
-                              pendingCount: _pendingCount,
-                              gradedCount: _gradedCount,
-                              lateCount: _lateCount,
-                              totalCount: _submissions.length,
-                              isDark: isDark,
-                              onStatTap: (status) {
-                                switch (status) {
-                                  case 'pending':
-                                    _tabController.animateTo(1);
-                                    break;
-                                  case 'graded':
-                                    _tabController.animateTo(2);
-                                    break;
-                                  case 'late':
-                                    _tabController.animateTo(3);
-                                    break;
-                                }
-                              },
-                            ),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -859,7 +943,7 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
           fontSize: 13,
         ),
         indicator: BoxDecoration(
-          gradient: GradingColors.primaryGradient,
+          gradient: GradingColors.headerGradient,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -906,7 +990,7 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
                 style: TextStyle(
                   fontSize: 9,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white70 : GradingColors.primary,
+                  color: isDark ? Colors.white70 : Colors.black,
                 ),
               ),
             ),

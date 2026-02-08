@@ -57,6 +57,7 @@ import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_scre
 import 'package:edu_verse/screens/instructor/courses/instructor_courses_screen.dart';
 import 'package:edu_verse/screens/instructor/grading_center/grading_center_screen.dart';
 import 'package:edu_verse/screens/instructor/course_management/course_management_screen.dart';
+import 'package:edu_verse/screens/instructor/announcements/announcement_manager_screen.dart';
 import 'package:edu_verse/models/instructor/instructor_course_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -353,6 +354,10 @@ class AppRouter {
           final course = state.extra as InstructorCourseModel?;
           return CourseManagementScreen(course: course);
         },
+      ),
+      GoRoute(
+        path: '/instructor/announcements',
+        builder: (context, state) => const AnnouncementManagerScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

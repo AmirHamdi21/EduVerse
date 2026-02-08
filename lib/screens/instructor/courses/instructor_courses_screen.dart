@@ -1,3 +1,4 @@
+import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,7 @@ class InstructorCoursesScreen extends StatefulWidget {
 
 class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
     with TickerProviderStateMixin {
+  ResponsiveUtil get _responsive => ResponsiveUtil(context);
   // State variables
   String _searchQuery = '';
   String _selectedStatus = 'all';
@@ -56,7 +58,8 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
   double get _totalRevenue => _courses.fold(0.0, (sum, c) => sum + c.revenue);
   double get _avgEngagement => _courses.isEmpty
       ? 0
-      : _courses.fold<num>(0, (sum, c) => sum + c.engagementScore).toDouble() / _courses.length;
+      : _courses.fold<num>(0, (sum, c) => sum + c.engagementScore).toDouble() /
+            _courses.length;
 
   @override
   void initState() {
@@ -87,13 +90,13 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
 
   Future<void> _loadCourses() async {
     if (!mounted) return;
-    
+
     setState(() => _isLoading = true);
-    
+
     // Reset animation controllers for refresh
     _statsAnimController.reset();
     _cardAnimController.reset();
-    
+
     try {
       await Future.delayed(const Duration(milliseconds: 600));
       if (mounted) {
@@ -111,7 +114,9 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
           SnackBar(
             content: const Text('Failed to load courses. Please try again.'),
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             backgroundColor: InstructorColors.error,
             action: SnackBarAction(
               label: 'Retry',
@@ -401,16 +406,18 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
             controller: _scrollController,
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               _buildSliverAppBar(isDark, l10n),
-            ],
-            body: Column(
-              children: [
-                // Stats Dashboard
-                AnimatedBuilder(
+              // Stats Dashboard scrolls away with the header
+              SliverToBoxAdapter(
+                child: AnimatedBuilder(
                   animation: _statsAnimation,
                   builder: (context, child) =>
                       _buildStatsDashboard(isDark, l10n),
                 ),
-                // Search, Filter, Sort bar
+              ),
+            ],
+            body: Column(
+              children: [
+                // Search, Filter, Sort bar stays pinned
                 _buildSearchFilterBar(isDark, l10n),
                 // Bulk actions bar (when in selection mode)
                 if (_isSelectionMode) _buildBulkActionsBar(isDark, l10n),
@@ -433,52 +440,95 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
 
   Widget _buildSliverAppBar(bool isDark, AppLocalizations l10n) {
     return SliverAppBar(
-      expandedHeight: 160,
+      // expandedHeight: 120,
       floating: true,
       pinned: true,
       elevation: 0,
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
-      leading: IconButton(
-        icon: Container(
-          width: 80,
-          height: 80,
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                const Color(0xFF0D3D9F).withOpacity(0.15),
-                const Color(0xFF155CFB).withOpacity(0.1),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: const Color(0xFF155CFB).withOpacity(0.2),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF155CFB).withOpacity(0.1),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+      leading: null,
+      leadingWidth: 0,
+      titleSpacing: 8,
+      automaticallyImplyLeading: false,
+      title: Row(
+        children: [
+          // Back button
+          IconButton(
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            icon: Container(
+              width: 32,
+              height: 32,
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF0D3D9F).withOpacity(0.15),
+                    const Color(0xFF155CFB).withOpacity(0.1),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: const Color(0xFF155CFB).withOpacity(0.2),
+                  width: 1,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF155CFB).withOpacity(0.1),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-            ],
+              child: Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: isDark ? Colors.white : const Color(0xFF0D3D9F),
+                size: 16,
+              ),
+            ),
+            onPressed: () => context.pop(),
           ),
-          child: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: isDark ? Colors.white : const Color(0xFF0D3D9F),
-            size: 18,
+          const SizedBox(width: 8),
+          // My Courses title with icon
+          Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF0D3D9F).withOpacity(0.2),
+                  const Color(0xFF155CFB).withOpacity(0.15),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              Icons.school_rounded,
+              color: isDark ? Colors.white : const Color(0xFF0D3D9F),
+              size: 16,
+            ),
           ),
-        ),
-        onPressed: () => context.pop(),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              l10n.myCourses,
+              style: TextStyle(
+                color: isDark ? Colors.white : const Color(0xFF0D3D9F),
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+                letterSpacing: -0.5,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
       ),
       actions: [
-        // View toggle with enhanced design
+        // View toggle with smaller design
         Container(
-          margin: const EdgeInsets.only(right: 8),
-          padding: const EdgeInsets.all(6),
+          margin: const EdgeInsets.only(right: 4),
+          padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
@@ -488,7 +538,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: const Color(0xFF155CFB).withOpacity(0.2),
               width: 1,
@@ -496,7 +546,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
             boxShadow: [
               BoxShadow(
                 color: const Color(0xFF155CFB).withOpacity(0.08),
-                blurRadius: 8,
+                blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
             ],
@@ -509,13 +559,13 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                 CourseViewType.grid,
                 isDark,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 2),
               _buildEnhancedViewToggle(
                 Icons.view_list_rounded,
                 CourseViewType.list,
                 isDark,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: 2),
               _buildEnhancedViewToggle(
                 Icons.view_headline_rounded,
                 CourseViewType.compact,
@@ -524,13 +574,18 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
             ],
           ),
         ),
-        // Selection mode toggle with enhanced design
+        // Selection mode toggle with smaller design
         Padding(
-          padding: const EdgeInsets.only(right: 12),
+          padding: const EdgeInsets.only(right: 8),
           child: IconButton(
+            iconSize: 18,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
             icon: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
-              padding: const EdgeInsets.all(10),
+              width: 32,
+              height: 32,
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 gradient: _isSelectionMode
                     ? LinearGradient(
@@ -549,7 +604,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: _isSelectionMode
                       ? const Color(0xFF155CFB).withOpacity(0.5)
@@ -561,7 +616,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                     color: _isSelectionMode
                         ? const Color(0xFF155CFB).withOpacity(0.3)
                         : const Color(0xFF155CFB).withOpacity(0.08),
-                    blurRadius: _isSelectionMode ? 12 : 8,
+                    blurRadius: _isSelectionMode ? 10 : 6,
                     offset: const Offset(0, 2),
                   ),
                 ],
@@ -573,7 +628,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                 color: _isSelectionMode
                     ? Colors.white
                     : (isDark ? Colors.white : const Color(0xFF0D3D9F)),
-                size: 20,
+                size: 16,
               ),
             ),
             onPressed: () => setState(() {
@@ -584,42 +639,6 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         ),
       ],
       flexibleSpace: FlexibleSpaceBar(
-        titlePadding: const EdgeInsets.only(left: 60, bottom: 16, right: 16),
-        title: AnimatedDefaultTextStyle(
-          duration: const Duration(milliseconds: 200),
-          style: TextStyle(
-            color: isDark ? Colors.white : const Color(0xFF0D3D9F),
-            fontSize: 24,
-            fontWeight: FontWeight.w800,
-            letterSpacing: -0.5,
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      const Color(0xFF0D3D9F).withOpacity(0.2),
-                      const Color(0xFF155CFB).withOpacity(0.15),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.school_rounded,
-                  color: isDark ? Colors.white : const Color(0xFF0D3D9F),
-                  size: 18,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Flexible(
-                child: Text(l10n.myCourses, overflow: TextOverflow.ellipsis),
-              ),
-            ],
-          ),
-        ),
         background: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -700,7 +719,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.all(7),
         decoration: BoxDecoration(
           gradient: isSelected
               ? LinearGradient(
@@ -710,7 +729,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                 )
               : null,
           color: isSelected ? null : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           boxShadow: isSelected
               ? [
                   BoxShadow(
@@ -723,7 +742,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         ),
         child: Icon(
           icon,
-          size: 18,
+          size: 15,
           color: isSelected
               ? Colors.white
               : (isDark
@@ -1021,59 +1040,65 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
           ),
           const SizedBox(height: 20),
           // Stats Grid
-          Row(
-            children: [
-              Expanded(
-                child: _buildEnhancedStatCard(
-                  isDark: isDark,
-                  icon: Icons.school_rounded,
-                  iconColors: [
-                    const Color(0xFF0D3D9F),
-                    const Color(0xFF155CFB),
-                  ],
-                  label: l10n.totalCourses,
-                  value: '${(_courses.length * _statsAnimation.value).round()}',
-                  subValue: '${_courses.length}',
-                  trend: '+2 this month',
-                  trendPositive: true,
-                  accentColor: const Color(0xFF155CFB),
+          SizedBox(
+            height: _responsive.p264,
+            child: Column(
+              children: [
+                Expanded(
+                  child: _buildEnhancedStatCard(
+                    isDark: isDark,
+                    icon: Icons.school_rounded,
+                    iconColors: [
+                      const Color(0xFF0D3D9F),
+                      const Color(0xFF155CFB),
+                    ],
+                    label: l10n.totalCourses,
+                    value:
+                        '${(_courses.length * _statsAnimation.value).round()}',
+                    subValue: '${_courses.length}',
+                    trend: '+2 this month',
+                    trendPositive: true,
+                    accentColor: const Color(0xFF155CFB),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildEnhancedStatCard(
-                  isDark: isDark,
-                  icon: Icons.people_rounded,
-                  iconColors: [
-                    const Color(0xFF7C4DFF),
-                    const Color(0xFF9C27B0),
-                  ],
-                  label: l10n.totalStudentsLabel,
-                  value: '${(_totalStudents * _statsAnimation.value).round()}',
-                  subValue: _formatNumber(_totalStudents),
-                  trend: '+48 this week',
-                  trendPositive: true,
-                  accentColor: const Color(0xFF7C4DFF),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: _buildEnhancedStatCard(
+                    isDark: isDark,
+                    icon: Icons.people_rounded,
+                    iconColors: [
+                      const Color(0xFF7C4DFF),
+                      const Color(0xFF9C27B0),
+                    ],
+                    label: l10n.totalStudentsLabel,
+                    value:
+                        '${(_totalStudents * _statsAnimation.value).round()}',
+                    subValue: _formatNumber(_totalStudents),
+                    trend: '+48 this week',
+                    trendPositive: true,
+                    accentColor: const Color(0xFF7C4DFF),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildEnhancedStatCard(
-                  isDark: isDark,
-                  icon: Icons.trending_up_rounded,
-                  iconColors: [
-                    const Color(0xFF10B981),
-                    const Color(0xFF059669),
-                  ],
-                  label: 'Engagement',
-                  value: '${(_avgEngagement * _statsAnimation.value).round()}%',
-                  subValue: '${_avgEngagement.round()}%',
-                  trend: '+5% vs last month',
-                  trendPositive: true,
-                  accentColor: const Color(0xFF10B981),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: _buildEnhancedStatCard(
+                    isDark: isDark,
+                    icon: Icons.trending_up_rounded,
+                    iconColors: [
+                      const Color(0xFF10B981),
+                      const Color(0xFF059669),
+                    ],
+                    label: 'Engagement',
+                    value:
+                        '${(_avgEngagement * _statsAnimation.value).round()}%',
+                    subValue: '${_avgEngagement.round()}%',
+                    trend: '+5% vs last month',
+                    trendPositive: true,
+                    accentColor: const Color(0xFF10B981),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -1105,7 +1130,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Icon with gradient background
@@ -1128,39 +1153,44 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
             ),
             child: Icon(icon, color: Colors.white, size: 20),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(width: 16),
           // Value with animated counter
-          ShaderMask(
-            shaderCallback: (bounds) => LinearGradient(
-              colors: iconColors,
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ).createShader(bounds),
-            child: Text(
-              value,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 28,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.5,
-                height: 1.0,
+          Column(
+            children: [
+              ShaderMask(
+                shaderCallback: (bounds) => LinearGradient(
+                  colors: iconColors,
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds),
+                child: Text(
+                  value,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.5,
+                    height: 1.0,
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 6),
+              // Label
+              Text(
+                label,
+                style: TextStyle(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.7)
+                      : const Color(0xFF6B7280),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 6),
-          // Label
-          Text(
-            label,
-            style: TextStyle(
-              color: isDark
-                  ? Colors.white.withOpacity(0.7)
-                  : const Color(0xFF6B7280),
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.3,
-            ),
-          ),
-          const SizedBox(height: 12),
+          // const SizedBox(height: 12),
+          Spacer(),
           // Trend indicator with enhanced design
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),

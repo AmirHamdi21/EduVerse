@@ -2683,8 +2683,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noNotesFoundSearch => 'No Notes Found';
 
   @override
-  String get tryDifferentSearch =>
-      'Try a different search term or adjust filters';
+  String get tryDifferentSearch => 'Try a different search term or filter';
 
   @override
   String get noFavoriteNotes => 'No Favorite Notes';
@@ -4704,6 +4703,126 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get newAnnouncement => 'New';
+
+  @override
+  String get announcementsManager => 'Announcements Manager';
+
+  @override
+  String get announcementsManagerSubtitle =>
+      'Create, publish, and track course updates';
+
+  @override
+  String get searchAnnouncements => 'Search announcements...';
+
+  @override
+  String get noAnnouncementsFoundSearch => 'No Announcements Found';
+
+  @override
+  String get createFirstAnnouncement =>
+      'Create your first announcement to keep students informed';
+
+  @override
+  String get allAnnouncements => 'All';
+
+  @override
+  String get publishedAnnouncements => 'Published';
+
+  @override
+  String get scheduledAnnouncements => 'Scheduled';
+
+  @override
+  String get draftAnnouncements => 'Draft';
+
+  @override
+  String get editAnnouncement => 'Edit Announcement';
+
+  @override
+  String get deleteAnnouncement => 'Delete Announcement';
+
+  @override
+  String get deleteAnnouncementConfirm =>
+      'Are you sure you want to delete this announcement? This action cannot be undone.';
+
+  @override
+  String get announcementTitle => 'Title';
+
+  @override
+  String get announcementTitleHint => 'Enter announcement title...';
+
+  @override
+  String get announcementContent => 'Content';
+
+  @override
+  String get announcementContentHint => 'Write your announcement here...';
+
+  @override
+  String get announcementAudience => 'Audience';
+
+  @override
+  String get publishImmediately => 'Publish Immediately';
+
+  @override
+  String get scheduleDate => 'Schedule Date';
+
+  @override
+  String get scheduleTime => 'Schedule Time';
+
+  @override
+  String get selectDate => 'Select date';
+
+  @override
+  String get selectTime => 'Select time';
+
+  @override
+  String get attachments => 'Attachments';
+
+  @override
+  String get dragFilesOrBrowse => 'Drag files here or tap to browse';
+
+  @override
+  String get addFiles => 'Add Files';
+
+  @override
+  String get saveDraft => 'Save Draft';
+
+  @override
+  String get publish => 'Publish';
+
+  @override
+  String get aiWritingAssistant => 'AI Writing Assistant';
+
+  @override
+  String get announcementCreated => 'Announcement created successfully!';
+
+  @override
+  String get announcementUpdated => 'Announcement updated successfully!';
+
+  @override
+  String get announcementDeleted => 'Announcement deleted successfully!';
+
+  @override
+  String get announcementPublished => 'Announcement published successfully!';
+
+  @override
+  String get readRate => 'Read Rate';
+
+  @override
+  String get views => 'Views';
+
+  @override
+  String get announcementAnalytics => 'Announcement Analytics';
+
+  @override
+  String get viewsOverTime => 'Views Over Time';
+
+  @override
+  String get aiInsight => 'AI Insight';
+
+  @override
+  String get dailyViews => 'Daily Views';
+
+  @override
+  String get publishNow => 'Publish Now';
 
   @override
   String get analyticsComingSoon => 'Analytics feature coming soon';

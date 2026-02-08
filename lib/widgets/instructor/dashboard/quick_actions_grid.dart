@@ -170,7 +170,7 @@ class InstructorQuickAccessGrid extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               color: isDark ? Colors.white : const Color(0xFF354152),
-              fontSize: 13,
+              fontSize: 11,
               fontWeight: FontWeight.w500,
               height: 1.3,
             ),
@@ -182,7 +182,11 @@ class InstructorQuickAccessGrid extends StatelessWidget {
     );
   }
 
-  void _showCreateAssignmentDialog(BuildContext context, bool isDark, AppLocalizations l10n) {
+  void _showCreateAssignmentDialog(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -191,7 +195,11 @@ class InstructorQuickAccessGrid extends StatelessWidget {
     );
   }
 
-  void _showUploadDialog(BuildContext context, bool isDark, AppLocalizations l10n) {
+  void _showUploadDialog(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -343,16 +351,26 @@ class _CreateAssignmentSheetState extends State<_CreateAssignmentSheet> {
             const SizedBox(height: 20),
             _buildTextField(widget.l10n.assignmentTitle, _titleController),
             const SizedBox(height: 14),
-            _buildTextField(widget.l10n.description, _descController, maxLines: 3),
+            _buildTextField(
+              widget.l10n.description,
+              _descController,
+              maxLines: 3,
+            ),
             const SizedBox(height: 14),
             DropdownButtonFormField<String>(
               value: _selectedCourse,
               decoration: _inputDecoration(widget.l10n.selectCourse),
-              dropdownColor: widget.isDark ? const Color(0xFF16213E) : Colors.white,
-              style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
-              items: ['CS101 - Operating Systems', 'CS202 - Data Structures', 'CS305 - Database']
-                  .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                  .toList(),
+              dropdownColor: widget.isDark
+                  ? const Color(0xFF16213E)
+                  : Colors.white,
+              style: TextStyle(
+                color: widget.isDark ? Colors.white : Colors.black,
+              ),
+              items: [
+                'CS101 - Operating Systems',
+                'CS202 - Data Structures',
+                'CS305 - Database',
+              ].map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
               onChanged: (v) => setState(() => _selectedCourse = v),
             ),
             const SizedBox(height: 14),
@@ -370,18 +388,27 @@ class _CreateAssignmentSheetState extends State<_CreateAssignmentSheet> {
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: widget.isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                    color: widget.isDark
+                        ? Colors.grey[700]!
+                        : Colors.grey[300]!,
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.calendar_today,
-                        color: widget.isDark ? Colors.grey[400] : Colors.grey[600], size: 20),
+                    Icon(
+                      Icons.calendar_today,
+                      color: widget.isDark
+                          ? Colors.grey[400]
+                          : Colors.grey[600],
+                      size: 20,
+                    ),
                     const SizedBox(width: 12),
                     Text(
                       '${widget.l10n.dueDate}: ${_dueDate.day}/${_dueDate.month}/${_dueDate.year}',
-                      style: TextStyle(color: widget.isDark ? Colors.white : Colors.black),
+                      style: TextStyle(
+                        color: widget.isDark ? Colors.white : Colors.black,
+                      ),
                     ),
                   ],
                 ),
@@ -404,7 +431,9 @@ class _CreateAssignmentSheetState extends State<_CreateAssignmentSheet> {
                   backgroundColor: const Color(0xFF155CFB),
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Text(widget.l10n.createAssignment),
               ),
@@ -415,7 +444,11 @@ class _CreateAssignmentSheetState extends State<_CreateAssignmentSheet> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {int maxLines = 1}) {
+  Widget _buildTextField(
+    String label,
+    TextEditingController controller, {
+    int maxLines = 1,
+  }) {
     return TextField(
       controller: controller,
       maxLines: maxLines,
@@ -427,11 +460,15 @@ class _CreateAssignmentSheetState extends State<_CreateAssignmentSheet> {
   InputDecoration _inputDecoration(String label) {
     return InputDecoration(
       labelText: label,
-      labelStyle: TextStyle(color: widget.isDark ? Colors.grey[400] : Colors.grey[600]),
+      labelStyle: TextStyle(
+        color: widget.isDark ? Colors.grey[400] : Colors.grey[600],
+      ),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: widget.isDark ? Colors.grey[700]! : Colors.grey[300]!),
+        borderSide: BorderSide(
+          color: widget.isDark ? Colors.grey[700]! : Colors.grey[300]!,
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),

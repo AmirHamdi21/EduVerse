@@ -24,18 +24,23 @@ class SubmissionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final statusColor = GradingColors.getStatusColor(submission.status.name);
-    final statusLightColor = GradingColors.getStatusLightColor(submission.status.name);
-    final statusGradient = GradingColors.getStatusGradient(submission.status.name);
+    final statusLightColor = GradingColors.getStatusLightColor(
+      submission.status.name,
+    );
+    final statusGradient = GradingColors.getStatusGradient(
+      submission.status.name,
+    );
 
     final statusLabel = submission.status == SubmissionStatus.pending
         ? l10n.pending
         : submission.status == SubmissionStatus.graded
-            ? l10n.graded
-            : l10n.late;
+        ? l10n.graded
+        : l10n.late;
 
     final timeAgo = _getTimeAgo(submission.submittedAt, l10n);
 
     Widget card = Container(
+      clipBehavior: Clip.antiAlias,
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
         color: GradingColors.cardColor(isDark),
@@ -131,7 +136,10 @@ class SubmissionCard extends StatelessWidget {
                     ),
                     // Status badge
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
@@ -182,7 +190,10 @@ class SubmissionCard extends StatelessWidget {
                 const SizedBox(height: 16),
                 // Course and time info
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: isDark
                         ? GradingColors.darkSurface.withValues(alpha: 0.5)
@@ -212,7 +223,8 @@ class SubmissionCard extends StatelessWidget {
                   _buildGradeDisplay(l10n),
                 ],
                 // Late warning
-                if (submission.lateDays != null && submission.lateDays! > 0) ...[
+                if (submission.lateDays != null &&
+                    submission.lateDays! > 0) ...[
                   const SizedBox(height: 12),
                   _buildLateWarning(l10n),
                 ],
@@ -254,13 +266,10 @@ class SubmissionCard extends StatelessWidget {
       return FadeTransition(
         opacity: animation!,
         child: SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0, 0.1),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(
-            parent: animation!,
-            curve: Curves.easeOutCubic,
-          )),
+          position: Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero)
+              .animate(
+                CurvedAnimation(parent: animation!, curve: Curves.easeOutCubic),
+              ),
           child: card,
         ),
       );
@@ -277,11 +286,7 @@ class SubmissionCard extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: 14,
-          color: GradingColors.textTertiaryColor(isDark),
-        ),
+        Icon(icon, size: 14, color: GradingColors.textTertiaryColor(isDark)),
         const SizedBox(width: 5),
         Text(
           text,
@@ -297,7 +302,7 @@ class SubmissionCard extends StatelessWidget {
 
   Widget _buildGradeDisplay(AppLocalizations l10n) {
     final gradeColor = GradingColors.getGradeColor(submission.gradePercentage);
-    
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -310,10 +315,7 @@ class SubmissionCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: gradeColor.withValues(alpha: 0.2),
-          width: 1,
-        ),
+        border: Border.all(color: gradeColor.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(
         children: [
@@ -375,7 +377,10 @@ class SubmissionCard extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [gradeColor, gradeColor.withValues(alpha: 0.7)],
+                              colors: [
+                                gradeColor,
+                                gradeColor.withValues(alpha: 0.7),
+                              ],
                             ),
                             borderRadius: BorderRadius.circular(3),
                           ),
@@ -480,11 +485,7 @@ class SubmissionCard extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 16,
-                color: GradingColors.primary,
-              ),
+              Icon(icon, size: 16, color: GradingColors.primary),
               const SizedBox(width: 6),
               Text(
                 label,

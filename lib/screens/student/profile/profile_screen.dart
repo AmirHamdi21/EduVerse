@@ -52,7 +52,9 @@ class _ProfileScreenState extends State<ProfileScreen>
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       body: BlocBuilder<ProfileCubit, ProfileState>(
         builder: (context, state) {
           if (state is ProfileLoading) {
@@ -84,9 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           const SizedBox(height: 16),
           Text(
             'Loading profile...',
-            style: TextStyle(
-              color: isDark ? Colors.white70 : Colors.black54,
-            ),
+            style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
           ),
         ],
       ),
@@ -118,9 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: isDark ? Colors.white70 : Colors.black54,
-              ),
+              style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
@@ -130,7 +128,10 @@ class _ProfileScreenState extends State<ProfileScreen>
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -159,12 +160,14 @@ class _ProfileScreenState extends State<ProfileScreen>
             floating: true,
             pinned: true,
             elevation: 0,
-            backgroundColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+            backgroundColor: isDark
+                ? const Color(0xFF0F172A)
+                : const Color(0xFFF8FAFC),
             surfaceTintColor: Colors.transparent,
             leading: IconButton(
               onPressed: () => context.pop(),
               icon: Icon(
-                Icons.arrow_back_rounded,
+                Icons.arrow_back_ios_rounded,
                 color: isDark ? Colors.white : Colors.black87,
               ),
             ),
@@ -205,10 +208,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 const SizedBox(height: 16),
 
                 // Stats Card
-                ProfileStatsCard(
-                  profile: state.profile,
-                  isDark: isDark,
-                ),
+                ProfileStatsCard(profile: state.profile, isDark: isDark),
 
                 const SizedBox(height: 20),
 
@@ -242,7 +242,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                       Icons.lock_outline_rounded,
                       isDark,
                       trailing: TextButton(
-                        onPressed: () => _showChangePasswordDialog(context, isDark, l10n),
+                        onPressed: () =>
+                            _showChangePasswordDialog(context, isDark, l10n),
                         child: Text(
                           l10n.change,
                           style: const TextStyle(
@@ -254,11 +255,14 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                     _buildInfoRow(
                       l10n.language,
-                      state.settings.languageCode == 'en' ? 'English' : 'العربية',
+                      state.settings.languageCode == 'en'
+                          ? 'English'
+                          : 'العربية',
                       Icons.language_rounded,
                       isDark,
                       trailing: TextButton(
-                        onPressed: () => _showLanguageDialog(context, state, isDark, l10n),
+                        onPressed: () =>
+                            _showLanguageDialog(context, state, isDark, l10n),
                         child: Text(
                           l10n.change,
                           style: const TextStyle(
@@ -274,18 +278,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                 const SizedBox(height: 16),
 
                 // Preferences & Notifications
-                PreferencesSection(
-                  settings: state.settings,
-                  isDark: isDark,
-                ),
+                PreferencesSection(settings: state.settings, isDark: isDark),
 
                 const SizedBox(height: 16),
 
                 // Appearance & Theme
-                AppearanceSection(
-                  settings: state.settings,
-                  isDark: isDark,
-                ),
+                AppearanceSection(settings: state.settings, isDark: isDark),
 
                 const SizedBox(height: 16),
 
@@ -324,9 +322,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF1E293B)
-                  : const Color(0xFFF1F5F9),
+              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -365,7 +361,11 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  void _showChangePasswordDialog(BuildContext context, bool isDark, AppLocalizations l10n) {
+  void _showChangePasswordDialog(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final currentPasswordController = TextEditingController();
     final newPasswordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
@@ -409,14 +409,13 @@ class _ProfileScreenState extends State<ProfileScreen>
             onPressed: () => Navigator.pop(context),
             child: Text(
               l10n.cancel,
-              style: TextStyle(
-                color: isDark ? Colors.white70 : Colors.black54,
-              ),
+              style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
             ),
           ),
           ElevatedButton(
             onPressed: () {
-              if (newPasswordController.text == confirmPasswordController.text) {
+              if (newPasswordController.text ==
+                  confirmPasswordController.text) {
                 context.read<ProfileCubit>().changePassword(
                   currentPasswordController.text,
                   newPasswordController.text,
@@ -456,9 +455,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       style: TextStyle(color: isDark ? Colors.white : Colors.black87),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(
-          color: isDark ? Colors.white54 : Colors.black45,
-        ),
+        labelStyle: TextStyle(color: isDark ? Colors.white54 : Colors.black45),
         filled: true,
         fillColor: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
         border: OutlineInputBorder(
@@ -490,9 +487,21 @@ class _ProfileScreenState extends State<ProfileScreen>
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildLanguageOption(context, 'English', 'en', state.settings.languageCode, isDark),
+            _buildLanguageOption(
+              context,
+              'English',
+              'en',
+              state.settings.languageCode,
+              isDark,
+            ),
             const SizedBox(height: 8),
-            _buildLanguageOption(context, 'العربية', 'ar', state.settings.languageCode, isDark),
+            _buildLanguageOption(
+              context,
+              'العربية',
+              'ar',
+              state.settings.languageCode,
+              isDark,
+            ),
           ],
         ),
       ),

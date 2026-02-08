@@ -304,6 +304,13 @@ class _InstructorDrawerState extends State<InstructorDrawer>
         category: 'main',
       ),
       _MenuItem(
+        icon: Icons.campaign_outlined,
+        activeIcon: Icons.campaign,
+        title: l10n.announcementsManager,
+        route: '/instructor/announcements',
+        category: 'main',
+      ),
+      _MenuItem(
         icon: Icons.calendar_month_outlined,
         activeIcon: Icons.calendar_month,
         title: l10n.calendar,

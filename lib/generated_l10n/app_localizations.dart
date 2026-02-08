@@ -5279,7 +5279,7 @@ abstract class AppLocalizations {
   /// No description provided for @tryDifferentSearch.
   ///
   /// In en, this message translates to:
-  /// **'Try a different search term or adjust filters'**
+  /// **'Try a different search term or filter'**
   String get tryDifferentSearch;
 
   /// No description provided for @noFavoriteNotes.
@@ -9157,6 +9157,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'New'**
   String get newAnnouncement;
+
+  /// No description provided for @announcementsManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements Manager'**
+  String get announcementsManager;
+
+  /// No description provided for @announcementsManagerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create, publish, and track course updates'**
+  String get announcementsManagerSubtitle;
+
+  /// No description provided for @searchAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'Search announcements...'**
+  String get searchAnnouncements;
+
+  /// No description provided for @noAnnouncementsFoundSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'No Announcements Found'**
+  String get noAnnouncementsFoundSearch;
+
+  /// No description provided for @createFirstAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first announcement to keep students informed'**
+  String get createFirstAnnouncement;
+
+  /// No description provided for @allAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allAnnouncements;
+
+  /// No description provided for @publishedAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get publishedAnnouncements;
+
+  /// No description provided for @scheduledAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get scheduledAnnouncements;
+
+  /// No description provided for @draftAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get draftAnnouncements;
+
+  /// No description provided for @editAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Announcement'**
+  String get editAnnouncement;
+
+  /// No description provided for @deleteAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Announcement'**
+  String get deleteAnnouncement;
+
+  /// No description provided for @deleteAnnouncementConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this announcement? This action cannot be undone.'**
+  String get deleteAnnouncementConfirm;
+
+  /// No description provided for @announcementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get announcementTitle;
+
+  /// No description provided for @announcementTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter announcement title...'**
+  String get announcementTitleHint;
+
+  /// No description provided for @announcementContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Content'**
+  String get announcementContent;
+
+  /// No description provided for @announcementContentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your announcement here...'**
+  String get announcementContentHint;
+
+  /// No description provided for @announcementAudience.
+  ///
+  /// In en, this message translates to:
+  /// **'Audience'**
+  String get announcementAudience;
+
+  /// No description provided for @publishImmediately.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish Immediately'**
+  String get publishImmediately;
+
+  /// No description provided for @scheduleDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule Date'**
+  String get scheduleDate;
+
+  /// No description provided for @scheduleTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule Time'**
+  String get scheduleTime;
+
+  /// No description provided for @selectDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get selectDate;
+
+  /// No description provided for @selectTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select time'**
+  String get selectTime;
+
+  /// No description provided for @attachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachments'**
+  String get attachments;
+
+  /// No description provided for @dragFilesOrBrowse.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag files here or tap to browse'**
+  String get dragFilesOrBrowse;
+
+  /// No description provided for @addFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Files'**
+  String get addFiles;
+
+  /// No description provided for @saveDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Draft'**
+  String get saveDraft;
+
+  /// No description provided for @publish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish'**
+  String get publish;
+
+  /// No description provided for @aiWritingAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Writing Assistant'**
+  String get aiWritingAssistant;
+
+  /// No description provided for @announcementCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement created successfully!'**
+  String get announcementCreated;
+
+  /// No description provided for @announcementUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement updated successfully!'**
+  String get announcementUpdated;
+
+  /// No description provided for @announcementDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement deleted successfully!'**
+  String get announcementDeleted;
+
+  /// No description provided for @announcementPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement published successfully!'**
+  String get announcementPublished;
+
+  /// No description provided for @readRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Read Rate'**
+  String get readRate;
+
+  /// No description provided for @views.
+  ///
+  /// In en, this message translates to:
+  /// **'Views'**
+  String get views;
+
+  /// No description provided for @announcementAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement Analytics'**
+  String get announcementAnalytics;
+
+  /// No description provided for @viewsOverTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Views Over Time'**
+  String get viewsOverTime;
+
+  /// No description provided for @aiInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insight'**
+  String get aiInsight;
+
+  /// No description provided for @dailyViews.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Views'**
+  String get dailyViews;
+
+  /// No description provided for @publishNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish Now'**
+  String get publishNow;
 
   /// No description provided for @analyticsComingSoon.
   ///

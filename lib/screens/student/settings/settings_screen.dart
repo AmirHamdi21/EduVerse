@@ -58,7 +58,7 @@ class _SettingsScreenState extends State<SettingsScreen>
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: Icon(
-            Icons.arrow_back_rounded,
+            Icons.arrow_back_ios_rounded,
             color: isDark ? Colors.white : Colors.black87,
           ),
         ),
@@ -1395,7 +1395,7 @@ class SettingsSearchDelegate extends SearchDelegate {
   Widget? buildLeading(BuildContext context) {
     return IconButton(
       onPressed: () => close(context, null),
-      icon: const Icon(Icons.arrow_back_rounded),
+      icon: const Icon(Icons.arrow_back_ios_rounded),
     );
   }
 

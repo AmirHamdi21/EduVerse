@@ -2675,7 +2675,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noNotesFoundSearch => 'لم يتم العثور على ملاحظات';
 
   @override
-  String get tryDifferentSearch => 'جرب كلمة بحث مختلفة أو عدّل الفلاتر';
+  String get tryDifferentSearch => 'جرب مصطلح بحث أو فلتر مختلف';
 
   @override
   String get noFavoriteNotes => 'لا توجد ملاحظات مفضلة';
@@ -3826,7 +3826,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mute => 'كتم';
 
   @override
-  String get schedule => 'الجدول';
+  String get schedule => 'جدولة';
 
   @override
   String get repeatDays => 'أيام التكرار';
@@ -4691,6 +4691,126 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get newAnnouncement => 'جديد';
+
+  @override
+  String get announcementsManager => 'مدير الإعلانات';
+
+  @override
+  String get announcementsManagerSubtitle =>
+      'إنشاء ونشر وتتبع تحديثات المقررات';
+
+  @override
+  String get searchAnnouncements => 'البحث في الإعلانات...';
+
+  @override
+  String get noAnnouncementsFoundSearch => 'لم يتم العثور على إعلانات';
+
+  @override
+  String get createFirstAnnouncement =>
+      'أنشئ أول إعلان لك لإبقاء الطلاب على اطلاع';
+
+  @override
+  String get allAnnouncements => 'الكل';
+
+  @override
+  String get publishedAnnouncements => 'منشور';
+
+  @override
+  String get scheduledAnnouncements => 'مجدول';
+
+  @override
+  String get draftAnnouncements => 'مسودة';
+
+  @override
+  String get editAnnouncement => 'تعديل الإعلان';
+
+  @override
+  String get deleteAnnouncement => 'حذف الإعلان';
+
+  @override
+  String get deleteAnnouncementConfirm =>
+      'هل أنت متأكد من حذف هذا الإعلان؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get announcementTitle => 'العنوان';
+
+  @override
+  String get announcementTitleHint => 'أدخل عنوان الإعلان...';
+
+  @override
+  String get announcementContent => 'المحتوى';
+
+  @override
+  String get announcementContentHint => 'اكتب إعلانك هنا...';
+
+  @override
+  String get announcementAudience => 'الجمهور';
+
+  @override
+  String get publishImmediately => 'نشر فوري';
+
+  @override
+  String get scheduleDate => 'تاريخ الجدولة';
+
+  @override
+  String get scheduleTime => 'وقت الجدولة';
+
+  @override
+  String get selectDate => 'اختر التاريخ';
+
+  @override
+  String get selectTime => 'اختر الوقت';
+
+  @override
+  String get attachments => 'المرفقات';
+
+  @override
+  String get dragFilesOrBrowse => 'اسحب الملفات هنا أو انقر للتصفح';
+
+  @override
+  String get addFiles => 'إضافة ملفات';
+
+  @override
+  String get saveDraft => 'حفظ كمسودة';
+
+  @override
+  String get publish => 'نشر';
+
+  @override
+  String get aiWritingAssistant => 'مساعد الكتابة الذكي';
+
+  @override
+  String get announcementCreated => 'تم إنشاء الإعلان بنجاح!';
+
+  @override
+  String get announcementUpdated => 'تم تحديث الإعلان بنجاح!';
+
+  @override
+  String get announcementDeleted => 'تم حذف الإعلان بنجاح!';
+
+  @override
+  String get announcementPublished => 'تم نشر الإعلان بنجاح!';
+
+  @override
+  String get readRate => 'معدل القراءة';
+
+  @override
+  String get views => 'المشاهدات';
+
+  @override
+  String get announcementAnalytics => 'إحصائيات الإعلان';
+
+  @override
+  String get viewsOverTime => 'المشاهدات عبر الزمن';
+
+  @override
+  String get aiInsight => 'رؤية الذكاء الاصطناعي';
+
+  @override
+  String get dailyViews => 'المشاهدات اليومية';
+
+  @override
+  String get publishNow => 'نشر الآن';
 
   @override
   String get analyticsComingSoon => 'ميزة الإحصائيات قادمة قريباً';

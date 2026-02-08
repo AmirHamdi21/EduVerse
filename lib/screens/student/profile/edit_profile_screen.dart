@@ -160,7 +160,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                         shape: BoxShape.circle,
                       ),
                       child: const Icon(
-                        Icons.arrow_back_rounded,
+                        Icons.arrow_back_ios_rounded,
                         color: Colors.white,
                       ),
                     ),
