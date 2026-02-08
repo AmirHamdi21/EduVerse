@@ -8987,7 +8987,7 @@ abstract class AppLocalizations {
   /// No description provided for @assignmentTitle.
   ///
   /// In en, this message translates to:
-  /// **'Assignment Title'**
+  /// **'Title'**
   String get assignmentTitle;
 
   /// No description provided for @enterAssignmentTitle.
@@ -9415,6 +9415,606 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Grade Now'**
   String get gradeNow;
+
+  /// No description provided for @attendanceManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance Manager'**
+  String get attendanceManager;
+
+  /// No description provided for @trackStudentAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Track and manage student attendance'**
+  String get trackStudentAttendance;
+
+  /// No description provided for @noStudentsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Students Found'**
+  String get noStudentsFound;
+
+  /// No description provided for @noStudentsFoundSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No students match your current filter'**
+  String get noStudentsFoundSubtitle;
+
+  /// No description provided for @unmarked.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmarked'**
+  String get unmarked;
+
+  /// No description provided for @allPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'All Present'**
+  String get allPresent;
+
+  /// No description provided for @allAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'All Absent'**
+  String get allAbsent;
+
+  /// No description provided for @qrScan.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Scan'**
+  String get qrScan;
+
+  /// No description provided for @exportAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get exportAttendance;
+
+  /// No description provided for @notifyStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify'**
+  String get notifyStudents;
+
+  /// No description provided for @saveAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Attendance'**
+  String get saveAttendance;
+
+  /// No description provided for @overallRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Rate'**
+  String get overallRate;
+
+  /// No description provided for @lastAttended.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Attended'**
+  String get lastAttended;
+
+  /// No description provided for @classesAttended.
+  ///
+  /// In en, this message translates to:
+  /// **'Classes Attended'**
+  String get classesAttended;
+
+  /// No description provided for @addNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Note'**
+  String get addNote;
+
+  /// No description provided for @saveNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Note'**
+  String get saveNote;
+
+  /// No description provided for @noteSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Note saved successfully'**
+  String get noteSaved;
+
+  /// No description provided for @aiAttendanceAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'AI detected {count} students with low attendance'**
+  String aiAttendanceAlert(int count);
+
+  /// No description provided for @selectWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Week'**
+  String get selectWeek;
+
+  /// No description provided for @createAssignmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Assignment / Lab'**
+  String get createAssignmentTitle;
+
+  /// No description provided for @createAssignmentSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use AI to generate or customize tasks'**
+  String get createAssignmentSubtitle;
+
+  /// No description provided for @basicDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Details'**
+  String get basicDetails;
+
+  /// No description provided for @instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions'**
+  String get instructions;
+
+  /// No description provided for @questions.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions'**
+  String get questions;
+
+  /// No description provided for @deadlineSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadline & Settings'**
+  String get deadlineSettings;
+
+  /// No description provided for @assignmentTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter assignment title'**
+  String get assignmentTitleHint;
+
+  /// No description provided for @shortDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Short Description'**
+  String get shortDescription;
+
+  /// No description provided for @shortDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Brief overview of the assignment'**
+  String get shortDescriptionHint;
+
+  /// No description provided for @module.
+  ///
+  /// In en, this message translates to:
+  /// **'Module'**
+  String get module;
+
+  /// No description provided for @selectModule.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Module'**
+  String get selectModule;
+
+  /// No description provided for @instructionsPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Write assignment instructions here...'**
+  String get instructionsPlaceholder;
+
+  /// No description provided for @addQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Question'**
+  String get addQuestion;
+
+  /// No description provided for @questionText.
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get questionText;
+
+  /// No description provided for @questionType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get questionType;
+
+  /// No description provided for @points.
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get points;
+
+  /// No description provided for @aiGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Generate'**
+  String get aiGenerate;
+
+  /// No description provided for @addHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Hint'**
+  String get addHint;
+
+  /// No description provided for @multipleChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple Choice'**
+  String get multipleChoice;
+
+  /// No description provided for @essay.
+  ///
+  /// In en, this message translates to:
+  /// **'Essay'**
+  String get essay;
+
+  /// No description provided for @dragDropFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag and drop files here'**
+  String get dragDropFiles;
+
+  /// No description provided for @chooseFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Files'**
+  String get chooseFiles;
+
+  /// No description provided for @dueTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Due Time'**
+  String get dueTime;
+
+  /// No description provided for @allowLateSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Late Submissions'**
+  String get allowLateSubmissions;
+
+  /// No description provided for @plagiarismDetection.
+  ///
+  /// In en, this message translates to:
+  /// **'Plagiarism Detection'**
+  String get plagiarismDetection;
+
+  /// No description provided for @groupWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Group Work'**
+  String get groupWork;
+
+  /// No description provided for @autoGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Grading (MCQ)'**
+  String get autoGrading;
+
+  /// No description provided for @veryHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Very Hard'**
+  String get veryHard;
+
+  /// No description provided for @draft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get draft;
+
+  /// No description provided for @assignToClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign to Class'**
+  String get assignToClass;
+
+  /// No description provided for @draftSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft saved successfully'**
+  String get draftSaved;
+
+  /// No description provided for @fillRequiredFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in required fields'**
+  String get fillRequiredFields;
+
+  /// No description provided for @lab.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab'**
+  String get lab;
+
+  /// No description provided for @enterHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter hint for the question'**
+  String get enterHint;
+
+  /// No description provided for @hintAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Hint added successfully'**
+  String get hintAdded;
+
+  /// No description provided for @aiQuestionGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'AI question generated'**
+  String get aiQuestionGenerated;
+
+  /// No description provided for @questionRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Question removed'**
+  String get questionRemoved;
+
+  /// No description provided for @attachmentAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachment added'**
+  String get attachmentAdded;
+
+  /// No description provided for @attachmentRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachment removed'**
+  String get attachmentRemoved;
+
+  /// No description provided for @labDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Details'**
+  String get labDetails;
+
+  /// No description provided for @labRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Room'**
+  String get labRoom;
+
+  /// No description provided for @selectLabRoom.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Lab Room'**
+  String get selectLabRoom;
+
+  /// No description provided for @estimatedDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated Duration'**
+  String get estimatedDuration;
+
+  /// No description provided for @labObjectives.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Objectives'**
+  String get labObjectives;
+
+  /// No description provided for @labObjectivesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What students will learn and achieve'**
+  String get labObjectivesHint;
+
+  /// No description provided for @labEquipment.
+  ///
+  /// In en, this message translates to:
+  /// **'Required Equipment'**
+  String get labEquipment;
+
+  /// No description provided for @labEquipmentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'List all required lab equipment'**
+  String get labEquipmentHint;
+
+  /// No description provided for @labProcedure.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Procedure'**
+  String get labProcedure;
+
+  /// No description provided for @labProcedureHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Step-by-step instructions for the lab'**
+  String get labProcedureHint;
+
+  /// No description provided for @safetyRequirements.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety Requirements'**
+  String get safetyRequirements;
+
+  /// No description provided for @labCoat.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Coat'**
+  String get labCoat;
+
+  /// No description provided for @safetyGlasses.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety Glasses'**
+  String get safetyGlasses;
+
+  /// No description provided for @gloves.
+  ///
+  /// In en, this message translates to:
+  /// **'Gloves'**
+  String get gloves;
+
+  /// No description provided for @safetyInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Safety Instructions'**
+  String get safetyInstructions;
+
+  /// No description provided for @safetyInstructionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Important safety guidelines'**
+  String get safetyInstructionsHint;
+
+  /// No description provided for @requireLabReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Require Lab Report'**
+  String get requireLabReport;
+
+  /// No description provided for @hours.
+  ///
+  /// In en, this message translates to:
+  /// **'hours'**
+  String get hours;
+
+  /// No description provided for @projectDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Project Details'**
+  String get projectDetails;
+
+  /// No description provided for @projectScope.
+  ///
+  /// In en, this message translates to:
+  /// **'Project Scope'**
+  String get projectScope;
+
+  /// No description provided for @projectScopeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Define the boundaries and goals of the project'**
+  String get projectScopeHint;
+
+  /// No description provided for @learningObjectives.
+  ///
+  /// In en, this message translates to:
+  /// **'Learning Objectives'**
+  String get learningObjectives;
+
+  /// No description provided for @learningObjectivesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What students will learn from this project'**
+  String get learningObjectivesHint;
+
+  /// No description provided for @teamConfiguration.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Configuration'**
+  String get teamConfiguration;
+
+  /// No description provided for @minTeamSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Min Team Size'**
+  String get minTeamSize;
+
+  /// No description provided for @maxTeamSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Team Size'**
+  String get maxTeamSize;
+
+  /// No description provided for @allowIndividualWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Individual Work'**
+  String get allowIndividualWork;
+
+  /// No description provided for @milestones.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestones'**
+  String get milestones;
+
+  /// No description provided for @addMilestone.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Milestone'**
+  String get addMilestone;
+
+  /// No description provided for @milestoneName.
+  ///
+  /// In en, this message translates to:
+  /// **'Milestone Name'**
+  String get milestoneName;
+
+  /// No description provided for @milestoneDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Due Date'**
+  String get milestoneDate;
+
+  /// No description provided for @noMilestones.
+  ///
+  /// In en, this message translates to:
+  /// **'No milestones added yet'**
+  String get noMilestones;
+
+  /// No description provided for @deliverables.
+  ///
+  /// In en, this message translates to:
+  /// **'Deliverables'**
+  String get deliverables;
+
+  /// No description provided for @addDeliverable.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Deliverable'**
+  String get addDeliverable;
+
+  /// No description provided for @report.
+  ///
+  /// In en, this message translates to:
+  /// **'Report'**
+  String get report;
+
+  /// No description provided for @demo.
+  ///
+  /// In en, this message translates to:
+  /// **'Demo'**
+  String get demo;
+
+  /// No description provided for @additionalRequirements.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Requirements'**
+  String get additionalRequirements;
+
+  /// No description provided for @requirePresentation.
+  ///
+  /// In en, this message translates to:
+  /// **'Require Presentation'**
+  String get requirePresentation;
+
+  /// No description provided for @requireDocumentation.
+  ///
+  /// In en, this message translates to:
+  /// **'Require Documentation'**
+  String get requireDocumentation;
+
+  /// No description provided for @enablePeerReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Peer Review'**
+  String get enablePeerReview;
+
+  /// No description provided for @resources.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Resources'**
+  String get resources;
+
+  /// No description provided for @resourcesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Helpful resources for the project'**
+  String get resourcesHint;
 }
 
 class _AppLocalizationsDelegate

@@ -311,6 +311,20 @@ class _InstructorDrawerState extends State<InstructorDrawer>
         category: 'main',
       ),
       _MenuItem(
+        icon: Icons.how_to_reg_outlined,
+        activeIcon: Icons.how_to_reg,
+        title: l10n.attendanceManager,
+        route: '/instructor/attendance',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.assignment_outlined,
+        activeIcon: Icons.assignment,
+        title: l10n.createAssignment,
+        route: '/instructor/create-assignment',
+        category: 'main',
+      ),
+      _MenuItem(
         icon: Icons.calendar_month_outlined,
         activeIcon: Icons.calendar_month,
         title: l10n.calendar,

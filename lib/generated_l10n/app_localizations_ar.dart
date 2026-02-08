@@ -683,7 +683,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'إنشاء اختبارات مخصصة من مواد دراستك.';
 
   @override
-  String get selectCourse => 'اختر المادة';
+  String get selectCourse => 'اختر المقرر';
 
   @override
   String get quizType => 'اختبار قصير';
@@ -692,7 +692,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get mcq => 'اختيار متعدد';
 
   @override
-  String get trueFalse => 'صحيح/خطأ';
+  String get trueFalse => 'صح / خطأ';
 
   @override
   String get shortAnswer => 'إجابة قصيرة';
@@ -704,7 +704,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get easy => 'سهل';
 
   @override
-  String get medium => 'متوسطة';
+  String get medium => 'متوسط';
 
   @override
   String get hard => 'صعب';
@@ -1057,7 +1057,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get search => 'بحث';
 
   @override
-  String get dueDate => 'تاريخ الاستحقاق';
+  String get dueDate => 'تاريخ التسليم';
 
   @override
   String get priority => 'الأولوية';
@@ -2885,7 +2885,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get sendFeedbackDesc => 'شاركنا أفكارك';
 
   @override
-  String get documentation => 'التوثيق';
+  String get documentation => 'توثيق';
 
   @override
   String get documentationDesc => 'تعلم كيفية استخدام إيدوفيرس';
@@ -4534,7 +4534,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get assignmentDetails => 'تفاصيل الواجب';
 
   @override
-  String get assignment => 'الواجب';
+  String get assignment => 'واجب';
 
   @override
   String get submittedFiles => 'الملفات المسلمة';
@@ -4603,7 +4603,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get analyticsTitle => 'الإحصائيات';
 
   @override
-  String get assignmentTitle => 'عنوان الواجب';
+  String get assignmentTitle => 'العنوان';
 
   @override
   String get enterAssignmentTitle => 'أدخل عنوان الواجب';
@@ -4823,4 +4823,307 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get gradeNow => 'صحح الآن';
+
+  @override
+  String get attendanceManager => 'مدير الحضور';
+
+  @override
+  String get trackStudentAttendance => 'تتبع وإدارة حضور الطلاب';
+
+  @override
+  String get noStudentsFound => 'لم يتم العثور على طلاب';
+
+  @override
+  String get noStudentsFoundSubtitle => 'لا يوجد طلاب يطابقون الفلتر الحالي';
+
+  @override
+  String get unmarked => 'غير محدد';
+
+  @override
+  String get allPresent => 'الكل حاضر';
+
+  @override
+  String get allAbsent => 'الكل غائب';
+
+  @override
+  String get qrScan => 'مسح QR';
+
+  @override
+  String get exportAttendance => 'تصدير';
+
+  @override
+  String get notifyStudents => 'إشعار';
+
+  @override
+  String get saveAttendance => 'حفظ الحضور';
+
+  @override
+  String get overallRate => 'المعدل الإجمالي';
+
+  @override
+  String get lastAttended => 'آخر حضور';
+
+  @override
+  String get classesAttended => 'المحاضرات التي حضرها';
+
+  @override
+  String get addNote => 'إضافة ملاحظة';
+
+  @override
+  String get saveNote => 'حفظ الملاحظة';
+
+  @override
+  String get noteSaved => 'تم حفظ الملاحظة بنجاح';
+
+  @override
+  String aiAttendanceAlert(int count) {
+    return 'اكتشف الذكاء الاصطناعي $count طلاب لديهم نسبة حضور منخفضة';
+  }
+
+  @override
+  String get selectWeek => 'اختر الأسبوع';
+
+  @override
+  String get createAssignmentTitle => 'إنشاء واجب / معمل';
+
+  @override
+  String get createAssignmentSubtitle =>
+      'استخدم الذكاء الاصطناعي لإنشاء أو تخصيص المهام';
+
+  @override
+  String get basicDetails => 'التفاصيل الأساسية';
+
+  @override
+  String get instructions => 'التعليمات';
+
+  @override
+  String get questions => 'الأسئلة';
+
+  @override
+  String get deadlineSettings => 'الموعد النهائي والإعدادات';
+
+  @override
+  String get assignmentTitleHint => 'أدخل عنوان الواجب';
+
+  @override
+  String get shortDescription => 'وصف مختصر';
+
+  @override
+  String get shortDescriptionHint => 'نظرة عامة موجزة عن الواجب';
+
+  @override
+  String get module => 'الوحدة';
+
+  @override
+  String get selectModule => 'اختر الوحدة';
+
+  @override
+  String get instructionsPlaceholder => 'اكتب تعليمات الواجب هنا...';
+
+  @override
+  String get addQuestion => 'إضافة سؤال';
+
+  @override
+  String get questionText => 'السؤال';
+
+  @override
+  String get questionType => 'النوع';
+
+  @override
+  String get points => 'النقاط';
+
+  @override
+  String get aiGenerate => 'توليد بالذكاء الاصطناعي';
+
+  @override
+  String get addHint => 'إضافة تلميح';
+
+  @override
+  String get multipleChoice => 'اختيار من متعدد';
+
+  @override
+  String get essay => 'مقالي';
+
+  @override
+  String get dragDropFiles => 'اسحب الملفات وأفلتها هنا';
+
+  @override
+  String get chooseFiles => 'اختر الملفات';
+
+  @override
+  String get dueTime => 'وقت التسليم';
+
+  @override
+  String get allowLateSubmissions => 'السماح بالتسليم المتأخر';
+
+  @override
+  String get plagiarismDetection => 'كشف الانتحال';
+
+  @override
+  String get groupWork => 'عمل جماعي';
+
+  @override
+  String get autoGrading => 'تصحيح تلقائي (اختيار من متعدد)';
+
+  @override
+  String get veryHard => 'صعب جداً';
+
+  @override
+  String get draft => 'مسودة';
+
+  @override
+  String get assignToClass => 'تعيين للفصل';
+
+  @override
+  String get draftSaved => 'تم حفظ المسودة بنجاح';
+
+  @override
+  String get fillRequiredFields => 'يرجى ملء الحقول المطلوبة';
+
+  @override
+  String get lab => 'معمل';
+
+  @override
+  String get enterHint => 'أدخل تلميح للسؤال';
+
+  @override
+  String get hintAdded => 'تمت إضافة التلميح بنجاح';
+
+  @override
+  String get aiQuestionGenerated => 'تم توليد السؤال بالذكاء الاصطناعي';
+
+  @override
+  String get questionRemoved => 'تم حذف السؤال';
+
+  @override
+  String get attachmentAdded => 'تمت إضافة المرفق';
+
+  @override
+  String get attachmentRemoved => 'تم حذف المرفق';
+
+  @override
+  String get labDetails => 'تفاصيل المعمل';
+
+  @override
+  String get labRoom => 'غرفة المعمل';
+
+  @override
+  String get selectLabRoom => 'اختر غرفة المعمل';
+
+  @override
+  String get estimatedDuration => 'المدة المقدرة';
+
+  @override
+  String get labObjectives => 'أهداف المعمل';
+
+  @override
+  String get labObjectivesHint => 'ما سيتعلمه ويحققه الطلاب';
+
+  @override
+  String get labEquipment => 'المعدات المطلوبة';
+
+  @override
+  String get labEquipmentHint => 'قائمة بجميع معدات المعمل المطلوبة';
+
+  @override
+  String get labProcedure => 'إجراءات المعمل';
+
+  @override
+  String get labProcedureHint => 'تعليمات خطوة بخطوة للمعمل';
+
+  @override
+  String get safetyRequirements => 'متطلبات السلامة';
+
+  @override
+  String get labCoat => 'معطف المعمل';
+
+  @override
+  String get safetyGlasses => 'نظارات السلامة';
+
+  @override
+  String get gloves => 'قفازات';
+
+  @override
+  String get safetyInstructions => 'تعليمات السلامة';
+
+  @override
+  String get safetyInstructionsHint => 'إرشادات السلامة المهمة';
+
+  @override
+  String get requireLabReport => 'طلب تقرير المعمل';
+
+  @override
+  String get hours => 'ساعات';
+
+  @override
+  String get projectDetails => 'تفاصيل المشروع';
+
+  @override
+  String get projectScope => 'نطاق المشروع';
+
+  @override
+  String get projectScopeHint => 'حدد حدود وأهداف المشروع';
+
+  @override
+  String get learningObjectives => 'أهداف التعلم';
+
+  @override
+  String get learningObjectivesHint => 'ما سيتعلمه الطلاب من هذا المشروع';
+
+  @override
+  String get teamConfiguration => 'تكوين الفريق';
+
+  @override
+  String get minTeamSize => 'الحد الأدنى للفريق';
+
+  @override
+  String get maxTeamSize => 'الحد الأقصى للفريق';
+
+  @override
+  String get allowIndividualWork => 'السماح بالعمل الفردي';
+
+  @override
+  String get milestones => 'المراحل';
+
+  @override
+  String get addMilestone => 'إضافة مرحلة';
+
+  @override
+  String get milestoneName => 'اسم المرحلة';
+
+  @override
+  String get milestoneDate => 'تاريخ التسليم';
+
+  @override
+  String get noMilestones => 'لا توجد مراحل مضافة بعد';
+
+  @override
+  String get deliverables => 'المخرجات';
+
+  @override
+  String get addDeliverable => 'إضافة مخرج';
+
+  @override
+  String get report => 'تقرير';
+
+  @override
+  String get demo => 'عرض توضيحي';
+
+  @override
+  String get additionalRequirements => 'متطلبات إضافية';
+
+  @override
+  String get requirePresentation => 'طلب عرض تقديمي';
+
+  @override
+  String get requireDocumentation => 'طلب توثيق';
+
+  @override
+  String get enablePeerReview => 'تفعيل مراجعة الأقران';
+
+  @override
+  String get resources => 'الموارد الموصى بها';
+
+  @override
+  String get resourcesHint => 'موارد مفيدة للمشروع';
 }

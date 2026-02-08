@@ -58,6 +58,8 @@ import 'package:edu_verse/screens/instructor/courses/instructor_courses_screen.d
 import 'package:edu_verse/screens/instructor/grading_center/grading_center_screen.dart';
 import 'package:edu_verse/screens/instructor/course_management/course_management_screen.dart';
 import 'package:edu_verse/screens/instructor/announcements/announcement_manager_screen.dart';
+import 'package:edu_verse/screens/instructor/attendance/attendance_manager_screen.dart';
+import 'package:edu_verse/screens/instructor/create_assignment/create_assignment_screen.dart';
 import 'package:edu_verse/models/instructor/instructor_course_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -358,6 +360,14 @@ class AppRouter {
       GoRoute(
         path: '/instructor/announcements',
         builder: (context, state) => const AnnouncementManagerScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/attendance',
+        builder: (context, state) => const AttendanceManagerScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/create-assignment',
+        builder: (context, state) => const CreateAssignmentScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

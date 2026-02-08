@@ -4615,7 +4615,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get analyticsTitle => 'Analytics';
 
   @override
-  String get assignmentTitle => 'Assignment Title';
+  String get assignmentTitle => 'Title';
 
   @override
   String get enterAssignmentTitle => 'Enter assignment title';
@@ -4835,4 +4835,309 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gradeNow => 'Grade Now';
+
+  @override
+  String get attendanceManager => 'Attendance Manager';
+
+  @override
+  String get trackStudentAttendance => 'Track and manage student attendance';
+
+  @override
+  String get noStudentsFound => 'No Students Found';
+
+  @override
+  String get noStudentsFoundSubtitle => 'No students match your current filter';
+
+  @override
+  String get unmarked => 'Unmarked';
+
+  @override
+  String get allPresent => 'All Present';
+
+  @override
+  String get allAbsent => 'All Absent';
+
+  @override
+  String get qrScan => 'QR Scan';
+
+  @override
+  String get exportAttendance => 'Export';
+
+  @override
+  String get notifyStudents => 'Notify';
+
+  @override
+  String get saveAttendance => 'Save Attendance';
+
+  @override
+  String get overallRate => 'Overall Rate';
+
+  @override
+  String get lastAttended => 'Last Attended';
+
+  @override
+  String get classesAttended => 'Classes Attended';
+
+  @override
+  String get addNote => 'Add Note';
+
+  @override
+  String get saveNote => 'Save Note';
+
+  @override
+  String get noteSaved => 'Note saved successfully';
+
+  @override
+  String aiAttendanceAlert(int count) {
+    return 'AI detected $count students with low attendance';
+  }
+
+  @override
+  String get selectWeek => 'Select Week';
+
+  @override
+  String get createAssignmentTitle => 'Create Assignment / Lab';
+
+  @override
+  String get createAssignmentSubtitle =>
+      'Use AI to generate or customize tasks';
+
+  @override
+  String get basicDetails => 'Basic Details';
+
+  @override
+  String get instructions => 'Instructions';
+
+  @override
+  String get questions => 'Questions';
+
+  @override
+  String get deadlineSettings => 'Deadline & Settings';
+
+  @override
+  String get assignmentTitleHint => 'Enter assignment title';
+
+  @override
+  String get shortDescription => 'Short Description';
+
+  @override
+  String get shortDescriptionHint => 'Brief overview of the assignment';
+
+  @override
+  String get module => 'Module';
+
+  @override
+  String get selectModule => 'Select Module';
+
+  @override
+  String get instructionsPlaceholder => 'Write assignment instructions here...';
+
+  @override
+  String get addQuestion => 'Add Question';
+
+  @override
+  String get questionText => 'Question';
+
+  @override
+  String get questionType => 'Type';
+
+  @override
+  String get points => 'Points';
+
+  @override
+  String get aiGenerate => 'AI Generate';
+
+  @override
+  String get addHint => 'Add Hint';
+
+  @override
+  String get multipleChoice => 'Multiple Choice';
+
+  @override
+  String get essay => 'Essay';
+
+  @override
+  String get dragDropFiles => 'Drag and drop files here';
+
+  @override
+  String get chooseFiles => 'Choose Files';
+
+  @override
+  String get dueTime => 'Due Time';
+
+  @override
+  String get allowLateSubmissions => 'Allow Late Submissions';
+
+  @override
+  String get plagiarismDetection => 'Plagiarism Detection';
+
+  @override
+  String get groupWork => 'Group Work';
+
+  @override
+  String get autoGrading => 'Auto-Grading (MCQ)';
+
+  @override
+  String get veryHard => 'Very Hard';
+
+  @override
+  String get draft => 'Draft';
+
+  @override
+  String get assignToClass => 'Assign to Class';
+
+  @override
+  String get draftSaved => 'Draft saved successfully';
+
+  @override
+  String get fillRequiredFields => 'Please fill in required fields';
+
+  @override
+  String get lab => 'Lab';
+
+  @override
+  String get enterHint => 'Enter hint for the question';
+
+  @override
+  String get hintAdded => 'Hint added successfully';
+
+  @override
+  String get aiQuestionGenerated => 'AI question generated';
+
+  @override
+  String get questionRemoved => 'Question removed';
+
+  @override
+  String get attachmentAdded => 'Attachment added';
+
+  @override
+  String get attachmentRemoved => 'Attachment removed';
+
+  @override
+  String get labDetails => 'Lab Details';
+
+  @override
+  String get labRoom => 'Lab Room';
+
+  @override
+  String get selectLabRoom => 'Select Lab Room';
+
+  @override
+  String get estimatedDuration => 'Estimated Duration';
+
+  @override
+  String get labObjectives => 'Lab Objectives';
+
+  @override
+  String get labObjectivesHint => 'What students will learn and achieve';
+
+  @override
+  String get labEquipment => 'Required Equipment';
+
+  @override
+  String get labEquipmentHint => 'List all required lab equipment';
+
+  @override
+  String get labProcedure => 'Lab Procedure';
+
+  @override
+  String get labProcedureHint => 'Step-by-step instructions for the lab';
+
+  @override
+  String get safetyRequirements => 'Safety Requirements';
+
+  @override
+  String get labCoat => 'Lab Coat';
+
+  @override
+  String get safetyGlasses => 'Safety Glasses';
+
+  @override
+  String get gloves => 'Gloves';
+
+  @override
+  String get safetyInstructions => 'Safety Instructions';
+
+  @override
+  String get safetyInstructionsHint => 'Important safety guidelines';
+
+  @override
+  String get requireLabReport => 'Require Lab Report';
+
+  @override
+  String get hours => 'hours';
+
+  @override
+  String get projectDetails => 'Project Details';
+
+  @override
+  String get projectScope => 'Project Scope';
+
+  @override
+  String get projectScopeHint =>
+      'Define the boundaries and goals of the project';
+
+  @override
+  String get learningObjectives => 'Learning Objectives';
+
+  @override
+  String get learningObjectivesHint =>
+      'What students will learn from this project';
+
+  @override
+  String get teamConfiguration => 'Team Configuration';
+
+  @override
+  String get minTeamSize => 'Min Team Size';
+
+  @override
+  String get maxTeamSize => 'Max Team Size';
+
+  @override
+  String get allowIndividualWork => 'Allow Individual Work';
+
+  @override
+  String get milestones => 'Milestones';
+
+  @override
+  String get addMilestone => 'Add Milestone';
+
+  @override
+  String get milestoneName => 'Milestone Name';
+
+  @override
+  String get milestoneDate => 'Due Date';
+
+  @override
+  String get noMilestones => 'No milestones added yet';
+
+  @override
+  String get deliverables => 'Deliverables';
+
+  @override
+  String get addDeliverable => 'Add Deliverable';
+
+  @override
+  String get report => 'Report';
+
+  @override
+  String get demo => 'Demo';
+
+  @override
+  String get additionalRequirements => 'Additional Requirements';
+
+  @override
+  String get requirePresentation => 'Require Presentation';
+
+  @override
+  String get requireDocumentation => 'Require Documentation';
+
+  @override
+  String get enablePeerReview => 'Enable Peer Review';
+
+  @override
+  String get resources => 'Recommended Resources';
+
+  @override
+  String get resourcesHint => 'Helpful resources for the project';
 }
