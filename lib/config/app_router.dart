@@ -52,6 +52,12 @@ import 'package:edu_verse/screens/student/search/overall_search_screen.dart';
 import 'package:edu_verse/screens/student/calendar/calendar_screen.dart';
 import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
+// Instructor screens
+import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_screen.dart';
+import 'package:edu_verse/screens/instructor/courses/instructor_courses_screen.dart';
+import 'package:edu_verse/screens/instructor/grading_center/grading_center_screen.dart';
+import 'package:edu_verse/screens/instructor/course_management/course_management_screen.dart';
+import 'package:edu_verse/models/instructor/instructor_course_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
@@ -326,6 +332,27 @@ class AppRouter {
       GoRoute(
         path: '/settings/share-app/apk',
         builder: (context, state) => const ApkShareScreen(),
+      ),
+      
+      // ============ INSTRUCTOR ROUTES ============
+      GoRoute(
+        path: '/instructor/dashboard',
+        builder: (context, state) => const InstructorDashboardScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/courses',
+        builder: (context, state) => const InstructorCoursesScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/grading',
+        builder: (context, state) => const GradingCenterScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/course-management',
+        builder: (context, state) {
+          final course = state.extra as InstructorCourseModel?;
+          return CourseManagementScreen(course: course);
+        },
       ),
     ],
     errorBuilder: (context, state) =>

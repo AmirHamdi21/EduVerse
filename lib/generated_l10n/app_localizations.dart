@@ -845,7 +845,7 @@ abstract class AppLocalizations {
   /// No description provided for @instructorGrading.
   ///
   /// In en, this message translates to:
-  /// **'Simplify grading and focus on teaching impact.'**
+  /// **'Grading'**
   String get instructorGrading;
 
   /// No description provided for @aiForAdmins.
@@ -2201,7 +2201,7 @@ abstract class AppLocalizations {
   /// No description provided for @enterDescription.
   ///
   /// In en, this message translates to:
-  /// **'Enter description (optional)'**
+  /// **'Enter description'**
   String get enterDescription;
 
   /// No description provided for @saveChanges.
@@ -2459,7 +2459,7 @@ abstract class AppLocalizations {
   /// No description provided for @tryAdjustingFilters.
   ///
   /// In en, this message translates to:
-  /// **'Try adjusting your filters'**
+  /// **'Try adjusting your filters or search terms'**
   String get tryAdjustingFilters;
 
   /// No description provided for @filterByGrade.
@@ -8587,6 +8587,600 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Note: The recipient may need to enable \'Install from unknown sources\' in their device settings'**
   String get installationNote;
+
+  /// No description provided for @instructorDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Dashboard'**
+  String get instructorDashboard;
+
+  /// No description provided for @totalStudentsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Students'**
+  String get totalStudentsLabel;
+
+  /// No description provided for @pendingGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Grading'**
+  String get pendingGrading;
+
+  /// No description provided for @pendingQuizzes.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Quizzes'**
+  String get pendingQuizzes;
+
+  /// No description provided for @unreadMessagesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unread Messages'**
+  String get unreadMessagesLabel;
+
+  /// No description provided for @quickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get quickActions;
+
+  /// No description provided for @createAssignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Assignment'**
+  String get createAssignment;
+
+  /// No description provided for @uploadMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Material'**
+  String get uploadMaterial;
+
+  /// No description provided for @openCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Course'**
+  String get openCourse;
+
+  /// No description provided for @askAiAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI Assistant'**
+  String get askAiAssistant;
+
+  /// No description provided for @viewAllCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'View All Courses'**
+  String get viewAllCourses;
+
+  /// No description provided for @students.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get students;
+
+  /// No description provided for @courseCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Code'**
+  String get courseCode;
+
+  /// No description provided for @courseName.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Name'**
+  String get courseName;
+
+  /// No description provided for @enterCourseName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter course name'**
+  String get enterCourseName;
+
+  /// No description provided for @courseCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Course created successfully'**
+  String get courseCreated;
+
+  /// No description provided for @createCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Course'**
+  String get createCourse;
+
+  /// No description provided for @editCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Course'**
+  String get editCourse;
+
+  /// No description provided for @manageStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Students'**
+  String get manageStudents;
+
+  /// No description provided for @viewAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'View Analytics'**
+  String get viewAnalytics;
+
+  /// No description provided for @archiveCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive Course'**
+  String get archiveCourse;
+
+  /// No description provided for @gradingCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading Center'**
+  String get gradingCenter;
+
+  /// No description provided for @totalSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Submissions'**
+  String get totalSubmissions;
+
+  /// No description provided for @averageGrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Average Grade'**
+  String get averageGrade;
+
+  /// No description provided for @completionRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Completion Rate'**
+  String get completionRate;
+
+  /// No description provided for @submissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Submissions'**
+  String get submissions;
+
+  /// No description provided for @searchStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Search students...'**
+  String get searchStudents;
+
+  /// No description provided for @allCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'All Courses'**
+  String get allCourses;
+
+  /// No description provided for @noPendingSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending submissions'**
+  String get noPendingSubmissions;
+
+  /// No description provided for @noGradedSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'No graded submissions yet'**
+  String get noGradedSubmissions;
+
+  /// No description provided for @noLateSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Great! No late submissions'**
+  String get noLateSubmissions;
+
+  /// No description provided for @noSubmissionsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No submissions found'**
+  String get noSubmissionsFound;
+
+  /// No description provided for @gradeSubmission.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade Submission'**
+  String get gradeSubmission;
+
+  /// No description provided for @grade.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade'**
+  String get grade;
+
+  /// No description provided for @quickGrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Grade'**
+  String get quickGrade;
+
+  /// No description provided for @feedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get feedback;
+
+  /// No description provided for @quickFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Feedback'**
+  String get quickFeedback;
+
+  /// No description provided for @enterFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your feedback for the student...'**
+  String get enterFeedback;
+
+  /// No description provided for @submitGrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Grade'**
+  String get submitGrade;
+
+  /// No description provided for @gradeSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade submitted successfully'**
+  String get gradeSubmitted;
+
+  /// No description provided for @editGrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Grade'**
+  String get editGrade;
+
+  /// No description provided for @viewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
+
+  /// No description provided for @assignmentDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment Details'**
+  String get assignmentDetails;
+
+  /// No description provided for @assignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment'**
+  String get assignment;
+
+  /// No description provided for @submittedFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted Files'**
+  String get submittedFiles;
+
+  /// No description provided for @gradeInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade Information'**
+  String get gradeInfo;
+
+  /// No description provided for @percentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Percentage'**
+  String get percentage;
+
+  /// No description provided for @exportGrades.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Grades'**
+  String get exportGrades;
+
+  /// No description provided for @gradingSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading Settings'**
+  String get gradingSettings;
+
+  /// No description provided for @day.
+  ///
+  /// In en, this message translates to:
+  /// **'day'**
+  String get day;
+
+  /// No description provided for @courseMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Materials'**
+  String get courseMaterials;
+
+  /// No description provided for @courseAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcements'**
+  String get courseAnnouncements;
+
+  /// No description provided for @courseStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get courseStudents;
+
+  /// No description provided for @courseAssignments.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments'**
+  String get courseAssignments;
+
+  /// No description provided for @instructorCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Courses'**
+  String get instructorCourses;
+
+  /// No description provided for @type.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get type;
+
+  /// No description provided for @courseProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Progress'**
+  String get courseProgress;
+
+  /// No description provided for @pendingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pendingLabel;
+
+  /// No description provided for @quizzesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quizzes'**
+  String get quizzesLabel;
+
+  /// No description provided for @messagesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get messagesLabel;
+
+  /// No description provided for @nextClass.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Class'**
+  String get nextClass;
+
+  /// No description provided for @activeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get activeLabel;
+
+  /// No description provided for @progress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get progress;
+
+  /// No description provided for @studentCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Count'**
+  String get studentCount;
+
+  /// No description provided for @createFirstCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first course'**
+  String get createFirstCourse;
+
+  /// No description provided for @analyticsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get analyticsTitle;
+
+  /// No description provided for @assignmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment Title'**
+  String get assignmentTitle;
+
+  /// No description provided for @enterAssignmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter assignment title'**
+  String get enterAssignmentTitle;
+
+  /// No description provided for @assignmentCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment created successfully'**
+  String get assignmentCreated;
+
+  /// No description provided for @dragAndDropFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag and drop files here'**
+  String get dragAndDropFiles;
+
+  /// No description provided for @orBrowseFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'or browse files'**
+  String get orBrowseFiles;
+
+  /// No description provided for @materialUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Material uploaded successfully'**
+  String get materialUploaded;
+
+  /// No description provided for @browseFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Files'**
+  String get browseFiles;
+
+  /// No description provided for @sendMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Message'**
+  String get sendMessage;
+
+  /// No description provided for @viewGrades.
+  ///
+  /// In en, this message translates to:
+  /// **'View Grades'**
+  String get viewGrades;
+
+  /// No description provided for @postAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Post Announcement'**
+  String get postAnnouncement;
+
+  /// No description provided for @myCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'My Courses'**
+  String get myCourses;
+
+  /// No description provided for @archived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get archived;
+
+  /// No description provided for @goodMorning.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Morning'**
+  String get goodMorning;
+
+  /// No description provided for @goodAfternoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Afternoon'**
+  String get goodAfternoon;
+
+  /// No description provided for @aiTeachingOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Teaching Overview'**
+  String get aiTeachingOverview;
+
+  /// No description provided for @dashboardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore AI-assisted course insights — here are your priority actions today.'**
+  String get dashboardSubtitle;
+
+  /// No description provided for @assignmentsPendingGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments Pending Grading'**
+  String get assignmentsPendingGrading;
+
+  /// No description provided for @studentsAtRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Students At Risk (Low Progress)'**
+  String get studentsAtRisk;
+
+  /// No description provided for @submissionsToReview.
+  ///
+  /// In en, this message translates to:
+  /// **'submissions to review'**
+  String get submissionsToReview;
+
+  /// No description provided for @nextDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Next {count} days'**
+  String nextDays(int count);
+
+  /// No description provided for @viewFullCalendar.
+  ///
+  /// In en, this message translates to:
+  /// **'View Full Calendar'**
+  String get viewFullCalendar;
+
+  /// No description provided for @calendarComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar feature coming soon'**
+  String get calendarComingSoon;
+
+  /// No description provided for @messagesComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages feature coming soon'**
+  String get messagesComingSoon;
+
+  /// No description provided for @helpComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support coming soon'**
+  String get helpComingSoon;
+
+  /// No description provided for @helpSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Support'**
+  String get helpSupport;
+
+  /// No description provided for @noMaterialsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No materials uploaded yet'**
+  String get noMaterialsYet;
+
+  /// No description provided for @noAnnouncementsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No announcements yet'**
+  String get noAnnouncementsYet;
+
+  /// No description provided for @announcementPosted.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement posted successfully'**
+  String get announcementPosted;
+
+  /// No description provided for @newAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newAnnouncement;
+
+  /// No description provided for @analyticsComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics feature coming soon'**
+  String get analyticsComingSoon;
+
+  /// No description provided for @activeQuizzes.
+  ///
+  /// In en, this message translates to:
+  /// **'active quizzes'**
+  String get activeQuizzes;
+
+  /// No description provided for @newItems.
+  ///
+  /// In en, this message translates to:
+  /// **'new items'**
+  String get newItems;
+
+  /// No description provided for @gradeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade Now'**
+  String get gradeNow;
 }
 
 class _AppLocalizationsDelegate

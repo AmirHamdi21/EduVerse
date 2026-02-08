@@ -390,7 +390,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get instructorRecommendations => 'توصيات التدريس المُنشأة تلقائياً';
 
   @override
-  String get instructorGrading => 'تبسيط التقييم والتركيز على تأثير التدريس';
+  String get instructorGrading => 'التصحيح';
 
   @override
   String get aiForAdmins => 'الذكاء الاصطناعي للمسؤولين';
@@ -468,7 +468,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get attendance => 'الحضور';
 
   @override
-  String get myCoursesSection => 'دوراتي';
+  String get myCoursesSection => 'موادي';
 
   @override
   String get toDoSmartReminders => 'قائمة المهام / التذكيرات الذكية';
@@ -549,7 +549,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get prepareDataStructuresQuiz => 'الاستعداد لاختبار هياكل البيانات';
 
   @override
-  String get due => 'الموعد النهائي';
+  String get due => 'الموعد';
 
   @override
   String get introductionToAI => 'مقدمة إلى الذكاء الاصطناعي';
@@ -1020,7 +1020,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get todayTasks => 'اليوم';
 
   @override
-  String get pending => 'قيد الانتظار';
+  String get pending => 'معلق';
 
   @override
   String get overdue => 'متأخر';
@@ -1108,7 +1108,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get enterTaskTitle => 'أدخل عنوان المهمة';
 
   @override
-  String get enterDescription => 'أدخل الوصف (اختياري)';
+  String get enterDescription => 'أدخل الوصف';
 
   @override
   String get saveChanges => 'حفظ التغييرات';
@@ -1182,10 +1182,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get clearFilters => 'مسح الفلاتر';
 
   @override
-  String get submitted => 'مُسلَّم';
+  String get submitted => 'تم التسليم';
 
   @override
-  String get graded => 'مُصحح';
+  String get graded => 'تم التصحيح';
 
   @override
   String get gradedAssignments => 'واجبات مصححة';
@@ -1236,10 +1236,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get needsAttention => 'يحتاج اهتمام';
 
   @override
-  String get noCoursesFound => 'لا توجد مقررات';
+  String get noCoursesFound => 'لم يتم العثور على مواد';
 
   @override
-  String get tryAdjustingFilters => 'حاول تعديل الفلاتر';
+  String get tryAdjustingFilters => 'حاول تعديل الفلاتر أو مصطلحات البحث';
 
   @override
   String get filterByGrade => 'تصفية حسب التقدير';
@@ -4403,4 +4403,304 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get installationNote =>
       'ملاحظة: قد يحتاج المستلم لتفعيل \'التثبيت من مصادر غير معروفة\' في إعدادات جهازه';
+
+  @override
+  String get instructorDashboard => 'لوحة تحكم المدرب';
+
+  @override
+  String get totalStudentsLabel => 'إجمالي الطلاب';
+
+  @override
+  String get pendingGrading => 'التصحيح المعلق';
+
+  @override
+  String get pendingQuizzes => 'الاختبارات المعلقة';
+
+  @override
+  String get unreadMessagesLabel => 'الرسائل غير المقروءة';
+
+  @override
+  String get quickActions => 'إجراءات سريعة';
+
+  @override
+  String get createAssignment => 'إنشاء واجب';
+
+  @override
+  String get uploadMaterial => 'رفع مادة';
+
+  @override
+  String get openCourse => 'فتح المادة';
+
+  @override
+  String get askAiAssistant => 'سؤال مساعد الذكاء الاصطناعي';
+
+  @override
+  String get viewAllCourses => 'عرض جميع المواد';
+
+  @override
+  String get students => 'الطلاب';
+
+  @override
+  String get courseCode => 'رمز المادة';
+
+  @override
+  String get courseName => 'اسم المادة';
+
+  @override
+  String get enterCourseName => 'أدخل اسم المادة';
+
+  @override
+  String get courseCreated => 'تم إنشاء المادة بنجاح';
+
+  @override
+  String get createCourse => 'إنشاء مادة';
+
+  @override
+  String get editCourse => 'تعديل المادة';
+
+  @override
+  String get manageStudents => 'إدارة الطلاب';
+
+  @override
+  String get viewAnalytics => 'عرض التحليلات';
+
+  @override
+  String get archiveCourse => 'أرشفة المادة';
+
+  @override
+  String get gradingCenter => 'مركز التصحيح';
+
+  @override
+  String get totalSubmissions => 'إجمالي التسليمات';
+
+  @override
+  String get averageGrade => 'متوسط الدرجة';
+
+  @override
+  String get completionRate => 'معدل الإنجاز';
+
+  @override
+  String get submissions => 'التسليمات';
+
+  @override
+  String get searchStudents => 'البحث عن طلاب...';
+
+  @override
+  String get allCourses => 'جميع المواد';
+
+  @override
+  String get noPendingSubmissions => 'لا توجد تسليمات معلقة';
+
+  @override
+  String get noGradedSubmissions => 'لا توجد تسليمات مصححة بعد';
+
+  @override
+  String get noLateSubmissions => 'رائع! لا توجد تسليمات متأخرة';
+
+  @override
+  String get noSubmissionsFound => 'لم يتم العثور على تسليمات';
+
+  @override
+  String get gradeSubmission => 'تصحيح التسليم';
+
+  @override
+  String get grade => 'الدرجة';
+
+  @override
+  String get quickGrade => 'تصحيح سريع';
+
+  @override
+  String get feedback => 'الملاحظات';
+
+  @override
+  String get quickFeedback => 'ملاحظات سريعة';
+
+  @override
+  String get enterFeedback => 'أدخل ملاحظاتك للطالب...';
+
+  @override
+  String get submitGrade => 'إرسال الدرجة';
+
+  @override
+  String get gradeSubmitted => 'تم إرسال الدرجة بنجاح';
+
+  @override
+  String get editGrade => 'تعديل الدرجة';
+
+  @override
+  String get viewDetails => 'عرض التفاصيل';
+
+  @override
+  String get assignmentDetails => 'تفاصيل الواجب';
+
+  @override
+  String get assignment => 'الواجب';
+
+  @override
+  String get submittedFiles => 'الملفات المسلمة';
+
+  @override
+  String get gradeInfo => 'معلومات الدرجة';
+
+  @override
+  String get percentage => 'النسبة المئوية';
+
+  @override
+  String get exportGrades => 'تصدير الدرجات';
+
+  @override
+  String get gradingSettings => 'إعدادات التصحيح';
+
+  @override
+  String get day => 'يوم';
+
+  @override
+  String get courseMaterials => 'مواد المادة';
+
+  @override
+  String get courseAnnouncements => 'الإعلانات';
+
+  @override
+  String get courseStudents => 'الطلاب';
+
+  @override
+  String get courseAssignments => 'الواجبات';
+
+  @override
+  String get instructorCourses => 'مواد المدرب';
+
+  @override
+  String get type => 'النوع';
+
+  @override
+  String get courseProgress => 'تقدم المادة';
+
+  @override
+  String get pendingLabel => 'معلق';
+
+  @override
+  String get quizzesLabel => 'الاختبارات';
+
+  @override
+  String get messagesLabel => 'الرسائل';
+
+  @override
+  String get nextClass => 'الحصة القادمة';
+
+  @override
+  String get activeLabel => 'نشط';
+
+  @override
+  String get progress => 'التقدم';
+
+  @override
+  String get studentCount => 'عدد الطلاب';
+
+  @override
+  String get createFirstCourse => 'أنشئ مادتك الأولى';
+
+  @override
+  String get analyticsTitle => 'الإحصائيات';
+
+  @override
+  String get assignmentTitle => 'عنوان الواجب';
+
+  @override
+  String get enterAssignmentTitle => 'أدخل عنوان الواجب';
+
+  @override
+  String get assignmentCreated => 'تم إنشاء الواجب بنجاح';
+
+  @override
+  String get dragAndDropFiles => 'اسحب وأفلت الملفات هنا';
+
+  @override
+  String get orBrowseFiles => 'أو تصفح الملفات';
+
+  @override
+  String get materialUploaded => 'تم رفع المادة بنجاح';
+
+  @override
+  String get browseFiles => 'تصفح الملفات';
+
+  @override
+  String get sendMessage => 'إرسال رسالة';
+
+  @override
+  String get viewGrades => 'عرض الدرجات';
+
+  @override
+  String get postAnnouncement => 'نشر إعلان';
+
+  @override
+  String get myCourses => 'موادي';
+
+  @override
+  String get archived => 'مؤرشفة';
+
+  @override
+  String get goodMorning => 'صباح الخير';
+
+  @override
+  String get goodAfternoon => 'مساء الخير';
+
+  @override
+  String get aiTeachingOverview => 'نظرة عامة على التدريس بالذكاء الاصطناعي';
+
+  @override
+  String get dashboardSubtitle =>
+      'استكشف رؤى المقررات المدعومة بالذكاء الاصطناعي — إليك إجراءاتك ذات الأولوية اليوم.';
+
+  @override
+  String get assignmentsPendingGrading => 'واجبات في انتظار التصحيح';
+
+  @override
+  String get studentsAtRisk => 'طلاب معرضون للخطر (تقدم منخفض)';
+
+  @override
+  String get submissionsToReview => 'تسليمات للمراجعة';
+
+  @override
+  String nextDays(int count) {
+    return 'الأيام الـ $count القادمة';
+  }
+
+  @override
+  String get viewFullCalendar => 'عرض التقويم الكامل';
+
+  @override
+  String get calendarComingSoon => 'ميزة التقويم قادمة قريباً';
+
+  @override
+  String get messagesComingSoon => 'ميزة الرسائل قادمة قريباً';
+
+  @override
+  String get helpComingSoon => 'المساعدة والدعم قادمة قريباً';
+
+  @override
+  String get helpSupport => 'المساعدة والدعم';
+
+  @override
+  String get noMaterialsYet => 'لم يتم رفع مواد بعد';
+
+  @override
+  String get noAnnouncementsYet => 'لا توجد إعلانات بعد';
+
+  @override
+  String get announcementPosted => 'تم نشر الإعلان بنجاح';
+
+  @override
+  String get newAnnouncement => 'جديد';
+
+  @override
+  String get analyticsComingSoon => 'ميزة الإحصائيات قادمة قريباً';
+
+  @override
+  String get activeQuizzes => 'اختبارات نشطة';
+
+  @override
+  String get newItems => 'عناصر جديدة';
+
+  @override
+  String get gradeNow => 'صحح الآن';
 }

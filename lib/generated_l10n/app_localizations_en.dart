@@ -389,8 +389,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Auto-Generated Teaching Recommendations';
 
   @override
-  String get instructorGrading =>
-      'Simplify grading and focus on teaching impact.';
+  String get instructorGrading => 'Grading';
 
   @override
   String get aiForAdmins => 'AI for Admins';
@@ -1112,7 +1111,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterTaskTitle => 'Enter task title';
 
   @override
-  String get enterDescription => 'Enter description (optional)';
+  String get enterDescription => 'Enter description';
 
   @override
   String get saveChanges => 'Save Changes';
@@ -1244,7 +1243,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noCoursesFound => 'No Courses Found';
 
   @override
-  String get tryAdjustingFilters => 'Try adjusting your filters';
+  String get tryAdjustingFilters =>
+      'Try adjusting your filters or search terms';
 
   @override
   String get filterByGrade => 'Filter by Grade';
@@ -4416,4 +4416,304 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get installationNote =>
       'Note: The recipient may need to enable \'Install from unknown sources\' in their device settings';
+
+  @override
+  String get instructorDashboard => 'Instructor Dashboard';
+
+  @override
+  String get totalStudentsLabel => 'Total Students';
+
+  @override
+  String get pendingGrading => 'Pending Grading';
+
+  @override
+  String get pendingQuizzes => 'Pending Quizzes';
+
+  @override
+  String get unreadMessagesLabel => 'Unread Messages';
+
+  @override
+  String get quickActions => 'Quick Actions';
+
+  @override
+  String get createAssignment => 'Create Assignment';
+
+  @override
+  String get uploadMaterial => 'Upload Material';
+
+  @override
+  String get openCourse => 'Open Course';
+
+  @override
+  String get askAiAssistant => 'Ask AI Assistant';
+
+  @override
+  String get viewAllCourses => 'View All Courses';
+
+  @override
+  String get students => 'Students';
+
+  @override
+  String get courseCode => 'Course Code';
+
+  @override
+  String get courseName => 'Course Name';
+
+  @override
+  String get enterCourseName => 'Enter course name';
+
+  @override
+  String get courseCreated => 'Course created successfully';
+
+  @override
+  String get createCourse => 'Create Course';
+
+  @override
+  String get editCourse => 'Edit Course';
+
+  @override
+  String get manageStudents => 'Manage Students';
+
+  @override
+  String get viewAnalytics => 'View Analytics';
+
+  @override
+  String get archiveCourse => 'Archive Course';
+
+  @override
+  String get gradingCenter => 'Grading Center';
+
+  @override
+  String get totalSubmissions => 'Total Submissions';
+
+  @override
+  String get averageGrade => 'Average Grade';
+
+  @override
+  String get completionRate => 'Completion Rate';
+
+  @override
+  String get submissions => 'Submissions';
+
+  @override
+  String get searchStudents => 'Search students...';
+
+  @override
+  String get allCourses => 'All Courses';
+
+  @override
+  String get noPendingSubmissions => 'No pending submissions';
+
+  @override
+  String get noGradedSubmissions => 'No graded submissions yet';
+
+  @override
+  String get noLateSubmissions => 'Great! No late submissions';
+
+  @override
+  String get noSubmissionsFound => 'No submissions found';
+
+  @override
+  String get gradeSubmission => 'Grade Submission';
+
+  @override
+  String get grade => 'Grade';
+
+  @override
+  String get quickGrade => 'Quick Grade';
+
+  @override
+  String get feedback => 'Feedback';
+
+  @override
+  String get quickFeedback => 'Quick Feedback';
+
+  @override
+  String get enterFeedback => 'Enter your feedback for the student...';
+
+  @override
+  String get submitGrade => 'Submit Grade';
+
+  @override
+  String get gradeSubmitted => 'Grade submitted successfully';
+
+  @override
+  String get editGrade => 'Edit Grade';
+
+  @override
+  String get viewDetails => 'View Details';
+
+  @override
+  String get assignmentDetails => 'Assignment Details';
+
+  @override
+  String get assignment => 'Assignment';
+
+  @override
+  String get submittedFiles => 'Submitted Files';
+
+  @override
+  String get gradeInfo => 'Grade Information';
+
+  @override
+  String get percentage => 'Percentage';
+
+  @override
+  String get exportGrades => 'Export Grades';
+
+  @override
+  String get gradingSettings => 'Grading Settings';
+
+  @override
+  String get day => 'day';
+
+  @override
+  String get courseMaterials => 'Course Materials';
+
+  @override
+  String get courseAnnouncements => 'Announcements';
+
+  @override
+  String get courseStudents => 'Students';
+
+  @override
+  String get courseAssignments => 'Assignments';
+
+  @override
+  String get instructorCourses => 'Instructor Courses';
+
+  @override
+  String get type => 'Type';
+
+  @override
+  String get courseProgress => 'Course Progress';
+
+  @override
+  String get pendingLabel => 'Pending';
+
+  @override
+  String get quizzesLabel => 'Quizzes';
+
+  @override
+  String get messagesLabel => 'Messages';
+
+  @override
+  String get nextClass => 'Next Class';
+
+  @override
+  String get activeLabel => 'Active';
+
+  @override
+  String get progress => 'Progress';
+
+  @override
+  String get studentCount => 'Student Count';
+
+  @override
+  String get createFirstCourse => 'Create your first course';
+
+  @override
+  String get analyticsTitle => 'Analytics';
+
+  @override
+  String get assignmentTitle => 'Assignment Title';
+
+  @override
+  String get enterAssignmentTitle => 'Enter assignment title';
+
+  @override
+  String get assignmentCreated => 'Assignment created successfully';
+
+  @override
+  String get dragAndDropFiles => 'Drag and drop files here';
+
+  @override
+  String get orBrowseFiles => 'or browse files';
+
+  @override
+  String get materialUploaded => 'Material uploaded successfully';
+
+  @override
+  String get browseFiles => 'Browse Files';
+
+  @override
+  String get sendMessage => 'Send Message';
+
+  @override
+  String get viewGrades => 'View Grades';
+
+  @override
+  String get postAnnouncement => 'Post Announcement';
+
+  @override
+  String get myCourses => 'My Courses';
+
+  @override
+  String get archived => 'Archived';
+
+  @override
+  String get goodMorning => 'Good Morning';
+
+  @override
+  String get goodAfternoon => 'Good Afternoon';
+
+  @override
+  String get aiTeachingOverview => 'AI Teaching Overview';
+
+  @override
+  String get dashboardSubtitle =>
+      'Explore AI-assisted course insights — here are your priority actions today.';
+
+  @override
+  String get assignmentsPendingGrading => 'Assignments Pending Grading';
+
+  @override
+  String get studentsAtRisk => 'Students At Risk (Low Progress)';
+
+  @override
+  String get submissionsToReview => 'submissions to review';
+
+  @override
+  String nextDays(int count) {
+    return 'Next $count days';
+  }
+
+  @override
+  String get viewFullCalendar => 'View Full Calendar';
+
+  @override
+  String get calendarComingSoon => 'Calendar feature coming soon';
+
+  @override
+  String get messagesComingSoon => 'Messages feature coming soon';
+
+  @override
+  String get helpComingSoon => 'Help & Support coming soon';
+
+  @override
+  String get helpSupport => 'Help & Support';
+
+  @override
+  String get noMaterialsYet => 'No materials uploaded yet';
+
+  @override
+  String get noAnnouncementsYet => 'No announcements yet';
+
+  @override
+  String get announcementPosted => 'Announcement posted successfully';
+
+  @override
+  String get newAnnouncement => 'New';
+
+  @override
+  String get analyticsComingSoon => 'Analytics feature coming soon';
+
+  @override
+  String get activeQuizzes => 'active quizzes';
+
+  @override
+  String get newItems => 'new items';
+
+  @override
+  String get gradeNow => 'Grade Now';
 }

@@ -809,7 +809,8 @@ class _LoginScreenState extends State<LoginScreen>
                     top: responsive.safeAreaTop + responsive.p8,
                     child: IconButton(
                       onPressed: () {
-                        context.go('/dashboard');
+                        // context.go('/dashboard');
+                        context.go('/instructor/dashboard');
                       },
                       icon: Icon(Icons.home),
                     ),
