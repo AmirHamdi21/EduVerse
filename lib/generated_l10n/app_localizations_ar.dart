@@ -4245,4 +4245,162 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get onboardingDescription4 =>
       'انضم إلى آلاف الطلاب الذين يحققون أهدافهم الأكاديمية. رحلتك نحو تعلم أذكى تبدأ الآن.';
+
+  @override
+  String get shareApp => 'مشاركة التطبيق';
+
+  @override
+  String get shareAppDesc => 'شارك EduVerse مع أصدقائك';
+
+  @override
+  String get shareAppTitle => 'مشاركة EduVerse';
+
+  @override
+  String get shareAppSubtitle => 'ساعد أصدقاءك على اكتشاف مستقبل التعلم الذكي';
+
+  @override
+  String get chooseShareMethod => 'اختر طريقة المشاركة';
+
+  @override
+  String get shareViaQrCode => 'رمز QR';
+
+  @override
+  String get shareViaQrCodeDesc => 'دع الآخرين يمسحون للتحميل';
+
+  @override
+  String get shareViaApk => 'ملف APK';
+
+  @override
+  String get shareViaApkDesc => 'شارك ملف تثبيت التطبيق';
+
+  @override
+  String get qrCodeShareTitle => 'مشاركة عبر رمز QR';
+
+  @override
+  String get qrCodeShareSubtitle =>
+      'دع الآخرين يمسحون هذا الرمز للحصول على EduVerse';
+
+  @override
+  String get scanToDownload => 'امسح للتحميل';
+
+  @override
+  String get qrCodeInstructions =>
+      'اطلب من صديقك مسح رمز QR هذا بتطبيق الكاميرا لتحميل EduVerse';
+
+  @override
+  String get shareQrCode => 'مشاركة رمز QR';
+
+  @override
+  String get saveQrCode => 'حفظ رمز QR';
+
+  @override
+  String get qrCodeSaved => 'تم حفظ رمز QR في المعرض';
+
+  @override
+  String get qrCodeShared => 'تمت مشاركة رمز QR بنجاح';
+
+  @override
+  String get apkShareTitle => 'مشاركة عبر APK';
+
+  @override
+  String get apkShareSubtitle => 'شارك ملف تثبيت التطبيق مباشرة';
+
+  @override
+  String get shareApkFile => 'مشاركة ملف APK';
+
+  @override
+  String get apkShareInstructions =>
+      'سيتم مشاركة ملف APK عبر تطبيقك المفضل. يمكن للمستلم تثبيته مباشرة على جهازه الأندرويد.';
+
+  @override
+  String get preparingApk => 'جاري تحضير ملف APK...';
+
+  @override
+  String get apkShared => 'تمت مشاركة APK بنجاح';
+
+  @override
+  String get apkShareFailed => 'فشل في مشاركة APK';
+
+  @override
+  String get apkNotAvailable => 'ملف APK غير متوفر على هذا الجهاز';
+
+  @override
+  String get shareAppMessage =>
+      'جرب EduVerse - منصة التعلم المدعومة بالذكاء الاصطناعي! حملها الآن: https://eduverse.app/download';
+
+  @override
+  String get appDownloadLink => 'https://eduverse.app/download';
+
+  @override
+  String get copyLink => 'نسخ الرابط';
+
+  @override
+  String get linkCopied => 'تم نسخ الرابط';
+
+  @override
+  String get shareLink => 'مشاركة الرابط';
+
+  @override
+  String get orShareVia => 'أو شارك عبر';
+
+  @override
+  String get backToOptions => 'العودة للخيارات';
+
+  @override
+  String get shareError => 'حدث خطأ أثناء المشاركة';
+
+  @override
+  String get tryAgainLater => 'يرجى المحاولة لاحقاً';
+
+  @override
+  String get androidOnly => 'هذه الميزة متاحة فقط على أجهزة الأندرويد';
+
+  @override
+  String get sharingInProgress => 'جاري المشاركة...';
+
+  @override
+  String get qrCodeGenerating => 'جاري إنشاء رمز QR...';
+
+  @override
+  String get downloadApp => 'تحميل EduVerse';
+
+  @override
+  String get inviteFriends => 'دعوة الأصدقاء';
+
+  @override
+  String get spreadTheWord => 'انشر الكلمة عن EduVerse';
+
+  @override
+  String get shareStatistics => 'إحصائيات المشاركة';
+
+  @override
+  String get friendsInvited => 'الأصدقاء المدعوون';
+
+  @override
+  String get appInstallations => 'تثبيتات التطبيق';
+
+  @override
+  String get brightness => 'السطوع';
+
+  @override
+  String get qrSize => 'حجم QR';
+
+  @override
+  String get customizeQr => 'تخصيص رمز QR';
+
+  @override
+  String get resetQr => 'إعادة تعيين';
+
+  @override
+  String get apkSize => 'حجم APK';
+
+  @override
+  String get estimatedSize => 'الحجم التقديري: ~50 ميجابايت';
+
+  @override
+  String get requiresAndroid => 'يتطلب أندرويد 5.0 أو أحدث';
+
+  @override
+  String get installationNote =>
+      'ملاحظة: قد يحتاج المستلم لتفعيل \'التثبيت من مصادر غير معروفة\' في إعدادات جهازه';
 }

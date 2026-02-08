@@ -4258,4 +4258,162 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get onboardingDescription4 =>
       'Join thousands of students achieving their academic goals. Your journey to smarter learning starts now.';
+
+  @override
+  String get shareApp => 'Share App';
+
+  @override
+  String get shareAppDesc => 'Share EduVerse with friends';
+
+  @override
+  String get shareAppTitle => 'Share EduVerse';
+
+  @override
+  String get shareAppSubtitle =>
+      'Help your friends discover the future of intelligent learning';
+
+  @override
+  String get chooseShareMethod => 'Choose how you want to share';
+
+  @override
+  String get shareViaQrCode => 'QR Code';
+
+  @override
+  String get shareViaQrCodeDesc => 'Let others scan to download';
+
+  @override
+  String get shareViaApk => 'APK File';
+
+  @override
+  String get shareViaApkDesc => 'Share the app installation file';
+
+  @override
+  String get qrCodeShareTitle => 'Share via QR Code';
+
+  @override
+  String get qrCodeShareSubtitle => 'Let others scan this code to get EduVerse';
+
+  @override
+  String get scanToDownload => 'Scan to Download';
+
+  @override
+  String get qrCodeInstructions =>
+      'Ask your friend to scan this QR code with their camera app to download EduVerse';
+
+  @override
+  String get shareQrCode => 'Share QR Code';
+
+  @override
+  String get saveQrCode => 'Save QR Code';
+
+  @override
+  String get qrCodeSaved => 'QR code saved to gallery';
+
+  @override
+  String get qrCodeShared => 'QR code shared successfully';
+
+  @override
+  String get apkShareTitle => 'Share via APK';
+
+  @override
+  String get apkShareSubtitle => 'Share the app installation file directly';
+
+  @override
+  String get shareApkFile => 'Share APK File';
+
+  @override
+  String get apkShareInstructions =>
+      'The APK file will be shared via your preferred app. The recipient can install it directly on their Android device.';
+
+  @override
+  String get preparingApk => 'Preparing APK file...';
+
+  @override
+  String get apkShared => 'APK shared successfully';
+
+  @override
+  String get apkShareFailed => 'Failed to share APK';
+
+  @override
+  String get apkNotAvailable => 'APK file not available on this device';
+
+  @override
+  String get shareAppMessage =>
+      'Check out EduVerse - the AI-powered learning platform! Download it now: https://eduverse.app/download';
+
+  @override
+  String get appDownloadLink => 'https://eduverse.app/download';
+
+  @override
+  String get copyLink => 'Copy Link';
+
+  @override
+  String get linkCopied => 'Link copied to clipboard';
+
+  @override
+  String get shareLink => 'Share Link';
+
+  @override
+  String get orShareVia => 'Or share via';
+
+  @override
+  String get backToOptions => 'Back to Options';
+
+  @override
+  String get shareError => 'An error occurred while sharing';
+
+  @override
+  String get tryAgainLater => 'Please try again later';
+
+  @override
+  String get androidOnly => 'This feature is only available on Android devices';
+
+  @override
+  String get sharingInProgress => 'Sharing in progress...';
+
+  @override
+  String get qrCodeGenerating => 'Generating QR code...';
+
+  @override
+  String get downloadApp => 'Download EduVerse';
+
+  @override
+  String get inviteFriends => 'Invite Friends';
+
+  @override
+  String get spreadTheWord => 'Spread the word about EduVerse';
+
+  @override
+  String get shareStatistics => 'Share Statistics';
+
+  @override
+  String get friendsInvited => 'Friends Invited';
+
+  @override
+  String get appInstallations => 'App Installations';
+
+  @override
+  String get brightness => 'Brightness';
+
+  @override
+  String get qrSize => 'QR Size';
+
+  @override
+  String get customizeQr => 'Customize QR Code';
+
+  @override
+  String get resetQr => 'Reset';
+
+  @override
+  String get apkSize => 'APK Size';
+
+  @override
+  String get estimatedSize => 'Estimated size: ~50 MB';
+
+  @override
+  String get requiresAndroid => 'Requires Android 5.0 or later';
+
+  @override
+  String get installationNote =>
+      'Note: The recipient may need to enable \'Install from unknown sources\' in their device settings';
 }

@@ -64,6 +64,7 @@ dependencies:
   file_picker: ^8.1.6
   open_file: ^3.5.10
   share_plus: ^10.1.4
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:

@@ -8281,6 +8281,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Join thousands of students achieving their academic goals. Your journey to smarter learning starts now.'**
   String get onboardingDescription4;
+
+  /// No description provided for @shareApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Share App'**
+  String get shareApp;
+
+  /// No description provided for @shareAppDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Share EduVerse with friends'**
+  String get shareAppDesc;
+
+  /// No description provided for @shareAppTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share EduVerse'**
+  String get shareAppTitle;
+
+  /// No description provided for @shareAppSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help your friends discover the future of intelligent learning'**
+  String get shareAppSubtitle;
+
+  /// No description provided for @chooseShareMethod.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose how you want to share'**
+  String get chooseShareMethod;
+
+  /// No description provided for @shareViaQrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Code'**
+  String get shareViaQrCode;
+
+  /// No description provided for @shareViaQrCodeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Let others scan to download'**
+  String get shareViaQrCodeDesc;
+
+  /// No description provided for @shareViaApk.
+  ///
+  /// In en, this message translates to:
+  /// **'APK File'**
+  String get shareViaApk;
+
+  /// No description provided for @shareViaApkDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Share the app installation file'**
+  String get shareViaApkDesc;
+
+  /// No description provided for @qrCodeShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share via QR Code'**
+  String get qrCodeShareTitle;
+
+  /// No description provided for @qrCodeShareSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Let others scan this code to get EduVerse'**
+  String get qrCodeShareSubtitle;
+
+  /// No description provided for @scanToDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan to Download'**
+  String get scanToDownload;
+
+  /// No description provided for @qrCodeInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask your friend to scan this QR code with their camera app to download EduVerse'**
+  String get qrCodeInstructions;
+
+  /// No description provided for @shareQrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Share QR Code'**
+  String get shareQrCode;
+
+  /// No description provided for @saveQrCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Save QR Code'**
+  String get saveQrCode;
+
+  /// No description provided for @qrCodeSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code saved to gallery'**
+  String get qrCodeSaved;
+
+  /// No description provided for @qrCodeShared.
+  ///
+  /// In en, this message translates to:
+  /// **'QR code shared successfully'**
+  String get qrCodeShared;
+
+  /// No description provided for @apkShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share via APK'**
+  String get apkShareTitle;
+
+  /// No description provided for @apkShareSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share the app installation file directly'**
+  String get apkShareSubtitle;
+
+  /// No description provided for @shareApkFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Share APK File'**
+  String get shareApkFile;
+
+  /// No description provided for @apkShareInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'The APK file will be shared via your preferred app. The recipient can install it directly on their Android device.'**
+  String get apkShareInstructions;
+
+  /// No description provided for @preparingApk.
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing APK file...'**
+  String get preparingApk;
+
+  /// No description provided for @apkShared.
+  ///
+  /// In en, this message translates to:
+  /// **'APK shared successfully'**
+  String get apkShared;
+
+  /// No description provided for @apkShareFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to share APK'**
+  String get apkShareFailed;
+
+  /// No description provided for @apkNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'APK file not available on this device'**
+  String get apkNotAvailable;
+
+  /// No description provided for @shareAppMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check out EduVerse - the AI-powered learning platform! Download it now: https://eduverse.app/download'**
+  String get shareAppMessage;
+
+  /// No description provided for @appDownloadLink.
+  ///
+  /// In en, this message translates to:
+  /// **'https://eduverse.app/download'**
+  String get appDownloadLink;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Link'**
+  String get copyLink;
+
+  /// No description provided for @linkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied to clipboard'**
+  String get linkCopied;
+
+  /// No description provided for @shareLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Link'**
+  String get shareLink;
+
+  /// No description provided for @orShareVia.
+  ///
+  /// In en, this message translates to:
+  /// **'Or share via'**
+  String get orShareVia;
+
+  /// No description provided for @backToOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Options'**
+  String get backToOptions;
+
+  /// No description provided for @shareError.
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while sharing'**
+  String get shareError;
+
+  /// No description provided for @tryAgainLater.
+  ///
+  /// In en, this message translates to:
+  /// **'Please try again later'**
+  String get tryAgainLater;
+
+  /// No description provided for @androidOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is only available on Android devices'**
+  String get androidOnly;
+
+  /// No description provided for @sharingInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Sharing in progress...'**
+  String get sharingInProgress;
+
+  /// No description provided for @qrCodeGenerating.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating QR code...'**
+  String get qrCodeGenerating;
+
+  /// No description provided for @downloadApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Download EduVerse'**
+  String get downloadApp;
+
+  /// No description provided for @inviteFriends.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite Friends'**
+  String get inviteFriends;
+
+  /// No description provided for @spreadTheWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Spread the word about EduVerse'**
+  String get spreadTheWord;
+
+  /// No description provided for @shareStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Statistics'**
+  String get shareStatistics;
+
+  /// No description provided for @friendsInvited.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends Invited'**
+  String get friendsInvited;
+
+  /// No description provided for @appInstallations.
+  ///
+  /// In en, this message translates to:
+  /// **'App Installations'**
+  String get appInstallations;
+
+  /// No description provided for @brightness.
+  ///
+  /// In en, this message translates to:
+  /// **'Brightness'**
+  String get brightness;
+
+  /// No description provided for @qrSize.
+  ///
+  /// In en, this message translates to:
+  /// **'QR Size'**
+  String get qrSize;
+
+  /// No description provided for @customizeQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize QR Code'**
+  String get customizeQr;
+
+  /// No description provided for @resetQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get resetQr;
+
+  /// No description provided for @apkSize.
+  ///
+  /// In en, this message translates to:
+  /// **'APK Size'**
+  String get apkSize;
+
+  /// No description provided for @estimatedSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated size: ~50 MB'**
+  String get estimatedSize;
+
+  /// No description provided for @requiresAndroid.
+  ///
+  /// In en, this message translates to:
+  /// **'Requires Android 5.0 or later'**
+  String get requiresAndroid;
+
+  /// No description provided for @installationNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: The recipient may need to enable \'Install from unknown sources\' in their device settings'**
+  String get installationNote;
 }
 
 class _AppLocalizationsDelegate

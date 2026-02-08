@@ -326,6 +326,13 @@ class _SettingsScreenState extends State<SettingsScreen>
                       subtitle: l10n.rateAppDesc,
                       onTap: () => _showRateAppDialog(context, l10n, isDark),
                     ),
+                    SettingsItem(
+                      icon: Icons.share_rounded,
+                      title: l10n.shareApp,
+                      subtitle: l10n.shareAppDesc,
+                      iconColor: const Color(0xFF6366F1),
+                      onTap: () => context.push('/settings/share-app'),
+                    ),
                   ],
                 ),
 

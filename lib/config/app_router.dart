@@ -29,6 +29,9 @@ import 'package:edu_verse/screens/student/settings/notification_swipe_settings_s
 import 'package:edu_verse/screens/student/settings/chat_swipe_settings_screen.dart' as settings_chat;
 import 'package:edu_verse/screens/student/settings/file_swipe_settings_screen.dart';
 import 'package:edu_verse/screens/student/settings/note_swipe_settings_screen.dart';
+import 'package:edu_verse/screens/student/settings/share_app/share_app_screen.dart';
+import 'package:edu_verse/screens/student/settings/share_app/qr_code_share_screen.dart';
+import 'package:edu_verse/screens/student/settings/share_app/apk_share_screen.dart';
 import 'package:edu_verse/screens/student/flashcards_screen.dart';
 import 'package:edu_verse/screens/student/grades_screen.dart';
 import 'package:edu_verse/screens/student/grade_analysis_screen.dart';
@@ -311,6 +314,18 @@ class AppRouter {
       GoRoute(
         path: '/settings/swipe-actions/notes',
         builder: (context, state) => const NoteSwipeSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/share-app',
+        builder: (context, state) => const ShareAppScreen(),
+      ),
+      GoRoute(
+        path: '/settings/share-app/qr',
+        builder: (context, state) => const QrCodeShareScreen(),
+      ),
+      GoRoute(
+        path: '/settings/share-app/apk',
+        builder: (context, state) => const ApkShareScreen(),
       ),
     ],
     errorBuilder: (context, state) =>
