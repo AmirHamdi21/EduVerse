@@ -68,7 +68,9 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                   const SizedBox(height: 8),
 
                   // Navigation Menu
-                  Expanded(child: _buildNavigationMenu(isDark, menuItems, l10n)),
+                  Expanded(
+                    child: _buildNavigationMenu(isDark, menuItems, l10n),
+                  ),
 
                   // Theme Toggle & Settings
                   _buildBottomSection(isDark, l10n),
@@ -92,7 +94,7 @@ class _InstructorDrawerState extends State<InstructorDrawer>
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
-                  context.push('/profile');
+                  context.push('/instructor/profile');
                 },
                 child: Container(
                   width: 56,
@@ -328,14 +330,14 @@ class _InstructorDrawerState extends State<InstructorDrawer>
         icon: Icons.calendar_month_outlined,
         activeIcon: Icons.calendar_month,
         title: l10n.calendar,
-        route: '/calendar',
+        route: '/instructor/calendar',
         category: 'main',
       ),
       _MenuItem(
         icon: Icons.analytics_outlined,
         activeIcon: Icons.analytics,
-        title: l10n.analytics,
-        route: '/analytics',
+        title: l10n.reportsAndAnalytics,
+        route: '/instructor/reports',
         category: 'main',
       ),
       _MenuItem(
@@ -344,6 +346,14 @@ class _InstructorDrawerState extends State<InstructorDrawer>
         title: l10n.myFiles,
         route: '/my-files',
         category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.psychology_outlined,
+        activeIcon: Icons.psychology,
+        title: l10n.aiTeachingAssistant,
+        route: '/instructor/ai-teaching',
+        isHighlighted: true,
+        category: 'ai',
       ),
       _MenuItem(
         icon: Icons.auto_awesome_outlined,
@@ -373,31 +383,45 @@ class _InstructorDrawerState extends State<InstructorDrawer>
         icon: Icons.chat_bubble_outline_rounded,
         activeIcon: Icons.chat_bubble_rounded,
         title: l10n.messages,
-        route: '/messages',
+        route: '/instructor/messages',
         badge: '5',
+        category: 'communication',
+      ),
+      _MenuItem(
+        icon: Icons.notifications_outlined,
+        activeIcon: Icons.notifications,
+        title: l10n.notifications,
+        route: '/instructor/notifications',
+        badge: '3',
         category: 'communication',
       ),
       _MenuItem(
         icon: Icons.person_outline_rounded,
         activeIcon: Icons.person,
         title: l10n.profile,
-        route: '/profile',
+        route: '/instructor/profile',
         category: 'account',
       ),
       _MenuItem(
         icon: Icons.settings_outlined,
         activeIcon: Icons.settings,
         title: l10n.settings,
-        route: '/settings',
+        route: '/instructor/settings',
         category: 'account',
       ),
     ];
   }
 
-  Widget _buildNavigationMenu(bool isDark, List<_MenuItem> items, AppLocalizations l10n) {
+  Widget _buildNavigationMenu(
+    bool isDark,
+    List<_MenuItem> items,
+    AppLocalizations l10n,
+  ) {
     final mainItems = items.where((i) => i.category == 'main').toList();
     final aiItems = items.where((i) => i.category == 'ai').toList();
-    final communicationItems = items.where((i) => i.category == 'communication').toList();
+    final communicationItems = items
+        .where((i) => i.category == 'communication')
+        .toList();
     final accountItems = items.where((i) => i.category == 'account').toList();
 
     return ListView(
@@ -457,7 +481,8 @@ class _InstructorDrawerState extends State<InstructorDrawer>
             setState(() => _selectedIndex = index);
             Navigator.pop(context);
             // Navigate to the route
-            if (item.route.isNotEmpty && item.route != '/instructor-dashboard') {
+            if (item.route.isNotEmpty &&
+                item.route != '/instructor-dashboard') {
               context.push(item.route);
             }
           },

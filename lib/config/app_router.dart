@@ -60,6 +60,16 @@ import 'package:edu_verse/screens/instructor/course_management/course_management
 import 'package:edu_verse/screens/instructor/announcements/announcement_manager_screen.dart';
 import 'package:edu_verse/screens/instructor/attendance/attendance_manager_screen.dart';
 import 'package:edu_verse/screens/instructor/create_assignment/create_assignment_screen.dart';
+import 'package:edu_verse/screens/instructor/reports/reports_analytics_screen.dart';
+import 'package:edu_verse/screens/instructor/ai_teaching/ai_teaching_screen.dart';
+import 'package:edu_verse/screens/instructor/upload_materials/upload_materials_screen.dart';
+import 'package:edu_verse/screens/instructor/calendar/instructor_calendar_screen.dart';
+import 'package:edu_verse/screens/instructor/search/instructor_search_screen.dart';
+import 'package:edu_verse/screens/instructor/notifications/instructor_notifications_screen.dart';
+import 'package:edu_verse/screens/instructor/profile/instructor_profile_screen.dart';
+import 'package:edu_verse/screens/instructor/profile/instructor_edit_profile_screen.dart';
+import 'package:edu_verse/screens/instructor/settings/instructor_settings_screen.dart';
+import 'package:edu_verse/screens/instructor/chat/instructor_chat_screen.dart';
 import 'package:edu_verse/models/instructor/instructor_course_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -368,6 +378,46 @@ class AppRouter {
       GoRoute(
         path: '/instructor/create-assignment',
         builder: (context, state) => const CreateAssignmentScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/reports',
+        builder: (context, state) => const ReportsAnalyticsScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/ai-teaching',
+        builder: (context, state) => const AITeachingScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/upload-materials',
+        builder: (context, state) => const UploadMaterialsScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/calendar',
+        builder: (context, state) => const InstructorCalendarScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/search',
+        builder: (context, state) => const InstructorSearchScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/notifications',
+        builder: (context, state) => const InstructorNotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/profile',
+        builder: (context, state) => const InstructorProfileScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/edit-profile',
+        builder: (context, state) => const InstructorEditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/settings',
+        builder: (context, state) => const InstructorSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/messages',
+        builder: (context, state) => const InstructorChatScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

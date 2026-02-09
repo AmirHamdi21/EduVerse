@@ -70,7 +70,8 @@ class InstructorQuickAccessGrid extends StatelessWidget {
                 ),
                 icon: Icons.add_task_outlined,
                 onTap: () {
-                  _showCreateAssignmentDialog(context, isDark, l10n);
+                  // _showCreateAssignmentDialog(context, isDark, l10n);
+                  context.push('/instructor/create-assignment');
                 },
               ),
               _buildQuickAccessItem(
@@ -96,7 +97,7 @@ class InstructorQuickAccessGrid extends StatelessWidget {
                 ),
                 icon: Icons.upload_file_outlined,
                 onTap: () {
-                  _showUploadDialog(context, isDark, l10n);
+                  context.push('/instructor/upload-materials');
                 },
               ),
               _buildQuickAccessItem(
@@ -109,9 +110,10 @@ class InstructorQuickAccessGrid extends StatelessWidget {
                 ),
                 icon: Icons.analytics_outlined,
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.analyticsComingSoon)),
-                  );
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   SnackBar(content: Text(l10n.analyticsComingSoon)),
+                  // );
+                  context.push('/instructor/reports');
                 },
               ),
               _buildQuickAccessItem(

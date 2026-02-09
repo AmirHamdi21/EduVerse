@@ -92,7 +92,7 @@ class InstructorAppBar extends StatelessWidget {
               context,
               icon: Icons.search_rounded,
               isDark: isDark,
-              onTap: () => context.push('/search'),
+              onTap: () => context.push('/instructor/search'),
             ),
             const SizedBox(width: 6),
             BlocBuilder<NotificationCubit, NotificationState>(
@@ -102,7 +102,7 @@ class InstructorAppBar extends StatelessWidget {
                   isDark: isDark,
                   unreadCount: notificationState.unreadCount,
                   onTap: () {
-                    context.push('/notifications');
+                    context.push('/instructor/notifications');
                   },
                 );
               },
@@ -328,7 +328,7 @@ class InstructorAppBar extends StatelessWidget {
   Widget _buildProfileAvatar(bool isDark, BuildContext context) {
     return GestureDetector(
       onTap: () {
-        context.push('/profile');
+        context.push('/instructor/profile');
       },
       child: Container(
         width: 56,

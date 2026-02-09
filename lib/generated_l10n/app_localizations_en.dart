@@ -2163,7 +2163,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get clearChatConfirm =>
-      'Are you sure you want to clear the chat history? This action cannot be undone.';
+      'This will delete all messages in this conversation. This action cannot be undone.';
 
   @override
   String get attachFile => 'Attach File';
@@ -2306,11 +2306,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchByNameOrEmail => 'Search by name or email...';
 
   @override
-  String get noConversations => 'No Conversations Yet';
+  String get noConversations => 'No Conversations';
 
   @override
-  String get noConversationsDesc =>
-      'Start a new conversation with instructors, students, or join course discussions.';
+  String get noConversationsDesc => 'Start a new conversation';
 
   @override
   String get noMatchingConversations => 'No Matching Conversations';
@@ -2365,7 +2364,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noMessagesYet => 'No messages yet';
 
   @override
-  String get startConversation => 'Start the conversation by sending a message';
+  String get startConversation => 'Start a Conversation';
 
   @override
   String get replyingTo => 'Replying to';
@@ -2683,7 +2682,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noNotesFoundSearch => 'No Notes Found';
 
   @override
-  String get tryDifferentSearch => 'Try a different search term or filter';
+  String get tryDifferentSearch => 'Try a different search term';
 
   @override
   String get noFavoriteNotes => 'No Favorite Notes';
@@ -2797,7 +2796,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get securityAccount => 'Security & Account';
 
   @override
-  String get twoFactorAuth => 'Two-Factor Authentication';
+  String get twoFactorAuth => 'Two-Factor Auth';
 
   @override
   String get twoFactorAuthDesc => 'Add extra security to your account';
@@ -2890,7 +2889,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sendFeedback => 'Send Feedback';
 
   @override
-  String get sendFeedbackDesc => 'Share your thoughts with us';
+  String get sendFeedbackDesc => 'Help us improve';
 
   @override
   String get documentation => 'Documentation';
@@ -3093,7 +3092,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get support => 'Support';
 
   @override
-  String get helpCenterDesc => 'Get help and support';
+  String get helpCenterDesc => 'FAQs and guides';
 
   @override
   String get sendFeedbackSettingsDesc => 'Share your experience';
@@ -3126,7 +3125,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchSettings => 'Search settings...';
 
   @override
-  String get noResultsFound => 'No results found';
+  String get noResultsFound => 'No Results Found';
 
   @override
   String get updatePassword => 'Update Password';
@@ -4262,7 +4261,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareApp => 'Share App';
 
   @override
-  String get shareAppDesc => 'Share EduVerse with friends';
+  String get shareAppDesc => 'Invite colleagues';
 
   @override
   String get shareAppTitle => 'Share EduVerse';
@@ -4438,7 +4437,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createAssignment => 'Create Assignment';
 
   @override
-  String get uploadMaterial => 'Upload Material';
+  String get uploadMaterial => 'Upload Materials';
 
   @override
   String get openCourse => 'Open Course';
@@ -4564,7 +4563,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get gradingSettings => 'Grading Settings';
 
   @override
-  String get day => 'day';
+  String get day => 'Day';
 
   @override
   String get courseMaterials => 'Course Materials';
@@ -4693,7 +4692,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpSupport => 'Help & Support';
 
   @override
-  String get noMaterialsYet => 'No materials uploaded yet';
+  String get noMaterialsYet => 'No Materials Yet';
 
   @override
   String get noAnnouncementsYet => 'No announcements yet';
@@ -4861,7 +4860,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get qrScan => 'QR Scan';
 
   @override
-  String get exportAttendance => 'Export';
+  String get exportAttendance => 'Export Attendance';
 
   @override
   String get notifyStudents => 'Notify';
@@ -5140,4 +5139,541 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get resourcesHint => 'Helpful resources for the project';
+
+  @override
+  String get reportsAndAnalytics => 'Reports & Analytics';
+
+  @override
+  String get exportPerformanceData => 'Export performance and attendance data';
+
+  @override
+  String get performance => 'Performance';
+
+  @override
+  String get totalStudents => 'Total Students';
+
+  @override
+  String get atRisk => 'At Risk';
+
+  @override
+  String get exportPDF => 'Export PDF';
+
+  @override
+  String get exportCSV => 'Export CSV';
+
+  @override
+  String get exportAllReports => 'Export All Reports';
+
+  @override
+  String get exportingReport => 'Exporting report...';
+
+  @override
+  String get engagementMetrics => 'Engagement Metrics';
+
+  @override
+  String get assignmentSubmissionRate => 'Assignment Submission Rate';
+
+  @override
+  String get labCompletionRate => 'Lab Completion Rate';
+
+  @override
+  String get discussionParticipation => 'Discussion Participation';
+
+  @override
+  String get studentDetails => 'Student Details';
+
+  @override
+  String get performanceBreakdown => 'Performance Breakdown';
+
+  @override
+  String get quizzes => 'Quizzes';
+
+  @override
+  String get midterm => 'Midterm';
+
+  @override
+  String get contact => 'Contact';
+
+  @override
+  String get export => 'Export';
+
+  @override
+  String get selected => 'selected';
+
+  @override
+  String get improving => 'Improving';
+
+  @override
+  String get stable => 'Stable';
+
+  @override
+  String get declining => 'Declining';
+
+  @override
+  String get aiTeachingAssistant => 'AI Teaching Assistant';
+
+  @override
+  String get aiOnlineReady => 'Online • Ready';
+
+  @override
+  String get aiAskAnything => 'Ask AI anything...';
+
+  @override
+  String get aiModes => 'AI Modes';
+
+  @override
+  String get aiModesSubtitle => 'Select an AI mode for specialized assistance';
+
+  @override
+  String get createContent => 'Create Content';
+
+  @override
+  String get createContentDesc =>
+      'Generate quizzes, assignments, and materials';
+
+  @override
+  String get analyzeData => 'Analyze Data';
+
+  @override
+  String get analyzeDataDesc => 'Insights from student performance data';
+
+  @override
+  String get rewriteEnhance => 'Rewrite & Enhance';
+
+  @override
+  String get rewriteEnhanceDesc => 'Improve existing content and materials';
+
+  @override
+  String get courseInsights => 'Course Insights';
+
+  @override
+  String get courseInsightsDesc => 'AI-powered course analytics';
+
+  @override
+  String get communication => 'Communication';
+
+  @override
+  String get communicationDesc => 'Draft emails and announcements';
+
+  @override
+  String get generate10MCQs => 'Generate 10 MCQs';
+
+  @override
+  String get summarizeLecture => 'Summarize Lecture';
+
+  @override
+  String get createLessonPlan => 'Create Lesson Plan';
+
+  @override
+  String get generateRubric => 'Generate Rubric';
+
+  @override
+  String get writeFeedback => 'Write Feedback';
+
+  @override
+  String get suggestedPrompts => 'Suggested Prompts';
+
+  @override
+  String get makeEasier => 'Easier';
+
+  @override
+  String get makeHarder => 'Harder';
+
+  @override
+  String get copyContent => 'Copy';
+
+  @override
+  String get exportContent => 'Export';
+
+  @override
+  String get aiAssistantIntro =>
+      'I\'m here to help you create content, analyze data, and enhance your teaching materials.';
+
+  @override
+  String get createQuizzesContent => 'Create quizzes & content';
+
+  @override
+  String get analyzeStudentData => 'Analyze student data';
+
+  @override
+  String get enhanceTeachingMaterials => 'Enhance teaching materials';
+
+  @override
+  String get chatHistory => 'Chat History';
+
+  @override
+  String get chatHistoryComingSoon => 'Chat history coming soon';
+
+  @override
+  String get voiceInputComingSoon => 'Voice input coming soon';
+
+  @override
+  String get exportAsPDF => 'Export as PDF';
+
+  @override
+  String get exportAsWord => 'Export as Word';
+
+  @override
+  String get exportAsText => 'Export as Text';
+
+  @override
+  String get exportComingSoon => 'Export coming soon';
+
+  @override
+  String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get aiTyping => 'AI is typing...';
+
+  @override
+  String get uploadMaterialSubtitle => 'Share course materials with students';
+
+  @override
+  String get selectDestination => 'Select Destination';
+
+  @override
+  String get selectDestinationSubtitle =>
+      'Choose where to upload your materials';
+
+  @override
+  String get uploadFiles => 'Upload Files';
+
+  @override
+  String get links => 'Links';
+
+  @override
+  String get uploadQueue => 'Upload Queue';
+
+  @override
+  String get clearCompleted => 'Clear Completed';
+
+  @override
+  String get searchMaterials => 'Search materials...';
+
+  @override
+  String get noMaterialsSubtitle =>
+      'Upload course materials to share with your students';
+
+  @override
+  String get materialDeleted => 'Material deleted';
+
+  @override
+  String get materialUpdated => 'Material updated';
+
+  @override
+  String get materialHidden => 'Material hidden from students';
+
+  @override
+  String get materialVisible => 'Material visible to students';
+
+  @override
+  String get linkAdded => 'Link added successfully';
+
+  @override
+  String get uploadOptions => 'Upload Options';
+
+  @override
+  String get uploadFilesOption => 'Upload Files';
+
+  @override
+  String get uploadFilesSubtitle => 'Select files from your device';
+
+  @override
+  String get uploadFolderOption => 'Upload Folder';
+
+  @override
+  String get uploadFolderSubtitle => 'Upload entire folder with subfolders';
+
+  @override
+  String get addLinkOption => 'Add Link';
+
+  @override
+  String get addLinkSubtitle => 'Add external link or resource';
+
+  @override
+  String get addLink => 'Add Link';
+
+  @override
+  String get title => 'Title';
+
+  @override
+  String get url => 'URL';
+
+  @override
+  String get sortMaterials => 'Sort Materials';
+
+  @override
+  String get exportAll => 'Export All';
+
+  @override
+  String get uploadSettings => 'Upload Settings';
+
+  @override
+  String get waiting => 'Waiting';
+
+  @override
+  String get processing => 'Processing';
+
+  @override
+  String get folderUploadComingSoon => 'Folder upload coming soon';
+
+  @override
+  String get month => 'Month';
+
+  @override
+  String get week => 'Week';
+
+  @override
+  String get noEventsToday => 'No Events Today';
+
+  @override
+  String get noEventsDescription => 'Enjoy your free time or add a new event';
+
+  @override
+  String get instructorSearchHint => 'Search students, courses, materials...';
+
+  @override
+  String get instructorSearchTip1 => 'Search by student name or ID';
+
+  @override
+  String get instructorSearchTip2 => 'Filter by course or assignment';
+
+  @override
+  String get instructorSearchTip3 => 'Use keywords from materials';
+
+  @override
+  String get resultsFound => 'results found';
+
+  @override
+  String get recentSearches => 'Recent Searches';
+
+  @override
+  String get noResultsDescription => 'Try different keywords or filters';
+
+  @override
+  String get markAllRead => 'Mark All Read';
+
+  @override
+  String get read => 'Read';
+
+  @override
+  String get noNotifications => 'No Notifications';
+
+  @override
+  String get noNotificationsDesc => 'You\'re all caught up!';
+
+  @override
+  String get noUnreadNotifications => 'No Unread Notifications';
+
+  @override
+  String get noUnreadNotificationsDesc => 'You\'ve read all your notifications';
+
+  @override
+  String get noReadNotifications => 'No Read Notifications';
+
+  @override
+  String get noReadNotificationsDesc =>
+      'Your read notifications will appear here';
+
+  @override
+  String get notificationSettings => 'Notification Settings';
+
+  @override
+  String get soundEnabled => 'Sound';
+
+  @override
+  String get vibrationEnabled => 'Vibration';
+
+  @override
+  String get clearAllNotifications => 'Clear All Notifications';
+
+  @override
+  String get notificationsCleared => 'All notifications cleared';
+
+  @override
+  String get contactInformation => 'Contact Information';
+
+  @override
+  String get office => 'Office';
+
+  @override
+  String get officeHours => 'Office Hours';
+
+  @override
+  String get specialization => 'Specialization';
+
+  @override
+  String get education => 'Education';
+
+  @override
+  String get currentCourses => 'Current Courses';
+
+  @override
+  String get displayName => 'Display Name';
+
+  @override
+  String get logoutConfirmTitle => 'Logout';
+
+  @override
+  String get logoutConfirmMessage => 'Are you sure you want to logout?';
+
+  @override
+  String get preferences => 'Preferences';
+
+  @override
+  String get appearanceDesc => 'Theme, colors, and display';
+
+  @override
+  String get languageDesc => 'App language settings';
+
+  @override
+  String get notificationsDesc => 'Push and email notifications';
+
+  @override
+  String get teachingSettings => 'Teaching Settings';
+
+  @override
+  String get gradingPreferences => 'Grading Preferences';
+
+  @override
+  String get gradingPreferencesDesc => 'Grade scales and auto-save';
+
+  @override
+  String get assignmentDefaults => 'Assignment Defaults';
+
+  @override
+  String get assignmentDefaultsDesc => 'Default settings for new assignments';
+
+  @override
+  String get attendanceSettings => 'Attendance Settings';
+
+  @override
+  String get attendanceSettingsDesc => 'Late marking and auto-attendance';
+
+  @override
+  String get privacyDesc => 'Data sharing and visibility';
+
+  @override
+  String get connectedDevicesDesc => 'Manage logged-in devices';
+
+  @override
+  String get dataStorage => 'Data & Storage';
+
+  @override
+  String get storageUsage => 'Storage Usage';
+
+  @override
+  String get storageUsageDesc => 'Manage your storage space';
+
+  @override
+  String get exportData => 'Export Data';
+
+  @override
+  String get exportDataDesc => 'Download your data';
+
+  @override
+  String get termsOfServiceDesc => 'Read our terms';
+
+  @override
+  String get privacyPolicyDesc => 'How we handle your data';
+
+  @override
+  String get aboutDesc => 'App version and info';
+
+  @override
+  String get autoSaveGrades => 'Auto-Save Grades';
+
+  @override
+  String get autoSaveGradesDesc =>
+      'Automatically save grades as you enter them';
+
+  @override
+  String get showRubricByDefault => 'Show Rubric by Default';
+
+  @override
+  String get showRubricByDefaultDesc => 'Display rubric while grading';
+
+  @override
+  String get anonymousGrading => 'Anonymous Grading';
+
+  @override
+  String get anonymousGradingDesc => 'Hide student names during grading';
+
+  @override
+  String get defaultGradeScale => 'Default Grade Scale';
+
+  @override
+  String get allowLateSubmissionsDesc => 'Accept assignments after deadline';
+
+  @override
+  String get latePenaltyPerDay => 'Late Penalty Per Day';
+
+  @override
+  String get defaultSubmissionDays => 'Default Submission Days';
+
+  @override
+  String get autoAttendance => 'Auto-Attendance';
+
+  @override
+  String get autoAttendanceDesc => 'Automatically mark students present';
+
+  @override
+  String get enableLateMarking => 'Enable Late Marking';
+
+  @override
+  String get enableLateMarkingDesc => 'Mark students as late instead of absent';
+
+  @override
+  String get lateThreshold => 'Late Threshold';
+
+  @override
+  String get exportStudentList => 'Export Student List';
+
+  @override
+  String get exportReports => 'Export Reports';
+
+  @override
+  String get feedbackHint => 'Tell us what you think...';
+
+  @override
+  String get settingsSaved => 'Settings saved';
+
+  @override
+  String get noStudentChats => 'No Student Chats';
+
+  @override
+  String get noStudentChatsDesc => 'Start a conversation with a student';
+
+  @override
+  String get noGroupChats => 'No Group Chats';
+
+  @override
+  String get noGroupChatsDesc => 'Create a group chat for your class';
+
+  @override
+  String get selectConversation => 'Select a Conversation';
+
+  @override
+  String get selectConversationDesc => 'Choose a conversation from the list';
+
+  @override
+  String get newMessage => 'New Message';
+
+  @override
+  String get messageStudent => 'Message Student';
+
+  @override
+  String get messageStudentDesc => 'Start a private conversation';
+
+  @override
+  String get createGroupChat => 'Create Group Chat';
+
+  @override
+  String get createGroupChatDesc => 'Create a new group for your class';
+
+  @override
+  String get broadcastMessage => 'Broadcast Message';
+
+  @override
+  String get broadcastMessageDesc => 'Send to all students in a course';
 }
