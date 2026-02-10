@@ -1,69 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../config/app_theme.dart';
-import '../../../generated_l10n/app_localizations.dart';
-
-enum InstructorNotificationType {
-  submission,
-  grading,
-  message,
-  deadline,
-  attendance,
-  announcement,
-  system,
-}
-
-class InstructorNotificationModel {
-  final String id;
-  final String title;
-  final String message;
-  final InstructorNotificationType type;
-  final DateTime timestamp;
-  final bool isRead;
-  final String? studentName;
-  final String? courseName;
-  final String? avatarUrl;
-  final Map<String, dynamic>? metadata;
-
-  const InstructorNotificationModel({
-    required this.id,
-    required this.title,
-    required this.message,
-    required this.type,
-    required this.timestamp,
-    this.isRead = false,
-    this.studentName,
-    this.courseName,
-    this.avatarUrl,
-    this.metadata,
-  });
-
-  InstructorNotificationModel copyWith({
-    String? id,
-    String? title,
-    String? message,
-    InstructorNotificationType? type,
-    DateTime? timestamp,
-    bool? isRead,
-    String? studentName,
-    String? courseName,
-    String? avatarUrl,
-    Map<String, dynamic>? metadata,
-  }) {
-    return InstructorNotificationModel(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      message: message ?? this.message,
-      type: type ?? this.type,
-      timestamp: timestamp ?? this.timestamp,
-      isRead: isRead ?? this.isRead,
-      studentName: studentName ?? this.studentName,
-      courseName: courseName ?? this.courseName,
-      avatarUrl: avatarUrl ?? this.avatarUrl,
-      metadata: metadata ?? this.metadata,
-    );
-  }
-}
+import '../../../models/instructor/instrucor_notification_model.dart';
 
 class InstructorNotificationTile extends StatelessWidget {
   final InstructorNotificationModel notification;
@@ -83,8 +21,6 @@ class InstructorNotificationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
     return Dismissible(
       key: Key(notification.id),
       direction: DismissDirection.horizontal,
@@ -118,15 +54,15 @@ class InstructorNotificationTile extends StatelessWidget {
           decoration: BoxDecoration(
             color: notification.isRead
                 ? (isDarkMode
-                    ? AppTheme.darkCardColor.withValues(alpha: 0.5)
-                    : Colors.white.withValues(alpha: 0.7))
+                      ? AppTheme.darkCardColor.withValues(alpha: 0.5)
+                      : Colors.white.withValues(alpha: 0.7))
                 : (isDarkMode ? AppTheme.darkCardColor : Colors.white),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: notification.isRead
                   ? (isDarkMode
-                      ? Colors.white.withValues(alpha: 0.05)
-                      : Colors.grey.withValues(alpha: 0.1))
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : Colors.grey.withValues(alpha: 0.1))
                   : _getTypeColor(notification.type).withValues(alpha: 0.3),
               width: notification.isRead ? 1 : 1.5,
             ),
@@ -134,7 +70,9 @@ class InstructorNotificationTile extends StatelessWidget {
                 ? null
                 : [
                     BoxShadow(
-                      color: _getTypeColor(notification.type).withValues(alpha: 0.1),
+                      color: _getTypeColor(
+                        notification.type,
+                      ).withValues(alpha: 0.1),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -215,7 +153,9 @@ class InstructorNotificationTile extends StatelessWidget {
                             const SizedBox(width: 12),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 2),
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: isDarkMode
                                     ? Colors.white.withValues(alpha: 0.1)
@@ -276,11 +216,7 @@ class InstructorNotificationTile extends StatelessWidget {
       ),
       alignment: alignment,
       padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Icon(
-        icon,
-        color: Colors.white,
-        size: 24,
-      ),
+      child: Icon(icon, color: Colors.white, size: 24),
     );
   }
 

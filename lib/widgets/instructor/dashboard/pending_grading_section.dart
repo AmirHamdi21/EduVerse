@@ -56,13 +56,27 @@ class PendingGradingSection extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    Text(
-                      l10n.pendingGrading,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : const Color(0xFF1E293B),
-                      ),
+                    Column(
+                      children: [
+                        Text(
+                          l10n.pendingGrading,
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF1E293B),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          '${submissions.length} ${l10n.submissionsToReview}',
+                          style: TextStyle(
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -78,14 +92,8 @@ class PendingGradingSection extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            Text(
-              '${submissions.length} ${l10n.submissionsToReview}',
-              style: TextStyle(
-                color: isDark ? Colors.grey[400] : Colors.grey[600],
-                fontSize: 13,
-              ),
-            ),
+
+            // const SizedBox(height: 6),
             const SizedBox(height: 14),
             Container(
               padding: const EdgeInsets.all(16),
@@ -110,7 +118,11 @@ class PendingGradingSection extends StatelessWidget {
                   final isLast = submission == submissions.take(3).last;
                   return Column(
                     children: [
-                      _SubmissionCard(submission: submission, isDark: isDark, l10n: l10n),
+                      _SubmissionCard(
+                        submission: submission,
+                        isDark: isDark,
+                        l10n: l10n,
+                      ),
                       if (!isLast)
                         Divider(
                           color: isDark ? Colors.white12 : Colors.grey[200],
@@ -151,7 +163,9 @@ class _SubmissionCard extends StatelessWidget {
           radius: 22,
           backgroundColor: const Color(0xFF155CFB).withValues(alpha: 0.2),
           child: Text(
-            submission.studentName.isNotEmpty ? submission.studentName[0].toUpperCase() : '?',
+            submission.studentName.isNotEmpty
+                ? submission.studentName[0].toUpperCase()
+                : '?',
             style: const TextStyle(
               color: Color(0xFF155CFB),
               fontWeight: FontWeight.bold,
@@ -195,14 +209,19 @@ class _SubmissionCard extends StatelessWidget {
                   Text(
                     '${l10n.due}: ${_formatDate(submission.dueDate)}',
                     style: TextStyle(
-                      color: isLate ? const Color(0xFFEF4444) : Colors.grey[500],
+                      color: isLate
+                          ? const Color(0xFFEF4444)
+                          : Colors.grey[500],
                       fontSize: 11,
                     ),
                   ),
                   if (isLate) ...[
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFEF4444).withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(4),
@@ -229,7 +248,9 @@ class _SubmissionCard extends StatelessWidget {
             backgroundColor: const Color(0xFF155CFB),
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
             elevation: 0,
           ),
           child: Text(
@@ -275,11 +296,17 @@ class _SubmissionCard extends StatelessWidget {
               style: TextStyle(color: isDark ? Colors.white : Colors.black),
               decoration: InputDecoration(
                 labelText: '${l10n.grade} (0-100)',
-                labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                labelStyle: TextStyle(
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
+                  borderSide: BorderSide(
+                    color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                  ),
                 ),
               ),
             ),
@@ -290,11 +317,17 @@ class _SubmissionCard extends StatelessWidget {
               style: TextStyle(color: isDark ? Colors.white : Colors.black),
               decoration: InputDecoration(
                 labelText: l10n.feedback,
-                labelStyle: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                labelStyle: TextStyle(
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide(color: isDark ? Colors.grey[700]! : Colors.grey[300]!),
+                  borderSide: BorderSide(
+                    color: isDark ? Colors.grey[700]! : Colors.grey[300]!,
+                  ),
                 ),
               ),
             ),
@@ -305,7 +338,9 @@ class _SubmissionCard extends StatelessWidget {
             onPressed: () => Navigator.pop(ctx),
             child: Text(
               l10n.cancel,
-              style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
+              style: TextStyle(
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
             ),
           ),
           ElevatedButton(
@@ -321,7 +356,9 @@ class _SubmissionCard extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF155CFB),
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: Text(l10n.submit),
           ),

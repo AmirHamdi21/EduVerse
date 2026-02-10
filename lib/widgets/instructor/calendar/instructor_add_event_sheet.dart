@@ -1,3 +1,4 @@
+import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bloc/theme/theme_bloc.dart';
@@ -8,13 +9,11 @@ import '../../../generated_l10n/app_localizations.dart';
 class InstructorAddEventSheet extends StatefulWidget {
   final DateTime? initialDate;
 
-  const InstructorAddEventSheet({
-    super.key,
-    this.initialDate,
-  });
+  const InstructorAddEventSheet({super.key, this.initialDate});
 
   @override
-  State<InstructorAddEventSheet> createState() => _InstructorAddEventSheetState();
+  State<InstructorAddEventSheet> createState() =>
+      _InstructorAddEventSheetState();
 }
 
 class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
@@ -137,10 +136,7 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
             color: const Color(0xFF155CFB).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
-            Icons.add_rounded,
-            color: Color(0xFF155CFB),
-          ),
+          child: const Icon(Icons.add_rounded, color: Color(0xFF155CFB)),
         ),
         const SizedBox(width: 12),
         Text(
@@ -157,13 +153,48 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
 
   Widget _buildEventTypeSelector(bool isDark) {
     final types = [
-      _TypeOption(InstructorEventType.lecture, 'Lecture', Icons.school_rounded, const Color(0xFF155CFB)),
-      _TypeOption(InstructorEventType.lab, 'Lab', Icons.science_rounded, const Color(0xFF7C3AED)),
-      _TypeOption(InstructorEventType.officeHours, 'Office Hours', Icons.access_time_rounded, const Color(0xFF059669)),
-      _TypeOption(InstructorEventType.meeting, 'Meeting', Icons.groups_rounded, const Color(0xFFF59E0B)),
-      _TypeOption(InstructorEventType.deadline, 'Deadline', Icons.flag_rounded, const Color(0xFFEF4444)),
-      _TypeOption(InstructorEventType.grading, 'Grading', Icons.grading_rounded, const Color(0xFF0EA5E9)),
-      _TypeOption(InstructorEventType.exam, 'Exam', Icons.quiz_rounded, const Color(0xFFEC4899)),
+      _TypeOption(
+        InstructorEventType.lecture,
+        'Lecture',
+        Icons.school_rounded,
+        const Color(0xFF155CFB),
+      ),
+      _TypeOption(
+        InstructorEventType.lab,
+        'Lab',
+        Icons.science_rounded,
+        const Color(0xFF7C3AED),
+      ),
+      _TypeOption(
+        InstructorEventType.officeHours,
+        'Office Hours',
+        Icons.access_time_rounded,
+        const Color(0xFF059669),
+      ),
+      _TypeOption(
+        InstructorEventType.meeting,
+        'Meeting',
+        Icons.groups_rounded,
+        const Color(0xFFF59E0B),
+      ),
+      _TypeOption(
+        InstructorEventType.deadline,
+        'Deadline',
+        Icons.flag_rounded,
+        const Color(0xFFEF4444),
+      ),
+      _TypeOption(
+        InstructorEventType.grading,
+        'Grading',
+        Icons.grading_rounded,
+        const Color(0xFF0EA5E9),
+      ),
+      _TypeOption(
+        InstructorEventType.exam,
+        'Exam',
+        Icons.quiz_rounded,
+        const Color(0xFFEC4899),
+      ),
     ];
 
     return Column(
@@ -187,11 +218,16 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
               onTap: () => setState(() => _selectedType = type.type),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? type.color.withValues(alpha: 0.15)
-                      : (isDark ? const Color(0xFF374151) : const Color(0xFFF1F5F9)),
+                      : (isDark
+                            ? const Color(0xFF374151)
+                            : const Color(0xFFF1F5F9)),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: isSelected ? type.color : Colors.transparent,
@@ -207,20 +243,22 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
                       color: isSelected
                           ? type.color
                           : (isDark
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF64748B)),
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF64748B)),
                     ),
                     const SizedBox(width: 6),
                     Text(
                       type.label,
                       style: TextStyle(
                         fontSize: 13,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
                         color: isSelected
                             ? type.color
                             : (isDark
-                                ? const Color(0xFFE2E8F0)
-                                : const Color(0xFF334155)),
+                                  ? const Color(0xFFE2E8F0)
+                                  : const Color(0xFF334155)),
                       ),
                     ),
                   ],
@@ -270,14 +308,19 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
               color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
             filled: true,
-            fillColor: isDark ? const Color(0xFF374151) : const Color(0xFFF1F5F9),
+            fillColor: isDark
+                ? const Color(0xFF374151)
+                : const Color(0xFFF1F5F9),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF155CFB), width: 1.5),
+              borderSide: const BorderSide(
+                color: Color(0xFF155CFB),
+                width: 1.5,
+              ),
             ),
           ),
         ),
@@ -288,17 +331,11 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
   Widget _buildDateTimePickers(bool isDark, AppLocalizations l10n) {
     return Row(
       children: [
-        Expanded(
-          child: _buildDatePicker(isDark),
-        ),
+        Expanded(child: _buildDatePicker(isDark)),
         const SizedBox(width: 12),
-        Expanded(
-          child: _buildTimePicker(isDark, true),
-        ),
+        Expanded(child: _buildTimePicker(isDark, true)),
         const SizedBox(width: 12),
-        Expanded(
-          child: _buildTimePicker(isDark, false),
-        ),
+        Expanded(child: _buildTimePicker(isDark, false)),
       ],
     );
   }
@@ -339,7 +376,9 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
                 Icon(
                   Icons.calendar_today_rounded,
                   size: 18,
-                  color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                  color: isDark
+                      ? const Color(0xFF94A3B8)
+                      : const Color(0xFF64748B),
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -388,7 +427,10 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
             }
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            width: ResponsiveUtil(context).isMobile
+                ? ResponsiveUtil(context).screenWidth * 0.6
+                : ResponsiveUtil(context).screenWidth * 0.25,
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 14),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF374151) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(12),
@@ -398,7 +440,9 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
                 Icon(
                   Icons.access_time_rounded,
                   size: 18,
-                  color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                  color: isDark
+                      ? const Color(0xFF94A3B8)
+                      : const Color(0xFF64748B),
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -431,7 +475,9 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
               Icon(
                 Icons.notifications_outlined,
                 size: 20,
-                color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                color: isDark
+                    ? const Color(0xFF94A3B8)
+                    : const Color(0xFF64748B),
               ),
               const SizedBox(width: 12),
               Text(
@@ -439,7 +485,9 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF334155),
+                  color: isDark
+                      ? const Color(0xFFE2E8F0)
+                      : const Color(0xFF334155),
                 ),
               ),
             ],
@@ -454,7 +502,11 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Row(
       children: [
         Expanded(
@@ -465,7 +517,9 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
                 side: BorderSide(
-                  color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                  color: isDark
+                      ? const Color(0xFF374151)
+                      : const Color(0xFFE5E7EB),
                 ),
               ),
             ),
@@ -474,7 +528,9 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: isDark ? const Color(0xFFE2E8F0) : const Color(0xFF334155),
+                color: isDark
+                    ? const Color(0xFFE2E8F0)
+                    : const Color(0xFF334155),
               ),
             ),
           ),
@@ -512,7 +568,9 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
           content: const Text('Please enter an event title'),
           backgroundColor: const Color(0xFFEF4444),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       return;
@@ -523,11 +581,19 @@ class _InstructorAddEventSheetState extends State<InstructorAddEventSheet> {
       title: _titleController.text.trim(),
       type: _selectedType,
       date: _selectedDate,
-      time: '${_startTime.hour.toString().padLeft(2, '0')}:${_startTime.minute.toString().padLeft(2, '0')}',
-      endTime: '${_endTime.hour.toString().padLeft(2, '0')}:${_endTime.minute.toString().padLeft(2, '0')}',
-      course: _courseController.text.trim().isEmpty ? null : _courseController.text.trim(),
-      location: _locationController.text.trim().isEmpty ? null : _locationController.text.trim(),
-      description: _descriptionController.text.trim().isEmpty ? null : _descriptionController.text.trim(),
+      time:
+          '${_startTime.hour.toString().padLeft(2, '0')}:${_startTime.minute.toString().padLeft(2, '0')}',
+      endTime:
+          '${_endTime.hour.toString().padLeft(2, '0')}:${_endTime.minute.toString().padLeft(2, '0')}',
+      course: _courseController.text.trim().isEmpty
+          ? null
+          : _courseController.text.trim(),
+      location: _locationController.text.trim().isEmpty
+          ? null
+          : _locationController.text.trim(),
+      description: _descriptionController.text.trim().isEmpty
+          ? null
+          : _descriptionController.text.trim(),
       hasReminder: _hasReminder,
     );
 

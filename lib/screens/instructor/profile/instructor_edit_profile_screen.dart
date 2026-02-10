@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../widgets/instructor/profile/instructor_profile_barrel.dart';
 
 class InstructorEditProfileScreen extends StatefulWidget {
   const InstructorEditProfileScreen({super.key});
@@ -230,139 +231,161 @@ class _InstructorEditProfileScreenState
                 child: Column(
                   children: [
                     // Profile Picture
-                    _buildProfilePicture(isDark),
+                    InstructorProfilePicture(
+                      initials: 'AM',
+                      isDark: isDark,
+                      onChangePicture: () {
+                        HapticFeedback.lightImpact();
+                        // Change profile picture
+                      },
+                    ),
                     const SizedBox(height: 24),
 
                     // Personal Information Section
-                    _buildSection(
+                    InstructorProfileSection(
                       title: 'Personal Information',
                       icon: Icons.person_outline_rounded,
                       isDark: isDark,
                       children: [
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _firstNameController,
                           label: 'First Name',
                           icon: Icons.person_outline_rounded,
                           isDark: isDark,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _lastNameController,
                           label: 'Last Name',
                           icon: Icons.person_outline_rounded,
                           isDark: isDark,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _emailController,
                           label: l10n.email,
                           icon: Icons.email_outlined,
                           isDark: isDark,
                           keyboardType: TextInputType.emailAddress,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _phoneController,
                           label: l10n.phone,
                           icon: Icons.phone_outlined,
                           isDark: isDark,
                           keyboardType: TextInputType.phone,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _locationController,
                           label: 'Location',
                           icon: Icons.location_on_outlined,
                           isDark: isDark,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildDateField(
+                        InstructorProfileDateField(
                           label: 'Date of Birth',
                           value: _dateOfBirth,
                           isDark: isDark,
                           onTap: () => _selectDate(context),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _bioController,
                           label: l10n.bio,
                           icon: Icons.info_outline_rounded,
                           isDark: isDark,
                           maxLines: 3,
+                          onChanged: (_) => _markChanged(),
                         ),
                       ],
                     ),
 
                     // Professional Information Section
-                    _buildSection(
+                    InstructorProfileSection(
                       title: 'Professional Information',
                       icon: Icons.work_outline_rounded,
                       isDark: isDark,
                       children: [
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _titleController,
                           label: 'Title',
                           icon: Icons.badge_outlined,
                           isDark: isDark,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _departmentController,
                           label: 'Department',
                           icon: Icons.business_outlined,
                           isDark: isDark,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _employeeIdController,
                           label: 'Employee ID',
                           icon: Icons.badge_outlined,
                           isDark: isDark,
                           enabled: false,
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _specializationController,
                           label: l10n.specialization,
                           icon: Icons.psychology_outlined,
                           isDark: isDark,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _officeController,
                           label: l10n.office,
                           icon: Icons.meeting_room_outlined,
                           isDark: isDark,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _officeHoursController,
                           label: l10n.officeHours,
                           icon: Icons.access_time_outlined,
                           isDark: isDark,
+                          onChanged: (_) => _markChanged(),
                         ),
                       ],
                     ),
 
                     // Social Links Section
-                    _buildSection(
+                    InstructorProfileSection(
                       title: 'Social & Academic Links',
                       icon: Icons.link_rounded,
                       isDark: isDark,
                       children: [
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _websiteController,
                           label: 'Website',
                           icon: Icons.language_outlined,
                           isDark: isDark,
                           keyboardType: TextInputType.url,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _linkedinController,
                           label: 'LinkedIn',
                           icon: Icons.link_rounded,
                           isDark: isDark,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _googleScholarController,
                           label: 'Google Scholar',
                           icon: Icons.school_outlined,
                           isDark: isDark,
+                          onChanged: (_) => _markChanged(),
                         ),
-                        _buildTextField(
+                        InstructorProfileTextField(
                           controller: _researchGateController,
                           label: 'ResearchGate',
                           icon: Icons.science_outlined,
                           isDark: isDark,
+                          onChanged: (_) => _markChanged(),
                         ),
                       ],
                     ),
@@ -410,251 +433,6 @@ class _InstructorEditProfileScreenState
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfilePicture(bool isDark) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Container(
-          width: 120,
-          height: 120,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: isDark ? const Color(0xFF0F172A) : Colors.white,
-              width: 4,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
-          ),
-          child: CircleAvatar(
-            radius: 56,
-            backgroundColor: const Color(0xFF155CFB),
-            child: const Text(
-              'AM',
-              style: TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        Positioned(
-          bottom: 0,
-          right: 0,
-          child: GestureDetector(
-            onTap: () {
-              HapticFeedback.lightImpact();
-              // Change profile picture
-            },
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: const Color(0xFF155CFB),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: isDark ? const Color(0xFF0F172A) : Colors.white,
-                  width: 3,
-                ),
-              ),
-              child: const Icon(
-                Icons.camera_alt_rounded,
-                color: Colors.white,
-                size: 20,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSection({
-    required String title,
-    required IconData icon,
-    required bool isDark,
-    required List<Widget> children,
-  }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: isDark
-                ? Colors.black.withValues(alpha: 0.2)
-                : Colors.black.withValues(alpha: 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF155CFB).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    icon,
-                    color: const Color(0xFF155CFB),
-                    size: 22,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white : const Color(0xFF0F172A),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(
-            height: 1,
-            color:
-                isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(children: children),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required IconData icon,
-    required bool isDark,
-    TextInputType? keyboardType,
-    int maxLines = 1,
-    bool enabled = true,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextField(
-        controller: controller,
-        onChanged: (_) => _markChanged(),
-        enabled: enabled,
-        keyboardType: keyboardType,
-        maxLines: maxLines,
-        style: TextStyle(
-          color: isDark ? Colors.white : const Color(0xFF0F172A),
-        ),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: TextStyle(
-            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-          ),
-          prefixIcon: Icon(
-            icon,
-            size: 20,
-            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-          ),
-          filled: true,
-          fillColor:
-              isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide.none,
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: const BorderSide(color: Color(0xFF155CFB), width: 1.5),
-          ),
-          disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide.none,
-          ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDateField({
-    required String label,
-    required DateTime? value,
-    required bool isDark,
-    required VoidCallback onTap,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF334155) : const Color(0xFFF1F5F9),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.calendar_today_outlined,
-                size: 20,
-                color:
-                    isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      label,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isDark
-                            ? const Color(0xFF94A3B8)
-                            : const Color(0xFF64748B),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      value != null
-                          ? '${value.month}/${value.day}/${value.year}'
-                          : 'Select date',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: isDark ? Colors.white : const Color(0xFF0F172A),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color:
-                    isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-              ),
-            ],
-          ),
         ),
       ),
     );

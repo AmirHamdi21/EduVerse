@@ -110,7 +110,8 @@ class _InstructorProfileScreenState extends State<InstructorProfileScreen> {
       ),
       actions: [
         IconButton(
-          onPressed: () => _showEditProfileSheet(isDark, l10n),
+          // onPressed: () => _showEditProfileSheet(isDark, l10n),
+          onPressed: () => context.push('/instructor/edit-profile'),
           icon: Container(
             width: 36,
             height: 36,

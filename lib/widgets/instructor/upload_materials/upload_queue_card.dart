@@ -27,9 +27,7 @@ class UploadQueueCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? UploadMaterialsColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: UploadMaterialsColors.borderColor(isDark),
-        ),
+        border: Border.all(color: UploadMaterialsColors.borderColor(isDark)),
         boxShadow: isDark
             ? null
             : [
@@ -53,11 +51,7 @@ class UploadQueueCard extends StatelessWidget {
                   color: item.type.color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
-                  item.type.icon,
-                  color: item.type.color,
-                  size: 22,
-                ),
+                child: Icon(item.type.icon, color: item.type.color, size: 22),
               ),
               const SizedBox(width: 12),
               // File info
@@ -78,10 +72,7 @@ class UploadQueueCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       '${item.formattedSize} • ${_getStatusText()}',
-                      style: TextStyle(
-                        color: _getStatusColor(),
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: _getStatusColor(), fontSize: 12),
                     ),
                   ],
                 ),
@@ -98,10 +89,10 @@ class UploadQueueCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: item.progress,
-                backgroundColor: UploadMaterialsColors.progressBackground(isDark),
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  _getProgressColor(),
+                backgroundColor: UploadMaterialsColors.progressBackground(
+                  isDark,
                 ),
+                valueColor: AlwaysStoppedAnimation<Color>(_getProgressColor()),
                 minHeight: 4,
               ),
             ),
@@ -136,7 +127,8 @@ class UploadQueueCard extends StatelessWidget {
             ),
           ],
           // Error message
-          if (item.status == UploadStatus.failed && item.errorMessage != null) ...[
+          if (item.status == UploadStatus.failed &&
+              item.errorMessage != null) ...[
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -277,40 +269,43 @@ class UploadQueueEmpty extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(32),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: UploadMaterialsColors.surfaceColor(isDark),
-              borderRadius: BorderRadius.circular(16),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: UploadMaterialsColors.surfaceColor(isDark),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                Icons.cloud_queue_rounded,
+                color: UploadMaterialsColors.textTertiaryColor(isDark),
+                size: 32,
+              ),
             ),
-            child: Icon(
-              Icons.cloud_queue_rounded,
-              color: UploadMaterialsColors.textTertiaryColor(isDark),
-              size: 32,
+            const SizedBox(height: 16),
+            Text(
+              'No files in queue',
+              style: TextStyle(
+                color: UploadMaterialsColors.textPrimaryColor(isDark),
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No files in queue',
-            style: TextStyle(
-              color: UploadMaterialsColors.textPrimaryColor(isDark),
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
+            const SizedBox(height: 4),
+            Text(
+              'Select files to upload',
+              style: TextStyle(
+                color: UploadMaterialsColors.textSecondaryColor(isDark),
+                fontSize: 14,
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Select files to upload',
-            style: TextStyle(
-              color: UploadMaterialsColors.textSecondaryColor(isDark),
-              fontSize: 14,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
