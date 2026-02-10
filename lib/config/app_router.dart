@@ -71,6 +71,18 @@ import 'package:edu_verse/screens/instructor/profile/instructor_edit_profile_scr
 import 'package:edu_verse/screens/instructor/settings/instructor_settings_screen.dart';
 import 'package:edu_verse/screens/instructor/chat/instructor_chat_screen.dart';
 import 'package:edu_verse/models/instructor/instructor_course_model.dart';
+// TA, Admin, IT Admin screens (placeholders for development)
+import 'package:edu_verse/screens/ta/ta_dashboard_screen.dart';
+import 'package:edu_verse/screens/ta/courses/ta_courses_list_screen.dart';
+import 'package:edu_verse/screens/ta/courses/ta_course_detail_screen.dart';
+import 'package:edu_verse/screens/ta/labs/ta_labs_list_screen.dart';
+import 'package:edu_verse/screens/ta/labs/ta_lab_detail_screen.dart';
+import 'package:edu_verse/screens/ta/student_performance/ta_student_performance_screen.dart';
+import 'package:edu_verse/screens/ta/notifications/ta_notifications_screen.dart';
+import 'package:edu_verse/screens/ta/discussions/ta_discussions_screen.dart';
+import 'package:edu_verse/screens/ta/upload_materials/ta_upload_materials_screen.dart';
+import 'package:edu_verse/screens/admin/admin_dashboard_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_admin_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
@@ -418,6 +430,62 @@ class AppRouter {
       GoRoute(
         path: '/instructor/messages',
         builder: (context, state) => const InstructorChatScreen(),
+      ),
+
+      // ============ TA ROUTES (Placeholder) ============
+      GoRoute(
+        path: '/ta/dashboard',
+        builder: (context, state) => const TADashboardScreen(),
+      ),
+      GoRoute(
+        path: '/ta/courses',
+        builder: (context, state) => const TACoursesListScreen(),
+      ),
+      GoRoute(
+        path: '/ta/course/:id',
+        builder: (context, state) {
+          final courseId = state.pathParameters['id'] ?? '1';
+          return TACourseDetailScreen(courseId: courseId);
+        },
+      ),
+      GoRoute(
+        path: '/ta/labs',
+        builder: (context, state) => const TALabsListScreen(),
+      ),
+      GoRoute(
+        path: '/ta/lab/:id',
+        builder: (context, state) {
+          final labId = state.pathParameters['id'] ?? '1';
+          return TALabDetailScreen(labId: labId);
+        },
+      ),
+      GoRoute(
+        path: '/ta/student-performance',
+        builder: (context, state) => const TAStudentPerformanceScreen(),
+      ),
+      GoRoute(
+        path: '/ta/notifications',
+        builder: (context, state) => const TANotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/ta/discussions',
+        builder: (context, state) => const TADiscussionsScreen(),
+      ),
+      GoRoute(
+        path: '/ta/upload-materials',
+        builder: (context, state) => const TAUploadMaterialsScreen(),
+      ),
+
+      // ============ ADMIN ROUTES (Placeholder) ============
+      GoRoute(
+        path: '/admin/dashboard',
+        builder: (context, state) => const AdminDashboardScreen(),
+      ),
+
+      // ============ IT ADMIN ROUTES (Placeholder) ============
+      GoRoute(
+        path: '/it-admin/dashboard',
+        builder: (context, state) => const ITAdminDashboardScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

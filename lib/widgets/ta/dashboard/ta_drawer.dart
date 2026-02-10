@@ -5,18 +5,25 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../shared/ta_colors.dart';
 
-class StudentDrawer extends StatefulWidget {
-  const StudentDrawer({super.key});
+class TADrawer extends StatefulWidget {
+  final String? currentRoute;
+  final bool? isDark;
+
+  const TADrawer({
+    super.key,
+    this.currentRoute,
+    this.isDark,
+  });
 
   @override
-  State<StudentDrawer> createState() => _StudentDrawerState();
+  State<TADrawer> createState() => _TADrawerState();
 }
 
-class _StudentDrawerState extends State<StudentDrawer>
+class _TADrawerState extends State<TADrawer>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -32,6 +39,16 @@ class _StudentDrawerState extends State<StudentDrawer>
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  int _getSelectedIndexFromRoute(List<_MenuItem> items) {
+    if (widget.currentRoute == null) return 0;
+    for (int i = 0; i < items.length; i++) {
+      if (items[i].route == widget.currentRoute) {
+        return i;
+      }
+    }
+    return 0;
   }
 
   @override
@@ -59,18 +76,12 @@ class _StudentDrawerState extends State<StudentDrawer>
             child: SafeArea(
               child: Column(
                 children: [
-                  // User Profile Header
                   _buildProfileHeader(isDark, l10n),
-
-                  // Quick Stats Row
-                  _buildQuickStats(isDark),
-
+                  _buildQuickStats(isDark, l10n),
                   const SizedBox(height: 8),
-
-                  // Navigation Menu
-                  Expanded(child: _buildNavigationMenu(isDark, menuItems)),
-
-                  // Theme Toggle & Settings
+                  Expanded(
+                    child: _buildNavigationMenu(isDark, menuItems, l10n),
+                  ),
                   _buildBottomSection(isDark, l10n),
                 ],
               ),
@@ -86,27 +97,22 @@ class _StudentDrawerState extends State<StudentDrawer>
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       child: Row(
         children: [
-          // Profile Avatar with Status
           Stack(
             children: [
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
-                  context.push('/profile');
+                  context.push('/ta/profile');
                 },
                 child: Container(
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                    ),
+                    gradient: TAColors.primaryGradient,
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF6366F1).withOpacity(0.3),
+                        color: TAColors.primary.withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -131,7 +137,7 @@ class _StudentDrawerState extends State<StudentDrawer>
                   width: 16,
                   height: 16,
                   decoration: BoxDecoration(
-                    color: const Color(0xFF10B981),
+                    color: TAColors.success,
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: isDark ? const Color(0xFF0F172A) : Colors.white,
@@ -143,13 +149,12 @@ class _StudentDrawerState extends State<StudentDrawer>
             ],
           ),
           const SizedBox(width: 14),
-          // User Info
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Student User',
+                  'Sarah Anderson',
                   style: TextStyle(
                     color: isDark ? Colors.white : const Color(0xFF1E293B),
                     fontSize: 17,
@@ -163,13 +168,13 @@ class _StudentDrawerState extends State<StudentDrawer>
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withOpacity(0.1),
+                    color: TAColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Text(
-                    '🎓 Active Learner',
-                    style: TextStyle(
-                      color: Color(0xFF10B981),
+                  child: Text(
+                    '🎓 ${l10n.ta}',
+                    style: const TextStyle(
+                      color: TAColors.primary,
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
@@ -178,7 +183,6 @@ class _StudentDrawerState extends State<StudentDrawer>
               ],
             ),
           ),
-          // Close Button
           Material(
             color: Colors.transparent,
             child: InkWell(
@@ -188,8 +192,8 @@ class _StudentDrawerState extends State<StudentDrawer>
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? Colors.white.withOpacity(0.05)
-                      : Colors.black.withOpacity(0.03),
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -207,7 +211,7 @@ class _StudentDrawerState extends State<StudentDrawer>
     );
   }
 
-  Widget _buildQuickStats(bool isDark) {
+  Widget _buildQuickStats(bool isDark, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -222,18 +226,18 @@ class _StudentDrawerState extends State<StudentDrawer>
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.black.withOpacity(0.03),
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.03),
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem(isDark, '12', 'Courses', Icons.book_rounded),
+          _buildStatItem(isDark, '4', l10n.courses, Icons.school_rounded),
           _buildStatDivider(isDark),
-          _buildStatItem(isDark, '89%', 'Progress', Icons.trending_up_rounded),
+          _buildStatItem(isDark, '36', l10n.taGraded, Icons.grading_rounded),
           _buildStatDivider(isDark),
-          _buildStatItem(isDark, '24', 'Tasks', Icons.task_alt_rounded),
+          _buildStatItem(isDark, '8', l10n.pending, Icons.pending_actions_rounded),
         ],
       ),
     );
@@ -248,7 +252,7 @@ class _StudentDrawerState extends State<StudentDrawer>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: const Color(0xFF6366F1), size: 20),
+        Icon(icon, color: TAColors.primary, size: 20),
         const SizedBox(height: 6),
         Text(
           value,
@@ -274,8 +278,8 @@ class _StudentDrawerState extends State<StudentDrawer>
       width: 1,
       height: 36,
       color: isDark
-          ? Colors.white.withOpacity(0.1)
-          : Colors.black.withOpacity(0.06),
+          ? Colors.white.withValues(alpha: 0.1)
+          : Colors.black.withValues(alpha: 0.06),
     );
   }
 
@@ -285,145 +289,172 @@ class _StudentDrawerState extends State<StudentDrawer>
         icon: Icons.space_dashboard_rounded,
         activeIcon: Icons.space_dashboard,
         title: l10n.dashboard,
-        route: '/student-dashboard',
+        route: '/ta/dashboard',
         category: 'main',
       ),
       _MenuItem(
-        icon: Icons.auto_stories_outlined,
-        activeIcon: Icons.auto_stories,
-        title: l10n.courses,
-        route: '/courses',
+        icon: Icons.school_outlined,
+        activeIcon: Icons.school,
+        title: l10n.taAssignedCourses,
+        route: '/ta/courses',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.science_outlined,
+        activeIcon: Icons.science,
+        title: l10n.taLabsTitle,
+        route: '/ta/labs',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.analytics_outlined,
+        activeIcon: Icons.analytics,
+        title: l10n.taStudentPerformance,
+        route: '/ta/student-performance',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.grading_outlined,
+        activeIcon: Icons.grading,
+        title: l10n.taGradingCenter,
+        route: '/ta/grading',
+        badge: '12',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.rate_review_outlined,
+        activeIcon: Icons.rate_review,
+        title: l10n.taReviewSubmissions,
+        route: '/ta/reviews',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.upload_file_outlined,
+        activeIcon: Icons.upload_file,
+        title: l10n.taUploadTitle,
+        route: '/ta/upload-materials',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.forum_outlined,
+        activeIcon: Icons.forum,
+        title: l10n.taDiscussions,
+        route: '/ta/discussions',
+        badge: '5',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.access_time_rounded,
+        activeIcon: Icons.access_time_filled,
+        title: l10n.taOfficeHours,
+        route: '/ta/office-hours',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.how_to_reg_outlined,
+        activeIcon: Icons.how_to_reg,
+        title: l10n.attendanceManager,
+        route: '/ta/attendance',
         category: 'main',
       ),
       _MenuItem(
         icon: Icons.calendar_month_outlined,
         activeIcon: Icons.calendar_month,
         title: l10n.calendar,
-        route: '/calendar',
+        route: '/ta/calendar',
         category: 'main',
-      ),
-      _MenuItem(
-        icon: Icons.emoji_events_outlined,
-        activeIcon: Icons.emoji_events,
-        title: l10n.grades,
-        route: '/grades',
-        badge: '3',
-        category: 'main',
-      ),
-      _MenuItem(
-        icon: Icons.checklist_outlined,
-        activeIcon: Icons.checklist,
-        title: l10n.attendance,
-        route: '/attendance',
-        category: 'main',
-      ),
-      _MenuItem(
-        icon: Icons.folder_outlined,
-        activeIcon: Icons.folder,
-        title: l10n.myFiles,
-        route: '/my-files',
-        category: 'main',
-      ),
-      _MenuItem(
-        icon: Icons.summarize_outlined,
-        activeIcon: Icons.summarize,
-        title: l10n.summarizerTitle,
-        route: '/summarizer',
-        category: 'ai',
-        isHighlighted: true,
-      ),
-      _MenuItem(
-        icon: Icons.auto_awesome_outlined,
-        activeIcon: Icons.auto_awesome,
-        title: l10n.smartStudyTitle,
-        route: '/smart-study',
-        category: 'ai',
-        isHighlighted: true,
-      ),
-      _MenuItem(
-        icon: Icons.emoji_events_outlined,
-        activeIcon: Icons.emoji_events,
-        title: l10n.gamificationTitle,
-        route: '/gamification',
-        category: 'ai',
-        isHighlighted: true,
-      ),
-      _MenuItem(
-        icon: Icons.mic_none_rounded,
-        activeIcon: Icons.mic_rounded,
-        title: l10n.voiceToTextTitle,
-        route: '/voice-to-text',
-        category: 'ai',
-        isHighlighted: true,
-      ),
-      _MenuItem(
-        icon: Icons.chat_bubble_outline_rounded,
-        activeIcon: Icons.chat_bubble_rounded,
-        title: l10n.messages,
-        route: '/messages',
-        badge: '5',
-        category: 'communication',
-      ),
-      _MenuItem(
-        icon: Icons.auto_awesome_outlined,
-        activeIcon: Icons.auto_awesome,
-        title: l10n.aiNotesSummaries,
-        route: '/ai-notes',
-        isHighlighted: true,
-        category: 'ai',
       ),
       _MenuItem(
         icon: Icons.psychology_outlined,
         activeIcon: Icons.psychology,
+        title: l10n.taAIAssistant,
+        route: '/ta/ai-assistant',
+        isHighlighted: true,
+        category: 'ai',
+      ),
+      _MenuItem(
+        icon: Icons.auto_awesome_outlined,
+        activeIcon: Icons.auto_awesome,
         title: l10n.aiAssistant,
         route: '/ai-chat',
         isHighlighted: true,
         category: 'ai',
       ),
       _MenuItem(
+        icon: Icons.forum_outlined,
+        activeIcon: Icons.forum,
+        title: l10n.taDiscussTitle,
+        route: '/ta/discussions',
+        badge: '5',
+        category: 'communication',
+      ),
+      _MenuItem(
+        icon: Icons.chat_bubble_outline_rounded,
+        activeIcon: Icons.chat_bubble_rounded,
+        title: l10n.messages,
+        route: '/ta/messages',
+        badge: '3',
+        category: 'communication',
+      ),
+      _MenuItem(
+        icon: Icons.notifications_outlined,
+        activeIcon: Icons.notifications,
+        title: l10n.taNotifications,
+        route: '/ta/notifications',
+        badge: '2',
+        category: 'communication',
+      ),
+      _MenuItem(
         icon: Icons.person_outline_rounded,
         activeIcon: Icons.person,
         title: l10n.profile,
-        route: '/profile',
+        route: '/ta/profile',
         category: 'account',
       ),
       _MenuItem(
         icon: Icons.settings_outlined,
         activeIcon: Icons.settings,
         title: l10n.settings,
-        route: '/settings',
+        route: '/ta/settings',
         category: 'account',
       ),
     ];
   }
 
-  Widget _buildNavigationMenu(bool isDark, List<_MenuItem> items) {
+  Widget _buildNavigationMenu(
+    bool isDark,
+    List<_MenuItem> items,
+    AppLocalizations l10n,
+  ) {
     final mainItems = items.where((i) => i.category == 'main').toList();
-    final communicationItems = items
-        .where((i) => i.category == 'communication' || i.category == 'ai')
-        .toList();
+    final aiItems = items.where((i) => i.category == 'ai').toList();
+    final communicationItems =
+        items.where((i) => i.category == 'communication').toList();
     final accountItems = items.where((i) => i.category == 'account').toList();
 
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       physics: const BouncingScrollPhysics(),
       children: [
-        _buildSectionLabel(isDark, 'MAIN MENU'),
+        _buildSectionLabel(isDark, l10n.mainMenu),
         ...mainItems.asMap().entries.map(
-          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-        ),
-
+              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+            ),
         const SizedBox(height: 16),
-        _buildSectionLabel(isDark, 'CONNECT'),
+        _buildSectionLabel(isDark, l10n.aiTools),
+        ...aiItems.asMap().entries.map(
+              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+            ),
+        const SizedBox(height: 16),
+        _buildSectionLabel(isDark, l10n.connect),
         ...communicationItems.asMap().entries.map(
-          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-        ),
-
+              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+            ),
         const SizedBox(height: 16),
-        _buildSectionLabel(isDark, 'ACCOUNT'),
+        _buildSectionLabel(isDark, l10n.account),
         ...accountItems.asMap().entries.map(
-          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-        ),
+              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+            ),
       ],
     );
   }
@@ -432,7 +463,7 @@ class _StudentDrawerState extends State<StudentDrawer>
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Text(
-        label,
+        label.toUpperCase(),
         style: TextStyle(
           color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
           fontSize: 11,
@@ -444,7 +475,7 @@ class _StudentDrawerState extends State<StudentDrawer>
   }
 
   Widget _buildNavItem(bool isDark, _MenuItem item, int index) {
-    final isSelected = _selectedIndex == index;
+    final isSelected = widget.currentRoute == item.route;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -452,11 +483,9 @@ class _StudentDrawerState extends State<StudentDrawer>
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            setState(() => _selectedIndex = index);
             Navigator.pop(context);
-            // Navigate to the route
-            if (item.route.isNotEmpty && item.route != '/student-dashboard') {
-              context.push(item.route);
+            if (item.route.isNotEmpty && item.route != widget.currentRoute) {
+              context.go(item.route);
             }
           },
           borderRadius: BorderRadius.circular(14),
@@ -467,76 +496,74 @@ class _StudentDrawerState extends State<StudentDrawer>
               gradient: isSelected
                   ? LinearGradient(
                       colors: item.isHighlighted
-                          ? [const Color(0xFF8B5CF6), const Color(0xFF6366F1)]
+                          ? [TAColors.primary, TAColors.primaryLight]
                           : [
-                              const Color(0xFF3B82F6).withValues(alpha: 0.15),
-                              const Color(0xFF6366F1).withValues(alpha: 0.1),
+                              TAColors.primary.withValues(alpha: 0.15),
+                              TAColors.primaryLight.withValues(alpha: 0.1),
                             ],
                     )
                   : item.isHighlighted
-                  ? LinearGradient(
-                      colors: [
-                        const Color(0xFF8B5CF6).withOpacity(0.1),
-                        const Color(0xFF6366F1).withOpacity(0.05),
-                      ],
-                    )
-                  : null,
+                      ? LinearGradient(
+                          colors: [
+                            TAColors.primary.withValues(alpha: 0.1),
+                            TAColors.primaryLight.withValues(alpha: 0.05),
+                          ],
+                        )
+                      : null,
               borderRadius: BorderRadius.circular(14),
               border: item.isHighlighted && !isSelected
-                  ? Border.all(color: const Color(0xFF8B5CF6).withOpacity(0.3))
+                  ? Border.all(
+                      color: TAColors.primary.withValues(alpha: 0.3),
+                    )
                   : null,
             ),
             child: Row(
               children: [
-                // Icon Container
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? (item.isHighlighted
-                              ? Colors.white.withOpacity(0.2)
-                              : const Color(0xFF3B82F6).withOpacity(0.1))
+                            ? Colors.white.withValues(alpha: 0.2)
+                            : TAColors.primary.withValues(alpha: 0.1))
                         : (isDark
-                              ? Colors.white.withOpacity(0.05)
-                              : Colors.black.withOpacity(0.03)),
+                            ? Colors.white.withValues(alpha: 0.05)
+                            : Colors.black.withValues(alpha: 0.03)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     isSelected ? item.activeIcon : item.icon,
                     color: isSelected
-                        ? (item.isHighlighted
-                              ? Colors.white
-                              : const Color(0xFF3B82F6))
+                        ? (item.isHighlighted ? Colors.white : TAColors.primary)
                         : item.isHighlighted
-                        ? const Color(0xFF8B5CF6)
-                        : (isDark
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF64748B)),
+                            ? TAColors.primary
+                            : (isDark
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF64748B)),
                     size: 20,
                   ),
                 ),
                 const SizedBox(width: 12),
-                // Title
                 Expanded(
                   child: Text(
                     item.title,
                     style: TextStyle(
                       color: isSelected
                           ? (item.isHighlighted
-                                ? Colors.white
-                                : const Color(0xFF3B82F6))
+                              ? Colors.white
+                              : TAColors.primary)
                           : item.isHighlighted
-                          ? const Color(0xFF8B5CF6)
-                          : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                              ? TAColors.primary
+                              : (isDark
+                                  ? Colors.white
+                                  : const Color(0xFF1E293B)),
                       fontSize: 14,
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
                 ),
-                // Badge
                 if (item.badge != null)
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -545,8 +572,8 @@ class _StudentDrawerState extends State<StudentDrawer>
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? Colors.white.withOpacity(0.2)
-                          : const Color(0xFFEF4444),
+                          ? Colors.white.withValues(alpha: 0.2)
+                          : TAColors.error,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -554,15 +581,14 @@ class _StudentDrawerState extends State<StudentDrawer>
                       style: TextStyle(
                         color: isSelected
                             ? (item.isHighlighted
-                                  ? Colors.white
-                                  : const Color(0xFF3B82F6))
+                                ? Colors.white
+                                : TAColors.primary)
                             : Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                // Highlighted indicator
                 if (item.isHighlighted && !isSelected)
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -570,7 +596,7 @@ class _StudentDrawerState extends State<StudentDrawer>
                       vertical: 2,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF8B5CF6),
+                      color: TAColors.primary,
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Text(
@@ -595,13 +621,12 @@ class _StudentDrawerState extends State<StudentDrawer>
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          // Theme Toggle
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withOpacity(0.05)
-                  : Colors.black.withOpacity(0.03),
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.black.withValues(alpha: 0.03),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
@@ -610,7 +635,7 @@ class _StudentDrawerState extends State<StudentDrawer>
                   child: _buildThemeOption(
                     isDark,
                     icon: Icons.light_mode_rounded,
-                    label: 'Light',
+                    label: l10n.lightMode,
                     isActive: !isDark,
                     onTap: () {
                       if (isDark) {
@@ -623,7 +648,7 @@ class _StudentDrawerState extends State<StudentDrawer>
                   child: _buildThemeOption(
                     isDark,
                     icon: Icons.dark_mode_rounded,
-                    label: 'Dark',
+                    label: l10n.darkMode,
                     isActive: isDark,
                     onTap: () {
                       if (!isDark) {
@@ -636,36 +661,35 @@ class _StudentDrawerState extends State<StudentDrawer>
             ),
           ),
           const SizedBox(height: 12),
-          // Logout Button
           Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                // Handle logout
-                context.push('/login');
+                Navigator.pop(context);
+                context.go('/login');
               },
               borderRadius: BorderRadius.circular(12),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: const Color(0xFFEF4444).withOpacity(0.3),
+                    color: TAColors.error.withValues(alpha: 0.3),
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.logout_rounded,
-                      color: Color(0xFFEF4444),
+                      color: TAColors.error,
                       size: 18,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       l10n.logout,
-                      style: TextStyle(
-                        color: Color(0xFFEF4444),
+                      style: const TextStyle(
+                        color: TAColors.error,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -694,14 +718,14 @@ class _StudentDrawerState extends State<StudentDrawer>
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           color: isActive
-              ? (isDark ? const Color(0xFF3B82F6) : Colors.white)
+              ? (isDark ? TAColors.primary : Colors.white)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: (isDark ? const Color(0xFF3B82F6) : Colors.black)
-                        .withOpacity(0.1),
+                    color: (isDark ? TAColors.primary : Colors.black)
+                        .withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -715,10 +739,10 @@ class _StudentDrawerState extends State<StudentDrawer>
               icon,
               size: 16,
               color: isActive
-                  ? (isDark ? Colors.white : const Color(0xFF3B82F6))
+                  ? (isDark ? Colors.white : TAColors.primary)
                   : (isDark
-                        ? const Color(0xFF64748B)
-                        : const Color(0xFF94A3B8)),
+                      ? const Color(0xFF64748B)
+                      : const Color(0xFF94A3B8)),
             ),
             const SizedBox(width: 6),
             Text(
@@ -727,10 +751,10 @@ class _StudentDrawerState extends State<StudentDrawer>
                 fontSize: 12,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                 color: isActive
-                    ? (isDark ? Colors.white : const Color(0xFF3B82F6))
+                    ? (isDark ? Colors.white : TAColors.primary)
                     : (isDark
-                          ? const Color(0xFF64748B)
-                          : const Color(0xFF94A3B8)),
+                        ? const Color(0xFF64748B)
+                        : const Color(0xFF94A3B8)),
               ),
             ),
           ],

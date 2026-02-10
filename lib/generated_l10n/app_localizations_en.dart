@@ -5676,4 +5676,1034 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get broadcastMessageDesc => 'Send to all students in a course';
+
+  @override
+  String get taDashboard => 'TA Dashboard';
+
+  @override
+  String get taSubtitle => 'Your tasks and student support hub';
+
+  @override
+  String get taAIInsightsTitle => 'AI Insights for You';
+
+  @override
+  String get taAIInsightsSubtitle => 'Personalized assistance & insights';
+
+  @override
+  String get taInsightGradingSpeed => 'Grading Speed';
+
+  @override
+  String get taInsightGradingSpeedDesc =>
+      'Your grading is 20% faster this week';
+
+  @override
+  String get taInsightStudentsNeedHelp => 'Students Need Help';
+
+  @override
+  String get taInsightStudentsNeedHelpDesc =>
+      '3 students asked questions in discussions';
+
+  @override
+  String get taInsightSuggestion => 'AI Suggestion';
+
+  @override
+  String get taInsightSuggestionDesc =>
+      'Schedule a help session for Week 5 content';
+
+  @override
+  String get taViewFullInsights => 'View Full Insights';
+
+  @override
+  String get taAskAIHelp => 'Ask AI for Help';
+
+  @override
+  String get taQuickActions => 'Quick Actions';
+
+  @override
+  String get taExamGrading => 'Exam Grading';
+
+  @override
+  String get taReviewLabs => 'Review Labs';
+
+  @override
+  String get taOpenDiscussions => 'Open Discussions';
+
+  @override
+  String get taThisWeekActivity => 'This Week\'s Activity';
+
+  @override
+  String get taFromLastWeek => 'from last week';
+
+  @override
+  String get taAssignmentsGraded => 'Assignments Graded';
+
+  @override
+  String get taLabsReviewed => 'Labs Reviewed';
+
+  @override
+  String get taQuestionsAnswered => 'Questions Answered';
+
+  @override
+  String get taAttendanceSessions => 'Attendance Sessions';
+
+  @override
+  String get taAIHelpedGrade => 'AI helped you grade 14% faster this week';
+
+  @override
+  String get taAIHelpedGradeDesc => 'Time saved with AI-assisted grading';
+
+  @override
+  String get taAssignedCourses => 'Assigned Courses';
+
+  @override
+  String get taTasks => 'Tasks';
+
+  @override
+  String get taTaskCenter => 'Task Center';
+
+  @override
+  String get taAllTasks => 'All Tasks';
+
+  @override
+  String get taGrading => 'Grading';
+
+  @override
+  String get taReviews => 'Reviews';
+
+  @override
+  String get taDiscussions => 'Discussions';
+
+  @override
+  String get taNoTasksInCategory => 'No tasks in this category';
+
+  @override
+  String get taSubmissions => 'submissions';
+
+  @override
+  String get taStart => 'Start';
+
+  @override
+  String get taDiscussionMonitor => 'Discussion Monitor';
+
+  @override
+  String get taUnanswered => 'Unanswered';
+
+  @override
+  String get taNoUnansweredQuestions => 'No unanswered questions';
+
+  @override
+  String get taViews => 'views';
+
+  @override
+  String get taReplyNow => 'Reply Now';
+
+  @override
+  String get taGraded => 'Graded';
+
+  @override
+  String get taGradingCenter => 'Grading Center';
+
+  @override
+  String get taReviewSubmissions => 'Review Submissions';
+
+  @override
+  String get taOfficeHours => 'Office Hours';
+
+  @override
+  String get taAIAssistant => 'TA AI Assistant';
+
+  @override
+  String get taCourses => 'TA Courses';
+
+  @override
+  String get taCourseDetail => 'Course Detail';
+
+  @override
+  String get taCourseStudents => 'Students';
+
+  @override
+  String get taCourseLabs => 'Labs';
+
+  @override
+  String get taCourseAssignments => 'Assignments';
+
+  @override
+  String get taCourseDiscussionsCount => 'Discussions';
+
+  @override
+  String get taCourseViewLabs => 'View Labs';
+
+  @override
+  String get taCourseSubmissions => 'Submissions';
+
+  @override
+  String get taCourseDiscussionBtn => 'Discussions';
+
+  @override
+  String get taCourseAIInsights => 'AI Insights';
+
+  @override
+  String get taCourseInsightsTitle => 'TA Insights';
+
+  @override
+  String get taCourseOpenInsights => 'Open TA Insights';
+
+  @override
+  String get taCourseFullInsightsTitle => 'Full AI Insights';
+
+  @override
+  String get taCourseFullInsightsSubtitle => 'AI-powered recommendations';
+
+  @override
+  String get taCoursePriorityTasks => 'Priority Tasks';
+
+  @override
+  String get taCourseUpcomingTasks => 'Upcoming TA Tasks';
+
+  @override
+  String get taCourseRecentActivity => 'Recent Activity';
+
+  @override
+  String get taCourseNoLabs => 'No Labs Available';
+
+  @override
+  String get taCourseNoLabsDesc => 'Labs for this course will appear here';
+
+  @override
+  String get taCourseLabActive => 'Active';
+
+  @override
+  String get taCourseLabClosed => 'Closed';
+
+  @override
+  String get taCourseLabAttendance => 'Attendance';
+
+  @override
+  String get taCourseLabStudents => 'students';
+
+  @override
+  String get taCourseLabOpen => 'Open Lab';
+
+  @override
+  String get taCourseLabReview => 'Review';
+
+  @override
+  String get taCourseLabAttendanceBtn => 'Attendance';
+
+  @override
+  String get taCourseLabUpload => 'Upload';
+
+  @override
+  String get taCourseNoGrading => 'No Pending Grading';
+
+  @override
+  String get taCourseNoGradingDesc => 'All submissions have been graded';
+
+  @override
+  String get taCourseGradingPending => 'Pending';
+
+  @override
+  String get taCourseGradingInProgress => 'In Progress';
+
+  @override
+  String get taCourseGradingComplete => 'Complete';
+
+  @override
+  String get taCourseApplyAIScore => 'Apply AI Score';
+
+  @override
+  String get taCourseStartReview => 'Start Reviewing';
+
+  @override
+  String get taCourseAIGradingHelper => 'AI Grading Helper';
+
+  @override
+  String get taCourseSuggestedScore => 'Suggested Score';
+
+  @override
+  String get taCourseFilterAll => 'All';
+
+  @override
+  String get taCourseFilterUnanswered => 'Unanswered';
+
+  @override
+  String get taCourseFilterHighActivity => 'High Activity';
+
+  @override
+  String get taCourseFilterAIFlagged => 'AI Flagged';
+
+  @override
+  String get taCourseNoDiscussions => 'No Discussions';
+
+  @override
+  String get taCourseNoDiscussionsDesc => 'Discussion threads will appear here';
+
+  @override
+  String get taCourseDiscussionReplies => 'replies';
+
+  @override
+  String get taCourseDiscussionLikes => 'likes';
+
+  @override
+  String get taCourseReplyAsTA => 'Reply as TA';
+
+  @override
+  String get taCourseUnanswered => 'Unanswered';
+
+  @override
+  String get taCourseOverview => 'Overview';
+
+  @override
+  String get taCourseLabsTab => 'Labs';
+
+  @override
+  String get taCourseGradingTab => 'Grading';
+
+  @override
+  String get taCourseDiscussionsTab => 'Discussions';
+
+  @override
+  String get mainMenu => 'Main Menu';
+
+  @override
+  String get aiTools => 'AI Tools';
+
+  @override
+  String get connect => 'Connect';
+
+  @override
+  String get goodNight => 'Good Night';
+
+  @override
+  String get taLabsTitle => 'Labs';
+
+  @override
+  String get taLabFilterAll => 'All Labs';
+
+  @override
+  String get taLabFilterActive => 'Active';
+
+  @override
+  String get taLabFilterPendingReview => 'Pending Review';
+
+  @override
+  String get taLabsCount => 'Labs';
+
+  @override
+  String get taLabNoLabs => 'No Labs Found';
+
+  @override
+  String get taLabNoLabsDesc => 'Labs will appear here when available';
+
+  @override
+  String get taLabActive => 'Active';
+
+  @override
+  String get taLabClosed => 'Closed';
+
+  @override
+  String get taLabPendingReview => 'pending';
+
+  @override
+  String get taLabOverview => 'Overview';
+
+  @override
+  String get taLabSubmissionsTab => 'Submissions';
+
+  @override
+  String get taLabAttendanceTab => 'Attendance';
+
+  @override
+  String get taLabEdit => 'Edit Lab';
+
+  @override
+  String get taLabSettings => 'Settings';
+
+  @override
+  String get taLabStatus => 'Status';
+
+  @override
+  String get taLabStudents => 'Students';
+
+  @override
+  String get taLabSubmissions => 'Submissions';
+
+  @override
+  String get taLabSubmitted => 'Submitted';
+
+  @override
+  String get taLabDue => 'Due';
+
+  @override
+  String get taLabUpload => 'Upload';
+
+  @override
+  String get taLabAttendance => 'Attendance';
+
+  @override
+  String get taLabAIInsights => 'AI Insights';
+
+  @override
+  String get taLabAllLabs => 'All Labs';
+
+  @override
+  String get taLabTaskSummary => 'Task Summary';
+
+  @override
+  String get taLabTaskStart => 'Start';
+
+  @override
+  String get taLabTaskMark => 'Mark';
+
+  @override
+  String get taLabTaskReply => 'Reply';
+
+  @override
+  String get taLabTaskReview => 'Review';
+
+  @override
+  String get taLabStudentQuestions => 'Student Questions';
+
+  @override
+  String get taLabUnresolved => 'unresolved';
+
+  @override
+  String get taLabResolved => 'Resolved';
+
+  @override
+  String get taLabResolve => 'Resolve';
+
+  @override
+  String get taLabAIHint => 'AI Hint';
+
+  @override
+  String get taLabRecentActivity => 'Recent Activity';
+
+  @override
+  String get taLabLoadingActivity => 'Loading activity...';
+
+  @override
+  String get taLabAllSubmissions => 'All Submissions';
+
+  @override
+  String get taLabTotal => 'Total';
+
+  @override
+  String get taLabPending => 'Pending';
+
+  @override
+  String get taLabReviewed => 'Reviewed';
+
+  @override
+  String get taLabLate => 'Late';
+
+  @override
+  String get taLabAIScore => 'AI Score';
+
+  @override
+  String get taLabFinalScore => 'Final Score';
+
+  @override
+  String get taLabOpenSubmission => 'Open';
+
+  @override
+  String get taLabNoScoreYet => 'No score yet';
+
+  @override
+  String get taLabNoSubmissions => 'No Submissions Yet';
+
+  @override
+  String get taLabNoSubmissionsDesc => 'Student submissions will appear here';
+
+  @override
+  String get taLabSession => 'Session';
+
+  @override
+  String get taLabSelectSession => 'Select Session';
+
+  @override
+  String get taLabMarkAllPresent => 'Mark All Present';
+
+  @override
+  String get taLabExport => 'Export';
+
+  @override
+  String get taLabAINotice => 'AI detected patterns in attendance';
+
+  @override
+  String get taLabStudentsAbsent => 'students were frequently absent';
+
+  @override
+  String get taLabPresent => 'Present';
+
+  @override
+  String get taLabAbsent => 'Absent';
+
+  @override
+  String get taLabLateMark => 'Late';
+
+  @override
+  String get taLabNoAttendance => 'No Attendance Records';
+
+  @override
+  String get taLabNoAttendanceDesc => 'Attendance will be shown here';
+
+  @override
+  String get taLabCopilotTitle => 'TA Lab Copilot';
+
+  @override
+  String get taLabCopilotSubtitle => 'AI-powered lab assistance tools';
+
+  @override
+  String get taLabGenerateHints => 'Generate Hints';
+
+  @override
+  String get taLabGenerateHintsDesc => 'Create helpful hints for students';
+
+  @override
+  String get taLabExplainSteps => 'Explain Steps';
+
+  @override
+  String get taLabExplainStepsDesc => 'Break down solution steps';
+
+  @override
+  String get taLabClarifyQuestions => 'Clarify Questions';
+
+  @override
+  String get taLabClarifyQuestionsDesc => 'Answer common questions';
+
+  @override
+  String get taLabSampleOutput => 'Sample Output';
+
+  @override
+  String get taLabSampleOutputDesc => 'Generate expected outputs';
+
+  @override
+  String get taLabEvaluateAnswers => 'Evaluate Answers';
+
+  @override
+  String get taLabEvaluateAnswersDesc => 'Assess student submissions';
+
+  @override
+  String get taLabRewriteInstructions => 'Rewrite Instructions';
+
+  @override
+  String get taLabRewriteInstructionsDesc => 'Simplify lab instructions';
+
+  @override
+  String get taLabAskAI => 'Ask AI Assistant';
+
+  @override
+  String get taLabAskAIPlaceholder => 'Ask anything about this lab...';
+
+  @override
+  String get taLabGenerateResponse => 'Generate';
+
+  @override
+  String get taLabAIResponse => 'AI Response';
+
+  @override
+  String get taLabCopy => 'Copy';
+
+  @override
+  String get taLabShare => 'Share';
+
+  @override
+  String get taLabReviewSubmission => 'Review Submission';
+
+  @override
+  String get taLabSubmissionFiles => 'Submission Files';
+
+  @override
+  String get taLabAIGradingAssistant => 'AI Grading Assistant';
+
+  @override
+  String get taLabSuggestedScore => 'Suggested Score';
+
+  @override
+  String get taLabPlagiarismCheck => 'Plagiarism Check';
+
+  @override
+  String get taLabSimilarity => 'similarity';
+
+  @override
+  String get taLabApplyAIScore => 'Apply Score';
+
+  @override
+  String get taLabViewRubric => 'View Rubric';
+
+  @override
+  String get taLabManualGrading => 'Manual Grading';
+
+  @override
+  String get taLabScore => 'Score';
+
+  @override
+  String get taLabEnterScore => 'Enter score (0-100)';
+
+  @override
+  String get taLabFeedback => 'Feedback';
+
+  @override
+  String get taLabEnterFeedback => 'Write your feedback here...';
+
+  @override
+  String get taLabCancel => 'Cancel';
+
+  @override
+  String get taLabSubmitReview => 'Submit Review';
+
+  @override
+  String get taPerformanceTitle => 'Student Performance';
+
+  @override
+  String get taPerformanceSubtitle =>
+      'Monitor lab progress and identify students needing assistance';
+
+  @override
+  String get taPerformanceAvgScore => 'Avg Score';
+
+  @override
+  String get taPerformanceHighPerformers => 'High Performers';
+
+  @override
+  String get taPerformanceScoring85 => 'Students scoring 85%+';
+
+  @override
+  String get taPerformanceAtRisk => 'At Risk';
+
+  @override
+  String get taPerformanceNeedSupport => 'Needs support';
+
+  @override
+  String get taPerformanceEngagement => 'Engagement';
+
+  @override
+  String get taPerformanceOverallEngagement => 'Overall engagement';
+
+  @override
+  String get taPerformanceOnTrack => 'On Track';
+
+  @override
+  String get taPerformanceAllSubmitted => 'All labs submitted';
+
+  @override
+  String get taPerformanceHighRisk => 'High Risk';
+
+  @override
+  String get taPerformanceMediumRisk => 'Medium Risk';
+
+  @override
+  String get taPerformanceLowRisk => 'Low Risk';
+
+  @override
+  String get taPerformanceLabAverage => 'Lab Average';
+
+  @override
+  String get taPerformanceLast => 'Last';
+
+  @override
+  String get taPerformanceViewSummary => 'View Summary';
+
+  @override
+  String get taPerformanceSummaryTitle => 'Student Performance Summary';
+
+  @override
+  String get taPerformanceSummarySubtitle => 'Detailed performance analysis';
+
+  @override
+  String get taPerformanceAINotes => 'AI Notes';
+
+  @override
+  String get taPerformanceLabTrend => 'Lab Performance Trend';
+
+  @override
+  String get taPerformanceAttendanceHistory => 'Attendance History';
+
+  @override
+  String get taPerformanceSendFeedback => 'Send Feedback';
+
+  @override
+  String get taPerformanceNotifyInstructor => 'Notify';
+
+  @override
+  String get taPerformanceDownloadReport => 'Download Report (PDF)';
+
+  @override
+  String get taPerformanceAIInsights => 'AI Performance Insights';
+
+  @override
+  String get taPerformanceAIInsightsSubtitle => 'AI-powered student analysis';
+
+  @override
+  String get taPerformanceStudentsNeedingSupport => 'Students Needing Support';
+
+  @override
+  String get taPerformanceRecommendedActions => 'Recommended Actions';
+
+  @override
+  String get taPerformanceAcademicIntegrityAlerts =>
+      'Academic Integrity Alerts';
+
+  @override
+  String get taPerformanceGenerateMaterials => 'Generate Study Materials';
+
+  @override
+  String get taPerformanceSearch => 'Search';
+
+  @override
+  String get taPerformanceAIInsightsBtn => 'AI Insights';
+
+  @override
+  String get taPerformanceExport => 'Export';
+
+  @override
+  String get taPerformanceSearchHint => 'Search students...';
+
+  @override
+  String get taPerformanceFilterName => 'Name';
+
+  @override
+  String get taPerformanceFilterScore => 'Score';
+
+  @override
+  String get taPerformanceFilterRisk => 'Risk';
+
+  @override
+  String get taPerformanceNoStudents => 'No students found';
+
+  @override
+  String get taPerformanceNoStudentsHint =>
+      'Try adjusting your search or filters';
+
+  @override
+  String get taPerformanceAISummary => 'AI Performance Summary';
+
+  @override
+  String get taPerformanceAISummaryText =>
+      'Based on the current data, 1 student requires immediate attention due to declining performance. Lab 3 shows a common struggling point across multiple students.';
+
+  @override
+  String get taPerformanceViewInsights => 'View Full Insights';
+
+  @override
+  String get taStudentPerformance => 'Student Performance';
+
+  @override
+  String get taNotifTitle => 'Notifications & Messages';
+
+  @override
+  String get taNotifSubtitle => 'Stay updated and respond instantly';
+
+  @override
+  String get taNotifSearch => 'Search';
+
+  @override
+  String get taNotifAIReplies => 'AI Replies';
+
+  @override
+  String get taNotifBulkActions => 'Bulk Actions';
+
+  @override
+  String get taNotifAll => 'All';
+
+  @override
+  String get taNotifStudents => 'Students';
+
+  @override
+  String get taNotifInstructors => 'Instructors';
+
+  @override
+  String get taNotifReplies => 'replies';
+
+  @override
+  String get taNotifRelatedTo => 'Related to';
+
+  @override
+  String get taNotifReply => 'Reply';
+
+  @override
+  String get taNotifResolve => 'Resolve';
+
+  @override
+  String get taNotifAIReplyAssistant => 'AI Reply Assistant';
+
+  @override
+  String get taNotifGenerateReply => 'Generate Reply';
+
+  @override
+  String get taNotifExplainIssue => 'Explain Issue';
+
+  @override
+  String get taNotifTypeReply => 'Type your reply...';
+
+  @override
+  String get taNotifResponsePerformance => 'Response Performance';
+
+  @override
+  String get taNotifAvgResponseTime => 'Avg Response Time';
+
+  @override
+  String get taNotifMessagesToday => 'Messages Today';
+
+  @override
+  String get taNotifAIRepliesUsed => 'AI Replies Used';
+
+  @override
+  String get taNotifNoNotifications => 'No notifications';
+
+  @override
+  String get taNotifNoNotificationsHint => 'You\'re all caught up!';
+
+  @override
+  String get taNotifications => 'Notifications';
+
+  @override
+  String get taNotifSelectAll => 'Select All';
+
+  @override
+  String get taNotifMarkAllRead => 'Mark All Read';
+
+  @override
+  String get taNotifDeleteAll => 'Delete All';
+
+  @override
+  String get taNotifSelected => 'selected';
+
+  @override
+  String get taNotifSwipeSettings => 'Swipe Settings';
+
+  @override
+  String get taNotifDeleteAllTitle => 'Delete All Notifications';
+
+  @override
+  String get taNotifDeleteAllMessage =>
+      'Are you sure you want to delete all notifications?';
+
+  @override
+  String get taDiscussTitle => 'Discussion & Q&A';
+
+  @override
+  String get taDiscussSubtitle =>
+      'Respond to student questions and moderate discussions';
+
+  @override
+  String get taDiscussSearch => 'Search threads...';
+
+  @override
+  String get taDiscussFlagged => 'Flagged';
+
+  @override
+  String get taDiscussAIInsights => 'AI Insights';
+
+  @override
+  String get taDiscussAllThreads => 'All Threads';
+
+  @override
+  String get taDiscussUnanswered => 'Unanswered';
+
+  @override
+  String get taDiscussMyReplies => 'My Replies';
+
+  @override
+  String get taDiscussReplies => 'replies';
+
+  @override
+  String get taDiscussTrendingTopics => 'Trending Topics';
+
+  @override
+  String get taDiscussNoThreads => 'No threads found';
+
+  @override
+  String get taDiscussNoThreadsHint => 'Try adjusting your search or filters';
+
+  @override
+  String get taDiscussReplyPlaceholder => 'Write your reply...';
+
+  @override
+  String get taDiscussCreateThread => 'Create New Thread';
+
+  @override
+  String get taDiscussThreadTitle => 'Thread Title';
+
+  @override
+  String get taDiscussThreadContent => 'Thread Content';
+
+  @override
+  String get taDiscussPost => 'Post Thread';
+
+  @override
+  String get taUploadTitle => 'Upload Materials';
+
+  @override
+  String get taUploadSubtitle =>
+      'Add videos, PDFs, or attachments for your labs';
+
+  @override
+  String get taUploadViewAll => 'View All';
+
+  @override
+  String get taUploadAISuggest => 'AI Suggest';
+
+  @override
+  String get taUploadSettings => 'Settings';
+
+  @override
+  String get taUploadStudents => 'Students';
+
+  @override
+  String get taUploadMaterialsCount => 'Materials';
+
+  @override
+  String get taUploadLastUpdated => 'Updated';
+
+  @override
+  String get taUploadDragDrop => 'Drag & drop files here';
+
+  @override
+  String get taUploadSupportedFormats =>
+      'Supported: PDF, Video, Code, Images, ZIP';
+
+  @override
+  String get taUploadMaterials => 'Upload Materials';
+
+  @override
+  String get taUploadAIGenerate => 'AI Generate';
+
+  @override
+  String get taUploadSearch => 'Search materials...';
+
+  @override
+  String get taUploadAllFiles => 'All Files';
+
+  @override
+  String get taUploadPDFs => 'PDFs';
+
+  @override
+  String get taUploadVideos => 'Videos';
+
+  @override
+  String get taUploadCode => 'Code';
+
+  @override
+  String get taUploadAIGenerated => 'AI Generated';
+
+  @override
+  String get taUploadRecent => 'Recent';
+
+  @override
+  String get taUploadByName => 'By Name';
+
+  @override
+  String get taUploadBySize => 'By Size';
+
+  @override
+  String get taUploadSelectFile => 'Select Upload Source';
+
+  @override
+  String get taUploadFromDevice => 'From Device';
+
+  @override
+  String get taUploadFromDeviceHint => 'Choose files from your device';
+
+  @override
+  String get taUploadFromCloud => 'From Cloud Storage';
+
+  @override
+  String get taUploadFromCloudHint => 'Google Drive, Dropbox, OneDrive';
+
+  @override
+  String get taUploadFromURL => 'From URL';
+
+  @override
+  String get taUploadFromURLHint => 'Import from a direct link';
+
+  @override
+  String get taUploadImport => 'Import';
+
+  @override
+  String get taUploadUploading => 'Uploading file...';
+
+  @override
+  String get taUploadSuccess => 'File uploaded successfully!';
+
+  @override
+  String get taUploadDeleteConfirm => 'Delete file';
+
+  @override
+  String get taUploadDeleted => 'File deleted';
+
+  @override
+  String get taUploadNoMaterials => 'No materials found';
+
+  @override
+  String get taUploadNoMaterialsHint =>
+      'Upload or generate materials to get started';
+
+  @override
+  String get taUploadAIMaterialGenerator => 'AI Material Generator';
+
+  @override
+  String get taUploadAIMaterialSubtitle =>
+      'Generate educational content with AI';
+
+  @override
+  String get taUploadGenerateLabPDF => 'Generate Lab Explanation PDF';
+
+  @override
+  String get taUploadGenerateLabPDFDesc =>
+      'Create detailed PDF explanations for lab content';
+
+  @override
+  String get taUploadGeneratePDF => 'Generate PDF';
+
+  @override
+  String get taUploadVideoTranscript => 'Video Transcript & Notes';
+
+  @override
+  String get taUploadVideoTranscriptDesc =>
+      'Generate transcript and study notes from videos';
+
+  @override
+  String get taUploadGenerateTranscript => 'Generate Transcript';
+
+  @override
+  String get taUploadCreateStudyGuide => 'Create Study Guide';
+
+  @override
+  String get taUploadCreateStudyGuideDesc =>
+      'Generate comprehensive study materials';
+
+  @override
+  String get taUploadGenerateGuide => 'Generate Guide';
+
+  @override
+  String get taUploadGeneratingPDF => 'Generating PDF...';
+
+  @override
+  String get taUploadGeneratingTranscript => 'Generating transcript...';
+
+  @override
+  String get taUploadGeneratingGuide => 'Generating study guide...';
+
+  @override
+  String get taUploadPreviewArea => 'File Preview';
+
+  @override
+  String get taUploadAIEnhancementTools => 'AI Enhancement Tools';
+
+  @override
+  String get taUploadSummarize => 'Summarize';
+
+  @override
+  String get taUploadQuiz => 'Quiz';
+
+  @override
+  String get taUploadFlashcards => 'Flashcards';
+
+  @override
+  String get taUploadNotes => 'Notes';
+
+  @override
+  String get taUploadDownload => 'Download';
 }

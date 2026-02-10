@@ -11077,6 +11077,2034 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Send to all students in a course'**
   String get broadcastMessageDesc;
+
+  /// No description provided for @taDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'TA Dashboard'**
+  String get taDashboard;
+
+  /// No description provided for @taSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your tasks and student support hub'**
+  String get taSubtitle;
+
+  /// No description provided for @taAIInsightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights for You'**
+  String get taAIInsightsTitle;
+
+  /// No description provided for @taAIInsightsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personalized assistance & insights'**
+  String get taAIInsightsSubtitle;
+
+  /// No description provided for @taInsightGradingSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading Speed'**
+  String get taInsightGradingSpeed;
+
+  /// No description provided for @taInsightGradingSpeedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Your grading is 20% faster this week'**
+  String get taInsightGradingSpeedDesc;
+
+  /// No description provided for @taInsightStudentsNeedHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Students Need Help'**
+  String get taInsightStudentsNeedHelp;
+
+  /// No description provided for @taInsightStudentsNeedHelpDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'3 students asked questions in discussions'**
+  String get taInsightStudentsNeedHelpDesc;
+
+  /// No description provided for @taInsightSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Suggestion'**
+  String get taInsightSuggestion;
+
+  /// No description provided for @taInsightSuggestionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule a help session for Week 5 content'**
+  String get taInsightSuggestionDesc;
+
+  /// No description provided for @taViewFullInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'View Full Insights'**
+  String get taViewFullInsights;
+
+  /// No description provided for @taAskAIHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI for Help'**
+  String get taAskAIHelp;
+
+  /// No description provided for @taQuickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get taQuickActions;
+
+  /// No description provided for @taExamGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Grading'**
+  String get taExamGrading;
+
+  /// No description provided for @taReviewLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Labs'**
+  String get taReviewLabs;
+
+  /// No description provided for @taOpenDiscussions.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Discussions'**
+  String get taOpenDiscussions;
+
+  /// No description provided for @taThisWeekActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week\'s Activity'**
+  String get taThisWeekActivity;
+
+  /// No description provided for @taFromLastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'from last week'**
+  String get taFromLastWeek;
+
+  /// No description provided for @taAssignmentsGraded.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments Graded'**
+  String get taAssignmentsGraded;
+
+  /// No description provided for @taLabsReviewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Labs Reviewed'**
+  String get taLabsReviewed;
+
+  /// No description provided for @taQuestionsAnswered.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions Answered'**
+  String get taQuestionsAnswered;
+
+  /// No description provided for @taAttendanceSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance Sessions'**
+  String get taAttendanceSessions;
+
+  /// No description provided for @taAIHelpedGrade.
+  ///
+  /// In en, this message translates to:
+  /// **'AI helped you grade 14% faster this week'**
+  String get taAIHelpedGrade;
+
+  /// No description provided for @taAIHelpedGradeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Time saved with AI-assisted grading'**
+  String get taAIHelpedGradeDesc;
+
+  /// No description provided for @taAssignedCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned Courses'**
+  String get taAssignedCourses;
+
+  /// No description provided for @taTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasks'**
+  String get taTasks;
+
+  /// No description provided for @taTaskCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Task Center'**
+  String get taTaskCenter;
+
+  /// No description provided for @taAllTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'All Tasks'**
+  String get taAllTasks;
+
+  /// No description provided for @taGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading'**
+  String get taGrading;
+
+  /// No description provided for @taReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviews'**
+  String get taReviews;
+
+  /// No description provided for @taDiscussions.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussions'**
+  String get taDiscussions;
+
+  /// No description provided for @taNoTasksInCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'No tasks in this category'**
+  String get taNoTasksInCategory;
+
+  /// No description provided for @taSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'submissions'**
+  String get taSubmissions;
+
+  /// No description provided for @taStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get taStart;
+
+  /// No description provided for @taDiscussionMonitor.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion Monitor'**
+  String get taDiscussionMonitor;
+
+  /// No description provided for @taUnanswered.
+  ///
+  /// In en, this message translates to:
+  /// **'Unanswered'**
+  String get taUnanswered;
+
+  /// No description provided for @taNoUnansweredQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'No unanswered questions'**
+  String get taNoUnansweredQuestions;
+
+  /// No description provided for @taViews.
+  ///
+  /// In en, this message translates to:
+  /// **'views'**
+  String get taViews;
+
+  /// No description provided for @taReplyNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply Now'**
+  String get taReplyNow;
+
+  /// No description provided for @taGraded.
+  ///
+  /// In en, this message translates to:
+  /// **'Graded'**
+  String get taGraded;
+
+  /// No description provided for @taGradingCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading Center'**
+  String get taGradingCenter;
+
+  /// No description provided for @taReviewSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Submissions'**
+  String get taReviewSubmissions;
+
+  /// No description provided for @taOfficeHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Office Hours'**
+  String get taOfficeHours;
+
+  /// No description provided for @taAIAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'TA AI Assistant'**
+  String get taAIAssistant;
+
+  /// No description provided for @taCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'TA Courses'**
+  String get taCourses;
+
+  /// No description provided for @taCourseDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Detail'**
+  String get taCourseDetail;
+
+  /// No description provided for @taCourseStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get taCourseStudents;
+
+  /// No description provided for @taCourseLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Labs'**
+  String get taCourseLabs;
+
+  /// No description provided for @taCourseAssignments.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments'**
+  String get taCourseAssignments;
+
+  /// No description provided for @taCourseDiscussionsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussions'**
+  String get taCourseDiscussionsCount;
+
+  /// No description provided for @taCourseViewLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'View Labs'**
+  String get taCourseViewLabs;
+
+  /// No description provided for @taCourseSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Submissions'**
+  String get taCourseSubmissions;
+
+  /// No description provided for @taCourseDiscussionBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussions'**
+  String get taCourseDiscussionBtn;
+
+  /// No description provided for @taCourseAIInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights'**
+  String get taCourseAIInsights;
+
+  /// No description provided for @taCourseInsightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'TA Insights'**
+  String get taCourseInsightsTitle;
+
+  /// No description provided for @taCourseOpenInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Open TA Insights'**
+  String get taCourseOpenInsights;
+
+  /// No description provided for @taCourseFullInsightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Full AI Insights'**
+  String get taCourseFullInsightsTitle;
+
+  /// No description provided for @taCourseFullInsightsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered recommendations'**
+  String get taCourseFullInsightsSubtitle;
+
+  /// No description provided for @taCoursePriorityTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Priority Tasks'**
+  String get taCoursePriorityTasks;
+
+  /// No description provided for @taCourseUpcomingTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming TA Tasks'**
+  String get taCourseUpcomingTasks;
+
+  /// No description provided for @taCourseRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Activity'**
+  String get taCourseRecentActivity;
+
+  /// No description provided for @taCourseNoLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'No Labs Available'**
+  String get taCourseNoLabs;
+
+  /// No description provided for @taCourseNoLabsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Labs for this course will appear here'**
+  String get taCourseNoLabsDesc;
+
+  /// No description provided for @taCourseLabActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get taCourseLabActive;
+
+  /// No description provided for @taCourseLabClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get taCourseLabClosed;
+
+  /// No description provided for @taCourseLabAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
+  String get taCourseLabAttendance;
+
+  /// No description provided for @taCourseLabStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'students'**
+  String get taCourseLabStudents;
+
+  /// No description provided for @taCourseLabOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Lab'**
+  String get taCourseLabOpen;
+
+  /// No description provided for @taCourseLabReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get taCourseLabReview;
+
+  /// No description provided for @taCourseLabAttendanceBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
+  String get taCourseLabAttendanceBtn;
+
+  /// No description provided for @taCourseLabUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get taCourseLabUpload;
+
+  /// No description provided for @taCourseNoGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'No Pending Grading'**
+  String get taCourseNoGrading;
+
+  /// No description provided for @taCourseNoGradingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'All submissions have been graded'**
+  String get taCourseNoGradingDesc;
+
+  /// No description provided for @taCourseGradingPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get taCourseGradingPending;
+
+  /// No description provided for @taCourseGradingInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get taCourseGradingInProgress;
+
+  /// No description provided for @taCourseGradingComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get taCourseGradingComplete;
+
+  /// No description provided for @taCourseApplyAIScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply AI Score'**
+  String get taCourseApplyAIScore;
+
+  /// No description provided for @taCourseStartReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Reviewing'**
+  String get taCourseStartReview;
+
+  /// No description provided for @taCourseAIGradingHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Grading Helper'**
+  String get taCourseAIGradingHelper;
+
+  /// No description provided for @taCourseSuggestedScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested Score'**
+  String get taCourseSuggestedScore;
+
+  /// No description provided for @taCourseFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get taCourseFilterAll;
+
+  /// No description provided for @taCourseFilterUnanswered.
+  ///
+  /// In en, this message translates to:
+  /// **'Unanswered'**
+  String get taCourseFilterUnanswered;
+
+  /// No description provided for @taCourseFilterHighActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'High Activity'**
+  String get taCourseFilterHighActivity;
+
+  /// No description provided for @taCourseFilterAIFlagged.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Flagged'**
+  String get taCourseFilterAIFlagged;
+
+  /// No description provided for @taCourseNoDiscussions.
+  ///
+  /// In en, this message translates to:
+  /// **'No Discussions'**
+  String get taCourseNoDiscussions;
+
+  /// No description provided for @taCourseNoDiscussionsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion threads will appear here'**
+  String get taCourseNoDiscussionsDesc;
+
+  /// No description provided for @taCourseDiscussionReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'replies'**
+  String get taCourseDiscussionReplies;
+
+  /// No description provided for @taCourseDiscussionLikes.
+  ///
+  /// In en, this message translates to:
+  /// **'likes'**
+  String get taCourseDiscussionLikes;
+
+  /// No description provided for @taCourseReplyAsTA.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply as TA'**
+  String get taCourseReplyAsTA;
+
+  /// No description provided for @taCourseUnanswered.
+  ///
+  /// In en, this message translates to:
+  /// **'Unanswered'**
+  String get taCourseUnanswered;
+
+  /// No description provided for @taCourseOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get taCourseOverview;
+
+  /// No description provided for @taCourseLabsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Labs'**
+  String get taCourseLabsTab;
+
+  /// No description provided for @taCourseGradingTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading'**
+  String get taCourseGradingTab;
+
+  /// No description provided for @taCourseDiscussionsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussions'**
+  String get taCourseDiscussionsTab;
+
+  /// No description provided for @mainMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Main Menu'**
+  String get mainMenu;
+
+  /// No description provided for @aiTools.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Tools'**
+  String get aiTools;
+
+  /// No description provided for @connect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get connect;
+
+  /// No description provided for @goodNight.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Night'**
+  String get goodNight;
+
+  /// No description provided for @taLabsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Labs'**
+  String get taLabsTitle;
+
+  /// No description provided for @taLabFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All Labs'**
+  String get taLabFilterAll;
+
+  /// No description provided for @taLabFilterActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get taLabFilterActive;
+
+  /// No description provided for @taLabFilterPendingReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Review'**
+  String get taLabFilterPendingReview;
+
+  /// No description provided for @taLabsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Labs'**
+  String get taLabsCount;
+
+  /// No description provided for @taLabNoLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'No Labs Found'**
+  String get taLabNoLabs;
+
+  /// No description provided for @taLabNoLabsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Labs will appear here when available'**
+  String get taLabNoLabsDesc;
+
+  /// No description provided for @taLabActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get taLabActive;
+
+  /// No description provided for @taLabClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get taLabClosed;
+
+  /// No description provided for @taLabPendingReview.
+  ///
+  /// In en, this message translates to:
+  /// **'pending'**
+  String get taLabPendingReview;
+
+  /// No description provided for @taLabOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get taLabOverview;
+
+  /// No description provided for @taLabSubmissionsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Submissions'**
+  String get taLabSubmissionsTab;
+
+  /// No description provided for @taLabAttendanceTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
+  String get taLabAttendanceTab;
+
+  /// No description provided for @taLabEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Lab'**
+  String get taLabEdit;
+
+  /// No description provided for @taLabSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get taLabSettings;
+
+  /// No description provided for @taLabStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get taLabStatus;
+
+  /// No description provided for @taLabStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get taLabStudents;
+
+  /// No description provided for @taLabSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Submissions'**
+  String get taLabSubmissions;
+
+  /// No description provided for @taLabSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get taLabSubmitted;
+
+  /// No description provided for @taLabDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Due'**
+  String get taLabDue;
+
+  /// No description provided for @taLabUpload.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get taLabUpload;
+
+  /// No description provided for @taLabAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance'**
+  String get taLabAttendance;
+
+  /// No description provided for @taLabAIInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights'**
+  String get taLabAIInsights;
+
+  /// No description provided for @taLabAllLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'All Labs'**
+  String get taLabAllLabs;
+
+  /// No description provided for @taLabTaskSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Task Summary'**
+  String get taLabTaskSummary;
+
+  /// No description provided for @taLabTaskStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get taLabTaskStart;
+
+  /// No description provided for @taLabTaskMark.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark'**
+  String get taLabTaskMark;
+
+  /// No description provided for @taLabTaskReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get taLabTaskReply;
+
+  /// No description provided for @taLabTaskReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get taLabTaskReview;
+
+  /// No description provided for @taLabStudentQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Questions'**
+  String get taLabStudentQuestions;
+
+  /// No description provided for @taLabUnresolved.
+  ///
+  /// In en, this message translates to:
+  /// **'unresolved'**
+  String get taLabUnresolved;
+
+  /// No description provided for @taLabResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get taLabResolved;
+
+  /// No description provided for @taLabResolve.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve'**
+  String get taLabResolve;
+
+  /// No description provided for @taLabAIHint.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Hint'**
+  String get taLabAIHint;
+
+  /// No description provided for @taLabRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Activity'**
+  String get taLabRecentActivity;
+
+  /// No description provided for @taLabLoadingActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading activity...'**
+  String get taLabLoadingActivity;
+
+  /// No description provided for @taLabAllSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'All Submissions'**
+  String get taLabAllSubmissions;
+
+  /// No description provided for @taLabTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get taLabTotal;
+
+  /// No description provided for @taLabPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get taLabPending;
+
+  /// No description provided for @taLabReviewed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewed'**
+  String get taLabReviewed;
+
+  /// No description provided for @taLabLate.
+  ///
+  /// In en, this message translates to:
+  /// **'Late'**
+  String get taLabLate;
+
+  /// No description provided for @taLabAIScore.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Score'**
+  String get taLabAIScore;
+
+  /// No description provided for @taLabFinalScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Final Score'**
+  String get taLabFinalScore;
+
+  /// No description provided for @taLabOpenSubmission.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get taLabOpenSubmission;
+
+  /// No description provided for @taLabNoScoreYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No score yet'**
+  String get taLabNoScoreYet;
+
+  /// No description provided for @taLabNoSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'No Submissions Yet'**
+  String get taLabNoSubmissions;
+
+  /// No description provided for @taLabNoSubmissionsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Student submissions will appear here'**
+  String get taLabNoSubmissionsDesc;
+
+  /// No description provided for @taLabSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Session'**
+  String get taLabSession;
+
+  /// No description provided for @taLabSelectSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Session'**
+  String get taLabSelectSession;
+
+  /// No description provided for @taLabMarkAllPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark All Present'**
+  String get taLabMarkAllPresent;
+
+  /// No description provided for @taLabExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get taLabExport;
+
+  /// No description provided for @taLabAINotice.
+  ///
+  /// In en, this message translates to:
+  /// **'AI detected patterns in attendance'**
+  String get taLabAINotice;
+
+  /// No description provided for @taLabStudentsAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'students were frequently absent'**
+  String get taLabStudentsAbsent;
+
+  /// No description provided for @taLabPresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Present'**
+  String get taLabPresent;
+
+  /// No description provided for @taLabAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Absent'**
+  String get taLabAbsent;
+
+  /// No description provided for @taLabLateMark.
+  ///
+  /// In en, this message translates to:
+  /// **'Late'**
+  String get taLabLateMark;
+
+  /// No description provided for @taLabNoAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'No Attendance Records'**
+  String get taLabNoAttendance;
+
+  /// No description provided for @taLabNoAttendanceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance will be shown here'**
+  String get taLabNoAttendanceDesc;
+
+  /// No description provided for @taLabCopilotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'TA Lab Copilot'**
+  String get taLabCopilotTitle;
+
+  /// No description provided for @taLabCopilotSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered lab assistance tools'**
+  String get taLabCopilotSubtitle;
+
+  /// No description provided for @taLabGenerateHints.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Hints'**
+  String get taLabGenerateHints;
+
+  /// No description provided for @taLabGenerateHintsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Create helpful hints for students'**
+  String get taLabGenerateHintsDesc;
+
+  /// No description provided for @taLabExplainSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain Steps'**
+  String get taLabExplainSteps;
+
+  /// No description provided for @taLabExplainStepsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Break down solution steps'**
+  String get taLabExplainStepsDesc;
+
+  /// No description provided for @taLabClarifyQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Clarify Questions'**
+  String get taLabClarifyQuestions;
+
+  /// No description provided for @taLabClarifyQuestionsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer common questions'**
+  String get taLabClarifyQuestionsDesc;
+
+  /// No description provided for @taLabSampleOutput.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Output'**
+  String get taLabSampleOutput;
+
+  /// No description provided for @taLabSampleOutputDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate expected outputs'**
+  String get taLabSampleOutputDesc;
+
+  /// No description provided for @taLabEvaluateAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Evaluate Answers'**
+  String get taLabEvaluateAnswers;
+
+  /// No description provided for @taLabEvaluateAnswersDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Assess student submissions'**
+  String get taLabEvaluateAnswersDesc;
+
+  /// No description provided for @taLabRewriteInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Rewrite Instructions'**
+  String get taLabRewriteInstructions;
+
+  /// No description provided for @taLabRewriteInstructionsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Simplify lab instructions'**
+  String get taLabRewriteInstructionsDesc;
+
+  /// No description provided for @taLabAskAI.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask AI Assistant'**
+  String get taLabAskAI;
+
+  /// No description provided for @taLabAskAIPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask anything about this lab...'**
+  String get taLabAskAIPlaceholder;
+
+  /// No description provided for @taLabGenerateResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate'**
+  String get taLabGenerateResponse;
+
+  /// No description provided for @taLabAIResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Response'**
+  String get taLabAIResponse;
+
+  /// No description provided for @taLabCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy'**
+  String get taLabCopy;
+
+  /// No description provided for @taLabShare.
+  ///
+  /// In en, this message translates to:
+  /// **'Share'**
+  String get taLabShare;
+
+  /// No description provided for @taLabReviewSubmission.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Submission'**
+  String get taLabReviewSubmission;
+
+  /// No description provided for @taLabSubmissionFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Files'**
+  String get taLabSubmissionFiles;
+
+  /// No description provided for @taLabAIGradingAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Grading Assistant'**
+  String get taLabAIGradingAssistant;
+
+  /// No description provided for @taLabSuggestedScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggested Score'**
+  String get taLabSuggestedScore;
+
+  /// No description provided for @taLabPlagiarismCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Plagiarism Check'**
+  String get taLabPlagiarismCheck;
+
+  /// No description provided for @taLabSimilarity.
+  ///
+  /// In en, this message translates to:
+  /// **'similarity'**
+  String get taLabSimilarity;
+
+  /// No description provided for @taLabApplyAIScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Score'**
+  String get taLabApplyAIScore;
+
+  /// No description provided for @taLabViewRubric.
+  ///
+  /// In en, this message translates to:
+  /// **'View Rubric'**
+  String get taLabViewRubric;
+
+  /// No description provided for @taLabManualGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual Grading'**
+  String get taLabManualGrading;
+
+  /// No description provided for @taLabScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get taLabScore;
+
+  /// No description provided for @taLabEnterScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter score (0-100)'**
+  String get taLabEnterScore;
+
+  /// No description provided for @taLabFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get taLabFeedback;
+
+  /// No description provided for @taLabEnterFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your feedback here...'**
+  String get taLabEnterFeedback;
+
+  /// No description provided for @taLabCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get taLabCancel;
+
+  /// No description provided for @taLabSubmitReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Review'**
+  String get taLabSubmitReview;
+
+  /// No description provided for @taPerformanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Performance'**
+  String get taPerformanceTitle;
+
+  /// No description provided for @taPerformanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor lab progress and identify students needing assistance'**
+  String get taPerformanceSubtitle;
+
+  /// No description provided for @taPerformanceAvgScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Score'**
+  String get taPerformanceAvgScore;
+
+  /// No description provided for @taPerformanceHighPerformers.
+  ///
+  /// In en, this message translates to:
+  /// **'High Performers'**
+  String get taPerformanceHighPerformers;
+
+  /// No description provided for @taPerformanceScoring85.
+  ///
+  /// In en, this message translates to:
+  /// **'Students scoring 85%+'**
+  String get taPerformanceScoring85;
+
+  /// No description provided for @taPerformanceAtRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'At Risk'**
+  String get taPerformanceAtRisk;
+
+  /// No description provided for @taPerformanceNeedSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs support'**
+  String get taPerformanceNeedSupport;
+
+  /// No description provided for @taPerformanceEngagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Engagement'**
+  String get taPerformanceEngagement;
+
+  /// No description provided for @taPerformanceOverallEngagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall engagement'**
+  String get taPerformanceOverallEngagement;
+
+  /// No description provided for @taPerformanceOnTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'On Track'**
+  String get taPerformanceOnTrack;
+
+  /// No description provided for @taPerformanceAllSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'All labs submitted'**
+  String get taPerformanceAllSubmitted;
+
+  /// No description provided for @taPerformanceHighRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'High Risk'**
+  String get taPerformanceHighRisk;
+
+  /// No description provided for @taPerformanceMediumRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium Risk'**
+  String get taPerformanceMediumRisk;
+
+  /// No description provided for @taPerformanceLowRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Risk'**
+  String get taPerformanceLowRisk;
+
+  /// No description provided for @taPerformanceLabAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Average'**
+  String get taPerformanceLabAverage;
+
+  /// No description provided for @taPerformanceLast.
+  ///
+  /// In en, this message translates to:
+  /// **'Last'**
+  String get taPerformanceLast;
+
+  /// No description provided for @taPerformanceViewSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'View Summary'**
+  String get taPerformanceViewSummary;
+
+  /// No description provided for @taPerformanceSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Performance Summary'**
+  String get taPerformanceSummaryTitle;
+
+  /// No description provided for @taPerformanceSummarySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed performance analysis'**
+  String get taPerformanceSummarySubtitle;
+
+  /// No description provided for @taPerformanceAINotes.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Notes'**
+  String get taPerformanceAINotes;
+
+  /// No description provided for @taPerformanceLabTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Performance Trend'**
+  String get taPerformanceLabTrend;
+
+  /// No description provided for @taPerformanceAttendanceHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance History'**
+  String get taPerformanceAttendanceHistory;
+
+  /// No description provided for @taPerformanceSendFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Feedback'**
+  String get taPerformanceSendFeedback;
+
+  /// No description provided for @taPerformanceNotifyInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Notify'**
+  String get taPerformanceNotifyInstructor;
+
+  /// No description provided for @taPerformanceDownloadReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Report (PDF)'**
+  String get taPerformanceDownloadReport;
+
+  /// No description provided for @taPerformanceAIInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Performance Insights'**
+  String get taPerformanceAIInsights;
+
+  /// No description provided for @taPerformanceAIInsightsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI-powered student analysis'**
+  String get taPerformanceAIInsightsSubtitle;
+
+  /// No description provided for @taPerformanceStudentsNeedingSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Students Needing Support'**
+  String get taPerformanceStudentsNeedingSupport;
+
+  /// No description provided for @taPerformanceRecommendedActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Actions'**
+  String get taPerformanceRecommendedActions;
+
+  /// No description provided for @taPerformanceAcademicIntegrityAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic Integrity Alerts'**
+  String get taPerformanceAcademicIntegrityAlerts;
+
+  /// No description provided for @taPerformanceGenerateMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Study Materials'**
+  String get taPerformanceGenerateMaterials;
+
+  /// No description provided for @taPerformanceSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get taPerformanceSearch;
+
+  /// No description provided for @taPerformanceAIInsightsBtn.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights'**
+  String get taPerformanceAIInsightsBtn;
+
+  /// No description provided for @taPerformanceExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get taPerformanceExport;
+
+  /// No description provided for @taPerformanceSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search students...'**
+  String get taPerformanceSearchHint;
+
+  /// No description provided for @taPerformanceFilterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get taPerformanceFilterName;
+
+  /// No description provided for @taPerformanceFilterScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get taPerformanceFilterScore;
+
+  /// No description provided for @taPerformanceFilterRisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Risk'**
+  String get taPerformanceFilterRisk;
+
+  /// No description provided for @taPerformanceNoStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'No students found'**
+  String get taPerformanceNoStudents;
+
+  /// No description provided for @taPerformanceNoStudentsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search or filters'**
+  String get taPerformanceNoStudentsHint;
+
+  /// No description provided for @taPerformanceAISummary.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Performance Summary'**
+  String get taPerformanceAISummary;
+
+  /// No description provided for @taPerformanceAISummaryText.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on the current data, 1 student requires immediate attention due to declining performance. Lab 3 shows a common struggling point across multiple students.'**
+  String get taPerformanceAISummaryText;
+
+  /// No description provided for @taPerformanceViewInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'View Full Insights'**
+  String get taPerformanceViewInsights;
+
+  /// No description provided for @taStudentPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Performance'**
+  String get taStudentPerformance;
+
+  /// No description provided for @taNotifTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications & Messages'**
+  String get taNotifTitle;
+
+  /// No description provided for @taNotifSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay updated and respond instantly'**
+  String get taNotifSubtitle;
+
+  /// No description provided for @taNotifSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get taNotifSearch;
+
+  /// No description provided for @taNotifAIReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Replies'**
+  String get taNotifAIReplies;
+
+  /// No description provided for @taNotifBulkActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk Actions'**
+  String get taNotifBulkActions;
+
+  /// No description provided for @taNotifAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get taNotifAll;
+
+  /// No description provided for @taNotifStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get taNotifStudents;
+
+  /// No description provided for @taNotifInstructors.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructors'**
+  String get taNotifInstructors;
+
+  /// No description provided for @taNotifReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'replies'**
+  String get taNotifReplies;
+
+  /// No description provided for @taNotifRelatedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Related to'**
+  String get taNotifRelatedTo;
+
+  /// No description provided for @taNotifReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get taNotifReply;
+
+  /// No description provided for @taNotifResolve.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve'**
+  String get taNotifResolve;
+
+  /// No description provided for @taNotifAIReplyAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Reply Assistant'**
+  String get taNotifAIReplyAssistant;
+
+  /// No description provided for @taNotifGenerateReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Reply'**
+  String get taNotifGenerateReply;
+
+  /// No description provided for @taNotifExplainIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain Issue'**
+  String get taNotifExplainIssue;
+
+  /// No description provided for @taNotifTypeReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Type your reply...'**
+  String get taNotifTypeReply;
+
+  /// No description provided for @taNotifResponsePerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Response Performance'**
+  String get taNotifResponsePerformance;
+
+  /// No description provided for @taNotifAvgResponseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Response Time'**
+  String get taNotifAvgResponseTime;
+
+  /// No description provided for @taNotifMessagesToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages Today'**
+  String get taNotifMessagesToday;
+
+  /// No description provided for @taNotifAIRepliesUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Replies Used'**
+  String get taNotifAIRepliesUsed;
+
+  /// No description provided for @taNotifNoNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications'**
+  String get taNotifNoNotifications;
+
+  /// No description provided for @taNotifNoNotificationsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re all caught up!'**
+  String get taNotifNoNotificationsHint;
+
+  /// No description provided for @taNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get taNotifications;
+
+  /// No description provided for @taNotifSelectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select All'**
+  String get taNotifSelectAll;
+
+  /// No description provided for @taNotifMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark All Read'**
+  String get taNotifMarkAllRead;
+
+  /// No description provided for @taNotifDeleteAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All'**
+  String get taNotifDeleteAll;
+
+  /// No description provided for @taNotifSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'selected'**
+  String get taNotifSelected;
+
+  /// No description provided for @taNotifSwipeSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Swipe Settings'**
+  String get taNotifSwipeSettings;
+
+  /// No description provided for @taNotifDeleteAllTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete All Notifications'**
+  String get taNotifDeleteAllTitle;
+
+  /// No description provided for @taNotifDeleteAllMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete all notifications?'**
+  String get taNotifDeleteAllMessage;
+
+  /// No description provided for @taDiscussTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion & Q&A'**
+  String get taDiscussTitle;
+
+  /// No description provided for @taDiscussSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Respond to student questions and moderate discussions'**
+  String get taDiscussSubtitle;
+
+  /// No description provided for @taDiscussSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search threads...'**
+  String get taDiscussSearch;
+
+  /// No description provided for @taDiscussFlagged.
+  ///
+  /// In en, this message translates to:
+  /// **'Flagged'**
+  String get taDiscussFlagged;
+
+  /// No description provided for @taDiscussAIInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Insights'**
+  String get taDiscussAIInsights;
+
+  /// No description provided for @taDiscussAllThreads.
+  ///
+  /// In en, this message translates to:
+  /// **'All Threads'**
+  String get taDiscussAllThreads;
+
+  /// No description provided for @taDiscussUnanswered.
+  ///
+  /// In en, this message translates to:
+  /// **'Unanswered'**
+  String get taDiscussUnanswered;
+
+  /// No description provided for @taDiscussMyReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'My Replies'**
+  String get taDiscussMyReplies;
+
+  /// No description provided for @taDiscussReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'replies'**
+  String get taDiscussReplies;
+
+  /// No description provided for @taDiscussTrendingTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Trending Topics'**
+  String get taDiscussTrendingTopics;
+
+  /// No description provided for @taDiscussNoThreads.
+  ///
+  /// In en, this message translates to:
+  /// **'No threads found'**
+  String get taDiscussNoThreads;
+
+  /// No description provided for @taDiscussNoThreadsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search or filters'**
+  String get taDiscussNoThreadsHint;
+
+  /// No description provided for @taDiscussReplyPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Write your reply...'**
+  String get taDiscussReplyPlaceholder;
+
+  /// No description provided for @taDiscussCreateThread.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Thread'**
+  String get taDiscussCreateThread;
+
+  /// No description provided for @taDiscussThreadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Thread Title'**
+  String get taDiscussThreadTitle;
+
+  /// No description provided for @taDiscussThreadContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Thread Content'**
+  String get taDiscussThreadContent;
+
+  /// No description provided for @taDiscussPost.
+  ///
+  /// In en, this message translates to:
+  /// **'Post Thread'**
+  String get taDiscussPost;
+
+  /// No description provided for @taUploadTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Materials'**
+  String get taUploadTitle;
+
+  /// No description provided for @taUploadSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add videos, PDFs, or attachments for your labs'**
+  String get taUploadSubtitle;
+
+  /// No description provided for @taUploadViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get taUploadViewAll;
+
+  /// No description provided for @taUploadAISuggest.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Suggest'**
+  String get taUploadAISuggest;
+
+  /// No description provided for @taUploadSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get taUploadSettings;
+
+  /// No description provided for @taUploadStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get taUploadStudents;
+
+  /// No description provided for @taUploadMaterialsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Materials'**
+  String get taUploadMaterialsCount;
+
+  /// No description provided for @taUploadLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get taUploadLastUpdated;
+
+  /// No description provided for @taUploadDragDrop.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag & drop files here'**
+  String get taUploadDragDrop;
+
+  /// No description provided for @taUploadSupportedFormats.
+  ///
+  /// In en, this message translates to:
+  /// **'Supported: PDF, Video, Code, Images, ZIP'**
+  String get taUploadSupportedFormats;
+
+  /// No description provided for @taUploadMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Materials'**
+  String get taUploadMaterials;
+
+  /// No description provided for @taUploadAIGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Generate'**
+  String get taUploadAIGenerate;
+
+  /// No description provided for @taUploadSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search materials...'**
+  String get taUploadSearch;
+
+  /// No description provided for @taUploadAllFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'All Files'**
+  String get taUploadAllFiles;
+
+  /// No description provided for @taUploadPDFs.
+  ///
+  /// In en, this message translates to:
+  /// **'PDFs'**
+  String get taUploadPDFs;
+
+  /// No description provided for @taUploadVideos.
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get taUploadVideos;
+
+  /// No description provided for @taUploadCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get taUploadCode;
+
+  /// No description provided for @taUploadAIGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Generated'**
+  String get taUploadAIGenerated;
+
+  /// No description provided for @taUploadRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent'**
+  String get taUploadRecent;
+
+  /// No description provided for @taUploadByName.
+  ///
+  /// In en, this message translates to:
+  /// **'By Name'**
+  String get taUploadByName;
+
+  /// No description provided for @taUploadBySize.
+  ///
+  /// In en, this message translates to:
+  /// **'By Size'**
+  String get taUploadBySize;
+
+  /// No description provided for @taUploadSelectFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Upload Source'**
+  String get taUploadSelectFile;
+
+  /// No description provided for @taUploadFromDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'From Device'**
+  String get taUploadFromDevice;
+
+  /// No description provided for @taUploadFromDeviceHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose files from your device'**
+  String get taUploadFromDeviceHint;
+
+  /// No description provided for @taUploadFromCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'From Cloud Storage'**
+  String get taUploadFromCloud;
+
+  /// No description provided for @taUploadFromCloudHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Drive, Dropbox, OneDrive'**
+  String get taUploadFromCloudHint;
+
+  /// No description provided for @taUploadFromURL.
+  ///
+  /// In en, this message translates to:
+  /// **'From URL'**
+  String get taUploadFromURL;
+
+  /// No description provided for @taUploadFromURLHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from a direct link'**
+  String get taUploadFromURLHint;
+
+  /// No description provided for @taUploadImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import'**
+  String get taUploadImport;
+
+  /// No description provided for @taUploadUploading.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading file...'**
+  String get taUploadUploading;
+
+  /// No description provided for @taUploadSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'File uploaded successfully!'**
+  String get taUploadSuccess;
+
+  /// No description provided for @taUploadDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete file'**
+  String get taUploadDeleteConfirm;
+
+  /// No description provided for @taUploadDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'File deleted'**
+  String get taUploadDeleted;
+
+  /// No description provided for @taUploadNoMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'No materials found'**
+  String get taUploadNoMaterials;
+
+  /// No description provided for @taUploadNoMaterialsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload or generate materials to get started'**
+  String get taUploadNoMaterialsHint;
+
+  /// No description provided for @taUploadAIMaterialGenerator.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Material Generator'**
+  String get taUploadAIMaterialGenerator;
+
+  /// No description provided for @taUploadAIMaterialSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate educational content with AI'**
+  String get taUploadAIMaterialSubtitle;
+
+  /// No description provided for @taUploadGenerateLabPDF.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Lab Explanation PDF'**
+  String get taUploadGenerateLabPDF;
+
+  /// No description provided for @taUploadGenerateLabPDFDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Create detailed PDF explanations for lab content'**
+  String get taUploadGenerateLabPDFDesc;
+
+  /// No description provided for @taUploadGeneratePDF.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate PDF'**
+  String get taUploadGeneratePDF;
+
+  /// No description provided for @taUploadVideoTranscript.
+  ///
+  /// In en, this message translates to:
+  /// **'Video Transcript & Notes'**
+  String get taUploadVideoTranscript;
+
+  /// No description provided for @taUploadVideoTranscriptDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate transcript and study notes from videos'**
+  String get taUploadVideoTranscriptDesc;
+
+  /// No description provided for @taUploadGenerateTranscript.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Transcript'**
+  String get taUploadGenerateTranscript;
+
+  /// No description provided for @taUploadCreateStudyGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Study Guide'**
+  String get taUploadCreateStudyGuide;
+
+  /// No description provided for @taUploadCreateStudyGuideDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate comprehensive study materials'**
+  String get taUploadCreateStudyGuideDesc;
+
+  /// No description provided for @taUploadGenerateGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Guide'**
+  String get taUploadGenerateGuide;
+
+  /// No description provided for @taUploadGeneratingPDF.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating PDF...'**
+  String get taUploadGeneratingPDF;
+
+  /// No description provided for @taUploadGeneratingTranscript.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating transcript...'**
+  String get taUploadGeneratingTranscript;
+
+  /// No description provided for @taUploadGeneratingGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating study guide...'**
+  String get taUploadGeneratingGuide;
+
+  /// No description provided for @taUploadPreviewArea.
+  ///
+  /// In en, this message translates to:
+  /// **'File Preview'**
+  String get taUploadPreviewArea;
+
+  /// No description provided for @taUploadAIEnhancementTools.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Enhancement Tools'**
+  String get taUploadAIEnhancementTools;
+
+  /// No description provided for @taUploadSummarize.
+  ///
+  /// In en, this message translates to:
+  /// **'Summarize'**
+  String get taUploadSummarize;
+
+  /// No description provided for @taUploadQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz'**
+  String get taUploadQuiz;
+
+  /// No description provided for @taUploadFlashcards.
+  ///
+  /// In en, this message translates to:
+  /// **'Flashcards'**
+  String get taUploadFlashcards;
+
+  /// No description provided for @taUploadNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get taUploadNotes;
+
+  /// No description provided for @taUploadDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get taUploadDownload;
 }
 
 class _AppLocalizationsDelegate

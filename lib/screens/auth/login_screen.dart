@@ -14,6 +14,7 @@ import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../common/utils/responsive.dart';
 import '../../services/api_service.dart';
+import '../../services/demo_credentials.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -258,6 +259,33 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
 
+    // Check for demo credentials first (development mode)
+    final demoRole = DemoCredentials.validateDemoCredentials(email, password);
+    if (demoRole != null) {
+      // Demo login - bypass API and navigate directly
+      final demoUser = DemoCredentials.getDemoUser(demoRole);
+      final route = DemoCredentials.getDashboardRouteForUser(demoUser);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('${l.success} (Demo: $demoRole)'),
+          backgroundColor: const Color(0xFF10B981),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+
+      context.go(route);
+      return;
+    }
+
+    // Check if it's a demo email with wrong password
+    if (DemoCredentials.isDemoEmail(email)) {
+      _showErrorDialog('Invalid demo password. Check credentials.');
+      return;
+    }
+
     // Pre-check: Try to authenticate to see if email is verified
     try {
       final apiService = ApiService();
@@ -351,10 +379,12 @@ class _LoginScreenState extends State<LoginScreen>
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l.success),
-              backgroundColor: Color(0xFF10B981),
+              backgroundColor: const Color(0xFF10B981),
             ),
           );
-          context.go('/dashboard');
+          // Navigate based on user role
+          final route = DemoCredentials.getDashboardRouteForUser(state.user);
+          context.go(route);
         } else if (state is AuthError) {
           if (state.message.toLowerCase().contains('verify')) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -795,6 +825,9 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                     ),
                                   ),
+                                  SizedBox(height: responsive.p16),
+                                  // Demo Credentials
+                                  _buildDemoCredentials(context, isDark),
                                 ],
                               ),
                             ),
@@ -803,18 +836,18 @@ class _LoginScreenState extends State<LoginScreen>
                       ),
                     ),
                   ),
-                  // Top left icon
-                  Positioned(
-                    left: responsive.p16,
-                    top: responsive.safeAreaTop + responsive.p8,
-                    child: IconButton(
-                      onPressed: () {
-                        // context.go('/dashboard');
-                        context.go('/instructor/dashboard');
-                      },
-                      icon: Icon(Icons.home),
-                    ),
-                  ),
+                  // // Top left icon
+                  // Positioned(
+                  //   left: responsive.p16,
+                  //   top: responsive.safeAreaTop + responsive.p8,
+                  //   child: IconButton(
+                  //     onPressed: () {
+                  //       // context.go('/dashboard');
+                  //       context.go('/instructor/dashboard');
+                  //     },
+                  //     icon: Icon(Icons.home),
+                  //   ),
+                  // ),
                   // Top right icons
                   Positioned(
                     right: responsive.p16,
@@ -1057,6 +1090,113 @@ class _LoginScreenState extends State<LoginScreen>
           horizontal: responsive.p16,
           vertical: responsive.p16,
         ),
+      ),
+    );
+  }
+
+  Widget _buildDemoCredentials(BuildContext context, bool isDark) {
+    final responsive = context.responsive;
+    final textColor = isDark
+        ? AppTheme.darkTextPrimary
+        : const Color(0xFF1E293B);
+    final textSecondaryColor = isDark
+        ? AppTheme.darkTextSecondary
+        : const Color(0xFF697282);
+    final cardColor = isDark ? AppTheme.darkCardColor : Colors.white;
+
+    return Container(
+      margin: EdgeInsets.only(top: responsive.p24),
+      padding: EdgeInsets.all(responsive.p16),
+      decoration: BoxDecoration(
+        color: cardColor.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(responsive.radius12),
+        border: Border.all(
+          color: isDark ? const Color(0xFF404756) : const Color(0xFFE5E7EB),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.info_outline,
+                size: responsive.iconSmall,
+                color: const Color(0xFF2B7FFF),
+              ),
+              SizedBox(width: responsive.p8),
+              Text(
+                'Demo Credentials',
+                style: TextStyle(
+                  fontSize: responsive.fontSize14,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: responsive.p12),
+          ...DemoCredentials.getAllCredentials().map((cred) {
+            return Padding(
+              padding: EdgeInsets.only(bottom: responsive.p8),
+              child: InkWell(
+                onTap: () {
+                  _emailController.text = cred['email']!;
+                  _passwordController.text = cred['password']!;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${cred['role']} credentials loaded'),
+                      duration: const Duration(seconds: 1),
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(responsive.radius8),
+                child: Container(
+                  padding: EdgeInsets.all(responsive.p8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(responsive.radius8),
+                    color: isDark
+                        ? const Color(0xFF1E2530).withOpacity(0.5)
+                        : const Color(0xFFF9FAFB),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              cred['role']!,
+                              style: TextStyle(
+                                fontSize: responsive.fontSize12,
+                                fontWeight: FontWeight.w600,
+                                color: textColor,
+                              ),
+                            ),
+                            SizedBox(height: responsive.p4),
+                            Text(
+                              cred['email']!,
+                              style: TextStyle(
+                                fontSize: responsive.fontSize11,
+                                color: textSecondaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.arrow_forward_ios,
+                        size: responsive.iconSmall * 0.7,
+                        color: textSecondaryColor,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ],
       ),
     );
   }

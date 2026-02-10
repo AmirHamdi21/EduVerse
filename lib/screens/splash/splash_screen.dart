@@ -157,11 +157,15 @@ class _SplashScreenState extends State<SplashScreen>
         _fadeController.forward().then((_) {
           if (state is AuthAuthenticated) {
             // context.go('/dashboard');
-            context.go('/instructor/dashboard');
+            // context.go('/login');
+            // context.go('/instructor/dashboard');
+            context.go('/ta/dashboard');
           } else if (state is AuthUnauthenticated) {
             // context.go('/onboarding');
             // context.go('/dashboard');
-            context.go('/instructor/dashboard');
+            // context.go('/instructor/dashboard');
+            // context.go('/login');
+            context.go('/ta/dashboard');
           }
         });
       },

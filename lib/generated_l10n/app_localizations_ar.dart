@@ -1020,7 +1020,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get todayTasks => 'اليوم';
 
   @override
-  String get pending => 'معلق';
+  String get pending => 'قيد الانتظار';
 
   @override
   String get overdue => 'متأخر';
@@ -5657,4 +5657,1027 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get broadcastMessageDesc => 'إرسال لجميع طلاب المقرر';
+
+  @override
+  String get taDashboard => 'لوحة تحكم المعيد';
+
+  @override
+  String get taSubtitle => 'مهامك ومركز دعم الطلاب';
+
+  @override
+  String get taAIInsightsTitle => 'رؤى الذكاء الاصطناعي لك';
+
+  @override
+  String get taAIInsightsSubtitle => 'مساعدة ورؤى مخصصة';
+
+  @override
+  String get taInsightGradingSpeed => 'سرعة التصحيح';
+
+  @override
+  String get taInsightGradingSpeedDesc => 'تصحيحك أسرع بنسبة 20% هذا الأسبوع';
+
+  @override
+  String get taInsightStudentsNeedHelp => 'طلاب يحتاجون مساعدة';
+
+  @override
+  String get taInsightStudentsNeedHelpDesc => '3 طلاب سألوا أسئلة في المناقشات';
+
+  @override
+  String get taInsightSuggestion => 'اقتراح الذكاء الاصطناعي';
+
+  @override
+  String get taInsightSuggestionDesc => 'جدول جلسة مساعدة لمحتوى الأسبوع 5';
+
+  @override
+  String get taViewFullInsights => 'عرض كل الرؤى';
+
+  @override
+  String get taAskAIHelp => 'اسأل الذكاء الاصطناعي';
+
+  @override
+  String get taQuickActions => 'إجراءات سريعة';
+
+  @override
+  String get taExamGrading => 'تصحيح الامتحانات';
+
+  @override
+  String get taReviewLabs => 'مراجعة المختبرات';
+
+  @override
+  String get taOpenDiscussions => 'فتح المناقشات';
+
+  @override
+  String get taThisWeekActivity => 'نشاط هذا الأسبوع';
+
+  @override
+  String get taFromLastWeek => 'من الأسبوع الماضي';
+
+  @override
+  String get taAssignmentsGraded => 'واجبات مصححة';
+
+  @override
+  String get taLabsReviewed => 'مختبرات تمت مراجعتها';
+
+  @override
+  String get taQuestionsAnswered => 'أسئلة تمت الإجابة عليها';
+
+  @override
+  String get taAttendanceSessions => 'جلسات الحضور';
+
+  @override
+  String get taAIHelpedGrade =>
+      'ساعدك الذكاء الاصطناعي على التصحيح أسرع بنسبة 14%';
+
+  @override
+  String get taAIHelpedGradeDesc =>
+      'الوقت الموفر مع التصحيح بمساعدة الذكاء الاصطناعي';
+
+  @override
+  String get taAssignedCourses => 'المقررات المعينة';
+
+  @override
+  String get taTasks => 'المهام';
+
+  @override
+  String get taTaskCenter => 'مركز المهام';
+
+  @override
+  String get taAllTasks => 'كل المهام';
+
+  @override
+  String get taGrading => 'التصحيح';
+
+  @override
+  String get taReviews => 'المراجعات';
+
+  @override
+  String get taDiscussions => 'المناقشات';
+
+  @override
+  String get taNoTasksInCategory => 'لا توجد مهام في هذه الفئة';
+
+  @override
+  String get taSubmissions => 'تسليمات';
+
+  @override
+  String get taStart => 'ابدأ';
+
+  @override
+  String get taDiscussionMonitor => 'مراقب المناقشات';
+
+  @override
+  String get taUnanswered => 'غير مجاب';
+
+  @override
+  String get taNoUnansweredQuestions => 'لا توجد أسئلة غير مجاب عليها';
+
+  @override
+  String get taViews => 'مشاهدات';
+
+  @override
+  String get taReplyNow => 'رد الآن';
+
+  @override
+  String get taGraded => 'تم التصحيح';
+
+  @override
+  String get taGradingCenter => 'مركز التصحيح';
+
+  @override
+  String get taReviewSubmissions => 'مراجعة التسليمات';
+
+  @override
+  String get taOfficeHours => 'ساعات المكتب';
+
+  @override
+  String get taAIAssistant => 'مساعد الذكاء الاصطناعي للمعيد';
+
+  @override
+  String get taCourses => 'مقررات المعيد';
+
+  @override
+  String get taCourseDetail => 'تفاصيل المقرر';
+
+  @override
+  String get taCourseStudents => 'الطلاب';
+
+  @override
+  String get taCourseLabs => 'المختبرات';
+
+  @override
+  String get taCourseAssignments => 'الواجبات';
+
+  @override
+  String get taCourseDiscussionsCount => 'المناقشات';
+
+  @override
+  String get taCourseViewLabs => 'عرض المختبرات';
+
+  @override
+  String get taCourseSubmissions => 'التسليمات';
+
+  @override
+  String get taCourseDiscussionBtn => 'المناقشات';
+
+  @override
+  String get taCourseAIInsights => 'رؤى الذكاء الاصطناعي';
+
+  @override
+  String get taCourseInsightsTitle => 'رؤى المعيد';
+
+  @override
+  String get taCourseOpenInsights => 'فتح رؤى المعيد';
+
+  @override
+  String get taCourseFullInsightsTitle => 'رؤى الذكاء الاصطناعي الكاملة';
+
+  @override
+  String get taCourseFullInsightsSubtitle => 'توصيات مدعومة بالذكاء الاصطناعي';
+
+  @override
+  String get taCoursePriorityTasks => 'المهام ذات الأولوية';
+
+  @override
+  String get taCourseUpcomingTasks => 'مهام المعيد القادمة';
+
+  @override
+  String get taCourseRecentActivity => 'النشاط الأخير';
+
+  @override
+  String get taCourseNoLabs => 'لا توجد مختبرات متاحة';
+
+  @override
+  String get taCourseNoLabsDesc => 'ستظهر مختبرات هذا المقرر هنا';
+
+  @override
+  String get taCourseLabActive => 'نشط';
+
+  @override
+  String get taCourseLabClosed => 'مغلق';
+
+  @override
+  String get taCourseLabAttendance => 'الحضور';
+
+  @override
+  String get taCourseLabStudents => 'طالب';
+
+  @override
+  String get taCourseLabOpen => 'فتح المختبر';
+
+  @override
+  String get taCourseLabReview => 'مراجعة';
+
+  @override
+  String get taCourseLabAttendanceBtn => 'الحضور';
+
+  @override
+  String get taCourseLabUpload => 'رفع';
+
+  @override
+  String get taCourseNoGrading => 'لا يوجد تصحيح معلق';
+
+  @override
+  String get taCourseNoGradingDesc => 'تم تصحيح جميع التسليمات';
+
+  @override
+  String get taCourseGradingPending => 'معلق';
+
+  @override
+  String get taCourseGradingInProgress => 'قيد التنفيذ';
+
+  @override
+  String get taCourseGradingComplete => 'مكتمل';
+
+  @override
+  String get taCourseApplyAIScore => 'تطبيق درجة الذكاء الاصطناعي';
+
+  @override
+  String get taCourseStartReview => 'بدء المراجعة';
+
+  @override
+  String get taCourseAIGradingHelper => 'مساعد التصحيح بالذكاء الاصطناعي';
+
+  @override
+  String get taCourseSuggestedScore => 'الدرجة المقترحة';
+
+  @override
+  String get taCourseFilterAll => 'الكل';
+
+  @override
+  String get taCourseFilterUnanswered => 'غير مجاب';
+
+  @override
+  String get taCourseFilterHighActivity => 'نشاط عالي';
+
+  @override
+  String get taCourseFilterAIFlagged => 'مميز بالذكاء الاصطناعي';
+
+  @override
+  String get taCourseNoDiscussions => 'لا توجد مناقشات';
+
+  @override
+  String get taCourseNoDiscussionsDesc => 'ستظهر سلاسل المناقشات هنا';
+
+  @override
+  String get taCourseDiscussionReplies => 'ردود';
+
+  @override
+  String get taCourseDiscussionLikes => 'إعجابات';
+
+  @override
+  String get taCourseReplyAsTA => 'الرد كمعيد';
+
+  @override
+  String get taCourseUnanswered => 'غير مجاب';
+
+  @override
+  String get taCourseOverview => 'نظرة عامة';
+
+  @override
+  String get taCourseLabsTab => 'المختبرات';
+
+  @override
+  String get taCourseGradingTab => 'التصحيح';
+
+  @override
+  String get taCourseDiscussionsTab => 'المناقشات';
+
+  @override
+  String get mainMenu => 'القائمة الرئيسية';
+
+  @override
+  String get aiTools => 'أدوات الذكاء الاصطناعي';
+
+  @override
+  String get connect => 'التواصل';
+
+  @override
+  String get goodNight => 'تصبح على خير';
+
+  @override
+  String get taLabsTitle => 'المختبرات';
+
+  @override
+  String get taLabFilterAll => 'كل المختبرات';
+
+  @override
+  String get taLabFilterActive => 'النشطة';
+
+  @override
+  String get taLabFilterPendingReview => 'بانتظار المراجعة';
+
+  @override
+  String get taLabsCount => 'مختبرات';
+
+  @override
+  String get taLabNoLabs => 'لا توجد مختبرات';
+
+  @override
+  String get taLabNoLabsDesc => 'ستظهر المختبرات هنا عند توفرها';
+
+  @override
+  String get taLabActive => 'نشط';
+
+  @override
+  String get taLabClosed => 'مغلق';
+
+  @override
+  String get taLabPendingReview => 'معلق';
+
+  @override
+  String get taLabOverview => 'نظرة عامة';
+
+  @override
+  String get taLabSubmissionsTab => 'التسليمات';
+
+  @override
+  String get taLabAttendanceTab => 'الحضور';
+
+  @override
+  String get taLabEdit => 'تعديل المختبر';
+
+  @override
+  String get taLabSettings => 'الإعدادات';
+
+  @override
+  String get taLabStatus => 'الحالة';
+
+  @override
+  String get taLabStudents => 'الطلاب';
+
+  @override
+  String get taLabSubmissions => 'التسليمات';
+
+  @override
+  String get taLabSubmitted => 'تم التسليم';
+
+  @override
+  String get taLabDue => 'الموعد النهائي';
+
+  @override
+  String get taLabUpload => 'رفع';
+
+  @override
+  String get taLabAttendance => 'الحضور';
+
+  @override
+  String get taLabAIInsights => 'رؤى الذكاء الاصطناعي';
+
+  @override
+  String get taLabAllLabs => 'كل المختبرات';
+
+  @override
+  String get taLabTaskSummary => 'ملخص المهام';
+
+  @override
+  String get taLabTaskStart => 'ابدأ';
+
+  @override
+  String get taLabTaskMark => 'وضع علامة';
+
+  @override
+  String get taLabTaskReply => 'رد';
+
+  @override
+  String get taLabTaskReview => 'مراجعة';
+
+  @override
+  String get taLabStudentQuestions => 'أسئلة الطلاب';
+
+  @override
+  String get taLabUnresolved => 'غير محلولة';
+
+  @override
+  String get taLabResolved => 'تم الحل';
+
+  @override
+  String get taLabResolve => 'حل';
+
+  @override
+  String get taLabAIHint => 'تلميح الذكاء الاصطناعي';
+
+  @override
+  String get taLabRecentActivity => 'النشاط الأخير';
+
+  @override
+  String get taLabLoadingActivity => 'جاري تحميل النشاط...';
+
+  @override
+  String get taLabAllSubmissions => 'كل التسليمات';
+
+  @override
+  String get taLabTotal => 'الإجمالي';
+
+  @override
+  String get taLabPending => 'معلق';
+
+  @override
+  String get taLabReviewed => 'تمت المراجعة';
+
+  @override
+  String get taLabLate => 'متأخر';
+
+  @override
+  String get taLabAIScore => 'درجة الذكاء الاصطناعي';
+
+  @override
+  String get taLabFinalScore => 'الدرجة النهائية';
+
+  @override
+  String get taLabOpenSubmission => 'فتح';
+
+  @override
+  String get taLabNoScoreYet => 'لا توجد درجة بعد';
+
+  @override
+  String get taLabNoSubmissions => 'لا توجد تسليمات بعد';
+
+  @override
+  String get taLabNoSubmissionsDesc => 'ستظهر تسليمات الطلاب هنا';
+
+  @override
+  String get taLabSession => 'الجلسة';
+
+  @override
+  String get taLabSelectSession => 'اختر الجلسة';
+
+  @override
+  String get taLabMarkAllPresent => 'تعليم الكل حاضر';
+
+  @override
+  String get taLabExport => 'تصدير';
+
+  @override
+  String get taLabAINotice => 'اكتشف الذكاء الاصطناعي أنماطاً في الحضور';
+
+  @override
+  String get taLabStudentsAbsent => 'طلاب غائبون بشكل متكرر';
+
+  @override
+  String get taLabPresent => 'حاضر';
+
+  @override
+  String get taLabAbsent => 'غائب';
+
+  @override
+  String get taLabLateMark => 'متأخر';
+
+  @override
+  String get taLabNoAttendance => 'لا توجد سجلات حضور';
+
+  @override
+  String get taLabNoAttendanceDesc => 'سيظهر الحضور هنا';
+
+  @override
+  String get taLabCopilotTitle => 'مساعد المختبر الذكي';
+
+  @override
+  String get taLabCopilotSubtitle =>
+      'أدوات مساعدة المختبر المدعومة بالذكاء الاصطناعي';
+
+  @override
+  String get taLabGenerateHints => 'إنشاء تلميحات';
+
+  @override
+  String get taLabGenerateHintsDesc => 'إنشاء تلميحات مفيدة للطلاب';
+
+  @override
+  String get taLabExplainSteps => 'شرح الخطوات';
+
+  @override
+  String get taLabExplainStepsDesc => 'تقسيم خطوات الحل';
+
+  @override
+  String get taLabClarifyQuestions => 'توضيح الأسئلة';
+
+  @override
+  String get taLabClarifyQuestionsDesc => 'الإجابة على الأسئلة الشائعة';
+
+  @override
+  String get taLabSampleOutput => 'مخرجات نموذجية';
+
+  @override
+  String get taLabSampleOutputDesc => 'إنشاء المخرجات المتوقعة';
+
+  @override
+  String get taLabEvaluateAnswers => 'تقييم الإجابات';
+
+  @override
+  String get taLabEvaluateAnswersDesc => 'تقييم تسليمات الطلاب';
+
+  @override
+  String get taLabRewriteInstructions => 'إعادة كتابة التعليمات';
+
+  @override
+  String get taLabRewriteInstructionsDesc => 'تبسيط تعليمات المختبر';
+
+  @override
+  String get taLabAskAI => 'اسأل المساعد الذكي';
+
+  @override
+  String get taLabAskAIPlaceholder => 'اسأل أي شيء عن هذا المختبر...';
+
+  @override
+  String get taLabGenerateResponse => 'إنشاء';
+
+  @override
+  String get taLabAIResponse => 'رد الذكاء الاصطناعي';
+
+  @override
+  String get taLabCopy => 'نسخ';
+
+  @override
+  String get taLabShare => 'مشاركة';
+
+  @override
+  String get taLabReviewSubmission => 'مراجعة التسليم';
+
+  @override
+  String get taLabSubmissionFiles => 'ملفات التسليم';
+
+  @override
+  String get taLabAIGradingAssistant => 'مساعد التصحيح بالذكاء الاصطناعي';
+
+  @override
+  String get taLabSuggestedScore => 'الدرجة المقترحة';
+
+  @override
+  String get taLabPlagiarismCheck => 'فحص الانتحال';
+
+  @override
+  String get taLabSimilarity => 'تشابه';
+
+  @override
+  String get taLabApplyAIScore => 'تطبيق الدرجة';
+
+  @override
+  String get taLabViewRubric => 'عرض معايير التقييم';
+
+  @override
+  String get taLabManualGrading => 'التصحيح اليدوي';
+
+  @override
+  String get taLabScore => 'الدرجة';
+
+  @override
+  String get taLabEnterScore => 'أدخل الدرجة (0-100)';
+
+  @override
+  String get taLabFeedback => 'الملاحظات';
+
+  @override
+  String get taLabEnterFeedback => 'اكتب ملاحظاتك هنا...';
+
+  @override
+  String get taLabCancel => 'إلغاء';
+
+  @override
+  String get taLabSubmitReview => 'إرسال المراجعة';
+
+  @override
+  String get taPerformanceTitle => 'أداء الطلاب';
+
+  @override
+  String get taPerformanceSubtitle =>
+      'مراقبة تقدم المختبر وتحديد الطلاب المحتاجين للمساعدة';
+
+  @override
+  String get taPerformanceAvgScore => 'متوسط الدرجات';
+
+  @override
+  String get taPerformanceHighPerformers => 'المتفوقون';
+
+  @override
+  String get taPerformanceScoring85 => 'طلاب بدرجات 85%+';
+
+  @override
+  String get taPerformanceAtRisk => 'معرضون للخطر';
+
+  @override
+  String get taPerformanceNeedSupport => 'يحتاج دعم';
+
+  @override
+  String get taPerformanceEngagement => 'المشاركة';
+
+  @override
+  String get taPerformanceOverallEngagement => 'المشاركة الكلية';
+
+  @override
+  String get taPerformanceOnTrack => 'على المسار';
+
+  @override
+  String get taPerformanceAllSubmitted => 'جميع المختبرات مقدمة';
+
+  @override
+  String get taPerformanceHighRisk => 'خطر عالي';
+
+  @override
+  String get taPerformanceMediumRisk => 'خطر متوسط';
+
+  @override
+  String get taPerformanceLowRisk => 'خطر منخفض';
+
+  @override
+  String get taPerformanceLabAverage => 'متوسط المختبر';
+
+  @override
+  String get taPerformanceLast => 'آخر';
+
+  @override
+  String get taPerformanceViewSummary => 'عرض الملخص';
+
+  @override
+  String get taPerformanceSummaryTitle => 'ملخص أداء الطالب';
+
+  @override
+  String get taPerformanceSummarySubtitle => 'تحليل أداء مفصل';
+
+  @override
+  String get taPerformanceAINotes => 'ملاحظات الذكاء الاصطناعي';
+
+  @override
+  String get taPerformanceLabTrend => 'اتجاه أداء المختبر';
+
+  @override
+  String get taPerformanceAttendanceHistory => 'سجل الحضور';
+
+  @override
+  String get taPerformanceSendFeedback => 'إرسال ملاحظات';
+
+  @override
+  String get taPerformanceNotifyInstructor => 'إشعار';
+
+  @override
+  String get taPerformanceDownloadReport => 'تحميل التقرير (PDF)';
+
+  @override
+  String get taPerformanceAIInsights => 'رؤى الأداء بالذكاء الاصطناعي';
+
+  @override
+  String get taPerformanceAIInsightsSubtitle =>
+      'تحليل الطلاب بالذكاء الاصطناعي';
+
+  @override
+  String get taPerformanceStudentsNeedingSupport => 'طلاب يحتاجون دعم';
+
+  @override
+  String get taPerformanceRecommendedActions => 'الإجراءات المقترحة';
+
+  @override
+  String get taPerformanceAcademicIntegrityAlerts =>
+      'تنبيهات النزاهة الأكاديمية';
+
+  @override
+  String get taPerformanceGenerateMaterials => 'إنشاء مواد دراسية';
+
+  @override
+  String get taPerformanceSearch => 'بحث';
+
+  @override
+  String get taPerformanceAIInsightsBtn => 'رؤى AI';
+
+  @override
+  String get taPerformanceExport => 'تصدير';
+
+  @override
+  String get taPerformanceSearchHint => 'بحث في الطلاب...';
+
+  @override
+  String get taPerformanceFilterName => 'الاسم';
+
+  @override
+  String get taPerformanceFilterScore => 'الدرجة';
+
+  @override
+  String get taPerformanceFilterRisk => 'الخطر';
+
+  @override
+  String get taPerformanceNoStudents => 'لم يتم العثور على طلاب';
+
+  @override
+  String get taPerformanceNoStudentsHint => 'جرب تعديل البحث أو الفلاتر';
+
+  @override
+  String get taPerformanceAISummary => 'ملخص الأداء بالذكاء الاصطناعي';
+
+  @override
+  String get taPerformanceAISummaryText =>
+      'بناءً على البيانات الحالية، يحتاج طالب واحد اهتماماً فورياً بسبب تراجع الأداء. يُظهر المختبر 3 نقطة صعوبة مشتركة لعدة طلاب.';
+
+  @override
+  String get taPerformanceViewInsights => 'عرض الرؤى الكاملة';
+
+  @override
+  String get taStudentPerformance => 'أداء الطلاب';
+
+  @override
+  String get taNotifTitle => 'الإشعارات والرسائل';
+
+  @override
+  String get taNotifSubtitle => 'ابق على اطلاع ورد فوراً';
+
+  @override
+  String get taNotifSearch => 'بحث';
+
+  @override
+  String get taNotifAIReplies => 'ردود AI';
+
+  @override
+  String get taNotifBulkActions => 'إجراءات جماعية';
+
+  @override
+  String get taNotifAll => 'الكل';
+
+  @override
+  String get taNotifStudents => 'الطلاب';
+
+  @override
+  String get taNotifInstructors => 'المحاضرون';
+
+  @override
+  String get taNotifReplies => 'ردود';
+
+  @override
+  String get taNotifRelatedTo => 'متعلق بـ';
+
+  @override
+  String get taNotifReply => 'رد';
+
+  @override
+  String get taNotifResolve => 'حل';
+
+  @override
+  String get taNotifAIReplyAssistant => 'مساعد الرد بالذكاء الاصطناعي';
+
+  @override
+  String get taNotifGenerateReply => 'إنشاء رد';
+
+  @override
+  String get taNotifExplainIssue => 'شرح المشكلة';
+
+  @override
+  String get taNotifTypeReply => 'اكتب ردك...';
+
+  @override
+  String get taNotifResponsePerformance => 'أداء الاستجابة';
+
+  @override
+  String get taNotifAvgResponseTime => 'متوسط وقت الاستجابة';
+
+  @override
+  String get taNotifMessagesToday => 'الرسائل اليوم';
+
+  @override
+  String get taNotifAIRepliesUsed => 'ردود AI المستخدمة';
+
+  @override
+  String get taNotifNoNotifications => 'لا توجد إشعارات';
+
+  @override
+  String get taNotifNoNotificationsHint => 'أنت على اطلاع بكل شيء!';
+
+  @override
+  String get taNotifications => 'الإشعارات';
+
+  @override
+  String get taNotifSelectAll => 'تحديد الكل';
+
+  @override
+  String get taNotifMarkAllRead => 'وضع علامة مقروءة على الكل';
+
+  @override
+  String get taNotifDeleteAll => 'حذف الكل';
+
+  @override
+  String get taNotifSelected => 'محدد';
+
+  @override
+  String get taNotifSwipeSettings => 'إعدادات السحب';
+
+  @override
+  String get taNotifDeleteAllTitle => 'حذف جميع الإشعارات';
+
+  @override
+  String get taNotifDeleteAllMessage => 'هل أنت متأكد من حذف جميع الإشعارات؟';
+
+  @override
+  String get taDiscussTitle => 'النقاش والأسئلة';
+
+  @override
+  String get taDiscussSubtitle => 'رد على أسئلة الطلاب وأدر النقاشات';
+
+  @override
+  String get taDiscussSearch => 'بحث في المواضيع...';
+
+  @override
+  String get taDiscussFlagged => 'مُعلَّم';
+
+  @override
+  String get taDiscussAIInsights => 'رؤى AI';
+
+  @override
+  String get taDiscussAllThreads => 'كل المواضيع';
+
+  @override
+  String get taDiscussUnanswered => 'غير مجاب';
+
+  @override
+  String get taDiscussMyReplies => 'ردودي';
+
+  @override
+  String get taDiscussReplies => 'ردود';
+
+  @override
+  String get taDiscussTrendingTopics => 'المواضيع الشائعة';
+
+  @override
+  String get taDiscussNoThreads => 'لم يتم العثور على مواضيع';
+
+  @override
+  String get taDiscussNoThreadsHint => 'جرب تعديل البحث أو الفلاتر';
+
+  @override
+  String get taDiscussReplyPlaceholder => 'اكتب ردك...';
+
+  @override
+  String get taDiscussCreateThread => 'إنشاء موضوع جديد';
+
+  @override
+  String get taDiscussThreadTitle => 'عنوان الموضوع';
+
+  @override
+  String get taDiscussThreadContent => 'محتوى الموضوع';
+
+  @override
+  String get taDiscussPost => 'نشر الموضوع';
+
+  @override
+  String get taUploadTitle => 'رفع المواد';
+
+  @override
+  String get taUploadSubtitle => 'أضف فيديوهات، ملفات PDF، أو مرفقات للمختبرات';
+
+  @override
+  String get taUploadViewAll => 'عرض الكل';
+
+  @override
+  String get taUploadAISuggest => 'اقتراحات AI';
+
+  @override
+  String get taUploadSettings => 'الإعدادات';
+
+  @override
+  String get taUploadStudents => 'الطلاب';
+
+  @override
+  String get taUploadMaterialsCount => 'المواد';
+
+  @override
+  String get taUploadLastUpdated => 'آخر تحديث';
+
+  @override
+  String get taUploadDragDrop => 'اسحب وأفلت الملفات هنا';
+
+  @override
+  String get taUploadSupportedFormats => 'المدعوم: PDF، فيديو، كود، صور، ZIP';
+
+  @override
+  String get taUploadMaterials => 'رفع المواد';
+
+  @override
+  String get taUploadAIGenerate => 'توليد AI';
+
+  @override
+  String get taUploadSearch => 'بحث في المواد...';
+
+  @override
+  String get taUploadAllFiles => 'كل الملفات';
+
+  @override
+  String get taUploadPDFs => 'ملفات PDF';
+
+  @override
+  String get taUploadVideos => 'فيديوهات';
+
+  @override
+  String get taUploadCode => 'كود';
+
+  @override
+  String get taUploadAIGenerated => 'مولد بـ AI';
+
+  @override
+  String get taUploadRecent => 'الأحدث';
+
+  @override
+  String get taUploadByName => 'بالاسم';
+
+  @override
+  String get taUploadBySize => 'بالحجم';
+
+  @override
+  String get taUploadSelectFile => 'اختر مصدر الرفع';
+
+  @override
+  String get taUploadFromDevice => 'من الجهاز';
+
+  @override
+  String get taUploadFromDeviceHint => 'اختر ملفات من جهازك';
+
+  @override
+  String get taUploadFromCloud => 'من التخزين السحابي';
+
+  @override
+  String get taUploadFromCloudHint => 'Google Drive, Dropbox, OneDrive';
+
+  @override
+  String get taUploadFromURL => 'من رابط';
+
+  @override
+  String get taUploadFromURLHint => 'استيراد من رابط مباشر';
+
+  @override
+  String get taUploadImport => 'استيراد';
+
+  @override
+  String get taUploadUploading => 'جاري رفع الملف...';
+
+  @override
+  String get taUploadSuccess => 'تم رفع الملف بنجاح!';
+
+  @override
+  String get taUploadDeleteConfirm => 'حذف الملف';
+
+  @override
+  String get taUploadDeleted => 'تم حذف الملف';
+
+  @override
+  String get taUploadNoMaterials => 'لم يتم العثور على مواد';
+
+  @override
+  String get taUploadNoMaterialsHint => 'ارفع أو ولّد مواد للبدء';
+
+  @override
+  String get taUploadAIMaterialGenerator => 'مولد المواد بالذكاء الاصطناعي';
+
+  @override
+  String get taUploadAIMaterialSubtitle => 'ولّد محتوى تعليمي باستخدام AI';
+
+  @override
+  String get taUploadGenerateLabPDF => 'توليد PDF لشرح المختبر';
+
+  @override
+  String get taUploadGenerateLabPDFDesc =>
+      'إنشاء شروحات PDF مفصلة لمحتوى المختبر';
+
+  @override
+  String get taUploadGeneratePDF => 'توليد PDF';
+
+  @override
+  String get taUploadVideoTranscript => 'نص الفيديو والملاحظات';
+
+  @override
+  String get taUploadVideoTranscriptDesc =>
+      'توليد نص وملاحظات دراسية من الفيديوهات';
+
+  @override
+  String get taUploadGenerateTranscript => 'توليد النص';
+
+  @override
+  String get taUploadCreateStudyGuide => 'إنشاء دليل دراسي';
+
+  @override
+  String get taUploadCreateStudyGuideDesc => 'توليد مواد دراسية شاملة';
+
+  @override
+  String get taUploadGenerateGuide => 'توليد الدليل';
+
+  @override
+  String get taUploadGeneratingPDF => 'جاري توليد PDF...';
+
+  @override
+  String get taUploadGeneratingTranscript => 'جاري توليد النص...';
+
+  @override
+  String get taUploadGeneratingGuide => 'جاري توليد الدليل الدراسي...';
+
+  @override
+  String get taUploadPreviewArea => 'معاينة الملف';
+
+  @override
+  String get taUploadAIEnhancementTools => 'أدوات تحسين AI';
+
+  @override
+  String get taUploadSummarize => 'تلخيص';
+
+  @override
+  String get taUploadQuiz => 'اختبار';
+
+  @override
+  String get taUploadFlashcards => 'بطاقات تعليمية';
+
+  @override
+  String get taUploadNotes => 'ملاحظات';
+
+  @override
+  String get taUploadDownload => 'تحميل';
 }
