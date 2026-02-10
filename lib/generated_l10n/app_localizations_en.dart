@@ -2385,7 +2385,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchInConversation => 'Search in conversation';
 
   @override
-  String get muteNotifications => 'Mute notifications';
+  String get muteNotifications => 'Mute Notifications';
 
   @override
   String get unmute => 'Unmute';
@@ -4494,7 +4494,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get submissions => 'Submissions';
 
   @override
-  String get searchStudents => 'Search students...';
+  String get searchStudents => 'Search Students';
 
   @override
   String get allCourses => 'All Courses';
@@ -5451,7 +5451,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noResultsDescription => 'Try different keywords or filters';
 
   @override
-  String get markAllRead => 'Mark All Read';
+  String get markAllRead => 'Mark All as Read';
 
   @override
   String get read => 'Read';
@@ -6706,4 +6706,704 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taUploadDownload => 'Download';
+
+  @override
+  String get taGradingTitle => 'AI Grading Assistant';
+
+  @override
+  String get taGradingSubtitle =>
+      'Review and grade student submissions with AI assistance';
+
+  @override
+  String get taGradingSelectCourse => 'Select Course';
+
+  @override
+  String get taGradingSelectAssignment => 'Select Assignment';
+
+  @override
+  String get taGradingTotal => 'Total';
+
+  @override
+  String get taGradingPending => 'Pending';
+
+  @override
+  String get taGradingReviewed => 'Reviewed';
+
+  @override
+  String get taGradingLate => 'Late';
+
+  @override
+  String get taGradingBatchEvaluate => 'Batch Auto-Evaluate';
+
+  @override
+  String get taGradingBatchDesc => 'Let AI evaluate all pending submissions';
+
+  @override
+  String get taGradingAutoEvaluate => 'Auto-Evaluate All';
+
+  @override
+  String get taGradingEvaluating => 'Evaluating submissions...';
+
+  @override
+  String get taGradingSearchStudents => 'Search submissions...';
+
+  @override
+  String get taGradingNoSubmissions => 'No Submissions Found';
+
+  @override
+  String get taGradingNoSubmissionsDesc =>
+      'Submissions will appear here when students submit their work';
+
+  @override
+  String get taGradingStatusPending => 'Pending';
+
+  @override
+  String get taGradingStatusEvaluated => 'AI Evaluated';
+
+  @override
+  String get taGradingStatusFinalized => 'Finalized';
+
+  @override
+  String get taGradingStatusLate => 'Late';
+
+  @override
+  String get taGradingAIScore => 'AI Score';
+
+  @override
+  String get taGradingReview => 'Review';
+
+  @override
+  String get taGradingSubmissionDetail => 'Submission Detail';
+
+  @override
+  String get taGradingFeedback => 'Feedback';
+
+  @override
+  String get taGradingEnterFeedback => 'Enter your feedback...';
+
+  @override
+  String get taGradingRunAI => 'Run AI Evaluation';
+
+  @override
+  String get taGradingFinalize => 'Finalize Grade';
+
+  @override
+  String get taGradingFinalized => 'Grade finalized successfully!';
+
+  @override
+  String get taGradingAllEvaluated => 'All submissions evaluated!';
+
+  @override
+  String get taGradingSubmissionDetails => 'Submission Details';
+
+  @override
+  String get taGradingSubmittedAt => 'Submitted';
+
+  @override
+  String get taGradingWordCount => 'Word Count';
+
+  @override
+  String get taGradingStatus => 'Status';
+
+  @override
+  String get taGradingSubmissionContent => 'Submission Content';
+
+  @override
+  String get taGradingAIInsights => 'AI Insights';
+
+  @override
+  String get taGradingBatchEvaluation => 'Batch AI Evaluation';
+
+  @override
+  String get taGradingBatchEvaluationDesc =>
+      'Let AI evaluate all pending submissions automatically';
+
+  @override
+  String get taGradingAutoEvaluateAll => 'Auto-Evaluate All';
+
+  @override
+  String get taGradingAssignmentLab => 'Assignment/Lab';
+
+  @override
+  String get taCoursesCourse => 'Course';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get taInboxTitle => 'Student Inbox';
+
+  @override
+  String get taInboxSubtitle => 'Manage student messages and communications';
+
+  @override
+  String get taInboxSearchStudents => 'Search students...';
+
+  @override
+  String get taInboxFilterAll => 'All Chats';
+
+  @override
+  String get taInboxFilterUnread => 'Unread';
+
+  @override
+  String get taInboxFilterAtRisk => 'At-Risk';
+
+  @override
+  String get taInboxFilterForwarded => 'Forwarded';
+
+  @override
+  String get taInboxAtRiskStudent => 'At-Risk Students';
+
+  @override
+  String get taInboxAtRiskDesc => 'Students requiring immediate attention';
+
+  @override
+  String get taInboxEmpty => 'No Messages';
+
+  @override
+  String get taInboxEmptyDesc =>
+      'Your inbox is empty. Student messages will appear here.';
+
+  @override
+  String get taInboxNewMessage => 'New Message';
+
+  @override
+  String get taInboxTypeMessage => 'Type your message...';
+
+  @override
+  String get taInboxMessageSent => 'Message sent!';
+
+  @override
+  String get taInboxForward => 'Forward to Instructor';
+
+  @override
+  String get taInboxMarkRead => 'Mark as Read';
+
+  @override
+  String get taInboxViewProfile => 'View Student Profile';
+
+  @override
+  String get taInboxMarkedAsRead => 'Marked as read';
+
+  @override
+  String get taInboxForwardTo => 'Forward Message To';
+
+  @override
+  String get taInboxForwarded => 'Message forwarded!';
+
+  @override
+  String get taLabResTitle => 'Lab Resources';
+
+  @override
+  String get taLabResSubtitle => 'Manage lab materials and resources';
+
+  @override
+  String get taLabResViews => 'views';
+
+  @override
+  String get taLabResDownloads => 'downloads';
+
+  @override
+  String get taLabResComplete => 'complete';
+
+  @override
+  String get taLabResView => 'View';
+
+  @override
+  String get taLabResDownload => 'Download';
+
+  @override
+  String get taLabResReplace => 'Replace';
+
+  @override
+  String get taLabResRecentlyAdded => 'Recently Added';
+
+  @override
+  String get taLabResMaterials => 'materials';
+
+  @override
+  String get taLabResUploadNew => 'Upload New Material';
+
+  @override
+  String get taLabResUploadDesc => 'Drag & drop or click to upload files';
+
+  @override
+  String get taLabResSearchMaterials => 'Search materials...';
+
+  @override
+  String get taLabResNoMaterials => 'No Materials Found';
+
+  @override
+  String get taLabResNoMaterialsDesc => 'Upload materials to get started';
+
+  @override
+  String get taLabResUpload => 'Upload';
+
+  @override
+  String get taLabResUploading => 'Uploading';
+
+  @override
+  String get taLabResUploadSuccess => 'Material uploaded successfully!';
+
+  @override
+  String get taLabResDownloading => 'Downloading';
+
+  @override
+  String get taLabResReplaceTitle => 'Replace Material';
+
+  @override
+  String get taLabResReplaceDesc => 'Are you sure you want to replace';
+
+  @override
+  String get taLabResReplaceSuccess => 'Material replaced successfully!';
+
+  @override
+  String get taLabResDeleteTitle => 'Delete Material';
+
+  @override
+  String get taLabResDeleteDesc => 'Are you sure you want to delete';
+
+  @override
+  String get taLabResDeleteSuccess => 'Material deleted successfully!';
+
+  @override
+  String get taLabResAIInsights => 'AI Insights';
+
+  @override
+  String get taLabResNewFolder => 'New Folder';
+
+  @override
+  String get taLabResFolderName => 'Folder name';
+
+  @override
+  String get taLabResFolderCreated => 'Folder created!';
+
+  @override
+  String get taLabResAILowClarity => 'AI: Low Clarity';
+
+  @override
+  String get taLabResAISuggestUpdate => 'AI: Suggest Update';
+
+  @override
+  String get taLabResAIOutdated => 'AI: Outdated';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get taAnalyticsTitle => 'Analytics Dashboard';
+
+  @override
+  String get taAnalyticsAttendance => 'Attendance';
+
+  @override
+  String get taAnalyticsSubmissionRate => 'Submission Rate';
+
+  @override
+  String get taAnalyticsAtRisk => 'At-Risk Students';
+
+  @override
+  String get taAnalyticsEngagement => 'Engagement Score';
+
+  @override
+  String get taAnalyticsAttendanceTrends => 'Attendance Trends';
+
+  @override
+  String get taAnalyticsSubmissionPerformance => 'Submission Performance';
+
+  @override
+  String get taAnalyticsScoreDistribution => 'Score Distribution';
+
+  @override
+  String get taAnalyticsAIInsights => 'AI Insights & Recommendations';
+
+  @override
+  String get taAnalyticsPerformanceDecline => 'Performance Decline Detected';
+
+  @override
+  String get taAnalyticsLabConfusion => 'Lab Confusion Detected';
+
+  @override
+  String get taAnalyticsAttendanceReminder => 'Attendance Reminder Recommended';
+
+  @override
+  String get taAnalyticsPerformancePrediction => 'Performance Drop Prediction';
+
+  @override
+  String get taAnalyticsSendSupport => 'Send Support Message';
+
+  @override
+  String get taAnalyticsCreateFAQ => 'Create FAQ';
+
+  @override
+  String get taAnalyticsSendReminder => 'Send Reminder';
+
+  @override
+  String get taAnalyticsViewDetails => 'View Details';
+
+  @override
+  String get taProfileInfo => 'Profile Information';
+
+  @override
+  String get taProfileEmployeeId => 'Employee ID';
+
+  @override
+  String get taProfileDepartment => 'Department';
+
+  @override
+  String get taProfileSupervisor => 'Supervisor';
+
+  @override
+  String get taProfileJoinDate => 'Join Date';
+
+  @override
+  String get taProfileBio => 'About Me';
+
+  @override
+  String get taEditProfilePersonalInfo => 'Personal Information';
+
+  @override
+  String get taEditProfileContactInfo => 'Contact Information';
+
+  @override
+  String get taEditProfileProfessionalInfo => 'Professional Information';
+
+  @override
+  String get taEditProfileOfficeLocation => 'Office Location';
+
+  @override
+  String get taEditProfileSpecialization => 'Specialization';
+
+  @override
+  String get taEditProfileSocialLinks => 'Social Links';
+
+  @override
+  String get taSettingsAccountSecurity => 'Account & Security';
+
+  @override
+  String get taSettingsLoginHistory => 'Login History';
+
+  @override
+  String get taSettingsLoginHistoryDesc => 'View your recent login activity';
+
+  @override
+  String get taSettingsNotifications => 'Notifications';
+
+  @override
+  String get taSettingsPushNotifications => 'Push Notifications';
+
+  @override
+  String get taSettingsPushNotificationsDesc => 'Receive push notifications';
+
+  @override
+  String get taSettingsEmailNotifications => 'Email Notifications';
+
+  @override
+  String get taSettingsEmailNotificationsDesc => 'Receive updates via email';
+
+  @override
+  String get taSettingsAppearance => 'Appearance';
+
+  @override
+  String get taSettingsDarkMode => 'Dark Mode';
+
+  @override
+  String get taSettingsDarkModeDesc => 'Switch to dark theme';
+
+  @override
+  String get taSettingsLanguage => 'Language';
+
+  @override
+  String get taSettingsLanguageDesc => 'Change app language';
+
+  @override
+  String get taSettingsPrivacy => 'Privacy & Security';
+
+  @override
+  String get taSettingsTwoFactor => 'Two-Factor Authentication';
+
+  @override
+  String get taSettingsTwoFactorDesc => 'Add extra security to your account';
+
+  @override
+  String get taSettingsConnectedDevices => 'Connected Devices';
+
+  @override
+  String get taSettingsConnectedDevicesDesc => 'Manage your connected devices';
+
+  @override
+  String get taSettingsBlockedUsers => 'Blocked Users';
+
+  @override
+  String get taSettingsBlockedUsersDesc => 'Manage blocked users';
+
+  @override
+  String get taSettingsTATools => 'TA Tools';
+
+  @override
+  String get taSettingsAutoGradeAssist => 'Auto-Grade Assist';
+
+  @override
+  String get taSettingsAutoGradeAssistDesc => 'AI-powered grading suggestions';
+
+  @override
+  String get taSettingsStudentAlerts => 'Student Alerts';
+
+  @override
+  String get taSettingsStudentAlertsDesc => 'Get alerts for at-risk students';
+
+  @override
+  String get taSettingsSwipeActions => 'Swipe Actions';
+
+  @override
+  String get taSettingsSwipeActionsDesc => 'Customize notification swipes';
+
+  @override
+  String get taSettingsStorageCache => 'Storage & Cache';
+
+  @override
+  String get taSettingsStorageUsed => 'Storage Used';
+
+  @override
+  String get taSettingsStorageUsedDesc => 'Manage your storage';
+
+  @override
+  String get taSettingsClearCache => 'Clear Cache';
+
+  @override
+  String get taSettingsClearCacheDesc => 'Free up device storage';
+
+  @override
+  String get taSettingsSupportAbout => 'Support & About';
+
+  @override
+  String get taSettingsHelpCenter => 'Help Center';
+
+  @override
+  String get taSettingsHelpCenterDesc => 'Get help and support';
+
+  @override
+  String get taSettingsShareApp => 'Share App';
+
+  @override
+  String get taSettingsShareAppDesc => 'Share EduVerse with others';
+
+  @override
+  String get taSettingsTerms => 'Terms of Service';
+
+  @override
+  String get taSettingsPrivacyPolicy => 'Privacy Policy';
+
+  @override
+  String get taSettingsVersion => 'Version';
+
+  @override
+  String get taSettingsLogout => 'Logout';
+
+  @override
+  String get taSettingsLogoutConfirm => 'Are you sure you want to logout?';
+
+  @override
+  String get taRole => 'Teaching Assistant';
+
+  @override
+  String get taSettingsTools => 'TA Tools';
+
+  @override
+  String get taSettingsAIGrading => 'AI Grading';
+
+  @override
+  String get taSettingsAIGradingDesc => 'AI-powered grading assistance';
+
+  @override
+  String get taSettingsAnalytics => 'Analytics';
+
+  @override
+  String get taSettingsAnalyticsDesc => 'View student analytics';
+
+  @override
+  String get taSettingsOfficeHours => 'Office Hours';
+
+  @override
+  String get taSettingsOfficeHoursDesc => 'Manage your office hours';
+
+  @override
+  String get taSettingsGradingPrefs => 'Grading Preferences';
+
+  @override
+  String get taSettingsGradingPrefsDesc => 'Configure grading settings';
+
+  @override
+  String get aboutApp => 'About EduVerse';
+
+  @override
+  String get taLabs => 'Labs';
+
+  @override
+  String get taOfficeHoursTitle => 'Office Hours';
+
+  @override
+  String get taOfficeActiveSlots => 'Active Slots';
+
+  @override
+  String get taOfficeUpcoming => 'Upcoming';
+
+  @override
+  String get taOfficeWeeklySchedule => 'Weekly Schedule';
+
+  @override
+  String get taOfficeUpcomingAppointments => 'Upcoming Appointments';
+
+  @override
+  String get taOfficeNoAppointments => 'No upcoming appointments';
+
+  @override
+  String get taOfficeQuickSettings => 'Quick Settings';
+
+  @override
+  String get taOfficeAddSlot => 'Add Slot';
+
+  @override
+  String get taCalendarAddEvent => 'Add Event';
+
+  @override
+  String get taCalendarNoEvents => 'No events for this day';
+
+  @override
+  String get taCalendarUpcoming => 'Upcoming Events';
+
+  @override
+  String get taSearchPlaceholder => 'Search students, courses, labs...';
+
+  @override
+  String get taSearchBrowseCategories => 'Browse by Category';
+
+  @override
+  String get taAtRiskStudents => 'At-Risk Students';
+
+  @override
+  String get taUpcomingLabs => 'Upcoming Labs';
+
+  @override
+  String get taNewDiscussions => 'New Discussions';
+
+  @override
+  String get discussions => 'Discussions';
+
+  @override
+  String get meetings => 'Meetings';
+
+  @override
+  String get allStudents => 'All Students';
+
+  @override
+  String get allLabs => 'All Labs';
+
+  @override
+  String get allSubmissions => 'All Submissions';
+
+  @override
+  String get allMaterials => 'All Materials';
+
+  @override
+  String get allDiscussions => 'All Discussions';
+
+  @override
+  String get takeAttendance => 'Take Attendance';
+
+  @override
+  String get history => 'History';
+
+  @override
+  String get reports => 'Reports';
+
+  @override
+  String get markAllPresent => 'All Present';
+
+  @override
+  String get markAllAbsent => 'All Absent';
+
+  @override
+  String get attendanceSaved => 'Attendance saved successfully';
+
+  @override
+  String get studentReport => 'Student Report';
+
+  @override
+  String get courseReport => 'Course Report';
+
+  @override
+  String get quickInsights => 'Quick Insights';
+
+  @override
+  String get scanQr => 'Scan QR';
+
+  @override
+  String get nfcCheckIn => 'NFC Check-in';
+
+  @override
+  String get generateLink => 'Generate Link';
+
+  @override
+  String get locationBased => 'Location Based';
+
+  @override
+  String get searchByNameOrId => 'Search by name or ID';
+
+  @override
+  String get absences => 'Absences';
+
+  @override
+  String get lateArrivals => 'Late Arrivals';
+
+  @override
+  String get viewPerformance => 'View Performance';
+
+  @override
+  String get exportChat => 'Export Chat';
+
+  @override
+  String get exportingChat => 'Exporting chat...';
+
+  @override
+  String get searchMessages => 'Search messages...';
+
+  @override
+  String get instructors => 'Instructors';
+
+  @override
+  String get noMessages => 'No messages';
+
+  @override
+  String get archivedChats => 'Archived Chats';
+
+  @override
+  String get messageSettings => 'Message Settings';
+
+  @override
+  String get pinConversation => 'Pin Conversation';
+
+  @override
+  String get viewProfile => 'View Profile';
+
+  @override
+  String get searchInChat => 'Search in Chat';
+
+  @override
+  String get chatWallpaper => 'Chat Wallpaper';
+
+  @override
+  String get block => 'Block';
+
+  @override
+  String get messageSent => 'Message sent';
+
+  @override
+  String get startingVideoCall => 'Starting video call...';
+
+  @override
+  String get startingVoiceCall => 'Starting voice call...';
 }

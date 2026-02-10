@@ -81,6 +81,19 @@ import 'package:edu_verse/screens/ta/student_performance/ta_student_performance_
 import 'package:edu_verse/screens/ta/notifications/ta_notifications_screen.dart';
 import 'package:edu_verse/screens/ta/discussions/ta_discussions_screen.dart';
 import 'package:edu_verse/screens/ta/upload_materials/ta_upload_materials_screen.dart';
+import 'package:edu_verse/screens/ta/ai_grading/ta_ai_grading_screen.dart';
+import 'package:edu_verse/screens/ta/student_inbox/ta_student_inbox_screen.dart';
+import 'package:edu_verse/screens/ta/lab_resources/ta_lab_resources_screen.dart';
+import 'package:edu_verse/screens/ta/analytics/ta_analytics_screen.dart';
+import 'package:edu_verse/screens/ta/settings/ta_settings_screen.dart';
+import 'package:edu_verse/screens/ta/profile/ta_profile_screen.dart';
+import 'package:edu_verse/screens/ta/profile/ta_edit_profile_screen.dart';
+import 'package:edu_verse/screens/ta/office_hours/ta_office_hours_screen.dart';
+import 'package:edu_verse/screens/ta/calendar/ta_calendar_screen.dart';
+import 'package:edu_verse/screens/ta/search/ta_search_screen.dart';
+import 'package:edu_verse/screens/ta/attendance/ta_attendance_screen.dart';
+import 'package:edu_verse/screens/ta/ai_assistant/ta_ai_assistant_screen.dart';
+import 'package:edu_verse/screens/ta/messages/ta_messages_screen.dart';
 import 'package:edu_verse/screens/admin/admin_dashboard_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_admin_dashboard_screen.dart';
 import 'package:flutter/material.dart';
@@ -474,6 +487,58 @@ class AppRouter {
       GoRoute(
         path: '/ta/upload-materials',
         builder: (context, state) => const TAUploadMaterialsScreen(),
+      ),
+      GoRoute(
+        path: '/ta/ai-grading',
+        builder: (context, state) => const TAAIGradingScreen(),
+      ),
+      GoRoute(
+        path: '/ta/student-inbox',
+        builder: (context, state) => const TAStudentInboxScreen(),
+      ),
+      GoRoute(
+        path: '/ta/lab-resources',
+        builder: (context, state) => const TALabResourcesScreen(),
+      ),
+      GoRoute(
+        path: '/ta/analytics',
+        builder: (context, state) => const TAAnalyticsScreen(),
+      ),
+      GoRoute(
+        path: '/ta/settings',
+        builder: (context, state) => const TASettingsScreen(),
+      ),
+      GoRoute(
+        path: '/ta/profile',
+        builder: (context, state) => const TAProfileScreen(),
+      ),
+      GoRoute(
+        path: '/ta/edit-profile',
+        builder: (context, state) => const TAEditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/ta/office-hours',
+        builder: (context, state) => const TAOfficeHoursScreen(),
+      ),
+      GoRoute(
+        path: '/ta/calendar',
+        builder: (context, state) => const TACalendarScreen(),
+      ),
+      GoRoute(
+        path: '/ta/search',
+        builder: (context, state) => const TASearchScreen(),
+      ),
+      GoRoute(
+        path: '/ta/attendance',
+        builder: (context, state) => const TAAttendanceScreen(),
+      ),
+      GoRoute(
+        path: '/ta/ai-assistant',
+        builder: (context, state) => const TAAIAssistantScreen(),
+      ),
+      GoRoute(
+        path: '/ta/messages',
+        builder: (context, state) => const TAMessagesScreen(),
       ),
 
       // ============ ADMIN ROUTES (Placeholder) ============

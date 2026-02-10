@@ -942,7 +942,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get markAsUnread => 'تحديد كغير مقروء';
 
   @override
-  String get archive => 'أرشيف';
+  String get archive => 'أرشفة';
 
   @override
   String get bookmark => 'حفظ';
@@ -1587,7 +1587,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get weeklyTrend => 'الاتجاه الأسبوعي';
 
   @override
-  String get attendanceRate => 'معدل الحضور';
+  String get attendanceRate => 'نسبة الحضور';
 
   @override
   String get viewAll => 'عرض الكل';
@@ -1699,7 +1699,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get modified => 'تاريخ التعديل';
 
   @override
-  String get location => 'الموقع';
+  String get location => 'موقع';
 
   @override
   String get deleteFile => 'حذف الملف';
@@ -2161,7 +2161,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get attachFile => 'إرفاق ملف';
 
   @override
-  String get camera => 'الكاميرا';
+  String get camera => 'كاميرا';
 
   @override
   String get typeMessageHint => 'اكتب رسالتك...';
@@ -2371,7 +2371,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get forward => 'إعادة توجيه';
 
   @override
-  String get copiedToClipboard => 'تم النسخ إلى الحافظة';
+  String get copiedToClipboard => 'تم النسخ';
 
   @override
   String get searchInConversation => 'البحث في المحادثة';
@@ -4482,10 +4482,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get submissions => 'التسليمات';
 
   @override
-  String get searchStudents => 'البحث عن طلاب...';
+  String get searchStudents => 'بحث الطلاب';
 
   @override
-  String get allCourses => 'جميع المواد';
+  String get allCourses => 'جميع المقررات';
 
   @override
   String get noPendingSubmissions => 'لا توجد تسليمات معلقة';
@@ -5425,7 +5425,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get instructorSearchTip3 => 'استخدم كلمات من المواد';
 
   @override
-  String get resultsFound => 'نتيجة';
+  String get resultsFound => 'نتائج';
 
   @override
   String get recentSearches => 'عمليات البحث الأخيرة';
@@ -5790,7 +5790,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get taOfficeHours => 'ساعات المكتب';
 
   @override
-  String get taAIAssistant => 'مساعد الذكاء الاصطناعي للمعيد';
+  String get taAIAssistant => 'مساعد الذكاء الاصطناعي';
 
   @override
   String get taCourses => 'مقررات المعيد';
@@ -6680,4 +6680,706 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get taUploadDownload => 'تحميل';
+
+  @override
+  String get taGradingTitle => 'مساعد التقييم الذكي';
+
+  @override
+  String get taGradingSubtitle =>
+      'مراجعة وتقييم تسليمات الطلاب بمساعدة الذكاء الاصطناعي';
+
+  @override
+  String get taGradingSelectCourse => 'اختر المقرر';
+
+  @override
+  String get taGradingSelectAssignment => 'اختر الواجب';
+
+  @override
+  String get taGradingTotal => 'الإجمالي';
+
+  @override
+  String get taGradingPending => 'قيد الانتظار';
+
+  @override
+  String get taGradingReviewed => 'تمت المراجعة';
+
+  @override
+  String get taGradingLate => 'متأخر';
+
+  @override
+  String get taGradingBatchEvaluate => 'تقييم دفعي تلقائي';
+
+  @override
+  String get taGradingBatchDesc =>
+      'دع الذكاء الاصطناعي يقيم جميع التسليمات المعلقة';
+
+  @override
+  String get taGradingAutoEvaluate => 'تقييم الكل تلقائياً';
+
+  @override
+  String get taGradingEvaluating => 'جاري تقييم التسليمات...';
+
+  @override
+  String get taGradingSearchStudents => 'البحث في التسليمات...';
+
+  @override
+  String get taGradingNoSubmissions => 'لا توجد تسليمات';
+
+  @override
+  String get taGradingNoSubmissionsDesc =>
+      'ستظهر التسليمات هنا عندما يقوم الطلاب بتقديم أعمالهم';
+
+  @override
+  String get taGradingStatusPending => 'قيد الانتظار';
+
+  @override
+  String get taGradingStatusEvaluated => 'تم تقييمه بالـ AI';
+
+  @override
+  String get taGradingStatusFinalized => 'نهائي';
+
+  @override
+  String get taGradingStatusLate => 'متأخر';
+
+  @override
+  String get taGradingAIScore => 'درجة AI';
+
+  @override
+  String get taGradingReview => 'مراجعة';
+
+  @override
+  String get taGradingSubmissionDetail => 'تفاصيل التسليم';
+
+  @override
+  String get taGradingFeedback => 'التعليقات';
+
+  @override
+  String get taGradingEnterFeedback => 'أدخل تعليقاتك...';
+
+  @override
+  String get taGradingRunAI => 'تشغيل تقييم AI';
+
+  @override
+  String get taGradingFinalize => 'اعتماد الدرجة';
+
+  @override
+  String get taGradingFinalized => 'تم اعتماد الدرجة بنجاح!';
+
+  @override
+  String get taGradingAllEvaluated => 'تم تقييم جميع التسليمات!';
+
+  @override
+  String get taGradingSubmissionDetails => 'تفاصيل التسليم';
+
+  @override
+  String get taGradingSubmittedAt => 'تم التسليم';
+
+  @override
+  String get taGradingWordCount => 'عدد الكلمات';
+
+  @override
+  String get taGradingStatus => 'الحالة';
+
+  @override
+  String get taGradingSubmissionContent => 'محتوى التسليم';
+
+  @override
+  String get taGradingAIInsights => 'رؤى AI';
+
+  @override
+  String get taGradingBatchEvaluation => 'تقييم دفعي بـ AI';
+
+  @override
+  String get taGradingBatchEvaluationDesc =>
+      'دع AI يقيم جميع التسليمات المعلقة تلقائياً';
+
+  @override
+  String get taGradingAutoEvaluateAll => 'تقييم الكل تلقائياً';
+
+  @override
+  String get taGradingAssignmentLab => 'الواجب/المختبر';
+
+  @override
+  String get taCoursesCourse => 'المقرر';
+
+  @override
+  String get confirm => 'تأكيد';
+
+  @override
+  String get taInboxTitle => 'صندوق بريد الطلاب';
+
+  @override
+  String get taInboxSubtitle => 'إدارة رسائل واتصالات الطلاب';
+
+  @override
+  String get taInboxSearchStudents => 'البحث عن طلاب...';
+
+  @override
+  String get taInboxFilterAll => 'كل المحادثات';
+
+  @override
+  String get taInboxFilterUnread => 'غير مقروء';
+
+  @override
+  String get taInboxFilterAtRisk => 'معرض للخطر';
+
+  @override
+  String get taInboxFilterForwarded => 'محول';
+
+  @override
+  String get taInboxAtRiskStudent => 'طلاب معرضون للخطر';
+
+  @override
+  String get taInboxAtRiskDesc => 'طلاب يحتاجون اهتمام فوري';
+
+  @override
+  String get taInboxEmpty => 'لا توجد رسائل';
+
+  @override
+  String get taInboxEmptyDesc => 'صندوق البريد فارغ. ستظهر رسائل الطلاب هنا.';
+
+  @override
+  String get taInboxNewMessage => 'رسالة جديدة';
+
+  @override
+  String get taInboxTypeMessage => 'اكتب رسالتك...';
+
+  @override
+  String get taInboxMessageSent => 'تم إرسال الرسالة!';
+
+  @override
+  String get taInboxForward => 'تحويل للمدرس';
+
+  @override
+  String get taInboxMarkRead => 'تحديد كمقروء';
+
+  @override
+  String get taInboxViewProfile => 'عرض ملف الطالب';
+
+  @override
+  String get taInboxMarkedAsRead => 'تم التحديد كمقروء';
+
+  @override
+  String get taInboxForwardTo => 'تحويل الرسالة إلى';
+
+  @override
+  String get taInboxForwarded => 'تم تحويل الرسالة!';
+
+  @override
+  String get taLabResTitle => 'موارد المختبر';
+
+  @override
+  String get taLabResSubtitle => 'إدارة مواد وموارد المختبر';
+
+  @override
+  String get taLabResViews => 'مشاهدات';
+
+  @override
+  String get taLabResDownloads => 'تحميلات';
+
+  @override
+  String get taLabResComplete => 'مكتمل';
+
+  @override
+  String get taLabResView => 'عرض';
+
+  @override
+  String get taLabResDownload => 'تحميل';
+
+  @override
+  String get taLabResReplace => 'استبدال';
+
+  @override
+  String get taLabResRecentlyAdded => 'أضيفت مؤخراً';
+
+  @override
+  String get taLabResMaterials => 'مواد';
+
+  @override
+  String get taLabResUploadNew => 'رفع مادة جديدة';
+
+  @override
+  String get taLabResUploadDesc => 'اسحب وأفلت أو انقر لرفع الملفات';
+
+  @override
+  String get taLabResSearchMaterials => 'البحث في المواد...';
+
+  @override
+  String get taLabResNoMaterials => 'لم يتم العثور على مواد';
+
+  @override
+  String get taLabResNoMaterialsDesc => 'ارفع مواد للبدء';
+
+  @override
+  String get taLabResUpload => 'رفع';
+
+  @override
+  String get taLabResUploading => 'جاري الرفع';
+
+  @override
+  String get taLabResUploadSuccess => 'تم رفع المادة بنجاح!';
+
+  @override
+  String get taLabResDownloading => 'جاري التحميل';
+
+  @override
+  String get taLabResReplaceTitle => 'استبدال المادة';
+
+  @override
+  String get taLabResReplaceDesc => 'هل أنت متأكد من استبدال';
+
+  @override
+  String get taLabResReplaceSuccess => 'تم استبدال المادة بنجاح!';
+
+  @override
+  String get taLabResDeleteTitle => 'حذف المادة';
+
+  @override
+  String get taLabResDeleteDesc => 'هل أنت متأكد من حذف';
+
+  @override
+  String get taLabResDeleteSuccess => 'تم حذف المادة بنجاح!';
+
+  @override
+  String get taLabResAIInsights => 'رؤى AI';
+
+  @override
+  String get taLabResNewFolder => 'مجلد جديد';
+
+  @override
+  String get taLabResFolderName => 'اسم المجلد';
+
+  @override
+  String get taLabResFolderCreated => 'تم إنشاء المجلد!';
+
+  @override
+  String get taLabResAILowClarity => 'AI: وضوح منخفض';
+
+  @override
+  String get taLabResAISuggestUpdate => 'AI: يقترح التحديث';
+
+  @override
+  String get taLabResAIOutdated => 'AI: قديم';
+
+  @override
+  String get create => 'إنشاء';
+
+  @override
+  String get send => 'إرسال';
+
+  @override
+  String get taAnalyticsTitle => 'لوحة التحليلات';
+
+  @override
+  String get taAnalyticsAttendance => 'الحضور';
+
+  @override
+  String get taAnalyticsSubmissionRate => 'معدل التسليم';
+
+  @override
+  String get taAnalyticsAtRisk => 'طلاب معرضون للخطر';
+
+  @override
+  String get taAnalyticsEngagement => 'درجة المشاركة';
+
+  @override
+  String get taAnalyticsAttendanceTrends => 'اتجاهات الحضور';
+
+  @override
+  String get taAnalyticsSubmissionPerformance => 'أداء التسليم';
+
+  @override
+  String get taAnalyticsScoreDistribution => 'توزيع الدرجات';
+
+  @override
+  String get taAnalyticsAIInsights => 'رؤى وتوصيات AI';
+
+  @override
+  String get taAnalyticsPerformanceDecline => 'تم اكتشاف انخفاض الأداء';
+
+  @override
+  String get taAnalyticsLabConfusion => 'تم اكتشاف ارتباك في المختبر';
+
+  @override
+  String get taAnalyticsAttendanceReminder => 'يوصى بتذكير الحضور';
+
+  @override
+  String get taAnalyticsPerformancePrediction => 'توقع انخفاض الأداء';
+
+  @override
+  String get taAnalyticsSendSupport => 'إرسال رسالة دعم';
+
+  @override
+  String get taAnalyticsCreateFAQ => 'إنشاء أسئلة شائعة';
+
+  @override
+  String get taAnalyticsSendReminder => 'إرسال تذكير';
+
+  @override
+  String get taAnalyticsViewDetails => 'عرض التفاصيل';
+
+  @override
+  String get taProfileInfo => 'معلومات الملف الشخصي';
+
+  @override
+  String get taProfileEmployeeId => 'رقم الموظف';
+
+  @override
+  String get taProfileDepartment => 'القسم';
+
+  @override
+  String get taProfileSupervisor => 'المشرف';
+
+  @override
+  String get taProfileJoinDate => 'تاريخ الانضمام';
+
+  @override
+  String get taProfileBio => 'نبذة عني';
+
+  @override
+  String get taEditProfilePersonalInfo => 'المعلومات الشخصية';
+
+  @override
+  String get taEditProfileContactInfo => 'معلومات الاتصال';
+
+  @override
+  String get taEditProfileProfessionalInfo => 'المعلومات المهنية';
+
+  @override
+  String get taEditProfileOfficeLocation => 'موقع المكتب';
+
+  @override
+  String get taEditProfileSpecialization => 'التخصص';
+
+  @override
+  String get taEditProfileSocialLinks => 'روابط التواصل';
+
+  @override
+  String get taSettingsAccountSecurity => 'الحساب والأمان';
+
+  @override
+  String get taSettingsLoginHistory => 'سجل تسجيل الدخول';
+
+  @override
+  String get taSettingsLoginHistoryDesc => 'عرض نشاط تسجيل الدخول الأخير';
+
+  @override
+  String get taSettingsNotifications => 'الإشعارات';
+
+  @override
+  String get taSettingsPushNotifications => 'إشعارات الهاتف';
+
+  @override
+  String get taSettingsPushNotificationsDesc => 'تلقي إشعارات فورية';
+
+  @override
+  String get taSettingsEmailNotifications => 'إشعارات البريد';
+
+  @override
+  String get taSettingsEmailNotificationsDesc => 'تلقي التحديثات عبر البريد';
+
+  @override
+  String get taSettingsAppearance => 'المظهر';
+
+  @override
+  String get taSettingsDarkMode => 'الوضع الداكن';
+
+  @override
+  String get taSettingsDarkModeDesc => 'التبديل للمظهر الداكن';
+
+  @override
+  String get taSettingsLanguage => 'اللغة';
+
+  @override
+  String get taSettingsLanguageDesc => 'تغيير لغة التطبيق';
+
+  @override
+  String get taSettingsPrivacy => 'الخصوصية والأمان';
+
+  @override
+  String get taSettingsTwoFactor => 'المصادقة الثنائية';
+
+  @override
+  String get taSettingsTwoFactorDesc => 'إضافة أمان إضافي لحسابك';
+
+  @override
+  String get taSettingsConnectedDevices => 'الأجهزة المتصلة';
+
+  @override
+  String get taSettingsConnectedDevicesDesc => 'إدارة أجهزتك المتصلة';
+
+  @override
+  String get taSettingsBlockedUsers => 'المستخدمون المحظورون';
+
+  @override
+  String get taSettingsBlockedUsersDesc => 'إدارة المستخدمين المحظورين';
+
+  @override
+  String get taSettingsTATools => 'أدوات المعيد';
+
+  @override
+  String get taSettingsAutoGradeAssist => 'مساعد التصحيح التلقائي';
+
+  @override
+  String get taSettingsAutoGradeAssistDesc =>
+      'اقتراحات تصحيح مدعومة بالذكاء الاصطناعي';
+
+  @override
+  String get taSettingsStudentAlerts => 'تنبيهات الطلاب';
+
+  @override
+  String get taSettingsStudentAlertsDesc =>
+      'تلقي تنبيهات للطلاب المعرضين للخطر';
+
+  @override
+  String get taSettingsSwipeActions => 'إجراءات السحب';
+
+  @override
+  String get taSettingsSwipeActionsDesc => 'تخصيص سحب الإشعارات';
+
+  @override
+  String get taSettingsStorageCache => 'التخزين والذاكرة المؤقتة';
+
+  @override
+  String get taSettingsStorageUsed => 'التخزين المستخدم';
+
+  @override
+  String get taSettingsStorageUsedDesc => 'إدارة مساحة التخزين';
+
+  @override
+  String get taSettingsClearCache => 'مسح الذاكرة المؤقتة';
+
+  @override
+  String get taSettingsClearCacheDesc => 'تحرير مساحة الجهاز';
+
+  @override
+  String get taSettingsSupportAbout => 'الدعم والمعلومات';
+
+  @override
+  String get taSettingsHelpCenter => 'مركز المساعدة';
+
+  @override
+  String get taSettingsHelpCenterDesc => 'الحصول على المساعدة والدعم';
+
+  @override
+  String get taSettingsShareApp => 'مشاركة التطبيق';
+
+  @override
+  String get taSettingsShareAppDesc => 'مشاركة EduVerse مع الآخرين';
+
+  @override
+  String get taSettingsTerms => 'شروط الخدمة';
+
+  @override
+  String get taSettingsPrivacyPolicy => 'سياسة الخصوصية';
+
+  @override
+  String get taSettingsVersion => 'الإصدار';
+
+  @override
+  String get taSettingsLogout => 'تسجيل الخروج';
+
+  @override
+  String get taSettingsLogoutConfirm => 'هل أنت متأكد من تسجيل الخروج؟';
+
+  @override
+  String get taRole => 'معيد';
+
+  @override
+  String get taSettingsTools => 'أدوات المعيد';
+
+  @override
+  String get taSettingsAIGrading => 'التصحيح بالذكاء الاصطناعي';
+
+  @override
+  String get taSettingsAIGradingDesc => 'مساعدة التصحيح بالذكاء الاصطناعي';
+
+  @override
+  String get taSettingsAnalytics => 'التحليلات';
+
+  @override
+  String get taSettingsAnalyticsDesc => 'عرض تحليلات الطلاب';
+
+  @override
+  String get taSettingsOfficeHours => 'ساعات المكتب';
+
+  @override
+  String get taSettingsOfficeHoursDesc => 'إدارة ساعات المكتب';
+
+  @override
+  String get taSettingsGradingPrefs => 'تفضيلات التصحيح';
+
+  @override
+  String get taSettingsGradingPrefsDesc => 'تكوين إعدادات التصحيح';
+
+  @override
+  String get aboutApp => 'حول EduVerse';
+
+  @override
+  String get taLabs => 'المعامل';
+
+  @override
+  String get taOfficeHoursTitle => 'ساعات المكتب';
+
+  @override
+  String get taOfficeActiveSlots => 'الفترات النشطة';
+
+  @override
+  String get taOfficeUpcoming => 'القادمة';
+
+  @override
+  String get taOfficeWeeklySchedule => 'الجدول الأسبوعي';
+
+  @override
+  String get taOfficeUpcomingAppointments => 'المواعيد القادمة';
+
+  @override
+  String get taOfficeNoAppointments => 'لا توجد مواعيد قادمة';
+
+  @override
+  String get taOfficeQuickSettings => 'إعدادات سريعة';
+
+  @override
+  String get taOfficeAddSlot => 'إضافة فترة';
+
+  @override
+  String get taCalendarAddEvent => 'إضافة حدث';
+
+  @override
+  String get taCalendarNoEvents => 'لا توجد أحداث لهذا اليوم';
+
+  @override
+  String get taCalendarUpcoming => 'الأحداث القادمة';
+
+  @override
+  String get taSearchPlaceholder => 'بحث الطلاب، المقررات، المعامل...';
+
+  @override
+  String get taSearchBrowseCategories => 'تصفح حسب الفئة';
+
+  @override
+  String get taAtRiskStudents => 'طلاب معرضون للخطر';
+
+  @override
+  String get taUpcomingLabs => 'المعامل القادمة';
+
+  @override
+  String get taNewDiscussions => 'مناقشات جديدة';
+
+  @override
+  String get discussions => 'المناقشات';
+
+  @override
+  String get meetings => 'الاجتماعات';
+
+  @override
+  String get allStudents => 'جميع الطلاب';
+
+  @override
+  String get allLabs => 'جميع المعامل';
+
+  @override
+  String get allSubmissions => 'جميع التسليمات';
+
+  @override
+  String get allMaterials => 'جميع المواد';
+
+  @override
+  String get allDiscussions => 'جميع المناقشات';
+
+  @override
+  String get takeAttendance => 'أخذ الحضور';
+
+  @override
+  String get history => 'السجل';
+
+  @override
+  String get reports => 'التقارير';
+
+  @override
+  String get markAllPresent => 'الكل حاضر';
+
+  @override
+  String get markAllAbsent => 'الكل غائب';
+
+  @override
+  String get attendanceSaved => 'تم حفظ الحضور بنجاح';
+
+  @override
+  String get studentReport => 'تقرير الطالب';
+
+  @override
+  String get courseReport => 'تقرير المقرر';
+
+  @override
+  String get quickInsights => 'رؤى سريعة';
+
+  @override
+  String get scanQr => 'مسح QR';
+
+  @override
+  String get nfcCheckIn => 'تسجيل NFC';
+
+  @override
+  String get generateLink => 'إنشاء رابط';
+
+  @override
+  String get locationBased => 'حسب الموقع';
+
+  @override
+  String get searchByNameOrId => 'البحث بالاسم أو الرقم';
+
+  @override
+  String get absences => 'الغيابات';
+
+  @override
+  String get lateArrivals => 'التأخيرات';
+
+  @override
+  String get viewPerformance => 'عرض الأداء';
+
+  @override
+  String get exportChat => 'تصدير المحادثة';
+
+  @override
+  String get exportingChat => 'جاري تصدير المحادثة...';
+
+  @override
+  String get searchMessages => 'بحث في الرسائل...';
+
+  @override
+  String get instructors => 'المدربين';
+
+  @override
+  String get noMessages => 'لا توجد رسائل';
+
+  @override
+  String get archivedChats => 'المحادثات المؤرشفة';
+
+  @override
+  String get messageSettings => 'إعدادات الرسائل';
+
+  @override
+  String get pinConversation => 'تثبيت المحادثة';
+
+  @override
+  String get viewProfile => 'عرض الملف الشخصي';
+
+  @override
+  String get searchInChat => 'بحث في المحادثة';
+
+  @override
+  String get chatWallpaper => 'خلفية المحادثة';
+
+  @override
+  String get block => 'حظر';
+
+  @override
+  String get messageSent => 'تم إرسال الرسالة';
+
+  @override
+  String get startingVideoCall => 'جاري بدء مكالمة فيديو...';
+
+  @override
+  String get startingVoiceCall => 'جاري بدء مكالمة صوتية...';
 }

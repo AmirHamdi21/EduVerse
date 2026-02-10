@@ -11,11 +11,7 @@ class TADrawer extends StatefulWidget {
   final String? currentRoute;
   final bool? isDark;
 
-  const TADrawer({
-    super.key,
-    this.currentRoute,
-    this.isDark,
-  });
+  const TADrawer({super.key, this.currentRoute, this.isDark});
 
   @override
   State<TADrawer> createState() => _TADrawerState();
@@ -237,7 +233,12 @@ class _TADrawerState extends State<TADrawer>
           _buildStatDivider(isDark),
           _buildStatItem(isDark, '36', l10n.taGraded, Icons.grading_rounded),
           _buildStatDivider(isDark),
-          _buildStatItem(isDark, '8', l10n.pending, Icons.pending_actions_rounded),
+          _buildStatItem(
+            isDark,
+            '8',
+            l10n.pending,
+            Icons.pending_actions_rounded,
+          ),
         ],
       ),
     );
@@ -322,6 +323,29 @@ class _TADrawerState extends State<TADrawer>
         category: 'main',
       ),
       _MenuItem(
+        icon: Icons.auto_fix_high_outlined,
+        activeIcon: Icons.auto_fix_high,
+        title: l10n.taGradingTitle,
+        route: '/ta/ai-grading',
+        isHighlighted: true,
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.folder_outlined,
+        activeIcon: Icons.folder,
+        title: l10n.taLabResTitle,
+        route: '/ta/lab-resources',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.inbox_outlined,
+        activeIcon: Icons.inbox,
+        title: l10n.taInboxTitle,
+        route: '/ta/student-inbox',
+        badge: '3',
+        category: 'main',
+      ),
+      _MenuItem(
         icon: Icons.rate_review_outlined,
         activeIcon: Icons.rate_review,
         title: l10n.taReviewSubmissions,
@@ -333,6 +357,13 @@ class _TADrawerState extends State<TADrawer>
         activeIcon: Icons.upload_file,
         title: l10n.taUploadTitle,
         route: '/ta/upload-materials',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.insights_outlined,
+        activeIcon: Icons.insights,
+        title: l10n.taAnalyticsTitle,
+        route: '/ta/analytics',
         category: 'main',
       ),
       _MenuItem(
@@ -376,7 +407,7 @@ class _TADrawerState extends State<TADrawer>
         icon: Icons.auto_awesome_outlined,
         activeIcon: Icons.auto_awesome,
         title: l10n.aiAssistant,
-        route: '/ai-chat',
+        route: '/ta/ai-assistant',
         isHighlighted: true,
         category: 'ai',
       ),
@@ -428,8 +459,9 @@ class _TADrawerState extends State<TADrawer>
   ) {
     final mainItems = items.where((i) => i.category == 'main').toList();
     final aiItems = items.where((i) => i.category == 'ai').toList();
-    final communicationItems =
-        items.where((i) => i.category == 'communication').toList();
+    final communicationItems = items
+        .where((i) => i.category == 'communication')
+        .toList();
     final accountItems = items.where((i) => i.category == 'account').toList();
 
     return ListView(
@@ -438,23 +470,23 @@ class _TADrawerState extends State<TADrawer>
       children: [
         _buildSectionLabel(isDark, l10n.mainMenu),
         ...mainItems.asMap().entries.map(
-              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-            ),
+          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+        ),
         const SizedBox(height: 16),
         _buildSectionLabel(isDark, l10n.aiTools),
         ...aiItems.asMap().entries.map(
-              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-            ),
+          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+        ),
         const SizedBox(height: 16),
         _buildSectionLabel(isDark, l10n.connect),
         ...communicationItems.asMap().entries.map(
-              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-            ),
+          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+        ),
         const SizedBox(height: 16),
         _buildSectionLabel(isDark, l10n.account),
         ...accountItems.asMap().entries.map(
-              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-            ),
+          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+        ),
       ],
     );
   }
@@ -503,18 +535,16 @@ class _TADrawerState extends State<TADrawer>
                             ],
                     )
                   : item.isHighlighted
-                      ? LinearGradient(
-                          colors: [
-                            TAColors.primary.withValues(alpha: 0.1),
-                            TAColors.primaryLight.withValues(alpha: 0.05),
-                          ],
-                        )
-                      : null,
+                  ? LinearGradient(
+                      colors: [
+                        TAColors.primary.withValues(alpha: 0.1),
+                        TAColors.primaryLight.withValues(alpha: 0.05),
+                      ],
+                    )
+                  : null,
               borderRadius: BorderRadius.circular(14),
               border: item.isHighlighted && !isSelected
-                  ? Border.all(
-                      color: TAColors.primary.withValues(alpha: 0.3),
-                    )
+                  ? Border.all(color: TAColors.primary.withValues(alpha: 0.3))
                   : null,
             ),
             child: Row(
@@ -525,11 +555,11 @@ class _TADrawerState extends State<TADrawer>
                   decoration: BoxDecoration(
                     color: isSelected
                         ? (item.isHighlighted
-                            ? Colors.white.withValues(alpha: 0.2)
-                            : TAColors.primary.withValues(alpha: 0.1))
+                              ? Colors.white.withValues(alpha: 0.2)
+                              : TAColors.primary.withValues(alpha: 0.1))
                         : (isDark
-                            ? Colors.white.withValues(alpha: 0.05)
-                            : Colors.black.withValues(alpha: 0.03)),
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.03)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -537,10 +567,10 @@ class _TADrawerState extends State<TADrawer>
                     color: isSelected
                         ? (item.isHighlighted ? Colors.white : TAColors.primary)
                         : item.isHighlighted
-                            ? TAColors.primary
-                            : (isDark
-                                ? const Color(0xFF94A3B8)
-                                : const Color(0xFF64748B)),
+                        ? TAColors.primary
+                        : (isDark
+                              ? const Color(0xFF94A3B8)
+                              : const Color(0xFF64748B)),
                     size: 20,
                   ),
                 ),
@@ -551,16 +581,15 @@ class _TADrawerState extends State<TADrawer>
                     style: TextStyle(
                       color: isSelected
                           ? (item.isHighlighted
-                              ? Colors.white
-                              : TAColors.primary)
+                                ? Colors.white
+                                : TAColors.primary)
                           : item.isHighlighted
-                              ? TAColors.primary
-                              : (isDark
-                                  ? Colors.white
-                                  : const Color(0xFF1E293B)),
+                          ? TAColors.primary
+                          : (isDark ? Colors.white : const Color(0xFF1E293B)),
                       fontSize: 14,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
                     ),
                   ),
                 ),
@@ -581,8 +610,8 @@ class _TADrawerState extends State<TADrawer>
                       style: TextStyle(
                         color: isSelected
                             ? (item.isHighlighted
-                                ? Colors.white
-                                : TAColors.primary)
+                                  ? Colors.white
+                                  : TAColors.primary)
                             : Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -741,8 +770,8 @@ class _TADrawerState extends State<TADrawer>
               color: isActive
                   ? (isDark ? Colors.white : TAColors.primary)
                   : (isDark
-                      ? const Color(0xFF64748B)
-                      : const Color(0xFF94A3B8)),
+                        ? const Color(0xFF64748B)
+                        : const Color(0xFF94A3B8)),
             ),
             const SizedBox(width: 6),
             Text(
@@ -753,8 +782,8 @@ class _TADrawerState extends State<TADrawer>
                 color: isActive
                     ? (isDark ? Colors.white : TAColors.primary)
                     : (isDark
-                        ? const Color(0xFF64748B)
-                        : const Color(0xFF94A3B8)),
+                          ? const Color(0xFF64748B)
+                          : const Color(0xFF94A3B8)),
               ),
             ),
           ],

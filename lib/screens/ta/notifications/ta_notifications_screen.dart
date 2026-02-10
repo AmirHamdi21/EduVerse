@@ -9,6 +9,8 @@ import '../../../generated_l10n/app_localizations.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/dashboard/ta_drawer.dart';
 import '../../../widgets/ta/notifications/ta_notifications_barrel.dart';
+import '../../../services/notification_swipe_settings_service.dart';
+import '../../../models/notifications/swipe_action_model.dart';
 
 class TANotificationsScreen extends StatefulWidget {
   const TANotificationsScreen({super.key});
@@ -26,13 +28,21 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
   String? _expandedNotificationId;
   bool _isSelectionMode = false;
   final Set<String> _selectedNotifications = {};
+  NotificationSwipeSettings _swipeSettings = const NotificationSwipeSettings();
 
   List<TANotificationItem> _notifications = [];
 
   @override
   void initState() {
     super.initState();
+    _loadSwipeSettings();
     _loadNotifications();
+  }
+
+  Future<void> _loadSwipeSettings() async {
+    final settings = await NotificationSwipeSettingsService.instance
+        .getSwipeSettings();
+    setState(() => _swipeSettings = settings);
   }
 
   Future<void> _loadNotifications() async {
@@ -122,27 +132,40 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
 
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
-      filtered = filtered.where((n) =>
-          n.title.toLowerCase().contains(query) ||
-          n.senderName.toLowerCase().contains(query) ||
-          n.preview.toLowerCase().contains(query)).toList();
+      filtered = filtered
+          .where(
+            (n) =>
+                n.title.toLowerCase().contains(query) ||
+                n.senderName.toLowerCase().contains(query) ||
+                n.preview.toLowerCase().contains(query),
+          )
+          .toList();
     }
 
     switch (_selectedFilter) {
       case 'students':
-        filtered = filtered.where((n) =>
-            n.type == TANotificationType.question ||
-            n.type == TANotificationType.submission ||
-            n.type == TANotificationType.deadline).toList();
+        filtered = filtered
+            .where(
+              (n) =>
+                  n.type == TANotificationType.question ||
+                  n.type == TANotificationType.submission ||
+                  n.type == TANotificationType.deadline,
+            )
+            .toList();
         break;
       case 'instructors':
-        filtered = filtered.where((n) =>
-            n.type == TANotificationType.plagiarism ||
-            n.type == TANotificationType.announcement).toList();
+        filtered = filtered
+            .where(
+              (n) =>
+                  n.type == TANotificationType.plagiarism ||
+                  n.type == TANotificationType.announcement,
+            )
+            .toList();
         break;
       case 'ai':
-        filtered = filtered.where((n) =>
-            n.type == TANotificationType.aiAlert).toList();
+        filtered = filtered
+            .where((n) => n.type == TANotificationType.aiAlert)
+            .toList();
         break;
     }
 
@@ -192,7 +215,7 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
 
   void _deleteSelected() {
     if (_selectedNotifications.isEmpty) return;
-    
+
     setState(() {
       _notifications.removeWhere((n) => _selectedNotifications.contains(n.id));
       _selectedNotifications.clear();
@@ -203,7 +226,7 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
 
   void _markSelectedAsRead() {
     if (_selectedNotifications.isEmpty) return;
-    
+
     setState(() {
       for (var i = 0; i < _notifications.length; i++) {
         if (_selectedNotifications.contains(_notifications[i].id)) {
@@ -258,6 +281,186 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
       _notifications.removeWhere((n) => n.id == id);
     });
     _showSnackBar('Notification deleted');
+  }
+
+  void _executeSwipeAction(
+    SwipeAction action,
+    TANotificationItem notification,
+  ) {
+    switch (action) {
+      case SwipeAction.delete:
+        // Handled by onDismissed
+        break;
+      case SwipeAction.markRead:
+        _markAsRead(notification.id);
+        break;
+      case SwipeAction.markUnread:
+        _markAsRead(notification.id);
+        break;
+      case SwipeAction.archive:
+        _archiveNotification(notification.id);
+        break;
+      case SwipeAction.bookmark:
+        _bookmarkNotification(notification.id);
+        break;
+      case SwipeAction.none:
+        break;
+    }
+  }
+
+  void _archiveNotification(String id) {
+    setState(() {
+      _notifications.removeWhere((n) => n.id == id);
+    });
+    _showSnackBar('Notification archived');
+  }
+
+  void _bookmarkNotification(String id) {
+    _showSnackBar('Notification bookmarked');
+  }
+
+  Future<bool> _showSwipeActionConfirmation(
+    bool isDark,
+    AppLocalizations l10n,
+    TANotificationItem notification,
+    SwipeAction action,
+  ) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: TAColors.cardColor(isDark),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          _getSwipeActionTitle(action, l10n),
+          style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
+        ),
+        content: Text(
+          _getSwipeActionMessage(action, notification, l10n),
+          style: TextStyle(color: TAColors.textSecondaryColor(isDark)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l10n.taLabCancel),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: action.color,
+              foregroundColor: Colors.white,
+            ),
+            child: Text(_getSwipeActionButtonText(action, l10n)),
+          ),
+        ],
+      ),
+    );
+    return result ?? false;
+  }
+
+  String _getSwipeActionTitle(SwipeAction action, AppLocalizations l10n) {
+    switch (action) {
+      case SwipeAction.delete:
+        return l10n.delete;
+      case SwipeAction.archive:
+        return l10n.archive;
+      default:
+        return '';
+    }
+  }
+
+  String _getSwipeActionMessage(
+    SwipeAction action,
+    TANotificationItem notification,
+    AppLocalizations l10n,
+  ) {
+    switch (action) {
+      case SwipeAction.delete:
+        return 'Delete notification from ${notification.senderName}?';
+      case SwipeAction.archive:
+        return 'Archive notification from ${notification.senderName}?';
+      default:
+        return '';
+    }
+  }
+
+  String _getSwipeActionButtonText(SwipeAction action, AppLocalizations l10n) {
+    switch (action) {
+      case SwipeAction.delete:
+        return l10n.delete;
+      case SwipeAction.archive:
+        return l10n.archive;
+      default:
+        return l10n.confirm;
+    }
+  }
+
+  Widget _buildSwipeBackground({
+    required SwipeAction action,
+    required AlignmentGeometry alignment,
+    required TANotificationItem notification,
+    required AppLocalizations l10n,
+  }) {
+    final isLeft = alignment == Alignment.centerLeft;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: action.color,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      alignment: alignment,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: isLeft
+            ? MainAxisAlignment.start
+            : MainAxisAlignment.end,
+        children: isLeft
+            ? [
+                Icon(action.icon, color: Colors.white),
+                const SizedBox(width: 8),
+                Text(
+                  _getSwipeActionLabel(action, notification, l10n),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ]
+            : [
+                Text(
+                  _getSwipeActionLabel(action, notification, l10n),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(action.icon, color: Colors.white),
+              ],
+      ),
+    );
+  }
+
+  String _getSwipeActionLabel(
+    SwipeAction action,
+    TANotificationItem notification,
+    AppLocalizations l10n,
+  ) {
+    switch (action) {
+      case SwipeAction.delete:
+        return l10n.delete;
+      case SwipeAction.markRead:
+        return notification.isUnread ? l10n.markAsRead : l10n.markAsUnread;
+      case SwipeAction.markUnread:
+        return l10n.markAsUnread;
+      case SwipeAction.archive:
+        return l10n.archive;
+      case SwipeAction.bookmark:
+        return l10n.bookmark;
+      case SwipeAction.none:
+        return '';
+    }
   }
 
   void _showBulkActionsSheet(bool isDark, AppLocalizations l10n) {
@@ -344,7 +547,11 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
               isDark: isDark,
               onTap: () {
                 Navigator.pop(context);
-                context.push('/settings/notification-swipe');
+                context.push('/settings/swipe-actions/notifications').then((_) {
+                  // Clear cache and reload swipe settings when returning
+                  NotificationSwipeSettingsService.instance.clearCache();
+                  _loadSwipeSettings();
+                });
               },
             ),
             const SizedBox(height: 10),
@@ -421,10 +628,7 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
         return Scaffold(
           key: _scaffoldKey,
           backgroundColor: TAColors.scaffoldColor(isDark),
-          drawer: TADrawer(
-            currentRoute: '/ta/notifications',
-            isDark: isDark,
-          ),
+          drawer: TADrawer(currentRoute: '/ta/notifications', isDark: isDark),
           body: SafeArea(
             child: RefreshIndicator(
               onRefresh: _loadNotifications,
@@ -433,15 +637,9 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
                 slivers: [
                   _buildAppBar(isDark, l10n),
                   if (_isSelectionMode)
-                    SliverToBoxAdapter(
-                      child: _buildSelectionBar(isDark, l10n),
-                    ),
-                  SliverToBoxAdapter(
-                    child: _buildActionBar(isDark, l10n),
-                  ),
-                  SliverToBoxAdapter(
-                    child: _buildFilterChips(isDark, l10n),
-                  ),
+                    SliverToBoxAdapter(child: _buildSelectionBar(isDark, l10n)),
+                  SliverToBoxAdapter(child: _buildActionBar(isDark, l10n)),
+                  SliverToBoxAdapter(child: _buildFilterChips(isDark, l10n)),
                   _buildNotificationsList(isDark, l10n),
                   if (_expandedNotificationId != null)
                     SliverToBoxAdapter(
@@ -501,22 +699,38 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
           const Spacer(),
           IconButton(
             onPressed: _selectAll,
-            icon: Icon(Icons.select_all_rounded, color: TAColors.primary, size: 20),
+            icon: Icon(
+              Icons.select_all_rounded,
+              color: TAColors.primary,
+              size: 20,
+            ),
             tooltip: l10n.taNotifSelectAll,
           ),
           IconButton(
             onPressed: _markSelectedAsRead,
-            icon: Icon(Icons.mark_email_read_outlined, color: TAColors.success, size: 20),
+            icon: Icon(
+              Icons.mark_email_read_outlined,
+              color: TAColors.success,
+              size: 20,
+            ),
             tooltip: l10n.taNotifMarkAllRead,
           ),
           IconButton(
             onPressed: _deleteSelected,
-            icon: Icon(Icons.delete_outline_rounded, color: TAColors.error, size: 20),
+            icon: Icon(
+              Icons.delete_outline_rounded,
+              color: TAColors.error,
+              size: 20,
+            ),
             tooltip: l10n.delete,
           ),
           IconButton(
             onPressed: _toggleSelectionMode,
-            icon: Icon(Icons.close_rounded, color: TAColors.textSecondaryColor(isDark), size: 20),
+            icon: Icon(
+              Icons.close_rounded,
+              color: TAColors.textSecondaryColor(isDark),
+              size: 20,
+            ),
           ),
         ],
       ),
@@ -556,7 +770,8 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
       ),
       actions: [
         IconButton(
-          onPressed: () => context.read<ThemeBloc>().add(const ToggleThemeEvent()),
+          onPressed: () =>
+              context.read<ThemeBloc>().add(const ToggleThemeEvent()),
           icon: Icon(
             isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
             color: TAColors.textPrimaryColor(isDark),
@@ -686,8 +901,16 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
   Widget _buildFilterChips(bool isDark, AppLocalizations l10n) {
     final filters = [
       {'id': 'all', 'label': l10n.taNotifAll, 'icon': Icons.all_inbox_rounded},
-      {'id': 'students', 'label': l10n.taNotifStudents, 'icon': Icons.school_rounded},
-      {'id': 'instructors', 'label': l10n.taNotifInstructors, 'icon': Icons.person_rounded},
+      {
+        'id': 'students',
+        'label': l10n.taNotifStudents,
+        'icon': Icons.school_rounded,
+      },
+      {
+        'id': 'instructors',
+        'label': l10n.taNotifInstructors,
+        'icon': Icons.person_rounded,
+      },
       {'id': 'ai', 'label': 'AI', 'icon': Icons.auto_awesome},
     ];
 
@@ -759,172 +982,131 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
     final notifications = _filteredNotifications;
 
     if (notifications.isEmpty) {
-      return SliverToBoxAdapter(
-        child: _buildEmptyState(isDark, l10n),
-      );
+      return SliverToBoxAdapter(child: _buildEmptyState(isDark, l10n));
     }
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final notification = notifications[index];
-            final isExpanded = _expandedNotificationId == notification.id;
-            final isSelected = _selectedNotifications.contains(notification.id);
-            
-            return Dismissible(
-              key: Key('ta_notif_${notification.id}'),
-              direction: _isSelectionMode 
-                  ? DismissDirection.none 
-                  : DismissDirection.horizontal,
-              dismissThresholds: const {
-                DismissDirection.startToEnd: 0.4,
-                DismissDirection.endToStart: 0.4,
-              },
-              confirmDismiss: (direction) async {
-                HapticFeedback.lightImpact();
-                if (direction == DismissDirection.endToStart) {
-                  // Swipe left - Delete
-                  return await _showDeleteConfirmation(isDark, l10n, notification);
-                } else {
-                  // Swipe right - Mark as read
-                  _markAsRead(notification.id);
-                  return false;
-                }
-              },
-              onDismissed: (direction) {
-                if (direction == DismissDirection.endToStart) {
-                  _deleteNotification(notification.id);
-                }
-              },
-              background: Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: TAColors.success,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                alignment: Alignment.centerLeft,
-                child: Row(
-                  children: [
-                    const Icon(Icons.mark_email_read_outlined, color: Colors.white),
-                    const SizedBox(width: 8),
-                    Text(
-                      notification.isUnread ? l10n.markAsRead : l10n.markAsUnread,
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-                    ),
-                  ],
-                ),
-              ),
-              secondaryBackground: Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  color: TAColors.error,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text(
-                      l10n.delete,
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(Icons.delete_outline_rounded, color: Colors.white),
-                  ],
-                ),
-              ),
-              child: GestureDetector(
-                onLongPress: () {
-                  if (!_isSelectionMode) {
-                    HapticFeedback.mediumImpact();
-                    _toggleSelectionMode();
-                    _toggleNotificationSelection(notification.id);
-                  }
-                },
-                child: Stack(
-                  children: [
-                    TANotificationCard(
-                      isDark: isDark,
-                      notification: notification,
-                      isExpanded: isExpanded,
-                      onTap: () {
-                        if (_isSelectionMode) {
-                          _toggleNotificationSelection(notification.id);
-                        } else {
-                          setState(() {
-                            _expandedNotificationId = isExpanded ? null : notification.id;
-                          });
-                        }
-                      },
-                      onReply: () => _showSnackBar('Replying to ${notification.senderName}'),
-                      onResolve: () => _showSnackBar('Marked as resolved'),
-                    ),
-                    if (_isSelectionMode)
-                      Positioned(
-                        top: 12,
-                        right: 12,
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: isSelected ? TAColors.primary : Colors.transparent,
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(
-                              color: isSelected ? TAColors.primary : TAColors.borderColor(isDark),
-                              width: 2,
-                            ),
-                          ),
-                          child: isSelected
-                              ? const Icon(Icons.check, color: Colors.white, size: 16)
-                              : null,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            );
-          },
-          childCount: notifications.length,
-        ),
-      ),
-    );
-  }
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final notification = notifications[index];
+          final isExpanded = _expandedNotificationId == notification.id;
+          final isSelected = _selectedNotifications.contains(notification.id);
 
-  Future<bool> _showDeleteConfirmation(bool isDark, AppLocalizations l10n, TANotificationItem notification) async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: TAColors.cardColor(isDark),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          l10n.delete,
-          style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
-        ),
-        content: Text(
-          'Delete notification from ${notification.senderName}?',
-          style: TextStyle(color: TAColors.textSecondaryColor(isDark)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.taLabCancel),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TAColors.error,
-              foregroundColor: Colors.white,
+          return Dismissible(
+            key: Key('ta_notif_${notification.id}'),
+            direction: _isSelectionMode
+                ? DismissDirection.none
+                : DismissDirection.horizontal,
+            dismissThresholds: {
+              DismissDirection.startToEnd: _swipeSettings.swipeSensitivity,
+              DismissDirection.endToStart: _swipeSettings.swipeSensitivity,
+            },
+            confirmDismiss: (direction) async {
+              HapticFeedback.lightImpact();
+              final action = direction == DismissDirection.endToStart
+                  ? _swipeSettings.leftAction
+                  : _swipeSettings.rightAction;
+
+              if (action == SwipeAction.none) return false;
+
+              if (action.requiresConfirmation &&
+                  _swipeSettings.confirmBeforeAction) {
+                return await _showSwipeActionConfirmation(
+                  isDark,
+                  l10n,
+                  notification,
+                  action,
+                );
+              }
+
+              _executeSwipeAction(action, notification);
+              return action == SwipeAction.delete;
+            },
+            onDismissed: (direction) {
+              final action = direction == DismissDirection.endToStart
+                  ? _swipeSettings.leftAction
+                  : _swipeSettings.rightAction;
+              if (action == SwipeAction.delete) {
+                _deleteNotification(notification.id);
+              }
+            },
+            background: _buildSwipeBackground(
+              action: _swipeSettings.rightAction,
+              alignment: Alignment.centerLeft,
+              notification: notification,
+              l10n: l10n,
             ),
-            child: Text(l10n.delete),
-          ),
-        ],
+            secondaryBackground: _buildSwipeBackground(
+              action: _swipeSettings.leftAction,
+              alignment: Alignment.centerRight,
+              notification: notification,
+              l10n: l10n,
+            ),
+            child: GestureDetector(
+              onLongPress: () {
+                if (!_isSelectionMode) {
+                  HapticFeedback.mediumImpact();
+                  _toggleSelectionMode();
+                  _toggleNotificationSelection(notification.id);
+                }
+              },
+              child: Stack(
+                children: [
+                  TANotificationCard(
+                    isDark: isDark,
+                    notification: notification,
+                    isExpanded: isExpanded,
+                    onTap: () {
+                      if (_isSelectionMode) {
+                        _toggleNotificationSelection(notification.id);
+                      } else {
+                        setState(() {
+                          _expandedNotificationId = isExpanded
+                              ? null
+                              : notification.id;
+                        });
+                      }
+                    },
+                    onReply: () =>
+                        _showSnackBar('Replying to ${notification.senderName}'),
+                    onResolve: () => _showSnackBar('Marked as resolved'),
+                  ),
+                  if (_isSelectionMode)
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? TAColors.primary
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(
+                            color: isSelected
+                                ? TAColors.primary
+                                : TAColors.borderColor(isDark),
+                            width: 2,
+                          ),
+                        ),
+                        child: isSelected
+                            ? const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 16,
+                              )
+                            : null,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          );
+        }, childCount: notifications.length),
       ),
     );
-    return result ?? false;
   }
 
   Widget _buildEmptyState(bool isDark, AppLocalizations l10n) {

@@ -4,14 +4,12 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_event.dart';
 import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:go_router/go_router.dart';
 
 class AiChatAppBar extends StatelessWidget {
   final VoidCallback onClearChat;
 
-  const AiChatAppBar({
-    super.key,
-    required this.onClearChat,
-  });
+  const AiChatAppBar({super.key, required this.onClearChat});
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +35,13 @@ class AiChatAppBar extends StatelessWidget {
     );
   }
 
-  Widget _buildBackButton(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildBackButton(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return GestureDetector(
-      onTap: () => Navigator.pop(context),
+      // onTap: () => context.pop(),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
@@ -62,7 +64,9 @@ class AiChatAppBar extends StatelessWidget {
               l10n.back,
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                color: isDark
+                    ? const Color(0xFF99A1AF)
+                    : const Color(0xFF4A5565),
               ),
             ),
           ],
@@ -83,12 +87,14 @@ class AiChatAppBar extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: isDark 
+              color: isDark
                   ? const Color(0xFF1E2939).withValues(alpha: 0.8)
                   : Colors.white.withValues(alpha: 0.8),
               shape: BoxShape.circle,
               border: Border.all(
-                color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                color: isDark
+                    ? const Color(0xFF374151)
+                    : const Color(0xFFE5E7EB),
               ),
               boxShadow: [
                 BoxShadow(
@@ -121,7 +127,7 @@ class AiChatAppBar extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: isDark 
+          color: isDark
               ? const Color(0xFF1E2939).withValues(alpha: 0.8)
               : Colors.white.withValues(alpha: 0.8),
           shape: BoxShape.circle,
