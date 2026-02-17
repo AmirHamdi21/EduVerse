@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:edu_verse/bloc/assignments/assignments_cubit.dart';
 import 'package:edu_verse/bloc/attendance/attendance_cubit.dart';
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
@@ -14,6 +16,7 @@ import 'package:edu_verse/bloc/tasks/tasks_cubit.dart';
 import 'package:edu_verse/bloc/search/search_cubit.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
+import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:edu_verse/config/app_router.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:edu_verse/services/api_service.dart';
@@ -22,8 +25,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated_l10n/app_localizations.dart';
+import 'package:flutter/services.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Hide status bar & navigation bar
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  if (Platform.isAndroid || Platform.isIOS) {
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
   runApp(const MyApp());
 }
 
@@ -109,6 +122,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return MultiBlocProvider(
       providers: [
         BlocProvider.value(value: _authBloc),

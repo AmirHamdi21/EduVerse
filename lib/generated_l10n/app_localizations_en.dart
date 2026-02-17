@@ -45,7 +45,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get enterEmail => 'Enter your email';
 
   @override
-  String get enterPassword => 'Enter your password';
+  String get enterPassword => 'Enter password';
 
   @override
   String get enterConfirmPassword => 'Confirm your password';
@@ -153,7 +153,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidEmail => 'Invalid email address';
 
   @override
-  String get passwordTooShort => 'Password must be at least 6 characters';
+  String get passwordTooShort => 'Password must be at least 8 characters';
 
   @override
   String get passwordMismatch => 'Passwords do not match';
@@ -225,7 +225,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get instructor => 'Instructor';
 
   @override
-  String get ta => 'Teaching Assistant';
+  String get ta => 'TA';
 
   @override
   String get admin => 'Admin';
@@ -244,7 +244,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backToLogin => 'Back to Login';
 
   @override
-  String get passwordResetSent => 'Password reset link sent to your email';
+  String get passwordResetSent => 'Password reset email sent successfully';
 
   @override
   String get enterVerificationCode => 'Enter the verification code';
@@ -1075,7 +1075,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createdAt => 'Created At';
 
   @override
-  String get listView => 'List';
+  String get listView => 'List View';
 
   @override
   String get calendarView => 'Calendar';
@@ -1228,7 +1228,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get credits => 'Credits';
 
   @override
-  String get searchCourses => 'Search courses...';
+  String get searchCourses => 'Search courses by name or code...';
 
   @override
   String get allSemesters => 'All Semesters';
@@ -2061,7 +2061,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get compare => 'Compare';
 
   @override
-  String get users => 'users';
+  String get users => 'Users';
 
   @override
   String get progressComparison => 'Progress Comparison';
@@ -2343,7 +2343,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get suggestedContacts => 'Suggested Contacts';
 
   @override
-  String get noUsersFound => 'No users found';
+  String get noUsersFound => 'No Users Found';
 
   @override
   String get online => 'Online';
@@ -2822,13 +2822,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get activeNow => 'Active now';
 
   @override
-  String minutesAgo(int count) {
-    return '${count}m ago';
+  String minutesAgo(int minutes) {
+    return '$minutes min ago';
   }
 
   @override
-  String hoursAgo(int count) {
-    return '${count}h ago';
+  String hoursAgo(int hours) {
+    return '$hours hour ago';
   }
 
   @override
@@ -4989,7 +4989,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get draftSaved => 'Draft saved successfully';
 
   @override
-  String get fillRequiredFields => 'Please fill in required fields';
+  String get fillRequiredFields => 'Please fill all required fields';
 
   @override
   String get lab => 'Lab';
@@ -7406,4 +7406,1155 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get startingVoiceCall => 'Starting voice call...';
+
+  @override
+  String get uptime => 'Uptime';
+
+  @override
+  String get userManagement => 'User Management';
+
+  @override
+  String get courseManagement => 'Course Management';
+
+  @override
+  String get reportsAnalytics => 'Reports & Analytics';
+
+  @override
+  String get systemHealth => 'System Health';
+
+  @override
+  String get totalUsers => 'Total Users';
+
+  @override
+  String get activeCourses => 'Active Courses';
+
+  @override
+  String get aiActionsToday => 'AI Actions Today';
+
+  @override
+  String get dailyActiveUsers => 'Daily Active Users';
+
+  @override
+  String get excellent => 'Excellent';
+
+  @override
+  String get quickAdminActions => 'Quick Admin Actions';
+
+  @override
+  String get addUser => 'Add User';
+
+  @override
+  String get addCourse => 'Add Course';
+
+  @override
+  String get announcement => 'Announcement';
+
+  @override
+  String get assignInstructor => 'Assign Instructor';
+
+  @override
+  String get viewReports => 'View Reports';
+
+  @override
+  String get systemSettings => 'System Settings';
+
+  @override
+  String get message => 'Message';
+
+  @override
+  String get selectInstructor => 'Select instructor';
+
+  @override
+  String get aiSystemInsights => 'AI System Insights';
+
+  @override
+  String get intelligentMonitoring =>
+      'Intelligent monitoring and anomaly detection';
+
+  @override
+  String get reviewAIReport => 'Review AI Report';
+
+  @override
+  String get highFailedLoginAttempts => 'High Failed Login Attempts';
+
+  @override
+  String get failedLoginDescription =>
+      '45 failed login attempts detected from IP 192.168.1.1';
+
+  @override
+  String get lowCourseEngagement => 'Low Course Engagement';
+
+  @override
+  String get lowEngagementDescription =>
+      'CS101 has dropped below 60% engagement this week';
+
+  @override
+  String get missingInstructorResources => 'Missing Instructor Resources';
+
+  @override
+  String get missingResourcesDescription =>
+      '3 courses have no uploaded materials this week';
+
+  @override
+  String get unassignedCourses => 'Unassigned';
+
+  @override
+  String get unassignedCoursesDescription =>
+      '2 courses have no assigned Teaching Assistants';
+
+  @override
+  String get aiReport => 'AI Report';
+
+  @override
+  String get performanceWarnings => 'Performance Warnings';
+
+  @override
+  String get systemRecommendations => 'System Recommendations';
+
+  @override
+  String get aiReportSummary =>
+      'AI has analyzed 1,429 system events today and generated insights based on user behavior patterns and system performance metrics.';
+
+  @override
+  String get downloadReport => 'Download Report';
+
+  @override
+  String get reportDownloaded => 'Report downloaded successfully';
+
+  @override
+  String get resolve => 'Resolve';
+
+  @override
+  String get alertResolved => 'Alert resolved successfully';
+
+  @override
+  String get userDistribution => 'User Distribution';
+
+  @override
+  String get total => 'Total';
+
+  @override
+  String get tas => 'TAs';
+
+  @override
+  String get admins => 'Admins';
+
+  @override
+  String get serverLoad => 'Server Load';
+
+  @override
+  String get apiPerformance => 'API Performance';
+
+  @override
+  String get database => 'Database';
+
+  @override
+  String get aiProcessing => 'AI Processing';
+
+  @override
+  String get systemUptime => 'System Uptime';
+
+  @override
+  String get errorRate => 'Error Rate';
+
+  @override
+  String get createdNewCourse => 'created a new course';
+
+  @override
+  String get updatedSystemSettings => 'updated system settings';
+
+  @override
+  String get uploadedCourseMaterials => 'uploaded course materials';
+
+  @override
+  String get enrolledInCourse => 'enrolled in a course';
+
+  @override
+  String get publishedAnnouncement => 'published an announcement';
+
+  @override
+  String get performedAction => 'performed an action';
+
+  @override
+  String get searchUsers => 'Search users...';
+
+  @override
+  String get resetPassword => 'Reset Password';
+
+  @override
+  String get deleteUser => 'Delete User';
+
+  @override
+  String get resetPasswordConfirmation => 'Send password reset email to';
+
+  @override
+  String get deleteUserConfirmation => 'Are you sure you want to delete';
+
+  @override
+  String get userDeleted => 'User deleted successfully';
+
+  @override
+  String get joinedDate => 'Joined Date';
+
+  @override
+  String get userId => 'User ID';
+
+  @override
+  String get noUsersFoundDescription =>
+      'No users match your current filters. Try adjusting your search or add a new user.';
+
+  @override
+  String get addNewUser => 'Add New User';
+
+  @override
+  String get createAndAssignNewUser =>
+      'Create and assign a new user with role-based options';
+
+  @override
+  String get selectUserType => 'Select User Type';
+
+  @override
+  String get learnerEnrolledInCourses => 'Learner enrolled in courses';
+
+  @override
+  String get courseTeacherAndContentCreator =>
+      'Course teacher and content creator';
+
+  @override
+  String get teachingAssistant => 'Teaching Assistant';
+
+  @override
+  String get labManagerAndGradingAssistant =>
+      'Lab manager and grading assistant';
+
+  @override
+  String get administrator => 'Administrator';
+
+  @override
+  String get systemManagerWithFullAccess => 'System manager with full access';
+
+  @override
+  String get userInformation => 'User Information';
+
+  @override
+  String get pleaseEnterFullName => 'Please enter full name';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get pleaseEnterEmail => 'Please enter email';
+
+  @override
+  String get pleaseEnterValidEmail => 'Please enter a valid email';
+
+  @override
+  String get initialPassword => 'Initial Password';
+
+  @override
+  String get pleaseEnterPassword => 'Please enter password';
+
+  @override
+  String get autoGenerate => 'Auto-generate';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get studentInformation => 'Student Information';
+
+  @override
+  String get academicLevel => 'Academic Level';
+
+  @override
+  String get selectLevel => 'Select level';
+
+  @override
+  String get labSection => 'Lab Section';
+
+  @override
+  String get selectSection => 'Select section';
+
+  @override
+  String get enrollInCourses => 'Enroll in Courses';
+
+  @override
+  String get selectCoursesToEnroll => 'Select courses to enroll this user';
+
+  @override
+  String get instructorSettings => 'Instructor Settings';
+
+  @override
+  String get requiresAIGradingTasks => 'Requires AI Grading Tasks';
+
+  @override
+  String get enableAIPoweredGrading => 'Enable AI-powered grading assistance';
+
+  @override
+  String get userAccessToAnalytics => 'User Access to Analytics';
+
+  @override
+  String get viewCourseStudentAnalytics => 'View course and student analytics';
+
+  @override
+  String get teachingAssistantSettings => 'Teaching Assistant Settings';
+
+  @override
+  String get administratorSettings => 'Administrator Settings';
+
+  @override
+  String get adminAccessWarning =>
+      'Administrator accounts have full system access. Please ensure proper security training.';
+
+  @override
+  String get rolePermissions => 'Role Permissions';
+
+  @override
+  String get viewCourseData => 'View course data';
+
+  @override
+  String get accessToCourseInformation => 'Access to course information';
+
+  @override
+  String get manageCourses => 'Manage courses';
+
+  @override
+  String get createEditDeleteCourses => 'Create, edit, and delete courses';
+
+  @override
+  String get manageUsers => 'Manage users';
+
+  @override
+  String get addEditRemoveUsers => 'Add, edit, and remove users';
+
+  @override
+  String get gradeStudents => 'Grade students';
+
+  @override
+  String get submitAndEditGrades => 'Submit and edit grades';
+
+  @override
+  String get aiFeaturesAccess => 'AI features access';
+
+  @override
+  String get useAIPoweredTools => 'Use AI-powered tools';
+
+  @override
+  String get viewAnalyticsDashboard => 'View analytics dashboard';
+
+  @override
+  String get accessPerformanceMetrics => 'Access performance metrics';
+
+  @override
+  String get sendGlobalAnnouncements => 'Send global announcements';
+
+  @override
+  String get broadcastToAllUsers => 'Broadcast to all users';
+
+  @override
+  String get aiProfileSummary => 'AI Profile Summary';
+
+  @override
+  String get selectARoleToSeeAISuggestions =>
+      'Select a role to see AI suggestions';
+
+  @override
+  String get basedOnRoleSelection => 'Based on role selection:';
+
+  @override
+  String get welcomeEmailRecommended => 'Welcome email recommended';
+
+  @override
+  String get enrollInIntroductoryCourses => 'Enroll in introductory courses';
+
+  @override
+  String get standardRolePermissions => 'Standard role permissions';
+
+  @override
+  String get courseAssignmentNeeded => 'Course assignment needed';
+
+  @override
+  String get giveAccessToAnalytics => 'Give access to analytics';
+
+  @override
+  String get fullSystemAccess => 'Full system access';
+
+  @override
+  String get securityTrainingRequired => 'Security training required';
+
+  @override
+  String get twoFactorAuthRequired => 'Two-factor authentication required';
+
+  @override
+  String get applyAISuggestions => 'Apply AI Suggestions';
+
+  @override
+  String get aiSuggestionsApplied => 'AI suggestions applied successfully';
+
+  @override
+  String get resetForm => 'Reset Form';
+
+  @override
+  String get createUser => 'Create User';
+
+  @override
+  String get creating => 'Creating...';
+
+  @override
+  String get pleaseSelectRole => 'Please select a user role';
+
+  @override
+  String get userCreatedSuccessfully => 'User created successfully';
+
+  @override
+  String get role => 'Role';
+
+  @override
+  String get department => 'Department';
+
+  @override
+  String get selectDepartment => 'Select department';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get rolePermissionsManagement => 'Role & Permissions';
+
+  @override
+  String get manageRolesAndPermissions => 'Manage roles and access control';
+
+  @override
+  String get customRole => 'Custom Role';
+
+  @override
+  String get managePermissions => 'Configure permissions for this role';
+
+  @override
+  String get view => 'View';
+
+  @override
+  String get aiRecommendations => 'AI Recommendations';
+
+  @override
+  String get basedOnUsagePatterns => 'Based on usage patterns';
+
+  @override
+  String get recommended => 'Recommended';
+
+  @override
+  String get aiRecEnableViewLabs => 'Enable Lab Access';
+
+  @override
+  String get aiRecEnableViewLabsDesc =>
+      'Students frequently need access to lab materials for their coursework.';
+
+  @override
+  String get aiRecEnableAssignments => 'Assignment Submission';
+
+  @override
+  String get aiRecEnableAssignmentsDesc =>
+      'Allow students to submit and track their assignments.';
+
+  @override
+  String get aiRecEnableGrading => 'Enable Full Grading';
+
+  @override
+  String get aiRecEnableGradingDesc =>
+      'Instructors need complete grading access to evaluate student work.';
+
+  @override
+  String get aiRecEnableAI => 'Enable AI Assistant';
+
+  @override
+  String get aiRecEnableAIDesc =>
+      'AI tools can help instructors create content and provide feedback.';
+
+  @override
+  String get aiRecLimitGrading => 'Limited Grading Access';
+
+  @override
+  String get aiRecLimitGradingDesc =>
+      'TAs should have grading access limited to assigned sections only.';
+
+  @override
+  String get aiRecReviewAccess => 'Review Access Controls';
+
+  @override
+  String get aiRecReviewAccessDesc =>
+      'Ensure admin accounts have proper security and audit logging enabled.';
+
+  @override
+  String get unsavedChanges => 'Unsaved Changes';
+
+  @override
+  String get unsavedChangesDescription =>
+      'You have unsaved changes. Do you want to save before switching?';
+
+  @override
+  String get saveAndSwitch => 'Save & Switch';
+
+  @override
+  String get unsaved => 'Unsaved';
+
+  @override
+  String get savingChanges => 'Saving changes...';
+
+  @override
+  String get permissionsSaved => 'Permissions saved successfully';
+
+  @override
+  String get createCustomRole => 'Create Custom Role';
+
+  @override
+  String get roleName => 'Role Name';
+
+  @override
+  String get customRoleDescription =>
+      'Custom roles allow you to create specific permission sets for unique use cases.';
+
+  @override
+  String get customRoleCreated => 'Custom role created successfully';
+
+  @override
+  String get aiUserAlerts => 'AI User Alerts';
+
+  @override
+  String get studentsFailingCourses => '3 students failing multiple courses';
+
+  @override
+  String get accountsFlaggedFailedLogins =>
+      '2 accounts flagged for multiple failed logins';
+
+  @override
+  String get studentsInactiveDays => '15 students inactive for 30+ days';
+
+  @override
+  String get investigate => 'Investigate';
+
+  @override
+  String get sendReminder => 'Send Reminder';
+
+  @override
+  String get reviewAllAlerts => 'Review All Alerts';
+
+  @override
+  String get userStatistics => 'User Statistics';
+
+  @override
+  String get activeToday => 'Active Today';
+
+  @override
+  String get newThisWeek => 'New This Week';
+
+  @override
+  String get flaggedUsers => 'Flagged Users';
+
+  @override
+  String get show => 'Show';
+
+  @override
+  String get of_ => 'of';
+
+  @override
+  String get page => 'Page';
+
+  @override
+  String get allRoles => 'All Roles';
+
+  @override
+  String get allStatus => 'All Status';
+
+  @override
+  String get mostInactive => 'Most Inactive';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get actions => 'Actions';
+
+  @override
+  String get enable => 'Enable';
+
+  @override
+  String get needsInstructor => 'Needs Instructor';
+
+  @override
+  String get needsTA => 'Needs TA';
+
+  @override
+  String get aiFlagged => 'AI Flagged';
+
+  @override
+  String get labBased => 'Lab-Based';
+
+  @override
+  String get notAssigned => 'Not Assigned';
+
+  @override
+  String get avg => 'Avg';
+
+  @override
+  String get assign => 'Assign';
+
+  @override
+  String get assignStaff => 'Assign Staff';
+
+  @override
+  String get assignTA => 'Assign Teaching Assistant';
+
+  @override
+  String get instructorAssigned => 'Instructor assigned successfully';
+
+  @override
+  String get taAssigned => 'Teaching Assistant assigned successfully';
+
+  @override
+  String get courseUpdated => 'Course updated successfully';
+
+  @override
+  String get courseStatistics => 'Course Statistics';
+
+  @override
+  String get coursesNoTA => 'courses have no assigned teaching assistants';
+
+  @override
+  String get noCoursesFoundDescription =>
+      'No courses match your current filters. Try adjusting your search or add a new course.';
+
+  @override
+  String get viewingLabs => 'Viewing labs for';
+
+  @override
+  String get viewingDetails => 'Viewing details for';
+
+  @override
+  String get allDepartments => 'All Departments';
+
+  @override
+  String get courseDetails => 'Course Details';
+
+  @override
+  String get courseNameHint => 'e.g., Advanced Machine Learning';
+
+  @override
+  String get courseCodeHint => 'e.g., CS501';
+
+  @override
+  String get semester => 'Semester';
+
+  @override
+  String get selectSemester => 'Select semester';
+
+  @override
+  String get courseDescription => 'Course Description';
+
+  @override
+  String get courseDescriptionHint =>
+      'Describe the course objectives and content...';
+
+  @override
+  String get uploadSyllabus => 'Upload Syllabus (PDF)';
+
+  @override
+  String get dragDropOrClick => 'Drag & drop or click to upload';
+
+  @override
+  String get pdfMaxSize => 'PDF, max 10MB';
+
+  @override
+  String get freshman => 'Freshman';
+
+  @override
+  String get sophomore => 'Sophomore';
+
+  @override
+  String get junior => 'Junior';
+
+  @override
+  String get senior => 'Senior';
+
+  @override
+  String get graduate => 'Graduate';
+
+  @override
+  String get fallSemester => 'Fall Semester';
+
+  @override
+  String get springSemester => 'Spring Semester';
+
+  @override
+  String get summerSemester => 'Summer Semester';
+
+  @override
+  String get staffAssignment => 'Staff Assignment';
+
+  @override
+  String get assignTAs => 'Assign TAs';
+
+  @override
+  String get courseSettings => 'Course Settings';
+
+  @override
+  String get maxStudents => 'Maximum Students';
+
+  @override
+  String get hasLabs => 'Has Laboratory Sessions';
+
+  @override
+  String get labsDescription => 'Enable if course includes lab components';
+
+  @override
+  String get numberOfLabs => 'Number of Labs';
+
+  @override
+  String get courseActive => 'Course Active';
+
+  @override
+  String get courseInactive => 'Course Inactive';
+
+  @override
+  String get studentCanEnroll => 'Students can enroll';
+
+  @override
+  String get enrollmentPaused => 'Enrollment paused';
+
+  @override
+  String get aiCoursePreview => 'AI Course Preview';
+
+  @override
+  String get aiAnalyzingCourse => 'AI is analyzing your course setup';
+
+  @override
+  String get noInstructorAssigned => 'No instructor assigned yet';
+
+  @override
+  String get noTAAssigned =>
+      'Consider assigning TAs for better student support';
+
+  @override
+  String get recommendMoreTAs =>
+      'Consider adding more TAs for large class size';
+
+  @override
+  String get largeClassSuggestion =>
+      'Consider adding labs for better engagement';
+
+  @override
+  String get labCapacityWarning =>
+      'Lab capacity may not accommodate all students';
+
+  @override
+  String get startFillingForm => 'Start filling the form to see AI preview';
+
+  @override
+  String get createNewCourse => 'Create New Course';
+
+  @override
+  String get fillCourseDetails => 'Fill in the course details';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get staff => 'Staff';
+
+  @override
+  String get previous => 'Previous';
+
+  @override
+  String get courseCreatedSuccess => 'Course Created!';
+
+  @override
+  String get courseCreatedMessage =>
+      'Your new course has been successfully created and is ready for enrollment.';
+
+  @override
+  String get createAnother => 'Create Another';
+
+  @override
+  String get viewCourses => 'View Courses';
+
+  @override
+  String get syllabusUploaded => 'Syllabus uploaded successfully';
+
+  @override
+  String get capacity => 'Capacity';
+
+  @override
+  String get assignInstructorsAndTAs => 'Assign Instructors & TAs';
+
+  @override
+  String get manageTeachingStaff =>
+      'Manage teaching staff for all active courses';
+
+  @override
+  String get instructorOverloaded => 'Instructor Overloaded';
+
+  @override
+  String get taOverloaded => 'TA Overloaded';
+
+  @override
+  String get coverageMap => 'Coverage Map';
+
+  @override
+  String get allCoursesAssigned => 'All courses have been assigned staff';
+
+  @override
+  String get noStudentsYet => 'No students enrolled yet';
+
+  @override
+  String get staffAvailability => 'Staff Availability';
+
+  @override
+  String get workloadAndInsights => 'Workload & AI insights';
+
+  @override
+  String get teachingAssistants => 'Teaching Assistants';
+
+  @override
+  String get noStaffAvailable => 'No staff available';
+
+  @override
+  String get available => 'Available';
+
+  @override
+  String get atCapacity => 'At Capacity';
+
+  @override
+  String get overloaded => 'Overloaded';
+
+  @override
+  String get onLeave => 'On Leave';
+
+  @override
+  String get smartAssignmentRecommendations =>
+      'Smart assignment recommendations';
+
+  @override
+  String get noSuggestionsNeeded => 'All assignments look optimal!';
+
+  @override
+  String get suggestionApplied => 'Suggestion applied successfully';
+
+  @override
+  String get workload => 'Workload';
+
+  @override
+  String get cardView => 'Card View';
+
+  @override
+  String get noTAs => 'No TAs';
+
+  @override
+  String get departmentsAndPrograms => 'Departments & Programs';
+
+  @override
+  String get organizeAcademicStructures =>
+      'Organize academic structures across the institution';
+
+  @override
+  String get searchDepartments => 'Search departments...';
+
+  @override
+  String get allFaculties => 'All Faculties';
+
+  @override
+  String get understaffed => 'Understaffed';
+
+  @override
+  String get missingCourses => 'Missing Courses';
+
+  @override
+  String get noHeadAssigned => 'No Head Assigned';
+
+  @override
+  String get aiWarnings => 'AI Warnings';
+
+  @override
+  String get programs => 'Programs';
+
+  @override
+  String get departmentHealthMap => 'Department Health Map';
+
+  @override
+  String get departmentAnalytics => 'Department analytics';
+
+  @override
+  String get mostActive => 'Most Active';
+
+  @override
+  String get underperforming => 'Underperforming';
+
+  @override
+  String get staffShortage => 'Staff Shortage';
+
+  @override
+  String get departments => 'departments';
+
+  @override
+  String get totalDepartments => 'Total Departments';
+
+  @override
+  String get totalPrograms => 'Total Programs';
+
+  @override
+  String get criticalAlerts => 'Critical Alerts';
+
+  @override
+  String get addNewDepartment => 'Add New Department';
+
+  @override
+  String get createNewAcademicDepartment => 'Create a new academic department';
+
+  @override
+  String get departmentName => 'Department Name';
+
+  @override
+  String get enterDepartmentName => 'e.g., Mechanical Engineering';
+
+  @override
+  String get departmentNameRequired => 'Department name is required';
+
+  @override
+  String get briefDescription => 'Brief description of the department...';
+
+  @override
+  String get academicLevelsOffered => 'Academic Levels Offered';
+
+  @override
+  String get selectDepartmentHead => 'Select Department Head';
+
+  @override
+  String get chooseDepartmentHead => 'Choose department head...';
+
+  @override
+  String get uploadDepartmentLogo => 'Upload Department Logo';
+
+  @override
+  String get clickToUploadLogo => 'Click to upload logo';
+
+  @override
+  String get createDepartment => 'Create Department';
+
+  @override
+  String get departmentCreatedSuccessfully => 'Department created successfully';
+
+  @override
+  String get departmentHead => 'Head';
+
+  @override
+  String get faculty => 'Faculty';
+
+  @override
+  String get assignHead => 'Assign Head';
+
+  @override
+  String get mathLowTACount =>
+      'Mathematics program has low TA count (4 TAs for 280 students)';
+
+  @override
+  String get physicsMissingHead =>
+      'Physics department missing department head assignment';
+
+  @override
+  String get electricalMissingAI =>
+      'Electrical Engineering missing AI-based evaluation tools';
+
+  @override
+  String get enableAITools => 'Enable AI Tools';
+
+  @override
+  String get editing => 'Editing';
+
+  @override
+  String get assigningHeadTo => 'Assigning head to';
+
+  @override
+  String get assigningTAsTo => 'Assigning TAs to';
+
+  @override
+  String get actionTriggered => 'Action triggered';
+
+  @override
+  String get systemAnalytics => 'System Analytics & Performance';
+
+  @override
+  String get monitorSystemHealth => 'Monitor system health and usage metrics';
+
+  @override
+  String get systemHealthOverview => 'System Health Overview';
+
+  @override
+  String get cpuUsage => 'CPU Usage';
+
+  @override
+  String get memoryUsage => 'Memory Usage';
+
+  @override
+  String get diskUsage => 'Disk Usage';
+
+  @override
+  String get networkLatency => 'Network Latency';
+
+  @override
+  String get good => 'Good';
+
+  @override
+  String get fair => 'Fair';
+
+  @override
+  String get poor => 'Poor';
+
+  @override
+  String get keyMetrics => 'Key Metrics';
+
+  @override
+  String get userActivity => 'User Activity';
+
+  @override
+  String get serverStatus => 'Server Status';
+
+  @override
+  String get recentSystemEvents => 'Recent System Events';
+
+  @override
+  String get performanceRecommendations => 'Performance recommendations';
+
+  @override
+  String get viewDetailedAnalysis => 'View Detailed Analysis';
+
+  @override
+  String get thisMonth => 'This Month';
+
+  @override
+  String get custom => 'Custom';
+
+  @override
+  String get viewMore => 'View More';
+
+  @override
+  String get region => 'Region';
+
+  @override
+  String get dataRefreshed => 'Data refreshed successfully';
+
+  @override
+  String get exportingData => 'Exporting data...';
+
+  @override
+  String get viewingMore => 'Viewing more';
+
+  @override
+  String get securityAndActivityLogs => 'Security & Activity Logs';
+
+  @override
+  String get monitorSecurityEvents =>
+      'Monitor security events and user activities';
+
+  @override
+  String get searchActivityLogs => 'Search activity logs...';
+
+  @override
+  String get allActivities => 'All Activities';
+
+  @override
+  String get logoutActivity => 'Logout Activity';
+
+  @override
+  String get passwordChangeActivity => 'Password Change';
+
+  @override
+  String get roleChangeActivity => 'Role Change';
+
+  @override
+  String get dataAccessActivity => 'Data Access';
+
+  @override
+  String get systemChangeActivity => 'System Change';
+
+  @override
+  String get lastWeek => 'Last Week';
+
+  @override
+  String get lastMonth => 'Last Month';
+
+  @override
+  String get lastThreeMonths => 'Last 3 Months';
+
+  @override
+  String get totalEvents => 'Total Events';
+
+  @override
+  String get failedLogins => 'Failed Logins';
+
+  @override
+  String get activeSessions => 'Active Sessions';
+
+  @override
+  String get activityLogs => 'Activity Logs';
+
+  @override
+  String get timestamp => 'Timestamp';
+
+  @override
+  String get activityType => 'Activity Type';
+
+  @override
+  String get ipAddress => 'IP Address';
+
+  @override
+  String get statusColumn => 'Status';
+
+  @override
+  String get noLogsFound => 'No activity logs found';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get info => 'Info';
+
+  @override
+  String get critical => 'Critical';
+
+  @override
+  String get noActiveAlerts => 'No active security alerts';
+
+  @override
+  String get resolved => 'Resolved';
+
+  @override
+  String get activityDetails => 'Activity Details';
+
+  @override
+  String get viewingTotalEvents => 'Viewing total events details';
+
+  @override
+  String get viewingFailedLogins => 'Viewing failed login attempts';
+
+  @override
+  String get viewingSecurityAlerts => 'Viewing security alerts';
+
+  @override
+  String get viewingActiveSessions => 'Viewing active sessions';
+
+  @override
+  String get exportingLogs => 'Exporting activity logs...';
+
+  @override
+  String get openingSecuritySettings => 'Opening security settings...';
+
+  @override
+  String get exportLogs => 'Export Logs';
+
+  @override
+  String get securitySettings => 'Security Settings';
+
+  @override
+  String get recentSecurityAlerts => 'Recent Security Alerts';
+
+  @override
+  String get loginActivityChart => 'Login Activity';
 }

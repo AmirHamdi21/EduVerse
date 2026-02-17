@@ -173,7 +173,7 @@ abstract class AppLocalizations {
   /// No description provided for @enterPassword.
   ///
   /// In en, this message translates to:
-  /// **'Enter your password'**
+  /// **'Enter password'**
   String get enterPassword;
 
   /// No description provided for @enterConfirmPassword.
@@ -389,7 +389,7 @@ abstract class AppLocalizations {
   /// No description provided for @passwordTooShort.
   ///
   /// In en, this message translates to:
-  /// **'Password must be at least 6 characters'**
+  /// **'Password must be at least 8 characters'**
   String get passwordTooShort;
 
   /// No description provided for @passwordMismatch.
@@ -533,7 +533,7 @@ abstract class AppLocalizations {
   /// No description provided for @ta.
   ///
   /// In en, this message translates to:
-  /// **'Teaching Assistant'**
+  /// **'TA'**
   String get ta;
 
   /// No description provided for @admin.
@@ -569,7 +569,7 @@ abstract class AppLocalizations {
   /// No description provided for @passwordResetSent.
   ///
   /// In en, this message translates to:
-  /// **'Password reset link sent to your email'**
+  /// **'Password reset email sent successfully'**
   String get passwordResetSent;
 
   /// No description provided for @enterVerificationCode.
@@ -2129,7 +2129,7 @@ abstract class AppLocalizations {
   /// No description provided for @listView.
   ///
   /// In en, this message translates to:
-  /// **'List'**
+  /// **'List View'**
   String get listView;
 
   /// No description provided for @calendarView.
@@ -2429,7 +2429,7 @@ abstract class AppLocalizations {
   /// No description provided for @searchCourses.
   ///
   /// In en, this message translates to:
-  /// **'Search courses...'**
+  /// **'Search courses by name or code...'**
   String get searchCourses;
 
   /// No description provided for @allSemesters.
@@ -4061,7 +4061,7 @@ abstract class AppLocalizations {
   /// No description provided for @users.
   ///
   /// In en, this message translates to:
-  /// **'users'**
+  /// **'Users'**
   String get users;
 
   /// No description provided for @progressComparison.
@@ -4613,7 +4613,7 @@ abstract class AppLocalizations {
   /// No description provided for @noUsersFound.
   ///
   /// In en, this message translates to:
-  /// **'No users found'**
+  /// **'No Users Found'**
   String get noUsersFound;
 
   /// No description provided for @online.
@@ -5555,14 +5555,14 @@ abstract class AppLocalizations {
   /// No description provided for @minutesAgo.
   ///
   /// In en, this message translates to:
-  /// **'{count}m ago'**
-  String minutesAgo(int count);
+  /// **'{minutes} min ago'**
+  String minutesAgo(int minutes);
 
   /// No description provided for @hoursAgo.
   ///
   /// In en, this message translates to:
-  /// **'{count}h ago'**
-  String hoursAgo(int count);
+  /// **'{hours} hour ago'**
+  String hoursAgo(int hours);
 
   /// No description provided for @removeDevice.
   ///
@@ -9719,7 +9719,7 @@ abstract class AppLocalizations {
   /// No description provided for @fillRequiredFields.
   ///
   /// In en, this message translates to:
-  /// **'Please fill in required fields'**
+  /// **'Please fill all required fields'**
   String get fillRequiredFields;
 
   /// No description provided for @lab.
@@ -14497,6 +14497,2238 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Starting voice call...'**
   String get startingVoiceCall;
+
+  /// No description provided for @uptime.
+  ///
+  /// In en, this message translates to:
+  /// **'Uptime'**
+  String get uptime;
+
+  /// No description provided for @userManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'User Management'**
+  String get userManagement;
+
+  /// No description provided for @courseManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Management'**
+  String get courseManagement;
+
+  /// No description provided for @reportsAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports & Analytics'**
+  String get reportsAnalytics;
+
+  /// No description provided for @systemHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'System Health'**
+  String get systemHealth;
+
+  /// No description provided for @totalUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Users'**
+  String get totalUsers;
+
+  /// No description provided for @activeCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Courses'**
+  String get activeCourses;
+
+  /// No description provided for @aiActionsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Actions Today'**
+  String get aiActionsToday;
+
+  /// No description provided for @dailyActiveUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Active Users'**
+  String get dailyActiveUsers;
+
+  /// No description provided for @excellent.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get excellent;
+
+  /// No description provided for @quickAdminActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Admin Actions'**
+  String get quickAdminActions;
+
+  /// No description provided for @addUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Add User'**
+  String get addUser;
+
+  /// No description provided for @addCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Course'**
+  String get addCourse;
+
+  /// No description provided for @announcement.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement'**
+  String get announcement;
+
+  /// No description provided for @assignInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Instructor'**
+  String get assignInstructor;
+
+  /// No description provided for @viewReports.
+  ///
+  /// In en, this message translates to:
+  /// **'View Reports'**
+  String get viewReports;
+
+  /// No description provided for @systemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'System Settings'**
+  String get systemSettings;
+
+  /// No description provided for @message.
+  ///
+  /// In en, this message translates to:
+  /// **'Message'**
+  String get message;
+
+  /// No description provided for @selectInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Select instructor'**
+  String get selectInstructor;
+
+  /// No description provided for @aiSystemInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'AI System Insights'**
+  String get aiSystemInsights;
+
+  /// No description provided for @intelligentMonitoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Intelligent monitoring and anomaly detection'**
+  String get intelligentMonitoring;
+
+  /// No description provided for @reviewAIReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Review AI Report'**
+  String get reviewAIReport;
+
+  /// No description provided for @highFailedLoginAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'High Failed Login Attempts'**
+  String get highFailedLoginAttempts;
+
+  /// No description provided for @failedLoginDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'45 failed login attempts detected from IP 192.168.1.1'**
+  String get failedLoginDescription;
+
+  /// No description provided for @lowCourseEngagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Course Engagement'**
+  String get lowCourseEngagement;
+
+  /// No description provided for @lowEngagementDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'CS101 has dropped below 60% engagement this week'**
+  String get lowEngagementDescription;
+
+  /// No description provided for @missingInstructorResources.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing Instructor Resources'**
+  String get missingInstructorResources;
+
+  /// No description provided for @missingResourcesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'3 courses have no uploaded materials this week'**
+  String get missingResourcesDescription;
+
+  /// No description provided for @unassignedCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassigned'**
+  String get unassignedCourses;
+
+  /// No description provided for @unassignedCoursesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'2 courses have no assigned Teaching Assistants'**
+  String get unassignedCoursesDescription;
+
+  /// No description provided for @aiReport.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Report'**
+  String get aiReport;
+
+  /// No description provided for @performanceWarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Warnings'**
+  String get performanceWarnings;
+
+  /// No description provided for @systemRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'System Recommendations'**
+  String get systemRecommendations;
+
+  /// No description provided for @aiReportSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'AI has analyzed 1,429 system events today and generated insights based on user behavior patterns and system performance metrics.'**
+  String get aiReportSummary;
+
+  /// No description provided for @downloadReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Report'**
+  String get downloadReport;
+
+  /// No description provided for @reportDownloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Report downloaded successfully'**
+  String get reportDownloaded;
+
+  /// No description provided for @resolve.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve'**
+  String get resolve;
+
+  /// No description provided for @alertResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert resolved successfully'**
+  String get alertResolved;
+
+  /// No description provided for @userDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'User Distribution'**
+  String get userDistribution;
+
+  /// No description provided for @total.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get total;
+
+  /// No description provided for @tas.
+  ///
+  /// In en, this message translates to:
+  /// **'TAs'**
+  String get tas;
+
+  /// No description provided for @admins.
+  ///
+  /// In en, this message translates to:
+  /// **'Admins'**
+  String get admins;
+
+  /// No description provided for @serverLoad.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Load'**
+  String get serverLoad;
+
+  /// No description provided for @apiPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'API Performance'**
+  String get apiPerformance;
+
+  /// No description provided for @database.
+  ///
+  /// In en, this message translates to:
+  /// **'Database'**
+  String get database;
+
+  /// No description provided for @aiProcessing.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Processing'**
+  String get aiProcessing;
+
+  /// No description provided for @systemUptime.
+  ///
+  /// In en, this message translates to:
+  /// **'System Uptime'**
+  String get systemUptime;
+
+  /// No description provided for @errorRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Error Rate'**
+  String get errorRate;
+
+  /// No description provided for @createdNewCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'created a new course'**
+  String get createdNewCourse;
+
+  /// No description provided for @updatedSystemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'updated system settings'**
+  String get updatedSystemSettings;
+
+  /// No description provided for @uploadedCourseMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'uploaded course materials'**
+  String get uploadedCourseMaterials;
+
+  /// No description provided for @enrolledInCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'enrolled in a course'**
+  String get enrolledInCourse;
+
+  /// No description provided for @publishedAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'published an announcement'**
+  String get publishedAnnouncement;
+
+  /// No description provided for @performedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'performed an action'**
+  String get performedAction;
+
+  /// No description provided for @searchUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Search users...'**
+  String get searchUsers;
+
+  /// No description provided for @resetPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPassword;
+
+  /// No description provided for @deleteUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete User'**
+  String get deleteUser;
+
+  /// No description provided for @resetPasswordConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Send password reset email to'**
+  String get resetPasswordConfirmation;
+
+  /// No description provided for @deleteUserConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete'**
+  String get deleteUserConfirmation;
+
+  /// No description provided for @userDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'User deleted successfully'**
+  String get userDeleted;
+
+  /// No description provided for @joinedDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined Date'**
+  String get joinedDate;
+
+  /// No description provided for @userId.
+  ///
+  /// In en, this message translates to:
+  /// **'User ID'**
+  String get userId;
+
+  /// No description provided for @noUsersFoundDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No users match your current filters. Try adjusting your search or add a new user.'**
+  String get noUsersFoundDescription;
+
+  /// No description provided for @addNewUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New User'**
+  String get addNewUser;
+
+  /// No description provided for @createAndAssignNewUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Create and assign a new user with role-based options'**
+  String get createAndAssignNewUser;
+
+  /// No description provided for @selectUserType.
+  ///
+  /// In en, this message translates to:
+  /// **'Select User Type'**
+  String get selectUserType;
+
+  /// No description provided for @learnerEnrolledInCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Learner enrolled in courses'**
+  String get learnerEnrolledInCourses;
+
+  /// No description provided for @courseTeacherAndContentCreator.
+  ///
+  /// In en, this message translates to:
+  /// **'Course teacher and content creator'**
+  String get courseTeacherAndContentCreator;
+
+  /// No description provided for @teachingAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching Assistant'**
+  String get teachingAssistant;
+
+  /// No description provided for @labManagerAndGradingAssistant.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab manager and grading assistant'**
+  String get labManagerAndGradingAssistant;
+
+  /// No description provided for @administrator.
+  ///
+  /// In en, this message translates to:
+  /// **'Administrator'**
+  String get administrator;
+
+  /// No description provided for @systemManagerWithFullAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'System manager with full access'**
+  String get systemManagerWithFullAccess;
+
+  /// No description provided for @userInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'User Information'**
+  String get userInformation;
+
+  /// No description provided for @pleaseEnterFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter full name'**
+  String get pleaseEnterFullName;
+
+  /// No description provided for @emailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get emailAddress;
+
+  /// No description provided for @pleaseEnterEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter email'**
+  String get pleaseEnterEmail;
+
+  /// No description provided for @pleaseEnterValidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email'**
+  String get pleaseEnterValidEmail;
+
+  /// No description provided for @initialPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial Password'**
+  String get initialPassword;
+
+  /// No description provided for @pleaseEnterPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter password'**
+  String get pleaseEnterPassword;
+
+  /// No description provided for @autoGenerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-generate'**
+  String get autoGenerate;
+
+  /// No description provided for @passwordsDoNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// No description provided for @studentInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Information'**
+  String get studentInformation;
+
+  /// No description provided for @academicLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic Level'**
+  String get academicLevel;
+
+  /// No description provided for @selectLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select level'**
+  String get selectLevel;
+
+  /// No description provided for @labSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Section'**
+  String get labSection;
+
+  /// No description provided for @selectSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Select section'**
+  String get selectSection;
+
+  /// No description provided for @enrollInCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Enroll in Courses'**
+  String get enrollInCourses;
+
+  /// No description provided for @selectCoursesToEnroll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select courses to enroll this user'**
+  String get selectCoursesToEnroll;
+
+  /// No description provided for @instructorSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Settings'**
+  String get instructorSettings;
+
+  /// No description provided for @requiresAIGradingTasks.
+  ///
+  /// In en, this message translates to:
+  /// **'Requires AI Grading Tasks'**
+  String get requiresAIGradingTasks;
+
+  /// No description provided for @enableAIPoweredGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable AI-powered grading assistance'**
+  String get enableAIPoweredGrading;
+
+  /// No description provided for @userAccessToAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'User Access to Analytics'**
+  String get userAccessToAnalytics;
+
+  /// No description provided for @viewCourseStudentAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'View course and student analytics'**
+  String get viewCourseStudentAnalytics;
+
+  /// No description provided for @teachingAssistantSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching Assistant Settings'**
+  String get teachingAssistantSettings;
+
+  /// No description provided for @administratorSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Administrator Settings'**
+  String get administratorSettings;
+
+  /// No description provided for @adminAccessWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Administrator accounts have full system access. Please ensure proper security training.'**
+  String get adminAccessWarning;
+
+  /// No description provided for @rolePermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Role Permissions'**
+  String get rolePermissions;
+
+  /// No description provided for @viewCourseData.
+  ///
+  /// In en, this message translates to:
+  /// **'View course data'**
+  String get viewCourseData;
+
+  /// No description provided for @accessToCourseInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Access to course information'**
+  String get accessToCourseInformation;
+
+  /// No description provided for @manageCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage courses'**
+  String get manageCourses;
+
+  /// No description provided for @createEditDeleteCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Create, edit, and delete courses'**
+  String get createEditDeleteCourses;
+
+  /// No description provided for @manageUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage users'**
+  String get manageUsers;
+
+  /// No description provided for @addEditRemoveUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Add, edit, and remove users'**
+  String get addEditRemoveUsers;
+
+  /// No description provided for @gradeStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade students'**
+  String get gradeStudents;
+
+  /// No description provided for @submitAndEditGrades.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit and edit grades'**
+  String get submitAndEditGrades;
+
+  /// No description provided for @aiFeaturesAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'AI features access'**
+  String get aiFeaturesAccess;
+
+  /// No description provided for @useAIPoweredTools.
+  ///
+  /// In en, this message translates to:
+  /// **'Use AI-powered tools'**
+  String get useAIPoweredTools;
+
+  /// No description provided for @viewAnalyticsDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'View analytics dashboard'**
+  String get viewAnalyticsDashboard;
+
+  /// No description provided for @accessPerformanceMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Access performance metrics'**
+  String get accessPerformanceMetrics;
+
+  /// No description provided for @sendGlobalAnnouncements.
+  ///
+  /// In en, this message translates to:
+  /// **'Send global announcements'**
+  String get sendGlobalAnnouncements;
+
+  /// No description provided for @broadcastToAllUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Broadcast to all users'**
+  String get broadcastToAllUsers;
+
+  /// No description provided for @aiProfileSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Profile Summary'**
+  String get aiProfileSummary;
+
+  /// No description provided for @selectARoleToSeeAISuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a role to see AI suggestions'**
+  String get selectARoleToSeeAISuggestions;
+
+  /// No description provided for @basedOnRoleSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on role selection:'**
+  String get basedOnRoleSelection;
+
+  /// No description provided for @welcomeEmailRecommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome email recommended'**
+  String get welcomeEmailRecommended;
+
+  /// No description provided for @enrollInIntroductoryCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Enroll in introductory courses'**
+  String get enrollInIntroductoryCourses;
+
+  /// No description provided for @standardRolePermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard role permissions'**
+  String get standardRolePermissions;
+
+  /// No description provided for @courseAssignmentNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Course assignment needed'**
+  String get courseAssignmentNeeded;
+
+  /// No description provided for @giveAccessToAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Give access to analytics'**
+  String get giveAccessToAnalytics;
+
+  /// No description provided for @fullSystemAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Full system access'**
+  String get fullSystemAccess;
+
+  /// No description provided for @securityTrainingRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Security training required'**
+  String get securityTrainingRequired;
+
+  /// No description provided for @twoFactorAuthRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-factor authentication required'**
+  String get twoFactorAuthRequired;
+
+  /// No description provided for @applyAISuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply AI Suggestions'**
+  String get applyAISuggestions;
+
+  /// No description provided for @aiSuggestionsApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'AI suggestions applied successfully'**
+  String get aiSuggestionsApplied;
+
+  /// No description provided for @resetForm.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Form'**
+  String get resetForm;
+
+  /// No description provided for @createUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Create User'**
+  String get createUser;
+
+  /// No description provided for @creating.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating...'**
+  String get creating;
+
+  /// No description provided for @pleaseSelectRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a user role'**
+  String get pleaseSelectRole;
+
+  /// No description provided for @userCreatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'User created successfully'**
+  String get userCreatedSuccessfully;
+
+  /// No description provided for @role.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get role;
+
+  /// No description provided for @department.
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get department;
+
+  /// No description provided for @selectDepartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Select department'**
+  String get selectDepartment;
+
+  /// No description provided for @name.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// No description provided for @rolePermissionsManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Role & Permissions'**
+  String get rolePermissionsManagement;
+
+  /// No description provided for @manageRolesAndPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage roles and access control'**
+  String get manageRolesAndPermissions;
+
+  /// No description provided for @customRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Role'**
+  String get customRole;
+
+  /// No description provided for @managePermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure permissions for this role'**
+  String get managePermissions;
+
+  /// No description provided for @view.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get view;
+
+  /// No description provided for @aiRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Recommendations'**
+  String get aiRecommendations;
+
+  /// No description provided for @basedOnUsagePatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on usage patterns'**
+  String get basedOnUsagePatterns;
+
+  /// No description provided for @recommended.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended'**
+  String get recommended;
+
+  /// No description provided for @aiRecEnableViewLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Lab Access'**
+  String get aiRecEnableViewLabs;
+
+  /// No description provided for @aiRecEnableViewLabsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Students frequently need access to lab materials for their coursework.'**
+  String get aiRecEnableViewLabsDesc;
+
+  /// No description provided for @aiRecEnableAssignments.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment Submission'**
+  String get aiRecEnableAssignments;
+
+  /// No description provided for @aiRecEnableAssignmentsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow students to submit and track their assignments.'**
+  String get aiRecEnableAssignmentsDesc;
+
+  /// No description provided for @aiRecEnableGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Full Grading'**
+  String get aiRecEnableGrading;
+
+  /// No description provided for @aiRecEnableGradingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructors need complete grading access to evaluate student work.'**
+  String get aiRecEnableGradingDesc;
+
+  /// No description provided for @aiRecEnableAI.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable AI Assistant'**
+  String get aiRecEnableAI;
+
+  /// No description provided for @aiRecEnableAIDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'AI tools can help instructors create content and provide feedback.'**
+  String get aiRecEnableAIDesc;
+
+  /// No description provided for @aiRecLimitGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Limited Grading Access'**
+  String get aiRecLimitGrading;
+
+  /// No description provided for @aiRecLimitGradingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'TAs should have grading access limited to assigned sections only.'**
+  String get aiRecLimitGradingDesc;
+
+  /// No description provided for @aiRecReviewAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Access Controls'**
+  String get aiRecReviewAccess;
+
+  /// No description provided for @aiRecReviewAccessDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Ensure admin accounts have proper security and audit logging enabled.'**
+  String get aiRecReviewAccessDesc;
+
+  /// No description provided for @unsavedChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsaved Changes'**
+  String get unsavedChanges;
+
+  /// No description provided for @unsavedChangesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes. Do you want to save before switching?'**
+  String get unsavedChangesDescription;
+
+  /// No description provided for @saveAndSwitch.
+  ///
+  /// In en, this message translates to:
+  /// **'Save & Switch'**
+  String get saveAndSwitch;
+
+  /// No description provided for @unsaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsaved'**
+  String get unsaved;
+
+  /// No description provided for @savingChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving changes...'**
+  String get savingChanges;
+
+  /// No description provided for @permissionsSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions saved successfully'**
+  String get permissionsSaved;
+
+  /// No description provided for @createCustomRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Custom Role'**
+  String get createCustomRole;
+
+  /// No description provided for @roleName.
+  ///
+  /// In en, this message translates to:
+  /// **'Role Name'**
+  String get roleName;
+
+  /// No description provided for @customRoleDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom roles allow you to create specific permission sets for unique use cases.'**
+  String get customRoleDescription;
+
+  /// No description provided for @customRoleCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom role created successfully'**
+  String get customRoleCreated;
+
+  /// No description provided for @aiUserAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'AI User Alerts'**
+  String get aiUserAlerts;
+
+  /// No description provided for @studentsFailingCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'3 students failing multiple courses'**
+  String get studentsFailingCourses;
+
+  /// No description provided for @accountsFlaggedFailedLogins.
+  ///
+  /// In en, this message translates to:
+  /// **'2 accounts flagged for multiple failed logins'**
+  String get accountsFlaggedFailedLogins;
+
+  /// No description provided for @studentsInactiveDays.
+  ///
+  /// In en, this message translates to:
+  /// **'15 students inactive for 30+ days'**
+  String get studentsInactiveDays;
+
+  /// No description provided for @investigate.
+  ///
+  /// In en, this message translates to:
+  /// **'Investigate'**
+  String get investigate;
+
+  /// No description provided for @sendReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reminder'**
+  String get sendReminder;
+
+  /// No description provided for @reviewAllAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Review All Alerts'**
+  String get reviewAllAlerts;
+
+  /// No description provided for @userStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'User Statistics'**
+  String get userStatistics;
+
+  /// No description provided for @activeToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Today'**
+  String get activeToday;
+
+  /// No description provided for @newThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'New This Week'**
+  String get newThisWeek;
+
+  /// No description provided for @flaggedUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Flagged Users'**
+  String get flaggedUsers;
+
+  /// No description provided for @show.
+  ///
+  /// In en, this message translates to:
+  /// **'Show'**
+  String get show;
+
+  /// No description provided for @of_.
+  ///
+  /// In en, this message translates to:
+  /// **'of'**
+  String get of_;
+
+  /// No description provided for @page.
+  ///
+  /// In en, this message translates to:
+  /// **'Page'**
+  String get page;
+
+  /// No description provided for @allRoles.
+  ///
+  /// In en, this message translates to:
+  /// **'All Roles'**
+  String get allRoles;
+
+  /// No description provided for @allStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'All Status'**
+  String get allStatus;
+
+  /// No description provided for @mostInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Inactive'**
+  String get mostInactive;
+
+  /// No description provided for @user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get user;
+
+  /// No description provided for @actions.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get actions;
+
+  /// No description provided for @enable.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable'**
+  String get enable;
+
+  /// No description provided for @needsInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Instructor'**
+  String get needsInstructor;
+
+  /// No description provided for @needsTA.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs TA'**
+  String get needsTA;
+
+  /// No description provided for @aiFlagged.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Flagged'**
+  String get aiFlagged;
+
+  /// No description provided for @labBased.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab-Based'**
+  String get labBased;
+
+  /// No description provided for @notAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Assigned'**
+  String get notAssigned;
+
+  /// No description provided for @avg.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg'**
+  String get avg;
+
+  /// No description provided for @assign.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign'**
+  String get assign;
+
+  /// No description provided for @assignStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Staff'**
+  String get assignStaff;
+
+  /// No description provided for @assignTA.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Teaching Assistant'**
+  String get assignTA;
+
+  /// No description provided for @instructorAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor assigned successfully'**
+  String get instructorAssigned;
+
+  /// No description provided for @taAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching Assistant assigned successfully'**
+  String get taAssigned;
+
+  /// No description provided for @courseUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Course updated successfully'**
+  String get courseUpdated;
+
+  /// No description provided for @courseStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Statistics'**
+  String get courseStatistics;
+
+  /// No description provided for @coursesNoTA.
+  ///
+  /// In en, this message translates to:
+  /// **'courses have no assigned teaching assistants'**
+  String get coursesNoTA;
+
+  /// No description provided for @noCoursesFoundDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No courses match your current filters. Try adjusting your search or add a new course.'**
+  String get noCoursesFoundDescription;
+
+  /// No description provided for @viewingLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing labs for'**
+  String get viewingLabs;
+
+  /// No description provided for @viewingDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing details for'**
+  String get viewingDetails;
+
+  /// No description provided for @allDepartments.
+  ///
+  /// In en, this message translates to:
+  /// **'All Departments'**
+  String get allDepartments;
+
+  /// No description provided for @courseDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Details'**
+  String get courseDetails;
+
+  /// No description provided for @courseNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Advanced Machine Learning'**
+  String get courseNameHint;
+
+  /// No description provided for @courseCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., CS501'**
+  String get courseCodeHint;
+
+  /// No description provided for @semester.
+  ///
+  /// In en, this message translates to:
+  /// **'Semester'**
+  String get semester;
+
+  /// No description provided for @selectSemester.
+  ///
+  /// In en, this message translates to:
+  /// **'Select semester'**
+  String get selectSemester;
+
+  /// No description provided for @courseDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Description'**
+  String get courseDescription;
+
+  /// No description provided for @courseDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the course objectives and content...'**
+  String get courseDescriptionHint;
+
+  /// No description provided for @uploadSyllabus.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Syllabus (PDF)'**
+  String get uploadSyllabus;
+
+  /// No description provided for @dragDropOrClick.
+  ///
+  /// In en, this message translates to:
+  /// **'Drag & drop or click to upload'**
+  String get dragDropOrClick;
+
+  /// No description provided for @pdfMaxSize.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF, max 10MB'**
+  String get pdfMaxSize;
+
+  /// No description provided for @freshman.
+  ///
+  /// In en, this message translates to:
+  /// **'Freshman'**
+  String get freshman;
+
+  /// No description provided for @sophomore.
+  ///
+  /// In en, this message translates to:
+  /// **'Sophomore'**
+  String get sophomore;
+
+  /// No description provided for @junior.
+  ///
+  /// In en, this message translates to:
+  /// **'Junior'**
+  String get junior;
+
+  /// No description provided for @senior.
+  ///
+  /// In en, this message translates to:
+  /// **'Senior'**
+  String get senior;
+
+  /// No description provided for @graduate.
+  ///
+  /// In en, this message translates to:
+  /// **'Graduate'**
+  String get graduate;
+
+  /// No description provided for @fallSemester.
+  ///
+  /// In en, this message translates to:
+  /// **'Fall Semester'**
+  String get fallSemester;
+
+  /// No description provided for @springSemester.
+  ///
+  /// In en, this message translates to:
+  /// **'Spring Semester'**
+  String get springSemester;
+
+  /// No description provided for @summerSemester.
+  ///
+  /// In en, this message translates to:
+  /// **'Summer Semester'**
+  String get summerSemester;
+
+  /// No description provided for @staffAssignment.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff Assignment'**
+  String get staffAssignment;
+
+  /// No description provided for @assignTAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign TAs'**
+  String get assignTAs;
+
+  /// No description provided for @courseSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Settings'**
+  String get courseSettings;
+
+  /// No description provided for @maxStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum Students'**
+  String get maxStudents;
+
+  /// No description provided for @hasLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Has Laboratory Sessions'**
+  String get hasLabs;
+
+  /// No description provided for @labsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable if course includes lab components'**
+  String get labsDescription;
+
+  /// No description provided for @numberOfLabs.
+  ///
+  /// In en, this message translates to:
+  /// **'Number of Labs'**
+  String get numberOfLabs;
+
+  /// No description provided for @courseActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Active'**
+  String get courseActive;
+
+  /// No description provided for @courseInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Inactive'**
+  String get courseInactive;
+
+  /// No description provided for @studentCanEnroll.
+  ///
+  /// In en, this message translates to:
+  /// **'Students can enroll'**
+  String get studentCanEnroll;
+
+  /// No description provided for @enrollmentPaused.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrollment paused'**
+  String get enrollmentPaused;
+
+  /// No description provided for @aiCoursePreview.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Course Preview'**
+  String get aiCoursePreview;
+
+  /// No description provided for @aiAnalyzingCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'AI is analyzing your course setup'**
+  String get aiAnalyzingCourse;
+
+  /// No description provided for @noInstructorAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'No instructor assigned yet'**
+  String get noInstructorAssigned;
+
+  /// No description provided for @noTAAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Consider assigning TAs for better student support'**
+  String get noTAAssigned;
+
+  /// No description provided for @recommendMoreTAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Consider adding more TAs for large class size'**
+  String get recommendMoreTAs;
+
+  /// No description provided for @largeClassSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Consider adding labs for better engagement'**
+  String get largeClassSuggestion;
+
+  /// No description provided for @labCapacityWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab capacity may not accommodate all students'**
+  String get labCapacityWarning;
+
+  /// No description provided for @startFillingForm.
+  ///
+  /// In en, this message translates to:
+  /// **'Start filling the form to see AI preview'**
+  String get startFillingForm;
+
+  /// No description provided for @createNewCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Course'**
+  String get createNewCourse;
+
+  /// No description provided for @fillCourseDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in the course details'**
+  String get fillCourseDetails;
+
+  /// No description provided for @details.
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// No description provided for @staff.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff'**
+  String get staff;
+
+  /// No description provided for @previous.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previous;
+
+  /// No description provided for @courseCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Created!'**
+  String get courseCreatedSuccess;
+
+  /// No description provided for @courseCreatedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your new course has been successfully created and is ready for enrollment.'**
+  String get courseCreatedMessage;
+
+  /// No description provided for @createAnother.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Another'**
+  String get createAnother;
+
+  /// No description provided for @viewCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'View Courses'**
+  String get viewCourses;
+
+  /// No description provided for @syllabusUploaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Syllabus uploaded successfully'**
+  String get syllabusUploaded;
+
+  /// No description provided for @capacity.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity'**
+  String get capacity;
+
+  /// No description provided for @assignInstructorsAndTAs.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Instructors & TAs'**
+  String get assignInstructorsAndTAs;
+
+  /// No description provided for @manageTeachingStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage teaching staff for all active courses'**
+  String get manageTeachingStaff;
+
+  /// No description provided for @instructorOverloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Overloaded'**
+  String get instructorOverloaded;
+
+  /// No description provided for @taOverloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'TA Overloaded'**
+  String get taOverloaded;
+
+  /// No description provided for @coverageMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Coverage Map'**
+  String get coverageMap;
+
+  /// No description provided for @allCoursesAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'All courses have been assigned staff'**
+  String get allCoursesAssigned;
+
+  /// No description provided for @noStudentsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No students enrolled yet'**
+  String get noStudentsYet;
+
+  /// No description provided for @staffAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff Availability'**
+  String get staffAvailability;
+
+  /// No description provided for @workloadAndInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Workload & AI insights'**
+  String get workloadAndInsights;
+
+  /// No description provided for @teachingAssistants.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching Assistants'**
+  String get teachingAssistants;
+
+  /// No description provided for @noStaffAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No staff available'**
+  String get noStaffAvailable;
+
+  /// No description provided for @available.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get available;
+
+  /// No description provided for @atCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'At Capacity'**
+  String get atCapacity;
+
+  /// No description provided for @overloaded.
+  ///
+  /// In en, this message translates to:
+  /// **'Overloaded'**
+  String get overloaded;
+
+  /// No description provided for @onLeave.
+  ///
+  /// In en, this message translates to:
+  /// **'On Leave'**
+  String get onLeave;
+
+  /// No description provided for @smartAssignmentRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart assignment recommendations'**
+  String get smartAssignmentRecommendations;
+
+  /// No description provided for @noSuggestionsNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'All assignments look optimal!'**
+  String get noSuggestionsNeeded;
+
+  /// No description provided for @suggestionApplied.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggestion applied successfully'**
+  String get suggestionApplied;
+
+  /// No description provided for @workload.
+  ///
+  /// In en, this message translates to:
+  /// **'Workload'**
+  String get workload;
+
+  /// No description provided for @cardView.
+  ///
+  /// In en, this message translates to:
+  /// **'Card View'**
+  String get cardView;
+
+  /// No description provided for @noTAs.
+  ///
+  /// In en, this message translates to:
+  /// **'No TAs'**
+  String get noTAs;
+
+  /// No description provided for @departmentsAndPrograms.
+  ///
+  /// In en, this message translates to:
+  /// **'Departments & Programs'**
+  String get departmentsAndPrograms;
+
+  /// No description provided for @organizeAcademicStructures.
+  ///
+  /// In en, this message translates to:
+  /// **'Organize academic structures across the institution'**
+  String get organizeAcademicStructures;
+
+  /// No description provided for @searchDepartments.
+  ///
+  /// In en, this message translates to:
+  /// **'Search departments...'**
+  String get searchDepartments;
+
+  /// No description provided for @allFaculties.
+  ///
+  /// In en, this message translates to:
+  /// **'All Faculties'**
+  String get allFaculties;
+
+  /// No description provided for @understaffed.
+  ///
+  /// In en, this message translates to:
+  /// **'Understaffed'**
+  String get understaffed;
+
+  /// No description provided for @missingCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Missing Courses'**
+  String get missingCourses;
+
+  /// No description provided for @noHeadAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'No Head Assigned'**
+  String get noHeadAssigned;
+
+  /// No description provided for @aiWarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Warnings'**
+  String get aiWarnings;
+
+  /// No description provided for @programs.
+  ///
+  /// In en, this message translates to:
+  /// **'Programs'**
+  String get programs;
+
+  /// No description provided for @departmentHealthMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Department Health Map'**
+  String get departmentHealthMap;
+
+  /// No description provided for @departmentAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Department analytics'**
+  String get departmentAnalytics;
+
+  /// No description provided for @mostActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Most Active'**
+  String get mostActive;
+
+  /// No description provided for @underperforming.
+  ///
+  /// In en, this message translates to:
+  /// **'Underperforming'**
+  String get underperforming;
+
+  /// No description provided for @staffShortage.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff Shortage'**
+  String get staffShortage;
+
+  /// No description provided for @departments.
+  ///
+  /// In en, this message translates to:
+  /// **'departments'**
+  String get departments;
+
+  /// No description provided for @totalDepartments.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Departments'**
+  String get totalDepartments;
+
+  /// No description provided for @totalPrograms.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Programs'**
+  String get totalPrograms;
+
+  /// No description provided for @criticalAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Alerts'**
+  String get criticalAlerts;
+
+  /// No description provided for @addNewDepartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Department'**
+  String get addNewDepartment;
+
+  /// No description provided for @createNewAcademicDepartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new academic department'**
+  String get createNewAcademicDepartment;
+
+  /// No description provided for @departmentName.
+  ///
+  /// In en, this message translates to:
+  /// **'Department Name'**
+  String get departmentName;
+
+  /// No description provided for @enterDepartmentName.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g., Mechanical Engineering'**
+  String get enterDepartmentName;
+
+  /// No description provided for @departmentNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Department name is required'**
+  String get departmentNameRequired;
+
+  /// No description provided for @briefDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Brief description of the department...'**
+  String get briefDescription;
+
+  /// No description provided for @academicLevelsOffered.
+  ///
+  /// In en, this message translates to:
+  /// **'Academic Levels Offered'**
+  String get academicLevelsOffered;
+
+  /// No description provided for @selectDepartmentHead.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Department Head'**
+  String get selectDepartmentHead;
+
+  /// No description provided for @chooseDepartmentHead.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose department head...'**
+  String get chooseDepartmentHead;
+
+  /// No description provided for @uploadDepartmentLogo.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Department Logo'**
+  String get uploadDepartmentLogo;
+
+  /// No description provided for @clickToUploadLogo.
+  ///
+  /// In en, this message translates to:
+  /// **'Click to upload logo'**
+  String get clickToUploadLogo;
+
+  /// No description provided for @createDepartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Department'**
+  String get createDepartment;
+
+  /// No description provided for @departmentCreatedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Department created successfully'**
+  String get departmentCreatedSuccessfully;
+
+  /// No description provided for @departmentHead.
+  ///
+  /// In en, this message translates to:
+  /// **'Head'**
+  String get departmentHead;
+
+  /// No description provided for @faculty.
+  ///
+  /// In en, this message translates to:
+  /// **'Faculty'**
+  String get faculty;
+
+  /// No description provided for @assignHead.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Head'**
+  String get assignHead;
+
+  /// No description provided for @mathLowTACount.
+  ///
+  /// In en, this message translates to:
+  /// **'Mathematics program has low TA count (4 TAs for 280 students)'**
+  String get mathLowTACount;
+
+  /// No description provided for @physicsMissingHead.
+  ///
+  /// In en, this message translates to:
+  /// **'Physics department missing department head assignment'**
+  String get physicsMissingHead;
+
+  /// No description provided for @electricalMissingAI.
+  ///
+  /// In en, this message translates to:
+  /// **'Electrical Engineering missing AI-based evaluation tools'**
+  String get electricalMissingAI;
+
+  /// No description provided for @enableAITools.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable AI Tools'**
+  String get enableAITools;
+
+  /// No description provided for @editing.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing'**
+  String get editing;
+
+  /// No description provided for @assigningHeadTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigning head to'**
+  String get assigningHeadTo;
+
+  /// No description provided for @assigningTAsTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigning TAs to'**
+  String get assigningTAsTo;
+
+  /// No description provided for @actionTriggered.
+  ///
+  /// In en, this message translates to:
+  /// **'Action triggered'**
+  String get actionTriggered;
+
+  /// No description provided for @systemAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'System Analytics & Performance'**
+  String get systemAnalytics;
+
+  /// No description provided for @monitorSystemHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor system health and usage metrics'**
+  String get monitorSystemHealth;
+
+  /// No description provided for @systemHealthOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'System Health Overview'**
+  String get systemHealthOverview;
+
+  /// No description provided for @cpuUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'CPU Usage'**
+  String get cpuUsage;
+
+  /// No description provided for @memoryUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory Usage'**
+  String get memoryUsage;
+
+  /// No description provided for @diskUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Disk Usage'**
+  String get diskUsage;
+
+  /// No description provided for @networkLatency.
+  ///
+  /// In en, this message translates to:
+  /// **'Network Latency'**
+  String get networkLatency;
+
+  /// No description provided for @good.
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get good;
+
+  /// No description provided for @fair.
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get fair;
+
+  /// No description provided for @poor.
+  ///
+  /// In en, this message translates to:
+  /// **'Poor'**
+  String get poor;
+
+  /// No description provided for @keyMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Key Metrics'**
+  String get keyMetrics;
+
+  /// No description provided for @userActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'User Activity'**
+  String get userActivity;
+
+  /// No description provided for @serverStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Status'**
+  String get serverStatus;
+
+  /// No description provided for @recentSystemEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent System Events'**
+  String get recentSystemEvents;
+
+  /// No description provided for @performanceRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance recommendations'**
+  String get performanceRecommendations;
+
+  /// No description provided for @viewDetailedAnalysis.
+  ///
+  /// In en, this message translates to:
+  /// **'View Detailed Analysis'**
+  String get viewDetailedAnalysis;
+
+  /// No description provided for @thisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get thisMonth;
+
+  /// No description provided for @custom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get custom;
+
+  /// No description provided for @viewMore.
+  ///
+  /// In en, this message translates to:
+  /// **'View More'**
+  String get viewMore;
+
+  /// No description provided for @region.
+  ///
+  /// In en, this message translates to:
+  /// **'Region'**
+  String get region;
+
+  /// No description provided for @dataRefreshed.
+  ///
+  /// In en, this message translates to:
+  /// **'Data refreshed successfully'**
+  String get dataRefreshed;
+
+  /// No description provided for @exportingData.
+  ///
+  /// In en, this message translates to:
+  /// **'Exporting data...'**
+  String get exportingData;
+
+  /// No description provided for @viewingMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing more'**
+  String get viewingMore;
+
+  /// No description provided for @securityAndActivityLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Security & Activity Logs'**
+  String get securityAndActivityLogs;
+
+  /// No description provided for @monitorSecurityEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor security events and user activities'**
+  String get monitorSecurityEvents;
+
+  /// No description provided for @searchActivityLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Search activity logs...'**
+  String get searchActivityLogs;
+
+  /// No description provided for @allActivities.
+  ///
+  /// In en, this message translates to:
+  /// **'All Activities'**
+  String get allActivities;
+
+  /// No description provided for @logoutActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout Activity'**
+  String get logoutActivity;
+
+  /// No description provided for @passwordChangeActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Password Change'**
+  String get passwordChangeActivity;
+
+  /// No description provided for @roleChangeActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Role Change'**
+  String get roleChangeActivity;
+
+  /// No description provided for @dataAccessActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Access'**
+  String get dataAccessActivity;
+
+  /// No description provided for @systemChangeActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'System Change'**
+  String get systemChangeActivity;
+
+  /// No description provided for @lastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Week'**
+  String get lastWeek;
+
+  /// No description provided for @lastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Month'**
+  String get lastMonth;
+
+  /// No description provided for @lastThreeMonths.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 3 Months'**
+  String get lastThreeMonths;
+
+  /// No description provided for @totalEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Events'**
+  String get totalEvents;
+
+  /// No description provided for @failedLogins.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed Logins'**
+  String get failedLogins;
+
+  /// No description provided for @activeSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Sessions'**
+  String get activeSessions;
+
+  /// No description provided for @activityLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Logs'**
+  String get activityLogs;
+
+  /// No description provided for @timestamp.
+  ///
+  /// In en, this message translates to:
+  /// **'Timestamp'**
+  String get timestamp;
+
+  /// No description provided for @activityType.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Type'**
+  String get activityType;
+
+  /// No description provided for @ipAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'IP Address'**
+  String get ipAddress;
+
+  /// No description provided for @statusColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get statusColumn;
+
+  /// No description provided for @noLogsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity logs found'**
+  String get noLogsFound;
+
+  /// No description provided for @login.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// No description provided for @info.
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get info;
+
+  /// No description provided for @critical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get critical;
+
+  /// No description provided for @noActiveAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'No active security alerts'**
+  String get noActiveAlerts;
+
+  /// No description provided for @resolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get resolved;
+
+  /// No description provided for @activityDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Details'**
+  String get activityDetails;
+
+  /// No description provided for @viewingTotalEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing total events details'**
+  String get viewingTotalEvents;
+
+  /// No description provided for @viewingFailedLogins.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing failed login attempts'**
+  String get viewingFailedLogins;
+
+  /// No description provided for @viewingSecurityAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing security alerts'**
+  String get viewingSecurityAlerts;
+
+  /// No description provided for @viewingActiveSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing active sessions'**
+  String get viewingActiveSessions;
+
+  /// No description provided for @exportingLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Exporting activity logs...'**
+  String get exportingLogs;
+
+  /// No description provided for @openingSecuritySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening security settings...'**
+  String get openingSecuritySettings;
+
+  /// No description provided for @exportLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Logs'**
+  String get exportLogs;
+
+  /// No description provided for @securitySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Settings'**
+  String get securitySettings;
+
+  /// No description provided for @recentSecurityAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Security Alerts'**
+  String get recentSecurityAlerts;
+
+  /// No description provided for @loginActivityChart.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Activity'**
+  String get loginActivityChart;
 }
 
 class _AppLocalizationsDelegate

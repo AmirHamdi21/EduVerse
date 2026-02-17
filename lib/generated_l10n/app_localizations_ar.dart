@@ -75,7 +75,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get signUp => 'إنشاء حساب';
 
   @override
-  String get logout => 'تسجيل الخروج';
+  String get logout => 'تسجيل خروج';
 
   @override
   String get profile => 'الملف الشخصي';
@@ -153,7 +153,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invalidEmail => 'عنوان بريد إلكتروني غير صالح';
 
   @override
-  String get passwordTooShort => 'يجب أن تكون كلمة المرور 6 أحرف على الأقل';
+  String get passwordTooShort => 'يجب أن تكون كلمة المرور 8 أحرف على الأقل';
 
   @override
   String get passwordMismatch => 'كلمات المرور غير متطابقة';
@@ -219,16 +219,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get selectRole => 'اختر الدور';
 
   @override
-  String get student => 'الطالب';
+  String get student => 'طالب';
 
   @override
-  String get instructor => 'المدرس';
+  String get instructor => 'مدرس';
 
   @override
-  String get ta => 'مساعد التدريس';
+  String get ta => 'معيد';
 
   @override
-  String get admin => 'المسؤول';
+  String get admin => 'مسؤول';
 
   @override
   String get forgotPasswordTitle => 'هل نسيت كلمة المرور؟';
@@ -244,8 +244,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backToLogin => 'العودة إلى تسجيل الدخول';
 
   @override
-  String get passwordResetSent =>
-      'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني';
+  String get passwordResetSent => 'تم إرسال بريد إعادة تعيين كلمة المرور بنجاح';
 
   @override
   String get enterVerificationCode => 'أدخل رمز التحقق';
@@ -297,7 +296,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'تم اكتشاف دورك تلقائياً بناءً على بريدك الإلكتروني المُتحقق منه — سيقوم EduVerse بتخصيص لوحة المعلومات الخاصة بك وفقاً لذلك.';
 
   @override
-  String get studentRole => 'الطالب';
+  String get studentRole => 'طالب';
 
   @override
   String get studentFeature1 => 'التعلم الشخصي والبطاقات الذاكرة';
@@ -312,7 +311,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get studentTagline => 'تعلم بذكاء مع EduVerse AI.';
 
   @override
-  String get instructorRole => 'المدرس';
+  String get instructorRole => 'محاضر';
 
   @override
   String get instructorFeature1 =>
@@ -328,7 +327,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get instructorTagline => 'التدريس بكفاءة مع الدعم الذكي.';
 
   @override
-  String get adminRole => 'المسؤول';
+  String get adminRole => 'مدير';
 
   @override
   String get adminFeature1 => 'تحليلات وتقارير في جميع أنحاء EduVerse';
@@ -477,7 +476,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get performanceInsights => 'رؤى الأداء';
 
   @override
-  String get courses => 'المواد';
+  String get courses => 'المقررات';
 
   @override
   String get aiQuiz => 'اختبار الذكاء الاصطناعي';
@@ -607,7 +606,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get lectures => 'محاضرات';
 
   @override
-  String get labs => 'المختبرات';
+  String get labs => 'المعامل';
 
   @override
   String get completed => 'مكتمل';
@@ -981,10 +980,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get swipeSensitivityDesc => 'ضبط مسافة السحب المطلوبة';
 
   @override
-  String get low => 'منخفضة';
+  String get low => 'منخفض';
 
   @override
-  String get high => 'عالية';
+  String get high => 'عالي';
 
   @override
   String get sampleNotificationTitle => 'إشعار تجريبي';
@@ -1020,7 +1019,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get todayTasks => 'اليوم';
 
   @override
-  String get pending => 'قيد الانتظار';
+  String get pending => 'معلق';
 
   @override
   String get overdue => 'متأخر';
@@ -1072,7 +1071,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get createdAt => 'تاريخ الإنشاء';
 
   @override
-  String get listView => 'قائمة';
+  String get listView => 'عرض القائمة';
 
   @override
   String get calendarView => 'تقويم';
@@ -1224,7 +1223,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get credits => 'الساعات';
 
   @override
-  String get searchCourses => 'البحث في المقررات...';
+  String get searchCourses => 'البحث عن المقررات بالاسم أو الكود...';
 
   @override
   String get allSemesters => 'جميع الفصول';
@@ -1236,7 +1235,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get needsAttention => 'يحتاج اهتمام';
 
   @override
-  String get noCoursesFound => 'لم يتم العثور على مواد';
+  String get noCoursesFound => 'لم يتم العثور على مقررات';
 
   @override
   String get tryAdjustingFilters => 'حاول تعديل الفلاتر أو مصطلحات البحث';
@@ -2052,7 +2051,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get compare => 'قارن';
 
   @override
-  String get users => 'مستخدمين';
+  String get users => 'المستخدمون';
 
   @override
   String get progressComparison => 'مقارنة التقدم';
@@ -2335,7 +2334,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get suggestedContacts => 'جهات الاتصال المقترحة';
 
   @override
-  String get noUsersFound => 'لم يتم العثور على مستخدمين';
+  String get noUsersFound => 'لا يوجد مستخدمون';
 
   @override
   String get online => 'متصل';
@@ -2473,7 +2472,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chatNoneDesc => 'لا إجراء في هذا الاتجاه';
 
   @override
-  String get none => 'لا شيء';
+  String get none => 'لا يوجد';
 
   @override
   String get aiNotesSummaries => 'الملاحظات والملخصات الذكية';
@@ -2607,7 +2606,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get retry => 'إعادة المحاولة';
 
   @override
-  String get dismiss => 'تجاهل';
+  String get dismiss => 'رفض';
 
   @override
   String get generateNotes => 'إنشاء ملاحظات';
@@ -2814,13 +2813,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get activeNow => 'نشط الآن';
 
   @override
-  String minutesAgo(int count) {
-    return 'منذ $count دقيقة';
+  String minutesAgo(int minutes) {
+    return 'منذ $minutes دقيقة';
   }
 
   @override
-  String hoursAgo(int count) {
-    return 'منذ $count ساعة';
+  String hoursAgo(int hours) {
+    return 'منذ $hours ساعة';
   }
 
   @override
@@ -3337,7 +3336,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'إلغاء المصادقة الثنائية سيجعل حسابك أقل أماناً. هل أنت متأكد؟';
 
   @override
-  String get disable => 'إلغاء';
+  String get disable => 'تعطيل';
 
   @override
   String get twoFactorDisabled => 'تم إلغاء المصادقة الثنائية';
@@ -4440,22 +4439,22 @@ class AppLocalizationsAr extends AppLocalizations {
   String get students => 'الطلاب';
 
   @override
-  String get courseCode => 'رمز المادة';
+  String get courseCode => 'كود المقرر';
 
   @override
-  String get courseName => 'اسم المادة';
+  String get courseName => 'اسم المقرر';
 
   @override
   String get enterCourseName => 'أدخل اسم المادة';
 
   @override
-  String get courseCreated => 'تم إنشاء المادة بنجاح';
+  String get courseCreated => 'تم إنشاء المقرر بنجاح';
 
   @override
-  String get createCourse => 'إنشاء مادة';
+  String get createCourse => 'إنشاء المقرر';
 
   @override
-  String get editCourse => 'تعديل المادة';
+  String get editCourse => 'تعديل المقرر';
 
   @override
   String get manageStudents => 'إدارة الطلاب';
@@ -4977,7 +4976,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get draftSaved => 'تم حفظ المسودة بنجاح';
 
   @override
-  String get fillRequiredFields => 'يرجى ملء الحقول المطلوبة';
+  String get fillRequiredFields => 'يرجى ملء جميع الحقول المطلوبة';
 
   @override
   String get lab => 'معمل';
@@ -7267,7 +7266,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get taNewDiscussions => 'مناقشات جديدة';
 
   @override
-  String get discussions => 'المناقشات';
+  String get discussions => 'النقاشات';
 
   @override
   String get meetings => 'الاجتماعات';
@@ -7382,4 +7381,1143 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get startingVoiceCall => 'جاري بدء مكالمة صوتية...';
+
+  @override
+  String get uptime => 'وقت التشغيل';
+
+  @override
+  String get userManagement => 'إدارة المستخدمين';
+
+  @override
+  String get courseManagement => 'إدارة المقررات';
+
+  @override
+  String get reportsAnalytics => 'التقارير والتحليلات';
+
+  @override
+  String get systemHealth => 'صحة النظام';
+
+  @override
+  String get totalUsers => 'إجمالي المستخدمين';
+
+  @override
+  String get activeCourses => 'المقررات النشطة';
+
+  @override
+  String get aiActionsToday => 'إجراءات الذكاء الاصطناعي اليوم';
+
+  @override
+  String get dailyActiveUsers => 'المستخدمون النشطون يومياً';
+
+  @override
+  String get excellent => 'ممتاز';
+
+  @override
+  String get quickAdminActions => 'إجراءات المسؤول السريعة';
+
+  @override
+  String get addUser => 'إضافة مستخدم';
+
+  @override
+  String get addCourse => 'إضافة مقرر';
+
+  @override
+  String get announcement => 'إعلان';
+
+  @override
+  String get assignInstructor => 'تعيين المدرس';
+
+  @override
+  String get viewReports => 'عرض التقارير';
+
+  @override
+  String get systemSettings => 'إعدادات النظام';
+
+  @override
+  String get message => 'الرسالة';
+
+  @override
+  String get selectInstructor => 'اختر المدرس';
+
+  @override
+  String get aiSystemInsights => 'رؤى نظام الذكاء الاصطناعي';
+
+  @override
+  String get intelligentMonitoring => 'المراقبة الذكية واكتشاف الشذوذ';
+
+  @override
+  String get reviewAIReport => 'مراجعة تقرير الذكاء الاصطناعي';
+
+  @override
+  String get highFailedLoginAttempts => 'محاولات تسجيل دخول فاشلة عالية';
+
+  @override
+  String get failedLoginDescription =>
+      'تم اكتشاف 45 محاولة تسجيل دخول فاشلة من IP 192.168.1.1';
+
+  @override
+  String get lowCourseEngagement => 'انخفاض التفاعل مع المقرر';
+
+  @override
+  String get lowEngagementDescription =>
+      'انخفض تفاعل CS101 إلى أقل من 60% هذا الأسبوع';
+
+  @override
+  String get missingInstructorResources => 'موارد المدرس مفقودة';
+
+  @override
+  String get missingResourcesDescription =>
+      '3 مقررات ليس لديها مواد محملة هذا الأسبوع';
+
+  @override
+  String get unassignedCourses => 'غير معينة';
+
+  @override
+  String get unassignedCoursesDescription => 'مقرران ليس لديهما معيدون معينون';
+
+  @override
+  String get aiReport => 'تقرير الذكاء الاصطناعي';
+
+  @override
+  String get performanceWarnings => 'تحذيرات الأداء';
+
+  @override
+  String get systemRecommendations => 'توصيات النظام';
+
+  @override
+  String get aiReportSummary =>
+      'حلل الذكاء الاصطناعي 1,429 حدث نظام اليوم وأنشأ رؤى بناءً على أنماط سلوك المستخدم ومقاييس أداء النظام.';
+
+  @override
+  String get downloadReport => 'تحميل التقرير';
+
+  @override
+  String get reportDownloaded => 'تم تحميل التقرير بنجاح';
+
+  @override
+  String get resolve => 'حل';
+
+  @override
+  String get alertResolved => 'تم حل التنبيه بنجاح';
+
+  @override
+  String get userDistribution => 'توزيع المستخدمين';
+
+  @override
+  String get total => 'الإجمالي';
+
+  @override
+  String get tas => 'المعيدين';
+
+  @override
+  String get admins => 'المسؤولون';
+
+  @override
+  String get serverLoad => 'حمل الخادم';
+
+  @override
+  String get apiPerformance => 'أداء API';
+
+  @override
+  String get database => 'قاعدة البيانات';
+
+  @override
+  String get aiProcessing => 'معالجة الذكاء الاصطناعي';
+
+  @override
+  String get systemUptime => 'وقت تشغيل النظام';
+
+  @override
+  String get errorRate => 'معدل الخطأ';
+
+  @override
+  String get createdNewCourse => 'أنشأ مقرراً جديداً';
+
+  @override
+  String get updatedSystemSettings => 'حدث إعدادات النظام';
+
+  @override
+  String get uploadedCourseMaterials => 'رفع مواد المقرر';
+
+  @override
+  String get enrolledInCourse => 'سجل في مقرر';
+
+  @override
+  String get publishedAnnouncement => 'نشر إعلاناً';
+
+  @override
+  String get performedAction => 'قام بإجراء';
+
+  @override
+  String get searchUsers => 'البحث عن المستخدمين...';
+
+  @override
+  String get resetPassword => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get deleteUser => 'حذف المستخدم';
+
+  @override
+  String get resetPasswordConfirmation =>
+      'إرسال بريد إعادة تعيين كلمة المرور إلى';
+
+  @override
+  String get deleteUserConfirmation => 'هل أنت متأكد من حذف';
+
+  @override
+  String get userDeleted => 'تم حذف المستخدم بنجاح';
+
+  @override
+  String get joinedDate => 'تاريخ الانضمام';
+
+  @override
+  String get userId => 'معرف المستخدم';
+
+  @override
+  String get noUsersFoundDescription =>
+      'لا يوجد مستخدمون مطابقون للفلاتر الحالية. حاول تعديل البحث أو إضافة مستخدم جديد.';
+
+  @override
+  String get addNewUser => 'إضافة مستخدم جديد';
+
+  @override
+  String get createAndAssignNewUser =>
+      'إنشاء وتعيين مستخدم جديد مع خيارات الأدوار';
+
+  @override
+  String get selectUserType => 'اختر نوع المستخدم';
+
+  @override
+  String get learnerEnrolledInCourses => 'متعلم مسجل في المقررات';
+
+  @override
+  String get courseTeacherAndContentCreator => 'مدرس ومنشئ محتوى';
+
+  @override
+  String get teachingAssistant => 'معيد';
+
+  @override
+  String get labManagerAndGradingAssistant => 'مدير المختبر ومساعد التصحيح';
+
+  @override
+  String get administrator => 'مسؤول';
+
+  @override
+  String get systemManagerWithFullAccess => 'مدير النظام بصلاحيات كاملة';
+
+  @override
+  String get userInformation => 'معلومات المستخدم';
+
+  @override
+  String get pleaseEnterFullName => 'الرجاء إدخال الاسم الكامل';
+
+  @override
+  String get emailAddress => 'البريد الإلكتروني';
+
+  @override
+  String get pleaseEnterEmail => 'الرجاء إدخال البريد الإلكتروني';
+
+  @override
+  String get pleaseEnterValidEmail => 'الرجاء إدخال بريد إلكتروني صالح';
+
+  @override
+  String get initialPassword => 'كلمة المرور الأولية';
+
+  @override
+  String get pleaseEnterPassword => 'الرجاء إدخال كلمة المرور';
+
+  @override
+  String get autoGenerate => 'إنشاء تلقائي';
+
+  @override
+  String get passwordsDoNotMatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get studentInformation => 'معلومات الطالب';
+
+  @override
+  String get academicLevel => 'المستوى الأكاديمي';
+
+  @override
+  String get selectLevel => 'اختر المستوى';
+
+  @override
+  String get labSection => 'قسم المختبر';
+
+  @override
+  String get selectSection => 'اختر القسم';
+
+  @override
+  String get enrollInCourses => 'التسجيل في المقررات';
+
+  @override
+  String get selectCoursesToEnroll => 'اختر المقررات لتسجيل هذا المستخدم';
+
+  @override
+  String get instructorSettings => 'إعدادات المدرس';
+
+  @override
+  String get requiresAIGradingTasks => 'يتطلب مهام تصحيح الذكاء الاصطناعي';
+
+  @override
+  String get enableAIPoweredGrading => 'تمكين مساعدة التصحيح بالذكاء الاصطناعي';
+
+  @override
+  String get userAccessToAnalytics => 'وصول المستخدم للتحليلات';
+
+  @override
+  String get viewCourseStudentAnalytics => 'عرض تحليلات المقررات والطلاب';
+
+  @override
+  String get teachingAssistantSettings => 'إعدادات المعيد';
+
+  @override
+  String get administratorSettings => 'إعدادات المسؤول';
+
+  @override
+  String get adminAccessWarning =>
+      'حسابات المسؤولين لديها صلاحية كاملة للنظام. يرجى التأكد من التدريب الأمني المناسب.';
+
+  @override
+  String get rolePermissions => 'صلاحيات الدور';
+
+  @override
+  String get viewCourseData => 'عرض بيانات المقرر';
+
+  @override
+  String get accessToCourseInformation => 'الوصول إلى معلومات المقرر';
+
+  @override
+  String get manageCourses => 'إدارة المقررات';
+
+  @override
+  String get createEditDeleteCourses => 'إنشاء وتعديل وحذف المقررات';
+
+  @override
+  String get manageUsers => 'إدارة المستخدمين';
+
+  @override
+  String get addEditRemoveUsers => 'إضافة وتعديل وإزالة المستخدمين';
+
+  @override
+  String get gradeStudents => 'تقييم الطلاب';
+
+  @override
+  String get submitAndEditGrades => 'تقديم وتعديل الدرجات';
+
+  @override
+  String get aiFeaturesAccess => 'الوصول لميزات الذكاء الاصطناعي';
+
+  @override
+  String get useAIPoweredTools => 'استخدام أدوات الذكاء الاصطناعي';
+
+  @override
+  String get viewAnalyticsDashboard => 'عرض لوحة التحليلات';
+
+  @override
+  String get accessPerformanceMetrics => 'الوصول لمقاييس الأداء';
+
+  @override
+  String get sendGlobalAnnouncements => 'إرسال إعلانات عامة';
+
+  @override
+  String get broadcastToAllUsers => 'البث لجميع المستخدمين';
+
+  @override
+  String get aiProfileSummary => 'ملخص الذكاء الاصطناعي للملف';
+
+  @override
+  String get selectARoleToSeeAISuggestions =>
+      'اختر دوراً لرؤية اقتراحات الذكاء الاصطناعي';
+
+  @override
+  String get basedOnRoleSelection => 'بناءً على اختيار الدور:';
+
+  @override
+  String get welcomeEmailRecommended => 'يُنصح ببريد ترحيبي';
+
+  @override
+  String get enrollInIntroductoryCourses => 'التسجيل في المقررات التمهيدية';
+
+  @override
+  String get standardRolePermissions => 'صلاحيات الدور القياسية';
+
+  @override
+  String get courseAssignmentNeeded => 'مطلوب تعيين مقرر';
+
+  @override
+  String get giveAccessToAnalytics => 'إعطاء الوصول للتحليلات';
+
+  @override
+  String get fullSystemAccess => 'وصول كامل للنظام';
+
+  @override
+  String get securityTrainingRequired => 'مطلوب تدريب أمني';
+
+  @override
+  String get twoFactorAuthRequired => 'مطلوب المصادقة الثنائية';
+
+  @override
+  String get applyAISuggestions => 'تطبيق اقتراحات الذكاء الاصطناعي';
+
+  @override
+  String get aiSuggestionsApplied => 'تم تطبيق اقتراحات الذكاء الاصطناعي بنجاح';
+
+  @override
+  String get resetForm => 'إعادة تعيين النموذج';
+
+  @override
+  String get createUser => 'إنشاء مستخدم';
+
+  @override
+  String get creating => 'جاري الإنشاء...';
+
+  @override
+  String get pleaseSelectRole => 'الرجاء اختيار دور المستخدم';
+
+  @override
+  String get userCreatedSuccessfully => 'تم إنشاء المستخدم بنجاح';
+
+  @override
+  String get role => 'الدور';
+
+  @override
+  String get department => 'القسم';
+
+  @override
+  String get selectDepartment => 'اختر القسم';
+
+  @override
+  String get name => 'الاسم';
+
+  @override
+  String get rolePermissionsManagement => 'الأدوار والصلاحيات';
+
+  @override
+  String get manageRolesAndPermissions => 'إدارة الأدوار والتحكم بالوصول';
+
+  @override
+  String get customRole => 'دور مخصص';
+
+  @override
+  String get managePermissions => 'تكوين الصلاحيات لهذا الدور';
+
+  @override
+  String get view => 'عرض';
+
+  @override
+  String get aiRecommendations => 'توصيات الذكاء الاصطناعي';
+
+  @override
+  String get basedOnUsagePatterns => 'بناءً على أنماط الاستخدام';
+
+  @override
+  String get recommended => 'موصى به';
+
+  @override
+  String get aiRecEnableViewLabs => 'تفعيل الوصول للمعامل';
+
+  @override
+  String get aiRecEnableViewLabsDesc =>
+      'يحتاج الطلاب في كثير من الأحيان للوصول إلى مواد المعمل لأعمالهم الدراسية.';
+
+  @override
+  String get aiRecEnableAssignments => 'تسليم الواجبات';
+
+  @override
+  String get aiRecEnableAssignmentsDesc =>
+      'السماح للطلاب بتسليم وتتبع واجباتهم.';
+
+  @override
+  String get aiRecEnableGrading => 'تفعيل التقييم الكامل';
+
+  @override
+  String get aiRecEnableGradingDesc =>
+      'يحتاج المدرسون لوصول كامل للتقييم لتقييم عمل الطلاب.';
+
+  @override
+  String get aiRecEnableAI => 'تفعيل مساعد الذكاء الاصطناعي';
+
+  @override
+  String get aiRecEnableAIDesc =>
+      'يمكن لأدوات الذكاء الاصطناعي مساعدة المدرسين في إنشاء المحتوى وتقديم الملاحظات.';
+
+  @override
+  String get aiRecLimitGrading => 'وصول تقييم محدود';
+
+  @override
+  String get aiRecLimitGradingDesc =>
+      'يجب أن يكون وصول المعيدين للتقييم محدوداً على الأقسام المعينة فقط.';
+
+  @override
+  String get aiRecReviewAccess => 'مراجعة ضوابط الوصول';
+
+  @override
+  String get aiRecReviewAccessDesc =>
+      'تأكد من أن حسابات المسؤولين لديها الأمان المناسب وتسجيل التدقيق مفعل.';
+
+  @override
+  String get unsavedChanges => 'تغييرات غير محفوظة';
+
+  @override
+  String get unsavedChangesDescription =>
+      'لديك تغييرات غير محفوظة. هل تريد الحفظ قبل التبديل؟';
+
+  @override
+  String get saveAndSwitch => 'حفظ والتبديل';
+
+  @override
+  String get unsaved => 'غير محفوظ';
+
+  @override
+  String get savingChanges => 'جارٍ حفظ التغييرات...';
+
+  @override
+  String get permissionsSaved => 'تم حفظ الصلاحيات بنجاح';
+
+  @override
+  String get createCustomRole => 'إنشاء دور مخصص';
+
+  @override
+  String get roleName => 'اسم الدور';
+
+  @override
+  String get customRoleDescription =>
+      'تسمح الأدوار المخصصة بإنشاء مجموعات صلاحيات محددة لحالات الاستخدام الفريدة.';
+
+  @override
+  String get customRoleCreated => 'تم إنشاء الدور المخصص بنجاح';
+
+  @override
+  String get aiUserAlerts => 'تنبيهات المستخدمين بالذكاء الاصطناعي';
+
+  @override
+  String get studentsFailingCourses => '٣ طلاب يرسبون في مقررات متعددة';
+
+  @override
+  String get accountsFlaggedFailedLogins =>
+      '٢ حسابات مُعلمة لمحاولات دخول فاشلة متعددة';
+
+  @override
+  String get studentsInactiveDays => '١٥ طالب غير نشط لأكثر من ٣٠ يوم';
+
+  @override
+  String get investigate => 'تحقيق';
+
+  @override
+  String get sendReminder => 'إرسال تذكير';
+
+  @override
+  String get reviewAllAlerts => 'مراجعة جميع التنبيهات';
+
+  @override
+  String get userStatistics => 'إحصائيات المستخدمين';
+
+  @override
+  String get activeToday => 'نشط اليوم';
+
+  @override
+  String get newThisWeek => 'جديد هذا الأسبوع';
+
+  @override
+  String get flaggedUsers => 'مستخدمون مُعلمون';
+
+  @override
+  String get show => 'إظهار';
+
+  @override
+  String get of_ => 'من';
+
+  @override
+  String get page => 'صفحة';
+
+  @override
+  String get allRoles => 'جميع الأدوار';
+
+  @override
+  String get allStatus => 'جميع الحالات';
+
+  @override
+  String get mostInactive => 'الأكثر عدم نشاط';
+
+  @override
+  String get user => 'المستخدم';
+
+  @override
+  String get actions => 'إجراءات';
+
+  @override
+  String get enable => 'تفعيل';
+
+  @override
+  String get needsInstructor => 'يحتاج مدرس';
+
+  @override
+  String get needsTA => 'يحتاج معيد';
+
+  @override
+  String get aiFlagged => 'مُعلم بالذكاء';
+
+  @override
+  String get labBased => 'معمل';
+
+  @override
+  String get notAssigned => 'غير معين';
+
+  @override
+  String get avg => 'متوسط';
+
+  @override
+  String get assign => 'تعيين';
+
+  @override
+  String get assignStaff => 'تعيين الطاقم';
+
+  @override
+  String get assignTA => 'تعيين معيد';
+
+  @override
+  String get instructorAssigned => 'تم تعيين المدرس بنجاح';
+
+  @override
+  String get taAssigned => 'تم تعيين المعيد بنجاح';
+
+  @override
+  String get courseUpdated => 'تم تحديث المقرر بنجاح';
+
+  @override
+  String get courseStatistics => 'إحصائيات المقررات';
+
+  @override
+  String get coursesNoTA => 'مقرر ليس لديه معيد معين';
+
+  @override
+  String get noCoursesFoundDescription =>
+      'لا توجد مقررات تطابق الفلاتر الحالية. حاول تعديل البحث أو أضف مقرر جديد.';
+
+  @override
+  String get viewingLabs => 'عرض المعامل لـ';
+
+  @override
+  String get viewingDetails => 'عرض التفاصيل لـ';
+
+  @override
+  String get allDepartments => 'جميع الأقسام';
+
+  @override
+  String get courseDetails => 'تفاصيل المقرر';
+
+  @override
+  String get courseNameHint => 'مثال: التعلم الآلي المتقدم';
+
+  @override
+  String get courseCodeHint => 'مثال: CS501';
+
+  @override
+  String get semester => 'الفصل الدراسي';
+
+  @override
+  String get selectSemester => 'اختر الفصل الدراسي';
+
+  @override
+  String get courseDescription => 'وصف المقرر';
+
+  @override
+  String get courseDescriptionHint => 'صف أهداف ومحتوى المقرر...';
+
+  @override
+  String get uploadSyllabus => 'رفع المنهج (PDF)';
+
+  @override
+  String get dragDropOrClick => 'اسحب وأفلت أو انقر للرفع';
+
+  @override
+  String get pdfMaxSize => 'PDF، الحد الأقصى 10 ميجابايت';
+
+  @override
+  String get freshman => 'السنة الأولى';
+
+  @override
+  String get sophomore => 'السنة الثانية';
+
+  @override
+  String get junior => 'السنة الثالثة';
+
+  @override
+  String get senior => 'السنة الرابعة';
+
+  @override
+  String get graduate => 'دراسات عليا';
+
+  @override
+  String get fallSemester => 'الفصل الخريفي';
+
+  @override
+  String get springSemester => 'الفصل الربيعي';
+
+  @override
+  String get summerSemester => 'الفصل الصيفي';
+
+  @override
+  String get staffAssignment => 'تعيين الطاقم';
+
+  @override
+  String get assignTAs => 'تعيين معيدين';
+
+  @override
+  String get courseSettings => 'إعدادات المقرر';
+
+  @override
+  String get maxStudents => 'الحد الأقصى للطلاب';
+
+  @override
+  String get hasLabs => 'يحتوي على معامل';
+
+  @override
+  String get labsDescription => 'فعّل إذا كان المقرر يتضمن معامل';
+
+  @override
+  String get numberOfLabs => 'عدد المعامل';
+
+  @override
+  String get courseActive => 'المقرر نشط';
+
+  @override
+  String get courseInactive => 'المقرر غير نشط';
+
+  @override
+  String get studentCanEnroll => 'يمكن للطلاب التسجيل';
+
+  @override
+  String get enrollmentPaused => 'التسجيل متوقف';
+
+  @override
+  String get aiCoursePreview => 'معاينة الذكاء الاصطناعي';
+
+  @override
+  String get aiAnalyzingCourse => 'الذكاء الاصطناعي يحلل إعداد المقرر';
+
+  @override
+  String get noInstructorAssigned => 'لم يتم تعيين مدرس بعد';
+
+  @override
+  String get noTAAssigned => 'فكر في تعيين معيدين لدعم أفضل للطلاب';
+
+  @override
+  String get recommendMoreTAs => 'فكر في إضافة معيدين للفصول الكبيرة';
+
+  @override
+  String get largeClassSuggestion => 'فكر في إضافة معامل لتفاعل أفضل';
+
+  @override
+  String get labCapacityWarning => 'سعة المعمل قد لا تستوعب جميع الطلاب';
+
+  @override
+  String get startFillingForm => 'ابدأ بملء النموذج لرؤية المعاينة';
+
+  @override
+  String get createNewCourse => 'إنشاء مقرر جديد';
+
+  @override
+  String get fillCourseDetails => 'املأ تفاصيل المقرر';
+
+  @override
+  String get details => 'التفاصيل';
+
+  @override
+  String get staff => 'الطاقم';
+
+  @override
+  String get previous => 'السابق';
+
+  @override
+  String get courseCreatedSuccess => 'تم إنشاء المقرر!';
+
+  @override
+  String get courseCreatedMessage =>
+      'تم إنشاء المقرر الجديد بنجاح وهو جاهز للتسجيل.';
+
+  @override
+  String get createAnother => 'إنشاء آخر';
+
+  @override
+  String get viewCourses => 'عرض المقررات';
+
+  @override
+  String get syllabusUploaded => 'تم رفع المنهج بنجاح';
+
+  @override
+  String get capacity => 'السعة';
+
+  @override
+  String get assignInstructorsAndTAs => 'تعيين المدرسين والمعيدين';
+
+  @override
+  String get manageTeachingStaff => 'إدارة طاقم التدريس لجميع المقررات النشطة';
+
+  @override
+  String get instructorOverloaded => 'مدرس مثقل';
+
+  @override
+  String get taOverloaded => 'معيد مثقل';
+
+  @override
+  String get coverageMap => 'خريطة التغطية';
+
+  @override
+  String get allCoursesAssigned => 'تم تعيين طاقم لجميع المقررات';
+
+  @override
+  String get noStudentsYet => 'لا يوجد طلاب مسجلين بعد';
+
+  @override
+  String get staffAvailability => 'توفر الطاقم';
+
+  @override
+  String get workloadAndInsights => 'عبء العمل ورؤى الذكاء الاصطناعي';
+
+  @override
+  String get teachingAssistants => 'المعيدين';
+
+  @override
+  String get noStaffAvailable => 'لا يوجد طاقم متاح';
+
+  @override
+  String get available => 'متاح';
+
+  @override
+  String get atCapacity => 'بالحد الأقصى';
+
+  @override
+  String get overloaded => 'مثقل';
+
+  @override
+  String get onLeave => 'في إجازة';
+
+  @override
+  String get smartAssignmentRecommendations => 'توصيات التعيين الذكية';
+
+  @override
+  String get noSuggestionsNeeded => 'جميع التعيينات تبدو مثالية!';
+
+  @override
+  String get suggestionApplied => 'تم تطبيق الاقتراح بنجاح';
+
+  @override
+  String get workload => 'عبء العمل';
+
+  @override
+  String get cardView => 'عرض البطاقات';
+
+  @override
+  String get noTAs => 'لا معيدين';
+
+  @override
+  String get departmentsAndPrograms => 'الأقسام والبرامج';
+
+  @override
+  String get organizeAcademicStructures =>
+      'تنظيم الهياكل الأكاديمية عبر المؤسسة';
+
+  @override
+  String get searchDepartments => 'البحث عن الأقسام...';
+
+  @override
+  String get allFaculties => 'جميع الكليات';
+
+  @override
+  String get understaffed => 'نقص في الكوادر';
+
+  @override
+  String get missingCourses => 'مقررات مفقودة';
+
+  @override
+  String get noHeadAssigned => 'لا يوجد رئيس قسم';
+
+  @override
+  String get aiWarnings => 'تحذيرات الذكاء الاصطناعي';
+
+  @override
+  String get programs => 'البرامج';
+
+  @override
+  String get departmentHealthMap => 'خريطة صحة الأقسام';
+
+  @override
+  String get departmentAnalytics => 'تحليلات الأقسام';
+
+  @override
+  String get mostActive => 'الأكثر نشاطاً';
+
+  @override
+  String get underperforming => 'أداء ضعيف';
+
+  @override
+  String get staffShortage => 'نقص في الكوادر';
+
+  @override
+  String get departments => 'أقسام';
+
+  @override
+  String get totalDepartments => 'إجمالي الأقسام';
+
+  @override
+  String get totalPrograms => 'إجمالي البرامج';
+
+  @override
+  String get criticalAlerts => 'تنبيهات حرجة';
+
+  @override
+  String get addNewDepartment => 'إضافة قسم جديد';
+
+  @override
+  String get createNewAcademicDepartment => 'إنشاء قسم أكاديمي جديد';
+
+  @override
+  String get departmentName => 'اسم القسم';
+
+  @override
+  String get enterDepartmentName => 'مثال: الهندسة الميكانيكية';
+
+  @override
+  String get departmentNameRequired => 'اسم القسم مطلوب';
+
+  @override
+  String get briefDescription => 'وصف مختصر للقسم...';
+
+  @override
+  String get academicLevelsOffered => 'المستويات الأكاديمية المقدمة';
+
+  @override
+  String get selectDepartmentHead => 'اختر رئيس القسم';
+
+  @override
+  String get chooseDepartmentHead => 'اختر رئيس القسم...';
+
+  @override
+  String get uploadDepartmentLogo => 'رفع شعار القسم';
+
+  @override
+  String get clickToUploadLogo => 'انقر لرفع الشعار';
+
+  @override
+  String get createDepartment => 'إنشاء القسم';
+
+  @override
+  String get departmentCreatedSuccessfully => 'تم إنشاء القسم بنجاح';
+
+  @override
+  String get departmentHead => 'رئيس القسم';
+
+  @override
+  String get faculty => 'الكلية';
+
+  @override
+  String get assignHead => 'تعيين رئيس';
+
+  @override
+  String get mathLowTACount =>
+      'برنامج الرياضيات لديه عدد منخفض من المعيدين (4 معيدين لـ 280 طالب)';
+
+  @override
+  String get physicsMissingHead => 'قسم الفيزياء يفتقر إلى تعيين رئيس قسم';
+
+  @override
+  String get electricalMissingAI =>
+      'الهندسة الكهربائية تفتقر إلى أدوات التقييم القائمة على الذكاء الاصطناعي';
+
+  @override
+  String get enableAITools => 'تفعيل أدوات الذكاء الاصطناعي';
+
+  @override
+  String get editing => 'تعديل';
+
+  @override
+  String get assigningHeadTo => 'تعيين رئيس لـ';
+
+  @override
+  String get assigningTAsTo => 'تعيين معيدين لـ';
+
+  @override
+  String get actionTriggered => 'تم تنفيذ الإجراء';
+
+  @override
+  String get systemAnalytics => 'تحليلات وأداء النظام';
+
+  @override
+  String get monitorSystemHealth => 'مراقبة صحة النظام ومقاييس الاستخدام';
+
+  @override
+  String get systemHealthOverview => 'نظرة عامة على صحة النظام';
+
+  @override
+  String get cpuUsage => 'استخدام المعالج';
+
+  @override
+  String get memoryUsage => 'استخدام الذاكرة';
+
+  @override
+  String get diskUsage => 'استخدام القرص';
+
+  @override
+  String get networkLatency => 'زمن الاستجابة';
+
+  @override
+  String get good => 'جيد';
+
+  @override
+  String get fair => 'مقبول';
+
+  @override
+  String get poor => 'ضعيف';
+
+  @override
+  String get keyMetrics => 'المقاييس الرئيسية';
+
+  @override
+  String get userActivity => 'نشاط المستخدمين';
+
+  @override
+  String get serverStatus => 'حالة الخوادم';
+
+  @override
+  String get recentSystemEvents => 'أحداث النظام الأخيرة';
+
+  @override
+  String get performanceRecommendations => 'توصيات الأداء';
+
+  @override
+  String get viewDetailedAnalysis => 'عرض التحليل التفصيلي';
+
+  @override
+  String get thisMonth => 'هذا الشهر';
+
+  @override
+  String get custom => 'مخصص';
+
+  @override
+  String get viewMore => 'عرض المزيد';
+
+  @override
+  String get region => 'المنطقة';
+
+  @override
+  String get dataRefreshed => 'تم تحديث البيانات بنجاح';
+
+  @override
+  String get exportingData => 'جاري تصدير البيانات...';
+
+  @override
+  String get viewingMore => 'عرض المزيد';
+
+  @override
+  String get securityAndActivityLogs => 'الأمان وسجلات النشاط';
+
+  @override
+  String get monitorSecurityEvents => 'مراقبة أحداث الأمان وأنشطة المستخدمين';
+
+  @override
+  String get searchActivityLogs => 'البحث في سجلات النشاط...';
+
+  @override
+  String get allActivities => 'جميع الأنشطة';
+
+  @override
+  String get logoutActivity => 'نشاط تسجيل الخروج';
+
+  @override
+  String get passwordChangeActivity => 'تغيير كلمة المرور';
+
+  @override
+  String get roleChangeActivity => 'تغيير الدور';
+
+  @override
+  String get dataAccessActivity => 'الوصول للبيانات';
+
+  @override
+  String get systemChangeActivity => 'تغيير النظام';
+
+  @override
+  String get lastWeek => 'الأسبوع الماضي';
+
+  @override
+  String get lastMonth => 'الشهر الماضي';
+
+  @override
+  String get lastThreeMonths => 'آخر 3 أشهر';
+
+  @override
+  String get totalEvents => 'إجمالي الأحداث';
+
+  @override
+  String get failedLogins => 'محاولات دخول فاشلة';
+
+  @override
+  String get activeSessions => 'الجلسات النشطة';
+
+  @override
+  String get activityLogs => 'سجلات النشاط';
+
+  @override
+  String get timestamp => 'الوقت';
+
+  @override
+  String get activityType => 'نوع النشاط';
+
+  @override
+  String get ipAddress => 'عنوان IP';
+
+  @override
+  String get statusColumn => 'الحالة';
+
+  @override
+  String get noLogsFound => 'لا توجد سجلات نشاط';
+
+  @override
+  String get login => 'تسجيل دخول';
+
+  @override
+  String get info => 'معلومات';
+
+  @override
+  String get critical => 'حرج';
+
+  @override
+  String get noActiveAlerts => 'لا توجد تنبيهات أمان نشطة';
+
+  @override
+  String get resolved => 'تم الحل';
+
+  @override
+  String get activityDetails => 'تفاصيل النشاط';
+
+  @override
+  String get viewingTotalEvents => 'عرض تفاصيل إجمالي الأحداث';
+
+  @override
+  String get viewingFailedLogins => 'عرض محاولات تسجيل الدخول الفاشلة';
+
+  @override
+  String get viewingSecurityAlerts => 'عرض تنبيهات الأمان';
+
+  @override
+  String get viewingActiveSessions => 'عرض الجلسات النشطة';
+
+  @override
+  String get exportingLogs => 'جاري تصدير سجلات النشاط...';
+
+  @override
+  String get openingSecuritySettings => 'جاري فتح إعدادات الأمان...';
+
+  @override
+  String get exportLogs => 'تصدير السجلات';
+
+  @override
+  String get securitySettings => 'إعدادات الأمان';
+
+  @override
+  String get recentSecurityAlerts => 'تنبيهات الأمان الأخيرة';
+
+  @override
+  String get loginActivityChart => 'نشاط تسجيل الدخول';
 }

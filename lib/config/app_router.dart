@@ -95,6 +95,15 @@ import 'package:edu_verse/screens/ta/attendance/ta_attendance_screen.dart';
 import 'package:edu_verse/screens/ta/ai_assistant/ta_ai_assistant_screen.dart';
 import 'package:edu_verse/screens/ta/messages/ta_messages_screen.dart';
 import 'package:edu_verse/screens/admin/admin_dashboard_screen.dart';
+import 'package:edu_verse/screens/admin/users/admin_user_management_screen.dart';
+import 'package:edu_verse/screens/admin/users/admin_add_new_user_screen.dart';
+import 'package:edu_verse/screens/admin/roles/admin_roles_screen.dart';
+import 'package:edu_verse/screens/admin/courses/admin_course_management_screen.dart';
+import 'package:edu_verse/screens/admin/courses/admin_add_course_screen.dart';
+import 'package:edu_verse/screens/admin/staff/admin_assign_staff_screen.dart';
+import 'package:edu_verse/screens/admin/departments/admin_departments_screen.dart';
+import 'package:edu_verse/screens/admin/analytics/admin_analytics_screen.dart';
+import 'package:edu_verse/screens/admin/security/admin_security_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_admin_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -541,10 +550,53 @@ class AppRouter {
         builder: (context, state) => const TAMessagesScreen(),
       ),
 
-      // ============ ADMIN ROUTES (Placeholder) ============
+      // ============ ADMIN ROUTES ============
       GoRoute(
         path: '/admin/dashboard',
         builder: (context, state) => const AdminDashboardScreen(),
+      ),
+      GoRoute(
+        path: '/admin/users',
+        builder: (context, state) => const AdminUserManagementScreen(),
+      ),
+      GoRoute(
+        path: '/admin/users/add',
+        builder: (context, state) => const AdminAddNewUserScreen(),
+      ),
+      GoRoute(
+        path: '/admin/users/edit/:id',
+        builder: (context, state) {
+          final userId = state.pathParameters['id'] ?? '';
+          return AdminAddNewUserScreen(key: ValueKey(userId));
+        },
+      ),
+      GoRoute(
+        path: '/admin/roles',
+        builder: (context, state) => const AdminRolesScreen(),
+      ),
+      GoRoute(
+        path: '/admin/courses',
+        builder: (context, state) => const AdminCourseManagementScreen(),
+      ),
+      GoRoute(
+        path: '/admin/courses/add',
+        builder: (context, state) => const AdminAddCourseScreen(),
+      ),
+      GoRoute(
+        path: '/admin/staff',
+        builder: (context, state) => const AdminAssignStaffScreen(),
+      ),
+      GoRoute(
+        path: '/admin/departments',
+        builder: (context, state) => const AdminDepartmentsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/analytics',
+        builder: (context, state) => const AdminAnalyticsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/security',
+        builder: (context, state) => const AdminSecurityScreen(),
       ),
 
       // ============ IT ADMIN ROUTES (Placeholder) ============
