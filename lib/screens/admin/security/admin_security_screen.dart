@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../widgets/admin/shared/admin_colors.dart';
 import '../../../widgets/admin/security/security_barrel.dart';
-import '../../../widgets/admin/dashboard/admin_drawer.dart';
+import '../../../common/utils/responsive.dart';
 
 class AdminSecurityScreen extends StatefulWidget {
   const AdminSecurityScreen({super.key});
@@ -14,8 +15,9 @@ class AdminSecurityScreen extends StatefulWidget {
   State<AdminSecurityScreen> createState() => _AdminSecurityScreenState();
 }
 
-class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+class _AdminSecurityScreenState extends State<AdminSecurityScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
 
   String _searchQuery = '';
   ActivityType _activityType = ActivityType.all;
@@ -27,11 +29,23 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
   late List<ActivityLog> _logs;
   late List<SecurityAlert> _alerts;
   late List<LoginActivityData> _loginData;
+  late List<AccessControl> _accessControls;
+  late List<ActiveSession> _activeSessions;
+  late List<IpRule> _ipRules;
+  late List<SecurityPolicyItem> _securityPolicies;
+  late List<ThreatData> _threatData;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
     _loadData();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   void _loadData() {
@@ -41,7 +55,7 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
     _logs = [
       const ActivityLog(
         id: '1',
-        timestamp: '2024-02-17 14:23:45',
+        timestamp: '2026-02-18 14:23:45',
         userName: 'Ahmed Hassan',
         userEmail: 'ahmed@eduverse.com',
         activityType: LogActivityType.login,
@@ -51,7 +65,7 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
       ),
       const ActivityLog(
         id: '2',
-        timestamp: '2024-02-17 14:20:12',
+        timestamp: '2026-02-18 14:20:12',
         userName: 'Sara Ahmed',
         userEmail: 'sara@eduverse.com',
         activityType: LogActivityType.passwordChange,
@@ -61,7 +75,7 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
       ),
       const ActivityLog(
         id: '3',
-        timestamp: '2024-02-17 14:15:33',
+        timestamp: '2026-02-18 14:15:33',
         userName: 'Unknown User',
         userEmail: 'unknown@test.com',
         activityType: LogActivityType.login,
@@ -71,7 +85,7 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
       ),
       const ActivityLog(
         id: '4',
-        timestamp: '2024-02-17 14:10:05',
+        timestamp: '2026-02-18 14:10:05',
         userName: 'Admin System',
         userEmail: 'system@eduverse.com',
         activityType: LogActivityType.roleChange,
@@ -81,7 +95,7 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
       ),
       const ActivityLog(
         id: '5',
-        timestamp: '2024-02-17 13:55:22',
+        timestamp: '2026-02-18 13:55:22',
         userName: 'Dr. Fatima',
         userEmail: 'fatima@eduverse.com',
         activityType: LogActivityType.dataAccess,
@@ -91,7 +105,7 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
       ),
       const ActivityLog(
         id: '6',
-        timestamp: '2024-02-17 13:45:18',
+        timestamp: '2026-02-18 13:45:18',
         userName: 'System',
         userEmail: 'system@eduverse.com',
         activityType: LogActivityType.systemChange,
@@ -139,6 +153,143 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
       LoginActivityData(hour: '8PM', successCount: 50, failedCount: 1),
     ];
 
+    // Access controls
+    _accessControls = [
+      AccessControl(
+        id: '1',
+        name: 'Two-Factor Authentication',
+        description: 'Require 2FA for all admin accounts',
+        isEnabled: true,
+        icon: Icons.verified_user_rounded,
+        color: AdminColors.success,
+      ),
+      AccessControl(
+        id: '2',
+        name: 'IP Restriction',
+        description: 'Limit access from approved IPs only',
+        isEnabled: false,
+        icon: Icons.public_rounded,
+        color: AdminColors.chartOrange,
+      ),
+      AccessControl(
+        id: '3',
+        name: 'Session Timeout',
+        description: 'Auto logout after 30 minutes of inactivity',
+        isEnabled: true,
+        icon: Icons.timer_rounded,
+        color: AdminColors.primary,
+      ),
+      AccessControl(
+        id: '4',
+        name: 'Login Notifications',
+        description: 'Send email on every new login',
+        isEnabled: true,
+        icon: Icons.notifications_active_rounded,
+        color: AdminColors.chartPurple,
+      ),
+    ];
+
+    // Active sessions
+    _activeSessions = [
+      ActiveSession(
+        id: '1',
+        userName: 'John Admin',
+        userEmail: 'john.admin@eduverse.com',
+        device: 'Windows PC',
+        browser: 'Chrome 121',
+        location: 'Cairo, Egypt',
+        ipAddress: '192.168.1.100',
+        lastActive: DateTime.now(),
+        isCurrentSession: true,
+      ),
+      ActiveSession(
+        id: '2',
+        userName: 'Ahmed Hassan',
+        userEmail: 'ahmed@eduverse.com',
+        device: 'MacBook Pro',
+        browser: 'Safari 17',
+        location: 'Alexandria, Egypt',
+        ipAddress: '192.168.1.105',
+        lastActive: DateTime.now().subtract(const Duration(minutes: 15)),
+      ),
+      ActiveSession(
+        id: '3',
+        userName: 'Sara Ahmed',
+        userEmail: 'sara@eduverse.com',
+        device: 'iPhone 15',
+        browser: 'Mobile Safari',
+        location: 'Giza, Egypt',
+        ipAddress: '192.168.1.142',
+        lastActive: DateTime.now().subtract(const Duration(hours: 1)),
+      ),
+      ActiveSession(
+        id: '4',
+        userName: 'Dr. Fatima',
+        userEmail: 'fatima@eduverse.com',
+        device: 'Android Phone',
+        browser: 'Chrome Mobile',
+        location: 'Cairo, Egypt',
+        ipAddress: '192.168.1.88',
+        lastActive: DateTime.now().subtract(const Duration(hours: 2)),
+      ),
+    ];
+
+    // IP rules
+    _ipRules = [
+      IpRule(
+        id: '1',
+        ipAddress: '192.168.1.0/24',
+        description: 'Internal Network',
+        isWhitelisted: true,
+        addedDate: DateTime.now().subtract(const Duration(days: 30)),
+      ),
+      IpRule(
+        id: '2',
+        ipAddress: '10.0.0.0/8',
+        description: 'VPN Network',
+        isWhitelisted: true,
+        addedDate: DateTime.now().subtract(const Duration(days: 15)),
+      ),
+      IpRule(
+        id: '3',
+        ipAddress: '45.33.32.156',
+        description: 'Suspicious Activity',
+        isWhitelisted: false,
+        addedDate: DateTime.now().subtract(const Duration(days: 1)),
+      ),
+      IpRule(
+        id: '4',
+        ipAddress: '185.220.100.0/24',
+        description: 'Known Tor Exit Node',
+        isWhitelisted: false,
+        addedDate: DateTime.now().subtract(const Duration(days: 5)),
+      ),
+    ];
+
+    // Threat data
+    _threatData = [
+      ThreatData(
+        category: 'Brute Force Attacks',
+        count: 156,
+        color: AdminColors.error,
+      ),
+      ThreatData(
+        category: 'SQL Injection Attempts',
+        count: 45,
+        color: AdminColors.chartOrange,
+      ),
+      ThreatData(
+        category: 'XSS Attempts',
+        count: 28,
+        color: AdminColors.warning,
+      ),
+      ThreatData(
+        category: 'Bot Traffic',
+        count: 892,
+        color: AdminColors.chartPurple,
+      ),
+    ];
+
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -146,10 +297,50 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
     });
   }
 
+  void _initSecurityPolicies(AppLocalizations l10n) {
+    _securityPolicies = [
+      SecurityPolicyItem(
+        id: '1',
+        name: l10n.passwordPolicy,
+        description: l10n.passwordPolicyDesc,
+        status: 'Strong',
+        icon: Icons.lock_rounded,
+        color: AdminColors.success,
+        onConfigure: () => context.push('/admin/settings/password-policy'),
+      ),
+      SecurityPolicyItem(
+        id: '2',
+        name: l10n.twoFactorAuth,
+        description: l10n.twoFactorAuthPlatformDesc,
+        status: 'Enabled',
+        icon: Icons.verified_user_rounded,
+        color: AdminColors.primary,
+        onConfigure: () => context.push('/admin/settings/two-factor'),
+      ),
+      SecurityPolicyItem(
+        id: '3',
+        name: l10n.sessionTimeout,
+        description: '30 ${l10n.minutes}',
+        status: 'Active',
+        icon: Icons.timer_rounded,
+        color: AdminColors.chartCyan,
+        onConfigure: () => _showSessionTimeoutDialog(),
+      ),
+      SecurityPolicyItem(
+        id: '4',
+        name: l10n.dataEncryption,
+        description: l10n.dataEncryptionDesc,
+        status: 'Enabled',
+        icon: Icons.enhanced_encryption_rounded,
+        color: AdminColors.chartPurple,
+        onConfigure: () => _showEncryptionSettings(),
+      ),
+    ];
+  }
+
   List<ActivityLog> get _filteredLogs {
     var filtered = _logs;
 
-    // Search filter
     if (_searchQuery.isNotEmpty) {
       filtered = filtered
           .where(
@@ -165,7 +356,6 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
           .toList();
     }
 
-    // Activity type filter
     if (_activityType != ActivityType.all) {
       filtered = filtered.where((log) {
         switch (_activityType) {
@@ -210,13 +400,7 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
   }
 
   void _openSettings() {
-    final l10n = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.openingSecuritySettings),
-        backgroundColor: AdminColors.secondary,
-      ),
-    );
+    context.push('/admin/settings');
   }
 
   @override
@@ -225,19 +409,19 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
+        final responsive = context.responsive;
+        _initSecurityPolicies(l10n);
 
         return Scaffold(
-          key: _scaffoldKey,
           backgroundColor: AdminColors.getBackgroundColor(isDark),
-          // drawer: const AdminDrawer(),
           body: Container(
-            decoration: BoxDecoration(
-              gradient: AdminColors.getBackgroundGradient(isDark),
-            ),
+            decoration: isDark
+                ? null
+                : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
             child: SafeArea(
               child: _isLoading
                   ? _buildLoadingState()
-                  : _buildContent(isDark, l10n),
+                  : _buildContent(isDark, l10n, responsive),
             ),
           ),
         );
@@ -251,168 +435,176 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
     );
   }
 
-  Widget _buildContent(bool isDark, AppLocalizations l10n) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final isWide = constraints.maxWidth > 900;
-
-        return RefreshIndicator(
-          onRefresh: () async => _loadData(),
-          color: AdminColors.secondary,
-          child: CustomScrollView(
-            slivers: [
-              // App Bar
-              // SliverToBoxAdapter(
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(20),
-              //     child: Row(
-              //       children: [
-              //         IconButton(
-              //           onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-              //           icon: Icon(
-              //             Icons.menu_rounded,
-              //             color: AdminColors.getTextColor(isDark),
-              //           ),
-              //         ),
-              //         const Spacer(),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-              // Header
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SecurityHeader(
-                    isDark: isDark,
-                    onExport: _exportLogs,
-                    onSettings: _openSettings,
-                  ),
-                ),
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: 20)),
-              // Filters
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SecurityFilters(
-                    isDark: isDark,
-                    searchQuery: _searchQuery,
-                    activityType: _activityType,
-                    userRole: _userRole,
-                    dateRange: _dateRange,
-                    onSearchChanged: (value) =>
-                        setState(() => _searchQuery = value),
-                    onActivityTypeChanged: (value) =>
-                        setState(() => _activityType = value),
-                    onUserRoleChanged: (value) =>
-                        setState(() => _userRole = value),
-                    onDateRangeChanged: (value) =>
-                        setState(() => _dateRange = value),
-                    onClearFilters: _clearFilters,
-                  ),
-                ),
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: 20)),
-              // Overview Stats
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: SecurityOverviewCard(
-                    isDark: isDark,
-                    totalEvents: 12456,
-                    failedLogins: 23,
-                    securityAlerts: _alerts.where((a) => !a.isResolved).length,
-                    activeSessions: 1234,
-                    onCardTap: _onStatCardTap,
-                  ),
-                ),
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: 20)),
-              // Main Content
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: isWide
-                      ? _buildWideLayout(isDark, l10n)
-                      : _buildNarrowLayout(isDark, l10n),
-                ),
-              ),
-              const SliverToBoxAdapter(child: SizedBox(height: 100)),
-            ],
+  Widget _buildContent(bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    return NestedScrollView(
+      headerSliverBuilder: (context, innerBoxIsScrolled) => [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: responsive.contentPadding,
+            child: SecurityHeader(
+              isDark: isDark,
+              onExport: _exportLogs,
+              onSettings: _openSettings,
+            ),
           ),
-        );
-      },
+        ),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: responsive.p16),
+            child: _buildTabBar(isDark, l10n),
+          ),
+        ),
+      ],
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildOverviewTab(isDark, l10n, responsive),
+          _buildAccessControlsTab(isDark, l10n, responsive),
+          _buildActivityLogsTab(isDark, l10n, responsive),
+        ],
+      ),
     );
   }
 
-  Widget _buildWideLayout(bool isDark, AppLocalizations l10n) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Left Column - Activity Logs
-        Expanded(
-          flex: 2,
-          child: ActivityLogsTable(
+  Widget _buildTabBar(bool isDark, AppLocalizations l10n) {
+    return Container(
+      margin: const EdgeInsets.only(top: 16),
+      decoration: BoxDecoration(
+        color: AdminColors.getCardColor(isDark),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
+      ),
+      child: TabBar(
+        controller: _tabController,
+        labelColor: Colors.white,
+        unselectedLabelColor: AdminColors.getTextSecondaryColor(isDark),
+        indicator: BoxDecoration(
+          gradient: AdminColors.primaryGradient,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        indicatorSize: TabBarIndicatorSize.tab,
+        dividerColor: Colors.transparent,
+        labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+        tabs: [
+          Tab(text: l10n.overview),
+          Tab(text: l10n.accessControls),
+          Tab(text: l10n.activityLogs),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOverviewTab(bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    return RefreshIndicator(
+      onRefresh: () async => _loadData(),
+      color: AdminColors.secondary,
+      child: ListView(
+        padding: responsive.contentPadding,
+        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        children: [
+          const SizedBox(height: 16),
+          SecurityOverviewCard(
             isDark: isDark,
-            logs: _filteredLogs,
-            onViewDetails: _onViewLogDetails,
-            onViewAll: () => _showViewMore(l10n.activityLogs),
+            totalEvents: 12456,
+            failedLogins: 23,
+            securityAlerts: _alerts.where((a) => !a.isResolved).length,
+            activeSessions: _activeSessions.length,
+            onCardTap: _onStatCardTap,
           ),
-        ),
-        const SizedBox(width: 20),
-        // Right Column
-        Expanded(
-          child: Column(
-            children: [
-              // Security Alerts
-              SecurityAlertsCard(
-                isDark: isDark,
-                alerts: _alerts,
-                onAlertTap: _onAlertTap,
-                onResolve: _onResolveAlert,
-                onViewAll: () => _showViewMore(l10n.securityAlerts),
-              ),
-              const SizedBox(height: 20),
-              // Login Activity
-              LoginActivityChart(
-                isDark: isDark,
-                data: _loginData,
-                onViewDetails: () => _showViewMore(l10n.loginActivity),
-              ),
-            ],
+          const SizedBox(height: 20),
+          ThreatAnalysisCard(
+            isDark: isDark,
+            threats: _threatData,
+            blockedToday: 47,
+            blockedThisWeek: 312,
+            onViewDetails: () => _showThreatDetails(l10n),
           ),
+          const SizedBox(height: 20),
+          SecurityAlertsCard(
+            isDark: isDark,
+            alerts: _alerts,
+            onAlertTap: _onAlertTap,
+            onResolve: _onResolveAlert,
+            onViewAll: () => _showViewMore(l10n.securityAlerts),
+          ),
+          const SizedBox(height: 20),
+          LoginActivityChart(
+            isDark: isDark,
+            data: _loginData,
+            onViewDetails: () => _showViewMore(l10n.loginActivity),
+          ),
+          const SizedBox(height: 100),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAccessControlsTab(bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    return ListView(
+      padding: responsive.contentPadding,
+      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      children: [
+        const SizedBox(height: 16),
+        AccessControlsCard(
+          isDark: isDark,
+          controls: _accessControls,
+          onToggle: _onToggleAccessControl,
+          onManage: () => context.push('/admin/settings'),
         ),
+        const SizedBox(height: 20),
+        SecurityPoliciesCard(
+          isDark: isDark,
+          policies: _securityPolicies,
+        ),
+        const SizedBox(height: 20),
+        ActiveSessionsCard(
+          isDark: isDark,
+          sessions: _activeSessions,
+          onTerminate: _onTerminateSession,
+          onTerminateAll: _onTerminateAllSessions,
+          onViewAll: () => _showAllSessions(l10n),
+        ),
+        const SizedBox(height: 20),
+        IpManagementCard(
+          isDark: isDark,
+          rules: _ipRules,
+          onRemove: _onRemoveIpRule,
+          onAddWhitelist: () => _showAddIpDialog(true),
+          onAddBlacklist: () => _showAddIpDialog(false),
+          onViewAll: () => _showAllIpRules(l10n),
+        ),
+        const SizedBox(height: 100),
       ],
     );
   }
 
-  Widget _buildNarrowLayout(bool isDark, AppLocalizations l10n) {
-    return Column(
+  Widget _buildActivityLogsTab(bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    return ListView(
+      padding: responsive.contentPadding,
+      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
       children: [
-        // Security Alerts
-        SecurityAlertsCard(
+        const SizedBox(height: 16),
+        SecurityFilters(
           isDark: isDark,
-          alerts: _alerts,
-          onAlertTap: _onAlertTap,
-          onResolve: _onResolveAlert,
-          onViewAll: () => _showViewMore(l10n.securityAlerts),
+          searchQuery: _searchQuery,
+          activityType: _activityType,
+          userRole: _userRole,
+          dateRange: _dateRange,
+          onSearchChanged: (value) => setState(() => _searchQuery = value),
+          onActivityTypeChanged: (value) => setState(() => _activityType = value),
+          onUserRoleChanged: (value) => setState(() => _userRole = value),
+          onDateRangeChanged: (value) => setState(() => _dateRange = value),
+          onClearFilters: _clearFilters,
         ),
         const SizedBox(height: 20),
-        // Login Activity
-        LoginActivityChart(
-          isDark: isDark,
-          data: _loginData,
-          onViewDetails: () => _showViewMore(l10n.loginActivity),
-        ),
-        const SizedBox(height: 20),
-        // Activity Logs
         ActivityLogsTable(
           isDark: isDark,
           logs: _filteredLogs,
           onViewDetails: _onViewLogDetails,
           onViewAll: () => _showViewMore(l10n.activityLogs),
         ),
+        const SizedBox(height: 100),
       ],
     );
   }
@@ -429,9 +621,11 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
         break;
       case 'securityAlerts':
         message = l10n.viewingSecurityAlerts;
+        _tabController.animateTo(0);
         break;
       case 'activeSessions':
         message = l10n.viewingActiveSessions;
+        _tabController.animateTo(1);
         break;
       default:
         message = cardType;
@@ -450,9 +644,7 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
           final l10n = AppLocalizations.of(context);
           return AlertDialog(
             backgroundColor: AdminColors.getCardColor(isDark),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             title: Row(
               children: [
                 Icon(Icons.info_outline_rounded, color: AdminColors.primary),
@@ -521,11 +713,228 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen> {
     );
   }
 
+  void _onToggleAccessControl(AccessControl control, bool value) {
+    setState(() {
+      final index = _accessControls.indexWhere((c) => c.id == control.id);
+      if (index != -1) {
+        _accessControls[index] = AccessControl(
+          id: control.id,
+          name: control.name,
+          description: control.description,
+          isEnabled: value,
+          icon: control.icon,
+          color: control.color,
+        );
+      }
+    });
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(value ? l10n.enabled : l10n.disabled),
+        backgroundColor: value ? AdminColors.success : AdminColors.warning,
+      ),
+    );
+  }
+
+  void _onTerminateSession(ActiveSession session) {
+    final l10n = AppLocalizations.of(context);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.terminateSession),
+        content: Text('${l10n.terminateSessionConfirm} ${session.userName}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              setState(() => _activeSessions.removeWhere((s) => s.id == session.id));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n.sessionTerminated),
+                  backgroundColor: AdminColors.success,
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AdminColors.error),
+            child: Text(l10n.terminate, style: const TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onTerminateAllSessions() {
+    final l10n = AppLocalizations.of(context);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.terminateAll),
+        content: Text(l10n.terminateAllConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.cancel),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              setState(() => _activeSessions.removeWhere((s) => !s.isCurrentSession));
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(l10n.allSessionsTerminated),
+                  backgroundColor: AdminColors.success,
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AdminColors.error),
+            child: Text(l10n.terminateAll, style: const TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onRemoveIpRule(IpRule rule) {
+    final l10n = AppLocalizations.of(context);
+    setState(() => _ipRules.removeWhere((r) => r.id == rule.id));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(l10n.ipRuleRemoved),
+        backgroundColor: AdminColors.success,
+      ),
+    );
+  }
+
+  void _showAddIpDialog(bool isWhitelist) {
+    final l10n = AppLocalizations.of(context);
+    final ipController = TextEditingController();
+    final descController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          final isDark = themeState.isDark;
+          return AlertDialog(
+            backgroundColor: AdminColors.getCardColor(isDark),
+            title: Text(isWhitelist ? l10n.addToWhitelist : l10n.addToBlacklist),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: ipController,
+                  decoration: InputDecoration(
+                    labelText: l10n.ipAddress,
+                    hintText: '192.168.1.1',
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descController,
+                  decoration: InputDecoration(
+                    labelText: l10n.description,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l10n.cancel),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (ipController.text.isNotEmpty) {
+                    Navigator.pop(ctx);
+                    setState(() {
+                      _ipRules.add(IpRule(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        ipAddress: ipController.text,
+                        description: descController.text.isEmpty 
+                            ? (isWhitelist ? 'Whitelisted IP' : 'Blacklisted IP')
+                            : descController.text,
+                        isWhitelisted: isWhitelist,
+                        addedDate: DateTime.now(),
+                      ));
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(l10n.ipRuleAdded),
+                        backgroundColor: AdminColors.success,
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: isWhitelist ? AdminColors.success : AdminColors.error,
+                ),
+                child: Text(l10n.add, style: const TextStyle(color: Colors.white)),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   void _showViewMore(String section) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('${AppLocalizations.of(context).viewingMore}: $section'),
         backgroundColor: AdminColors.primary,
+      ),
+    );
+  }
+
+  void _showThreatDetails(AppLocalizations l10n) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(l10n.viewingThreatDetails),
+        backgroundColor: AdminColors.error,
+      ),
+    );
+  }
+
+  void _showAllSessions(AppLocalizations l10n) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${l10n.viewingMore}: ${l10n.activeSessions}'),
+        backgroundColor: AdminColors.chartCyan,
+      ),
+    );
+  }
+
+  void _showAllIpRules(AppLocalizations l10n) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${l10n.viewingMore}: ${l10n.ipManagement}'),
+        backgroundColor: AdminColors.chartOrange,
+      ),
+    );
+  }
+
+  void _showSessionTimeoutDialog() {
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(l10n.sessionTimeoutSettings),
+        backgroundColor: AdminColors.chartCyan,
+      ),
+    );
+  }
+
+  void _showEncryptionSettings() {
+    final l10n = AppLocalizations.of(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(l10n.encryptionSettings),
+        backgroundColor: AdminColors.chartPurple,
       ),
     );
   }

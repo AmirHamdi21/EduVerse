@@ -1019,7 +1019,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get todayTasks => 'اليوم';
 
   @override
-  String get pending => 'معلق';
+  String get pending => 'قيد الانتظار';
 
   @override
   String get overdue => 'متأخر';
@@ -1229,10 +1229,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get allSemesters => 'جميع الفصول';
 
   @override
-  String get current => 'الحالي';
+  String get current => 'الحالية';
 
   @override
-  String get needsAttention => 'يحتاج اهتمام';
+  String get needsAttention => 'يحتاج انتباه';
 
   @override
   String get noCoursesFound => 'لم يتم العثور على مقررات';
@@ -1692,7 +1692,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get size => 'الحجم';
 
   @override
-  String get created => 'تاريخ الإنشاء';
+  String get created => 'تم الإنشاء';
 
   @override
   String get modified => 'تاريخ التعديل';
@@ -2094,7 +2094,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get currentStreak => 'السلسلة الحالية';
 
   @override
-  String get days => 'أيام';
+  String get days => 'يوم';
 
   @override
   String get nextBonus => 'المكافأة التالية';
@@ -2291,7 +2291,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get newConversation => 'محادثة جديدة';
 
   @override
-  String get searchConversations => 'البحث في المحادثات...';
+  String get searchConversations => 'البحث في المحادثات';
 
   @override
   String get searchByNameOrEmail => 'البحث بالاسم أو البريد الإلكتروني...';
@@ -2370,7 +2370,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get forward => 'إعادة توجيه';
 
   @override
-  String get copiedToClipboard => 'تم النسخ';
+  String get copiedToClipboard => 'تم النسخ إلى الحافظة';
 
   @override
   String get searchInConversation => 'البحث في المحادثة';
@@ -2594,7 +2594,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get translate => 'ترجمة';
 
   @override
-  String get regenerate => 'إعادة التوليد';
+  String get regenerate => 'إعادة إنشاء';
 
   @override
   String get summarize => 'تلخيص';
@@ -2706,7 +2706,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dateOfBirth => 'تاريخ الميلاد';
 
   @override
-  String get bio => 'السيرة الذاتية';
+  String get bio => 'نبذة';
 
   @override
   String get coursesEnrolled => 'المقررات';
@@ -2819,7 +2819,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String hoursAgo(int hours) {
-    return 'منذ $hours ساعة';
+    return 'ساعات مضت';
   }
 
   @override
@@ -2932,13 +2932,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get studentId => 'رقم الطالب';
 
   @override
-  String get major => 'التخصص الرئيسي';
+  String get major => 'رئيسي';
 
   @override
-  String get minor => 'التخصص الفرعي';
+  String get minor => 'ثانوي';
 
   @override
-  String get year => 'السنة';
+  String get year => 'سنة';
 
   @override
   String get expectedGraduation => 'التخرج المتوقع';
@@ -2962,11 +2962,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get remove => 'إزالة';
 
   @override
-  String get discardChanges => 'تجاهل التغييرات؟';
+  String get discardChanges => 'تجاهل التغييرات';
 
   @override
   String get discardChangesMessage =>
-      'لديك تغييرات غير محفوظة. هل أنت متأكد من تجاهلها؟';
+      'لديك تغييرات غير محفوظة. هل أنت متأكد أنك تريد تجاهلها؟';
 
   @override
   String get keepEditing => 'متابعة التعديل';
@@ -3011,10 +3011,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get privacySecurity => 'الخصوصية والأمان';
 
   @override
-  String get enabled => 'مفعّل';
+  String get enabled => 'مفعل';
 
   @override
-  String get disabled => 'معطّل';
+  String get disabled => 'معطل';
 
   @override
   String devicesConnected(int count) {
@@ -3055,10 +3055,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get storageData => 'التخزين والبيانات';
 
   @override
-  String get clearCache => 'مسح ذاكرة التخزين المؤقت';
+  String get clearCache => 'مسح الذاكرة المؤقتة';
 
   @override
-  String get clearCacheDesc => 'تحرير مساحة التخزين';
+  String get clearCacheDesc => 'إزالة جميع البيانات المخزنة مؤقتاً';
 
   @override
   String get clearCacheConfirmation =>
@@ -3116,7 +3116,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchSettings => 'البحث في الإعدادات...';
 
   @override
-  String get noResultsFound => 'لا توجد نتائج';
+  String get noResultsFound => 'لم يتم العثور على نتائج';
 
   @override
   String get updatePassword => 'تحديث كلمة المرور';
@@ -3168,7 +3168,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get courseUpdates => 'تحديثات المقررات';
 
   @override
-  String get courseUpdatesDesc => 'محتوى جديد ومحاضرات ومواد';
+  String get courseUpdatesDesc => 'إشعار بتغييرات محتوى المقررات';
 
   @override
   String get assignmentReminders => 'تذكيرات الواجبات';
@@ -3192,7 +3192,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get announcements => 'الإعلانات';
 
   @override
-  String get announcementsDesc => 'إعلانات مهمة';
+  String get announcementsDesc => 'إشعار بالإعلانات الجديدة';
 
   @override
   String get scheduleChanges => 'تغييرات الجدول';
@@ -3277,7 +3277,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get authenticatorApp => 'تطبيق المصادقة';
 
   @override
-  String get authenticatorAppDesc => 'استخدم Google أو Microsoft Authenticator';
+  String get authenticatorAppDesc => 'Google Authenticator، Authy، إلخ';
 
   @override
   String get smsCode => 'رمز SMS';
@@ -3292,7 +3292,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get emailCodeDesc => 'استلام رموز عبر البريد الإلكتروني';
 
   @override
-  String get backupCodes => 'رموز النسخ الاحتياطي';
+  String get backupCodes => 'رموز الاسترداد';
 
   @override
   String get viewBackupCodes => 'عرض رموز النسخ الاحتياطي';
@@ -3560,7 +3560,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get accuracy => 'الدقة';
 
   @override
-  String get storageBreakdown => 'تفاصيل التخزين';
+  String get storageBreakdown => 'تفصيل التخزين';
 
   @override
   String get cache => 'ذاكرة التخزين المؤقت';
@@ -3596,7 +3596,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get backupNow => 'نسخ احتياطي الآن';
 
   @override
-  String get lastBackup => 'آخر نسخ احتياطي: اليوم';
+  String get lastBackup => 'آخر نسخة';
 
   @override
   String get backupStarted => 'بدأ النسخ الاحتياطي';
@@ -3618,8 +3618,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get downloadsCleared => 'تم مسح التحميلات بنجاح';
 
   @override
-  String get clearCacheConfirm =>
-      'سيتم مسح الملفات المؤقتة والبيانات المخزنة مؤقتاً.';
+  String get clearCacheConfirm => 'مسح جميع البيانات المخزنة مؤقتاً؟';
 
   @override
   String get quickHelp => 'مساعدة سريعة';
@@ -4823,7 +4822,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get gradeNow => 'صحح الآن';
 
   @override
-  String get attendanceManager => 'مدير الحضور';
+  String get attendanceManager => 'إدارة الحضور';
 
   @override
   String get trackStudentAttendance => 'تتبع وإدارة حضور الطلاب';
@@ -5496,7 +5495,8 @@ class AppLocalizationsAr extends AppLocalizations {
   String get logoutConfirmTitle => 'تسجيل الخروج';
 
   @override
-  String get logoutConfirmMessage => 'هل أنت متأكد من رغبتك في تسجيل الخروج؟';
+  String get logoutConfirmMessage =>
+      'هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟';
 
   @override
   String get preferences => 'التفضيلات';
@@ -5640,7 +5640,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get newMessage => 'رسالة جديدة';
 
   @override
-  String get messageStudent => 'مراسلة طالب';
+  String get messageStudent => 'مراسلة طالب أو مدرس أو مساعد';
 
   @override
   String get messageStudentDesc => 'ابدأ محادثة خاصة';
@@ -5652,7 +5652,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get createGroupChatDesc => 'أنشئ مجموعة جديدة لصفك';
 
   @override
-  String get broadcastMessage => 'رسالة جماعية';
+  String get broadcastMessage => 'رسالة عامة';
 
   @override
   String get broadcastMessageDesc => 'إرسال لجميع طلاب المقرر';
@@ -5948,7 +5948,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get aiTools => 'أدوات الذكاء الاصطناعي';
 
   @override
-  String get connect => 'التواصل';
+  String get connect => 'اتصال';
 
   @override
   String get goodNight => 'تصبح على خير';
@@ -7401,7 +7401,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get totalUsers => 'إجمالي المستخدمين';
 
   @override
-  String get activeCourses => 'المقررات النشطة';
+  String get activeCourses => 'الدورات النشطة';
 
   @override
   String get aiActionsToday => 'إجراءات الذكاء الاصطناعي اليوم';
@@ -7679,7 +7679,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'حسابات المسؤولين لديها صلاحية كاملة للنظام. يرجى التأكد من التدريب الأمني المناسب.';
 
   @override
-  String get rolePermissions => 'صلاحيات الدور';
+  String get rolePermissions => 'صلاحيات الأدوار';
 
   @override
   String get viewCourseData => 'عرض بيانات المقرر';
@@ -8405,7 +8405,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dataRefreshed => 'تم تحديث البيانات بنجاح';
 
   @override
-  String get exportingData => 'جاري تصدير البيانات...';
+  String get exportingData => 'جاري تصدير بياناتك...';
 
   @override
   String get viewingMore => 'عرض المزيد';
@@ -8471,7 +8471,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get statusColumn => 'الحالة';
 
   @override
-  String get noLogsFound => 'لا توجد سجلات نشاط';
+  String get noLogsFound => 'لا توجد سجلات';
 
   @override
   String get login => 'تسجيل دخول';
@@ -8520,4 +8520,2011 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get loginActivityChart => 'نشاط تسجيل الدخول';
+
+  @override
+  String get adminNotificationsTitle => 'الإشعارات';
+
+  @override
+  String get adminNotificationsSubtitle => 'إدارة إشعارات النظام والإعلانات';
+
+  @override
+  String get adminNotificationsTab => 'الإشعارات';
+
+  @override
+  String get adminAnnouncementsTab => 'الإعلانات';
+
+  @override
+  String get adminArchivedTab => 'المؤرشفة';
+
+  @override
+  String get adminNotificationSearchHint => 'البحث في الإشعارات...';
+
+  @override
+  String get adminNoNotifications => 'لا توجد إشعارات';
+
+  @override
+  String get adminNoNotificationsMessage =>
+      'أنت على اطلاع! لا توجد إشعارات في الوقت الحالي.';
+
+  @override
+  String get adminNoAnnouncements => 'لا توجد إعلانات';
+
+  @override
+  String get adminNoAnnouncementsMessage =>
+      'أنشئ إعلانك الأول للتواصل مع المستخدمين.';
+
+  @override
+  String get adminNoArchivedNotifications => 'لا توجد عناصر مؤرشفة';
+
+  @override
+  String get adminNoArchivedNotificationsMessage =>
+      'ستظهر الإشعارات المؤرشفة هنا.';
+
+  @override
+  String get adminCreateAnnouncement => 'إنشاء إعلان';
+
+  @override
+  String get adminNotificationDeleted => 'تم حذف الإشعار';
+
+  @override
+  String get adminNotificationArchived => 'تم أرشفة الإشعار';
+
+  @override
+  String get adminNotificationUnarchived => 'تم إلغاء أرشفة الإشعار';
+
+  @override
+  String get adminNotificationMarkedAllRead =>
+      'تم تعليم جميع الإشعارات كمقروءة';
+
+  @override
+  String get adminAnnouncementDeleted => 'تم حذف الإعلان';
+
+  @override
+  String get adminDeleteAnnouncementTitle => 'حذف الإعلان؟';
+
+  @override
+  String get adminDeleteAnnouncementMessage =>
+      'لا يمكن التراجع عن هذا الإجراء. سيتم حذف الإعلان بشكل دائم.';
+
+  @override
+  String get adminClearAllTitle => 'مسح جميع الإشعارات؟';
+
+  @override
+  String get adminClearAllMessage =>
+      'سيؤدي هذا إلى حذف جميع الإشعارات بشكل دائم. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get adminClearAllButton => 'مسح الكل';
+
+  @override
+  String get adminAllNotificationsCleared => 'تم مسح جميع الإشعارات';
+
+  @override
+  String get adminNotificationDeleteConfirmTitle => 'حذف الإشعار؟';
+
+  @override
+  String get adminNotificationDeleteConfirmMessage =>
+      'هل أنت متأكد من حذف هذا الإشعار؟';
+
+  @override
+  String get adminNotificationArchiveConfirmTitle => 'أرشفة الإشعار؟';
+
+  @override
+  String get adminNotificationArchiveConfirmMessage =>
+      'سيتم نقل هذا الإشعار إلى الأرشيف.';
+
+  @override
+  String get platformSettings => 'إعدادات المنصة';
+
+  @override
+  String get platformStatus => 'حالة المنصة';
+
+  @override
+  String get platformStatusDesc => 'نظرة عامة على النظام والصحة';
+
+  @override
+  String get operational => 'تعمل';
+
+  @override
+  String get activeUsers => 'المستخدمون النشطون';
+
+  @override
+  String get serverUptime => 'وقت تشغيل الخادم';
+
+  @override
+  String get generalSettings => 'الإعدادات العامة';
+
+  @override
+  String get generalSettingsDesc => 'تكوين المنصة الأساسي';
+
+  @override
+  String get platformInfo => 'معلومات المنصة';
+
+  @override
+  String get platformInfoDesc => 'عرض تفاصيل النظام';
+
+  @override
+  String get platformName => 'اسم المنصة';
+
+  @override
+  String get version => 'الإصدار';
+
+  @override
+  String get environment => 'البيئة';
+
+  @override
+  String get serverRegion => 'منطقة الخادم';
+
+  @override
+  String get databaseVersion => 'إصدار قاعدة البيانات';
+
+  @override
+  String get timezone => 'المنطقة الزمنية';
+
+  @override
+  String get selectTimezone => 'اختر المنطقة الزمنية';
+
+  @override
+  String get academicYear => 'العام الدراسي';
+
+  @override
+  String get selectAcademicYear => 'اختر العام الدراسي';
+
+  @override
+  String get semesterSettings => 'إعدادات الفصل الدراسي';
+
+  @override
+  String get semesterSettingsDesc => 'تكوين الفصول الدراسية';
+
+  @override
+  String get userManagementSettingsDesc => 'إدارة المستخدمين والصلاحيات';
+
+  @override
+  String get registrationSettings => 'إعدادات التسجيل';
+
+  @override
+  String get registrationSettingsDesc => 'تكوين خيارات تسجيل المستخدمين';
+
+  @override
+  String get rolePermissionsDesc => 'تكوين مستويات الوصول';
+
+  @override
+  String get userGroups => 'مجموعات المستخدمين';
+
+  @override
+  String get userGroupsDesc => 'إدارة تنظيم المستخدمين';
+
+  @override
+  String get blockedUsersDesc => 'عرض وإدارة الحسابات المحظورة';
+
+  @override
+  String get appearanceSettingsDesc => 'تخصيص مظهر المنصة';
+
+  @override
+  String get defaultLanguageDesc => 'تعيين لغة النظام';
+
+  @override
+  String get brandingColors => 'ألوان العلامة التجارية';
+
+  @override
+  String get brandingColorsDesc => 'تخصيص ألوان المنصة';
+
+  @override
+  String get logoAssets => 'الشعار والأصول';
+
+  @override
+  String get logoAssetsDesc => 'إدارة صور المنصة';
+
+  @override
+  String get languageSettingsDesc => 'تغيير لغة العرض';
+
+  @override
+  String get securityPolicies => 'سياسات الأمان';
+
+  @override
+  String get securityPoliciesDesc => 'تكوين إعدادات الأمان';
+
+  @override
+  String get passwordPolicy => 'سياسة كلمة المرور';
+
+  @override
+  String get passwordPolicyDesc => 'تعيين متطلبات كلمة المرور';
+
+  @override
+  String get twoFactorAuthPlatformDesc => 'تكوين متطلبات المصادقة الثنائية';
+
+  @override
+  String get sessionTimeout => 'مهلة الجلسة';
+
+  @override
+  String get minutes => 'دقائق';
+
+  @override
+  String get never => 'أبداً';
+
+  @override
+  String get auditLogs => 'سجلات التدقيق';
+
+  @override
+  String get auditLogsDesc => 'عرض نشاط الأمان';
+
+  @override
+  String get notificationSettingsDesc => 'تكوين إشعارات النظام';
+
+  @override
+  String get emailConfiguration => 'تكوين البريد الإلكتروني';
+
+  @override
+  String get emailConfigurationDesc => 'إعدادات SMTP والبريد';
+
+  @override
+  String get smsConfiguration => 'تكوين الرسائل النصية';
+
+  @override
+  String get smsConfigurationDesc => 'تكوين بوابة الرسائل النصية';
+
+  @override
+  String get pushNotificationsConfigDesc => 'تكوين خدمات الإشعارات';
+
+  @override
+  String get webhooks => 'خطافات الويب';
+
+  @override
+  String get webhooksDesc => 'تلقي تحديثات فورية عند حدوث أحداث في النظام.';
+
+  @override
+  String get integrations => 'التكاملات';
+
+  @override
+  String get integrationsDesc => 'خدمات الطرف الثالث';
+
+  @override
+  String get apiManagement => 'إدارة API';
+
+  @override
+  String get apiManagementDesc => 'إدارة مفاتيح API والوصول';
+
+  @override
+  String get cloudStorage => 'التخزين السحابي';
+
+  @override
+  String get cloudStorageDesc => 'تكوين مزودي التخزين';
+
+  @override
+  String get paymentGateways => 'بوابات الدفع';
+
+  @override
+  String get paymentGatewaysDesc => 'تكوين طرق الدفع';
+
+  @override
+  String get videoConferencing => 'مؤتمرات الفيديو';
+
+  @override
+  String get videoConferencingDesc => 'تكوين خدمات الفيديو';
+
+  @override
+  String get backupRestore => 'النسخ الاحتياطي والاستعادة';
+
+  @override
+  String get backupRestoreDesc => 'إدارة النسخ الاحتياطية';
+
+  @override
+  String get maintenanceMode => 'وضع الصيانة';
+
+  @override
+  String get maintenanceModeDesc => 'تفعيل وضع الصيانة';
+
+  @override
+  String get maintenanceModeConfirmation =>
+      'تفعيل وضع الصيانة سيجعل المنصة غير متاحة لجميع المستخدمين باستثناء المسؤولين. متابعة؟';
+
+  @override
+  String get maintenanceModeEnabled => 'تم تفعيل وضع الصيانة';
+
+  @override
+  String get clearSystemCache => 'مسح ذاكرة التخزين المؤقت';
+
+  @override
+  String get clearSystemCacheDesc => 'تحرير موارد النظام';
+
+  @override
+  String get clearSystemCacheConfirmation =>
+      'سيؤدي هذا إلى مسح جميع البيانات المخزنة مؤقتاً. قد يعاني المستخدمون من بطء في التحميل مؤقتاً. متابعة؟';
+
+  @override
+  String get systemUpdates => 'تحديثات النظام';
+
+  @override
+  String get systemUpdatesDesc => 'التحقق من التحديثات المتاحة';
+
+  @override
+  String get updateAvailable => 'تحديث متاح';
+
+  @override
+  String get advancedSettings => 'الإعدادات المتقدمة';
+
+  @override
+  String get developerOptions => 'خيارات المطور';
+
+  @override
+  String get developerOptionsDesc => 'أدوات التصحيح والتطوير';
+
+  @override
+  String get debugMode => 'وضع التصحيح';
+
+  @override
+  String get debugModeDesc => 'تفعيل التسجيل المفصل';
+
+  @override
+  String get debugModeEnabled => 'تم تفعيل وضع التصحيح';
+
+  @override
+  String get debugModeDisabled => 'تم تعطيل وضع التصحيح';
+
+  @override
+  String get systemLogs => 'سجلات النظام';
+
+  @override
+  String get systemLogsDesc => 'عرض سجلات التطبيق';
+
+  @override
+  String get resetPlatformSettings => 'إعادة تعيين إعدادات المنصة';
+
+  @override
+  String get resetPlatformSettingsWarning =>
+      'سيؤدي هذا إلى إعادة تعيين جميع إعدادات المنصة إلى قيمها الافتراضية. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get settingsReset => 'تم إعادة تعيين الإعدادات';
+
+  @override
+  String get purgeAllData => 'حذف جميع البيانات';
+
+  @override
+  String get purgeAllDataWarning =>
+      'سيؤدي هذا إلى حذف جميع البيانات بشكل دائم بما في ذلك المستخدمين والمقررات والمحتوى. هذا الإجراء لا رجعة فيه.';
+
+  @override
+  String get typeConfirmToProceed => 'اكتب CONFIRM للمتابعة:';
+
+  @override
+  String get dataPurged => 'تم حذف جميع البيانات';
+
+  @override
+  String get purge => 'حذف';
+
+  @override
+  String get brandPreview => 'معاينة العلامة التجارية';
+
+  @override
+  String get primaryButton => 'أساسي';
+
+  @override
+  String get accentButton => 'تمييز';
+
+  @override
+  String get primaryColor => 'اللون الأساسي';
+
+  @override
+  String get primaryColorDesc => 'لون العلامة التجارية الرئيسي للأزرار';
+
+  @override
+  String get secondaryColor => 'اللون الثانوي';
+
+  @override
+  String get secondaryColorDesc => 'لون داعم للتدرجات';
+
+  @override
+  String get accentColor => 'لون التمييز';
+
+  @override
+  String get accentColorDesc => 'لون التمييز للتأكيد';
+
+  @override
+  String get presetThemes => 'قوالب جاهزة';
+
+  @override
+  String get brandingSaved => 'تم حفظ إعدادات العلامة التجارية';
+
+  @override
+  String get saveBranding => 'حفظ العلامة التجارية';
+
+  @override
+  String get resetToDefault => 'إعادة تعيين للافتراضي';
+
+  @override
+  String get logos => 'الشعارات';
+
+  @override
+  String get icons => 'الأيقونات';
+
+  @override
+  String get backgrounds => 'الخلفيات';
+
+  @override
+  String get assetGuidelinesTitle => 'إرشادات الأصول';
+
+  @override
+  String get assetGuidelinesDesc =>
+      'ارفع صوراً عالية الجودة بالتنسيقات الموصى بها للحصول على أفضل النتائج.';
+
+  @override
+  String get noImage => 'لا توجد صورة';
+
+  @override
+  String get uploaded => 'تم الرفع';
+
+  @override
+  String get notUploaded => 'لم يتم الرفع';
+
+  @override
+  String get assetRemoved => 'تم إزالة الأصل';
+
+  @override
+  String get assetUploaded => 'تم رفع الأصل بنجاح';
+
+  @override
+  String get dragAndDrop => 'اسحب وأفلت ملفك هنا';
+
+  @override
+  String get orClickToBrowse => 'أو انقر للاستعراض';
+
+  @override
+  String get recommendedSize => 'الحجم الموصى به';
+
+  @override
+  String get courseVideos => 'فيديوهات المقررات';
+
+  @override
+  String get userUploads => 'تحميلات المستخدمين';
+
+  @override
+  String get passwordComplexity => 'تعقيد كلمة المرور';
+
+  @override
+  String get minimumLength => 'الحد الأدنى للطول';
+
+  @override
+  String get characters => 'حرف';
+
+  @override
+  String get requireUppercase => 'طلب أحرف كبيرة';
+
+  @override
+  String get requireUppercaseDesc => 'حرف كبير واحد على الأقل (A-Z)';
+
+  @override
+  String get requireLowercase => 'طلب أحرف صغيرة';
+
+  @override
+  String get requireLowercaseDesc => 'حرف صغير واحد على الأقل (a-z)';
+
+  @override
+  String get requireNumbers => 'طلب أرقام';
+
+  @override
+  String get requireNumbersDesc => 'رقم واحد على الأقل (0-9)';
+
+  @override
+  String get requireSpecialChars => 'طلب أحرف خاصة';
+
+  @override
+  String get requireSpecialCharsDesc => 'حرف خاص واحد على الأقل (!@#\$%)';
+
+  @override
+  String get passwordExpiration => 'انتهاء صلاحية كلمة المرور';
+
+  @override
+  String get expirationPeriod => 'فترة الانتهاء';
+
+  @override
+  String get passwordHistory => 'سجل كلمات المرور';
+
+  @override
+  String get passwords => 'كلمات مرور';
+
+  @override
+  String get accountLockout => 'قفل الحساب';
+
+  @override
+  String get maxLoginAttempts => 'الحد الأقصى لمحاولات الدخول';
+
+  @override
+  String get attempts => 'محاولات';
+
+  @override
+  String get lockoutDuration => 'مدة القفل';
+
+  @override
+  String get blockCommonPasswords => 'حظر كلمات المرور الشائعة';
+
+  @override
+  String get blockCommonPasswordsDesc =>
+      'منع استخدام الكلمات القاموسية الشائعة';
+
+  @override
+  String get policyStrength => 'قوة السياسة';
+
+  @override
+  String get weak => 'ضعيف';
+
+  @override
+  String get strong => 'قوي';
+
+  @override
+  String get veryStrong => 'قوي جداً';
+
+  @override
+  String get passwordPolicySaved => 'تم حفظ سياسة كلمة المرور بنجاح';
+
+  @override
+  String get savePolicy => 'حفظ السياسة';
+
+  @override
+  String get advanced => 'متقدم';
+
+  @override
+  String get twoFactorAuthentication => 'المصادقة الثنائية';
+
+  @override
+  String get enforcementRules => 'قواعد التطبيق';
+
+  @override
+  String get administrators => 'المسؤولون';
+
+  @override
+  String get adminEnforcementDesc =>
+      'طلب المصادقة الثنائية لجميع حسابات المسؤولين';
+
+  @override
+  String get instructorEnforcementDesc =>
+      'طلب المصادقة الثنائية لحسابات المدرسين';
+
+  @override
+  String get studentEnforcementDesc => 'طلب المصادقة الثنائية لحسابات الطلاب';
+
+  @override
+  String get gracePeriod => 'فترة السماح';
+
+  @override
+  String get noGracePeriod => 'لا توجد فترة سماح';
+
+  @override
+  String get authenticationMethods => 'طرق المصادقة';
+
+  @override
+  String get smsVerification => 'التحقق عبر SMS';
+
+  @override
+  String get smsVerificationDesc => 'استلام الرمز عبر رسالة نصية';
+
+  @override
+  String get emailVerification => 'التحقق عبر البريد';
+
+  @override
+  String get emailVerificationDesc => 'استلام الرمز عبر البريد الإلكتروني';
+
+  @override
+  String get backupCodesDesc => 'رموز استخدام لمرة واحدة للاسترداد';
+
+  @override
+  String get codeSettings => 'إعدادات الرمز';
+
+  @override
+  String get codeLength => 'طول الرمز';
+
+  @override
+  String get digits => 'أرقام';
+
+  @override
+  String get codeExpiry => 'انتهاء صلاحية الرمز';
+
+  @override
+  String get backupCodesCount => 'عدد رموز الاسترداد';
+
+  @override
+  String get codes => 'رموز';
+
+  @override
+  String get twoFactorPolicySaved => 'تم حفظ سياسة المصادقة الثنائية بنجاح';
+
+  @override
+  String get smtpSettings => 'إعدادات SMTP';
+
+  @override
+  String get smtpHost => 'خادم SMTP';
+
+  @override
+  String get port => 'المنفذ';
+
+  @override
+  String get encryption => 'التشفير';
+
+  @override
+  String get authentication => 'المصادقة';
+
+  @override
+  String get username => 'اسم المستخدم';
+
+  @override
+  String get senderInfo => 'معلومات المرسل';
+
+  @override
+  String get senderName => 'اسم المرسل';
+
+  @override
+  String get senderEmail => 'بريد المرسل';
+
+  @override
+  String get sendTestEmail => 'إرسال بريد تجريبي';
+
+  @override
+  String get testing => 'جاري الاختبار...';
+
+  @override
+  String get saveConfiguration => 'حفظ التكوين';
+
+  @override
+  String get testEmailSent => 'تم إرسال البريد التجريبي بنجاح';
+
+  @override
+  String get emailConfigSaved => 'تم حفظ تكوين البريد الإلكتروني';
+
+  @override
+  String get smtpServer => 'خادم SMTP';
+
+  @override
+  String get notConfigured => 'غير مكون';
+
+  @override
+  String get connected => 'متصل';
+
+  @override
+  String get smsProvider => 'مزود الرسائل النصية';
+
+  @override
+  String get credentials => 'بيانات الاعتماد';
+
+  @override
+  String get accountSid => 'معرف الحساب';
+
+  @override
+  String get authToken => 'رمز المصادقة';
+
+  @override
+  String get usageStatistics => 'إحصائيات الاستخدام';
+
+  @override
+  String get sentThisMonth => 'المرسلة هذا الشهر';
+
+  @override
+  String get failedThisMonth => 'الفاشلة هذا الشهر';
+
+  @override
+  String get remainingCredits => 'الرصيد المتبقي';
+
+  @override
+  String get deliveryRate => 'معدل التسليم';
+
+  @override
+  String get sendTestSms => 'إرسال رسالة تجريبية';
+
+  @override
+  String get testSmsSent => 'تم إرسال الرسالة التجريبية بنجاح';
+
+  @override
+  String get smsConfigSaved => 'تم حفظ تكوين الرسائل النصية';
+
+  @override
+  String get smsService => 'خدمة الرسائل النصية';
+
+  @override
+  String get notificationProvider => 'مزود الإشعارات';
+
+  @override
+  String get serverKey => 'مفتاح الخادم';
+
+  @override
+  String get senderId => 'معرف المرسل';
+
+  @override
+  String get newEnrollments => 'تسجيلات جديدة';
+
+  @override
+  String get newEnrollmentsDesc => 'إشعار عند تسجيل المستخدمين في المقررات';
+
+  @override
+  String get assignmentsDesc => 'إشعار بالواجبات الجديدة والمستحقة';
+
+  @override
+  String get gradesDesc => 'إشعار عند نشر الدرجات';
+
+  @override
+  String get messagesDesc => 'إشعار بالرسائل الجديدة';
+
+  @override
+  String get systemAlerts => 'تنبيهات النظام';
+
+  @override
+  String get systemAlertsDesc => 'إشعار بأحداث النظام';
+
+  @override
+  String get deliveryStatistics => 'إحصائيات التسليم';
+
+  @override
+  String get delivered => 'تم التسليم';
+
+  @override
+  String get opened => 'تم الفتح';
+
+  @override
+  String get clicked => 'تم النقر';
+
+  @override
+  String get registeredDevices => 'الأجهزة المسجلة';
+
+  @override
+  String get sentToday => 'المرسلة اليوم';
+
+  @override
+  String get pushNotificationsSaved => 'تم حفظ إعدادات الإشعارات';
+
+  @override
+  String get webhooksInfo => 'Webhooks';
+
+  @override
+  String get totalWebhooks => 'إجمالي Webhooks';
+
+  @override
+  String get activeWebhooks => 'نشط';
+
+  @override
+  String get triggeredToday => 'المشغلة اليوم';
+
+  @override
+  String get lastTriggered => 'آخر تشغيل';
+
+  @override
+  String get test => 'اختبار';
+
+  @override
+  String get addWebhook => 'إضافة خطاف ويب';
+
+  @override
+  String get editWebhook => 'تعديل Webhook';
+
+  @override
+  String get webhookName => 'اسم Webhook';
+
+  @override
+  String get webhookUrl => 'رابط Webhook';
+
+  @override
+  String get webhookAdded => 'تم إضافة Webhook بنجاح';
+
+  @override
+  String get webhookUpdated => 'تم تحديث Webhook بنجاح';
+
+  @override
+  String get webhookDeleted => 'تم حذف Webhook بنجاح';
+
+  @override
+  String get webhookTestSent => 'تم إرسال اختبار Webhook بنجاح';
+
+  @override
+  String get apiAccess => 'الوصول لـ API';
+
+  @override
+  String get activeKeys => 'المفاتيح النشطة';
+
+  @override
+  String get requestsToday => 'الطلبات اليوم';
+
+  @override
+  String get successRate => 'معدل النجاح';
+
+  @override
+  String get rateLimiting => 'تحديد المعدل';
+
+  @override
+  String get requestsPerWindow => 'الطلبات لكل نافذة';
+
+  @override
+  String get requests => 'طلبات';
+
+  @override
+  String get timeWindow => 'نافذة الوقت';
+
+  @override
+  String get apiKeys => 'مفاتيح API';
+
+  @override
+  String get keys => 'مفاتيح';
+
+  @override
+  String get revoke => 'إلغاء';
+
+  @override
+  String get generateApiKey => 'إنشاء مفتاح API';
+
+  @override
+  String get keyName => 'اسم المفتاح';
+
+  @override
+  String get permissions => 'الصلاحيات';
+
+  @override
+  String get generate => 'إنشاء';
+
+  @override
+  String get apiKeyGenerated => 'تم إنشاء مفتاح API بنجاح';
+
+  @override
+  String get apiKeyRegenerated => 'تم إعادة إنشاء مفتاح API بنجاح';
+
+  @override
+  String get apiKeyRevoked => 'تم إلغاء مفتاح API بنجاح';
+
+  @override
+  String get apiDocumentation => 'وثائق API';
+
+  @override
+  String get storageProvider => 'مزود التخزين';
+
+  @override
+  String get bucketName => 'اسم الحاوية';
+
+  @override
+  String get accessKeyId => 'معرف مفتاح الوصول';
+
+  @override
+  String get secretAccessKey => 'مفتاح الوصول السري';
+
+  @override
+  String get remaining => 'متبقي';
+
+  @override
+  String get testConnection => 'اختبار الاتصال';
+
+  @override
+  String get connectionTested => 'تم اختبار الاتصال بنجاح';
+
+  @override
+  String get cloudStorageSaved => 'تم حفظ تكوين التخزين السحابي';
+
+  @override
+  String get totalRevenue => 'إجمالي الإيرادات';
+
+  @override
+  String get transactions => 'المعاملات';
+
+  @override
+  String get paidUsers => 'المستخدمون المدفوعون';
+
+  @override
+  String get paymentSettings => 'إعدادات الدفع';
+
+  @override
+  String get defaultCurrency => 'العملة الافتراضية';
+
+  @override
+  String get testMode => 'وضع الاختبار';
+
+  @override
+  String get paymentMethods => 'طرق الدفع';
+
+  @override
+  String get configured => 'مكون';
+
+  @override
+  String get configure => 'تكوين';
+
+  @override
+  String get recentTransactions => 'المعاملات الأخيرة';
+
+  @override
+  String get publishableKey => 'المفتاح العام';
+
+  @override
+  String get secretKey => 'المفتاح السري';
+
+  @override
+  String get paymentGatewayConfigured => 'تم تكوين بوابة الدفع بنجاح';
+
+  @override
+  String get videoProvider => 'مزود الفيديو';
+
+  @override
+  String get apiCredentials => 'بيانات اعتماد API';
+
+  @override
+  String get apiKey => 'مفتاح API';
+
+  @override
+  String get apiSecret => 'سر API';
+
+  @override
+  String get meetingSettings => 'إعدادات الاجتماعات';
+
+  @override
+  String get enableWaitingRoom => 'تفعيل غرفة الانتظار';
+
+  @override
+  String get waitingRoomDesc => 'احتجاز المشاركين قبل القبول';
+
+  @override
+  String get enableRecording => 'تفعيل التسجيل';
+
+  @override
+  String get recordingDesc => 'السماح بتسجيل الاجتماعات';
+
+  @override
+  String get muteOnEntry => 'كتم الصوت عند الدخول';
+
+  @override
+  String get muteOnEntryDesc => 'كتم صوت المشاركين عند الانضمام';
+
+  @override
+  String get enableChat => 'تفعيل الدردشة';
+
+  @override
+  String get chatDesc => 'السماح بالدردشة أثناء الاجتماع';
+
+  @override
+  String get enableScreenShare => 'تفعيل مشاركة الشاشة';
+
+  @override
+  String get screenShareDesc => 'السماح بمشاركة الشاشة';
+
+  @override
+  String get limits => 'الحدود';
+
+  @override
+  String get maxParticipants => 'الحد الأقصى للمشاركين';
+
+  @override
+  String get maxDuration => 'الحد الأقصى للمدة';
+
+  @override
+  String get activeMeetings => 'الاجتماعات النشطة';
+
+  @override
+  String get todayMeetings => 'اجتماعات اليوم';
+
+  @override
+  String get participants => 'مشاركين';
+
+  @override
+  String get videoConferencingSaved => 'تم حفظ إعدادات مؤتمرات الفيديو';
+
+  @override
+  String get automaticBackup => 'النسخ الاحتياطي التلقائي';
+
+  @override
+  String get enableAutoBackup => 'تفعيل النسخ التلقائي';
+
+  @override
+  String get hourly => 'كل ساعة';
+
+  @override
+  String get retention => 'الاحتفاظ';
+
+  @override
+  String get backupOptions => 'خيارات النسخ الاحتياطي';
+
+  @override
+  String get userData => 'بيانات المستخدمين';
+
+  @override
+  String get userDataDesc => 'حسابات المستخدمين والملفات الشخصية والتفضيلات';
+
+  @override
+  String get courseData => 'بيانات المقررات';
+
+  @override
+  String get courseDataDesc => 'المقررات والدروس والتسجيلات';
+
+  @override
+  String get mediaFiles => 'ملفات الوسائط';
+
+  @override
+  String get mediaFilesDesc => 'الفيديوهات والصور والمستندات';
+
+  @override
+  String get systemSettingsBackup => 'إعدادات النظام';
+
+  @override
+  String get systemSettingsDesc => 'تكوين المنصة';
+
+  @override
+  String get recentBackups => 'النسخ الاحتياطية الأخيرة';
+
+  @override
+  String get totalBackups => 'إجمالي النسخ';
+
+  @override
+  String get totalSize => 'الحجم الإجمالي';
+
+  @override
+  String get nextBackup => 'النسخة التالية';
+
+  @override
+  String get healthy => 'سليم';
+
+  @override
+  String get restoreBackup => 'استعادة النسخة';
+
+  @override
+  String get restoreWarning =>
+      'استعادة نسخة احتياطية ستستبدل البيانات الحالية. لا يمكن التراجع عن هذا الإجراء. هل أنت متأكد؟';
+
+  @override
+  String get restore => 'استعادة';
+
+  @override
+  String get backupCreated => 'تم إنشاء النسخة الاحتياطية بنجاح';
+
+  @override
+  String get backupRestored => 'تم استعادة النسخة الاحتياطية بنجاح';
+
+  @override
+  String get backupDownloadStarted => 'بدأ تحميل النسخة الاحتياطية';
+
+  @override
+  String get backupDeleted => 'تم حذف النسخة';
+
+  @override
+  String get currentVersion => 'الإصدار الحالي';
+
+  @override
+  String get upToDate => 'محدث';
+
+  @override
+  String get availableNow => 'متاح الآن';
+
+  @override
+  String get newVersionDesc => 'إصدار جديد متاح مع تحسينات وإصلاحات.';
+
+  @override
+  String get installNow => 'تثبيت الآن';
+
+  @override
+  String get installing => 'جاري التثبيت...';
+
+  @override
+  String get automaticUpdates => 'التحديثات التلقائية';
+
+  @override
+  String get automaticUpdatesDesc => 'تثبيت التحديثات تلقائياً عند توفرها';
+
+  @override
+  String get systemInformation => 'معلومات النظام';
+
+  @override
+  String get platform => 'المنصة';
+
+  @override
+  String get flutterVersion => 'إصدار Flutter';
+
+  @override
+  String get dartVersion => 'إصدار Dart';
+
+  @override
+  String get buildNumber => 'رقم البناء';
+
+  @override
+  String get changelog => 'سجل التغييرات';
+
+  @override
+  String get patch => 'تصحيح';
+
+  @override
+  String get checkForUpdates => 'التحقق من التحديثات';
+
+  @override
+  String get updateCheckComplete => 'اكتمل فحص التحديثات';
+
+  @override
+  String get updateInstalled => 'تم تثبيت التحديث بنجاح';
+
+  @override
+  String get developerWarningTitle => 'خيارات المطور';
+
+  @override
+  String get developerWarningDesc =>
+      'هذه الإعدادات لأغراض التطوير. التغييرات قد تؤثر على استقرار النظام.';
+
+  @override
+  String get productionDesc => 'بيئة حية مع بيانات حقيقية';
+
+  @override
+  String get stagingDesc => 'بيئة اختبار للإصدارات المسبقة';
+
+  @override
+  String get developmentDesc => 'بيئة تطوير محلية';
+
+  @override
+  String get debugSettings => 'إعدادات التصحيح';
+
+  @override
+  String get verboseLogging => 'التسجيل المفصل';
+
+  @override
+  String get verboseLoggingDesc => 'تفعيل مخرجات السجل المفصلة';
+
+  @override
+  String get performanceOverlay => 'طبقة الأداء';
+
+  @override
+  String get performanceOverlayDesc => 'عرض معلومات FPS والعرض';
+
+  @override
+  String get debugBanner => 'شعار التصحيح';
+
+  @override
+  String get debugBannerDesc => 'عرض شعار التصحيح على الشاشات';
+
+  @override
+  String get apiSettings => 'إعدادات API';
+
+  @override
+  String get mockApi => 'API وهمي';
+
+  @override
+  String get mockApiDesc => 'استخدام بيانات وهمية بدلاً من API الحقيقي';
+
+  @override
+  String get simulatedDelay => 'تأخير محاكى';
+
+  @override
+  String get developerTools => 'أدوات المطور';
+
+  @override
+  String get enableDevTools => 'تفعيل DevTools';
+
+  @override
+  String get enableDevToolsDesc => 'الوصول إلى Flutter DevTools';
+
+  @override
+  String get resetPreferences => 'إعادة تعيين التفضيلات';
+
+  @override
+  String get resetPreferencesDesc => 'إعادة تعيين جميع تفضيلات المستخدم';
+
+  @override
+  String get resetPreferencesConfirm => 'إعادة تعيين جميع التفضيلات للافتراضي؟';
+
+  @override
+  String get exportLogsDesc => 'تحميل سجلات النظام';
+
+  @override
+  String get logsExported => 'تم تصدير السجلات بنجاح';
+
+  @override
+  String get operationCompleted => 'اكتملت العملية بنجاح';
+
+  @override
+  String get searchLogs => 'البحث في السجلات...';
+
+  @override
+  String get allLevels => 'جميع المستويات';
+
+  @override
+  String get allSources => 'جميع المصادر';
+
+  @override
+  String get debug => 'تصحيح';
+
+  @override
+  String get errors => 'أخطاء';
+
+  @override
+  String get warnings => 'تحذيرات';
+
+  @override
+  String get fullMessage => 'الرسالة الكاملة';
+
+  @override
+  String get source => 'المصدر';
+
+  @override
+  String get adjustFilters => 'جرب تعديل المرشحات';
+
+  @override
+  String get clearLogs => 'مسح السجلات';
+
+  @override
+  String get clearLogsConfirm =>
+      'هل أنت متأكد أنك تريد مسح جميع السجلات؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get logsCleared => 'تم مسح السجلات بنجاح';
+
+  @override
+  String get systemDefault => 'الافتراضي للنظام';
+
+  @override
+  String get sampleHeading => 'عنوان عينة';
+
+  @override
+  String get sampleText => 'هذا نص عينة لمعاينة إعدادات حجم الخط.';
+
+  @override
+  String get noBackups => 'لم يتم العثور على نسخ احتياطية';
+
+  @override
+  String get searchBlockedUsers => 'البحث في المستخدمين المحظورين...';
+
+  @override
+  String get totalBlocked => 'إجمالي المحظورين';
+
+  @override
+  String get byAdmin => 'بواسطة المسؤول';
+
+  @override
+  String get bySystem => 'بواسطة النظام';
+
+  @override
+  String get blockedOn => 'تم الحظر في';
+
+  @override
+  String get by => 'بواسطة';
+
+  @override
+  String get accountDeleted => 'تم حذف الحساب بنجاح';
+
+  @override
+  String get availableLanguages => 'اللغات المتاحة';
+
+  @override
+  String get languageChangeNote => 'سيتم تطبيق تغييرات اللغة فوراً';
+
+  @override
+  String get registrationOptions => 'خيارات التسجيل';
+
+  @override
+  String get allowSelfRegistration => 'السماح بالتسجيل الذاتي';
+
+  @override
+  String get allowSelfRegistrationDesc =>
+      'يمكن للمستخدمين إنشاء حساباتهم الخاصة';
+
+  @override
+  String get requireEmailVerification => 'طلب التحقق من البريد';
+
+  @override
+  String get requireEmailVerificationDesc =>
+      'التحقق من البريد قبل تفعيل الحساب';
+
+  @override
+  String get requireAdminApproval => 'طلب موافقة المسؤول';
+
+  @override
+  String get requireAdminApprovalDesc =>
+      'الحسابات الجديدة تتطلب موافقة المسؤول';
+
+  @override
+  String get socialLogin => 'تسجيل الدخول الاجتماعي';
+
+  @override
+  String get enableSocialLogin => 'تفعيل تسجيل الدخول الاجتماعي';
+
+  @override
+  String get enableSocialLoginDesc => 'السماح بالدخول عبر الحسابات الاجتماعية';
+
+  @override
+  String get allowGoogleLoginDesc => 'السماح بتسجيل الدخول بحساب Google';
+
+  @override
+  String get allowMicrosoftLoginDesc => 'السماح بتسجيل الدخول بحساب Microsoft';
+
+  @override
+  String get allowAppleLoginDesc => 'السماح بتسجيل الدخول بحساب Apple';
+
+  @override
+  String get defaultSettings => 'الإعدادات الافتراضية';
+
+  @override
+  String get defaultRole => 'الدور الافتراضي';
+
+  @override
+  String get defaultRoleDesc => 'الدور المعين للمستخدمين الجدد';
+
+  @override
+  String get maxRegistrationsPerDay => 'الحد الأقصى للتسجيلات يومياً';
+
+  @override
+  String get allowedEmailDomains => 'نطاقات البريد المسموحة';
+
+  @override
+  String get allDomainsAllowed => 'جميع النطاقات مسموحة';
+
+  @override
+  String get registrationStatus => 'حالة التسجيل';
+
+  @override
+  String get registrationOpen => 'مفتوح';
+
+  @override
+  String get registrationClosed => 'مغلق';
+
+  @override
+  String get addEmailDomain => 'إضافة نطاق بريد';
+
+  @override
+  String get saveSettings => 'حفظ الإعدادات';
+
+  @override
+  String get addSemester => 'إضافة فصل دراسي';
+
+  @override
+  String get currentSemester => 'الفصل الحالي';
+
+  @override
+  String get starts => 'يبدأ';
+
+  @override
+  String get ends => 'ينتهي';
+
+  @override
+  String get enrollmentOpen => 'مفتوح';
+
+  @override
+  String get enrollmentClosed => 'مغلق';
+
+  @override
+  String get setAsActive => 'تعيين كنشط';
+
+  @override
+  String get daysRemaining => 'أيام متبقية';
+
+  @override
+  String get semesterActivated => 'تم تفعيل الفصل الدراسي بنجاح';
+
+  @override
+  String get semesterName => 'اسم الفصل الدراسي';
+
+  @override
+  String get startDate => 'تاريخ البداية';
+
+  @override
+  String get endDate => 'تاريخ النهاية';
+
+  @override
+  String get semesterAdded => 'تم إضافة الفصل الدراسي بنجاح';
+
+  @override
+  String get editSemester => 'تعديل الفصل الدراسي';
+
+  @override
+  String get enrollmentStatus => 'حالة التسجيل';
+
+  @override
+  String get semesterUpdated => 'تم تحديث الفصل الدراسي بنجاح';
+
+  @override
+  String get deleteSemester => 'حذف الفصل الدراسي';
+
+  @override
+  String get deleteSemesterConfirm =>
+      'هل أنت متأكد أنك تريد حذف هذا الفصل الدراسي؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get semesterDeleted => 'تم حذف الفصل الدراسي بنجاح';
+
+  @override
+  String get accessControls => 'التحكم في الوصول';
+
+  @override
+  String get accessControlsDesc => 'إدارة إعدادات أمان الوصول';
+
+  @override
+  String get terminateAll => 'إنهاء الكل';
+
+  @override
+  String get terminateSession => 'إنهاء الجلسة';
+
+  @override
+  String get terminateSessionConfirm => 'إنهاء جلسة';
+
+  @override
+  String get sessionTerminated => 'تم إنهاء الجلسة';
+
+  @override
+  String get allSessionsTerminated => 'تم إنهاء جميع الجلسات';
+
+  @override
+  String get terminateAllConfirm =>
+      'سيؤدي هذا إلى إنهاء جميع الجلسات باستثناء جلستك الحالية. متابعة؟';
+
+  @override
+  String get lastActive => 'آخر نشاط';
+
+  @override
+  String get more => 'المزيد';
+
+  @override
+  String get ipManagement => 'إدارة IP';
+
+  @override
+  String get ipManagementDesc => 'إدارة قوائم IP المسموحة والمحظورة';
+
+  @override
+  String get whitelisted => 'مسموح';
+
+  @override
+  String get blacklisted => 'محظور';
+
+  @override
+  String get addToWhitelist => 'إضافة للمسموح';
+
+  @override
+  String get addToBlacklist => 'إضافة للمحظور';
+
+  @override
+  String get recentRules => 'القواعد الأخيرة';
+
+  @override
+  String get rules => 'قواعد';
+
+  @override
+  String get ipRuleRemoved => 'تم إزالة قاعدة IP';
+
+  @override
+  String get ipRuleAdded => 'تم إضافة قاعدة IP';
+
+  @override
+  String get terminate => 'إنهاء';
+
+  @override
+  String get threatAnalysis => 'تحليل التهديدات';
+
+  @override
+  String get threatAnalysisDesc => 'مراقبة وتحليل التهديدات الأمنية';
+
+  @override
+  String get blockedToday => 'المحظور اليوم';
+
+  @override
+  String get blockedThisWeek => 'المحظور هذا الأسبوع';
+
+  @override
+  String get threatBreakdown => 'تفصيل التهديدات';
+
+  @override
+  String get viewingThreatDetails => 'عرض تفاصيل التهديدات';
+
+  @override
+  String get sessionTimeoutSettings => 'إعدادات مهلة الجلسة';
+
+  @override
+  String get encryptionSettings => 'إعدادات التشفير';
+
+  @override
+  String get dataEncryption => 'تشفير البيانات';
+
+  @override
+  String get dataEncryptionDesc => 'تشفير AES-256 مفعل';
+
+  @override
+  String get backupDataCenter => 'مركز النسخ الاحتياطي والبيانات';
+
+  @override
+  String get backupStatus => 'حالة النسخ الاحتياطي';
+
+  @override
+  String get allSystemsOperational => 'جميع الأنظمة تعمل';
+
+  @override
+  String get backupRequired => 'النسخ الاحتياطي مطلوب';
+
+  @override
+  String get attention => 'انتباه';
+
+  @override
+  String get automaticBackups => 'النسخ الاحتياطي التلقائي';
+
+  @override
+  String get scheduleAutomaticBackups => 'جدولة النسخ الاحتياطي التلقائي';
+
+  @override
+  String get retentionPeriod => 'فترة الاحتفاظ';
+
+  @override
+  String get keepBackupsFor => 'الاحتفاظ بالنسخ لمدة';
+
+  @override
+  String get backupHistory => 'سجل النسخ الاحتياطي';
+
+  @override
+  String get backupsAvailable => 'نسخ متاحة';
+
+  @override
+  String get auto => 'تلقائي';
+
+  @override
+  String get manual => 'يدوي';
+
+  @override
+  String get backups => 'النسخ الاحتياطية';
+
+  @override
+  String get dataExport => 'تصدير البيانات';
+
+  @override
+  String get selectDataToExport => 'اختر البيانات للتصدير';
+
+  @override
+  String get exportUserDataDesc => 'تصدير جميع ملفات المستخدمين والحسابات';
+
+  @override
+  String get exportCourseDataDesc => 'تصدير المقررات والمواد والتسجيلات';
+
+  @override
+  String get gradesData => 'بيانات الدرجات';
+
+  @override
+  String get exportGradesDataDesc => 'تصدير جميع الدرجات والتقييمات';
+
+  @override
+  String get attendanceData => 'بيانات الحضور';
+
+  @override
+  String get exportAttendanceDataDesc => 'تصدير سجلات الحضور';
+
+  @override
+  String get analyticsData => 'بيانات التحليلات';
+
+  @override
+  String get exportAnalyticsDataDesc => 'تصدير التحليلات والتقارير';
+
+  @override
+  String get exportFormat => 'صيغة التصدير';
+
+  @override
+  String get exportSelected => 'تصدير المحدد';
+
+  @override
+  String get recentExports => 'التصديرات الأخيرة';
+
+  @override
+  String get ago => 'مضت';
+
+  @override
+  String get backupStorageInfo => 'معلومات تخزين النسخ الاحتياطي';
+
+  @override
+  String get storageCritical =>
+      'التخزين ممتلئ تقريباً. يرجى حذف النسخ القديمة.';
+
+  @override
+  String get localBackups => 'النسخ المحلية';
+
+  @override
+  String get cloudBackups => 'النسخ السحابية';
+
+  @override
+  String get autoBackupEnabled => 'تم تفعيل النسخ الاحتياطي التلقائي';
+
+  @override
+  String get autoBackupDisabled => 'تم تعطيل النسخ الاحتياطي التلقائي';
+
+  @override
+  String get backupFrequencyChanged => 'تم تغيير تكرار النسخ الاحتياطي إلى';
+
+  @override
+  String get retentionPeriodChanged => 'تم تغيير فترة الاحتفاظ إلى';
+
+  @override
+  String get backupCompleted => 'تم النسخ الاحتياطي بنجاح';
+
+  @override
+  String get exportCompleted => 'تم التصدير بنجاح';
+
+  @override
+  String get restoreBackupConfirm =>
+      'هل أنت متأكد من استعادة هذه النسخة؟ سيتم استبدال البيانات الحالية.';
+
+  @override
+  String get restoreStarted => 'بدأت عملية الاستعادة';
+
+  @override
+  String get deleteBackup => 'حذف النسخة';
+
+  @override
+  String get deleteBackupConfirm =>
+      'هل أنت متأكد من حذف هذه النسخة الاحتياطية؟';
+
+  @override
+  String get selectBackupToRestore => 'اختر نسخة للاستعادة';
+
+  @override
+  String get paymentManagement => 'إدارة المدفوعات';
+
+  @override
+  String get subscriptionOverview => 'نظرة عامة على الاشتراكات';
+
+  @override
+  String get manageSubscriptions => 'إدارة اشتراكاتك';
+
+  @override
+  String get newSubs => 'جديد';
+
+  @override
+  String get canceled => 'ملغى';
+
+  @override
+  String get expiringSoon => 'ينتهي قريباً';
+
+  @override
+  String get transactionsToday => 'معاملات اليوم';
+
+  @override
+  String get refunded => 'مسترد';
+
+  @override
+  String get noTransactions => 'لا توجد معاملات';
+
+  @override
+  String get subscription => 'اشتراك';
+
+  @override
+  String get coursePurchase => 'شراء مقرر';
+
+  @override
+  String get refund => 'استرداد';
+
+  @override
+  String get configurePaymentGateways => 'تكوين بوابات الدفع';
+
+  @override
+  String get fee => 'رسوم';
+
+  @override
+  String get managePaymentGateways => 'إدارة بوابات الدفع';
+
+  @override
+  String get subscriptionPlans => 'خطط الاشتراك';
+
+  @override
+  String get managePricingPlans => 'إدارة خطط التسعير';
+
+  @override
+  String get addPlan => 'إضافة خطة';
+
+  @override
+  String get lifetime => 'مدى الحياة';
+
+  @override
+  String get subscribers => 'مشتركين';
+
+  @override
+  String get transactionDetails => 'تفاصيل المعاملة';
+
+  @override
+  String get transactionId => 'رقم المعاملة';
+
+  @override
+  String get customer => 'العميل';
+
+  @override
+  String get emailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get paymentMethodLabel => 'طريقة الدفع';
+
+  @override
+  String get processRefund => 'معالجة الاسترداد';
+
+  @override
+  String get refundConfirmation => 'هل أنت متأكد من معالجة هذا الاسترداد؟';
+
+  @override
+  String get refundProcessed => 'تمت معالجة الاسترداد بنجاح';
+
+  @override
+  String get planActivated => 'تم تفعيل الخطة';
+
+  @override
+  String get planDeactivated => 'تم تعطيل الخطة';
+
+  @override
+  String get subscriptions => 'الاشتراكات';
+
+  @override
+  String get amount => 'المبلغ';
+
+  @override
+  String get auditCompliance => 'التدقيق والامتثال';
+
+  @override
+  String get complianceScore => 'درجة الامتثال';
+
+  @override
+  String get compliant => 'متوافق';
+
+  @override
+  String get totalLogs => 'إجمالي السجلات';
+
+  @override
+  String get entriesFound => 'سجل موجود';
+
+  @override
+  String get loadMore => 'تحميل المزيد';
+
+  @override
+  String get complianceStatus => 'حالة الامتثال';
+
+  @override
+  String get checksCompliant => 'فحوصات متوافقة';
+
+  @override
+  String get checking => 'جاري الفحص...';
+
+  @override
+  String get runCheck => 'تشغيل الفحص';
+
+  @override
+  String get nonCompliant => 'غير متوافق';
+
+  @override
+  String get partial => 'جزئي';
+
+  @override
+  String get severity => 'الخطورة';
+
+  @override
+  String get actionType => 'نوع الإجراء';
+
+  @override
+  String get update => 'تحديث';
+
+  @override
+  String get dateRange => 'نطاق التاريخ';
+
+  @override
+  String get selectDateRange => 'اختر نطاق التاريخ';
+
+  @override
+  String get exportReport => 'تصدير التقرير';
+
+  @override
+  String get exportAuditData => 'تصدير بيانات التدقيق إلى ملف';
+
+  @override
+  String get includeDetailedInfo => 'تضمين معلومات تفصيلية';
+
+  @override
+  String get includeIpUserAgent => 'تضمين عناوين IP ومعلومات المتصفح';
+
+  @override
+  String get exporting => 'جاري التصدير...';
+
+  @override
+  String get exportNow => 'تصدير الآن';
+
+  @override
+  String get scheduleReport => 'جدولة التقرير';
+
+  @override
+  String get logDetails => 'تفاصيل السجل';
+
+  @override
+  String get action => 'الإجراء';
+
+  @override
+  String get resource => 'المورد';
+
+  @override
+  String get complianceCheckComplete => 'اكتمل فحص الامتثال';
+
+  @override
+  String get complianceReportExported => 'تم تصدير تقرير الامتثال';
+
+  @override
+  String get reportScheduled => 'تمت جدولة التقرير بنجاح';
+
+  @override
+  String get compliance => 'الامتثال';
+
+  @override
+  String get integrationsApi => 'التكاملات و API';
+
+  @override
+  String get apiUsage => 'استخدام API';
+
+  @override
+  String get noIntegrationsFound => 'لم يتم العثور على تكاملات';
+
+  @override
+  String get lms => 'نظام إدارة التعلم';
+
+  @override
+  String get payment => 'الدفع';
+
+  @override
+  String get lastSync => 'آخر مزامنة';
+
+  @override
+  String get disconnected => 'غير متصل';
+
+  @override
+  String get syncNow => 'مزامنة الآن';
+
+  @override
+  String get syncing => 'جاري المزامنة';
+
+  @override
+  String get connecting => 'جاري الاتصال';
+
+  @override
+  String get noApiKeys => 'لم يتم إنشاء مفاتيح API';
+
+  @override
+  String get createApiKeyDescription =>
+      'أنشئ مفتاح API للوصول إلى المنصة برمجياً';
+
+  @override
+  String get createNew => 'إنشاء جديد';
+
+  @override
+  String get expired => 'منتهي الصلاحية';
+
+  @override
+  String get lastUsed => 'آخر استخدام';
+
+  @override
+  String get noWebhooks => 'لم يتم تكوين خطافات ويب';
+
+  @override
+  String get webhooksDescription =>
+      'تقوم خطافات الويب بإخطار الخدمات الخارجية عند وقوع أحداث';
+
+  @override
+  String get rate => 'المعدل';
+
+  @override
+  String get activated => 'تم التفعيل';
+
+  @override
+  String get deactivated => 'تم إلغاء التفعيل';
+
+  @override
+  String get totalRequests => 'إجمالي الطلبات';
+
+  @override
+  String get failedRequests => 'الطلبات الفاشلة';
+
+  @override
+  String get avgLatency => 'متوسط التأخير';
+
+  @override
+  String get requestsOverTime => 'الطلبات عبر الوقت';
+
+  @override
+  String get myProfile => 'ملفي الشخصي';
+
+  @override
+  String get activityStats => 'إحصائيات النشاط';
+
+  @override
+  String get usersManaged => 'المستخدمون المُدارون';
+
+  @override
+  String get coursesCreated => 'الدورات المُنشأة';
+
+  @override
+  String get reportsGenerated => 'التقارير المُنشأة';
+
+  @override
+  String get workInformation => 'معلومات العمل';
+
+  @override
+  String get employeeId => 'رقم الموظف';
+
+  @override
+  String get joinDate => 'تاريخ الانضمام';
+
+  @override
+  String get lastLogin => 'آخر تسجيل دخول';
+
+  @override
+  String get exportMyData => 'تصدير بياناتي';
+
+  @override
+  String get noRecentActivity => 'لا يوجد نشاط حديث';
+
+  @override
+  String get changeProfilePhoto => 'تغيير صورة الملف الشخصي';
+
+  @override
+  String get twoFactorDescription =>
+      'أضف طبقة أمان إضافية لحسابك من خلال طلب رمز تحقق بالإضافة إلى كلمة المرور.';
+
+  @override
+  String get twoFactorEnabled => 'المصادقة الثنائية مفعلة';
+
+  @override
+  String get twoFactorSettingsUpdated => 'تم تحديث إعدادات المصادقة الثنائية';
+
+  @override
+  String get manageSettings => 'إدارة الإعدادات';
+
+  @override
+  String get confirmLogout => 'تأكيد تسجيل الخروج';
+
+  @override
+  String get passwordsDontMatch => 'كلمات المرور غير متطابقة';
+
+  @override
+  String get languageSettings => 'إعدادات اللغة';
+
+  @override
+  String get sendAlerts => 'إرسال تنبيهات';
+
+  @override
+  String get emailReport => 'تقرير بريد إلكتروني';
+
+  @override
+  String get pdfReport => 'تقرير PDF';
+
+  @override
+  String get excelExport => 'تصدير Excel';
+
+  @override
+  String get exportOptions => 'خيارات التصدير';
+
+  @override
+  String get printReport => 'طباعة التقرير';
+
+  @override
+  String get newIndividualMessage => 'رسالة فردية جديدة';
+
+  @override
+  String get newGroup => 'مجموعة جديدة';
+
+  @override
+  String get createGroupConversation => 'إنشاء محادثة جماعية';
+
+  @override
+  String get sendToMultiple => 'إرسال لعدة مستلمين';
+
+  @override
+  String get askAiAnything => 'اسأل الذكاء الاصطناعي أي شيء...';
+
+  @override
+  String get generateReport => 'إنشاء تقرير';
+
+  @override
+  String get findIssues => 'اكتشاف المشاكل';
+
+  @override
+  String get optimizeSystem => 'تحسين';
+
+  @override
+  String get forecastTrends => 'توقعات';
+
+  @override
+  String get dailySummary => 'ملخص يومي';
+
+  @override
+  String get queriesAnswered => 'الاستفسارات المجابة';
+
+  @override
+  String get searchResults => 'نتائج البحث';
+
+  @override
+  String get quickSearch => 'بحث سريع';
+
+  @override
+  String get lowAttendance => 'حضور منخفض';
+
+  @override
+  String get securityLogs => 'سجلات الأمان';
+
+  @override
+  String get paymentIssues => 'مشاكل الدفع';
+
+  @override
+  String get recentReports => 'التقارير الأخيرة';
 }

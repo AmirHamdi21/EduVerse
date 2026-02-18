@@ -1237,7 +1237,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get current => 'Current';
 
   @override
-  String get needsAttention => 'Attention';
+  String get needsAttention => 'Needs Attention';
 
   @override
   String get noCoursesFound => 'No Courses Found';
@@ -2300,7 +2300,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newConversation => 'New Conversation';
 
   @override
-  String get searchConversations => 'Search conversations...';
+  String get searchConversations => 'Search conversations';
 
   @override
   String get searchByNameOrEmail => 'Search by name or email...';
@@ -2819,7 +2819,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get currentDevice => 'Current';
 
   @override
-  String get activeNow => 'Active now';
+  String get activeNow => 'active now';
 
   @override
   String minutesAgo(int minutes) {
@@ -2828,7 +2828,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String hoursAgo(int hours) {
-    return '$hours hour ago';
+    return 'hours ago';
   }
 
   @override
@@ -2947,7 +2947,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get minor => 'Minor';
 
   @override
-  String get year => 'Year';
+  String get year => 'year';
 
   @override
   String get expectedGraduation => 'Expected Graduation';
@@ -2971,7 +2971,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get remove => 'Remove';
 
   @override
-  String get discardChanges => 'Discard Changes?';
+  String get discardChanges => 'Discard Changes';
 
   @override
   String get discardChangesMessage =>
@@ -3020,10 +3020,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get privacySecurity => 'Privacy & Security';
 
   @override
-  String get enabled => 'Enabled';
+  String get enabled => 'enabled';
 
   @override
-  String get disabled => 'Disabled';
+  String get disabled => 'disabled';
 
   @override
   String devicesConnected(int count) {
@@ -3067,7 +3067,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get clearCache => 'Clear Cache';
 
   @override
-  String get clearCacheDesc => 'Free up storage space';
+  String get clearCacheDesc => 'Remove all cached data';
 
   @override
   String get clearCacheConfirmation =>
@@ -3177,7 +3177,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get courseUpdates => 'Course Updates';
 
   @override
-  String get courseUpdatesDesc => 'New content, lectures, and materials';
+  String get courseUpdatesDesc => 'Notify about course content changes';
 
   @override
   String get assignmentReminders => 'Assignment Reminders';
@@ -3201,7 +3201,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get announcements => 'Announcements';
 
   @override
-  String get announcementsDesc => 'Important announcements';
+  String get announcementsDesc => 'Notify about new announcements';
 
   @override
   String get scheduleChanges => 'Schedule Changes';
@@ -3286,7 +3286,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get authenticatorApp => 'Authenticator App';
 
   @override
-  String get authenticatorAppDesc => 'Use Google or Microsoft Authenticator';
+  String get authenticatorAppDesc => 'Google Authenticator, Authy, etc.';
 
   @override
   String get smsCode => 'SMS Code';
@@ -3607,7 +3607,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backupNow => 'Backup Now';
 
   @override
-  String get lastBackup => 'Last backup: Today';
+  String get lastBackup => 'Last Backup';
 
   @override
   String get backupStarted => 'Backup started';
@@ -3629,8 +3629,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get downloadsCleared => 'Downloads cleared successfully';
 
   @override
-  String get clearCacheConfirm =>
-      'This will clear temporary files and cached data.';
+  String get clearCacheConfirm => 'Clear all cached data?';
 
   @override
   String get quickHelp => 'Quick Help';
@@ -5418,7 +5417,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get folderUploadComingSoon => 'Folder upload coming soon';
 
   @override
-  String get month => 'Month';
+  String get month => 'month';
 
   @override
   String get week => 'Week';
@@ -5515,7 +5514,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logoutConfirmTitle => 'Logout';
 
   @override
-  String get logoutConfirmMessage => 'Are you sure you want to logout?';
+  String get logoutConfirmMessage =>
+      'Are you sure you want to logout from your account?';
 
   @override
   String get preferences => 'Preferences';
@@ -5660,7 +5660,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newMessage => 'New Message';
 
   @override
-  String get messageStudent => 'Message Student';
+  String get messageStudent => 'Message a student, instructor, or TA';
 
   @override
   String get messageStudentDesc => 'Start a private conversation';
@@ -7297,7 +7297,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetings => 'Meetings';
 
   @override
-  String get allStudents => 'All Students';
+  String get allStudents => 'All students';
 
   @override
   String get allLabs => 'All Labs';
@@ -7426,7 +7426,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get totalUsers => 'Total Users';
 
   @override
-  String get activeCourses => 'Active Courses';
+  String get activeCourses => 'Active courses';
 
   @override
   String get aiActionsToday => 'AI Actions Today';
@@ -8441,7 +8441,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dataRefreshed => 'Data refreshed successfully';
 
   @override
-  String get exportingData => 'Exporting data...';
+  String get exportingData => 'Exporting your data...';
 
   @override
   String get viewingMore => 'Viewing more';
@@ -8508,7 +8508,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusColumn => 'Status';
 
   @override
-  String get noLogsFound => 'No activity logs found';
+  String get noLogsFound => 'No logs found';
 
   @override
   String get login => 'Login';
@@ -8557,4 +8557,2018 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginActivityChart => 'Login Activity';
+
+  @override
+  String get adminNotificationsTitle => 'Notifications';
+
+  @override
+  String get adminNotificationsSubtitle =>
+      'Manage system notifications and announcements';
+
+  @override
+  String get adminNotificationsTab => 'Notifications';
+
+  @override
+  String get adminAnnouncementsTab => 'Announcements';
+
+  @override
+  String get adminArchivedTab => 'Archived';
+
+  @override
+  String get adminNotificationSearchHint => 'Search notifications...';
+
+  @override
+  String get adminNoNotifications => 'No Notifications';
+
+  @override
+  String get adminNoNotificationsMessage =>
+      'You\'re all caught up! No notifications at the moment.';
+
+  @override
+  String get adminNoAnnouncements => 'No Announcements';
+
+  @override
+  String get adminNoAnnouncementsMessage =>
+      'Create your first announcement to communicate with your users.';
+
+  @override
+  String get adminNoArchivedNotifications => 'No Archived Items';
+
+  @override
+  String get adminNoArchivedNotificationsMessage =>
+      'Archived notifications will appear here.';
+
+  @override
+  String get adminCreateAnnouncement => 'Create Announcement';
+
+  @override
+  String get adminNotificationDeleted => 'Notification deleted';
+
+  @override
+  String get adminNotificationArchived => 'Notification archived';
+
+  @override
+  String get adminNotificationUnarchived => 'Notification unarchived';
+
+  @override
+  String get adminNotificationMarkedAllRead =>
+      'All notifications marked as read';
+
+  @override
+  String get adminAnnouncementDeleted => 'Announcement deleted';
+
+  @override
+  String get adminDeleteAnnouncementTitle => 'Delete Announcement?';
+
+  @override
+  String get adminDeleteAnnouncementMessage =>
+      'This action cannot be undone. The announcement will be permanently removed.';
+
+  @override
+  String get adminClearAllTitle => 'Clear All Notifications?';
+
+  @override
+  String get adminClearAllMessage =>
+      'This will permanently delete all notifications. This action cannot be undone.';
+
+  @override
+  String get adminClearAllButton => 'Clear All';
+
+  @override
+  String get adminAllNotificationsCleared => 'All notifications cleared';
+
+  @override
+  String get adminNotificationDeleteConfirmTitle => 'Delete Notification?';
+
+  @override
+  String get adminNotificationDeleteConfirmMessage =>
+      'Are you sure you want to delete this notification?';
+
+  @override
+  String get adminNotificationArchiveConfirmTitle => 'Archive Notification?';
+
+  @override
+  String get adminNotificationArchiveConfirmMessage =>
+      'This notification will be moved to the archive.';
+
+  @override
+  String get platformSettings => 'Platform Settings';
+
+  @override
+  String get platformStatus => 'Platform Status';
+
+  @override
+  String get platformStatusDesc => 'System overview and health';
+
+  @override
+  String get operational => 'Operational';
+
+  @override
+  String get activeUsers => 'Active Users';
+
+  @override
+  String get serverUptime => 'Server Uptime';
+
+  @override
+  String get generalSettings => 'General Settings';
+
+  @override
+  String get generalSettingsDesc => 'Basic platform configuration';
+
+  @override
+  String get platformInfo => 'Platform Information';
+
+  @override
+  String get platformInfoDesc => 'View system details';
+
+  @override
+  String get platformName => 'Platform Name';
+
+  @override
+  String get version => 'Version';
+
+  @override
+  String get environment => 'Environment';
+
+  @override
+  String get serverRegion => 'Server Region';
+
+  @override
+  String get databaseVersion => 'Database Version';
+
+  @override
+  String get timezone => 'Timezone';
+
+  @override
+  String get selectTimezone => 'Select Timezone';
+
+  @override
+  String get academicYear => 'Academic Year';
+
+  @override
+  String get selectAcademicYear => 'Select Academic Year';
+
+  @override
+  String get semesterSettings => 'Semester Settings';
+
+  @override
+  String get semesterSettingsDesc => 'Configure academic semesters';
+
+  @override
+  String get userManagementSettingsDesc => 'Manage users and permissions';
+
+  @override
+  String get registrationSettings => 'Registration Settings';
+
+  @override
+  String get registrationSettingsDesc => 'Configure user signup options';
+
+  @override
+  String get rolePermissionsDesc => 'Configure access levels';
+
+  @override
+  String get userGroups => 'User Groups';
+
+  @override
+  String get userGroupsDesc => 'Manage user organization';
+
+  @override
+  String get blockedUsersDesc => 'View and manage blocked accounts';
+
+  @override
+  String get appearanceSettingsDesc => 'Customize platform look';
+
+  @override
+  String get defaultLanguageDesc => 'Set system-wide language';
+
+  @override
+  String get brandingColors => 'Branding Colors';
+
+  @override
+  String get brandingColorsDesc => 'Customize platform colors';
+
+  @override
+  String get logoAssets => 'Logo & Assets';
+
+  @override
+  String get logoAssetsDesc => 'Manage platform images';
+
+  @override
+  String get languageSettingsDesc => 'Change display language';
+
+  @override
+  String get securityPolicies => 'Security Policies';
+
+  @override
+  String get securityPoliciesDesc => 'Configure security settings';
+
+  @override
+  String get passwordPolicy => 'Password Policy';
+
+  @override
+  String get passwordPolicyDesc => 'Set password requirements';
+
+  @override
+  String get twoFactorAuthPlatformDesc => 'Configure 2FA requirements';
+
+  @override
+  String get sessionTimeout => 'Session Timeout';
+
+  @override
+  String get minutes => 'minutes';
+
+  @override
+  String get never => 'Never';
+
+  @override
+  String get auditLogs => 'Audit Logs';
+
+  @override
+  String get auditLogsDesc => 'View security activity';
+
+  @override
+  String get notificationSettingsDesc => 'Configure system notifications';
+
+  @override
+  String get emailConfiguration => 'Email Configuration';
+
+  @override
+  String get emailConfigurationDesc => 'SMTP and email settings';
+
+  @override
+  String get smsConfiguration => 'SMS Configuration';
+
+  @override
+  String get smsConfigurationDesc => 'Configure SMS gateway';
+
+  @override
+  String get pushNotificationsConfigDesc => 'Configure push services';
+
+  @override
+  String get webhooks => 'Webhooks';
+
+  @override
+  String get webhooksDesc =>
+      'Receive real-time updates when events occur in the system.';
+
+  @override
+  String get integrations => 'Integrations';
+
+  @override
+  String get integrationsDesc => 'Third-party services';
+
+  @override
+  String get apiManagement => 'API Management';
+
+  @override
+  String get apiManagementDesc => 'Manage API keys and access';
+
+  @override
+  String get cloudStorage => 'Cloud Storage';
+
+  @override
+  String get cloudStorageDesc => 'Configure storage providers';
+
+  @override
+  String get paymentGateways => 'Payment Gateways';
+
+  @override
+  String get paymentGatewaysDesc => 'Configure payment methods';
+
+  @override
+  String get videoConferencing => 'Video Conferencing';
+
+  @override
+  String get videoConferencingDesc => 'Configure video services';
+
+  @override
+  String get backupRestore => 'Backup & Restore';
+
+  @override
+  String get backupRestoreDesc => 'Manage system backups';
+
+  @override
+  String get maintenanceMode => 'Maintenance Mode';
+
+  @override
+  String get maintenanceModeDesc => 'Enable maintenance mode';
+
+  @override
+  String get maintenanceModeConfirmation =>
+      'Enabling maintenance mode will make the platform inaccessible to all users except administrators. Continue?';
+
+  @override
+  String get maintenanceModeEnabled => 'Maintenance mode enabled';
+
+  @override
+  String get clearSystemCache => 'Clear System Cache';
+
+  @override
+  String get clearSystemCacheDesc => 'Free up system resources';
+
+  @override
+  String get clearSystemCacheConfirmation =>
+      'This will clear all cached data. Users may experience slower load times temporarily. Continue?';
+
+  @override
+  String get systemUpdates => 'System Updates';
+
+  @override
+  String get systemUpdatesDesc => 'Check for available updates';
+
+  @override
+  String get updateAvailable => 'Update Available';
+
+  @override
+  String get advancedSettings => 'Advanced Settings';
+
+  @override
+  String get developerOptions => 'Developer Options';
+
+  @override
+  String get developerOptionsDesc => 'Debug and development tools';
+
+  @override
+  String get debugMode => 'Debug Mode';
+
+  @override
+  String get debugModeDesc => 'Enable detailed logging';
+
+  @override
+  String get debugModeEnabled => 'Debug mode enabled';
+
+  @override
+  String get debugModeDisabled => 'Debug mode disabled';
+
+  @override
+  String get systemLogs => 'System Logs';
+
+  @override
+  String get systemLogsDesc => 'View application logs';
+
+  @override
+  String get resetPlatformSettings => 'Reset Platform Settings';
+
+  @override
+  String get resetPlatformSettingsWarning =>
+      'This will reset all platform settings to their default values. This action cannot be undone.';
+
+  @override
+  String get settingsReset => 'Settings have been reset';
+
+  @override
+  String get purgeAllData => 'Purge All Data';
+
+  @override
+  String get purgeAllDataWarning =>
+      'This will permanently delete ALL data including users, courses, and content. This action is IRREVERSIBLE.';
+
+  @override
+  String get typeConfirmToProceed => 'Type CONFIRM to proceed:';
+
+  @override
+  String get dataPurged => 'All data has been purged';
+
+  @override
+  String get purge => 'Purge';
+
+  @override
+  String get brandPreview => 'Brand Preview';
+
+  @override
+  String get primaryButton => 'Primary';
+
+  @override
+  String get accentButton => 'Accent';
+
+  @override
+  String get primaryColor => 'Primary Color';
+
+  @override
+  String get primaryColorDesc => 'Main brand color for buttons and accents';
+
+  @override
+  String get secondaryColor => 'Secondary Color';
+
+  @override
+  String get secondaryColorDesc => 'Supporting color for gradients';
+
+  @override
+  String get accentColor => 'Accent Color';
+
+  @override
+  String get accentColorDesc => 'Highlight color for emphasis';
+
+  @override
+  String get presetThemes => 'Preset Themes';
+
+  @override
+  String get brandingSaved => 'Branding settings saved';
+
+  @override
+  String get saveBranding => 'Save Branding';
+
+  @override
+  String get resetToDefault => 'Reset to Default';
+
+  @override
+  String get logos => 'Logos';
+
+  @override
+  String get icons => 'Icons';
+
+  @override
+  String get backgrounds => 'Backgrounds';
+
+  @override
+  String get assetGuidelinesTitle => 'Asset Guidelines';
+
+  @override
+  String get assetGuidelinesDesc =>
+      'Upload high-quality images in recommended formats for best results.';
+
+  @override
+  String get noImage => 'No Image';
+
+  @override
+  String get uploaded => 'Uploaded';
+
+  @override
+  String get notUploaded => 'Not uploaded';
+
+  @override
+  String get assetRemoved => 'Asset removed';
+
+  @override
+  String get assetUploaded => 'Asset uploaded successfully';
+
+  @override
+  String get dragAndDrop => 'Drag and drop your file here';
+
+  @override
+  String get orClickToBrowse => 'or click to browse';
+
+  @override
+  String get recommendedSize => 'Recommended size';
+
+  @override
+  String get courseVideos => 'Course Videos';
+
+  @override
+  String get userUploads => 'User Uploads';
+
+  @override
+  String get passwordComplexity => 'Password Complexity';
+
+  @override
+  String get minimumLength => 'Minimum Length';
+
+  @override
+  String get characters => 'characters';
+
+  @override
+  String get requireUppercase => 'Require Uppercase';
+
+  @override
+  String get requireUppercaseDesc => 'At least one uppercase letter (A-Z)';
+
+  @override
+  String get requireLowercase => 'Require Lowercase';
+
+  @override
+  String get requireLowercaseDesc => 'At least one lowercase letter (a-z)';
+
+  @override
+  String get requireNumbers => 'Require Numbers';
+
+  @override
+  String get requireNumbersDesc => 'At least one number (0-9)';
+
+  @override
+  String get requireSpecialChars => 'Require Special Characters';
+
+  @override
+  String get requireSpecialCharsDesc =>
+      'At least one special character (!@#\$%)';
+
+  @override
+  String get passwordExpiration => 'Password Expiration';
+
+  @override
+  String get expirationPeriod => 'Expiration Period';
+
+  @override
+  String get passwordHistory => 'Password History';
+
+  @override
+  String get passwords => 'passwords';
+
+  @override
+  String get accountLockout => 'Account Lockout';
+
+  @override
+  String get maxLoginAttempts => 'Max Login Attempts';
+
+  @override
+  String get attempts => 'attempts';
+
+  @override
+  String get lockoutDuration => 'Lockout Duration';
+
+  @override
+  String get blockCommonPasswords => 'Block Common Passwords';
+
+  @override
+  String get blockCommonPasswordsDesc =>
+      'Prevent use of common dictionary words';
+
+  @override
+  String get policyStrength => 'Policy Strength';
+
+  @override
+  String get weak => 'Weak';
+
+  @override
+  String get strong => 'Strong';
+
+  @override
+  String get veryStrong => 'Very Strong';
+
+  @override
+  String get passwordPolicySaved => 'Password policy saved successfully';
+
+  @override
+  String get savePolicy => 'Save Policy';
+
+  @override
+  String get advanced => 'Advanced';
+
+  @override
+  String get twoFactorAuthentication => 'Two-Factor Authentication';
+
+  @override
+  String get enforcementRules => 'Enforcement Rules';
+
+  @override
+  String get administrators => 'Administrators';
+
+  @override
+  String get adminEnforcementDesc => 'Require 2FA for all admin accounts';
+
+  @override
+  String get instructorEnforcementDesc => 'Require 2FA for instructor accounts';
+
+  @override
+  String get studentEnforcementDesc => 'Require 2FA for student accounts';
+
+  @override
+  String get gracePeriod => 'Grace Period';
+
+  @override
+  String get noGracePeriod => 'No grace period';
+
+  @override
+  String get authenticationMethods => 'Authentication Methods';
+
+  @override
+  String get smsVerification => 'SMS Verification';
+
+  @override
+  String get smsVerificationDesc => 'Receive code via text message';
+
+  @override
+  String get emailVerification => 'Email Verification';
+
+  @override
+  String get emailVerificationDesc => 'Receive code via email';
+
+  @override
+  String get backupCodesDesc => 'One-time use recovery codes';
+
+  @override
+  String get codeSettings => 'Code Settings';
+
+  @override
+  String get codeLength => 'Code Length';
+
+  @override
+  String get digits => 'digits';
+
+  @override
+  String get codeExpiry => 'Code Expiry';
+
+  @override
+  String get backupCodesCount => 'Backup Codes Count';
+
+  @override
+  String get codes => 'codes';
+
+  @override
+  String get twoFactorPolicySaved => 'Two-factor policy saved successfully';
+
+  @override
+  String get smtpSettings => 'SMTP Settings';
+
+  @override
+  String get smtpHost => 'SMTP Host';
+
+  @override
+  String get port => 'Port';
+
+  @override
+  String get encryption => 'Encryption';
+
+  @override
+  String get authentication => 'Authentication';
+
+  @override
+  String get username => 'Username';
+
+  @override
+  String get senderInfo => 'Sender Information';
+
+  @override
+  String get senderName => 'Sender Name';
+
+  @override
+  String get senderEmail => 'Sender Email';
+
+  @override
+  String get sendTestEmail => 'Send Test Email';
+
+  @override
+  String get testing => 'Testing...';
+
+  @override
+  String get saveConfiguration => 'Save Configuration';
+
+  @override
+  String get testEmailSent => 'Test email sent successfully';
+
+  @override
+  String get emailConfigSaved => 'Email configuration saved';
+
+  @override
+  String get smtpServer => 'SMTP Server';
+
+  @override
+  String get notConfigured => 'Not configured';
+
+  @override
+  String get connected => 'Connected';
+
+  @override
+  String get smsProvider => 'SMS Provider';
+
+  @override
+  String get credentials => 'Credentials';
+
+  @override
+  String get accountSid => 'Account SID';
+
+  @override
+  String get authToken => 'Auth Token';
+
+  @override
+  String get usageStatistics => 'Usage Statistics';
+
+  @override
+  String get sentThisMonth => 'Sent This Month';
+
+  @override
+  String get failedThisMonth => 'Failed This Month';
+
+  @override
+  String get remainingCredits => 'Remaining Credits';
+
+  @override
+  String get deliveryRate => 'Delivery Rate';
+
+  @override
+  String get sendTestSms => 'Send Test SMS';
+
+  @override
+  String get testSmsSent => 'Test SMS sent successfully';
+
+  @override
+  String get smsConfigSaved => 'SMS configuration saved';
+
+  @override
+  String get smsService => 'SMS Service';
+
+  @override
+  String get notificationProvider => 'Notification Provider';
+
+  @override
+  String get serverKey => 'Server Key';
+
+  @override
+  String get senderId => 'Sender ID';
+
+  @override
+  String get newEnrollments => 'New Enrollments';
+
+  @override
+  String get newEnrollmentsDesc => 'Notify when users enroll in courses';
+
+  @override
+  String get assignmentsDesc => 'Notify about new and due assignments';
+
+  @override
+  String get gradesDesc => 'Notify when grades are posted';
+
+  @override
+  String get messagesDesc => 'Notify about new messages';
+
+  @override
+  String get systemAlerts => 'System Alerts';
+
+  @override
+  String get systemAlertsDesc => 'Notify about system events';
+
+  @override
+  String get deliveryStatistics => 'Delivery Statistics';
+
+  @override
+  String get delivered => 'Delivered';
+
+  @override
+  String get opened => 'Opened';
+
+  @override
+  String get clicked => 'Clicked';
+
+  @override
+  String get registeredDevices => 'Registered Devices';
+
+  @override
+  String get sentToday => 'Sent Today';
+
+  @override
+  String get pushNotificationsSaved => 'Push notification settings saved';
+
+  @override
+  String get webhooksInfo => 'Webhooks';
+
+  @override
+  String get totalWebhooks => 'Total Webhooks';
+
+  @override
+  String get activeWebhooks => 'Active';
+
+  @override
+  String get triggeredToday => 'Triggered Today';
+
+  @override
+  String get lastTriggered => 'Last triggered';
+
+  @override
+  String get test => 'Test';
+
+  @override
+  String get addWebhook => 'Add Webhook';
+
+  @override
+  String get editWebhook => 'Edit Webhook';
+
+  @override
+  String get webhookName => 'Webhook Name';
+
+  @override
+  String get webhookUrl => 'Webhook URL';
+
+  @override
+  String get webhookAdded => 'Webhook added successfully';
+
+  @override
+  String get webhookUpdated => 'Webhook updated successfully';
+
+  @override
+  String get webhookDeleted => 'Webhook deleted successfully';
+
+  @override
+  String get webhookTestSent => 'Test webhook sent successfully';
+
+  @override
+  String get apiAccess => 'API Access';
+
+  @override
+  String get activeKeys => 'Active Keys';
+
+  @override
+  String get requestsToday => 'Requests Today';
+
+  @override
+  String get successRate => 'Success Rate';
+
+  @override
+  String get rateLimiting => 'Rate Limiting';
+
+  @override
+  String get requestsPerWindow => 'Requests per Window';
+
+  @override
+  String get requests => 'requests';
+
+  @override
+  String get timeWindow => 'Time Window';
+
+  @override
+  String get apiKeys => 'API Keys';
+
+  @override
+  String get keys => 'keys';
+
+  @override
+  String get revoke => 'Revoke';
+
+  @override
+  String get generateApiKey => 'Generate API Key';
+
+  @override
+  String get keyName => 'Key Name';
+
+  @override
+  String get permissions => 'Permissions';
+
+  @override
+  String get generate => 'Generate';
+
+  @override
+  String get apiKeyGenerated => 'API key generated successfully';
+
+  @override
+  String get apiKeyRegenerated => 'API key regenerated successfully';
+
+  @override
+  String get apiKeyRevoked => 'API key revoked successfully';
+
+  @override
+  String get apiDocumentation => 'API Documentation';
+
+  @override
+  String get storageProvider => 'Storage Provider';
+
+  @override
+  String get bucketName => 'Bucket Name';
+
+  @override
+  String get accessKeyId => 'Access Key ID';
+
+  @override
+  String get secretAccessKey => 'Secret Access Key';
+
+  @override
+  String get remaining => 'remaining';
+
+  @override
+  String get testConnection => 'Test Connection';
+
+  @override
+  String get connectionTested => 'Connection tested successfully';
+
+  @override
+  String get cloudStorageSaved => 'Cloud storage configuration saved';
+
+  @override
+  String get totalRevenue => 'Total Revenue';
+
+  @override
+  String get transactions => 'Transactions';
+
+  @override
+  String get paidUsers => 'Paid Users';
+
+  @override
+  String get paymentSettings => 'Payment Settings';
+
+  @override
+  String get defaultCurrency => 'Default Currency';
+
+  @override
+  String get testMode => 'Test Mode';
+
+  @override
+  String get paymentMethods => 'Payment Methods';
+
+  @override
+  String get configured => 'Configured';
+
+  @override
+  String get configure => 'Configure';
+
+  @override
+  String get recentTransactions => 'Recent Transactions';
+
+  @override
+  String get publishableKey => 'Publishable Key';
+
+  @override
+  String get secretKey => 'Secret Key';
+
+  @override
+  String get paymentGatewayConfigured =>
+      'Payment gateway configured successfully';
+
+  @override
+  String get videoProvider => 'Video Provider';
+
+  @override
+  String get apiCredentials => 'API Credentials';
+
+  @override
+  String get apiKey => 'API Key';
+
+  @override
+  String get apiSecret => 'API Secret';
+
+  @override
+  String get meetingSettings => 'Meeting Settings';
+
+  @override
+  String get enableWaitingRoom => 'Enable Waiting Room';
+
+  @override
+  String get waitingRoomDesc => 'Hold participants before admitting';
+
+  @override
+  String get enableRecording => 'Enable Recording';
+
+  @override
+  String get recordingDesc => 'Allow meeting recordings';
+
+  @override
+  String get muteOnEntry => 'Mute on Entry';
+
+  @override
+  String get muteOnEntryDesc => 'Mute participants when joining';
+
+  @override
+  String get enableChat => 'Enable Chat';
+
+  @override
+  String get chatDesc => 'Allow in-meeting chat';
+
+  @override
+  String get enableScreenShare => 'Enable Screen Share';
+
+  @override
+  String get screenShareDesc => 'Allow screen sharing';
+
+  @override
+  String get limits => 'Limits';
+
+  @override
+  String get maxParticipants => 'Max Participants';
+
+  @override
+  String get maxDuration => 'Max Duration';
+
+  @override
+  String get activeMeetings => 'Active Meetings';
+
+  @override
+  String get todayMeetings => 'Today\'s Meetings';
+
+  @override
+  String get participants => 'Participants';
+
+  @override
+  String get videoConferencingSaved => 'Video conferencing settings saved';
+
+  @override
+  String get automaticBackup => 'Automatic Backup';
+
+  @override
+  String get enableAutoBackup => 'Enable Auto Backup';
+
+  @override
+  String get hourly => 'Hourly';
+
+  @override
+  String get retention => 'Retention';
+
+  @override
+  String get backupOptions => 'Backup Options';
+
+  @override
+  String get userData => 'User Data';
+
+  @override
+  String get userDataDesc => 'User accounts, profiles, and preferences';
+
+  @override
+  String get courseData => 'Course Data';
+
+  @override
+  String get courseDataDesc => 'Courses, lessons, and enrollments';
+
+  @override
+  String get mediaFiles => 'Media Files';
+
+  @override
+  String get mediaFilesDesc => 'Videos, images, and documents';
+
+  @override
+  String get systemSettingsBackup => 'System Settings';
+
+  @override
+  String get systemSettingsDesc => 'Platform configuration';
+
+  @override
+  String get recentBackups => 'Recent Backups';
+
+  @override
+  String get totalBackups => 'Total Backups';
+
+  @override
+  String get totalSize => 'Total Size';
+
+  @override
+  String get nextBackup => 'Next backup';
+
+  @override
+  String get healthy => 'Healthy';
+
+  @override
+  String get restoreBackup => 'Restore Backup';
+
+  @override
+  String get restoreWarning =>
+      'Restoring a backup will overwrite current data. This action cannot be undone. Are you sure?';
+
+  @override
+  String get restore => 'Restore';
+
+  @override
+  String get backupCreated => 'Backup created successfully';
+
+  @override
+  String get backupRestored => 'Backup restored successfully';
+
+  @override
+  String get backupDownloadStarted => 'Backup download started';
+
+  @override
+  String get backupDeleted => 'Backup deleted';
+
+  @override
+  String get currentVersion => 'Current Version';
+
+  @override
+  String get upToDate => 'Up to Date';
+
+  @override
+  String get availableNow => 'Available Now';
+
+  @override
+  String get newVersionDesc =>
+      'A new version is available with improvements and bug fixes.';
+
+  @override
+  String get installNow => 'Install Now';
+
+  @override
+  String get installing => 'Installing...';
+
+  @override
+  String get automaticUpdates => 'Automatic Updates';
+
+  @override
+  String get automaticUpdatesDesc =>
+      'Install updates automatically when available';
+
+  @override
+  String get systemInformation => 'System Information';
+
+  @override
+  String get platform => 'Platform';
+
+  @override
+  String get flutterVersion => 'Flutter Version';
+
+  @override
+  String get dartVersion => 'Dart Version';
+
+  @override
+  String get buildNumber => 'Build Number';
+
+  @override
+  String get changelog => 'Changelog';
+
+  @override
+  String get patch => 'Patch';
+
+  @override
+  String get checkForUpdates => 'Check for Updates';
+
+  @override
+  String get updateCheckComplete => 'Update check complete';
+
+  @override
+  String get updateInstalled => 'Update installed successfully';
+
+  @override
+  String get developerWarningTitle => 'Developer Options';
+
+  @override
+  String get developerWarningDesc =>
+      'These settings are for development purposes. Changes may affect system stability.';
+
+  @override
+  String get productionDesc => 'Live environment with real data';
+
+  @override
+  String get stagingDesc => 'Testing environment for pre-release';
+
+  @override
+  String get developmentDesc => 'Local development environment';
+
+  @override
+  String get debugSettings => 'Debug Settings';
+
+  @override
+  String get verboseLogging => 'Verbose Logging';
+
+  @override
+  String get verboseLoggingDesc => 'Enable detailed log output';
+
+  @override
+  String get performanceOverlay => 'Performance Overlay';
+
+  @override
+  String get performanceOverlayDesc => 'Show FPS and rendering info';
+
+  @override
+  String get debugBanner => 'Debug Banner';
+
+  @override
+  String get debugBannerDesc => 'Show debug banner on screens';
+
+  @override
+  String get apiSettings => 'API Settings';
+
+  @override
+  String get mockApi => 'Mock API';
+
+  @override
+  String get mockApiDesc => 'Use mock data instead of real API';
+
+  @override
+  String get simulatedDelay => 'Simulated Delay';
+
+  @override
+  String get developerTools => 'Developer Tools';
+
+  @override
+  String get enableDevTools => 'Enable DevTools';
+
+  @override
+  String get enableDevToolsDesc => 'Access Flutter DevTools';
+
+  @override
+  String get resetPreferences => 'Reset Preferences';
+
+  @override
+  String get resetPreferencesDesc => 'Reset all user preferences';
+
+  @override
+  String get resetPreferencesConfirm => 'Reset all preferences to default?';
+
+  @override
+  String get exportLogsDesc => 'Download system logs';
+
+  @override
+  String get logsExported => 'Logs exported successfully';
+
+  @override
+  String get operationCompleted => 'Operation completed successfully';
+
+  @override
+  String get searchLogs => 'Search logs...';
+
+  @override
+  String get allLevels => 'All Levels';
+
+  @override
+  String get allSources => 'All Sources';
+
+  @override
+  String get debug => 'Debug';
+
+  @override
+  String get errors => 'Errors';
+
+  @override
+  String get warnings => 'Warnings';
+
+  @override
+  String get fullMessage => 'Full Message';
+
+  @override
+  String get source => 'Source';
+
+  @override
+  String get adjustFilters => 'Try adjusting your filters';
+
+  @override
+  String get clearLogs => 'Clear Logs';
+
+  @override
+  String get clearLogsConfirm =>
+      'Are you sure you want to clear all logs? This action cannot be undone.';
+
+  @override
+  String get logsCleared => 'Logs cleared successfully';
+
+  @override
+  String get systemDefault => 'System Default';
+
+  @override
+  String get sampleHeading => 'Sample Heading';
+
+  @override
+  String get sampleText =>
+      'This is sample text to preview the font size settings.';
+
+  @override
+  String get noBackups => 'No backups found';
+
+  @override
+  String get searchBlockedUsers => 'Search blocked users...';
+
+  @override
+  String get totalBlocked => 'Total Blocked';
+
+  @override
+  String get byAdmin => 'By Admin';
+
+  @override
+  String get bySystem => 'By System';
+
+  @override
+  String get blockedOn => 'Blocked on';
+
+  @override
+  String get by => 'By';
+
+  @override
+  String get accountDeleted => 'Account deleted successfully';
+
+  @override
+  String get availableLanguages => 'Available Languages';
+
+  @override
+  String get languageChangeNote =>
+      'Language changes will be applied immediately';
+
+  @override
+  String get registrationOptions => 'Registration Options';
+
+  @override
+  String get allowSelfRegistration => 'Allow Self Registration';
+
+  @override
+  String get allowSelfRegistrationDesc => 'Users can create their own accounts';
+
+  @override
+  String get requireEmailVerification => 'Require Email Verification';
+
+  @override
+  String get requireEmailVerificationDesc =>
+      'Verify email before account activation';
+
+  @override
+  String get requireAdminApproval => 'Require Admin Approval';
+
+  @override
+  String get requireAdminApprovalDesc =>
+      'New accounts require administrator approval';
+
+  @override
+  String get socialLogin => 'Social Login';
+
+  @override
+  String get enableSocialLogin => 'Enable Social Login';
+
+  @override
+  String get enableSocialLoginDesc => 'Allow login via social accounts';
+
+  @override
+  String get allowGoogleLoginDesc => 'Allow Google account login';
+
+  @override
+  String get allowMicrosoftLoginDesc => 'Allow Microsoft account login';
+
+  @override
+  String get allowAppleLoginDesc => 'Allow Apple account login';
+
+  @override
+  String get defaultSettings => 'Default Settings';
+
+  @override
+  String get defaultRole => 'Default Role';
+
+  @override
+  String get defaultRoleDesc => 'Role assigned to new users';
+
+  @override
+  String get maxRegistrationsPerDay => 'Max Registrations Per Day';
+
+  @override
+  String get allowedEmailDomains => 'Allowed Email Domains';
+
+  @override
+  String get allDomainsAllowed => 'All domains allowed';
+
+  @override
+  String get registrationStatus => 'Registration Status';
+
+  @override
+  String get registrationOpen => 'Open';
+
+  @override
+  String get registrationClosed => 'Closed';
+
+  @override
+  String get addEmailDomain => 'Add Email Domain';
+
+  @override
+  String get saveSettings => 'Save Settings';
+
+  @override
+  String get addSemester => 'Add Semester';
+
+  @override
+  String get currentSemester => 'Current Semester';
+
+  @override
+  String get starts => 'Starts';
+
+  @override
+  String get ends => 'Ends';
+
+  @override
+  String get enrollmentOpen => 'Open';
+
+  @override
+  String get enrollmentClosed => 'Closed';
+
+  @override
+  String get setAsActive => 'Set as Active';
+
+  @override
+  String get daysRemaining => 'days remaining';
+
+  @override
+  String get semesterActivated => 'Semester activated successfully';
+
+  @override
+  String get semesterName => 'Semester Name';
+
+  @override
+  String get startDate => 'Start Date';
+
+  @override
+  String get endDate => 'End Date';
+
+  @override
+  String get semesterAdded => 'Semester added successfully';
+
+  @override
+  String get editSemester => 'Edit Semester';
+
+  @override
+  String get enrollmentStatus => 'Enrollment Status';
+
+  @override
+  String get semesterUpdated => 'Semester updated successfully';
+
+  @override
+  String get deleteSemester => 'Delete Semester';
+
+  @override
+  String get deleteSemesterConfirm =>
+      'Are you sure you want to delete this semester? This action cannot be undone.';
+
+  @override
+  String get semesterDeleted => 'Semester deleted successfully';
+
+  @override
+  String get accessControls => 'Access Controls';
+
+  @override
+  String get accessControlsDesc => 'Manage security access settings';
+
+  @override
+  String get terminateAll => 'Terminate All';
+
+  @override
+  String get terminateSession => 'Terminate Session';
+
+  @override
+  String get terminateSessionConfirm => 'Terminate session for';
+
+  @override
+  String get sessionTerminated => 'Session terminated';
+
+  @override
+  String get allSessionsTerminated => 'All sessions terminated';
+
+  @override
+  String get terminateAllConfirm =>
+      'This will terminate all sessions except your current one. Continue?';
+
+  @override
+  String get lastActive => 'Last active';
+
+  @override
+  String get more => 'more';
+
+  @override
+  String get ipManagement => 'IP Management';
+
+  @override
+  String get ipManagementDesc => 'Manage whitelist and blacklist IPs';
+
+  @override
+  String get whitelisted => 'Whitelisted';
+
+  @override
+  String get blacklisted => 'Blacklisted';
+
+  @override
+  String get addToWhitelist => 'Add to Whitelist';
+
+  @override
+  String get addToBlacklist => 'Add to Blacklist';
+
+  @override
+  String get recentRules => 'Recent Rules';
+
+  @override
+  String get rules => 'rules';
+
+  @override
+  String get ipRuleRemoved => 'IP rule removed';
+
+  @override
+  String get ipRuleAdded => 'IP rule added';
+
+  @override
+  String get terminate => 'Terminate';
+
+  @override
+  String get threatAnalysis => 'Threat Analysis';
+
+  @override
+  String get threatAnalysisDesc => 'Monitor and analyze security threats';
+
+  @override
+  String get blockedToday => 'Blocked Today';
+
+  @override
+  String get blockedThisWeek => 'Blocked This Week';
+
+  @override
+  String get threatBreakdown => 'Threat Breakdown';
+
+  @override
+  String get viewingThreatDetails => 'Viewing threat details';
+
+  @override
+  String get sessionTimeoutSettings => 'Session timeout settings';
+
+  @override
+  String get encryptionSettings => 'Encryption settings';
+
+  @override
+  String get dataEncryption => 'Data Encryption';
+
+  @override
+  String get dataEncryptionDesc => 'AES-256 encryption enabled';
+
+  @override
+  String get backupDataCenter => 'Backup & Data Center';
+
+  @override
+  String get backupStatus => 'Backup Status';
+
+  @override
+  String get allSystemsOperational => 'All Systems Operational';
+
+  @override
+  String get backupRequired => 'Backup Required';
+
+  @override
+  String get attention => 'Attention';
+
+  @override
+  String get automaticBackups => 'Automatic Backups';
+
+  @override
+  String get scheduleAutomaticBackups => 'Schedule automatic backups';
+
+  @override
+  String get retentionPeriod => 'Retention Period';
+
+  @override
+  String get keepBackupsFor => 'Keep backups for';
+
+  @override
+  String get backupHistory => 'Backup History';
+
+  @override
+  String get backupsAvailable => 'backups available';
+
+  @override
+  String get auto => 'Auto';
+
+  @override
+  String get manual => 'Manual';
+
+  @override
+  String get backups => 'Backups';
+
+  @override
+  String get dataExport => 'Data Export';
+
+  @override
+  String get selectDataToExport => 'Select data to export';
+
+  @override
+  String get exportUserDataDesc => 'Export all user profiles and accounts';
+
+  @override
+  String get exportCourseDataDesc =>
+      'Export courses, materials, and enrollments';
+
+  @override
+  String get gradesData => 'Grades Data';
+
+  @override
+  String get exportGradesDataDesc => 'Export all grades and assessments';
+
+  @override
+  String get attendanceData => 'Attendance Data';
+
+  @override
+  String get exportAttendanceDataDesc => 'Export attendance records';
+
+  @override
+  String get analyticsData => 'Analytics Data';
+
+  @override
+  String get exportAnalyticsDataDesc => 'Export analytics and reports';
+
+  @override
+  String get exportFormat => 'Export Format';
+
+  @override
+  String get exportSelected => 'Export Selected';
+
+  @override
+  String get recentExports => 'Recent Exports';
+
+  @override
+  String get ago => 'ago';
+
+  @override
+  String get backupStorageInfo => 'Backup storage information';
+
+  @override
+  String get storageCritical =>
+      'Storage is almost full. Please delete old backups.';
+
+  @override
+  String get localBackups => 'Local Backups';
+
+  @override
+  String get cloudBackups => 'Cloud Backups';
+
+  @override
+  String get autoBackupEnabled => 'Automatic backup enabled';
+
+  @override
+  String get autoBackupDisabled => 'Automatic backup disabled';
+
+  @override
+  String get backupFrequencyChanged => 'Backup frequency changed to';
+
+  @override
+  String get retentionPeriodChanged => 'Retention period changed to';
+
+  @override
+  String get backupCompleted => 'Backup completed successfully';
+
+  @override
+  String get exportCompleted => 'Export completed successfully';
+
+  @override
+  String get restoreBackupConfirm =>
+      'Are you sure you want to restore this backup? This will replace current data.';
+
+  @override
+  String get restoreStarted => 'Restore process started';
+
+  @override
+  String get deleteBackup => 'Delete Backup';
+
+  @override
+  String get deleteBackupConfirm =>
+      'Are you sure you want to delete this backup?';
+
+  @override
+  String get selectBackupToRestore => 'Select Backup to Restore';
+
+  @override
+  String get paymentManagement => 'Payment Management';
+
+  @override
+  String get subscriptionOverview => 'Subscription Overview';
+
+  @override
+  String get manageSubscriptions => 'Manage your subscriptions';
+
+  @override
+  String get newSubs => 'New';
+
+  @override
+  String get canceled => 'Canceled';
+
+  @override
+  String get expiringSoon => 'Expiring Soon';
+
+  @override
+  String get transactionsToday => 'transactions today';
+
+  @override
+  String get refunded => 'Refunded';
+
+  @override
+  String get noTransactions => 'No transactions found';
+
+  @override
+  String get subscription => 'Subscription';
+
+  @override
+  String get coursePurchase => 'Course Purchase';
+
+  @override
+  String get refund => 'Refund';
+
+  @override
+  String get configurePaymentGateways => 'Configure payment gateways';
+
+  @override
+  String get fee => 'fee';
+
+  @override
+  String get managePaymentGateways => 'Manage Payment Gateways';
+
+  @override
+  String get subscriptionPlans => 'Subscription Plans';
+
+  @override
+  String get managePricingPlans => 'Manage pricing plans';
+
+  @override
+  String get addPlan => 'Add Plan';
+
+  @override
+  String get lifetime => 'Lifetime';
+
+  @override
+  String get subscribers => 'subscribers';
+
+  @override
+  String get transactionDetails => 'Transaction Details';
+
+  @override
+  String get transactionId => 'Transaction ID';
+
+  @override
+  String get customer => 'Customer';
+
+  @override
+  String get emailLabel => 'Email';
+
+  @override
+  String get paymentMethodLabel => 'Payment Method';
+
+  @override
+  String get processRefund => 'Process Refund';
+
+  @override
+  String get refundConfirmation =>
+      'Are you sure you want to process this refund?';
+
+  @override
+  String get refundProcessed => 'Refund processed successfully';
+
+  @override
+  String get planActivated => 'plan activated';
+
+  @override
+  String get planDeactivated => 'plan deactivated';
+
+  @override
+  String get subscriptions => 'Subscriptions';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get auditCompliance => 'Audit & Compliance';
+
+  @override
+  String get complianceScore => 'Compliance Score';
+
+  @override
+  String get compliant => 'Compliant';
+
+  @override
+  String get totalLogs => 'Total Logs';
+
+  @override
+  String get entriesFound => 'entries found';
+
+  @override
+  String get loadMore => 'Load More';
+
+  @override
+  String get complianceStatus => 'Compliance Status';
+
+  @override
+  String get checksCompliant => 'checks compliant';
+
+  @override
+  String get checking => 'Checking...';
+
+  @override
+  String get runCheck => 'Run Check';
+
+  @override
+  String get nonCompliant => 'Non-Compliant';
+
+  @override
+  String get partial => 'Partial';
+
+  @override
+  String get severity => 'Severity';
+
+  @override
+  String get actionType => 'Action Type';
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get dateRange => 'Date Range';
+
+  @override
+  String get selectDateRange => 'Select date range';
+
+  @override
+  String get exportReport => 'Export Report';
+
+  @override
+  String get exportAuditData => 'Export audit data to file';
+
+  @override
+  String get includeDetailedInfo => 'Include Detailed Information';
+
+  @override
+  String get includeIpUserAgent => 'Include IP addresses and user agents';
+
+  @override
+  String get exporting => 'Exporting...';
+
+  @override
+  String get exportNow => 'Export Now';
+
+  @override
+  String get scheduleReport => 'Schedule Report';
+
+  @override
+  String get logDetails => 'Log Details';
+
+  @override
+  String get action => 'Action';
+
+  @override
+  String get resource => 'Resource';
+
+  @override
+  String get complianceCheckComplete => 'Compliance check completed';
+
+  @override
+  String get complianceReportExported => 'Compliance report exported';
+
+  @override
+  String get reportScheduled => 'Report scheduled successfully';
+
+  @override
+  String get compliance => 'Compliance';
+
+  @override
+  String get integrationsApi => 'Integrations & API';
+
+  @override
+  String get apiUsage => 'API Usage';
+
+  @override
+  String get noIntegrationsFound => 'No integrations found';
+
+  @override
+  String get lms => 'LMS';
+
+  @override
+  String get payment => 'Payment';
+
+  @override
+  String get lastSync => 'Last sync';
+
+  @override
+  String get disconnected => 'Disconnected';
+
+  @override
+  String get syncNow => 'Sync Now';
+
+  @override
+  String get syncing => 'Syncing';
+
+  @override
+  String get connecting => 'Connecting';
+
+  @override
+  String get noApiKeys => 'No API keys created';
+
+  @override
+  String get createApiKeyDescription =>
+      'Create an API key to access the platform programmatically';
+
+  @override
+  String get createNew => 'Create New';
+
+  @override
+  String get expired => 'Expired';
+
+  @override
+  String get lastUsed => 'Last used';
+
+  @override
+  String get noWebhooks => 'No webhooks configured';
+
+  @override
+  String get webhooksDescription =>
+      'Webhooks notify external services when events occur';
+
+  @override
+  String get rate => 'Rate';
+
+  @override
+  String get activated => 'activated';
+
+  @override
+  String get deactivated => 'deactivated';
+
+  @override
+  String get totalRequests => 'Total Requests';
+
+  @override
+  String get failedRequests => 'Failed Requests';
+
+  @override
+  String get avgLatency => 'Avg Latency';
+
+  @override
+  String get requestsOverTime => 'Requests Over Time';
+
+  @override
+  String get myProfile => 'My Profile';
+
+  @override
+  String get activityStats => 'Activity Stats';
+
+  @override
+  String get usersManaged => 'Users Managed';
+
+  @override
+  String get coursesCreated => 'Courses Created';
+
+  @override
+  String get reportsGenerated => 'Reports Generated';
+
+  @override
+  String get workInformation => 'Work Information';
+
+  @override
+  String get employeeId => 'Employee ID';
+
+  @override
+  String get joinDate => 'Join Date';
+
+  @override
+  String get lastLogin => 'Last Login';
+
+  @override
+  String get exportMyData => 'Export My Data';
+
+  @override
+  String get noRecentActivity => 'No recent activity';
+
+  @override
+  String get changeProfilePhoto => 'Change profile photo';
+
+  @override
+  String get twoFactorDescription =>
+      'Add an extra layer of security to your account by requiring a verification code in addition to your password.';
+
+  @override
+  String get twoFactorEnabled => 'Two-factor authentication is enabled';
+
+  @override
+  String get twoFactorSettingsUpdated => 'Two-factor settings updated';
+
+  @override
+  String get manageSettings => 'Manage Settings';
+
+  @override
+  String get confirmLogout => 'Confirm Logout';
+
+  @override
+  String get passwordsDontMatch => 'Passwords don\'t match';
+
+  @override
+  String get languageSettings => 'Language settings';
+
+  @override
+  String get sendAlerts => 'Send Alerts';
+
+  @override
+  String get emailReport => 'Email Report';
+
+  @override
+  String get pdfReport => 'PDF Report';
+
+  @override
+  String get excelExport => 'Excel Export';
+
+  @override
+  String get exportOptions => 'Export Options';
+
+  @override
+  String get printReport => 'Print Report';
+
+  @override
+  String get newIndividualMessage => 'New Individual Message';
+
+  @override
+  String get newGroup => 'New Group';
+
+  @override
+  String get createGroupConversation => 'Create a group conversation';
+
+  @override
+  String get sendToMultiple => 'Send to multiple recipients';
+
+  @override
+  String get askAiAnything => 'Ask AI anything...';
+
+  @override
+  String get generateReport => 'Generate Report';
+
+  @override
+  String get findIssues => 'Find Issues';
+
+  @override
+  String get optimizeSystem => 'Optimize';
+
+  @override
+  String get forecastTrends => 'Forecast';
+
+  @override
+  String get dailySummary => 'Daily Summary';
+
+  @override
+  String get queriesAnswered => 'Queries Answered';
+
+  @override
+  String get searchResults => 'Search Results';
+
+  @override
+  String get quickSearch => 'Quick Search';
+
+  @override
+  String get lowAttendance => 'Low attendance';
+
+  @override
+  String get securityLogs => 'Security logs';
+
+  @override
+  String get paymentIssues => 'Payment issues';
+
+  @override
+  String get recentReports => 'Recent reports';
 }

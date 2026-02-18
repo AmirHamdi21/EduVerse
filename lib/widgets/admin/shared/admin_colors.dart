@@ -77,6 +77,12 @@ class AdminColors {
     colors: [Color(0xFF00C950), Color(0xFF009689)],
   );
 
+  static const LinearGradient orangeGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFFF9800), Color(0xFFFF5722)],
+  );
+
   static const LinearGradient secondaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,

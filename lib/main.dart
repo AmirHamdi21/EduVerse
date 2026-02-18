@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:edu_verse/bloc/admin_notifications/admin_notification_cubit.dart';
 import 'package:edu_verse/bloc/assignments/assignments_cubit.dart';
 import 'package:edu_verse/bloc/attendance/attendance_cubit.dart';
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
@@ -64,6 +65,7 @@ class _MyAppState extends State<MyApp> {
   late AINoteCubit _aiNoteCubit;
   late ProfileCubit _profileCubit;
   late SearchCubit _searchCubit;
+  late AdminNotificationCubit _adminNotificationCubit;
 
   @override
   void initState() {
@@ -87,6 +89,7 @@ class _MyAppState extends State<MyApp> {
     _aiNoteCubit = AINoteCubit();
     _profileCubit = ProfileCubit()..loadProfile();
     _searchCubit = SearchCubit();
+    _adminNotificationCubit = AdminNotificationCubit();
     // Initialize theme and language from storage
     _initializeTheme();
     _initializeLanguage();
@@ -117,6 +120,7 @@ class _MyAppState extends State<MyApp> {
     _aiNoteCubit.close();
     _profileCubit.close();
     _searchCubit.close();
+    _adminNotificationCubit.close();
     super.dispose();
   }
 
@@ -141,6 +145,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _aiNoteCubit),
         BlocProvider.value(value: _profileCubit),
         BlocProvider.value(value: _searchCubit),
+        BlocProvider.value(value: _adminNotificationCubit),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {

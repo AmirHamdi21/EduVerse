@@ -104,6 +104,40 @@ import 'package:edu_verse/screens/admin/staff/admin_assign_staff_screen.dart';
 import 'package:edu_verse/screens/admin/departments/admin_departments_screen.dart';
 import 'package:edu_verse/screens/admin/analytics/admin_analytics_screen.dart';
 import 'package:edu_verse/screens/admin/security/admin_security_screen.dart';
+import 'package:edu_verse/screens/admin/backup/admin_backup_center_screen.dart';
+import 'package:edu_verse/screens/admin/payments/admin_payments_screen.dart';
+import 'package:edu_verse/screens/admin/audit/admin_audit_screen.dart';
+import 'package:edu_verse/screens/admin/integrations/admin_integrations_screen.dart';
+import 'package:edu_verse/screens/admin/profile/admin_profile_screen.dart';
+import 'package:edu_verse/screens/admin/profile/admin_edit_profile_screen.dart';
+import 'package:edu_verse/screens/admin/notifications/admin_notifications_screen.dart';
+import 'package:edu_verse/screens/admin/notifications/admin_notification_swipe_settings_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_settings_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_semester_settings_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_registration_settings_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_blocked_users_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_appearance_settings_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_language_settings_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_branding_settings_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_logo_assets_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_password_policy_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_two_factor_policy_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_email_settings_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_sms_settings_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_push_notifications_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_webhooks_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_api_settings_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_cloud_storage_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_payment_gateways_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_video_conferencing_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_backup_restore_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_system_updates_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_developer_options_screen.dart';
+import 'package:edu_verse/screens/admin/settings/admin_system_logs_screen.dart';
+import 'package:edu_verse/screens/admin/attendance/admin_attendance_screen.dart';
+import 'package:edu_verse/screens/admin/search/admin_search_screen.dart';
+import 'package:edu_verse/screens/admin/messages/admin_messages_screen.dart';
+import 'package:edu_verse/screens/admin/ai_insights/admin_ai_insights_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_admin_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -597,6 +631,142 @@ class AppRouter {
       GoRoute(
         path: '/admin/security',
         builder: (context, state) => const AdminSecurityScreen(),
+      ),
+      GoRoute(
+        path: '/admin/backup-center',
+        builder: (context, state) => const AdminBackupCenterScreen(),
+      ),
+      GoRoute(
+        path: '/admin/payments',
+        builder: (context, state) => const AdminPaymentsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/audit',
+        builder: (context, state) => const AdminAuditScreen(),
+      ),
+      GoRoute(
+        path: '/admin/integrations',
+        builder: (context, state) => const AdminIntegrationsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/profile',
+        builder: (context, state) => const AdminProfileScreen(),
+      ),
+      GoRoute(
+        path: '/admin/edit-profile',
+        builder: (context, state) => const AdminEditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/admin/attendance',
+        builder: (context, state) => const AdminAttendanceScreen(),
+      ),
+      GoRoute(
+        path: '/admin/search',
+        builder: (context, state) => const AdminSearchScreen(),
+      ),
+      GoRoute(
+        path: '/admin/messages',
+        builder: (context, state) => const AdminMessagesScreen(),
+      ),
+      GoRoute(
+        path: '/admin/ai-insights',
+        builder: (context, state) => const AdminAIInsightsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/notifications',
+        builder: (context, state) => const AdminNotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/notifications/swipe-settings',
+        builder: (context, state) => const AdminNotificationSwipeSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings',
+        builder: (context, state) => const AdminSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/semester',
+        builder: (context, state) => const AdminSemesterSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/registration',
+        builder: (context, state) => const AdminRegistrationSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/blocked-users',
+        builder: (context, state) => const AdminBlockedUsersScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/appearance',
+        builder: (context, state) => const AdminAppearanceSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/language',
+        builder: (context, state) => const AdminLanguageSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/branding',
+        builder: (context, state) => const AdminBrandingSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/logo-assets',
+        builder: (context, state) => const AdminLogoAssetsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/password-policy',
+        builder: (context, state) => const AdminPasswordPolicyScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/two-factor',
+        builder: (context, state) => const AdminTwoFactorPolicyScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/email',
+        builder: (context, state) => const AdminEmailSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/sms',
+        builder: (context, state) => const AdminSmsSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/push-notifications',
+        builder: (context, state) => const AdminPushNotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/webhooks',
+        builder: (context, state) => const AdminWebhooksScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/api',
+        builder: (context, state) => const AdminApiSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/cloud-storage',
+        builder: (context, state) => const AdminCloudStorageScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/payment-gateways',
+        builder: (context, state) => const AdminPaymentGatewaysScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/video-conferencing',
+        builder: (context, state) => const AdminVideoConferencingScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/backup-restore',
+        builder: (context, state) => const AdminBackupRestoreScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/system-updates',
+        builder: (context, state) => const AdminSystemUpdatesScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/developer-options',
+        builder: (context, state) => const AdminDeveloperOptionsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/settings/system-logs',
+        builder: (context, state) => const AdminSystemLogsScreen(),
       ),
 
       // ============ IT ADMIN ROUTES (Placeholder) ============

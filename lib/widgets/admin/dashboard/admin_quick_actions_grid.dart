@@ -96,7 +96,7 @@ class AdminQuickActionsGrid extends StatelessWidget {
                     title: l10n.addCourse,
                     icon: Icons.add_box_rounded,
                     gradient: AdminColors.purpleGradient,
-                    onTap: () => _showAddCourseDialog(context, isDark, l10n),
+                    onTap: () => context.push('/admin/courses/add'),
                   ),
                   _buildQuickActionItem(
                     context,
@@ -104,7 +104,7 @@ class AdminQuickActionsGrid extends StatelessWidget {
                     title: l10n.announcement,
                     icon: Icons.campaign_rounded,
                     gradient: AdminColors.cyanGradient,
-                    onTap: () => _showAnnouncementDialog(context, isDark, l10n),
+                    onTap: () => context.push('/admin/notifications'),
                   ),
                   _buildQuickActionItem(
                     context,
@@ -112,8 +112,7 @@ class AdminQuickActionsGrid extends StatelessWidget {
                     title: l10n.assignInstructor,
                     icon: Icons.assignment_ind_rounded,
                     gradient: AdminColors.greenGradient,
-                    onTap: () =>
-                        _showAssignInstructorDialog(context, isDark, l10n),
+                    onTap: () => context.push('/admin/staff'),
                   ),
                   _buildQuickActionItem(
                     context,
@@ -123,7 +122,7 @@ class AdminQuickActionsGrid extends StatelessWidget {
                     gradient: const LinearGradient(
                       colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
                     ),
-                    onTap: () => context.push('/admin/reports'),
+                    onTap: () => context.push('/admin/analytics'),
                   ),
                   _buildQuickActionItem(
                     context,

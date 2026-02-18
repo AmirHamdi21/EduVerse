@@ -161,6 +161,31 @@ class _AdminDrawerState extends State<AdminDrawer>
           Material(
             color: Colors.transparent,
             child: InkWell(
+              onTap: () {
+                Navigator.pop(context);
+                context.push('/admin/search');
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.05)
+                      : Colors.black.withOpacity(0.03),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.search_rounded,
+                  color: AdminColors.getTextTertiaryColor(isDark),
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
               onTap: () => Navigator.pop(context),
               borderRadius: BorderRadius.circular(12),
               child: Container(
@@ -326,6 +351,34 @@ class _AdminDrawerState extends State<AdminDrawer>
         activeIcon: Icons.fact_check,
         title: l10n.attendance,
         route: '/admin/attendance',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.backup_rounded,
+        activeIcon: Icons.backup,
+        title: l10n.backupDataCenter,
+        route: '/admin/backup-center',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.payments_rounded,
+        activeIcon: Icons.payments,
+        title: l10n.paymentManagement,
+        route: '/admin/payments',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.fact_check_outlined,
+        activeIcon: Icons.fact_check_rounded,
+        title: l10n.auditCompliance,
+        route: '/admin/audit',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.hub_outlined,
+        activeIcon: Icons.hub_rounded,
+        title: l10n.integrationsApi,
+        route: '/admin/integrations',
         category: 'main',
       ),
       _MenuItem(
