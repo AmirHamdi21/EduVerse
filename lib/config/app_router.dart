@@ -139,6 +139,15 @@ import 'package:edu_verse/screens/admin/search/admin_search_screen.dart';
 import 'package:edu_verse/screens/admin/messages/admin_messages_screen.dart';
 import 'package:edu_verse/screens/admin/ai_insights/admin_ai_insights_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_admin_dashboard_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_system_settings_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_integration_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_backup_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_security_logs_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_ai_model_settings_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_performance_report_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_alerts_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_profile_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
@@ -769,10 +778,46 @@ class AppRouter {
         builder: (context, state) => const AdminSystemLogsScreen(),
       ),
 
-      // ============ IT ADMIN ROUTES (Placeholder) ============
+      // ============ IT ADMIN ROUTES ============
       GoRoute(
         path: '/it-admin/dashboard',
         builder: (context, state) => const ITAdminDashboardScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/settings',
+        builder: (context, state) => const ITSystemSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/integrations',
+        builder: (context, state) => const ITIntegrationScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/backup',
+        builder: (context, state) => const ITBackupScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/security-logs',
+        builder: (context, state) => const ITSecurityLogsScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/ai-settings',
+        builder: (context, state) => const ITAIModelSettingsScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/performance',
+        builder: (context, state) => const ITPerformanceReportScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/alerts',
+        builder: (context, state) => const ITAlertsScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/profile',
+        builder: (context, state) => const ITProfileScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/edit-profile',
+        builder: (context, state) => const ITEditProfileScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

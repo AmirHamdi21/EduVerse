@@ -5,19 +5,20 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../generated_l10n/app_localizations.dart';
-import '../shared/admin_colors.dart';
 
-class AdminDrawer extends StatefulWidget {
-  const AdminDrawer({super.key});
+class ITDrawer extends StatefulWidget {
+  final String currentRoute;
+  final bool isDark;
+
+  const ITDrawer({super.key, required this.currentRoute, required this.isDark});
 
   @override
-  State<AdminDrawer> createState() => _AdminDrawerState();
+  State<ITDrawer> createState() => _ITDrawerState();
 }
 
-class _AdminDrawerState extends State<AdminDrawer>
+class _ITDrawerState extends State<ITDrawer>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
-  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class _AdminDrawerState extends State<AdminDrawer>
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
+
         final menuItems = _buildMenuItems(l10n);
 
         return Drawer(
@@ -83,17 +85,20 @@ class _AdminDrawerState extends State<AdminDrawer>
               GestureDetector(
                 onTap: () {
                   Navigator.pop(context);
-                  context.push('/admin/profile');
                 },
                 child: Container(
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    gradient: AdminColors.primaryGradient,
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF0891B2), Color(0xFF22D3EE)],
+                    ),
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: AdminColors.primary.withOpacity(0.3),
+                        color: const Color(0xFF0891B2).withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -101,7 +106,7 @@ class _AdminDrawerState extends State<AdminDrawer>
                   ),
                   child: const Center(
                     child: Icon(
-                      Icons.admin_panel_settings_rounded,
+                      Icons.computer_rounded,
                       color: Colors.white,
                       size: 28,
                     ),
@@ -115,7 +120,7 @@ class _AdminDrawerState extends State<AdminDrawer>
                   width: 16,
                   height: 16,
                   decoration: BoxDecoration(
-                    color: AdminColors.success,
+                    color: const Color(0xFF10B981),
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: isDark ? const Color(0xFF0F172A) : Colors.white,
@@ -132,9 +137,9 @@ class _AdminDrawerState extends State<AdminDrawer>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.admin,
+                  l10n.itAdmin,
                   style: TextStyle(
-                    color: AdminColors.getTextColor(isDark),
+                    color: isDark ? Colors.white : const Color(0xFF1E293B),
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
                   ),
@@ -146,13 +151,13 @@ class _AdminDrawerState extends State<AdminDrawer>
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: AdminColors.primary.withOpacity(0.1),
+                    color: const Color(0xFF0891B2).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
-                    '🔐 ${l10n.adminRole}',
-                    style: TextStyle(
-                      color: AdminColors.primary,
+                    '🖥️ ${l10n.itSystemAdmin}',
+                    style: const TextStyle(
+                      color: Color(0xFF0891B2),
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
@@ -164,44 +169,21 @@ class _AdminDrawerState extends State<AdminDrawer>
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () {
-                Navigator.pop(context);
-                context.push('/admin/search');
-              },
-              borderRadius: BorderRadius.circular(12),
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.05)
-                      : Colors.black.withOpacity(0.03),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  Icons.search_rounded,
-                  color: AdminColors.getTextTertiaryColor(isDark),
-                  size: 20,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
               onTap: () => Navigator.pop(context),
               borderRadius: BorderRadius.circular(12),
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? Colors.white.withOpacity(0.05)
-                      : Colors.black.withOpacity(0.03),
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   Icons.close_rounded,
-                  color: AdminColors.getTextTertiaryColor(isDark),
+                  color: isDark
+                      ? const Color(0xFF94A3B8)
+                      : const Color(0xFF64748B),
                   size: 20,
                 ),
               ),
@@ -227,18 +209,18 @@ class _AdminDrawerState extends State<AdminDrawer>
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.black.withOpacity(0.03),
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.03),
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStatItem(isDark, '12.8K', l10n.users, Icons.people_rounded),
+          _buildStatItem(isDark, '99.9%', l10n.itUptime, Icons.timer_rounded),
           _buildStatDivider(isDark),
-          _buildStatItem(isDark, '342', l10n.courses, Icons.school_rounded),
+          _buildStatItem(isDark, '2', l10n.itIncidents, Icons.warning_rounded),
           _buildStatDivider(isDark),
-          _buildStatItem(isDark, '98.7%', l10n.uptime, Icons.speed_rounded),
+          _buildStatItem(isDark, '8', l10n.itServers, Icons.dns_rounded),
         ],
       ),
     );
@@ -253,12 +235,12 @@ class _AdminDrawerState extends State<AdminDrawer>
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: AdminColors.primary, size: 20),
+        Icon(icon, color: const Color(0xFF0891B2), size: 20),
         const SizedBox(height: 6),
         Text(
           value,
           style: TextStyle(
-            color: AdminColors.getTextColor(isDark),
+            color: isDark ? Colors.white : const Color(0xFF1E293B),
             fontSize: 16,
             fontWeight: FontWeight.w700,
           ),
@@ -266,7 +248,7 @@ class _AdminDrawerState extends State<AdminDrawer>
         Text(
           label,
           style: TextStyle(
-            color: AdminColors.getTextTertiaryColor(isDark),
+            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             fontSize: 11,
           ),
         ),
@@ -279,155 +261,117 @@ class _AdminDrawerState extends State<AdminDrawer>
       width: 1,
       height: 36,
       color: isDark
-          ? Colors.white.withOpacity(0.1)
-          : Colors.black.withOpacity(0.06),
+          ? Colors.white.withValues(alpha: 0.1)
+          : Colors.black.withValues(alpha: 0.06),
     );
   }
 
   List<_MenuItem> _buildMenuItems(AppLocalizations l10n) {
     return [
       _MenuItem(
-        icon: Icons.space_dashboard_outlined,
+        icon: Icons.space_dashboard_rounded,
         activeIcon: Icons.space_dashboard,
         title: l10n.dashboard,
-        route: '/admin/dashboard',
+        route: '/it-admin/dashboard',
         category: 'main',
       ),
       _MenuItem(
-        icon: Icons.people_outline_rounded,
-        activeIcon: Icons.people_rounded,
-        title: l10n.userManagement,
-        route: '/admin/users',
+        icon: Icons.monitor_heart_outlined,
+        activeIcon: Icons.monitor_heart,
+        title: l10n.itSystemHealth,
+        route: '/it-admin/system-health',
         category: 'main',
       ),
       _MenuItem(
-        icon: Icons.admin_panel_settings_outlined,
-        activeIcon: Icons.admin_panel_settings_rounded,
-        title: l10n.rolePermissionsManagement,
-        route: '/admin/roles',
-        category: 'main',
-      ),
-      _MenuItem(
-        icon: Icons.school_outlined,
-        activeIcon: Icons.school_rounded,
-        title: l10n.courseManagement,
-        route: '/admin/courses',
-        category: 'main',
-      ),
-      _MenuItem(
-        icon: Icons.people_alt_outlined,
-        activeIcon: Icons.people_alt_rounded,
-        title: l10n.assignStaff,
-        route: '/admin/staff',
-        category: 'main',
-      ),
-      _MenuItem(
-        icon: Icons.business_outlined,
-        activeIcon: Icons.business_rounded,
-        title: l10n.departmentsAndPrograms,
-        route: '/admin/departments',
-        category: 'main',
-      ),
-      _MenuItem(
-        icon: Icons.analytics_outlined,
-        activeIcon: Icons.analytics,
-        title: l10n.reportsAnalytics,
-        route: '/admin/analytics',
+        icon: Icons.dns_outlined,
+        activeIcon: Icons.dns,
+        title: l10n.itServerManagement,
+        route: '/it-admin/servers',
         category: 'main',
       ),
       _MenuItem(
         icon: Icons.security_outlined,
         activeIcon: Icons.security,
-        title: l10n.securityAndActivityLogs,
-        route: '/admin/security',
+        title: l10n.securityLogs,
+        route: '/it-admin/security-logs',
         category: 'main',
       ),
       _MenuItem(
-        icon: Icons.campaign_outlined,
-        activeIcon: Icons.campaign,
-        title: l10n.announcements,
-        route: '/admin/announcements',
-        category: 'main',
-      ),
-      _MenuItem(
-        icon: Icons.fact_check_outlined,
-        activeIcon: Icons.fact_check,
-        title: l10n.attendance,
-        route: '/admin/attendance',
-        category: 'main',
-      ),
-      _MenuItem(
-        icon: Icons.backup_rounded,
+        icon: Icons.backup_outlined,
         activeIcon: Icons.backup,
-        title: l10n.backupDataCenter,
-        route: '/admin/backup-center',
+        title: l10n.itBackupRecovery,
+        route: '/it-admin/backup',
         category: 'main',
       ),
       _MenuItem(
-        icon: Icons.payments_rounded,
-        activeIcon: Icons.payments,
-        title: l10n.paymentManagement,
-        route: '/admin/payments',
-        category: 'main',
-      ),
-      _MenuItem(
-        icon: Icons.fact_check_outlined,
-        activeIcon: Icons.fact_check_rounded,
-        title: l10n.auditCompliance,
-        route: '/admin/audit',
+        icon: Icons.api_outlined,
+        activeIcon: Icons.api,
+        title: l10n.itApiManagement,
+        route: '/it-admin/api',
         category: 'main',
       ),
       _MenuItem(
         icon: Icons.hub_outlined,
-        activeIcon: Icons.hub_rounded,
-        title: l10n.integrationsApi,
-        route: '/admin/integrations',
+        activeIcon: Icons.hub,
+        title: l10n.itIntegrations,
+        route: '/it-admin/integrations',
         category: 'main',
       ),
       _MenuItem(
-        icon: Icons.auto_awesome_outlined,
-        activeIcon: Icons.auto_awesome,
-        title: l10n.aiInsights,
-        route: '/admin/ai-insights',
-        category: 'ai',
-        isHighlighted: true,
+        icon: Icons.psychology_outlined,
+        activeIcon: Icons.psychology,
+        title: l10n.itAiModelSettings,
+        route: '/it-admin/ai-settings',
+        category: 'main',
       ),
       _MenuItem(
-        icon: Icons.shield_outlined,
-        activeIcon: Icons.shield,
-        title: l10n.systemHealth,
-        route: '/admin/analytics',
-        category: 'ai',
-        isHighlighted: true,
+        icon: Icons.bug_report_outlined,
+        activeIcon: Icons.bug_report,
+        title: l10n.itErrorLogs,
+        route: '/it-admin/logs',
+        category: 'monitoring',
       ),
       _MenuItem(
-        icon: Icons.chat_bubble_outline_rounded,
-        activeIcon: Icons.chat_bubble_rounded,
-        title: l10n.messages,
-        route: '/admin/messages',
-        badge: '3',
-        category: 'communication',
+        icon: Icons.analytics_outlined,
+        activeIcon: Icons.analytics,
+        title: l10n.itPerformance,
+        route: '/it-admin/performance',
+        category: 'monitoring',
       ),
       _MenuItem(
         icon: Icons.notifications_outlined,
         activeIcon: Icons.notifications,
-        title: l10n.notifications,
-        route: '/admin/notifications',
-        badge: '12',
-        category: 'communication',
+        title: l10n.itAlerts,
+        route: '/it-admin/alerts',
+        badge: '3',
+        category: 'monitoring',
       ),
       _MenuItem(
-        icon: Icons.person_outline_rounded,
-        activeIcon: Icons.person_rounded,
-        title: l10n.profile,
-        route: '/admin/profile',
-        category: 'account',
+        icon: Icons.storage_outlined,
+        activeIcon: Icons.storage,
+        title: l10n.itDatabase,
+        route: '/it-admin/database',
+        category: 'infrastructure',
+      ),
+      _MenuItem(
+        icon: Icons.cloud_outlined,
+        activeIcon: Icons.cloud,
+        title: l10n.itCloudServices,
+        route: '/it-admin/cloud',
+        category: 'infrastructure',
       ),
       _MenuItem(
         icon: Icons.settings_outlined,
         activeIcon: Icons.settings,
         title: l10n.settings,
-        route: '/admin/settings',
+        route: '/it-admin/settings',
+        category: 'account',
+      ),
+      _MenuItem(
+        icon: Icons.person_outline,
+        activeIcon: Icons.person,
+        title: l10n.itProfileScreen,
+        route: '/it-admin/profile',
         category: 'account',
       ),
     ];
@@ -435,35 +379,30 @@ class _AdminDrawerState extends State<AdminDrawer>
 
   Widget _buildNavigationMenu(bool isDark, List<_MenuItem> items) {
     final mainItems = items.where((i) => i.category == 'main').toList();
-    final aiItems = items.where((i) => i.category == 'ai').toList();
-    final communicationItems = items
-        .where((i) => i.category == 'communication')
+    final monitoringItems = items
+        .where((i) => i.category == 'monitoring')
+        .toList();
+    final infrastructureItems = items
+        .where((i) => i.category == 'infrastructure')
         .toList();
     final accountItems = items.where((i) => i.category == 'account').toList();
+    final l10n = AppLocalizations.of(context);
 
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       physics: const BouncingScrollPhysics(),
       children: [
-        _buildSectionLabel(isDark, 'MAIN MENU'),
-        ...mainItems.asMap().entries.map(
-          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-        ),
+        _buildSectionLabel(isDark, l10n.itMainMenu),
+        ...mainItems.map((item) => _buildNavItem(isDark, item)),
         const SizedBox(height: 16),
-        _buildSectionLabel(isDark, 'AI & SYSTEM'),
-        ...aiItems.asMap().entries.map(
-          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-        ),
+        _buildSectionLabel(isDark, l10n.itMonitoring),
+        ...monitoringItems.map((item) => _buildNavItem(isDark, item)),
         const SizedBox(height: 16),
-        _buildSectionLabel(isDark, 'COMMUNICATION'),
-        ...communicationItems.asMap().entries.map(
-          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-        ),
+        _buildSectionLabel(isDark, l10n.itInfrastructure),
+        ...infrastructureItems.map((item) => _buildNavItem(isDark, item)),
         const SizedBox(height: 16),
-        _buildSectionLabel(isDark, 'ACCOUNT'),
-        ...accountItems.asMap().entries.map(
-          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-        ),
+        _buildSectionLabel(isDark, l10n.itAccount),
+        ...accountItems.map((item) => _buildNavItem(isDark, item)),
       ],
     );
   }
@@ -472,9 +411,9 @@ class _AdminDrawerState extends State<AdminDrawer>
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Text(
-        label,
+        label.toUpperCase(),
         style: TextStyle(
-          color: AdminColors.getTextTertiaryColor(isDark),
+          color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
           fontSize: 11,
           fontWeight: FontWeight.w600,
           letterSpacing: 1.2,
@@ -483,8 +422,8 @@ class _AdminDrawerState extends State<AdminDrawer>
     );
   }
 
-  Widget _buildNavItem(bool isDark, _MenuItem item, int index) {
-    final isSelected = _selectedIndex == index;
+  Widget _buildNavItem(bool isDark, _MenuItem item) {
+    final isSelected = widget.currentRoute == item.route;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -492,9 +431,8 @@ class _AdminDrawerState extends State<AdminDrawer>
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            setState(() => _selectedIndex = index);
             Navigator.pop(context);
-            if (item.route.isNotEmpty && item.route != '/admin/dashboard') {
+            if (item.route.isNotEmpty && !isSelected) {
               context.push(item.route);
             }
           },
@@ -504,26 +442,11 @@ class _AdminDrawerState extends State<AdminDrawer>
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               gradient: isSelected
-                  ? LinearGradient(
-                      colors: item.isHighlighted
-                          ? [AdminColors.secondary, AdminColors.primary]
-                          : [
-                              AdminColors.primary.withValues(alpha: 0.15),
-                              AdminColors.secondary.withValues(alpha: 0.1),
-                            ],
-                    )
-                  : item.isHighlighted
-                  ? LinearGradient(
-                      colors: [
-                        AdminColors.secondary.withOpacity(0.1),
-                        AdminColors.primary.withOpacity(0.05),
-                      ],
+                  ? const LinearGradient(
+                      colors: [Color(0xFF0891B2), Color(0xFF22D3EE)],
                     )
                   : null,
               borderRadius: BorderRadius.circular(14),
-              border: item.isHighlighted && !isSelected
-                  ? Border.all(color: AdminColors.secondary.withOpacity(0.3))
-                  : null,
             ),
             child: Row(
               children: [
@@ -532,23 +455,19 @@ class _AdminDrawerState extends State<AdminDrawer>
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? (item.isHighlighted
-                              ? Colors.white.withOpacity(0.2)
-                              : AdminColors.primary.withOpacity(0.1))
+                        ? Colors.white.withValues(alpha: 0.2)
                         : (isDark
-                              ? Colors.white.withOpacity(0.05)
-                              : Colors.black.withOpacity(0.03)),
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.03)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     isSelected ? item.activeIcon : item.icon,
                     color: isSelected
-                        ? (item.isHighlighted
-                              ? Colors.white
-                              : AdminColors.primary)
-                        : item.isHighlighted
-                        ? AdminColors.secondary
-                        : AdminColors.getTextTertiaryColor(isDark),
+                        ? Colors.white
+                        : (isDark
+                              ? const Color(0xFF94A3B8)
+                              : const Color(0xFF64748B)),
                     size: 20,
                   ),
                 ),
@@ -558,12 +477,8 @@ class _AdminDrawerState extends State<AdminDrawer>
                     item.title,
                     style: TextStyle(
                       color: isSelected
-                          ? (item.isHighlighted
-                                ? Colors.white
-                                : AdminColors.primary)
-                          : item.isHighlighted
-                          ? AdminColors.secondary
-                          : AdminColors.getTextColor(isDark),
+                          ? Colors.white
+                          : (isDark ? Colors.white : const Color(0xFF1E293B)),
                       fontSize: 14,
                       fontWeight: isSelected
                           ? FontWeight.w600
@@ -579,39 +494,16 @@ class _AdminDrawerState extends State<AdminDrawer>
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? Colors.white.withOpacity(0.2)
-                          : AdminColors.error,
+                          ? Colors.white.withValues(alpha: 0.2)
+                          : const Color(0xFFEF4444),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
                       item.badge!,
                       style: TextStyle(
-                        color: isSelected
-                            ? (item.isHighlighted
-                                  ? Colors.white
-                                  : AdminColors.primary)
-                            : Colors.white,
+                        color: isSelected ? Colors.white : Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                if (item.isHighlighted && !isSelected)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AdminColors.secondary,
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text(
-                      'AI',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ),
@@ -632,8 +524,8 @@ class _AdminDrawerState extends State<AdminDrawer>
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withOpacity(0.05)
-                  : Colors.black.withOpacity(0.03),
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.black.withValues(alpha: 0.03),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
@@ -676,22 +568,24 @@ class _AdminDrawerState extends State<AdminDrawer>
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  border: Border.all(color: AdminColors.error.withOpacity(0.3)),
+                  border: Border.all(
+                    color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                  ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.logout_rounded,
-                      color: AdminColors.error,
+                      color: Color(0xFFEF4444),
                       size: 18,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       l10n.logout,
-                      style: TextStyle(
-                        color: AdminColors.error,
+                      style: const TextStyle(
+                        color: Color(0xFFEF4444),
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -720,14 +614,14 @@ class _AdminDrawerState extends State<AdminDrawer>
         padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           color: isActive
-              ? (isDark ? AdminColors.primary : Colors.white)
+              ? (isDark ? const Color(0xFF0891B2) : Colors.white)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: (isDark ? AdminColors.primary : Colors.black)
-                        .withOpacity(0.1),
+                    color: (isDark ? const Color(0xFF0891B2) : Colors.black)
+                        .withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -741,8 +635,10 @@ class _AdminDrawerState extends State<AdminDrawer>
               icon,
               size: 16,
               color: isActive
-                  ? (isDark ? Colors.white : AdminColors.primary)
-                  : AdminColors.getTextTertiaryColor(isDark),
+                  ? (isDark ? Colors.white : const Color(0xFF0891B2))
+                  : (isDark
+                        ? const Color(0xFF64748B)
+                        : const Color(0xFF94A3B8)),
             ),
             const SizedBox(width: 6),
             Text(
@@ -751,8 +647,10 @@ class _AdminDrawerState extends State<AdminDrawer>
                 fontSize: 12,
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
                 color: isActive
-                    ? (isDark ? Colors.white : AdminColors.primary)
-                    : AdminColors.getTextTertiaryColor(isDark),
+                    ? (isDark ? Colors.white : const Color(0xFF0891B2))
+                    : (isDark
+                          ? const Color(0xFF64748B)
+                          : const Color(0xFF94A3B8)),
               ),
             ),
           ],
@@ -768,7 +666,6 @@ class _MenuItem {
   final String title;
   final String route;
   final String? badge;
-  final bool isHighlighted;
   final String category;
 
   _MenuItem({
@@ -777,7 +674,6 @@ class _MenuItem {
     required this.title,
     required this.route,
     this.badge,
-    this.isHighlighted = false,
     required this.category,
   });
 }

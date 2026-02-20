@@ -10571,4 +10571,1302 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recentReports => 'Recent reports';
-}
+
+  @override
+  String get itAdmin => 'IT Admin';
+
+  @override
+  String get itSystemAdmin => 'System Admin';
+
+  @override
+  String get itDashboard => 'IT Dashboard';
+
+  @override
+  String get itSystemHealthMonitor => 'System Health Monitor';
+
+  @override
+  String get itSystemHealth => 'System Health';
+
+  @override
+  String get itServerManagement => 'Server Management';
+
+  @override
+  String get itSecurity => 'Security';
+
+  @override
+  String get itBackupRecovery => 'Backup & Recovery';
+
+  @override
+  String get itApiManagement => 'API Management';
+
+  @override
+  String get itErrorLogs => 'Error Logs';
+
+  @override
+  String get itPerformance => 'Performance';
+
+  @override
+  String get itAlerts => 'Alerts';
+
+  @override
+  String get itDatabase => 'Database';
+
+  @override
+  String get itCloudServices => 'Cloud Services';
+
+  @override
+  String get itMainMenu => 'Main Menu';
+
+  @override
+  String get itMonitoring => 'Monitoring';
+
+  @override
+  String get itInfrastructure => 'Infrastructure';
+
+  @override
+  String get itAccount => 'Account';
+
+  @override
+  String get itUptime => 'Uptime';
+
+  @override
+  String get itIncidents => 'Incidents';
+
+  @override
+  String get itServers => 'Servers';
+
+  @override
+  String get itOverall => 'Overall';
+
+  @override
+  String get itNormal => 'Normal';
+
+  @override
+  String get itDegraded => 'Degraded';
+
+  @override
+  String get itOffline => 'Offline';
+
+  @override
+  String get itMaintenance => 'Maintenance';
+
+  @override
+  String get itRefresh => 'Refresh';
+
+  @override
+  String get itQuickActions => 'Quick Actions';
+
+  @override
+  String get itBackup => 'Backup';
+
+  @override
+  String get itApi => 'API';
+
+  @override
+  String get itLogs => 'Logs';
+
+  @override
+  String get itCloud => 'Cloud';
+
+  @override
+  String get itActiveIncidents => 'Active Incidents';
+
+  @override
+  String get itActive => 'active';
+
+  @override
+  String get itViewAll => 'View All';
+
+  @override
+  String get itNoActiveIncidents => 'No active incidents';
+
+  @override
+  String get itAllSystemsOperational => 'All systems are operating normally';
+
+  @override
+  String get itResolve => 'Resolve';
+
+  @override
+  String get itServerStatus => 'Server Status';
+
+  @override
+  String get itRestart => 'Restart';
+
+  @override
+  String get itRecentActivity => 'Recent Activity';
+
+  @override
+  String get itClear => 'Clear';
+
+  @override
+  String get itNoRecentActivity => 'No recent activity';
+
+  @override
+  String get itSystemMetrics => 'System Metrics';
+
+  @override
+  String get itCpuUsage => 'CPU Usage';
+
+  @override
+  String get itMemory => 'Memory';
+
+  @override
+  String get itStorage => 'Storage';
+
+  @override
+  String get itApiLatency => 'API Latency';
+
+  @override
+  String get itDbConnections => 'DB Connections';
+
+  @override
+  String get itSystemAlerts => 'System Alerts';
+
+  @override
+  String get itPendingAlerts => 'pending';
+
+  @override
+  String get itNoAlerts => 'No alerts found';
+
+  @override
+  String get itAllClear => 'All systems operating normally';
+
+  @override
+  String get itAll => 'All';
+
+  @override
+  String get itActivity => 'Activity';
+
+  @override
+  String get itFeatureComingSoon =>
+      'This feature is currently under development and will be available in a future update.';
+
+  @override
+  String get itStayTuned => 'Stay tuned for exciting new features!';
+
+  @override
+  String get itSystemSettings => 'System Settings';
+
+  @override
+  String get itConfigureSystemSettings =>
+      'Configure and manage system settings';
+
+  @override
+  String get itEnvironment => 'Environment';
+
+  @override
+  String get itServices => 'Services';
+
+  @override
+  String get itNotifications => 'Notifications';
+
+  @override
+  String get itIntegrations => 'Integrations';
+
+  @override
+  String get itManageExternalServices => 'Manage external services and APIs';
+
+  @override
+  String get itAllProviders => 'All Providers';
+
+  @override
+  String get itConnected => 'Connected';
+
+  @override
+  String get itDisconnected => 'Disconnected';
+
+  @override
+  String get itPending => 'Pending';
+
+  @override
+  String get itConfigure => 'Configure';
+
+  @override
+  String get itSync => 'Sync';
+
+  @override
+  String get itConnect => 'Connect';
+
+  @override
+  String get itDisconnect => 'Disconnect';
+
+  @override
+  String get itLastSync => 'Last sync';
+
+  @override
+  String get itApiCalls => 'API Calls';
+
+  @override
+  String get itErrorRate => 'Error Rate';
+
+  @override
+  String get itRequestsPerMin => 'Requests/min';
+
+  @override
+  String get itViewLogs => 'View Logs';
+
+  @override
+  String get itViewDocs => 'Documentation';
+
+  @override
+  String get itAddIntegration => 'Add Integration';
+
+  @override
+  String get itSearchIntegrations => 'Search integrations, providers...';
+
+  @override
+  String get itNoIntegrationsFound => 'No integrations found';
+
+  @override
+  String get itTryAdjustingFilters => 'Try adjusting your search or filters';
+
+  @override
+  String get itConnectionSettings => 'Connection Settings';
+
+  @override
+  String get itAuthentication => 'Authentication';
+
+  @override
+  String get itApiKey => 'API Key';
+
+  @override
+  String get itApiEndpoint => 'API Endpoint';
+
+  @override
+  String get itClientId => 'Client ID';
+
+  @override
+  String get itClientSecret => 'Client Secret';
+
+  @override
+  String get itAutoSync => 'Auto Sync';
+
+  @override
+  String get itSyncInterval => 'Sync Interval';
+
+  @override
+  String get itRateLimit => 'Rate Limit';
+
+  @override
+  String get itTimeout => 'Timeout';
+
+  @override
+  String get itSaveChanges => 'Save Changes';
+
+  @override
+  String get itIntegrationOverview => 'Integration Overview';
+
+  @override
+  String get itRealTimeStatus => 'Real-time connection status';
+
+  @override
+  String get itTotalIntegrations => 'Total';
+
+  @override
+  String get itAvailable => 'Available';
+
+  @override
+  String get itPerformanceMetrics => 'Performance Metrics';
+
+  @override
+  String get itTotalRequests => 'Total Requests';
+
+  @override
+  String get itSuccessRate => 'Success Rate';
+
+  @override
+  String get itAvgResponse => 'Avg Response';
+
+  @override
+  String get itSyncNow => 'Sync Now';
+
+  @override
+  String get itConnectIntegration => 'Connect Integration';
+
+  @override
+  String get itDisconnectConfirm =>
+      'This will remove the connection and stop all data synchronization. You can reconnect at any time.';
+
+  @override
+  String get itLms => 'LMS';
+
+  @override
+  String get itAi => 'AI';
+
+  @override
+  String get itStorageCategory => 'Storage';
+
+  @override
+  String get itProductivity => 'Productivity';
+
+  @override
+  String get itCommunication => 'Communication';
+
+  @override
+  String get itAnalytics => 'Analytics';
+
+  @override
+  String get itSecurityCategory => 'Security';
+
+  @override
+  String get itBackupRestoreDR => 'Backup, Restore & DR Center';
+
+  @override
+  String get itBackupSubtitle =>
+      'Backup health, restore actions, and disaster recovery orchestration';
+
+  @override
+  String get itCreateBackup => 'Create Backup';
+
+  @override
+  String get itLastFullBackup => 'Last Full Backup';
+
+  @override
+  String get itSuccessful24h => 'Successful (24h)';
+
+  @override
+  String get itFailed24h => 'Failed (24h)';
+
+  @override
+  String get itNextScheduled => 'Next Scheduled';
+
+  @override
+  String get itStorageUsed => 'Storage Used';
+
+  @override
+  String get itRecoveryScore => 'Recovery Score';
+
+  @override
+  String get itViewJobs => 'View Jobs';
+
+  @override
+  String get itInvestigate => 'Investigate';
+
+  @override
+  String get itBackupJobs => 'Backup Jobs';
+
+  @override
+  String get itRestore => 'Restore';
+
+  @override
+  String get itDrRunbooks => 'DR Runbooks';
+
+  @override
+  String get itIntegrity => 'Integrity';
+
+  @override
+  String get itFull => 'Full';
+
+  @override
+  String get itIncremental => 'Incremental';
+
+  @override
+  String get itDifferential => 'Differential';
+
+  @override
+  String get itSnapshot => 'Snapshot';
+
+  @override
+  String get itArchive => 'Archive';
+
+  @override
+  String get itCompleted => 'Completed';
+
+  @override
+  String get itRunning => 'Running';
+
+  @override
+  String get itFailed => 'Failed';
+
+  @override
+  String get itScheduled => 'Scheduled';
+
+  @override
+  String get itCancelled => 'Cancelled';
+
+  @override
+  String get itTarget => 'Target';
+
+  @override
+  String get itDuration => 'Duration';
+
+  @override
+  String get itProgress => 'Progress';
+
+  @override
+  String get itCancel => 'Cancel';
+
+  @override
+  String get itRetry => 'Retry';
+
+  @override
+  String get itView => 'View';
+
+  @override
+  String get itVerified => 'Verified';
+
+  @override
+  String get itPendingVerification => 'Pending';
+
+  @override
+  String get itRestorePoints => 'Restore Points';
+
+  @override
+  String get itRestoreNow => 'Restore Now';
+
+  @override
+  String get itVerify => 'Verify';
+
+  @override
+  String get itSource => 'Source';
+
+  @override
+  String get itSize => 'Size';
+
+  @override
+  String get itRto => 'RTO';
+
+  @override
+  String get itRpo => 'RPO';
+
+  @override
+  String get itRunTest => 'Run Test';
+
+  @override
+  String get itLastTested => 'Last Tested';
+
+  @override
+  String get itReady => 'Ready';
+
+  @override
+  String get itNeedsReview => 'Needs Review';
+
+  @override
+  String get itCriticalReview => 'Critical Review';
+
+  @override
+  String get itSteps => 'Steps';
+
+  @override
+  String get itSuccessRateLabel => 'Success Rate';
+
+  @override
+  String get itVerifiedBackups => 'Verified Backups';
+
+  @override
+  String get itPendingChecks => 'Pending Verification';
+
+  @override
+  String get itAutoVerifySchedule => 'Auto-Verify Schedule';
+
+  @override
+  String get itDaily => 'Daily';
+
+  @override
+  String get itRecentIntegrityChecks => 'Recent Integrity Checks';
+
+  @override
+  String get itPassed => 'Passed';
+
+  @override
+  String get itChecksum => 'Checksum';
+
+  @override
+  String get itRunVerification => 'Run Verification';
+
+  @override
+  String get itAiRecommendations => 'AI Recommendations';
+
+  @override
+  String get itOptimize => 'Optimize';
+
+  @override
+  String get itWarning => 'Warning';
+
+  @override
+  String get itCostSavings => 'Cost Savings';
+
+  @override
+  String get itTestDue => 'Test Due';
+
+  @override
+  String get itStorageDistribution => 'Storage Distribution';
+
+  @override
+  String get itDatabaseBackups => 'Database Backups';
+
+  @override
+  String get itFileBackups => 'File Backups';
+
+  @override
+  String get itVmSnapshots => 'VM Snapshots';
+
+  @override
+  String get itLogArchives => 'Log Archives';
+
+  @override
+  String get itAlertSettings => 'Alert Settings';
+
+  @override
+  String get itEmailAlerts => 'Email Alerts';
+
+  @override
+  String get itSlackNotifications => 'Slack Notifications';
+
+  @override
+  String get itCriticalOnly => 'Critical Only';
+
+  @override
+  String get itReceiveBackupAlerts => 'Receive backup alerts via email';
+
+  @override
+  String get itSendToSlack => 'Send alerts to Slack channel';
+
+  @override
+  String get itOnlyCritical => 'Only notify for critical failures';
+
+  @override
+  String get itNoBackupJobs => 'No Backup Jobs';
+
+  @override
+  String get itNoBackupJobsDesc => 'No backup jobs match the selected filters';
+
+  @override
+  String get itNoRestorePoints => 'No Restore Points';
+
+  @override
+  String get itNoRestorePointsDesc => 'No restore points available';
+
+  @override
+  String get itNoRunbooks => 'No DR Runbooks';
+
+  @override
+  String get itNoRunbooksDesc => 'No disaster recovery runbooks configured';
+
+  @override
+  String get itNoIntegrityChecks => 'No Integrity Checks';
+
+  @override
+  String get itNoIntegrityChecksDesc =>
+      'No integrity checks have been performed';
+
+  @override
+  String get itSecurityLogsAccessControl => 'Security Logs & Access Control';
+
+  @override
+  String get itSecurityLogsSubtitle =>
+      'Monitor system activity, enforce policies, and track security events';
+
+  @override
+  String get itAuthEvents24h => 'Auth Events (24h)';
+
+  @override
+  String get itFailedLogins24h => 'Failed Logins (24h)';
+
+  @override
+  String get itBreachAttempts => 'Breach Attempts';
+
+  @override
+  String get itPrivilegeChanges7d => 'Privilege Changes (7d)';
+
+  @override
+  String get itViewAllEvents => 'View All Events';
+
+  @override
+  String get itInvestigateNow => 'Investigate Now';
+
+  @override
+  String get itAllAuthorized => 'All authorized changes';
+
+  @override
+  String get itSecurityLogsTab => 'Security Logs';
+
+  @override
+  String get itAccessControlTab => 'Access Control';
+
+  @override
+  String get itPoliciesTab => 'Policies';
+
+  @override
+  String get itRequestsTab => 'Requests';
+
+  @override
+  String get itRolesTab => 'Roles';
+
+  @override
+  String get itAllEvents => 'All Events';
+
+  @override
+  String get itFlaggedOnly => 'Flagged Only';
+
+  @override
+  String get itHighRiskOnly => 'High-Risk Only';
+
+  @override
+  String get itSearchLogs => 'Search logs, users, IPs...';
+
+  @override
+  String get itEventType => 'Event Type';
+
+  @override
+  String get itLoginSuccess => 'Login Success';
+
+  @override
+  String get itLoginFailed => 'Login Failed';
+
+  @override
+  String get itLogout => 'Logout';
+
+  @override
+  String get itBreachAttempt => 'Breach Attempt';
+
+  @override
+  String get itPermissionChange => 'Permission Change';
+
+  @override
+  String get itApiAccess => 'API Access';
+
+  @override
+  String get itMfaEnabled => 'Enabled';
+
+  @override
+  String get itPasswordChange => 'Password Change';
+
+  @override
+  String get itAccountLocked => 'Account Locked';
+
+  @override
+  String get itSessionExpired => 'Session Expired';
+
+  @override
+  String get itRiskLow => 'Low';
+
+  @override
+  String get itRiskMedium => 'Medium';
+
+  @override
+  String get itRiskHigh => 'High';
+
+  @override
+  String get itRiskCritical => 'Critical';
+
+  @override
+  String get itPendingAccessRequests => 'Pending Access Requests';
+
+  @override
+  String get itNoAccessRequests => 'No pending access requests';
+
+  @override
+  String get itRequestedRole => 'Requested Role';
+
+  @override
+  String get itCurrentRole => 'Current Role';
+
+  @override
+  String get itReason => 'Reason';
+
+  @override
+  String get itRequestedAt => 'Requested';
+
+  @override
+  String get itApprove => 'Approve';
+
+  @override
+  String get itDeny => 'Deny';
+
+  @override
+  String get itRolePermissionsManagement => 'Role & Permission Management';
+
+  @override
+  String get itPermissions => 'Permissions';
+
+  @override
+  String get itViewUsers => 'View Users';
+
+  @override
+  String get itUsers => 'users';
+
+  @override
+  String get itSecurityPoliciesMfa => 'Security Policies & MFA';
+
+  @override
+  String get itMandatoryMfa => 'Mandatory MFA';
+
+  @override
+  String get itPasswordStrength => 'Password Strength';
+
+  @override
+  String get itSessionTimeout => 'Session Timeout';
+
+  @override
+  String get itIpBlocklist => 'IP Blocklist';
+
+  @override
+  String get itApiRateLimiting => 'API Rate Limiting';
+
+  @override
+  String get itActiveIncidentsSection => 'Active Incidents';
+
+  @override
+  String get itHide => 'Hide';
+
+  @override
+  String get itSeverityInfo => 'Info';
+
+  @override
+  String get itSeverityWarning => 'Warning';
+
+  @override
+  String get itSeverityCritical => 'Critical';
+
+  @override
+  String get itStatusActive => 'Active';
+
+  @override
+  String get itStatusInvestigating => 'Investigating';
+
+  @override
+  String get itStatusResolved => 'Resolved';
+
+  @override
+  String get itStatusDismissed => 'Dismissed';
+
+  @override
+  String get itAiSecurityInsights => 'AI Security Insights';
+
+  @override
+  String get itNoAiInsights => 'No AI insights available';
+
+  @override
+  String get itRecentSecurityActions => 'Recent Security Actions';
+
+  @override
+  String get itNoRecentActions => 'No recent actions';
+
+  @override
+  String get itViewAllActions => 'View All';
+
+  @override
+  String get itIncidentDetails => 'Incident Details';
+
+  @override
+  String get itAffectedAccounts => 'Affected Accounts';
+
+  @override
+  String get itRelatedIps => 'Related IPs';
+
+  @override
+  String get itDetectedAt => 'Detected At';
+
+  @override
+  String get itInvestigationNotes => 'Investigation Notes';
+
+  @override
+  String get itQuickResponseActions => 'Quick Response Actions';
+
+  @override
+  String get itBlockAllRelatedIps => 'Block All Related IPs';
+
+  @override
+  String get itMarkResolved => 'Mark Resolved';
+
+  @override
+  String get itCreateReport => 'Create Report';
+
+  @override
+  String get itClose => 'Close';
+
+  @override
+  String get itAiModelSettings => 'AI Model Settings & Governance';
+
+  @override
+  String get itAiModelSettingsSubtitle =>
+      'Manage AI providers, configurations, policies, and usage limitations';
+
+  @override
+  String get itAiProviders => 'AI Providers';
+
+  @override
+  String get itSelectProvider => 'Select Provider';
+
+  @override
+  String get itSelectModel => 'Select Model';
+
+  @override
+  String get itApiKeysCredentials => 'API Keys & Credentials';
+
+  @override
+  String get itMainKey => 'Main Key';
+
+  @override
+  String get itAutoRotate => 'Auto-Rotate';
+
+  @override
+  String get itRegenerateKey => 'Regenerate Key';
+
+  @override
+  String get itGovernanceRules => 'Governance Rules';
+
+  @override
+  String get itRoleRestrictions => 'Role Restrictions';
+
+  @override
+  String get itEnableAiForStudents => 'Enable AI for Students';
+
+  @override
+  String get itEnableAiForInstructors => 'Enable AI for Instructors';
+
+  @override
+  String get itEnableAiForTa => 'Enable AI for TA';
+
+  @override
+  String get itAiCapabilities => 'AI Capabilities';
+
+  @override
+  String get itAnalyzeSubmissions => 'Analyze Student Submissions';
+
+  @override
+  String get itMaxResponseLength => 'Maximum Response Length';
+
+  @override
+  String get itCompliancePrivacy => 'Compliance & Privacy';
+
+  @override
+  String get itStoreAiLogs => 'Store AI Logs';
+
+  @override
+  String get itEnableContentFilters => 'Enable Inappropriate Content Filters';
+
+  @override
+  String get itBlockSensitiveTopics => 'Block Sensitive Topics';
+
+  @override
+  String get itSystemLimits => 'System Limits';
+
+  @override
+  String get itDailyRequestsPerUser => 'Daily Requests per Day/User';
+
+  @override
+  String get itUsageProgress => 'Usage Progress';
+
+  @override
+  String get itHighLoadWarning => 'High Load Warning';
+
+  @override
+  String get itAiRequestLogs => 'AI Request Logs';
+
+  @override
+  String get itActiveProviders => 'Active Providers';
+
+  @override
+  String get itTotalRequestsLabel => 'Total Requests';
+
+  @override
+  String get itRecentRequests => 'Recent Requests';
+
+  @override
+  String get itViewFullLogs => 'View Full Logs';
+
+  @override
+  String get itDownloadLogs => 'Download Logs';
+
+  @override
+  String get itSaveConfiguration => 'Save Configuration';
+
+  @override
+  String get itResetToDefault => 'Reset to Default';
+
+  @override
+  String get itConfirmSave => 'Confirm & Save';
+
+  @override
+  String get itConfigSaved => 'Configuration saved successfully';
+
+  @override
+  String get itSettingsReset => 'Settings reset to default';
+
+  @override
+  String get itPerformanceReports => 'System Performance Reports';
+
+  @override
+  String get itPerformanceReportsSubtitle =>
+      'Monitor real-time metrics and system health';
+
+  @override
+  String get itTimePeriodToday => 'Today';
+
+  @override
+  String get itTimePeriodWeek => 'Week';
+
+  @override
+  String get itTimePeriodMonth => 'Month';
+
+  @override
+  String get itTimePeriodCustom => 'Custom';
+
+  @override
+  String get itPerformanceOverview => 'Performance Overview';
+
+  @override
+  String get itViewDetailsMetrics => 'View Details';
+
+  @override
+  String get itServerHealth => 'Server Health';
+
+  @override
+  String get itViewAllServers => 'View All';
+
+  @override
+  String get itHealthy => 'Healthy';
+
+  @override
+  String get itCritical => 'Critical';
+
+  @override
+  String get itMemoryUsage => 'Memory Usage';
+
+  @override
+  String get itDiskUsage => 'Disk Usage';
+
+  @override
+  String get itPerformanceTrends => 'Performance Trends';
+
+  @override
+  String get itTrendCpu => 'CPU';
+
+  @override
+  String get itTrendMemory => 'Memory';
+
+  @override
+  String get itTrendResponseTime => 'Response Time';
+
+  @override
+  String get itRecentAlerts => 'Recent Alerts';
+
+  @override
+  String get itViewAllAlerts => 'View All';
+
+  @override
+  String get itAlertInfo => 'Info';
+
+  @override
+  String get itAlertWarning => 'Warning';
+
+  @override
+  String get itAlertCritical => 'Critical';
+
+  @override
+  String get itAlertResolved => 'Resolved';
+
+  @override
+  String get itResourceUtilization => 'Resource Utilization';
+
+  @override
+  String get itManageStorage => 'Manage Storage';
+
+  @override
+  String get itUsedOf => 'used of';
+
+  @override
+  String get itExportReport => 'Export Report';
+
+  @override
+  String get itRefreshData => 'Refresh Data';
+
+  @override
+  String get itLastUpdated => 'Last Updated';
+
+  @override
+  String get itNoServers => 'No servers available';
+
+  @override
+  String get itNoResources => 'No resources available';
+
+  @override
+  String get itServerDetails => 'Server Details';
+
+  @override
+  String get itRestartServer => 'Restart Server';
+
+  @override
+  String get itNetworkIO => 'Network I/O';
+
+  @override
+  String get itAvgResponseTime => 'Avg Response Time';
+
+  @override
+  String get itActiveUsers => 'Active Users';
+
+  @override
+  String get itAlertsTitle => 'Alerts, Notifications & Threshold Rules';
+
+  @override
+  String get itAlertsSubtitle =>
+      'Create alert rules, configure channels, and manage escalation policies';
+
+  @override
+  String get itActiveAlerts => 'Active Alerts';
+
+  @override
+  String get itResolvedAlerts => 'Resolved (24h)';
+
+  @override
+  String get itSuppressedAlerts => 'Suppressed (24h)';
+
+  @override
+  String get itNoiseScore => 'Noise Score (AI)';
+
+  @override
+  String get itAlertRules => 'Alert Rules';
+
+  @override
+  String get itNotificationChannels => 'Notification Channels';
+
+  @override
+  String get itEscalationPolicies => 'Escalation Policies';
+
+  @override
+  String get itSuppressionWindows => 'Suppression Windows';
+
+  @override
+  String get itAlertHistory => 'Alert History & Logs';
+
+  @override
+  String get itCreateRule => 'Create Rule';
+
+  @override
+  String get itCreatePolicy => 'Create Policy';
+
+  @override
+  String get itCreateWindow => 'Create Window';
+
+  @override
+  String get itAddChannel => 'Add Channel';
+
+  @override
+  String get itSearchRules => 'Search alert rules...';
+
+  @override
+  String get itAllSeverity => 'All Severity';
+
+  @override
+  String get itSeverityCriticalLabel => 'Critical';
+
+  @override
+  String get itSeverityWarningLabel => 'Warning';
+
+  @override
+  String get itSeverityInfoLabel => 'Info';
+
+  @override
+  String get itRuleEnabled => 'enabled';
+
+  @override
+  String get itRuleDisabled => 'disabled';
+
+  @override
+  String get itViewDetails => 'View Details';
+
+  @override
+  String get itTestChannel => 'Test';
+
+  @override
+  String get itEditChannel => 'Edit';
+
+  @override
+  String get itAiTuningAdvisor => 'AI Tuning Advisor';
+
+  @override
+  String get itApplySuggestion => 'Apply Suggestion';
+
+  @override
+  String get itReviewGrouping => 'Review Grouping';
+
+  @override
+  String get itUpdateWindow => 'Update Window';
+
+  @override
+  String get itAlertMetrics => 'Alert Metrics';
+
+  @override
+  String get itAlertsPerDay => 'Alerts per Day';
+
+  @override
+  String get itFalsePositives => 'False Positives';
+
+  @override
+  String get itAvgTimeToAck => 'Avg Time to Ack';
+
+  @override
+  String get itTopNoisyRules => 'Top Noisy Rules';
+
+  @override
+  String get itNoRulesFound => 'No alert rules found';
+
+  @override
+  String get itNoChannels => 'No notification channels';
+
+  @override
+  String get itNoPolicies => 'No escalation policies';
+
+  @override
+  String get itNoWindows => 'No suppression windows';
+
+  @override
+  String get itNoHistory => 'No alert history';
+
+  @override
+  String get itTimestamp => 'Timestamp';
+
+  @override
+  String get itRule => 'Rule';
+
+  @override
+  String get itSeverity => 'Severity';
+
+  @override
+  String get itStatus => 'Status';
+
+  @override
+  String get itActiveNow => 'Active Now';
+
+  @override
+  String get itRecurring => 'Recurring';
+
+  @override
+  String get itProfileScreen => 'Profile';
+
+  @override
+  String get itEditProfile => 'Edit Profile';
+
+  @override
+  String get itPersonalInfo => 'Personal Information';
+
+  @override
+  String get itWorkInfo => 'Work Information';
+
+  @override
+  String get itPreferences => 'Preferences';
+
+  @override
+  String get itFullName => 'Full Name';
+
+  @override
+  String get itEmailAddress => 'Email Address';
+
+  @override
+  String get itPhoneNumber => 'Phone Number';
+
+  @override
+  String get itEmployeeId => 'Employee ID';
+
+  @override
+  String get itDepartment => 'Department';
+
+  @override
+  String get itTimezone => 'Timezone';
+
+  @override
+  String get itPreferredLanguage => 'Preferred Language';
+
+  @override
+  String get itRolePermissions => 'Role & Permissions';
+
+  @override
+  String get itFullSystemAccess => 'Full System Access';
+
+  @override
+  String get itViewFullPermissions => 'View Full Permissions';
+
+  @override
+  String get itManageSecurity => 'Manage Security';
+
+  @override
+  String get itViewActivityLogs => 'View Activity Logs';
+
+  @override
+  String get itProfilePersonal => 'Personal';
+
+  @override
+  String get itProfileNotifications => 'Notifications';
+
+  @override
+  String get itProfileSecurity => 'Security';
+
+  @override
+  String get itProfilePreferences => 'Preferences';
+
+  @override
+  String get itSecurityAlertsToggle => 'Security Alerts';
+
+  @override
+  String get itSystemOutageUpdates => 'System Outage Updates';
+
+  @override
+  String get itIntegrationWarnings => 'Integration Warnings';
+
+  @override
+  String get itAiAnomalyNotifications => 'AI Anomaly Notifications';
+
+  @override
+  String get itDeliveryMethods => 'Delivery Methods';
+
+  @override
+  String get itEmailDelivery => 'Email';
+
+  @override
+  String get itSmsDelivery => 'SMS';
+
+  @override
+  String get itInAppDelivery => 'In-App';
+
+  @override
+  String get itSlackDelivery => 'Slack';
+
+  @override
+  String get itSavePreferences => 'Save Preferences';
+
+  @override
+  String get itPasswordManagement => 'Password Management';
+
+  @override
+  String get itChangePassword => 'Change Password';
+
+  @override
+  String get itPasswordRequirements => 'Password Requirements';
+
+  @override
+  String get itMfa => 'Multi-Factor Authentication';
+
+  @override
+  String get itMfaDisabled => 'Disabled';
+
+  @override
+  String get itSetupMfa => 'Setup MFA';
+
+  @override
+  String get itAddDevice => 'Add Device';
+
+  @override
+  String get itActiveSessions => 'Active Sessions';
+
+  @override
+  String get itTerminateAll => 'Terminate All';
+
+  @override
+  String get itCurrentSession => 'Current';
+
+  @override
+  String get itApiTokens => 'API Access Tokens';
+
+  @override
+  String get itGenerateToken => 'Generate Token';
+
+  @override
+  String get itRevokeToken => 'Revoke';
+
+  @override
+  String get itThemeCustomization => 'Theme & UI Customization';
+
+  @override
+  String get itThemeMode => 'Theme Mode

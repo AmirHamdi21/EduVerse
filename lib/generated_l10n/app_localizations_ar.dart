@@ -10527,4 +10527,1378 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recentReports => 'التقارير الأخيرة';
+
+  @override
+  String get itAdmin => 'مسؤول تقنية المعلومات';
+
+  @override
+  String get itSystemAdmin => 'مسؤول النظام';
+
+  @override
+  String get itDashboard => 'لوحة تحكم تقنية المعلومات';
+
+  @override
+  String get itSystemHealthMonitor => 'مراقب صحة النظام';
+
+  @override
+  String get itSystemHealth => 'صحة النظام';
+
+  @override
+  String get itServerManagement => 'إدارة الخوادم';
+
+  @override
+  String get itSecurity => 'الأمان';
+
+  @override
+  String get itBackupRecovery => 'النسخ الاحتياطي والاستعادة';
+
+  @override
+  String get itApiManagement => 'إدارة واجهة برمجة التطبيقات';
+
+  @override
+  String get itErrorLogs => 'سجلات الأخطاء';
+
+  @override
+  String get itPerformance => 'الأداء';
+
+  @override
+  String get itAlerts => 'التنبيهات';
+
+  @override
+  String get itDatabase => 'قاعدة البيانات';
+
+  @override
+  String get itCloudServices => 'الخدمات السحابية';
+
+  @override
+  String get itMainMenu => 'القائمة الرئيسية';
+
+  @override
+  String get itMonitoring => 'المراقبة';
+
+  @override
+  String get itInfrastructure => 'البنية التحتية';
+
+  @override
+  String get itAccount => 'الحساب';
+
+  @override
+  String get itUptime => 'وقت التشغيل';
+
+  @override
+  String get itIncidents => 'الحوادث';
+
+  @override
+  String get itServers => 'الخوادم';
+
+  @override
+  String get itOverall => 'عام';
+
+  @override
+  String get itNormal => 'طبيعي';
+
+  @override
+  String get itDegraded => 'متدهور';
+
+  @override
+  String get itOffline => 'غير متصل';
+
+  @override
+  String get itMaintenance => 'صيانة';
+
+  @override
+  String get itRefresh => 'تحديث';
+
+  @override
+  String get itQuickActions => 'إجراءات سريعة';
+
+  @override
+  String get itBackup => 'نسخ احتياطي';
+
+  @override
+  String get itApi => 'واجهة برمجة التطبيقات';
+
+  @override
+  String get itLogs => 'السجلات';
+
+  @override
+  String get itCloud => 'السحابة';
+
+  @override
+  String get itActiveIncidents => 'الحوادث النشطة';
+
+  @override
+  String get itActive => 'نشطة';
+
+  @override
+  String get itViewAll => 'عرض الكل';
+
+  @override
+  String get itNoActiveIncidents => 'لا توجد حوادث نشطة';
+
+  @override
+  String get itAllSystemsOperational => 'جميع الأنظمة تعمل بشكل طبيعي';
+
+  @override
+  String get itResolve => 'حل';
+
+  @override
+  String get itServerStatus => 'حالة الخادم';
+
+  @override
+  String get itRestart => 'إعادة تشغيل';
+
+  @override
+  String get itRecentActivity => 'النشاط الأخير';
+
+  @override
+  String get itClear => 'مسح';
+
+  @override
+  String get itNoRecentActivity => 'لا يوجد نشاط حديث';
+
+  @override
+  String get itSystemMetrics => 'مقاييس النظام';
+
+  @override
+  String get itCpuUsage => 'استخدام المعالج';
+
+  @override
+  String get itMemory => 'الذاكرة';
+
+  @override
+  String get itStorage => 'التخزين';
+
+  @override
+  String get itApiLatency => 'زمن استجابة واجهة برمجة التطبيقات';
+
+  @override
+  String get itDbConnections => 'اتصالات قاعدة البيانات';
+
+  @override
+  String get itSystemAlerts => 'تنبيهات النظام';
+
+  @override
+  String get itPendingAlerts => 'معلقة';
+
+  @override
+  String get itNoAlerts => 'لا توجد تنبيهات';
+
+  @override
+  String get itAllClear => 'جميع الأنظمة تعمل بشكل طبيعي';
+
+  @override
+  String get itAll => 'الكل';
+
+  @override
+  String get itActivity => 'النشاط';
+
+  @override
+  String get itFeatureComingSoon =>
+      'هذه الميزة قيد التطوير حالياً وستكون متاحة في تحديث مستقبلي.';
+
+  @override
+  String get itStayTuned => 'ترقبوا ميزات جديدة ومثيرة!';
+
+  @override
+  String get itSystemSettings => 'إعدادات النظام';
+
+  @override
+  String get itConfigureSystemSettings => 'تكوين وإدارة إعدادات النظام';
+
+  @override
+  String get itEnvironment => 'البيئة';
+
+  @override
+  String get itServices => 'الخدمات';
+
+  @override
+  String get itNotifications => 'الإشعارات';
+
+  @override
+  String get itIntegrations => 'التكاملات';
+
+  @override
+  String get itManageExternalServices =>
+      'إدارة الخدمات الخارجية وواجهات برمجة التطبيقات';
+
+  @override
+  String get itAllProviders => 'جميع مزودي الخدمة';
+
+  @override
+  String get itConnected => 'متصل';
+
+  @override
+  String get itDisconnected => 'غير متصل';
+
+  @override
+  String get itPending => 'قيد الانتظار';
+
+  @override
+  String get itConfigure => 'تكوين';
+
+  @override
+  String get itSync => 'مزامنة';
+
+  @override
+  String get itConnect => 'اتصال';
+
+  @override
+  String get itDisconnect => 'قطع الاتصال';
+
+  @override
+  String get itLastSync => 'آخر مزامنة';
+
+  @override
+  String get itApiCalls => 'استدعاءات واجهة برمجة التطبيقات';
+
+  @override
+  String get itErrorRate => 'معدل الخطأ';
+
+  @override
+  String get itRequestsPerMin => 'طلب/دقيقة';
+
+  @override
+  String get itViewLogs => 'عرض السجلات';
+
+  @override
+  String get itViewDocs => 'الوثائق';
+
+  @override
+  String get itAddIntegration => 'إضافة تكامل';
+
+  @override
+  String get itSearchIntegrations => 'البحث عن التكاملات، مزودي الخدمة...';
+
+  @override
+  String get itNoIntegrationsFound => 'لم يتم العثور على تكاملات';
+
+  @override
+  String get itTryAdjustingFilters => 'حاول تعديل البحث أو المرشحات';
+
+  @override
+  String get itConnectionSettings => 'إعدادات الاتصال';
+
+  @override
+  String get itAuthentication => 'المصادقة';
+
+  @override
+  String get itApiKey => 'مفتاح واجهة برمجة التطبيقات';
+
+  @override
+  String get itApiEndpoint => 'نقطة نهاية واجهة برمجة التطبيقات';
+
+  @override
+  String get itClientId => 'معرف العميل';
+
+  @override
+  String get itClientSecret => 'سر العميل';
+
+  @override
+  String get itAutoSync => 'المزامنة التلقائية';
+
+  @override
+  String get itSyncInterval => 'فترة المزامنة';
+
+  @override
+  String get itRateLimit => 'حد المعدل';
+
+  @override
+  String get itTimeout => 'المهلة';
+
+  @override
+  String get itSaveChanges => 'حفظ التغييرات';
+
+  @override
+  String get itIntegrationOverview => 'نظرة عامة على التكامل';
+
+  @override
+  String get itRealTimeStatus => 'حالة الاتصال في الوقت الفعلي';
+
+  @override
+  String get itTotalIntegrations => 'الإجمالي';
+
+  @override
+  String get itAvailable => 'متاح';
+
+  @override
+  String get itPerformanceMetrics => 'مقاييس الأداء';
+
+  @override
+  String get itTotalRequests => 'إجمالي الطلبات';
+
+  @override
+  String get itSuccessRate => 'معدل النجاح';
+
+  @override
+  String get itAvgResponse => 'متوسط الاستجابة';
+
+  @override
+  String get itSyncNow => 'مزامنة الآن';
+
+  @override
+  String get itConnectIntegration => 'ربط التكامل';
+
+  @override
+  String get itDisconnectConfirm =>
+      'سيؤدي هذا إلى إزالة الاتصال وإيقاف جميع مزامنات البيانات. يمكنك إعادة الاتصال في أي وقت.';
+
+  @override
+  String get itLms => 'نظام إدارة التعلم';
+
+  @override
+  String get itAi => 'الذكاء الاصطناعي';
+
+  @override
+  String get itStorageCategory => 'التخزين';
+
+  @override
+  String get itProductivity => 'الإنتاجية';
+
+  @override
+  String get itCommunication => 'التواصل';
+
+  @override
+  String get itAnalytics => 'التحليلات';
+
+  @override
+  String get itSecurityCategory => 'الأمان';
+
+  @override
+  String get itBackupRestoreDR =>
+      'مركز النسخ الاحتياطي والاستعادة والتعافي من الكوارث';
+
+  @override
+  String get itBackupSubtitle =>
+      'صحة النسخ الاحتياطي وإجراءات الاستعادة وتنسيق التعافي من الكوارث';
+
+  @override
+  String get itCreateBackup => 'إنشاء نسخة احتياطية';
+
+  @override
+  String get itLastFullBackup => 'آخر نسخة كاملة';
+
+  @override
+  String get itSuccessful24h => 'ناجحة (24 ساعة)';
+
+  @override
+  String get itFailed24h => 'فاشلة (24 ساعة)';
+
+  @override
+  String get itNextScheduled => 'المجدولة التالية';
+
+  @override
+  String get itStorageUsed => 'التخزين المستخدم';
+
+  @override
+  String get itRecoveryScore => 'نتيجة الاستعادة';
+
+  @override
+  String get itViewJobs => 'عرض المهام';
+
+  @override
+  String get itInvestigate => 'التحقيق';
+
+  @override
+  String get itBackupJobs => 'مهام النسخ الاحتياطي';
+
+  @override
+  String get itRestore => 'استعادة';
+
+  @override
+  String get itDrRunbooks => 'دفاتر تشغيل التعافي';
+
+  @override
+  String get itIntegrity => 'السلامة';
+
+  @override
+  String get itFull => 'كامل';
+
+  @override
+  String get itIncremental => 'تزايدي';
+
+  @override
+  String get itDifferential => 'تفاضلي';
+
+  @override
+  String get itSnapshot => 'لقطة';
+
+  @override
+  String get itArchive => 'أرشيف';
+
+  @override
+  String get itCompleted => 'مكتمل';
+
+  @override
+  String get itRunning => 'قيد التشغيل';
+
+  @override
+  String get itFailed => 'فشل';
+
+  @override
+  String get itScheduled => 'مجدول';
+
+  @override
+  String get itCancelled => 'ملغى';
+
+  @override
+  String get itTarget => 'الهدف';
+
+  @override
+  String get itDuration => 'المدة';
+
+  @override
+  String get itProgress => 'التقدم';
+
+  @override
+  String get itCancel => 'إلغاء';
+
+  @override
+  String get itRetry => 'إعادة المحاولة';
+
+  @override
+  String get itView => 'عرض';
+
+  @override
+  String get itVerified => 'موثق';
+
+  @override
+  String get itPendingVerification => 'قيد الانتظار';
+
+  @override
+  String get itRestorePoints => 'نقاط الاستعادة';
+
+  @override
+  String get itRestoreNow => 'استعادة الآن';
+
+  @override
+  String get itVerify => 'تحقق';
+
+  @override
+  String get itSource => 'المصدر';
+
+  @override
+  String get itSize => 'الحجم';
+
+  @override
+  String get itRto => 'وقت الاستعادة المستهدف';
+
+  @override
+  String get itRpo => 'نقطة الاستعادة المستهدفة';
+
+  @override
+  String get itRunTest => 'تشغيل الاختبار';
+
+  @override
+  String get itLastTested => 'آخر اختبار';
+
+  @override
+  String get itReady => 'جاهز';
+
+  @override
+  String get itNeedsReview => 'يحتاج مراجعة';
+
+  @override
+  String get itCriticalReview => 'مراجعة حرجة';
+
+  @override
+  String get itSteps => 'الخطوات';
+
+  @override
+  String get itSuccessRateLabel => 'معدل النجاح';
+
+  @override
+  String get itVerifiedBackups => 'النسخ الموثقة';
+
+  @override
+  String get itPendingChecks => 'قيد التحقق';
+
+  @override
+  String get itAutoVerifySchedule => 'جدول التحقق التلقائي';
+
+  @override
+  String get itDaily => 'يومياً';
+
+  @override
+  String get itRecentIntegrityChecks => 'فحوصات السلامة الأخيرة';
+
+  @override
+  String get itPassed => 'نجح';
+
+  @override
+  String get itChecksum => 'المجموع الاختباري';
+
+  @override
+  String get itRunVerification => 'تشغيل التحقق';
+
+  @override
+  String get itAiRecommendations => 'توصيات الذكاء الاصطناعي';
+
+  @override
+  String get itOptimize => 'تحسين';
+
+  @override
+  String get itWarning => 'تحذير';
+
+  @override
+  String get itCostSavings => 'توفير التكاليف';
+
+  @override
+  String get itTestDue => 'موعد الاختبار';
+
+  @override
+  String get itStorageDistribution => 'توزيع التخزين';
+
+  @override
+  String get itDatabaseBackups => 'نسخ قواعد البيانات';
+
+  @override
+  String get itFileBackups => 'نسخ الملفات';
+
+  @override
+  String get itVmSnapshots => 'لقطات الأجهزة الافتراضية';
+
+  @override
+  String get itLogArchives => 'أرشيفات السجلات';
+
+  @override
+  String get itAlertSettings => 'إعدادات التنبيهات';
+
+  @override
+  String get itEmailAlerts => 'تنبيهات البريد الإلكتروني';
+
+  @override
+  String get itSlackNotifications => 'إشعارات Slack';
+
+  @override
+  String get itCriticalOnly => 'الحرجة فقط';
+
+  @override
+  String get itReceiveBackupAlerts =>
+      'تلقي تنبيهات النسخ الاحتياطي عبر البريد الإلكتروني';
+
+  @override
+  String get itSendToSlack => 'إرسال التنبيهات إلى قناة Slack';
+
+  @override
+  String get itOnlyCritical => 'الإشعار فقط للإخفاقات الحرجة';
+
+  @override
+  String get itNoBackupJobs => 'لا توجد مهام نسخ احتياطي';
+
+  @override
+  String get itNoBackupJobsDesc =>
+      'لا توجد مهام نسخ احتياطي تطابق المرشحات المحددة';
+
+  @override
+  String get itNoRestorePoints => 'لا توجد نقاط استعادة';
+
+  @override
+  String get itNoRestorePointsDesc => 'لا توجد نقاط استعادة متاحة';
+
+  @override
+  String get itNoRunbooks => 'لا توجد دفاتر تشغيل';
+
+  @override
+  String get itNoRunbooksDesc => 'لم يتم تكوين دفاتر تشغيل التعافي من الكوارث';
+
+  @override
+  String get itNoIntegrityChecks => 'لا توجد فحوصات سلامة';
+
+  @override
+  String get itNoIntegrityChecksDesc => 'لم يتم إجراء أي فحوصات سلامة';
+
+  @override
+  String get itSecurityLogsAccessControl => 'سجلات الأمان والتحكم في الوصول';
+
+  @override
+  String get itSecurityLogsSubtitle =>
+      'مراقبة نشاط النظام وفرض السياسات وتتبع أحداث الأمان';
+
+  @override
+  String get itAuthEvents24h => 'أحداث المصادقة (24 ساعة)';
+
+  @override
+  String get itFailedLogins24h => 'تسجيلات دخول فاشلة (24 ساعة)';
+
+  @override
+  String get itBreachAttempts => 'محاولات الاختراق';
+
+  @override
+  String get itPrivilegeChanges7d => 'تغييرات الصلاحيات (7 أيام)';
+
+  @override
+  String get itViewAllEvents => 'عرض جميع الأحداث';
+
+  @override
+  String get itInvestigateNow => 'التحقيق الآن';
+
+  @override
+  String get itAllAuthorized => 'جميع التغييرات مصرح بها';
+
+  @override
+  String get itSecurityLogsTab => 'سجلات الأمان';
+
+  @override
+  String get itAccessControlTab => 'التحكم في الوصول';
+
+  @override
+  String get itPoliciesTab => 'السياسات';
+
+  @override
+  String get itRequestsTab => 'الطلبات';
+
+  @override
+  String get itRolesTab => 'الأدوار';
+
+  @override
+  String get itAllEvents => 'جميع الأحداث';
+
+  @override
+  String get itFlaggedOnly => 'المميزة فقط';
+
+  @override
+  String get itHighRiskOnly => 'عالية الخطورة فقط';
+
+  @override
+  String get itSearchLogs => 'البحث في السجلات والمستخدمين والعناوين...';
+
+  @override
+  String get itEventType => 'نوع الحدث';
+
+  @override
+  String get itLoginSuccess => 'تسجيل دخول ناجح';
+
+  @override
+  String get itLoginFailed => 'فشل تسجيل الدخول';
+
+  @override
+  String get itLogout => 'تسجيل خروج';
+
+  @override
+  String get itBreachAttempt => 'محاولة اختراق';
+
+  @override
+  String get itPermissionChange => 'تغيير الصلاحية';
+
+  @override
+  String get itApiAccess => 'وصول API';
+
+  @override
+  String get itMfaEnabled => 'مفعّل';
+
+  @override
+  String get itPasswordChange => 'تغيير كلمة المرور';
+
+  @override
+  String get itAccountLocked => 'الحساب مقفل';
+
+  @override
+  String get itSessionExpired => 'انتهت الجلسة';
+
+  @override
+  String get itRiskLow => 'منخفض';
+
+  @override
+  String get itRiskMedium => 'متوسط';
+
+  @override
+  String get itRiskHigh => 'مرتفع';
+
+  @override
+  String get itRiskCritical => 'حرج';
+
+  @override
+  String get itPendingAccessRequests => 'طلبات الوصول المعلقة';
+
+  @override
+  String get itNoAccessRequests => 'لا توجد طلبات وصول معلقة';
+
+  @override
+  String get itRequestedRole => 'الدور المطلوب';
+
+  @override
+  String get itCurrentRole => 'الدور الحالي';
+
+  @override
+  String get itReason => 'السبب';
+
+  @override
+  String get itRequestedAt => 'تم الطلب';
+
+  @override
+  String get itApprove => 'موافقة';
+
+  @override
+  String get itDeny => 'رفض';
+
+  @override
+  String get itRolePermissionsManagement => 'إدارة الأدوار والصلاحيات';
+
+  @override
+  String get itPermissions => 'الصلاحيات';
+
+  @override
+  String get itViewUsers => 'عرض المستخدمين';
+
+  @override
+  String get itUsers => 'مستخدم';
+
+  @override
+  String get itSecurityPoliciesMfa => 'سياسات الأمان والمصادقة الثنائية';
+
+  @override
+  String get itMandatoryMfa => 'المصادقة الثنائية الإلزامية';
+
+  @override
+  String get itPasswordStrength => 'قوة كلمة المرور';
+
+  @override
+  String get itSessionTimeout => 'مهلة الجلسة';
+
+  @override
+  String get itIpBlocklist => 'قائمة حظر IP';
+
+  @override
+  String get itApiRateLimiting => 'تحديد معدل API';
+
+  @override
+  String get itActiveIncidentsSection => 'الحوادث النشطة';
+
+  @override
+  String get itHide => 'إخفاء';
+
+  @override
+  String get itSeverityInfo => 'معلومات';
+
+  @override
+  String get itSeverityWarning => 'تحذير';
+
+  @override
+  String get itSeverityCritical => 'حرج';
+
+  @override
+  String get itStatusActive => 'نشط';
+
+  @override
+  String get itStatusInvestigating => 'قيد التحقيق';
+
+  @override
+  String get itStatusResolved => 'تم الحل';
+
+  @override
+  String get itStatusDismissed => 'تم التجاهل';
+
+  @override
+  String get itAiSecurityInsights => 'رؤى الأمان بالذكاء الاصطناعي';
+
+  @override
+  String get itNoAiInsights => 'لا توجد رؤى متاحة';
+
+  @override
+  String get itRecentSecurityActions => 'إجراءات الأمان الأخيرة';
+
+  @override
+  String get itNoRecentActions => 'لا توجد إجراءات حديثة';
+
+  @override
+  String get itViewAllActions => 'عرض الكل';
+
+  @override
+  String get itIncidentDetails => 'تفاصيل الحادث';
+
+  @override
+  String get itAffectedAccounts => 'الحسابات المتأثرة';
+
+  @override
+  String get itRelatedIps => 'عناوين IP ذات الصلة';
+
+  @override
+  String get itDetectedAt => 'تم الاكتشاف في';
+
+  @override
+  String get itInvestigationNotes => 'ملاحظات التحقيق';
+
+  @override
+  String get itQuickResponseActions => 'إجراءات الاستجابة السريعة';
+
+  @override
+  String get itBlockAllRelatedIps => 'حظر جميع عناوين IP ذات الصلة';
+
+  @override
+  String get itMarkResolved => 'وضع علامة تم الحل';
+
+  @override
+  String get itCreateReport => 'إنشاء تقرير';
+
+  @override
+  String get itClose => 'إغلاق';
+
+  @override
+  String get itAiModelSettings => 'إعدادات نموذج الذكاء الاصطناعي والحوكمة';
+
+  @override
+  String get itAiModelSettingsSubtitle =>
+      'إدارة مزودي الذكاء الاصطناعي والتكوينات والسياسات وقيود الاستخدام';
+
+  @override
+  String get itAiProviders => 'مزودي الذكاء الاصطناعي';
+
+  @override
+  String get itSelectProvider => 'اختر المزود';
+
+  @override
+  String get itSelectModel => 'اختر النموذج';
+
+  @override
+  String get itApiKeysCredentials => 'مفاتيح API وبيانات الاعتماد';
+
+  @override
+  String get itMainKey => 'المفتاح الرئيسي';
+
+  @override
+  String get itAutoRotate => 'التدوير التلقائي';
+
+  @override
+  String get itRegenerateKey => 'إعادة إنشاء المفتاح';
+
+  @override
+  String get itGovernanceRules => 'قواعد الحوكمة';
+
+  @override
+  String get itRoleRestrictions => 'قيود الأدوار';
+
+  @override
+  String get itEnableAiForStudents => 'تفعيل الذكاء الاصطناعي للطلاب';
+
+  @override
+  String get itEnableAiForInstructors => 'تفعيل الذكاء الاصطناعي للمدرسين';
+
+  @override
+  String get itEnableAiForTa => 'تفعيل الذكاء الاصطناعي للمساعدين';
+
+  @override
+  String get itAiCapabilities => 'قدرات الذكاء الاصطناعي';
+
+  @override
+  String get itAnalyzeSubmissions => 'تحليل مشاركات الطلاب';
+
+  @override
+  String get itMaxResponseLength => 'الحد الأقصى لطول الرد';
+
+  @override
+  String get itCompliancePrivacy => 'الامتثال والخصوصية';
+
+  @override
+  String get itStoreAiLogs => 'تخزين سجلات الذكاء الاصطناعي';
+
+  @override
+  String get itEnableContentFilters => 'تفعيل فلاتر المحتوى غير الملائم';
+
+  @override
+  String get itBlockSensitiveTopics => 'حظر المواضيع الحساسة';
+
+  @override
+  String get itSystemLimits => 'حدود النظام';
+
+  @override
+  String get itDailyRequestsPerUser => 'الطلبات اليومية لكل مستخدم';
+
+  @override
+  String get itUsageProgress => 'تقدم الاستخدام';
+
+  @override
+  String get itHighLoadWarning => 'تحذير الحمل العالي';
+
+  @override
+  String get itAiRequestLogs => 'سجلات طلبات الذكاء الاصطناعي';
+
+  @override
+  String get itActiveProviders => 'المزودين النشطين';
+
+  @override
+  String get itTotalRequestsLabel => 'إجمالي الطلبات';
+
+  @override
+  String get itRecentRequests => 'الطلبات الأخيرة';
+
+  @override
+  String get itViewFullLogs => 'عرض السجلات الكاملة';
+
+  @override
+  String get itDownloadLogs => 'تحميل السجلات';
+
+  @override
+  String get itSaveConfiguration => 'حفظ التكوين';
+
+  @override
+  String get itResetToDefault => 'إعادة التعيين للافتراضي';
+
+  @override
+  String get itConfirmSave => 'تأكيد وحفظ';
+
+  @override
+  String get itConfigSaved => 'تم حفظ التكوين بنجاح';
+
+  @override
+  String get itSettingsReset => 'تم إعادة تعيين الإعدادات للافتراضي';
+
+  @override
+  String get itPerformanceReports => 'تقارير أداء النظام';
+
+  @override
+  String get itPerformanceReportsSubtitle =>
+      'مراقبة المقاييس وصحة النظام في الوقت الفعلي';
+
+  @override
+  String get itTimePeriodToday => 'اليوم';
+
+  @override
+  String get itTimePeriodWeek => 'الأسبوع';
+
+  @override
+  String get itTimePeriodMonth => 'الشهر';
+
+  @override
+  String get itTimePeriodCustom => 'مخصص';
+
+  @override
+  String get itPerformanceOverview => 'نظرة عامة على الأداء';
+
+  @override
+  String get itViewDetailsMetrics => 'عرض التفاصيل';
+
+  @override
+  String get itServerHealth => 'صحة الخادم';
+
+  @override
+  String get itViewAllServers => 'عرض الكل';
+
+  @override
+  String get itHealthy => 'سليم';
+
+  @override
+  String get itCritical => 'حرج';
+
+  @override
+  String get itMemoryUsage => 'استخدام الذاكرة';
+
+  @override
+  String get itDiskUsage => 'استخدام القرص';
+
+  @override
+  String get itPerformanceTrends => 'اتجاهات الأداء';
+
+  @override
+  String get itTrendCpu => 'المعالج';
+
+  @override
+  String get itTrendMemory => 'الذاكرة';
+
+  @override
+  String get itTrendResponseTime => 'وقت الاستجابة';
+
+  @override
+  String get itRecentAlerts => 'التنبيهات الأخيرة';
+
+  @override
+  String get itViewAllAlerts => 'عرض الكل';
+
+  @override
+  String get itAlertInfo => 'معلومات';
+
+  @override
+  String get itAlertWarning => 'تحذير';
+
+  @override
+  String get itAlertCritical => 'حرج';
+
+  @override
+  String get itAlertResolved => 'تم الحل';
+
+  @override
+  String get itResourceUtilization => 'استخدام الموارد';
+
+  @override
+  String get itManageStorage => 'إدارة التخزين';
+
+  @override
+  String get itUsedOf => 'مستخدم من';
+
+  @override
+  String get itExportReport => 'تصدير التقرير';
+
+  @override
+  String get itRefreshData => 'تحديث البيانات';
+
+  @override
+  String get itLastUpdated => 'آخر تحديث';
+
+  @override
+  String get itNoServers => 'لا توجد خوادم متاحة';
+
+  @override
+  String get itNoResources => 'لا توجد موارد متاحة';
+
+  @override
+  String get itServerDetails => 'تفاصيل الخادم';
+
+  @override
+  String get itRestartServer => 'إعادة تشغيل الخادم';
+
+  @override
+  String get itNetworkIO => 'إدخال/إخراج الشبكة';
+
+  @override
+  String get itAvgResponseTime => 'متوسط وقت الاستجابة';
+
+  @override
+  String get itActiveUsers => 'المستخدمين النشطين';
+
+  @override
+  String get itAlertsTitle => 'التنبيهات والإشعارات وقواعد الحد';
+
+  @override
+  String get itAlertsSubtitle =>
+      'إنشاء قواعد التنبيه وتكوين القنوات وإدارة سياسات التصعيد';
+
+  @override
+  String get itActiveAlerts => 'التنبيهات النشطة';
+
+  @override
+  String get itResolvedAlerts => 'تم الحل (24 ساعة)';
+
+  @override
+  String get itSuppressedAlerts => 'مكتومة (24 ساعة)';
+
+  @override
+  String get itNoiseScore => 'درجة الضوضاء (AI)';
+
+  @override
+  String get itAlertRules => 'قواعد التنبيه';
+
+  @override
+  String get itNotificationChannels => 'قنوات الإشعارات';
+
+  @override
+  String get itEscalationPolicies => 'سياسات التصعيد';
+
+  @override
+  String get itSuppressionWindows => 'نوافذ الكتم';
+
+  @override
+  String get itAlertHistory => 'سجل التنبيهات';
+
+  @override
+  String get itCreateRule => 'إنشاء قاعدة';
+
+  @override
+  String get itCreatePolicy => 'إنشاء سياسة';
+
+  @override
+  String get itCreateWindow => 'إنشاء نافذة';
+
+  @override
+  String get itAddChannel => 'إضافة قناة';
+
+  @override
+  String get itSearchRules => 'البحث في قواعد التنبيه...';
+
+  @override
+  String get itAllSeverity => 'جميع الخطورات';
+
+  @override
+  String get itSeverityCriticalLabel => 'حرج';
+
+  @override
+  String get itSeverityWarningLabel => 'تحذير';
+
+  @override
+  String get itSeverityInfoLabel => 'معلومات';
+
+  @override
+  String get itRuleEnabled => 'مفعل';
+
+  @override
+  String get itRuleDisabled => 'معطل';
+
+  @override
+  String get itViewDetails => 'عرض التفاصيل';
+
+  @override
+  String get itTestChannel => 'اختبار';
+
+  @override
+  String get itEditChannel => 'تعديل';
+
+  @override
+  String get itAiTuningAdvisor => 'مستشار ضبط الذكاء الاصطناعي';
+
+  @override
+  String get itApplySuggestion => 'تطبيق الاقتراح';
+
+  @override
+  String get itReviewGrouping => 'مراجعة التجميع';
+
+  @override
+  String get itUpdateWindow => 'تحديث النافذة';
+
+  @override
+  String get itAlertMetrics => 'مقاييس التنبيهات';
+
+  @override
+  String get itAlertsPerDay => 'التنبيهات يوميًا';
+
+  @override
+  String get itFalsePositives => 'الإيجابيات الخاطئة';
+
+  @override
+  String get itAvgTimeToAck => 'متوسط وقت الإقرار';
+
+  @override
+  String get itTopNoisyRules => 'أكثر القواعد ضوضاءً';
+
+  @override
+  String get itNoRulesFound => 'لا توجد قواعد تنبيه';
+
+  @override
+  String get itNoChannels => 'لا توجد قنوات إشعارات';
+
+  @override
+  String get itNoPolicies => 'لا توجد سياسات تصعيد';
+
+  @override
+  String get itNoWindows => 'لا توجد نوافذ كتم';
+
+  @override
+  String get itNoHistory => 'لا يوجد سجل تنبيهات';
+
+  @override
+  String get itTimestamp => 'الطابع الزمني';
+
+  @override
+  String get itRule => 'القاعدة';
+
+  @override
+  String get itSeverity => 'الخطورة';
+
+  @override
+  String get itStatus => 'الحالة';
+
+  @override
+  String get itActiveNow => 'نشط الآن';
+
+  @override
+  String get itRecurring => 'متكرر';
+
+  @override
+  String get itProfileScreen => 'الملف الشخصي';
+
+  @override
+  String get itEditProfile => 'تعديل الملف الشخصي';
+
+  @override
+  String get itPersonalInfo => 'المعلومات الشخصية';
+
+  @override
+  String get itWorkInfo => 'معلومات العمل';
+
+  @override
+  String get itPreferences => 'التفضيلات';
+
+  @override
+  String get itFullName => 'الاسم الكامل';
+
+  @override
+  String get itEmailAddress => 'البريد الإلكتروني';
+
+  @override
+  String get itPhoneNumber => 'رقم الهاتف';
+
+  @override
+  String get itEmployeeId => 'رقم الموظف';
+
+  @override
+  String get itDepartment => 'القسم';
+
+  @override
+  String get itTimezone => 'المنطقة الزمنية';
+
+  @override
+  String get itPreferredLanguage => 'اللغة المفضلة';
+
+  @override
+  String get itRolePermissions => 'الدور والصلاحيات';
+
+  @override
+  String get itFullSystemAccess => 'وصول كامل للنظام';
+
+  @override
+  String get itViewFullPermissions => 'عرض جميع الصلاحيات';
+
+  @override
+  String get itManageSecurity => 'إدارة الأمان';
+
+  @override
+  String get itViewActivityLogs => 'عرض سجلات النشاط';
+
+  @override
+  String get itProfilePersonal => 'شخصي';
+
+  @override
+  String get itProfileNotifications => 'الإشعارات';
+
+  @override
+  String get itProfileSecurity => 'الأمان';
+
+  @override
+  String get itProfilePreferences => 'التفضيلات';
+
+  @override
+  String get itSecurityAlertsToggle => 'تنبيهات الأمان';
+
+  @override
+  String get itSystemOutageUpdates => 'تحديثات انقطاع النظام';
+
+  @override
+  String get itIntegrationWarnings => 'تحذيرات التكامل';
+
+  @override
+  String get itAiAnomalyNotifications => 'إشعارات شذوذ الذكاء الاصطناعي';
+
+  @override
+  String get itDeliveryMethods => 'طرق التسليم';
+
+  @override
+  String get itEmailDelivery => 'البريد الإلكتروني';
+
+  @override
+  String get itSmsDelivery => 'الرسائل النصية';
+
+  @override
+  String get itInAppDelivery => 'داخل التطبيق';
+
+  @override
+  String get itSlackDelivery => 'سلاك';
+
+  @override
+  String get itSavePreferences => 'حفظ التفضيلات';
+
+  @override
+  String get itPasswordManagement => 'إدارة كلمة المرور';
+
+  @override
+  String get itChangePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get itPasswordRequirements => 'متطلبات كلمة المرور';
+
+  @override
+  String get itMfa => 'المصادقة متعددة العوامل';
+
+  @override
+  String get itMfaDisabled => 'معطّل';
+
+  @override
+  String get itSetupMfa => 'إعداد MFA';
+
+  @override
+  String get itAddDevice => 'إضافة جهاز';
+
+  @override
+  String get itActiveSessions => 'الجلسات النشطة';
+
+  @override
+  String get itTerminateAll => 'إنهاء الكل';
+
+  @override
+  String get itCurrentSession => 'الحالية';
+
+  @override
+  String get itApiTokens => 'رموز الوصول للـ API';
+
+  @override
+  String get itGenerateToken => 'إنشاء رمز';
+
+  @override
+  String get itRevokeToken => 'إلغاء';
+
+  @override
+  String get itThemeCustomization => 'تخصيص المظهر والواجهة';
+
+  @override
+  String get itThemeMode => 'وضع المظهر';
+
+  @override
+  String get itThemeLight => 'فاتح';
+
+  @override
+  String get itThemeDark => 'داكن';
+
+  @override
+  String get itThemeAuto => 'تلقائي';
+
+  @override
+  String get itAccentColor => 'لون التمييز';
+
+  @override
+  String get itUiDensity => 'كثافة الواجهة';
+
+  @override
+  String get itAdvancedMetrics => 'وضع المقاييس المتقدمة';
+
+  @override
+  String get itDangerZone => 'منطقة الخطر';
+
+  @override
+  String get itRevokeApiKeys => 'إلغاء مفاتيح API';
+
+  @override
+  String get itResetSecuritySettings => 'إعادة تعيين إعدادات الأمان';
+
+  @override
+  String get itRequestRoleDowngrade => 'طلب تخفيض الدور';
+
+  @override
+  String get itResetFields => 'إعادة تعيين الحقول';
+
+  @override
+  String get itProfileUpdated => 'تم تحديث الملف الشخصي بنجاح';
+
+  @override
+  String get itPreferencesSaved => 'تم حفظ التفضيلات';
+
+  @override
+  String get itSessionTerminated => 'تم إنهاء الجلسة';
+
+  @override
+  String get itTokenGenerated => 'تم إنشاء الرمز';
+
+  @override
+  String get itTokenRevoked => 'تم إلغاء الرمز';
+
+  @override
+  String get itDiscardChanges => 'تجاهل التغييرات؟';
+
+  @override
+  String get itUnsavedChanges =>
+      'لديك تغييرات غير محفوظة. هل أنت متأكد من تجاهلها؟';
+
+  @override
+  String get itKeepEditing => 'الاستمرار في التعديل';
+
+  @override
+  String get itDiscard => 'تجاهل';
+
+  @override
+  String get itChangePhoto => 'تغيير صورة الملف الشخصي';
+
+  @override
+  String get itTakePhoto => 'التقاط صورة';
+
+  @override
+  String get itChooseFromGallery => 'اختيار من المعرض';
+
+  @override
+  String get itRemovePhoto => 'إزالة الصورة';
 }

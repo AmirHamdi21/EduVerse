@@ -159,13 +159,13 @@ class _SplashScreenState extends State<SplashScreen>
             // context.go('/dashboard');
             // context.go('/login');
             // context.go('/instructor/dashboard');
-            context.go('/admin/dashboard');
+            context.go('/it-admin/dashboard');
           } else if (state is AuthUnauthenticated) {
             // context.go('/onboarding');
             // context.go('/dashboard');
             // context.go('/instructor/dashboard');
             // context.go('/login');
-            context.go('/admin/dashboard');
+            context.go('/it-admin/dashboard');
           }
         });
       },

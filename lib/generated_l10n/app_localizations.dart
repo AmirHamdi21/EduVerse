@@ -62,8 +62,7 @@ import 'app_localizations_en.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -71,8 +70,7 @@ abstract class AppLocalizations {
     return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -84,18 +82,17 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
-    Locale('en'),
+    Locale('en')
   ];
 
   /// No description provided for @appTitle.
@@ -20683,10 +20680,2733 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recent reports'**
   String get recentReports;
+
+  /// No description provided for @itAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'IT Admin'**
+  String get itAdmin;
+
+  /// No description provided for @itSystemAdmin.
+  ///
+  /// In en, this message translates to:
+  /// **'System Admin'**
+  String get itSystemAdmin;
+
+  /// No description provided for @itDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'IT Dashboard'**
+  String get itDashboard;
+
+  /// No description provided for @itSystemHealthMonitor.
+  ///
+  /// In en, this message translates to:
+  /// **'System Health Monitor'**
+  String get itSystemHealthMonitor;
+
+  /// No description provided for @itSystemHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'System Health'**
+  String get itSystemHealth;
+
+  /// No description provided for @itServerManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Management'**
+  String get itServerManagement;
+
+  /// No description provided for @itSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get itSecurity;
+
+  /// No description provided for @itBackupRecovery.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & Recovery'**
+  String get itBackupRecovery;
+
+  /// No description provided for @itApiManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'API Management'**
+  String get itApiManagement;
+
+  /// No description provided for @itErrorLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Error Logs'**
+  String get itErrorLogs;
+
+  /// No description provided for @itPerformance.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance'**
+  String get itPerformance;
+
+  /// No description provided for @itAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts'**
+  String get itAlerts;
+
+  /// No description provided for @itDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Database'**
+  String get itDatabase;
+
+  /// No description provided for @itCloudServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Services'**
+  String get itCloudServices;
+
+  /// No description provided for @itMainMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Main Menu'**
+  String get itMainMenu;
+
+  /// No description provided for @itMonitoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitoring'**
+  String get itMonitoring;
+
+  /// No description provided for @itInfrastructure.
+  ///
+  /// In en, this message translates to:
+  /// **'Infrastructure'**
+  String get itInfrastructure;
+
+  /// No description provided for @itAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get itAccount;
+
+  /// No description provided for @itUptime.
+  ///
+  /// In en, this message translates to:
+  /// **'Uptime'**
+  String get itUptime;
+
+  /// No description provided for @itIncidents.
+  ///
+  /// In en, this message translates to:
+  /// **'Incidents'**
+  String get itIncidents;
+
+  /// No description provided for @itServers.
+  ///
+  /// In en, this message translates to:
+  /// **'Servers'**
+  String get itServers;
+
+  /// No description provided for @itOverall.
+  ///
+  /// In en, this message translates to:
+  /// **'Overall'**
+  String get itOverall;
+
+  /// No description provided for @itNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get itNormal;
+
+  /// No description provided for @itDegraded.
+  ///
+  /// In en, this message translates to:
+  /// **'Degraded'**
+  String get itDegraded;
+
+  /// No description provided for @itOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get itOffline;
+
+  /// No description provided for @itMaintenance.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance'**
+  String get itMaintenance;
+
+  /// No description provided for @itRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get itRefresh;
+
+  /// No description provided for @itQuickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get itQuickActions;
+
+  /// No description provided for @itBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup'**
+  String get itBackup;
+
+  /// No description provided for @itApi.
+  ///
+  /// In en, this message translates to:
+  /// **'API'**
+  String get itApi;
+
+  /// No description provided for @itLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Logs'**
+  String get itLogs;
+
+  /// No description provided for @itCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud'**
+  String get itCloud;
+
+  /// No description provided for @itActiveIncidents.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Incidents'**
+  String get itActiveIncidents;
+
+  /// No description provided for @itActive.
+  ///
+  /// In en, this message translates to:
+  /// **'active'**
+  String get itActive;
+
+  /// No description provided for @itViewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get itViewAll;
+
+  /// No description provided for @itNoActiveIncidents.
+  ///
+  /// In en, this message translates to:
+  /// **'No active incidents'**
+  String get itNoActiveIncidents;
+
+  /// No description provided for @itAllSystemsOperational.
+  ///
+  /// In en, this message translates to:
+  /// **'All systems are operating normally'**
+  String get itAllSystemsOperational;
+
+  /// No description provided for @itResolve.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve'**
+  String get itResolve;
+
+  /// No description provided for @itServerStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Status'**
+  String get itServerStatus;
+
+  /// No description provided for @itRestart.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart'**
+  String get itRestart;
+
+  /// No description provided for @itRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Activity'**
+  String get itRecentActivity;
+
+  /// No description provided for @itClear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get itClear;
+
+  /// No description provided for @itNoRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent activity'**
+  String get itNoRecentActivity;
+
+  /// No description provided for @itSystemMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'System Metrics'**
+  String get itSystemMetrics;
+
+  /// No description provided for @itCpuUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'CPU Usage'**
+  String get itCpuUsage;
+
+  /// No description provided for @itMemory.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory'**
+  String get itMemory;
+
+  /// No description provided for @itStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get itStorage;
+
+  /// No description provided for @itApiLatency.
+  ///
+  /// In en, this message translates to:
+  /// **'API Latency'**
+  String get itApiLatency;
+
+  /// No description provided for @itDbConnections.
+  ///
+  /// In en, this message translates to:
+  /// **'DB Connections'**
+  String get itDbConnections;
+
+  /// No description provided for @itSystemAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'System Alerts'**
+  String get itSystemAlerts;
+
+  /// No description provided for @itPendingAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'pending'**
+  String get itPendingAlerts;
+
+  /// No description provided for @itNoAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'No alerts found'**
+  String get itNoAlerts;
+
+  /// No description provided for @itAllClear.
+  ///
+  /// In en, this message translates to:
+  /// **'All systems operating normally'**
+  String get itAllClear;
+
+  /// No description provided for @itAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get itAll;
+
+  /// No description provided for @itActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get itActivity;
+
+  /// No description provided for @itFeatureComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'This feature is currently under development and will be available in a future update.'**
+  String get itFeatureComingSoon;
+
+  /// No description provided for @itStayTuned.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay tuned for exciting new features!'**
+  String get itStayTuned;
+
+  /// No description provided for @itSystemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'System Settings'**
+  String get itSystemSettings;
+
+  /// No description provided for @itConfigureSystemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure and manage system settings'**
+  String get itConfigureSystemSettings;
+
+  /// No description provided for @itEnvironment.
+  ///
+  /// In en, this message translates to:
+  /// **'Environment'**
+  String get itEnvironment;
+
+  /// No description provided for @itServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Services'**
+  String get itServices;
+
+  /// No description provided for @itNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get itNotifications;
+
+  /// No description provided for @itIntegrations.
+  ///
+  /// In en, this message translates to:
+  /// **'Integrations'**
+  String get itIntegrations;
+
+  /// No description provided for @itManageExternalServices.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage external services and APIs'**
+  String get itManageExternalServices;
+
+  /// No description provided for @itAllProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'All Providers'**
+  String get itAllProviders;
+
+  /// No description provided for @itConnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Connected'**
+  String get itConnected;
+
+  /// No description provided for @itDisconnected.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnected'**
+  String get itDisconnected;
+
+  /// No description provided for @itPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get itPending;
+
+  /// No description provided for @itConfigure.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure'**
+  String get itConfigure;
+
+  /// No description provided for @itSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync'**
+  String get itSync;
+
+  /// No description provided for @itConnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect'**
+  String get itConnect;
+
+  /// No description provided for @itDisconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Disconnect'**
+  String get itDisconnect;
+
+  /// No description provided for @itLastSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync'**
+  String get itLastSync;
+
+  /// No description provided for @itApiCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'API Calls'**
+  String get itApiCalls;
+
+  /// No description provided for @itErrorRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Error Rate'**
+  String get itErrorRate;
+
+  /// No description provided for @itRequestsPerMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests/min'**
+  String get itRequestsPerMin;
+
+  /// No description provided for @itViewLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'View Logs'**
+  String get itViewLogs;
+
+  /// No description provided for @itViewDocs.
+  ///
+  /// In en, this message translates to:
+  /// **'Documentation'**
+  String get itViewDocs;
+
+  /// No description provided for @itAddIntegration.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Integration'**
+  String get itAddIntegration;
+
+  /// No description provided for @itSearchIntegrations.
+  ///
+  /// In en, this message translates to:
+  /// **'Search integrations, providers...'**
+  String get itSearchIntegrations;
+
+  /// No description provided for @itNoIntegrationsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No integrations found'**
+  String get itNoIntegrationsFound;
+
+  /// No description provided for @itTryAdjustingFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search or filters'**
+  String get itTryAdjustingFilters;
+
+  /// No description provided for @itConnectionSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Settings'**
+  String get itConnectionSettings;
+
+  /// No description provided for @itAuthentication.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication'**
+  String get itAuthentication;
+
+  /// No description provided for @itApiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'API Key'**
+  String get itApiKey;
+
+  /// No description provided for @itApiEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'API Endpoint'**
+  String get itApiEndpoint;
+
+  /// No description provided for @itClientId.
+  ///
+  /// In en, this message translates to:
+  /// **'Client ID'**
+  String get itClientId;
+
+  /// No description provided for @itClientSecret.
+  ///
+  /// In en, this message translates to:
+  /// **'Client Secret'**
+  String get itClientSecret;
+
+  /// No description provided for @itAutoSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Sync'**
+  String get itAutoSync;
+
+  /// No description provided for @itSyncInterval.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Interval'**
+  String get itSyncInterval;
+
+  /// No description provided for @itRateLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Limit'**
+  String get itRateLimit;
+
+  /// No description provided for @itTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeout'**
+  String get itTimeout;
+
+  /// No description provided for @itSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get itSaveChanges;
+
+  /// No description provided for @itIntegrationOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Integration Overview'**
+  String get itIntegrationOverview;
+
+  /// No description provided for @itRealTimeStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Real-time connection status'**
+  String get itRealTimeStatus;
+
+  /// No description provided for @itTotalIntegrations.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get itTotalIntegrations;
+
+  /// No description provided for @itAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get itAvailable;
+
+  /// No description provided for @itPerformanceMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Metrics'**
+  String get itPerformanceMetrics;
+
+  /// No description provided for @itTotalRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Requests'**
+  String get itTotalRequests;
+
+  /// No description provided for @itSuccessRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Success Rate'**
+  String get itSuccessRate;
+
+  /// No description provided for @itAvgResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Response'**
+  String get itAvgResponse;
+
+  /// No description provided for @itSyncNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Now'**
+  String get itSyncNow;
+
+  /// No description provided for @itConnectIntegration.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect Integration'**
+  String get itConnectIntegration;
+
+  /// No description provided for @itDisconnectConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This will remove the connection and stop all data synchronization. You can reconnect at any time.'**
+  String get itDisconnectConfirm;
+
+  /// No description provided for @itLms.
+  ///
+  /// In en, this message translates to:
+  /// **'LMS'**
+  String get itLms;
+
+  /// No description provided for @itAi.
+  ///
+  /// In en, this message translates to:
+  /// **'AI'**
+  String get itAi;
+
+  /// No description provided for @itStorageCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage'**
+  String get itStorageCategory;
+
+  /// No description provided for @itProductivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Productivity'**
+  String get itProductivity;
+
+  /// No description provided for @itCommunication.
+  ///
+  /// In en, this message translates to:
+  /// **'Communication'**
+  String get itCommunication;
+
+  /// No description provided for @itAnalytics.
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get itAnalytics;
+
+  /// No description provided for @itSecurityCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get itSecurityCategory;
+
+  /// No description provided for @itBackupRestoreDR.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup, Restore & DR Center'**
+  String get itBackupRestoreDR;
+
+  /// No description provided for @itBackupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup health, restore actions, and disaster recovery orchestration'**
+  String get itBackupSubtitle;
+
+  /// No description provided for @itCreateBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Backup'**
+  String get itCreateBackup;
+
+  /// No description provided for @itLastFullBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Full Backup'**
+  String get itLastFullBackup;
+
+  /// No description provided for @itSuccessful24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Successful (24h)'**
+  String get itSuccessful24h;
+
+  /// No description provided for @itFailed24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed (24h)'**
+  String get itFailed24h;
+
+  /// No description provided for @itNextScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Scheduled'**
+  String get itNextScheduled;
+
+  /// No description provided for @itStorageUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Used'**
+  String get itStorageUsed;
+
+  /// No description provided for @itRecoveryScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Score'**
+  String get itRecoveryScore;
+
+  /// No description provided for @itViewJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'View Jobs'**
+  String get itViewJobs;
+
+  /// No description provided for @itInvestigate.
+  ///
+  /// In en, this message translates to:
+  /// **'Investigate'**
+  String get itInvestigate;
+
+  /// No description provided for @itBackupJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Jobs'**
+  String get itBackupJobs;
+
+  /// No description provided for @itRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get itRestore;
+
+  /// No description provided for @itDrRunbooks.
+  ///
+  /// In en, this message translates to:
+  /// **'DR Runbooks'**
+  String get itDrRunbooks;
+
+  /// No description provided for @itIntegrity.
+  ///
+  /// In en, this message translates to:
+  /// **'Integrity'**
+  String get itIntegrity;
+
+  /// No description provided for @itFull.
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get itFull;
+
+  /// No description provided for @itIncremental.
+  ///
+  /// In en, this message translates to:
+  /// **'Incremental'**
+  String get itIncremental;
+
+  /// No description provided for @itDifferential.
+  ///
+  /// In en, this message translates to:
+  /// **'Differential'**
+  String get itDifferential;
+
+  /// No description provided for @itSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Snapshot'**
+  String get itSnapshot;
+
+  /// No description provided for @itArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get itArchive;
+
+  /// No description provided for @itCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get itCompleted;
+
+  /// No description provided for @itRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Running'**
+  String get itRunning;
+
+  /// No description provided for @itFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get itFailed;
+
+  /// No description provided for @itScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get itScheduled;
+
+  /// No description provided for @itCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get itCancelled;
+
+  /// No description provided for @itTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get itTarget;
+
+  /// No description provided for @itDuration.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get itDuration;
+
+  /// No description provided for @itProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get itProgress;
+
+  /// No description provided for @itCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get itCancel;
+
+  /// No description provided for @itRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get itRetry;
+
+  /// No description provided for @itView.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get itView;
+
+  /// No description provided for @itVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get itVerified;
+
+  /// No description provided for @itPendingVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get itPendingVerification;
+
+  /// No description provided for @itRestorePoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Points'**
+  String get itRestorePoints;
+
+  /// No description provided for @itRestoreNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Now'**
+  String get itRestoreNow;
+
+  /// No description provided for @itVerify.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get itVerify;
+
+  /// No description provided for @itSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Source'**
+  String get itSource;
+
+  /// No description provided for @itSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get itSize;
+
+  /// No description provided for @itRto.
+  ///
+  /// In en, this message translates to:
+  /// **'RTO'**
+  String get itRto;
+
+  /// No description provided for @itRpo.
+  ///
+  /// In en, this message translates to:
+  /// **'RPO'**
+  String get itRpo;
+
+  /// No description provided for @itRunTest.
+  ///
+  /// In en, this message translates to:
+  /// **'Run Test'**
+  String get itRunTest;
+
+  /// No description provided for @itLastTested.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Tested'**
+  String get itLastTested;
+
+  /// No description provided for @itReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get itReady;
+
+  /// No description provided for @itNeedsReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Review'**
+  String get itNeedsReview;
+
+  /// No description provided for @itCriticalReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Review'**
+  String get itCriticalReview;
+
+  /// No description provided for @itSteps.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps'**
+  String get itSteps;
+
+  /// No description provided for @itSuccessRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Success Rate'**
+  String get itSuccessRateLabel;
+
+  /// No description provided for @itVerifiedBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified Backups'**
+  String get itVerifiedBackups;
+
+  /// No description provided for @itPendingChecks.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Verification'**
+  String get itPendingChecks;
+
+  /// No description provided for @itAutoVerifySchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Verify Schedule'**
+  String get itAutoVerifySchedule;
+
+  /// No description provided for @itDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get itDaily;
+
+  /// No description provided for @itRecentIntegrityChecks.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Integrity Checks'**
+  String get itRecentIntegrityChecks;
+
+  /// No description provided for @itPassed.
+  ///
+  /// In en, this message translates to:
+  /// **'Passed'**
+  String get itPassed;
+
+  /// No description provided for @itChecksum.
+  ///
+  /// In en, this message translates to:
+  /// **'Checksum'**
+  String get itChecksum;
+
+  /// No description provided for @itRunVerification.
+  ///
+  /// In en, this message translates to:
+  /// **'Run Verification'**
+  String get itRunVerification;
+
+  /// No description provided for @itAiRecommendations.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Recommendations'**
+  String get itAiRecommendations;
+
+  /// No description provided for @itOptimize.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimize'**
+  String get itOptimize;
+
+  /// No description provided for @itWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get itWarning;
+
+  /// No description provided for @itCostSavings.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost Savings'**
+  String get itCostSavings;
+
+  /// No description provided for @itTestDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Due'**
+  String get itTestDue;
+
+  /// No description provided for @itStorageDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage Distribution'**
+  String get itStorageDistribution;
+
+  /// No description provided for @itDatabaseBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'Database Backups'**
+  String get itDatabaseBackups;
+
+  /// No description provided for @itFileBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'File Backups'**
+  String get itFileBackups;
+
+  /// No description provided for @itVmSnapshots.
+  ///
+  /// In en, this message translates to:
+  /// **'VM Snapshots'**
+  String get itVmSnapshots;
+
+  /// No description provided for @itLogArchives.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Archives'**
+  String get itLogArchives;
+
+  /// No description provided for @itAlertSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert Settings'**
+  String get itAlertSettings;
+
+  /// No description provided for @itEmailAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Alerts'**
+  String get itEmailAlerts;
+
+  /// No description provided for @itSlackNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Slack Notifications'**
+  String get itSlackNotifications;
+
+  /// No description provided for @itCriticalOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical Only'**
+  String get itCriticalOnly;
+
+  /// No description provided for @itReceiveBackupAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive backup alerts via email'**
+  String get itReceiveBackupAlerts;
+
+  /// No description provided for @itSendToSlack.
+  ///
+  /// In en, this message translates to:
+  /// **'Send alerts to Slack channel'**
+  String get itSendToSlack;
+
+  /// No description provided for @itOnlyCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Only notify for critical failures'**
+  String get itOnlyCritical;
+
+  /// No description provided for @itNoBackupJobs.
+  ///
+  /// In en, this message translates to:
+  /// **'No Backup Jobs'**
+  String get itNoBackupJobs;
+
+  /// No description provided for @itNoBackupJobsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'No backup jobs match the selected filters'**
+  String get itNoBackupJobsDesc;
+
+  /// No description provided for @itNoRestorePoints.
+  ///
+  /// In en, this message translates to:
+  /// **'No Restore Points'**
+  String get itNoRestorePoints;
+
+  /// No description provided for @itNoRestorePointsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'No restore points available'**
+  String get itNoRestorePointsDesc;
+
+  /// No description provided for @itNoRunbooks.
+  ///
+  /// In en, this message translates to:
+  /// **'No DR Runbooks'**
+  String get itNoRunbooks;
+
+  /// No description provided for @itNoRunbooksDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'No disaster recovery runbooks configured'**
+  String get itNoRunbooksDesc;
+
+  /// No description provided for @itNoIntegrityChecks.
+  ///
+  /// In en, this message translates to:
+  /// **'No Integrity Checks'**
+  String get itNoIntegrityChecks;
+
+  /// No description provided for @itNoIntegrityChecksDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'No integrity checks have been performed'**
+  String get itNoIntegrityChecksDesc;
+
+  /// No description provided for @itSecurityLogsAccessControl.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Logs & Access Control'**
+  String get itSecurityLogsAccessControl;
+
+  /// No description provided for @itSecurityLogsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor system activity, enforce policies, and track security events'**
+  String get itSecurityLogsSubtitle;
+
+  /// No description provided for @itAuthEvents24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Auth Events (24h)'**
+  String get itAuthEvents24h;
+
+  /// No description provided for @itFailedLogins24h.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed Logins (24h)'**
+  String get itFailedLogins24h;
+
+  /// No description provided for @itBreachAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Breach Attempts'**
+  String get itBreachAttempts;
+
+  /// No description provided for @itPrivilegeChanges7d.
+  ///
+  /// In en, this message translates to:
+  /// **'Privilege Changes (7d)'**
+  String get itPrivilegeChanges7d;
+
+  /// No description provided for @itViewAllEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'View All Events'**
+  String get itViewAllEvents;
+
+  /// No description provided for @itInvestigateNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Investigate Now'**
+  String get itInvestigateNow;
+
+  /// No description provided for @itAllAuthorized.
+  ///
+  /// In en, this message translates to:
+  /// **'All authorized changes'**
+  String get itAllAuthorized;
+
+  /// No description provided for @itSecurityLogsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Logs'**
+  String get itSecurityLogsTab;
+
+  /// No description provided for @itAccessControlTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Access Control'**
+  String get itAccessControlTab;
+
+  /// No description provided for @itPoliciesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Policies'**
+  String get itPoliciesTab;
+
+  /// No description provided for @itRequestsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Requests'**
+  String get itRequestsTab;
+
+  /// No description provided for @itRolesTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Roles'**
+  String get itRolesTab;
+
+  /// No description provided for @itAllEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'All Events'**
+  String get itAllEvents;
+
+  /// No description provided for @itFlaggedOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Flagged Only'**
+  String get itFlaggedOnly;
+
+  /// No description provided for @itHighRiskOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'High-Risk Only'**
+  String get itHighRiskOnly;
+
+  /// No description provided for @itSearchLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Search logs, users, IPs...'**
+  String get itSearchLogs;
+
+  /// No description provided for @itEventType.
+  ///
+  /// In en, this message translates to:
+  /// **'Event Type'**
+  String get itEventType;
+
+  /// No description provided for @itLoginSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Success'**
+  String get itLoginSuccess;
+
+  /// No description provided for @itLoginFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Login Failed'**
+  String get itLoginFailed;
+
+  /// No description provided for @itLogout.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get itLogout;
+
+  /// No description provided for @itBreachAttempt.
+  ///
+  /// In en, this message translates to:
+  /// **'Breach Attempt'**
+  String get itBreachAttempt;
+
+  /// No description provided for @itPermissionChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission Change'**
+  String get itPermissionChange;
+
+  /// No description provided for @itApiAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'API Access'**
+  String get itApiAccess;
+
+  /// No description provided for @itMfaEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enabled'**
+  String get itMfaEnabled;
+
+  /// No description provided for @itPasswordChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Password Change'**
+  String get itPasswordChange;
+
+  /// No description provided for @itAccountLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Locked'**
+  String get itAccountLocked;
+
+  /// No description provided for @itSessionExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Expired'**
+  String get itSessionExpired;
+
+  /// No description provided for @itRiskLow.
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get itRiskLow;
+
+  /// No description provided for @itRiskMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get itRiskMedium;
+
+  /// No description provided for @itRiskHigh.
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get itRiskHigh;
+
+  /// No description provided for @itRiskCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get itRiskCritical;
+
+  /// No description provided for @itPendingAccessRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Access Requests'**
+  String get itPendingAccessRequests;
+
+  /// No description provided for @itNoAccessRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending access requests'**
+  String get itNoAccessRequests;
+
+  /// No description provided for @itRequestedRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested Role'**
+  String get itRequestedRole;
+
+  /// No description provided for @itCurrentRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Role'**
+  String get itCurrentRole;
+
+  /// No description provided for @itReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get itReason;
+
+  /// No description provided for @itRequestedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Requested'**
+  String get itRequestedAt;
+
+  /// No description provided for @itApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get itApprove;
+
+  /// No description provided for @itDeny.
+  ///
+  /// In en, this message translates to:
+  /// **'Deny'**
+  String get itDeny;
+
+  /// No description provided for @itRolePermissionsManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Role & Permission Management'**
+  String get itRolePermissionsManagement;
+
+  /// No description provided for @itPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions'**
+  String get itPermissions;
+
+  /// No description provided for @itViewUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'View Users'**
+  String get itViewUsers;
+
+  /// No description provided for @itUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'users'**
+  String get itUsers;
+
+  /// No description provided for @itSecurityPoliciesMfa.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Policies & MFA'**
+  String get itSecurityPoliciesMfa;
+
+  /// No description provided for @itMandatoryMfa.
+  ///
+  /// In en, this message translates to:
+  /// **'Mandatory MFA'**
+  String get itMandatoryMfa;
+
+  /// No description provided for @itPasswordStrength.
+  ///
+  /// In en, this message translates to:
+  /// **'Password Strength'**
+  String get itPasswordStrength;
+
+  /// No description provided for @itSessionTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Timeout'**
+  String get itSessionTimeout;
+
+  /// No description provided for @itIpBlocklist.
+  ///
+  /// In en, this message translates to:
+  /// **'IP Blocklist'**
+  String get itIpBlocklist;
+
+  /// No description provided for @itApiRateLimiting.
+  ///
+  /// In en, this message translates to:
+  /// **'API Rate Limiting'**
+  String get itApiRateLimiting;
+
+  /// No description provided for @itActiveIncidentsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Incidents'**
+  String get itActiveIncidentsSection;
+
+  /// No description provided for @itHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get itHide;
+
+  /// No description provided for @itSeverityInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get itSeverityInfo;
+
+  /// No description provided for @itSeverityWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get itSeverityWarning;
+
+  /// No description provided for @itSeverityCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get itSeverityCritical;
+
+  /// No description provided for @itStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get itStatusActive;
+
+  /// No description provided for @itStatusInvestigating.
+  ///
+  /// In en, this message translates to:
+  /// **'Investigating'**
+  String get itStatusInvestigating;
+
+  /// No description provided for @itStatusResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get itStatusResolved;
+
+  /// No description provided for @itStatusDismissed.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismissed'**
+  String get itStatusDismissed;
+
+  /// No description provided for @itAiSecurityInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Security Insights'**
+  String get itAiSecurityInsights;
+
+  /// No description provided for @itNoAiInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'No AI insights available'**
+  String get itNoAiInsights;
+
+  /// No description provided for @itRecentSecurityActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Security Actions'**
+  String get itRecentSecurityActions;
+
+  /// No description provided for @itNoRecentActions.
+  ///
+  /// In en, this message translates to:
+  /// **'No recent actions'**
+  String get itNoRecentActions;
+
+  /// No description provided for @itViewAllActions.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get itViewAllActions;
+
+  /// No description provided for @itIncidentDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Incident Details'**
+  String get itIncidentDetails;
+
+  /// No description provided for @itAffectedAccounts.
+  ///
+  /// In en, this message translates to:
+  /// **'Affected Accounts'**
+  String get itAffectedAccounts;
+
+  /// No description provided for @itRelatedIps.
+  ///
+  /// In en, this message translates to:
+  /// **'Related IPs'**
+  String get itRelatedIps;
+
+  /// No description provided for @itDetectedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Detected At'**
+  String get itDetectedAt;
+
+  /// No description provided for @itInvestigationNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Investigation Notes'**
+  String get itInvestigationNotes;
+
+  /// No description provided for @itQuickResponseActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Response Actions'**
+  String get itQuickResponseActions;
+
+  /// No description provided for @itBlockAllRelatedIps.
+  ///
+  /// In en, this message translates to:
+  /// **'Block All Related IPs'**
+  String get itBlockAllRelatedIps;
+
+  /// No description provided for @itMarkResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Resolved'**
+  String get itMarkResolved;
+
+  /// No description provided for @itCreateReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Report'**
+  String get itCreateReport;
+
+  /// No description provided for @itClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get itClose;
+
+  /// No description provided for @itAiModelSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Model Settings & Governance'**
+  String get itAiModelSettings;
+
+  /// No description provided for @itAiModelSettingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage AI providers, configurations, policies, and usage limitations'**
+  String get itAiModelSettingsSubtitle;
+
+  /// No description provided for @itAiProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Providers'**
+  String get itAiProviders;
+
+  /// No description provided for @itSelectProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Provider'**
+  String get itSelectProvider;
+
+  /// No description provided for @itSelectModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Model'**
+  String get itSelectModel;
+
+  /// No description provided for @itApiKeysCredentials.
+  ///
+  /// In en, this message translates to:
+  /// **'API Keys & Credentials'**
+  String get itApiKeysCredentials;
+
+  /// No description provided for @itMainKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Main Key'**
+  String get itMainKey;
+
+  /// No description provided for @itAutoRotate.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Rotate'**
+  String get itAutoRotate;
+
+  /// No description provided for @itRegenerateKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate Key'**
+  String get itRegenerateKey;
+
+  /// No description provided for @itGovernanceRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Governance Rules'**
+  String get itGovernanceRules;
+
+  /// No description provided for @itRoleRestrictions.
+  ///
+  /// In en, this message translates to:
+  /// **'Role Restrictions'**
+  String get itRoleRestrictions;
+
+  /// No description provided for @itEnableAiForStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable AI for Students'**
+  String get itEnableAiForStudents;
+
+  /// No description provided for @itEnableAiForInstructors.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable AI for Instructors'**
+  String get itEnableAiForInstructors;
+
+  /// No description provided for @itEnableAiForTa.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable AI for TA'**
+  String get itEnableAiForTa;
+
+  /// No description provided for @itAiCapabilities.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Capabilities'**
+  String get itAiCapabilities;
+
+  /// No description provided for @itAnalyzeSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze Student Submissions'**
+  String get itAnalyzeSubmissions;
+
+  /// No description provided for @itMaxResponseLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum Response Length'**
+  String get itMaxResponseLength;
+
+  /// No description provided for @itCompliancePrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Compliance & Privacy'**
+  String get itCompliancePrivacy;
+
+  /// No description provided for @itStoreAiLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Store AI Logs'**
+  String get itStoreAiLogs;
+
+  /// No description provided for @itEnableContentFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Inappropriate Content Filters'**
+  String get itEnableContentFilters;
+
+  /// No description provided for @itBlockSensitiveTopics.
+  ///
+  /// In en, this message translates to:
+  /// **'Block Sensitive Topics'**
+  String get itBlockSensitiveTopics;
+
+  /// No description provided for @itSystemLimits.
+  ///
+  /// In en, this message translates to:
+  /// **'System Limits'**
+  String get itSystemLimits;
+
+  /// No description provided for @itDailyRequestsPerUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Requests per Day/User'**
+  String get itDailyRequestsPerUser;
+
+  /// No description provided for @itUsageProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Progress'**
+  String get itUsageProgress;
+
+  /// No description provided for @itHighLoadWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'High Load Warning'**
+  String get itHighLoadWarning;
+
+  /// No description provided for @itAiRequestLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Request Logs'**
+  String get itAiRequestLogs;
+
+  /// No description provided for @itActiveProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Providers'**
+  String get itActiveProviders;
+
+  /// No description provided for @itTotalRequestsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Requests'**
+  String get itTotalRequestsLabel;
+
+  /// No description provided for @itRecentRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Requests'**
+  String get itRecentRequests;
+
+  /// No description provided for @itViewFullLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'View Full Logs'**
+  String get itViewFullLogs;
+
+  /// No description provided for @itDownloadLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Logs'**
+  String get itDownloadLogs;
+
+  /// No description provided for @itSaveConfiguration.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Configuration'**
+  String get itSaveConfiguration;
+
+  /// No description provided for @itResetToDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to Default'**
+  String get itResetToDefault;
+
+  /// No description provided for @itConfirmSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm & Save'**
+  String get itConfirmSave;
+
+  /// No description provided for @itConfigSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Configuration saved successfully'**
+  String get itConfigSaved;
+
+  /// No description provided for @itSettingsReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings reset to default'**
+  String get itSettingsReset;
+
+  /// No description provided for @itPerformanceReports.
+  ///
+  /// In en, this message translates to:
+  /// **'System Performance Reports'**
+  String get itPerformanceReports;
+
+  /// No description provided for @itPerformanceReportsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor real-time metrics and system health'**
+  String get itPerformanceReportsSubtitle;
+
+  /// No description provided for @itTimePeriodToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get itTimePeriodToday;
+
+  /// No description provided for @itTimePeriodWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get itTimePeriodWeek;
+
+  /// No description provided for @itTimePeriodMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get itTimePeriodMonth;
+
+  /// No description provided for @itTimePeriodCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get itTimePeriodCustom;
+
+  /// No description provided for @itPerformanceOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Overview'**
+  String get itPerformanceOverview;
+
+  /// No description provided for @itViewDetailsMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get itViewDetailsMetrics;
+
+  /// No description provided for @itServerHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Health'**
+  String get itServerHealth;
+
+  /// No description provided for @itViewAllServers.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get itViewAllServers;
+
+  /// No description provided for @itHealthy.
+  ///
+  /// In en, this message translates to:
+  /// **'Healthy'**
+  String get itHealthy;
+
+  /// No description provided for @itCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get itCritical;
+
+  /// No description provided for @itMemoryUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory Usage'**
+  String get itMemoryUsage;
+
+  /// No description provided for @itDiskUsage.
+  ///
+  /// In en, this message translates to:
+  /// **'Disk Usage'**
+  String get itDiskUsage;
+
+  /// No description provided for @itPerformanceTrends.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Trends'**
+  String get itPerformanceTrends;
+
+  /// No description provided for @itTrendCpu.
+  ///
+  /// In en, this message translates to:
+  /// **'CPU'**
+  String get itTrendCpu;
+
+  /// No description provided for @itTrendMemory.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory'**
+  String get itTrendMemory;
+
+  /// No description provided for @itTrendResponseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Response Time'**
+  String get itTrendResponseTime;
+
+  /// No description provided for @itRecentAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Alerts'**
+  String get itRecentAlerts;
+
+  /// No description provided for @itViewAllAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get itViewAllAlerts;
+
+  /// No description provided for @itAlertInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get itAlertInfo;
+
+  /// No description provided for @itAlertWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get itAlertWarning;
+
+  /// No description provided for @itAlertCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get itAlertCritical;
+
+  /// No description provided for @itAlertResolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get itAlertResolved;
+
+  /// No description provided for @itResourceUtilization.
+  ///
+  /// In en, this message translates to:
+  /// **'Resource Utilization'**
+  String get itResourceUtilization;
+
+  /// No description provided for @itManageStorage.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Storage'**
+  String get itManageStorage;
+
+  /// No description provided for @itUsedOf.
+  ///
+  /// In en, this message translates to:
+  /// **'used of'**
+  String get itUsedOf;
+
+  /// No description provided for @itExportReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Report'**
+  String get itExportReport;
+
+  /// No description provided for @itRefreshData.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh Data'**
+  String get itRefreshData;
+
+  /// No description provided for @itLastUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Updated'**
+  String get itLastUpdated;
+
+  /// No description provided for @itNoServers.
+  ///
+  /// In en, this message translates to:
+  /// **'No servers available'**
+  String get itNoServers;
+
+  /// No description provided for @itNoResources.
+  ///
+  /// In en, this message translates to:
+  /// **'No resources available'**
+  String get itNoResources;
+
+  /// No description provided for @itServerDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Details'**
+  String get itServerDetails;
+
+  /// No description provided for @itRestartServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart Server'**
+  String get itRestartServer;
+
+  /// No description provided for @itNetworkIO.
+  ///
+  /// In en, this message translates to:
+  /// **'Network I/O'**
+  String get itNetworkIO;
+
+  /// No description provided for @itAvgResponseTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Response Time'**
+  String get itAvgResponseTime;
+
+  /// No description provided for @itActiveUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Users'**
+  String get itActiveUsers;
+
+  /// No description provided for @itAlertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts, Notifications & Threshold Rules'**
+  String get itAlertsTitle;
+
+  /// No description provided for @itAlertsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create alert rules, configure channels, and manage escalation policies'**
+  String get itAlertsSubtitle;
+
+  /// No description provided for @itActiveAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Alerts'**
+  String get itActiveAlerts;
+
+  /// No description provided for @itResolvedAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved (24h)'**
+  String get itResolvedAlerts;
+
+  /// No description provided for @itSuppressedAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppressed (24h)'**
+  String get itSuppressedAlerts;
+
+  /// No description provided for @itNoiseScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Noise Score (AI)'**
+  String get itNoiseScore;
+
+  /// No description provided for @itAlertRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert Rules'**
+  String get itAlertRules;
+
+  /// No description provided for @itNotificationChannels.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Channels'**
+  String get itNotificationChannels;
+
+  /// No description provided for @itEscalationPolicies.
+  ///
+  /// In en, this message translates to:
+  /// **'Escalation Policies'**
+  String get itEscalationPolicies;
+
+  /// No description provided for @itSuppressionWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'Suppression Windows'**
+  String get itSuppressionWindows;
+
+  /// No description provided for @itAlertHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert History & Logs'**
+  String get itAlertHistory;
+
+  /// No description provided for @itCreateRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Rule'**
+  String get itCreateRule;
+
+  /// No description provided for @itCreatePolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Policy'**
+  String get itCreatePolicy;
+
+  /// No description provided for @itCreateWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Window'**
+  String get itCreateWindow;
+
+  /// No description provided for @itAddChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Channel'**
+  String get itAddChannel;
+
+  /// No description provided for @itSearchRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Search alert rules...'**
+  String get itSearchRules;
+
+  /// No description provided for @itAllSeverity.
+  ///
+  /// In en, this message translates to:
+  /// **'All Severity'**
+  String get itAllSeverity;
+
+  /// No description provided for @itSeverityCriticalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Critical'**
+  String get itSeverityCriticalLabel;
+
+  /// No description provided for @itSeverityWarningLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get itSeverityWarningLabel;
+
+  /// No description provided for @itSeverityInfoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get itSeverityInfoLabel;
+
+  /// No description provided for @itRuleEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'enabled'**
+  String get itRuleEnabled;
+
+  /// No description provided for @itRuleDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'disabled'**
+  String get itRuleDisabled;
+
+  /// No description provided for @itViewDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get itViewDetails;
+
+  /// No description provided for @itTestChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Test'**
+  String get itTestChannel;
+
+  /// No description provided for @itEditChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get itEditChannel;
+
+  /// No description provided for @itAiTuningAdvisor.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Tuning Advisor'**
+  String get itAiTuningAdvisor;
+
+  /// No description provided for @itApplySuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Suggestion'**
+  String get itApplySuggestion;
+
+  /// No description provided for @itReviewGrouping.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Grouping'**
+  String get itReviewGrouping;
+
+  /// No description provided for @itUpdateWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Window'**
+  String get itUpdateWindow;
+
+  /// No description provided for @itAlertMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert Metrics'**
+  String get itAlertMetrics;
+
+  /// No description provided for @itAlertsPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Alerts per Day'**
+  String get itAlertsPerDay;
+
+  /// No description provided for @itFalsePositives.
+  ///
+  /// In en, this message translates to:
+  /// **'False Positives'**
+  String get itFalsePositives;
+
+  /// No description provided for @itAvgTimeToAck.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Time to Ack'**
+  String get itAvgTimeToAck;
+
+  /// No description provided for @itTopNoisyRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Noisy Rules'**
+  String get itTopNoisyRules;
+
+  /// No description provided for @itNoRulesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No alert rules found'**
+  String get itNoRulesFound;
+
+  /// No description provided for @itNoChannels.
+  ///
+  /// In en, this message translates to:
+  /// **'No notification channels'**
+  String get itNoChannels;
+
+  /// No description provided for @itNoPolicies.
+  ///
+  /// In en, this message translates to:
+  /// **'No escalation policies'**
+  String get itNoPolicies;
+
+  /// No description provided for @itNoWindows.
+  ///
+  /// In en, this message translates to:
+  /// **'No suppression windows'**
+  String get itNoWindows;
+
+  /// No description provided for @itNoHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No alert history'**
+  String get itNoHistory;
+
+  /// No description provided for @itTimestamp.
+  ///
+  /// In en, this message translates to:
+  /// **'Timestamp'**
+  String get itTimestamp;
+
+  /// No description provided for @itRule.
+  ///
+  /// In en, this message translates to:
+  /// **'Rule'**
+  String get itRule;
+
+  /// No description provided for @itSeverity.
+  ///
+  /// In en, this message translates to:
+  /// **'Severity'**
+  String get itSeverity;
+
+  /// No description provided for @itStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get itStatus;
+
+  /// No description provided for @itActiveNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Now'**
+  String get itActiveNow;
+
+  /// No description provided for @itRecurring.
+  ///
+  /// In en, this message translates to:
+  /// **'Recurring'**
+  String get itRecurring;
+
+  /// No description provided for @itProfileScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get itProfileScreen;
+
+  /// No description provided for @itEditProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get itEditProfile;
+
+  /// No description provided for @itPersonalInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get itPersonalInfo;
+
+  /// No description provided for @itWorkInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Work Information'**
+  String get itWorkInfo;
+
+  /// No description provided for @itPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get itPreferences;
+
+  /// No description provided for @itFullName.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get itFullName;
+
+  /// No description provided for @itEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get itEmailAddress;
+
+  /// No description provided for @itPhoneNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get itPhoneNumber;
+
+  /// No description provided for @itEmployeeId.
+  ///
+  /// In en, this message translates to:
+  /// **'Employee ID'**
+  String get itEmployeeId;
+
+  /// No description provided for @itDepartment.
+  ///
+  /// In en, this message translates to:
+  /// **'Department'**
+  String get itDepartment;
+
+  /// No description provided for @itTimezone.
+  ///
+  /// In en, this message translates to:
+  /// **'Timezone'**
+  String get itTimezone;
+
+  /// No description provided for @itPreferredLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred Language'**
+  String get itPreferredLanguage;
+
+  /// No description provided for @itRolePermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Role & Permissions'**
+  String get itRolePermissions;
+
+  /// No description provided for @itFullSystemAccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Full System Access'**
+  String get itFullSystemAccess;
+
+  /// No description provided for @itViewFullPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'View Full Permissions'**
+  String get itViewFullPermissions;
+
+  /// No description provided for @itManageSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Security'**
+  String get itManageSecurity;
+
+  /// No description provided for @itViewActivityLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'View Activity Logs'**
+  String get itViewActivityLogs;
+
+  /// No description provided for @itProfilePersonal.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal'**
+  String get itProfilePersonal;
+
+  /// No description provided for @itProfileNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get itProfileNotifications;
+
+  /// No description provided for @itProfileSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get itProfileSecurity;
+
+  /// No description provided for @itProfilePreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences'**
+  String get itProfilePreferences;
+
+  /// No description provided for @itSecurityAlertsToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Alerts'**
+  String get itSecurityAlertsToggle;
+
+  /// No description provided for @itSystemOutageUpdates.
+  ///
+  /// In en, this message translates to:
+  /// **'System Outage Updates'**
+  String get itSystemOutageUpdates;
+
+  /// No description provided for @itIntegrationWarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Integration Warnings'**
+  String get itIntegrationWarnings;
+
+  /// No description provided for @itAiAnomalyNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'AI Anomaly Notifications'**
+  String get itAiAnomalyNotifications;
+
+  /// No description provided for @itDeliveryMethods.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery Methods'**
+  String get itDeliveryMethods;
+
+  /// No description provided for @itEmailDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get itEmailDelivery;
+
+  /// No description provided for @itSmsDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS'**
+  String get itSmsDelivery;
+
+  /// No description provided for @itInAppDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'In-App'**
+  String get itInAppDelivery;
+
+  /// No description provided for @itSlackDelivery.
+  ///
+  /// In en, this message translates to:
+  /// **'Slack'**
+  String get itSlackDelivery;
+
+  /// No description provided for @itSavePreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Preferences'**
+  String get itSavePreferences;
+
+  /// No description provided for @itPasswordManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Password Management'**
+  String get itPasswordManagement;
+
+  /// No description provided for @itChangePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get itChangePassword;
+
+  /// No description provided for @itPasswordRequirements.
+  ///
+  /// In en, this message translates to:
+  /// **'Password Requirements'**
+  String get itPasswordRequirements;
+
+  /// No description provided for @itMfa.
+  ///
+  /// In en, this message translates to:
+  /// **'Multi-Factor Authentication'**
+  String get itMfa;
+
+  /// No description provided for @itMfaDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get itMfaDisabled;
+
+  /// No description provided for @itSetupMfa.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup MFA'**
+  String get itSetupMfa;
+
+  /// No description provided for @itAddDevice.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Device'**
+  String get itAddDevice;
+
+  /// No description provided for @itActiveSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Sessions'**
+  String get itActiveSessions;
+
+  /// No description provided for @itTerminateAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Terminate All'**
+  String get itTerminateAll;
+
+  /// No description provided for @itCurrentSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get itCurrentSession;
+
+  /// No description provided for @itApiTokens.
+  ///
+  /// In en, this message translates to:
+  /// **'API Access Tokens'**
+  String get itApiTokens;
+
+  /// No description provided for @itGenerateToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Token'**
+  String get itGenerateToken;
+
+  /// No description provided for @itRevokeToken.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke'**
+  String get itRevokeToken;
+
+  /// No description provided for @itThemeCustomization.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme & UI Customization'**
+  String get itThemeCustomization;
+
+  /// No description provided for @itThemeMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme Mode'**
+  String get itThemeMode;
+
+  /// No description provided for @itThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get itThemeLight;
+
+  /// No description provided for @itThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get itThemeDark;
+
+  /// No description provided for @itThemeAuto.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto'**
+  String get itThemeAuto;
+
+  /// No description provided for @itAccentColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Accent Color'**
+  String get itAccentColor;
+
+  /// No description provided for @itUiDensity.
+  ///
+  /// In en, this message translates to:
+  /// **'UI Density'**
+  String get itUiDensity;
+
+  /// No description provided for @itAdvancedMetrics.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced Metrics Mode'**
+  String get itAdvancedMetrics;
+
+  /// No description provided for @itDangerZone.
+  ///
+  /// In en, this message translates to:
+  /// **'Danger Zone'**
+  String get itDangerZone;
+
+  /// No description provided for @itRevokeApiKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke API Keys'**
+  String get itRevokeApiKeys;
+
+  /// No description provided for @itResetSecuritySettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Security Settings'**
+  String get itResetSecuritySettings;
+
+  /// No description provided for @itRequestRoleDowngrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Role Downgrade'**
+  String get itRequestRoleDowngrade;
+
+  /// No description provided for @itResetFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Fields'**
+  String get itResetFields;
+
+  /// No description provided for @itProfileUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get itProfileUpdated;
+
+  /// No description provided for @itPreferencesSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferences saved'**
+  String get itPreferencesSaved;
+
+  /// No description provided for @itSessionTerminated.
+  ///
+  /// In en, this message translates to:
+  /// **'Session terminated'**
+  String get itSessionTerminated;
+
+  /// No description provided for @itTokenGenerated.
+  ///
+  /// In en, this message translates to:
+  /// **'Token generated'**
+  String get itTokenGenerated;
+
+  /// No description provided for @itTokenRevoked.
+  ///
+  /// In en, this message translates to:
+  /// **'Token revoked'**
+  String get itTokenRevoked;
+
+  /// No description provided for @itDiscardChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard Changes?'**
+  String get itDiscardChanges;
+
+  /// No description provided for @itUnsavedChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes. Are you sure you want to discard them?'**
+  String get itUnsavedChanges;
+
+  /// No description provided for @itKeepEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Editing'**
+  String get itKeepEditing;
+
+  /// No description provided for @itDiscard.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get itDiscard;
+
+  /// No description provided for @itChangePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Profile Photo'**
+  String get itChangePhoto;
+
+  /// No description provided for @itTakePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo'**
+  String get itTakePhoto;
+
+  /// No description provided for @itChooseFromGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get itChooseFromGallery;
+
+  /// No description provided for @itRemovePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Photo'**
+  String get itRemovePhoto;
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -20695,26 +23415,25 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['ar', 'en'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ar', 'en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ar':
-      return AppLocalizationsAr();
-    case 'en':
-      return AppLocalizationsEn();
+    case 'ar': return AppLocalizationsAr();
+    case 'en': return AppLocalizationsEn();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
+    'that was used.'
   );
 }
