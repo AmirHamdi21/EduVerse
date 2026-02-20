@@ -11869,4 +11869,78 @@ class AppLocalizationsEn extends AppLocalizations {
   String get itThemeCustomization => 'Theme & UI Customization';
 
   @override
-  String get itThemeMode => 'Theme Mode
+  String get itThemeMode => 'Theme Mode';
+
+  @override
+  String get itThemeLight => 'Light';
+
+  @override
+  String get itThemeDark => 'Dark';
+
+  @override
+  String get itThemeAuto => 'Auto';
+
+  @override
+  String get itAccentColor => 'Accent Color';
+
+  @override
+  String get itUiDensity => 'UI Density';
+
+  @override
+  String get itAdvancedMetrics => 'Advanced Metrics Mode';
+
+  @override
+  String get itDangerZone => 'Danger Zone';
+
+  @override
+  String get itRevokeApiKeys => 'Revoke API Keys';
+
+  @override
+  String get itResetSecuritySettings => 'Reset Security Settings';
+
+  @override
+  String get itRequestRoleDowngrade => 'Request Role Downgrade';
+
+  @override
+  String get itResetFields => 'Reset Fields';
+
+  @override
+  String get itProfileUpdated => 'Profile updated successfully';
+
+  @override
+  String get itPreferencesSaved => 'Preferences saved';
+
+  @override
+  String get itSessionTerminated => 'Session terminated';
+
+  @override
+  String get itTokenGenerated => 'Token generated';
+
+  @override
+  String get itTokenRevoked => 'Token revoked';
+
+  @override
+  String get itDiscardChanges => 'Discard Changes?';
+
+  @override
+  String get itUnsavedChanges =>
+      'You have unsaved changes. Are you sure you want to discard them?';
+
+  @override
+  String get itKeepEditing => 'Keep Editing';
+
+  @override
+  String get itDiscard => 'Discard';
+
+  @override
+  String get itChangePhoto => 'Change Profile Photo';
+
+  @override
+  String get itTakePhoto => 'Take Photo';
+
+  @override
+  String get itChooseFromGallery => 'Choose from Gallery';
+
+  @override
+  String get itRemovePhoto => 'Remove Photo';
+}
