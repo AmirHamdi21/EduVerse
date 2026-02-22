@@ -177,12 +177,14 @@ class _ITProfileScreenState extends State<ITProfileScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? ITColors.darkBackground : ITColors.lightBackground,
+      backgroundColor: isDark
+          ? ITColors.darkBackground
+          : ITColors.lightBackground,
       body: _isLoading
           ? _buildLoadingState(isDark)
           : _error != null
-              ? _buildErrorState(isDark)
-              : _buildContent(isDark),
+          ? _buildErrorState(isDark)
+          : _buildContent(isDark),
     );
   }
 
@@ -195,9 +197,7 @@ class _ITProfileScreenState extends State<ITProfileScreen> {
           const SizedBox(height: 16),
           Text(
             'Loading profile...',
-            style: TextStyle(
-              color: ITColors.textSecondaryColor(isDark),
-            ),
+            style: TextStyle(color: ITColors.textSecondaryColor(isDark)),
           ),
         ],
       ),
@@ -211,11 +211,7 @@ class _ITProfileScreenState extends State<ITProfileScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.error_outline_rounded,
-              size: 64,
-              color: ITColors.error,
-            ),
+            Icon(Icons.error_outline_rounded, size: 64, color: ITColors.error),
             const SizedBox(height: 16),
             Text(
               'Failed to load profile',
@@ -229,9 +225,7 @@ class _ITProfileScreenState extends State<ITProfileScreen> {
             Text(
               _error!,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: ITColors.textSecondaryColor(isDark),
-              ),
+              style: TextStyle(color: ITColors.textSecondaryColor(isDark)),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
@@ -261,7 +255,7 @@ class _ITProfileScreenState extends State<ITProfileScreen> {
           surfaceTintColor: Colors.transparent,
           leading: IconButton(
             icon: Icon(
-              Icons.arrow_back_rounded,
+              Icons.arrow_back_ios_rounded,
               color: ITColors.textPrimaryColor(isDark),
             ),
             onPressed: () => context.pop(),
@@ -276,10 +270,7 @@ class _ITProfileScreenState extends State<ITProfileScreen> {
           ),
           actions: [
             IconButton(
-              icon: Icon(
-                Icons.edit_rounded,
-                color: ITColors.primary,
-              ),
+              icon: Icon(Icons.edit_rounded, color: ITColors.primary),
               onPressed: () => context.push('/it-admin/edit-profile'),
               tooltip: 'Edit Profile',
             ),
@@ -292,10 +283,7 @@ class _ITProfileScreenState extends State<ITProfileScreen> {
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               // Profile Header
-              ITProfileHeader(
-                isDark: isDark,
-                profile: _profile,
-              ),
+              ITProfileHeader(isDark: isDark, profile: _profile),
               const SizedBox(height: 16),
 
               // Quick Actions
@@ -441,7 +429,8 @@ class _ITProfileScreenState extends State<ITProfileScreen> {
             final newToken = ApiToken(
               id: 'token-${DateTime.now().millisecondsSinceEpoch}',
               name: 'New API Token',
-              preview: 'sk_new_****${DateTime.now().second}${DateTime.now().millisecond}',
+              preview:
+                  'sk_new_****${DateTime.now().second}${DateTime.now().millisecond}',
               expiresAt: DateTime.now().add(const Duration(days: 90)),
               isActive: true,
             );
@@ -600,10 +589,7 @@ class _ITProfileScreenState extends State<ITProfileScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'Close',
-              style: TextStyle(color: ITColors.primary),
-            ),
+            child: Text('Close', style: TextStyle(color: ITColors.primary)),
           ),
         ],
       ),
@@ -637,18 +623,14 @@ class _ITProfileScreenState extends State<ITProfileScreen> {
         ),
         content: Text(
           message,
-          style: TextStyle(
-            color: ITColors.textSecondaryColor(isDark),
-          ),
+          style: TextStyle(color: ITColors.textSecondaryColor(isDark)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
               'Cancel',
-              style: TextStyle(
-                color: ITColors.textSecondaryColor(isDark),
-              ),
+              style: TextStyle(color: ITColors.textSecondaryColor(isDark)),
             ),
           ),
           ElevatedButton(
