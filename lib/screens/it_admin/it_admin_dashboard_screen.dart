@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../generated_l10n/app_localizations.dart';
@@ -104,7 +105,8 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
       ITIncident(
         id: '1',
         title: 'High memory usage on API server',
-        description: 'API server memory usage exceeded 85% threshold. Auto-scaling triggered.',
+        description:
+            'API server memory usage exceeded 85% threshold. Auto-scaling triggered.',
         priority: 'high',
         service: 'API Gateway',
         time: '15 min ago',
@@ -113,7 +115,8 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
       ITIncident(
         id: '2',
         title: 'Storage service degraded performance',
-        description: 'File upload latency increased by 200%. Investigation ongoing.',
+        description:
+            'File upload latency increased by 200%. Investigation ongoing.',
         priority: 'medium',
         service: 'Storage',
         time: '45 min ago',
@@ -217,26 +220,41 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
   }
 
   void _handleQuickAction(String action) {
-    final l10n = AppLocalizations.of(context);
-    final titles = {
-      'system_health': l10n.itSystemHealth,
-      'servers': l10n.itServers,
-      'security': l10n.itSecurity,
-      'backup': l10n.itBackup,
-      'api': l10n.itApiManagement,
-      'logs': l10n.itLogs,
-      'database': l10n.itDatabase,
-      'cloud': l10n.itCloudServices,
+    final routes = {
+      'system_health': '/it-admin/system-health',
+      'servers': '/it-admin/servers',
+      'security': '/it-admin/security-logs',
+      'backup': '/it-admin/backup',
+      'api': '/it-admin/api',
+      'logs': '/it-admin/logs',
+      'database': '/it-admin/database',
+      'cloud': '/it-admin/cloud',
     };
-    
-    final title = titles[action] ?? action;
-    _showFeatureDialog(title);
+
+    final route = routes[action];
+    if (route != null) {
+      context.push(route);
+    } else {
+      final l10n = AppLocalizations.of(context);
+      final titles = {
+        'system_health': l10n.itSystemHealth,
+        'servers': l10n.itServers,
+        'security': l10n.itSecurity,
+        'backup': l10n.itBackup,
+        'api': l10n.itApiManagement,
+        'logs': l10n.itLogs,
+        'database': l10n.itDatabase,
+        'cloud': l10n.itCloudServices,
+      };
+      final title = titles[action] ?? action;
+      _showFeatureDialog(title);
+    }
   }
 
   void _showFeatureDialog(String featureTitle) {
     final l10n = AppLocalizations.of(context);
     final isDark = context.read<ThemeBloc>().state.isDark;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -250,7 +268,11 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
                 color: ITColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.construction_rounded, color: ITColors.primary, size: 24),
+              child: Icon(
+                Icons.construction_rounded,
+                color: ITColors.primary,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -286,7 +308,11 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline_rounded, color: ITColors.info, size: 20),
+                  Icon(
+                    Icons.info_outline_rounded,
+                    color: ITColors.info,
+                    size: 20,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -308,7 +334,9 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
             onPressed: () => Navigator.of(context).pop(),
             style: TextButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
             child: Text(
               l10n.close,
@@ -374,9 +402,7 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: ITColors.primary),
-      );
+      return Center(child: CircularProgressIndicator(color: ITColors.primary));
     }
 
     if (_errorMessage != null) {
@@ -432,7 +458,9 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
                   ITIncidentsSection(
                     isDark: isDark,
                     incidents: _incidents,
-                    onViewAll: () => _showFeatureDialog(AppLocalizations.of(context).itIncidents),
+                    onViewAll: () => _showFeatureDialog(
+                      AppLocalizations.of(context).itIncidents,
+                    ),
                     onIncidentTap: (incident) =>
                         _showSnackBar('Opening incident: ${incident.title}'),
                     onResolve: (incident) =>
@@ -446,7 +474,9 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
                   ITServerStatusSection(
                     isDark: isDark,
                     servers: _servers,
-                    onViewAll: () => _showFeatureDialog(AppLocalizations.of(context).itServers),
+                    onViewAll: () => _showFeatureDialog(
+                      AppLocalizations.of(context).itServers,
+                    ),
                     onServerTap: (server) =>
                         _showSnackBar('Opening server: ${server.name}'),
                     onRestart: (server) =>
@@ -460,11 +490,15 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
                   ITAlertsSection(
                     isDark: isDark,
                     alerts: _alerts,
-                    onViewAll: () => _showFeatureDialog(AppLocalizations.of(context).itAlerts),
+                    onViewAll: () => _showFeatureDialog(
+                      AppLocalizations.of(context).itAlerts,
+                    ),
                     onAlertTap: (alert) =>
                         _showSnackBar('Alert: ${alert.message}'),
                     onDismiss: (alert) {
-                      setState(() => _alerts.removeWhere((a) => a.id == alert.id));
+                      setState(
+                        () => _alerts.removeWhere((a) => a.id == alert.id),
+                      );
                       _showSnackBar('Alert dismissed');
                     },
                   ),
@@ -476,7 +510,8 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
                   ITRecentActivitySection(
                     isDark: isDark,
                     activities: _activities,
-                    onViewAll: () => _showFeatureDialog(AppLocalizations.of(context).itLogs),
+                    onViewAll: () =>
+                        _showFeatureDialog(AppLocalizations.of(context).itLogs),
                     onClearAll: () {
                       setState(() => _activities.clear());
                       _showSnackBar('Activity cleared');
@@ -495,10 +530,22 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
   Widget _buildFilterSection(bool isDark, AppLocalizations l10n) {
     final filters = [
       {'id': 'all', 'label': l10n.itAll, 'icon': Icons.dashboard_rounded},
-      {'id': 'incidents', 'label': l10n.itIncidents, 'icon': Icons.warning_rounded},
+      {
+        'id': 'incidents',
+        'label': l10n.itIncidents,
+        'icon': Icons.warning_rounded,
+      },
       {'id': 'servers', 'label': l10n.itServers, 'icon': Icons.dns_rounded},
-      {'id': 'alerts', 'label': l10n.itAlerts, 'icon': Icons.notifications_rounded},
-      {'id': 'activity', 'label': l10n.itActivity, 'icon': Icons.history_rounded},
+      {
+        'id': 'alerts',
+        'label': l10n.itAlerts,
+        'icon': Icons.notifications_rounded,
+      },
+      {
+        'id': 'activity',
+        'label': l10n.itActivity,
+        'icon': Icons.history_rounded,
+      },
     ];
 
     return SingleChildScrollView(
@@ -541,8 +588,8 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
                 color: isSelected
                     ? ITColors.primary
                     : (isDark
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : ITColors.border),
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : ITColors.border),
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),

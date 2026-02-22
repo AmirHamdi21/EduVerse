@@ -23407,6 +23407,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Remove Photo'**
   String get itRemovePhoto;
+
+  /// No description provided for @itSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get itSettingsTitle;
+
+  /// No description provided for @itAccountSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Settings'**
+  String get itAccountSettings;
+
+  /// No description provided for @itEducationSystemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Education System Settings'**
+  String get itEducationSystemSettings;
+
+  /// No description provided for @itSettingsSystemAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'System Alerts'**
+  String get itSettingsSystemAlerts;
+
+  /// No description provided for @itSettingsSystemAlertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified about system issues'**
+  String get itSettingsSystemAlertsDesc;
+
+  /// No description provided for @itSettingsMaintenanceAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance Alerts'**
+  String get itSettingsMaintenanceAlerts;
+
+  /// No description provided for @itSettingsMaintenanceAlertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications for scheduled maintenance'**
+  String get itSettingsMaintenanceAlertsDesc;
+
+  /// No description provided for @itSettingsAutoBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto Backup'**
+  String get itSettingsAutoBackup;
+
+  /// No description provided for @itSettingsAutoBackupDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically backup system data'**
+  String get itSettingsAutoBackupDesc;
+
+  /// No description provided for @itSettingsPerformanceMonitoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance Monitoring'**
+  String get itSettingsPerformanceMonitoring;
+
+  /// No description provided for @itSettingsPerformanceMonitoringDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Monitor system performance metrics'**
+  String get itSettingsPerformanceMonitoringDesc;
+
+  /// No description provided for @itSettingsSecurityScanning.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Scanning'**
+  String get itSettingsSecurityScanning;
+
+  /// No description provided for @itSettingsSecurityScanningDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Automated security vulnerability scanning'**
+  String get itSettingsSecurityScanningDesc;
+
+  /// No description provided for @itSettingsApiLogging.
+  ///
+  /// In en, this message translates to:
+  /// **'API Logging'**
+  String get itSettingsApiLogging;
+
+  /// No description provided for @itSettingsApiLoggingDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Log all API requests and responses'**
+  String get itSettingsApiLoggingDesc;
+
+  /// No description provided for @itSettingsSystemConfig.
+  ///
+  /// In en, this message translates to:
+  /// **'System Configuration'**
+  String get itSettingsSystemConfig;
+
+  /// No description provided for @itSettingsSystemConfigDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure education system settings'**
+  String get itSettingsSystemConfigDesc;
+
+  /// No description provided for @itSettingsTools.
+  ///
+  /// In en, this message translates to:
+  /// **'IT Tools'**
+  String get itSettingsTools;
+
+  /// No description provided for @itSettingsTwoFactorEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-factor authentication enabled'**
+  String get itSettingsTwoFactorEnabled;
+
+  /// No description provided for @itSettingsTwoFactorDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Two-factor authentication disabled'**
+  String get itSettingsTwoFactorDisabled;
+
+  /// No description provided for @itSettingsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search settings...'**
+  String get itSettingsSearchHint;
+
+  /// No description provided for @itOperational.
+  ///
+  /// In en, this message translates to:
+  /// **'Operational'**
+  String get itOperational;
+
+  /// No description provided for @itDeprecated.
+  ///
+  /// In en, this message translates to:
+  /// **'Deprecated'**
+  String get itDeprecated;
+
+  /// No description provided for @itEndpoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoints'**
+  String get itEndpoints;
+
+  /// No description provided for @itApiKeys.
+  ///
+  /// In en, this message translates to:
+  /// **'API Keys'**
+  String get itApiKeys;
+
+  /// No description provided for @itSearchPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search servers, services, logs...'**
+  String get itSearchPlaceholder;
+
+  /// No description provided for @itSearchNoResultsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term or category'**
+  String get itSearchNoResultsHint;
+
+  /// No description provided for @itSearchBrowseCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse by Category'**
+  String get itSearchBrowseCategories;
+
+  /// No description provided for @itBackupStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Status'**
+  String get itBackupStatus;
+
+  /// No description provided for @itAllServers.
+  ///
+  /// In en, this message translates to:
+  /// **'All Servers'**
+  String get itAllServers;
+
+  /// No description provided for @itAllServices.
+  ///
+  /// In en, this message translates to:
+  /// **'All Services'**
+  String get itAllServices;
+
+  /// No description provided for @itAllAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'All Alerts'**
+  String get itAllAlerts;
+
+  /// No description provided for @itAllLogs.
+  ///
+  /// In en, this message translates to:
+  /// **'All Logs'**
+  String get itAllLogs;
+
+  /// No description provided for @itAllConfigs.
+  ///
+  /// In en, this message translates to:
+  /// **'All Configurations'**
+  String get itAllConfigs;
+
+  /// No description provided for @itAllBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'All Backups'**
+  String get itAllBackups;
+
+  /// No description provided for @itSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get itSearch;
 }
 
 class _AppLocalizationsDelegate

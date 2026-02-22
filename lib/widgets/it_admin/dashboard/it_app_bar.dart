@@ -50,6 +50,30 @@ class ITAppBar extends StatelessWidget {
           ),
           actions: [
             IconButton(
+              onPressed: () => context.push('/it-admin/search'),
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : Colors.white.withValues(alpha: 0.9),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Icon(
+                  Icons.search_rounded,
+                  color: isDark ? Colors.white : ITColors.textPrimary,
+                  size: 20,
+                ),
+              ),
+            ),
+            IconButton(
               onPressed: () => context.push('/it-admin/alerts'),
               icon: Container(
                 padding: const EdgeInsets.all(8),

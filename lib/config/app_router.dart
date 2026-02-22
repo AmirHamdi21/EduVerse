@@ -140,6 +140,7 @@ import 'package:edu_verse/screens/admin/messages/admin_messages_screen.dart';
 import 'package:edu_verse/screens/admin/ai_insights/admin_ai_insights_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_admin_dashboard_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_system_settings_screen.dart';
+import 'package:edu_verse/screens/it_admin/settings/it_settings_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_integration_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_backup_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_security_logs_screen.dart';
@@ -148,6 +149,13 @@ import 'package:edu_verse/screens/it_admin/it_performance_report_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_alerts_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_profile_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_edit_profile_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_system_health_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_server_management_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_api_management_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_error_logs_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_database_screen.dart';
+import 'package:edu_verse/screens/it_admin/it_cloud_services_screen.dart';
+import 'package:edu_verse/screens/it_admin/search/it_search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
@@ -788,6 +796,10 @@ class AppRouter {
         builder: (context, state) => const ITSystemSettingsScreen(),
       ),
       GoRoute(
+        path: '/it-admin/account-settings',
+        builder: (context, state) => const ITSettingsScreen(),
+      ),
+      GoRoute(
         path: '/it-admin/integrations',
         builder: (context, state) => const ITIntegrationScreen(),
       ),
@@ -818,6 +830,34 @@ class AppRouter {
       GoRoute(
         path: '/it-admin/edit-profile',
         builder: (context, state) => const ITEditProfileScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/system-health',
+        builder: (context, state) => const ITSystemHealthScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/servers',
+        builder: (context, state) => const ITServerManagementScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/api',
+        builder: (context, state) => const ITApiManagementScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/logs',
+        builder: (context, state) => const ITErrorLogsScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/database',
+        builder: (context, state) => const ITDatabaseScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/cloud',
+        builder: (context, state) => const ITCloudServicesScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/search',
+        builder: (context, state) => const ITSearchScreen(),
       ),
     ],
     errorBuilder: (context, state) =>

@@ -275,6 +275,13 @@ class _ITDrawerState extends State<ITDrawer>
         route: '/it-admin/dashboard',
         category: 'main',
       ),
+      // _MenuItem(
+      //   icon: Icons.search_rounded,
+      //   activeIcon: Icons.search,
+      //   title: l10n.itSearch,
+      //   route: '/it-admin/search',
+      //   category: 'main',
+      // ),
       _MenuItem(
         icon: Icons.monitor_heart_outlined,
         activeIcon: Icons.monitor_heart,
@@ -363,8 +370,8 @@ class _ITDrawerState extends State<ITDrawer>
       _MenuItem(
         icon: Icons.settings_outlined,
         activeIcon: Icons.settings,
-        title: l10n.settings,
-        route: '/it-admin/settings',
+        title: l10n.itAccountSettings,
+        route: '/it-admin/account-settings',
         category: 'account',
       ),
       _MenuItem(
@@ -372,6 +379,13 @@ class _ITDrawerState extends State<ITDrawer>
         activeIcon: Icons.person,
         title: l10n.itProfileScreen,
         route: '/it-admin/profile',
+        category: 'account',
+      ),
+      _MenuItem(
+        icon: Icons.admin_panel_settings_outlined,
+        activeIcon: Icons.admin_panel_settings,
+        title: l10n.itEducationSystemSettings,
+        route: '/it-admin/settings',
         category: 'account',
       ),
     ];

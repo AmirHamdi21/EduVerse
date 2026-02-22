@@ -11901,4 +11901,112 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get itRemovePhoto => 'إزالة الصورة';
+
+  @override
+  String get itSettingsTitle => 'الإعدادات';
+
+  @override
+  String get itAccountSettings => 'إعدادات الحساب';
+
+  @override
+  String get itEducationSystemSettings => 'إعدادات النظام التعليمي';
+
+  @override
+  String get itSettingsSystemAlerts => 'تنبيهات النظام';
+
+  @override
+  String get itSettingsSystemAlertsDesc => 'احصل على إشعارات حول مشاكل النظام';
+
+  @override
+  String get itSettingsMaintenanceAlerts => 'تنبيهات الصيانة';
+
+  @override
+  String get itSettingsMaintenanceAlertsDesc => 'إشعارات الصيانة المجدولة';
+
+  @override
+  String get itSettingsAutoBackup => 'النسخ الاحتياطي التلقائي';
+
+  @override
+  String get itSettingsAutoBackupDesc => 'نسخ احتياطي تلقائي لبيانات النظام';
+
+  @override
+  String get itSettingsPerformanceMonitoring => 'مراقبة الأداء';
+
+  @override
+  String get itSettingsPerformanceMonitoringDesc => 'مراقبة مقاييس أداء النظام';
+
+  @override
+  String get itSettingsSecurityScanning => 'فحص الأمان';
+
+  @override
+  String get itSettingsSecurityScanningDesc => 'فحص آلي للثغرات الأمنية';
+
+  @override
+  String get itSettingsApiLogging => 'تسجيل API';
+
+  @override
+  String get itSettingsApiLoggingDesc => 'تسجيل جميع طلبات واستجابات API';
+
+  @override
+  String get itSettingsSystemConfig => 'تكوين النظام';
+
+  @override
+  String get itSettingsSystemConfigDesc => 'تكوين إعدادات النظام التعليمي';
+
+  @override
+  String get itSettingsTools => 'أدوات تقنية المعلومات';
+
+  @override
+  String get itSettingsTwoFactorEnabled => 'تم تفعيل المصادقة الثنائية';
+
+  @override
+  String get itSettingsTwoFactorDisabled => 'تم تعطيل المصادقة الثنائية';
+
+  @override
+  String get itSettingsSearchHint => 'البحث في الإعدادات...';
+
+  @override
+  String get itOperational => 'تعمل';
+
+  @override
+  String get itDeprecated => 'موقوفة';
+
+  @override
+  String get itEndpoints => 'نقاط النهاية';
+
+  @override
+  String get itApiKeys => 'مفاتيح API';
+
+  @override
+  String get itSearchPlaceholder => 'البحث في الخوادم والخدمات والسجلات...';
+
+  @override
+  String get itSearchNoResultsHint => 'جرب مصطلح بحث أو فئة مختلفة';
+
+  @override
+  String get itSearchBrowseCategories => 'تصفح حسب الفئة';
+
+  @override
+  String get itBackupStatus => 'حالة النسخ الاحتياطي';
+
+  @override
+  String get itAllServers => 'جميع الخوادم';
+
+  @override
+  String get itAllServices => 'جميع الخدمات';
+
+  @override
+  String get itAllAlerts => 'جميع التنبيهات';
+
+  @override
+  String get itAllLogs => 'جميع السجلات';
+
+  @override
+  String get itAllConfigs => 'جميع الإعدادات';
+
+  @override
+  String get itAllBackups => 'جميع النسخ الاحتياطية';
+
+  @override
+  String get itSearch => 'بحث';
 }

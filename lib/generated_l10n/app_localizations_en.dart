@@ -11943,4 +11943,117 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get itRemovePhoto => 'Remove Photo';
+
+  @override
+  String get itSettingsTitle => 'Settings';
+
+  @override
+  String get itAccountSettings => 'Account Settings';
+
+  @override
+  String get itEducationSystemSettings => 'Education System Settings';
+
+  @override
+  String get itSettingsSystemAlerts => 'System Alerts';
+
+  @override
+  String get itSettingsSystemAlertsDesc => 'Get notified about system issues';
+
+  @override
+  String get itSettingsMaintenanceAlerts => 'Maintenance Alerts';
+
+  @override
+  String get itSettingsMaintenanceAlertsDesc =>
+      'Notifications for scheduled maintenance';
+
+  @override
+  String get itSettingsAutoBackup => 'Auto Backup';
+
+  @override
+  String get itSettingsAutoBackupDesc => 'Automatically backup system data';
+
+  @override
+  String get itSettingsPerformanceMonitoring => 'Performance Monitoring';
+
+  @override
+  String get itSettingsPerformanceMonitoringDesc =>
+      'Monitor system performance metrics';
+
+  @override
+  String get itSettingsSecurityScanning => 'Security Scanning';
+
+  @override
+  String get itSettingsSecurityScanningDesc =>
+      'Automated security vulnerability scanning';
+
+  @override
+  String get itSettingsApiLogging => 'API Logging';
+
+  @override
+  String get itSettingsApiLoggingDesc => 'Log all API requests and responses';
+
+  @override
+  String get itSettingsSystemConfig => 'System Configuration';
+
+  @override
+  String get itSettingsSystemConfigDesc =>
+      'Configure education system settings';
+
+  @override
+  String get itSettingsTools => 'IT Tools';
+
+  @override
+  String get itSettingsTwoFactorEnabled => 'Two-factor authentication enabled';
+
+  @override
+  String get itSettingsTwoFactorDisabled =>
+      'Two-factor authentication disabled';
+
+  @override
+  String get itSettingsSearchHint => 'Search settings...';
+
+  @override
+  String get itOperational => 'Operational';
+
+  @override
+  String get itDeprecated => 'Deprecated';
+
+  @override
+  String get itEndpoints => 'Endpoints';
+
+  @override
+  String get itApiKeys => 'API Keys';
+
+  @override
+  String get itSearchPlaceholder => 'Search servers, services, logs...';
+
+  @override
+  String get itSearchNoResultsHint => 'Try a different search term or category';
+
+  @override
+  String get itSearchBrowseCategories => 'Browse by Category';
+
+  @override
+  String get itBackupStatus => 'Backup Status';
+
+  @override
+  String get itAllServers => 'All Servers';
+
+  @override
+  String get itAllServices => 'All Services';
+
+  @override
+  String get itAllAlerts => 'All Alerts';
+
+  @override
+  String get itAllLogs => 'All Logs';
+
+  @override
+  String get itAllConfigs => 'All Configurations';
+
+  @override
+  String get itAllBackups => 'All Backups';
+
+  @override
+  String get itSearch => 'Search';
 }
