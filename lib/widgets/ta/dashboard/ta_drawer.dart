@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../bloc/auth/auth_bloc.dart';
+import '../../../bloc/auth/auth_event.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
@@ -695,6 +697,7 @@ class _TADrawerState extends State<TADrawer>
             child: InkWell(
               onTap: () {
                 Navigator.pop(context);
+                context.read<AuthBloc>().add(const LogoutRequested());
                 context.go('/login');
               },
               borderRadius: BorderRadius.circular(12),

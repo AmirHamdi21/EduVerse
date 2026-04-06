@@ -1,0 +1,92 @@
+import 'package:equatable/equatable.dart';
+import '../materials/course_material_model.dart';
+
+/// Represents organizational structure items within a course timeline
+/// (lectures, labs, sections, tutorials).
+///
+/// Maps to the backend `/api/courses/{courseId}/structure` endpoints.
+class CourseStructureModel extends Equatable {
+  final String organizationId;
+  final String courseId;
+  final String? materialId;
+  final CourseMaterialModel? material;
+  final String organizationType; // 'lecture' | 'lab' | 'section' | 'tutorial'
+  final String title;
+  final int weekNumber;
+  final int orderIndex;
+  final String? description;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
+
+  const CourseStructureModel({
+    required this.organizationId,
+    required this.courseId,
+    this.materialId,
+    this.material,
+    required this.organizationType,
+    required this.title,
+    required this.weekNumber,
+    required this.orderIndex,
+    this.description,
+    this.createdAt,
+    this.updatedAt,
+  });
+
+  factory CourseStructureModel.fromJson(Map<String, dynamic> json) {
+    return CourseStructureModel(
+      organizationId: json['organizationId']?.toString() ?? '',
+      courseId: json['courseId']?.toString() ?? '',
+      materialId: json['materialId']?.toString(),
+      material: json['material'] != null
+          ? CourseMaterialModel.fromJson(
+              json['material'] as Map<String, dynamic>)
+          : null,
+      organizationType: json['organizationType'] as String? ?? 'lecture',
+      title: json['title'] as String? ?? '',
+      weekNumber: json['weekNumber'] is int
+          ? json['weekNumber'] as int
+          : int.tryParse(json['weekNumber']?.toString() ?? '') ?? 0,
+      orderIndex: json['orderIndex'] is int
+          ? json['orderIndex'] as int
+          : int.tryParse(json['orderIndex']?.toString() ?? '') ?? 0,
+      description: json['description'] as String?,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'] as String)
+          : null,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'organizationId': organizationId,
+      'courseId': courseId,
+      'materialId': materialId,
+      'material': material?.toJson(),
+      'organizationType': organizationType,
+      'title': title,
+      'weekNumber': weekNumber,
+      'orderIndex': orderIndex,
+      'description': description,
+      'createdAt': createdAt?.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+    };
+  }
+
+  @override
+  List<Object?> get props => [
+        organizationId,
+        courseId,
+        materialId,
+        material,
+        organizationType,
+        title,
+        weekNumber,
+        orderIndex,
+        description,
+        createdAt,
+        updatedAt,
+      ];
+}

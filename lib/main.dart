@@ -22,6 +22,12 @@ import 'package:edu_verse/config/app_router.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:edu_verse/services/api_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/services/api/core_api_client.dart';
+import 'package:edu_verse/services/api/course_service.dart';
+import 'package:edu_verse/services/api/enrollment_service.dart';
+import 'package:edu_verse/services/api/material_service.dart';
+import 'package:edu_verse/services/api/communication_service.dart';
+import 'package:edu_verse/bloc/courses/courses_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -66,6 +72,7 @@ class _MyAppState extends State<MyApp> {
   late ProfileCubit _profileCubit;
   late SearchCubit _searchCubit;
   late AdminNotificationCubit _adminNotificationCubit;
+  late CoursesBloc _coursesBloc;
 
   @override
   void initState() {
@@ -90,6 +97,16 @@ class _MyAppState extends State<MyApp> {
     _profileCubit = ProfileCubit()..loadProfile();
     _searchCubit = SearchCubit();
     _adminNotificationCubit = AdminNotificationCubit();
+
+    // ── Course API layer (Phase 1) ─────────────────────────
+    final coreApiClient = CoreApiClient(storageService: _storageService);
+    _coursesBloc = CoursesBloc(
+      courseService: CourseService(coreApiClient: coreApiClient),
+      enrollmentService: EnrollmentService(coreApiClient: coreApiClient),
+      materialService: MaterialService(coreApiClient: coreApiClient),
+      communicationService: CommunicationService(coreApiClient: coreApiClient),
+    );
+
     // Initialize theme and language from storage
     _initializeTheme();
     _initializeLanguage();
@@ -121,6 +138,7 @@ class _MyAppState extends State<MyApp> {
     _profileCubit.close();
     _searchCubit.close();
     _adminNotificationCubit.close();
+    _coursesBloc.close();
     super.dispose();
   }
 
@@ -146,6 +164,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _profileCubit),
         BlocProvider.value(value: _searchCubit),
         BlocProvider.value(value: _adminNotificationCubit),
+        BlocProvider.value(value: _coursesBloc),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {

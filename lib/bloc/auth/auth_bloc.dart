@@ -456,8 +456,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         response.accessToken,
         response.refreshToken,
       );
-      await _storageService.saveUserData(response.user);
-      emit(AuthAuthenticated(response.user));
+      // The refresh endpoint does NOT return user data,
+      // so we keep the existing user from storage.
+      final user = await _storageService.getUserData();
+      if (user != null) {
+        emit(AuthAuthenticated(user));
+      } else {
+        emit(const AuthUnauthenticated());
+      }
     } catch (e) {
       // Token refresh failed, logout
       await _storageService.clearAll();

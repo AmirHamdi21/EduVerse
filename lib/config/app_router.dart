@@ -165,6 +165,7 @@ import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
 import '../widgets/student/courses/course_model.dart';
+import '../models/core/enrollment_model.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -241,22 +242,47 @@ class AppRouter {
         path: '/course-details',
         builder: (context, state) {
           final extra = state.extra;
-          CourseModel? course;
           int initialTab = 0;
-          
-          if (extra is Map<String, dynamic>) {
-            course = extra['course'] as CourseModel?;
-            initialTab = extra['initialTab'] as int? ?? 0;
-          } else if (extra is CourseModel) {
-            course = extra;
-          }
-          
-          if (course == null) {
-            return const Scaffold(
-              body: Center(child: Text('Course not found')),
+
+          // Live enrollment from CoursesBloc
+          if (extra is CourseEnrollmentModel) {
+            return CourseDetailsScreen(
+              enrollment: extra,
+              initialTab: initialTab,
             );
           }
-          return CourseDetailsScreen(course: course, initialTab: initialTab);
+
+          // Map-style extras (from dashboard section)
+          if (extra is Map<String, dynamic>) {
+            final enrollment = extra['enrollment'] as CourseEnrollmentModel?;
+            final legacyCourse = extra['course'] as CourseModel?;
+            initialTab = extra['initialTab'] as int? ?? 0;
+
+            if (enrollment != null) {
+              return CourseDetailsScreen(
+                enrollment: enrollment,
+                initialTab: initialTab,
+              );
+            }
+            if (legacyCourse != null) {
+              return CourseDetailsScreen(
+                legacyCourse: legacyCourse,
+                initialTab: initialTab,
+              );
+            }
+          }
+
+          // Legacy CourseModel direct pass
+          if (extra is CourseModel) {
+            return CourseDetailsScreen(
+              legacyCourse: extra,
+              initialTab: initialTab,
+            );
+          }
+
+          return const Scaffold(
+            body: Center(child: Text('Course not found')),
+          );
         },
       ),
       GoRoute(

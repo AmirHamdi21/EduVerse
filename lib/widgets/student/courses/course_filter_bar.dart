@@ -38,20 +38,20 @@ class _CourseFilterBarState extends State<CourseFilterBar> {
               ),
               const SizedBox(width: 12),
               _buildFilterButton(
-                label: l10n.lectures,
-                value: 'lectures',
-                isDark: isDark,
-              ),
-              const SizedBox(width: 12),
-              _buildFilterButton(
-                label: l10n.labs,
-                value: 'labs',
+                label: 'Active',
+                value: 'active',
                 isDark: isDark,
               ),
               const SizedBox(width: 12),
               _buildFilterButton(
                 label: l10n.completed,
                 value: 'completed',
+                isDark: isDark,
+              ),
+              const SizedBox(width: 12),
+              _buildFilterButton(
+                label: 'Dropped',
+                value: 'dropped',
                 isDark: isDark,
               ),
             ],

@@ -1,18 +1,21 @@
-import 'package:edu_verse/generated_l10n/app_localizations.dart';
-import 'package:edu_verse/widgets/common/animated_circular_bar.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
-import '../../../widgets/common/animated_progress_bar.dart';
-import 'course_model.dart';
+import '../../../common/utils/course_ui_utils.dart';
+import '../../../models/core/enrollment_model.dart';
 
+/// Displays a single course enrollment card with live data from the API.
+///
+/// Consumes [CourseEnrollmentModel] and uses [CourseUiUtils] for
+/// deterministic gradient backgrounds when thumbnails are unavailable.
 class CourseCard extends StatefulWidget {
-  final CourseModel course;
+  final CourseEnrollmentModel enrollment;
   final Animation<double>? animation;
 
-  const CourseCard({super.key, required this.course, this.animation});
+  const CourseCard({super.key, required this.enrollment, this.animation});
 
   @override
   State<CourseCard> createState() => _CourseCardState();
@@ -37,6 +40,66 @@ class _CourseCardState extends State<CourseCard>
     super.dispose();
   }
 
+  // ── Helpers ──────────────────────────────────────────────────────────────
+
+  /// Safe course title extraction with SC-003 null-coalescing.
+  String get _title =>
+      CourseUiUtils.safeCourseTitle(widget.enrollment.course?.courseName);
+
+  /// Safe course code extraction with SC-003 null-coalescing.
+  String get _courseCode =>
+      CourseUiUtils.safeCourseCode(widget.enrollment.course?.courseCode);
+
+  /// Department name or fallback text if unavailable.
+  String get _departmentOrInstructor =>
+      widget.enrollment.course?.departmentName ?? 'General';
+
+  /// Credit hours display.
+  int get _credits => widget.enrollment.course?.credits ?? 0;
+
+  /// Enrollment status label.
+  String get _statusLabel {
+    switch (widget.enrollment.status.toLowerCase()) {
+      case 'completed':
+        return 'Completed';
+      case 'dropped':
+        return 'Dropped';
+      case 'active':
+      case 'enrolled':
+        return 'Active';
+      case 'waitlisted':
+        return 'Waitlisted';
+      default:
+        return 'Active';
+    }
+  }
+
+  /// Deterministic gradient colors for the course icon placeholder.
+  List<Color> get _gradientColors => CourseUiUtils.gradientForCourseId(
+      widget.enrollment.course?.courseId ?? widget.enrollment.courseId);
+
+  /// Initials for the gradient avatar.
+  String get _initials => CourseUiUtils.initialsFromCourseName(
+      widget.enrollment.course?.courseName ?? '');
+
+
+
+  /// Status badge color.
+  Color get _statusColor {
+    switch (widget.enrollment.status.toLowerCase()) {
+      case 'completed':
+        return const Color(0xFF10B981);
+      case 'dropped':
+        return const Color(0xFFEF4444);
+      case 'waitlisted':
+        return const Color(0xFFF59E0B);
+      case 'active':
+      case 'enrolled':
+      default:
+        return const Color(0xFF155DFC);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
@@ -51,7 +114,7 @@ class _CourseCardState extends State<CourseCard>
                   end: Offset.zero,
                 ).chain(CurveTween(curve: Curves.easeOutCubic)),
               ) ??
-              AlwaysStoppedAnimation(Offset.zero),
+              const AlwaysStoppedAnimation(Offset.zero),
           child: FadeTransition(
             opacity:
                 widget.animation?.drive(
@@ -60,7 +123,7 @@ class _CourseCardState extends State<CourseCard>
                     end: 1.0,
                   ).chain(CurveTween(curve: Curves.easeOut)),
                 ) ??
-                AlwaysStoppedAnimation(1.0),
+                const AlwaysStoppedAnimation(1.0),
             child: Container(
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF16213E) : Colors.white,
@@ -86,7 +149,7 @@ class _CourseCardState extends State<CourseCard>
                   children: [
                     _buildCourseHeader(isDark),
                     const SizedBox(height: 24),
-                    _buildProgressSection(isDark),
+                    _buildInfoSection(isDark),
                     const SizedBox(height: 24),
                     _buildActionButtons(isDark),
                   ],
@@ -103,17 +166,27 @@ class _CourseCardState extends State<CourseCard>
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Gradient avatar with initials (replaces hardcoded icon)
         Container(
           width: 64,
           height: 64,
           decoration: BoxDecoration(
-            color: widget.course.iconBackgroundColor.withOpacity(0.15),
+            gradient: LinearGradient(
+              colors: _gradientColors,
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: Icon(
-            widget.course.courseIcon,
-            color: widget.course.iconBackgroundColor,
-            size: 32,
+          child: Center(
+            child: Text(
+              _initials,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
         const SizedBox(width: 16),
@@ -122,7 +195,7 @@ class _CourseCardState extends State<CourseCard>
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                widget.course.title,
+                _title,
                 style: TextStyle(
                   color: isDark ? Colors.white : const Color(0xFF101828),
                   fontSize: 16,
@@ -132,127 +205,114 @@ class _CourseCardState extends State<CourseCard>
               ),
               const SizedBox(height: 4),
               Text(
-                widget.course.instructor,
+                _courseCode,
                 style: TextStyle(
                   color: isDark ? Colors.white70 : const Color(0xFF4A5565),
                   fontSize: 14,
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                widget.course.nextEvent,
-                style: TextStyle(
-                  color: isDark ? Colors.white54 : const Color(0xFF6A7282),
-                  fontSize: 12,
-                  height: 1.33,
-                ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.school_outlined,
+                    size: 14,
+                    color: isDark ? Colors.white54 : const Color(0xFF6A7282),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    _departmentOrInstructor,
+                    style: TextStyle(
+                      color:
+                          isDark ? Colors.white54 : const Color(0xFF6A7282),
+                      fontSize: 12,
+                      height: 1.33,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
         ),
         const SizedBox(width: 12),
-        // CircularProgressIndicator(
-        //   value: widget.course.progress,
-        //   strokeWidth: 3,
-
-        //   valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF155DFC)),
-        // ),
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            // Circular Progress Indicator
-            SizedBox(
-              width: 72,
-              height: 72,
-              // child: CircularProgressIndicator(
-              //   value: widget.course.progress, // 0.0 to 1.0
-              //   strokeWidth: 4,
-              //   backgroundColor: isDark
-              //       ? Colors.white10
-              //       : const Color(0xFFE0E7FF),
-              //   valueColor: AlwaysStoppedAnimation<Color>(
-              //     isDark ? const Color(0xff8EC5FF) : const Color(0xFF155DFC),
-              //   ),
-              // ),
-              child: AnimatedCircularBar(
-                value: widget.course.progress,
-                backgroundColor: isDark
-                    ? Colors.white10
-                    : const Color(0xFFE0E7FF),
-                valueColor: isDark
-                    ? const Color(0xff8EC5FF)
-                    : const Color(0xFF155DFC),
-                minHeight: 4,
-                duration: const Duration(milliseconds: 1500),
-              ),
+        // Status badge
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: BoxDecoration(
+            color: _statusColor.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            _statusLabel,
+            style: TextStyle(
+              color: _statusColor,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
             ),
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                // color: isDark ? Colors.white10 : const Color(0xFFF0F4FF),
-                border: Border.all(
-                  color: isDark ? Colors.white10 : const Color(0xFFE0E7FF),
-                  width: 2,
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  '${(widget.course.progress * 100).toInt()}%',
-                  style: TextStyle(
-                    color: isDark
-                        ? const Color(0xff8EC5FF)
-                        : const Color(0xFF155DFC),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildProgressSection(bool isDark) {
-    final l10n = AppLocalizations.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildInfoSection(bool isDark) {
+    return Row(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        _buildInfoChip(
+          icon: Icons.credit_card_outlined,
+          label: '$_credits Credits',
+          isDark: isDark,
+        ),
+        const SizedBox(width: 12),
+        _buildInfoChip(
+          icon: Icons.layers_outlined,
+          label: widget.enrollment.course?.level ?? 'N/A',
+          isDark: isDark,
+        ),
+        const SizedBox(width: 12),
+        _buildInfoChip(
+          icon: Icons.person_outline,
+          label: widget.enrollment.role,
+          isDark: isDark,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoChip({
+    required IconData icon,
+    required String label,
+    required bool isDark,
+  }) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : const Color(0xFFF5F7FA),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              '${(widget.course.progress * 100).toInt()}% ' + l10n.completed,
-              style: TextStyle(
-                color: isDark ? Colors.white70 : const Color(0xFF4A5565),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Text(
-              widget.course.eventDate,
-              style: TextStyle(
-                color: isDark ? Colors.white70 : const Color(0xFF4A5565),
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+            Icon(icon, size: 14, color: isDark ? Colors.white54 : const Color(0xFF6A7282)),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: isDark ? Colors.white70 : const Color(0xFF4A5565),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w500,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        CompactAnimatedProgressBar(
-          value: widget.course.progress,
-          backgroundColor: isDark
-              ? Colors.white.withOpacity(0.1)
-              : const Color(0xFFE5E7EB),
-          valueColor: const Color(0xFF155DFC),
-          minHeight: 6,
-          duration: const Duration(milliseconds: 1500),
-        ),
-      ],
+      ),
     );
   }
 
@@ -278,9 +338,7 @@ class _CourseCardState extends State<CourseCard>
             ),
             child: ElevatedButton(
               onPressed: () {
-                widget.course.onPrimaryButtonPressed?.call();
-                // Navigate to course details
-                context.push('/course-details', extra: widget.course);
+                context.push('/course-details', extra: widget.enrollment);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
@@ -291,9 +349,9 @@ class _CourseCardState extends State<CourseCard>
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              child: Text(
-                widget.course.primaryButtonLabel,
-                style: const TextStyle(
+              child: const Text(
+                'Continue',
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -304,14 +362,14 @@ class _CourseCardState extends State<CourseCard>
         const SizedBox(width: 12),
         Expanded(
           child: ElevatedButton(
-            onPressed: widget.course.onSecondaryButtonPressed ?? () {},
+            onPressed: () {},
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
               foregroundColor: const Color(0xFF155DFC),
               elevation: 0,
               padding: const EdgeInsets.symmetric(vertical: 12),
               side: BorderSide(
-                color: isDark ? Color(0xff8EC5FF) : const Color(0xFF155DFC),
+                color: isDark ? const Color(0xff8EC5FF) : const Color(0xFF155DFC),
                 width: 1.5,
               ),
               shape: RoundedRectangleBorder(
@@ -323,7 +381,7 @@ class _CourseCardState extends State<CourseCard>
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Color(0xff8EC5FF) : Color(0xFF155DFC),
+                color: isDark ? const Color(0xff8EC5FF) : const Color(0xFF155DFC),
               ),
             ),
           ),

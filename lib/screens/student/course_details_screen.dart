@@ -3,16 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../common/utils/course_ui_utils.dart';
+import '../../models/core/enrollment_model.dart';
 import '../../widgets/student/courses/course_model.dart';
 import '../../widgets/student/course_details/course_tabs.dart';
 
+/// Course detail drill-down screen consuming live [CourseEnrollmentModel].
+///
+/// T014: Constructor now accepts [CourseEnrollmentModel] directly.
+/// T015: All header info, credits, and instructor use live object data
+///        with safe SC-003 null-coalescing fallbacks.
 class CourseDetailsScreen extends StatefulWidget {
-  final CourseModel course;
+  /// Accepts either a [CourseEnrollmentModel] (live) or legacy [CourseModel].
+  final CourseEnrollmentModel? enrollment;
+  final CourseModel? legacyCourse;
   final int initialTab;
 
   const CourseDetailsScreen({
-    super.key, 
-    required this.course,
+    super.key,
+    this.enrollment,
+    this.legacyCourse,
     this.initialTab = 0,
   });
 
@@ -26,6 +36,85 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   late AnimationController _headerAnimationController;
   final ScrollController _scrollController = ScrollController();
   bool _isHeaderCollapsed = false;
+
+  // ── Safe accessors with SC-003 null-coalescing ─────────────────────────
+
+  String get _title {
+    if (widget.enrollment != null) {
+      return CourseUiUtils.safeCourseTitle(
+          widget.enrollment!.course?.courseName);
+    }
+    return widget.legacyCourse?.title ?? 'Course';
+  }
+
+  String get _courseCode {
+    if (widget.enrollment != null) {
+      return CourseUiUtils.safeCourseCode(
+          widget.enrollment!.course?.courseCode);
+    }
+    return '';
+  }
+
+  String get _instructor {
+    if (widget.enrollment != null) {
+      return widget.enrollment!.course?.departmentName ?? 'Unknown Instructor';
+    }
+    return widget.legacyCourse?.instructor ?? 'Unknown Instructor';
+  }
+
+  int get _credits {
+    return widget.enrollment?.course?.credits ?? 0;
+  }
+
+  String get _statusLabel {
+    if (widget.enrollment != null) {
+      switch (widget.enrollment!.status.toLowerCase()) {
+        case 'completed':
+          return 'Completed';
+        case 'dropped':
+          return 'Dropped';
+        case 'active':
+        case 'enrolled':
+          return 'Active';
+        case 'waitlisted':
+          return 'Waitlisted';
+        default:
+          return 'Active';
+      }
+    }
+    return 'Active';
+  }
+
+  String get _level {
+    return widget.enrollment?.course?.level ?? 'N/A';
+  }
+
+  String? get _description {
+    return widget.enrollment?.course?.description;
+  }
+
+  List<Color> get _gradientColors {
+    if (widget.enrollment != null) {
+      return CourseUiUtils.gradientForCourseId(
+          widget.enrollment!.course?.courseId ?? widget.enrollment!.courseId);
+    }
+    return [const Color(0xFF2B7FFF), const Color(0xFF155DFC)];
+  }
+
+  /// Legacy progress value (from old model) or status-derived value.
+  double get _progress {
+    if (widget.legacyCourse != null) {
+      return widget.legacyCourse!.progress;
+    }
+    switch (widget.enrollment?.status.toLowerCase() ?? 'active') {
+      case 'completed':
+        return 1.0;
+      case 'dropped':
+        return 0.0;
+      default:
+        return 0.5;
+    }
+  }
 
   @override
   void initState() {
@@ -65,10 +154,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
 
         return Scaffold(
           backgroundColor: bgColor,
-
           body: Stack(
             children: [
-              // Main scrollable content
               CustomScrollView(
                 controller: _scrollController,
                 slivers: [
@@ -78,8 +165,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: isDark
-                              ? [Color(0xFF1E293B), Color(0xFF0F172A)]
-                              : [Color(0xFF2B7FFF), Color(0xFF155DFC)],
+                              ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+                              : _gradientColors,
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -92,36 +179,35 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                           child: Column(
                             children: [
                               CourseDetailsHeader(
-                                title: widget.course.title,
+                                title: _title,
                                 isDark: isDark,
                                 onBackPressed: () => Navigator.pop(context),
                               ),
                               const SizedBox(height: 20),
-                              // Stats cards row
+                              // Stats cards row — T015
                               Row(
                                 children: [
                                   Expanded(
                                     child: _buildStatCard(
-                                      icon: Icons.assessment_outlined,
-                                      value:
-                                          '${(widget.course.progress * 100).toInt()}%',
-                                      label: 'Progress',
+                                      icon: Icons.credit_card_outlined,
+                                      value: '$_credits',
+                                      label: 'Credits',
                                     ),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: _buildStatCard(
-                                      icon: Icons.calendar_today_outlined,
-                                      value: widget.course.eventDate,
-                                      label: 'Next Event',
+                                      icon: Icons.layers_outlined,
+                                      value: _level,
+                                      label: 'Level',
                                     ),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: _buildStatCard(
-                                      icon: Icons.schedule_outlined,
-                                      value: '12h',
-                                      label: 'Duration',
+                                      icon: Icons.check_circle_outline,
+                                      value: _statusLabel,
+                                      label: 'Status',
                                     ),
                                   ),
                                 ],
@@ -150,98 +236,54 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Instructor info card
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? const Color(0xFF2D2D44)
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(16),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 56,
-                                      height: 56,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        gradient: LinearGradient(
-                                          colors: [
-                                            Color(0xFF2B7FFF),
-                                            Color(0xFF155DFC),
-                                          ],
-                                        ),
-                                      ),
-                                      child:
-                                          widget.course.instructorImage != null
-                                          ? ClipOval(
-                                              child: Image.network(
-                                                widget.course.instructorImage!,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            )
-                                          : const Icon(
-                                              Icons.person,
-                                              size: 28,
-                                              color: Colors.white,
-                                            ),
-                                    ),
-                                    const SizedBox(width: 16),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            widget.course.instructor,
-                                            style: TextStyle(
-                                              color: isDark
-                                                  ? Colors.white
-                                                  : const Color(0xFF101828),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            'Course Instructor',
-                                            style: TextStyle(
-                                              color: isDark
-                                                  ? Colors.white54
-                                                  : const Color(0xFF667085),
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {},
-                                      icon: Icon(
-                                        Icons.message_outlined,
-                                        color: const Color(0xFF155DFC),
-                                        size: 22,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              // Instructor / Department info card
+                              _buildInstructorCard(isDark),
                               const SizedBox(height: 20),
+                              // Course code & description
+                              if (_courseCode.isNotEmpty) ...[
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? Colors.white.withOpacity(0.08)
+                                        : const Color(0xFFF0F4FF),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    _courseCode,
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? const Color(0xFF8EC5FF)
+                                          : const Color(0xFF155DFC),
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                              ],
+                              if (_description != null &&
+                                  _description!.isNotEmpty) ...[
+                                Text(
+                                  _description!,
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? Colors.white70
+                                        : const Color(0xFF4A5565),
+                                    fontSize: 14,
+                                    height: 1.6,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                              ],
                               // Action buttons
                               Row(
                                 children: [
                                   Expanded(
                                     flex: 2,
                                     child: _buildActionButton(
-                                      label: widget.course.primaryButtonLabel,
+                                      label: 'Continue',
                                       icon: Icons.play_circle_outline,
                                       isPrimary: true,
                                       onTap: () {},
@@ -262,7 +304,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                               // Progress section
                               _buildProgressSection(isDark),
                               const SizedBox(height: 24),
-                              // Tabs
+                              // Tabs — pass legacy CourseModel for tab content compatibility
                               CourseTabs(
                                 selectedIndex: _selectedTabIndex,
                                 onTabChanged: (index) {
@@ -271,9 +313,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                                   });
                                 },
                                 isDark: isDark,
-                                course: widget.course,
+                                course: _buildLegacyCourseForTabs(),
                               ),
-                              // const SizedBox(height: 80),
                             ],
                           ),
                         ),
@@ -282,21 +323,87 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                   ),
                 ],
               ),
-              // // Floating action button
-              // Positioned(
-              //   bottom: 20,
-              //   right: 20,
-              //   child: FloatingActionButton(
-              //     onPressed: () {},
-              //     backgroundColor: const Color(0xFF155DFC),
-              //     elevation: 8,
-              //     child: const Icon(Icons.add, color: Colors.white, size: 28),
-              //   ),
-              // ),
             ],
           ),
         );
       },
+    );
+  }
+
+  /// Builds a legacy [CourseModel] for backwards compatibility with
+  /// CourseTabs which still expects the old type.
+  CourseModel _buildLegacyCourseForTabs() {
+    if (widget.legacyCourse != null) return widget.legacyCourse!;
+    return CourseModel(
+      title: _title,
+      instructor: _instructor,
+      progress: _progress,
+      nextEvent: '',
+      eventDate: '',
+      iconBackgroundColor: _gradientColors.first,
+      courseIcon: Icons.school_outlined,
+    );
+  }
+
+  Widget _buildInstructorCard(bool isDark) {
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2D2D44) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(colors: _gradientColors),
+            ),
+            child: const Icon(Icons.person, size: 28, color: Colors.white),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _instructor,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : const Color(0xFF101828),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Course Instructor',
+                  style: TextStyle(
+                    color: isDark ? Colors.white54 : const Color(0xFF667085),
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: const Icon(
+              Icons.message_outlined,
+              color: Color(0xFF155DFC),
+              size: 22,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -402,7 +509,6 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   }
 
   Widget _buildProgressSection(bool isDark) {
-    final progress = widget.course.progress;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -436,13 +542,13 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
                   ),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  '${(progress * 100).toInt()}%',
+                  _statusLabel,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -467,13 +573,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                   ),
                 ),
                 FractionallySizedBox(
-                  widthFactor: progress,
+                  widthFactor: _progress,
                   child: Container(
                     height: 12,
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
-                      ),
+                      gradient: LinearGradient(colors: _gradientColors),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -483,7 +587,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
           ),
           const SizedBox(height: 12),
           Text(
-            widget.course.nextEvent,
+            widget.enrollment != null
+                ? 'Enrolled: ${widget.enrollment!.enrollmentDate.toString().substring(0, 10)}'
+                : (widget.legacyCourse?.nextEvent ?? ''),
             style: TextStyle(
               color: isDark ? Colors.white54 : const Color(0xFF667085),
               fontSize: 13,

@@ -13,15 +13,15 @@ class SortButton extends StatelessWidget {
   String _getSortLabel(String? sort, AppLocalizations l10n) {
     if (sort == null) return l10n.sort;
     switch (sort) {
-      case 'progress_desc':
-        return 'Progress ↓';
-      case 'progress_asc':
-        return 'Progress ↑';
       case 'title_asc':
         return 'A-Z';
       case 'title_desc':
         return 'Z-A';
-      case 'event_date':
+      case 'credits_desc':
+        return 'Credits ↓';
+      case 'credits_asc':
+        return 'Credits ↑';
+      case 'date':
         return 'Date';
       default:
         return l10n.sort;
@@ -44,10 +44,10 @@ class SortButton extends StatelessWidget {
                 color: isDark ? const Color(0xFF16213E) : Colors.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: selectedSort != null && selectedSort != 'progress_desc'
+                  color: selectedSort != null && selectedSort != 'title_asc'
                       ? const Color(0xFF155DFC)
                       : (isDark ? Colors.white10 : const Color(0xFFD1D5DC)),
-                  width: selectedSort != null && selectedSort != 'progress_desc' ? 1.5 : 1,
+                  width: selectedSort != null && selectedSort != 'title_asc' ? 1.5 : 1,
                 ),
               ),
               child: Row(
@@ -55,7 +55,7 @@ class SortButton extends StatelessWidget {
                   const SizedBox(width: 6),
                   Icon(
                     Icons.swap_vert,
-                    color: selectedSort != null && selectedSort != 'progress_desc'
+                    color: selectedSort != null && selectedSort != 'title_asc'
                         ? const Color(0xFF155DFC)
                         : (isDark ? Colors.white54 : const Color(0xFF495565)),
                     size: 20,
@@ -65,11 +65,11 @@ class SortButton extends StatelessWidget {
                     child: Text(
                       _getSortLabel(selectedSort, l10n),
                       style: TextStyle(
-                        color: selectedSort != null && selectedSort != 'progress_desc'
+                        color: selectedSort != null && selectedSort != 'title_asc'
                             ? const Color(0xFF155DFC)
                             : (isDark ? Colors.white70 : const Color(0xFF364153)),
                         fontSize: 14,
-                        fontWeight: selectedSort != null && selectedSort != 'progress_desc'
+                        fontWeight: selectedSort != null && selectedSort != 'title_asc'
                             ? FontWeight.w600
                             : FontWeight.w500,
                       ),
@@ -111,21 +111,21 @@ class SortButton extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            _buildSortOption(
-              context,
-              'progress_desc',
-              'Highest Progress',
-              isDark,
-            ),
-            _buildSortOption(
-              context,
-              'progress_asc',
-              'Lowest Progress',
-              isDark,
-            ),
             _buildSortOption(context, 'title_asc', 'Title (A-Z)', isDark),
             _buildSortOption(context, 'title_desc', 'Title (Z-A)', isDark),
-            _buildSortOption(context, 'event_date', 'Next Event', isDark),
+            _buildSortOption(
+              context,
+              'credits_desc',
+              'Most Credits',
+              isDark,
+            ),
+            _buildSortOption(
+              context,
+              'credits_asc',
+              'Least Credits',
+              isDark,
+            ),
+            _buildSortOption(context, 'date', 'Enrollment Date', isDark),
           ],
         ),
       ),

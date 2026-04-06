@@ -17,12 +17,12 @@ class FilterButton extends StatelessWidget {
   String _getFilterLabel(String? filter, AppLocalizations l10n) {
     if (filter == null || filter == 'all') return l10n.filter;
     switch (filter) {
+      case 'active':
+        return 'Active';
       case 'completed':
         return l10n.completed;
-      case 'lectures':
-        return l10n.lectures;
-      case 'labs':
-        return l10n.labs;
+      case 'dropped':
+        return 'Dropped';
       default:
         return l10n.filter;
     }
@@ -119,20 +119,20 @@ class FilterButton extends StatelessWidget {
             ),
             _buildFilterOption(
               context,
+              'active',
+              'Active',
+              isDark,
+            ),
+            _buildFilterOption(
+              context,
               'completed',
-              '${l10n.completed} (80%+)',
+              l10n.completed,
               isDark,
             ),
             _buildFilterOption(
               context,
-              'lectures',
-              '${l10n.lectures} (<80%)',
-              isDark,
-            ),
-            _buildFilterOption(
-              context,
-              'labs',
-              '${l10n.labs} (50-80%)',
+              'dropped',
+              'Dropped',
               isDark,
             ),
           ],

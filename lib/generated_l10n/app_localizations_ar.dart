@@ -2407,7 +2407,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get courseChatComingSoon => 'ميزة محادثة المقرر قادمة قريباً!';
 
   @override
-  String get yesterday => 'Yesterday';
+  String get yesterday => 'أمس';
 
   @override
   String get justNow => 'الآن';

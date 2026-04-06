@@ -6,7 +6,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
+import '../../../bloc/courses/courses_bloc.dart';
+import '../../../bloc/courses/courses_event.dart';
+import '../../../bloc/courses/courses_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/instructor/instructor_course_model.dart';
 import '../../../models/instructor/extended_course_model.dart';
 import '../../../widgets/instructor/courses/courses_barrel.dart';
@@ -28,8 +32,6 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
   String _selectedCategory = 'all';
   CourseSortOption _sortOption = CourseSortOption.newest;
   CourseViewType _viewType = CourseViewType.grid;
-  List<ExtendedCourse> _courses = [];
-  bool _isLoading = true;
   bool _isSelectionMode = false;
   final Set<String> _selectedCourses = {};
   final TextEditingController _searchController = TextEditingController();
@@ -51,15 +53,9 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
     'Database',
   ];
 
-  // Stats
-  int get _totalStudents =>
-      _courses.fold<num>(0, (sum, c) => sum + c.course.totalStudents).toInt();
-  // ignore: unused_element
-  double get _totalRevenue => _courses.fold(0.0, (sum, c) => sum + c.revenue);
-  double get _avgEngagement => _courses.isEmpty
-      ? 0
-      : _courses.fold<num>(0, (sum, c) => sum + c.engagementScore).toDouble() /
-            _courses.length;
+  // Stats — computed from live BLoC state
+  int _totalStudents = 0;
+  List<ExtendedCourse> _courses = [];
 
   @override
   void initState() {
@@ -76,7 +72,8 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
       parent: _statsAnimController,
       curve: Curves.easeOutCubic,
     );
-    _loadCourses();
+    // Dispatch BLoC event to fetch instructor courses from API
+    context.read<CoursesBloc>().add(const InstructorCoursesFetched());
   }
 
   @override
@@ -88,253 +85,47 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
     super.dispose();
   }
 
-  Future<void> _loadCourses() async {
-    if (!mounted) return;
-
-    setState(() => _isLoading = true);
-
-    // Reset animation controllers for refresh
-    _statsAnimController.reset();
-    _cardAnimController.reset();
-
-    try {
-      await Future.delayed(const Duration(milliseconds: 600));
-      if (mounted) {
-        setState(() {
-          _courses = _getDemoCourses();
-          _isLoading = false;
-        });
-        _statsAnimController.forward();
-        _cardAnimController.forward();
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Failed to load courses. Please try again.'),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            backgroundColor: InstructorColors.error,
-            action: SnackBarAction(
-              label: 'Retry',
-              textColor: Colors.white,
-              onPressed: _loadCourses,
-            ),
-          ),
-        );
-      }
-    }
-  }
-
-  List<ExtendedCourse> _getDemoCourses() {
-    return [
-      ExtendedCourse(
-        course: InstructorCourseModel(
-          id: '1',
-          name: 'Advanced Operating Systems',
-          code: 'CS501',
-          description:
-              'Deep dive into OS internals, process management, memory systems, and distributed computing.',
-          totalStudents: 156,
-          newItems: 5,
-          activeQuizzes: 3,
-          colorValue: 0xFF0D47A1,
-          isActive: true,
-          semester: 'Fall 2025',
-          assignments: [
-            AssignmentModel(
-              id: '1',
-              title: 'Process Scheduling',
-              dueDate: DateTime.now().add(const Duration(days: 3)),
-              submissionsCount: 98,
-              gradedCount: 45,
-            ),
-            AssignmentModel(
-              id: '2',
-              title: 'Memory Management',
-              dueDate: DateTime.now().add(const Duration(days: 7)),
-              submissionsCount: 56,
-              gradedCount: 20,
-            ),
-          ],
-          materials: [],
-          announcements: [],
-        ),
-        completionRate: 0.72,
-        revenue: 4680.0,
-        engagementScore: 89,
-        status: 'published',
-        category: 'Programming',
-        createdAt: DateTime.now().subtract(const Duration(days: 45)),
-        enrollmentTrend: [0.5, 0.6, 0.7, 0.65, 0.8, 0.85, 0.9],
-        hasMilestone: true,
-        milestoneText: '150+ Students! 🎉',
-      ),
-      ExtendedCourse(
-        course: InstructorCourseModel(
-          id: '2',
-          name: 'Data Structures & Algorithms',
-          code: 'CS202',
-          description:
-              'Master fundamental data structures and algorithmic thinking.',
-          totalStudents: 234,
-          newItems: 2,
-          activeQuizzes: 4,
-          colorValue: 0xFF7C4DFF,
-          isActive: true,
-          semester: 'Fall 2025',
-          assignments: [],
-          materials: [],
-          announcements: [],
-        ),
-        completionRate: 0.85,
-        revenue: 7020.0,
-        engagementScore: 94,
-        status: 'published',
-        category: 'Programming',
-        createdAt: DateTime.now().subtract(const Duration(days: 90)),
-        enrollmentTrend: [0.7, 0.75, 0.8, 0.85, 0.82, 0.88, 0.92],
-        hasMilestone: true,
-        milestoneText: 'Top Rated! ⭐',
-      ),
-      ExtendedCourse(
-        course: InstructorCourseModel(
-          id: '3',
-          name: 'Machine Learning Fundamentals',
-          code: 'AI301',
-          description:
-              'Introduction to ML algorithms, neural networks, and practical applications.',
-          totalStudents: 189,
-          newItems: 8,
-          activeQuizzes: 2,
-          colorValue: 0xFF00BFA5,
-          isActive: true,
-          semester: 'Fall 2025',
-          assignments: [
-            AssignmentModel(
-              id: '3',
-              title: 'Linear Regression',
-              dueDate: DateTime.now().add(const Duration(days: 5)),
-              submissionsCount: 145,
-              gradedCount: 100,
-            ),
-          ],
-          materials: [],
-          announcements: [],
-        ),
-        completionRate: 0.68,
-        revenue: 5670.0,
-        engagementScore: 91,
-        status: 'published',
-        category: 'AI/ML',
-        createdAt: DateTime.now().subtract(const Duration(days: 30)),
-        enrollmentTrend: [0.4, 0.5, 0.55, 0.7, 0.75, 0.8, 0.85],
-      ),
-      ExtendedCourse(
-        course: InstructorCourseModel(
-          id: '4',
-          name: 'Full-Stack Web Development',
-          code: 'WEB401',
-          description:
-              'Build modern web applications with React, Node.js, and cloud deployment.',
-          totalStudents: 312,
-          newItems: 12,
-          activeQuizzes: 5,
-          colorValue: 0xFFFF6D00,
-          isActive: true,
-          semester: 'Fall 2025',
-          assignments: [],
-          materials: [],
-          announcements: [],
-        ),
-        completionRate: 0.78,
-        revenue: 9360.0,
-        engagementScore: 96,
-        status: 'published',
-        category: 'Web Development',
-        createdAt: DateTime.now().subtract(const Duration(days: 120)),
-        enrollmentTrend: [0.8, 0.82, 0.85, 0.88, 0.9, 0.92, 0.95],
-        hasMilestone: true,
-        milestoneText: '300+ Students! 🚀',
-      ),
-      ExtendedCourse(
-        course: InstructorCourseModel(
-          id: '5',
-          name: 'Database Design & SQL',
-          code: 'DB301',
-          description: 'Design efficient databases and master SQL queries.',
-          totalStudents: 87,
-          newItems: 1,
-          activeQuizzes: 1,
-          colorValue: 0xFFE91E63,
-          isActive: true,
-          semester: 'Fall 2025',
-          assignments: [],
-          materials: [],
-          announcements: [],
-        ),
-        completionRate: 0.45,
-        revenue: 2610.0,
-        engagementScore: 72,
-        status: 'draft',
-        category: 'Database',
-        createdAt: DateTime.now().subtract(const Duration(days: 10)),
-        enrollmentTrend: [0.2, 0.25, 0.3, 0.35, 0.4, 0.42, 0.45],
-      ),
-      ExtendedCourse(
-        course: InstructorCourseModel(
-          id: '6',
-          name: 'Mobile App Development with Flutter',
-          code: 'MOB401',
-          description:
-              'Create beautiful cross-platform mobile apps with Flutter and Dart.',
-          totalStudents: 145,
-          newItems: 6,
-          activeQuizzes: 3,
-          colorValue: 0xFF536DFE,
-          isActive: true,
-          semester: 'Fall 2025',
-          assignments: [],
-          materials: [],
-          announcements: [],
-        ),
-        completionRate: 0.62,
-        revenue: 4350.0,
-        engagementScore: 88,
-        status: 'published',
-        category: 'Mobile',
-        createdAt: DateTime.now().subtract(const Duration(days: 60)),
-        enrollmentTrend: [0.5, 0.55, 0.6, 0.58, 0.65, 0.68, 0.7],
-      ),
-      ExtendedCourse(
-        course: InstructorCourseModel(
-          id: '7',
-          name: 'Python for Data Science',
-          code: 'DS201',
-          description:
-              'Learn Python programming for data analysis and visualization.',
-          totalStudents: 0,
-          newItems: 0,
-          activeQuizzes: 0,
-          colorValue: 0xFFFFAB00,
-          isActive: false,
-          semester: 'Spring 2025',
-          assignments: [],
-          materials: [],
-          announcements: [],
-        ),
-        completionRate: 0.0,
-        revenue: 0.0,
-        engagementScore: 0,
-        status: 'archived',
-        category: 'Data Science',
-        createdAt: DateTime.now().subtract(const Duration(days: 180)),
-        enrollmentTrend: [0, 0, 0, 0, 0, 0, 0],
-      ),
+  /// Maps backend [TeachingCourseModel] list into UI-compatible
+  /// [ExtendedCourse] wrappers, populating visual fields with
+  /// sensible defaults derived from backend data.
+  List<ExtendedCourse> _mapToExtendedCourses(
+      List<TeachingCourseModel> models) {
+    // Deterministic color palette for visual variety
+    const colorPalette = [
+      0xFF0D47A1, 0xFF7C4DFF, 0xFF00BFA5, 0xFFFF6D00,
+      0xFFE91E63, 0xFF536DFE, 0xFFFFAB00, 0xFF00C853,
     ];
+
+    return models.asMap().entries.map((entry) {
+      final idx = entry.key;
+      final tc = entry.value;
+      final colorValue = colorPalette[idx % colorPalette.length];
+      final fillRatio = tc.section.maxCapacity > 0
+          ? tc.section.currentEnrollment / tc.section.maxCapacity
+          : 0.0;
+
+      return ExtendedCourse(
+        course: InstructorCourseModel(
+          id: tc.courseId.toString(),
+          code: tc.course.courseCode,
+          name: tc.course.courseName,
+          description: tc.course.description ?? '',
+          totalStudents: tc.section.currentEnrollment,
+          colorValue: colorValue,
+          isActive: true,
+          semester: tc.semester.name,
+          assignments: const [],
+          materials: const [],
+          announcements: const [],
+        ),
+        completionRate: fillRatio.clamp(0.0, 1.0),
+        engagementScore: 0,
+        status: 'published',
+        category: 'General',
+        createdAt: tc.semester.startDate ?? DateTime.now(),
+        enrollmentTrend: [fillRatio, fillRatio, fillRatio, fillRatio, fillRatio, fillRatio, fillRatio],
+      );
+    }).toList();
   }
 
   List<ExtendedCourse> get _filteredCourses {
@@ -398,43 +189,134 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
-        return Scaffold(
-          backgroundColor: isDark
-              ? InstructorColors.darkBackground
-              : InstructorColors.primaryBackground,
-          body: NestedScrollView(
-            controller: _scrollController,
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              _buildSliverAppBar(isDark, l10n),
-              // Stats Dashboard scrolls away with the header
-              SliverToBoxAdapter(
-                child: AnimatedBuilder(
-                  animation: _statsAnimation,
-                  builder: (context, child) =>
-                      _buildStatsDashboard(isDark, l10n),
+        return BlocConsumer<CoursesBloc, CoursesState>(
+          listener: (context, coursesState) {
+            if (coursesState is InstructorCoursesLoaded) {
+              setState(() {
+                _courses = _mapToExtendedCourses(coursesState.teachingCourses);
+                _totalStudents = coursesState.totalStudents;
+              });
+              _statsAnimController.reset();
+              _cardAnimController.reset();
+              _statsAnimController.forward();
+              _cardAnimController.forward();
+            }
+          },
+          builder: (context, coursesState) {
+            final isLoading = coursesState is CoursesLoading;
+            final isError = coursesState is CoursesError;
+            final errorMessage = isError
+                ? coursesState.message
+                : '';
+
+            return Scaffold(
+              backgroundColor: isDark
+                  ? InstructorColors.darkBackground
+                  : InstructorColors.primaryBackground,
+              body: NestedScrollView(
+                controller: _scrollController,
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  _buildSliverAppBar(isDark, l10n),
+                  // Stats Dashboard scrolls away with the header
+                  SliverToBoxAdapter(
+                    child: AnimatedBuilder(
+                      animation: _statsAnimation,
+                      builder: (context, child) =>
+                          _buildStatsDashboard(isDark, l10n),
+                    ),
+                  ),
+                ],
+                body: Column(
+                  children: [
+                    // Search, Filter, Sort bar stays pinned
+                    _buildSearchFilterBar(isDark, l10n),
+                    // Bulk actions bar (when in selection mode)
+                    if (_isSelectionMode) _buildBulkActionsBar(isDark, l10n),
+                    // Course list/grid
+                    Expanded(
+                      child: isLoading
+                          ? _buildSkeletonLoader(isDark)
+                          : isError
+                          ? _buildErrorState(isDark, l10n, errorMessage)
+                          : _courses.isEmpty
+                          ? _buildEmptyState(isDark, l10n)
+                          : _buildCoursesList(isDark, l10n),
+                    ),
+                  ],
                 ),
               ),
-            ],
-            body: Column(
-              children: [
-                // Search, Filter, Sort bar stays pinned
-                _buildSearchFilterBar(isDark, l10n),
-                // Bulk actions bar (when in selection mode)
-                if (_isSelectionMode) _buildBulkActionsBar(isDark, l10n),
-                // Course list/grid
-                Expanded(
-                  child: _isLoading
-                      ? _buildSkeletonLoader(isDark)
-                      : _filteredCourses.isEmpty
-                      ? _buildEmptyState(isDark, l10n)
-                      : _buildCoursesList(isDark, l10n),
-                ),
-              ],
-            ),
-          ),
-          floatingActionButton: _buildFAB(isDark, l10n),
+              floatingActionButton: _buildFAB(isDark, l10n),
+            );
+          },
         );
       },
+    );
+  }
+
+  /// Error state with retry button (T009)
+  Widget _buildErrorState(
+      bool isDark, AppLocalizations l10n, String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: InstructorColors.error.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.wifi_off_rounded,
+                size: 48,
+                color: InstructorColors.error,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Unable to load courses',
+              style: TextStyle(
+                color:
+                    isDark ? Colors.white : InstructorColors.textPrimary,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message.isNotEmpty ? message : 'Please check your connection and try again.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: isDark
+                    ? Colors.white60
+                    : InstructorColors.textSecondary,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: () {
+                context
+                    .read<CoursesBloc>()
+                    .add(const InstructorCoursesFetched());
+              },
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('Retry'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: InstructorColors.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 32, vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1079,24 +961,6 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                     accentColor: const Color(0xFF7C4DFF),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: _buildEnhancedStatCard(
-                    isDark: isDark,
-                    icon: Icons.trending_up_rounded,
-                    iconColors: [
-                      const Color(0xFF10B981),
-                      const Color(0xFF059669),
-                    ],
-                    label: 'Engagement',
-                    value:
-                        '${(_avgEngagement * _statsAnimation.value).round()}%',
-                    subValue: '${_avgEngagement.round()}%',
-                    trend: '+5% vs last month',
-                    trendPositive: true,
-                    accentColor: const Color(0xFF10B981),
-                  ),
-                ),
               ],
             ),
           ),
@@ -1624,7 +1488,9 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
     final courses = _filteredCourses;
 
     return RefreshIndicator(
-      onRefresh: _loadCourses,
+      onRefresh: () async {
+        context.read<CoursesBloc>().add(const InstructorCoursesFetched());
+      },
       color: InstructorColors.primary,
       backgroundColor: isDark ? InstructorColors.darkCard : Colors.white,
       child: _viewType == CourseViewType.grid
@@ -2298,7 +2164,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                         backgroundColor: InstructorColors.success,
                       ),
                     );
-                    _loadCourses();
+                    context.read<CoursesBloc>().add(const InstructorCoursesFetched());
                   },
                   icon: const Icon(Icons.rocket_launch_rounded),
                   label: Text(l10n.createCourse),

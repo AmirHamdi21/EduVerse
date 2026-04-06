@@ -27,7 +27,7 @@ class DemoCredentials {
   /// Returns the user role if valid, null otherwise
   static String? validateDemoCredentials(String email, String password) {
     final emailLower = email.toLowerCase().trim();
-    
+
     if (emailLower == studentEmail && password == studentPassword) {
       return 'STUDENT';
     }
@@ -43,7 +43,7 @@ class DemoCredentials {
     if (emailLower == itAdminEmail && password == itAdminPassword) {
       return 'IT_ADMIN';
     }
-    
+
     return null;
   }
 
@@ -73,7 +73,7 @@ class DemoCredentials {
           emailVerified: true,
           lastLoginAt: DateTime.now().toIso8601String(),
           createdAt: '2024-01-01T00:00:00Z',
-          roles: ['STUDENT'],
+          roles: [const RoleModel(roleId: 0, roleName: 'STUDENT')],
         );
       case 'INSTRUCTOR':
         return UserDto(
@@ -88,7 +88,7 @@ class DemoCredentials {
           emailVerified: true,
           lastLoginAt: DateTime.now().toIso8601String(),
           createdAt: '2024-01-01T00:00:00Z',
-          roles: ['INSTRUCTOR'],
+          roles: [const RoleModel(roleId: 0, roleName: 'INSTRUCTOR')],
         );
       case 'TA':
         return UserDto(
@@ -103,7 +103,7 @@ class DemoCredentials {
           emailVerified: true,
           lastLoginAt: DateTime.now().toIso8601String(),
           createdAt: '2024-01-01T00:00:00Z',
-          roles: ['TA'],
+          roles: [const RoleModel(roleId: 0, roleName: 'TA')],
         );
       case 'ADMIN':
         return UserDto(
@@ -118,7 +118,7 @@ class DemoCredentials {
           emailVerified: true,
           lastLoginAt: DateTime.now().toIso8601String(),
           createdAt: '2024-01-01T00:00:00Z',
-          roles: ['ADMIN'],
+          roles: [const RoleModel(roleId: 0, roleName: 'ADMIN')],
         );
       case 'IT_ADMIN':
         return UserDto(
@@ -133,7 +133,7 @@ class DemoCredentials {
           emailVerified: true,
           lastLoginAt: DateTime.now().toIso8601String(),
           createdAt: '2024-01-01T00:00:00Z',
-          roles: ['IT_ADMIN'],
+          roles: [const RoleModel(roleId: 0, roleName: 'IT_ADMIN')],
         );
       default:
         throw Exception('Unknown role: $role');
@@ -161,16 +161,16 @@ class DemoCredentials {
   /// Get the dashboard route based on user's roles
   static String getDashboardRouteForUser(UserDto user) {
     // Priority: IT_ADMIN > ADMIN > INSTRUCTOR > TA > STUDENT
-    if (user.roles.contains('IT_ADMIN')) {
+    if (user.hasRole('IT_ADMIN')) {
       return getDashboardRoute('IT_ADMIN');
     }
-    if (user.roles.contains('ADMIN')) {
+    if (user.hasRole('ADMIN')) {
       return getDashboardRoute('ADMIN');
     }
-    if (user.roles.contains('INSTRUCTOR')) {
+    if (user.hasRole('INSTRUCTOR')) {
       return getDashboardRoute('INSTRUCTOR');
     }
-    if (user.roles.contains('TA')) {
+    if (user.hasRole('TA')) {
       return getDashboardRoute('TA');
     }
     return getDashboardRoute('STUDENT');
@@ -179,31 +179,15 @@ class DemoCredentials {
   /// Get all demo credentials as a list for display
   static List<Map<String, String>> getAllCredentials() {
     return [
-      {
-        'role': 'Student',
-        'email': studentEmail,
-        'password': studentPassword,
-      },
+      {'role': 'Student', 'email': studentEmail, 'password': studentPassword},
       {
         'role': 'Instructor',
         'email': instructorEmail,
         'password': instructorPassword,
       },
-      {
-        'role': 'Teaching Assistant',
-        'email': taEmail,
-        'password': taPassword,
-      },
-      {
-        'role': 'Admin',
-        'email': adminEmail,
-        'password': adminPassword,
-      },
-      {
-        'role': 'IT Admin',
-        'email': itAdminEmail,
-        'password': itAdminPassword,
-      },
+      {'role': 'Teaching Assistant', 'email': taEmail, 'password': taPassword},
+      {'role': 'Admin', 'email': adminEmail, 'password': adminPassword},
+      {'role': 'IT Admin', 'email': itAdminEmail, 'password': itAdminPassword},
     ];
   }
 }

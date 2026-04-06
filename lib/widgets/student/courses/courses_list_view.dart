@@ -3,15 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
-import 'course_model.dart';
+import '../../../models/core/enrollment_model.dart';
 import 'course_card.dart';
 
+/// Renders a list of enrolled courses with staggered entry animations.
+///
+/// Accepts [List<CourseEnrollmentModel>] from [CoursesBloc] state and
+/// delegates rendering to individual [CourseCard] widgets.
 class CoursesListView extends StatefulWidget {
-  final List<CourseModel> courses;
+  final List<CourseEnrollmentModel> enrollments;
 
   const CoursesListView({
     super.key,
-    required this.courses,
+    required this.enrollments,
   });
 
   @override
@@ -31,7 +35,7 @@ class _CoursesListViewState extends State<CoursesListView>
 
   void _initializeAnimations() {
     _animationControllers = List.generate(
-      widget.courses.length,
+      widget.enrollments.length,
       (index) => AnimationController(
         duration: const Duration(milliseconds: 600),
         vsync: this,
@@ -55,7 +59,7 @@ class _CoursesListViewState extends State<CoursesListView>
   @override
   void didUpdateWidget(CoursesListView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.courses.length != widget.courses.length) {
+    if (oldWidget.enrollments.length != widget.enrollments.length) {
       _pendingAnimations = null;
       _disposeAnimations();
       _initializeAnimations();
@@ -82,7 +86,7 @@ class _CoursesListViewState extends State<CoursesListView>
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
-        if (widget.courses.isEmpty) {
+        if (widget.enrollments.isEmpty) {
           return Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -109,10 +113,10 @@ class _CoursesListViewState extends State<CoursesListView>
         return ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: widget.courses.length,
+          itemCount: widget.enrollments.length,
           separatorBuilder: (context, index) => const SizedBox(height: 16),
           itemBuilder: (context, index) => CourseCard(
-            course: widget.courses[index],
+            enrollment: widget.enrollments[index],
             animation: Tween<double>(begin: 0.0, end: 1.0).animate(
               CurvedAnimation(
                 parent: _animationControllers[index],
