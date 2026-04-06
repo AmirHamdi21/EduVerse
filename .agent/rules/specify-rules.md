@@ -9,6 +9,8 @@ Auto-generated from all feature plans. Last updated: 2026-04-06
 - HydratedBloc / local storage (for offline parity) (003-instructor-courses-integration)
 - Dart <3.0 + flutter_bloc, freezed, json_serializable, dio, url_launcher (004-ta-backend-integration)
 - SecureStorage (for Auth, cached tokens) (004-ta-backend-integration)
+- Dart (Flutter SDK) + flutter_bloc, dio, url_launcher, freezed (005-course-details-viewer)
+- SharedPreferences (for basic caching) (005-course-details-viewer)
 
 - Dart (Flutter 3.9.2) + `dio` (for api/interceptors), `flutter_bloc` (state), `shared_preferences` (001-course-api-domain-models)
 
@@ -28,9 +30,9 @@ tests/
 Dart (Flutter 3.9.2): Follow standard conventions
 
 ## Recent Changes
+- 005-course-details-viewer: Added Dart (Flutter SDK) + flutter_bloc, dio, url_launcher, freezed
 - 004-ta-backend-integration: Added Dart <3.0 + flutter_bloc, freezed, json_serializable, dio, url_launcher
 - 003-instructor-courses-integration: Added Dart (Flutter) + flutter_bloc/hydrated_bloc, dio, freezed, json_serializable
-- 002-student-screens-integration: Added Dart 3+, Flutter + `flutter_bloc`, `dio`, `equatable`, `shared_preferences`
 
 
 <!-- MANUAL ADDITIONS START -->

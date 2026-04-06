@@ -2,18 +2,21 @@ import 'package:flutter/material.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/instructor/instructor_course_model.dart';
 import 'course_management_colors.dart';
+import '../../shared/course_structure_viewer.dart';
 
 /// Overview tab with course description, quick actions, and recent activity
 class OverviewTab extends StatelessWidget {
   final InstructorCourseModel course;
   final bool isDark;
   final AppLocalizations l10n;
+  final dynamic courseId;
 
   const OverviewTab({
     super.key,
     required this.course,
     required this.isDark,
     required this.l10n,
+    this.courseId,
   });
 
   @override
@@ -23,6 +26,13 @@ class OverviewTab extends StatelessWidget {
       children: [
         _buildDescriptionCard(),
         const SizedBox(height: 16),
+        // T009: Course Structure Viewer
+        if (courseId != null)
+          CourseStructureViewer(
+            courseId: courseId,
+            isDark: isDark,
+          ),
+        if (courseId != null) const SizedBox(height: 16),
         _buildQuickActionsRow(context),
         const SizedBox(height: 20),
         _buildSectionTitle(l10n.recentActivity),

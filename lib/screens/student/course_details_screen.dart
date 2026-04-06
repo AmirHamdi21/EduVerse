@@ -7,6 +7,7 @@ import '../../common/utils/course_ui_utils.dart';
 import '../../models/core/enrollment_model.dart';
 import '../../widgets/student/courses/course_model.dart';
 import '../../widgets/student/course_details/course_tabs.dart';
+import '../../widgets/shared/course_structure_viewer.dart';
 
 /// Course detail drill-down screen consuming live [CourseEnrollmentModel].
 ///
@@ -304,6 +305,15 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                               // Progress section
                               _buildProgressSection(isDark),
                               const SizedBox(height: 24),
+                              // T008: Course Structure Viewer
+                              if (widget.enrollment != null)
+                                CourseStructureViewer(
+                                  courseId: widget.enrollment!.course?.courseId ??
+                                      widget.enrollment!.courseId,
+                                  isDark: isDark,
+                                ),
+                              if (widget.enrollment != null)
+                                const SizedBox(height: 24),
                               // Tabs — pass legacy CourseModel for tab content compatibility
                               CourseTabs(
                                 selectedIndex: _selectedTabIndex,

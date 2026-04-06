@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../shared/ta_colors.dart';
+import '../../shared/course_structure_viewer.dart';
 
 class TACourseOverviewTab extends StatelessWidget {
   final bool isDark;
+  final dynamic courseId;
   final List<TAUpcomingTask> upcomingTasks;
   final List<TARecentActivity> recentActivities;
   final Function(TAUpcomingTask)? onStartTask;
@@ -11,6 +13,7 @@ class TACourseOverviewTab extends StatelessWidget {
   const TACourseOverviewTab({
     super.key,
     required this.isDark,
+    this.courseId,
     required this.upcomingTasks,
     required this.recentActivities,
     this.onStartTask,
@@ -23,6 +26,13 @@ class TACourseOverviewTab extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // T010: Course Structure Viewer (Materials drill-down)
+        if (courseId != null)
+          CourseStructureViewer(
+            courseId: courseId,
+            isDark: isDark,
+          ),
+        if (courseId != null) const SizedBox(height: 24),
         _buildUpcomingTasksSection(l10n),
         const SizedBox(height: 24),
         _buildRecentActivitySection(l10n),

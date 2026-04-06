@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'courses_event.dart';
@@ -9,6 +10,7 @@ import '../../services/api/material_service.dart';
 import '../../services/api/communication_service.dart';
 import '../../models/core/enrollment_model.dart';
 import '../../models/core/course_model.dart';
+import '../../models/core/course_structure_model.dart';
 import '../../models/instructor/teaching_course_model.dart';
 
 /// Central BLoC for all course-related state management.
@@ -28,6 +30,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   static const _cacheKeyEnrollments = 'courses_cache_enrollments';
   static const _cacheKeyAllCourses = 'courses_cache_all';
   static const _cacheKeyTeaching = 'courses_cache_teaching';
+  static const _cacheKeyStructurePrefix = 'courses_cache_structure_';
 
   CoursesBloc({
     required CourseService courseService,
@@ -145,13 +148,26 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     CourseStructureFetched event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(const CoursesLoading());
+    // T005a/T007: Cache-first pattern for <2s load target (SC-003)
+    final cached = await _loadCachedStructure(event.courseId);
+    if (cached.isNotEmpty) {
+      // Emit cached data immediately for instant UI rendering
+      emit(CourseStructureLoaded(structure: cached));
+    } else {
+      emit(const CoursesLoading());
+    }
 
     try {
       final structure = await _courseService.getCourseStructure(event.courseId);
+      await _cacheStructure(event.courseId, structure);
       emit(CourseStructureLoaded(structure: structure));
     } catch (e) {
-      emit(CoursesError(message: _sanitizeError(e)));
+      if (cached.isNotEmpty) {
+        // Already showing cached data, keep it visible
+        emit(CourseStructureLoaded(structure: cached));
+      } else {
+        emit(CoursesError(message: _sanitizeError(e)));
+      }
     }
   }
 
@@ -296,9 +312,52 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     }
   }
 
+  // ── Course Structure Cache ────────────────────────────────────────────────
+
+  Future<List<CourseStructureModel>> _loadCachedStructure(dynamic courseId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString('$_cacheKeyStructurePrefix$courseId');
+      if (raw == null) return [];
+      final List decoded = jsonDecode(raw) as List;
+      return decoded
+          .map((e) => CourseStructureModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<void> _cacheStructure(dynamic courseId, List<CourseStructureModel> structure) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final encoded = jsonEncode(structure.map((e) => e.toJson()).toList());
+      await prefs.setString('$_cacheKeyStructurePrefix$courseId', encoded);
+    } catch (_) {
+      // Silently fail — caching is best-effort.
+    }
+  }
+
   // ── Error Sanitization ─────────────────────────────────────────────────
 
+  /// T013: Enhanced error sanitization with 403 Forbidden awareness.
+  /// When a TA attempts a restricted action, the backend returns 403.
+  /// Instead of showing a cryptic error, we surface a user-friendly message.
   String _sanitizeError(Object error) {
+    // T013: Detect DioException 403 for graceful TA permission handling
+    if (error is DioException) {
+      final statusCode = error.response?.statusCode;
+      if (statusCode == 403) {
+        return 'You do not have permission to perform this action';
+      }
+      if (statusCode == 404) {
+        return 'The requested resource was not found';
+      }
+      if (statusCode != null && statusCode >= 500) {
+        return 'Server error. Please try again later';
+      }
+    }
+
     final raw = error.toString();
     // Strip Dart Exception wrapper for cleaner UI messages
     return raw
