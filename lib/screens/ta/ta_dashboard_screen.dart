@@ -309,7 +309,7 @@ class _TADashboardScreenState extends State<TADashboardScreen> {
                   isDark: isDark,
                   courses: _courses,
                   // onCourseTap: (course) => _showSnackBar('Opening ${course.name}'),
-                  onCourseTap: (course) => context.push('/ta/course/:id'),
+                  onCourseTap: (course) => context.push('/ta/course/${course.id}'),
                   onViewTasks: (course) =>
                       _showSnackBar('Viewing tasks for ${course.code}'),
                   onViewAll: () => context.push('/ta/courses'),

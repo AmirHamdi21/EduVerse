@@ -5,6 +5,10 @@ import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
+import '../../../bloc/courses/courses_bloc.dart';
+import '../../../bloc/courses/courses_state.dart';
+import '../../../bloc/courses/courses_event.dart';
+import '../../../models/instructor/teaching_course_model.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/courses/ta_courses_barrel.dart';
@@ -21,15 +25,16 @@ class TACourseDetailScreen extends StatefulWidget {
 class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  bool _isLoading = true;
-  String? _error;
-  TACourseData? _courseData;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    _loadCourseData();
+    // Ensure TA courses are fetched if not already
+    final state = context.read<CoursesBloc>().state;
+    if (state is! TACoursesLoaded) {
+      context.read<CoursesBloc>().add(const TACoursesFetched());
+    }
   }
 
   @override
@@ -38,178 +43,20 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     super.dispose();
   }
 
-  Future<void> _loadCourseData() async {
-    try {
-      setState(() {
-        _isLoading = true;
-        _error = null;
-      });
-
-      // Simulate loading course data
-      await Future.delayed(const Duration(milliseconds: 800));
-
-      // Mock course data
-      _courseData = TACourseData(
-        id: widget.courseId,
-        code: 'CS101',
-        name: 'Operating Systems',
-        instructor: 'Dr. Ahmed Mohamed',
-        studentsCount: 120,
-        labsCount: 6,
-        assignmentsCount: 3,
-        discussionsCount: 18,
-        insights: [
-          '5 submissions need urgent grading before deadline',
-          '3 students are struggling with Lab 4 content',
-          'Discussion activity increased 40% this week',
-        ],
-        upcomingTasks: [
-          TAUpcomingTask(
-            id: '1',
-            title: 'Grade Lab 3 Submissions',
-            subtitle: '45 submissions • Due in 2 days',
-          ),
-          TAUpcomingTask(
-            id: '2',
-            title: 'Review Discussion Posts',
-            subtitle: '12 new posts • Week 5 content',
-          ),
-          TAUpcomingTask(
-            id: '3',
-            title: 'Prepare Lab 4 Materials',
-            subtitle: 'Session on Thursday',
-          ),
-        ],
-        recentActivities: [
-          TARecentActivity(
-            id: '1',
-            title: 'Graded 12 submissions for Assignment 2',
-            timeAgo: '2 hours ago',
-            icon: Icons.grading_rounded,
-            color: TAColors.success,
-          ),
-          TARecentActivity(
-            id: '2',
-            title: 'Answered 5 student questions in discussion',
-            timeAgo: '4 hours ago',
-            icon: Icons.forum_rounded,
-            color: TAColors.info,
-          ),
-          TARecentActivity(
-            id: '3',
-            title: 'Updated attendance for Lab 2',
-            timeAgo: 'Yesterday',
-            icon: Icons.check_circle_rounded,
-            color: TAColors.primary,
-          ),
-        ],
-        labs: [
-          TALabItem(
-            id: '1',
-            title: 'Lab 1: Process Management',
-            subtitle: 'Week 1-2 content',
-            status: TALabStatus.closed,
-            progress: 1.0,
-            attended: 115,
-            total: 120,
-          ),
-          TALabItem(
-            id: '2',
-            title: 'Lab 2: Thread Synchronization',
-            subtitle: 'Week 3-4 content',
-            status: TALabStatus.closed,
-            progress: 0.92,
-            attended: 110,
-            total: 120,
-          ),
-          TALabItem(
-            id: '3',
-            title: 'Lab 3: Memory Management',
-            subtitle: 'Week 5-6 content',
-            status: TALabStatus.active,
-            progress: 0.78,
-            attended: 94,
-            total: 120,
-          ),
-          TALabItem(
-            id: '4',
-            title: 'Lab 4: File Systems',
-            subtitle: 'Week 7-8 content',
-            status: TALabStatus.active,
-            progress: 0.0,
-            attended: 0,
-            total: 120,
-          ),
-        ],
-        gradingTasks: [
-          TAGradingTask(
-            id: '1',
-            studentName: 'Omar Hassan',
-            assignmentName: 'Lab 3 - Memory Management',
-            status: TAGradingStatus.pending,
-            aiSuggestedScore: 85,
-          ),
-          TAGradingTask(
-            id: '2',
-            studentName: 'Sara Ahmed',
-            assignmentName: 'Lab 3 - Memory Management',
-            status: TAGradingStatus.pending,
-            aiSuggestedScore: 92,
-          ),
-          TAGradingTask(
-            id: '3',
-            studentName: 'Mohamed Ali',
-            assignmentName: 'Lab 3 - Memory Management',
-            status: TAGradingStatus.inProgress,
-            aiSuggestedScore: 78,
-          ),
-        ],
-        discussions: [
-          TADiscussionItem(
-            id: '1',
-            studentName: 'Fatima Hassan',
-            question:
-                'I\'m having trouble understanding the difference between paging and segmentation. Can someone explain?',
-            timeAgo: '2 hours ago',
-            repliesCount: 3,
-            likesCount: 8,
-            isAnswered: false,
-            isAIFlagged: true,
-          ),
-          TADiscussionItem(
-            id: '2',
-            studentName: 'Ahmed Youssef',
-            question:
-                'What is the best approach for implementing the LRU page replacement algorithm in the lab assignment?',
-            timeAgo: '5 hours ago',
-            repliesCount: 7,
-            likesCount: 15,
-            isAnswered: true,
-            isAIFlagged: false,
-          ),
-          TADiscussionItem(
-            id: '3',
-            studentName: 'Nour Ibrahim',
-            question:
-                'Is there a deadline extension for Lab 3? I\'m facing some issues with the virtual memory simulation.',
-            timeAgo: '1 day ago',
-            repliesCount: 2,
-            likesCount: 4,
-            isAnswered: false,
-            isAIFlagged: false,
-          ),
-        ],
-      );
-
-      setState(() {
-        _isLoading = false;
-      });
-    } catch (e) {
-      setState(() {
-        _isLoading = false;
-        _error = e.toString();
-      });
+  /// T009: Extract the matching TeachingCourseModel from BLoC state.
+  TeachingCourseModel? _findCourse(CoursesState state) {
+    if (state is TACoursesLoaded) {
+      final id = int.tryParse(widget.courseId);
+      if (id == null) return null;
+      try {
+        return state.teachingCourses.firstWhere(
+          (tc) => tc.sectionId == id || tc.courseId == id,
+        );
+      } catch (_) {
+        return null;
+      }
     }
+    return null;
   }
 
   @override
@@ -221,29 +68,38 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
 
         return Scaffold(
           backgroundColor: TAColors.scaffoldColor(isDark),
-          body: SafeArea(child: _buildBody(isDark, l10n)),
+          body: SafeArea(
+            // T009: Wrap with BlocBuilder for CoursesBloc
+            child: BlocBuilder<CoursesBloc, CoursesState>(
+              builder: (context, coursesState) {
+                return _buildBody(isDark, l10n, coursesState);
+              },
+            ),
+          ),
         );
       },
     );
   }
 
-  Widget _buildBody(bool isDark, AppLocalizations l10n) {
-    if (_isLoading) {
+  Widget _buildBody(bool isDark, AppLocalizations l10n, CoursesState state) {
+    // T009: Loading skeleton while data resolves
+    if (state is CoursesLoading) {
       return _buildLoadingState(isDark);
     }
 
-    if (_error != null) {
-      return _buildErrorState(isDark, l10n);
+    if (state is CoursesError) {
+      return _buildErrorState(isDark, l10n, state.message);
     }
 
-    if (_courseData == null) {
+    final course = _findCourse(state);
+    if (course == null) {
       return _buildEmptyState(isDark, l10n);
     }
 
     return NestedScrollView(
       headerSliverBuilder: (context, innerBoxIsScrolled) => [
-        _buildAppBar(isDark, l10n),
-        SliverToBoxAdapter(child: _buildCourseContent(isDark, l10n)),
+        _buildAppBar(isDark, l10n, course),
+        SliverToBoxAdapter(child: _buildCourseContent(isDark, l10n, course)),
         SliverPersistentHeader(
           pinned: true,
           delegate: _TabBarDelegate(
@@ -255,7 +111,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildOverviewTab(isDark, l10n),
+          _buildOverviewTab(isDark, l10n, course),
           _buildLabsTab(isDark, l10n),
           _buildGradingTab(isDark, l10n),
           _buildDiscussionsTab(isDark, l10n),
@@ -265,25 +121,77 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
   }
 
   Widget _buildLoadingState(bool isDark) {
-    return Center(
+    // T009: Skeleton loading per Constitution Principle IV
+    return Padding(
+      padding: const EdgeInsets.all(16),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CircularProgressIndicator(color: TAColors.primary),
-          const SizedBox(height: 16),
-          Text(
-            'Loading course...',
-            style: TextStyle(
-              color: TAColors.textSecondaryColor(isDark),
-              fontSize: 14,
-            ),
+          // Back button skeleton
+          _skeletonBox(isDark, width: 40, height: 40, radius: 10),
+          const SizedBox(height: 24),
+          // Header skeleton
+          Row(
+            children: [
+              _skeletonBox(isDark, width: 52, height: 52, radius: 14),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _skeletonBox(isDark, width: 200, height: 18, radius: 4),
+                    const SizedBox(height: 8),
+                    _skeletonBox(isDark, width: 140, height: 14, radius: 4),
+                  ],
+                ),
+              ),
+            ],
           ),
+          const SizedBox(height: 24),
+          // Stats skeleton
+          Row(
+            children: [
+              Expanded(child: _skeletonBox(isDark, height: 80, radius: 16)),
+              const SizedBox(width: 12),
+              Expanded(child: _skeletonBox(isDark, height: 80, radius: 16)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _skeletonBox(isDark, height: 80, radius: 16)),
+              const SizedBox(width: 12),
+              Expanded(child: _skeletonBox(isDark, height: 80, radius: 16)),
+            ],
+          ),
+          const SizedBox(height: 24),
+          // Tab bar skeleton
+          _skeletonBox(isDark, width: double.infinity, height: 48, radius: 12),
+          const SizedBox(height: 24),
+          // Content skeleton
+          _skeletonBox(isDark, width: double.infinity, height: 120, radius: 16),
         ],
       ),
     );
   }
 
-  Widget _buildErrorState(bool isDark, AppLocalizations l10n) {
+  Widget _skeletonBox(
+    bool isDark, {
+    double? width,
+    double height = 16,
+    double radius = 8,
+  }) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: TAColors.borderColor(isDark).withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(radius),
+      ),
+    );
+  }
+
+  Widget _buildErrorState(bool isDark, AppLocalizations l10n, String message) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -313,7 +221,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
             ),
             const SizedBox(height: 8),
             Text(
-              _error ?? 'Unknown error',
+              message,
               style: TextStyle(
                 color: TAColors.textSecondaryColor(isDark),
                 fontSize: 14,
@@ -322,7 +230,9 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
-              onPressed: _loadCourseData,
+              onPressed: () {
+                context.read<CoursesBloc>().add(const TACoursesFetched());
+              },
               icon: const Icon(Icons.refresh_rounded),
               label: const Text('Retry'),
               style: ElevatedButton.styleFrom(
@@ -345,7 +255,12 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     );
   }
 
-  SliverAppBar _buildAppBar(bool isDark, AppLocalizations l10n) {
+  /// T009/T014: App bar uses dynamic TeachingCourseModel data.
+  SliverAppBar _buildAppBar(
+    bool isDark,
+    AppLocalizations l10n,
+    TeachingCourseModel tc,
+  ) {
     return SliverAppBar(
       backgroundColor: TAColors.scaffoldColor(isDark),
       surfaceTintColor: Colors.transparent,
@@ -360,7 +275,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${_courseData!.code} — ${_courseData!.name}',
+            '${tc.course.courseCode} — ${tc.course.courseName}',
             style: TextStyle(
               color: TAColors.textPrimaryColor(isDark),
               fontSize: 16,
@@ -368,7 +283,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
             ),
           ),
           Text(
-            _courseData!.instructor,
+            '${tc.semester.name} • Section ${tc.section.sectionNumber}',
             style: TextStyle(
               color: TAColors.textSecondaryColor(isDark),
               fontSize: 12,
@@ -405,7 +320,12 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     );
   }
 
-  Widget _buildCourseContent(bool isDark, AppLocalizations l10n) {
+  /// T014: Stats cards use dynamic model data instead of hardcoded numbers.
+  Widget _buildCourseContent(
+    bool isDark,
+    AppLocalizations l10n,
+    TeachingCourseModel tc,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -413,12 +333,13 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
         children: [
           TACourseStatsCards(
             isDark: isDark,
-            studentsCount: _courseData!.studentsCount,
-            labsCount: _courseData!.labsCount,
-            assignmentsCount: _courseData!.assignmentsCount,
-            discussionsCount: _courseData!.discussionsCount,
+            studentsCount: tc.section.currentEnrollment,
+            labsCount: 0, // Will be populated from future lab endpoints
+            assignmentsCount: 0, // Will be populated from future assignment endpoints
+            discussionsCount: 0, // Will be populated from future discussion endpoints
           ),
           const SizedBox(height: 16),
+          // T015/T018: Quick actions — TA-safe actions only (no destructive ops)
           TACourseQuickActions(
             isDark: isDark,
             onViewLabs: () => _tabController.animateTo(1),
@@ -429,7 +350,12 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
           const SizedBox(height: 16),
           TACourseInsightsCard(
             isDark: isDark,
-            insights: _courseData!.insights,
+            insights: [
+              'Section ${tc.section.sectionNumber} has ${tc.section.currentEnrollment}/${tc.section.maxCapacity} students enrolled',
+              'Course level: ${tc.course.level} • ${tc.course.credits} credits',
+              if (tc.section.location != null)
+                'Location: ${tc.section.location}',
+            ],
             onOpenFullInsights: () => _showAIInsightsSheet(),
           ),
         ],
@@ -480,28 +406,38 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
             Tab(text: l10n.taCourseLabsTab),
             Tab(text: l10n.taCourseGradingTab),
             Tab(text: l10n.taCourseDiscussionsTab),
-            // child: Row(
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     Text(l10n.taCourseDiscussionsTab),
-            //     const SizedBox(width: 4),
-            //     const Icon(Icons.chat_bubble_outline_rounded, size: 14),
-            //   ],
-            // ),
-            // ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildOverviewTab(bool isDark, AppLocalizations l10n) {
+  /// T010: Overview tab populated with dynamic model data.
+  Widget _buildOverviewTab(
+    bool isDark,
+    AppLocalizations l10n,
+    TeachingCourseModel tc,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: TACourseOverviewTab(
         isDark: isDark,
-        upcomingTasks: _courseData!.upcomingTasks,
-        recentActivities: _courseData!.recentActivities,
+        upcomingTasks: [
+          TAUpcomingTask(
+            id: '1',
+            title: 'Review ${tc.course.courseName} materials',
+            subtitle: '${tc.section.currentEnrollment} students enrolled',
+          ),
+        ],
+        recentActivities: [
+          TARecentActivity(
+            id: '1',
+            title: 'Course ${tc.course.courseCode} assigned for ${tc.semester.name}',
+            timeAgo: 'Recent',
+            icon: Icons.school_rounded,
+            color: TAColors.primary,
+          ),
+        ],
         onStartTask: (task) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -514,54 +450,28 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     );
   }
 
+  /// T012: Labs tab — currently empty lists, ready for future lab endpoints.
   Widget _buildLabsTab(bool isDark, AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: TACourseLabsTab(
         isDark: isDark,
-        labs: _courseData!.labs,
-        onOpenLab: (lab) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Opening: ${lab.title}'),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        },
-        onReview: (lab) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Reviewing: ${lab.title}'),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        },
-        onAttendance: (lab) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Attendance for: ${lab.title}'),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        },
-        onUpload: (lab) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Upload for: ${lab.title}'),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        },
+        labs: const [], // Will be populated from future lab endpoints
+        onOpenLab: (lab) {},
+        onReview: (lab) {},
+        onAttendance: (lab) {},
+        onUpload: (lab) {},
       ),
     );
   }
 
+  /// T011/T015: Grading tab — no destructive actions, TA view-only.
   Widget _buildGradingTab(bool isDark, AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: TACourseGradingTab(
         isDark: isDark,
-        gradingTasks: _courseData!.gradingTasks,
+        gradingTasks: const [], // Will be populated from future grading endpoints
         onStartReview: (task) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -570,31 +480,23 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
             ),
           );
         },
-        onApplyAIScore: (task) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Applied AI score: ${task.aiSuggestedScore}/100'),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: TAColors.success,
-            ),
-          );
-        },
+        // T015 FR-006: No onApplyAIScore for TA — this is a view-only action
+        onApplyAIScore: null,
       ),
     );
   }
 
+  /// T013: Discussions tab — dynamically ready for future discussion endpoints.
   Widget _buildDiscussionsTab(bool isDark, AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: TACourseDiscussionsTab(
         isDark: isDark,
-        discussions: _courseData!.discussions,
+        discussions: const [], // Will be populated from future discussion endpoints
         onReplyAsTA: (discussion) {
           _showReplyDialog(discussion);
         },
-        onFilterChanged: (filter) {
-          // Filter handling is done internally by the widget
-        },
+        onFilterChanged: (filter) {},
       ),
     );
   }
@@ -609,10 +511,9 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
       backgroundColor: Colors.transparent,
       builder: (context) => TAFullInsightsSheet(
         isDark: isDark,
-        priorityTasks: [
-          'Grade 45 Lab 3 submissions (Due in 2 days)',
-          'Review 5 flagged discussion posts',
-          'Update attendance for Lab 2 session',
+        priorityTasks: const [
+          'Review assigned section submissions',
+          'Check discussion activity',
         ],
         quickActions: [
           TAQuickAction(
@@ -648,7 +549,8 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
         child: Container(
           decoration: BoxDecoration(
             color: TAColors.cardColor(isDark),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -705,11 +607,13 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
                   fillColor: TAColors.surfaceColor(isDark),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: TAColors.borderColor(isDark)),
+                    borderSide:
+                        BorderSide(color: TAColors.borderColor(isDark)),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: TAColors.borderColor(isDark)),
+                    borderSide:
+                        BorderSide(color: TAColors.borderColor(isDark)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -725,9 +629,12 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(ctx),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: TAColors.textSecondaryColor(isDark),
-                        side: BorderSide(color: TAColors.borderColor(isDark)),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        foregroundColor:
+                            TAColors.textSecondaryColor(isDark),
+                        side: BorderSide(
+                            color: TAColors.borderColor(isDark)),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -742,7 +649,8 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
                         Navigator.pop(ctx);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: const Text('Reply posted successfully'),
+                            content:
+                                const Text('Reply posted successfully'),
                             behavior: SnackBarBehavior.floating,
                             backgroundColor: TAColors.success,
                           ),
@@ -752,7 +660,8 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
                         backgroundColor: TAColors.primary,
                         foregroundColor: Colors.white,
                         elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -795,39 +704,4 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(covariant _TabBarDelegate oldDelegate) {
     return isDark != oldDelegate.isDark;
   }
-}
-
-// Course data model
-class TACourseData {
-  final String id;
-  final String code;
-  final String name;
-  final String instructor;
-  final int studentsCount;
-  final int labsCount;
-  final int assignmentsCount;
-  final int discussionsCount;
-  final List<String> insights;
-  final List<TAUpcomingTask> upcomingTasks;
-  final List<TARecentActivity> recentActivities;
-  final List<TALabItem> labs;
-  final List<TAGradingTask> gradingTasks;
-  final List<TADiscussionItem> discussions;
-
-  TACourseData({
-    required this.id,
-    required this.code,
-    required this.name,
-    required this.instructor,
-    required this.studentsCount,
-    required this.labsCount,
-    required this.assignmentsCount,
-    required this.discussionsCount,
-    required this.insights,
-    required this.upcomingTasks,
-    required this.recentActivities,
-    required this.labs,
-    required this.gradingTasks,
-    required this.discussions,
-  });
 }

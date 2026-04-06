@@ -214,15 +214,15 @@ Returns an array of Enrollment objects.
 
 ---
 
-## 4. Instructor Flow
+## 4. Instructor & TA Flow
 
 ### 4.1 Get Teaching Courses
 **Endpoint:** `GET /api/enrollments/teaching`
 **Access:** Protected (`Bearer Token`, Role: INSTRUCTOR, TA)
-**Description:** Retrieves sections assigned to the current instructor or TA.
+**Description:** Retrieves sections assigned to the current instructor or teaching assistant (TA).
 
 **Payload Structure (Option C Answer):**
-This endpoint returns a **completely different shape** (Option C) from the student's `my-courses`. It does not include student-specific fields like `status`, `grade`, or `dropDeadline`. Instead, it provides a streamlined model mapping the instructor directly to the courses and sections they teach.
+This endpoint returns a **completely different shape** (Option C) from the student's `my-courses`. It does not include student-specific fields like `status`, `grade`, or `dropDeadline`. Instead, it provides a streamlined model mapping the instructor/TA directly to the courses and sections they teach or assist.
 
 **Success Response (HTTP 200)**
 ```json
@@ -254,6 +254,31 @@ This endpoint returns a **completely different shape** (Option C) from the stude
   }
 ]
 ```
+
+### 4.2 Get Section TAs
+**Endpoint:** `GET /api/enrollments/sections/:sectionId/tas`
+**Access:** Protected (`Bearer Token`, Role: INSTRUCTOR, ADMIN)
+**Description:** Returns a detailed list of all Teaching Assistants assigned to a course section. Useful for instructors managing their assigned courses. Note: The Instructor flow uses this to view who is helping teach the course.
+
+**Success Response (HTTP 200)**
+```json
+[
+  {
+    "id": 1,
+    "sectionId": 10,
+    "userId": 7,
+    "responsibilities": "Grading assignments",
+    "assignedAt": "2026-08-15T10:00:00.000Z",
+    "firstName": "Jane",
+    "lastName": "Smith",
+    "email": "jane.smith@example.com"
+  }
+]
+```
+
+### 4.3 TA Specific Notes for Flutter
+- **Reusability**: You can heavily reuse the `TeachingCourseModel` for both Instructor and TA dashboards, as the `/api/enrollments/teaching` endpoint acts as the primary data source for both roles and yields identical structural responses.
+- **Permissions Limitation**: TAs generally have view access to the sections they assist with, but unlike Administrators or Instructors, they do not automatically have elevated endpoints for managing enrollments (like dropping other students or viewing the waitlist from this API controller) unless additionally scoped. Keep the TA UI strictly focused on Course views and other authorized tools (e.g., grading, forums).
 
 ---
 
@@ -344,6 +369,22 @@ class TeachingCourseModel with _$TeachingCourseModel {
 
   factory TeachingCourseModel.fromJson(Map<String, dynamic> json) => _$TeachingCourseModelFromJson(json);
 }
+
+@freezed
+class TAAssignmentModel with _$TAAssignmentModel {
+  const factory TAAssignmentModel({
+    required int id,
+    required int sectionId,
+    required int userId,
+    String? responsibilities,
+    required DateTime assignedAt,
+    required String firstName,
+    required String lastName,
+    required String email,
+  }) = _TAAssignmentModel;
+
+  factory TAAssignmentModel.fromJson(Map<String, dynamic> json) => _$TAAssignmentModelFromJson(json);
+}
 ```
 
 ### 2. Available Courses Data Flow (Search Screen)
@@ -414,6 +455,11 @@ class EnrollmentApi {
   Future<List<TeachingCourseModel>> getTeachingCourses() async {
     final response = await _dio.get('/api/enrollments/teaching');
     return (response.data as List).map((json) => TeachingCourseModel.fromJson(json)).toList();
+  }
+
+  Future<List<TAAssignmentModel>> getSectionTAs(int sectionId) async {
+    final response = await _dio.get('/api/enrollments/sections/$sectionId/tas');
+    return (response.data as List).map((json) => TAAssignmentModel.fromJson(json)).toList();
   }
 }
 ```

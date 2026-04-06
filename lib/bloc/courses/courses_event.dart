@@ -63,3 +63,8 @@ class AssignmentsFetched extends CoursesEvent {
 class CoursesRefreshed extends CoursesEvent {
   const CoursesRefreshed();
 }
+
+/// Fetch courses for a Teaching Assistant (TA assignments).
+class TACoursesFetched extends CoursesEvent {
+  const TACoursesFetched();
+}

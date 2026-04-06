@@ -161,16 +161,16 @@ class DemoCredentials {
   /// Get the dashboard route based on user's roles
   static String getDashboardRouteForUser(UserDto user) {
     // Priority: IT_ADMIN > ADMIN > INSTRUCTOR > TA > STUDENT
-    if (user.hasRole('IT_ADMIN')) {
+    if (user.hasRole('IT_ADMIN') || user.hasRole('it_admin')) {
       return getDashboardRoute('IT_ADMIN');
     }
-    if (user.hasRole('ADMIN')) {
+    if (user.hasRole('ADMIN') || user.hasRole('admin')) {
       return getDashboardRoute('ADMIN');
     }
-    if (user.hasRole('INSTRUCTOR')) {
+    if (user.hasRole('INSTRUCTOR') || user.hasRole('instructor')) {
       return getDashboardRoute('INSTRUCTOR');
     }
-    if (user.hasRole('TA')) {
+    if (user.hasRole('TA') || user.hasRole('teaching_assistant')) {
       return getDashboardRoute('TA');
     }
     return getDashboardRoute('STUDENT');

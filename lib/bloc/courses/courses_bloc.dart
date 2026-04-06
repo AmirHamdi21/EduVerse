@@ -47,6 +47,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     on<AnnouncementsFetched>(_onAnnouncementsFetched);
     on<AssignmentsFetched>(_onAssignmentsFetched);
     on<CoursesRefreshed>(_onCoursesRefreshed);
+    on<TACoursesFetched>(_onTACoursesFetched);
   }
 
   // ── Student Courses ────────────────────────────────────────────────────
@@ -88,6 +89,28 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     } catch (e) {
       if (cached.isNotEmpty) {
         emit(InstructorCoursesLoaded(teachingCourses: cached));
+      } else {
+        emit(CoursesError(message: _sanitizeError(e)));
+      }
+    }
+  }
+
+  // ── TA Courses ──────────────────────────────────────────────────────────
+
+  Future<void> _onTACoursesFetched(
+    TACoursesFetched event,
+    Emitter<CoursesState> emit,
+  ) async {
+    final cached = await _loadCachedTeachingCourses();
+    emit(CoursesLoading(cachedData: cached));
+
+    try {
+      final teachingCourses = await _enrollmentService.getTeachingCourses();
+      await _cacheTeachingCourses(teachingCourses);
+      emit(TACoursesLoaded(teachingCourses: teachingCourses));
+    } catch (e) {
+      if (cached.isNotEmpty) {
+        emit(TACoursesLoaded(teachingCourses: cached));
       } else {
         emit(CoursesError(message: _sanitizeError(e)));
       }

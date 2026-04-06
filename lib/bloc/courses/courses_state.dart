@@ -71,6 +71,24 @@ class InstructorCoursesLoaded extends CoursesState {
   List<Object?> get props => [teachingCourses];
 }
 
+/// Successfully loaded TA teaching assignments.
+/// Uses the same data shape as InstructorCoursesLoaded but provides
+/// a distinct state type so BlocBuilder can differentiate TA vs Instructor.
+class TACoursesLoaded extends CoursesState {
+  final List<TeachingCourseModel> teachingCourses;
+
+  const TACoursesLoaded({required this.teachingCourses});
+
+  /// Total enrolled students across all assigned sections.
+  int get totalStudents => teachingCourses.fold<int>(
+    0,
+    (sum, tc) => sum + tc.section.currentEnrollment,
+  );
+
+  @override
+  List<Object?> get props => [teachingCourses];
+}
+
 /// Successfully loaded course structure.
 class CourseStructureLoaded extends CoursesState {
   final List<CourseStructureModel> structure;
