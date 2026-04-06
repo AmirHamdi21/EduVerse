@@ -35,53 +35,7 @@
 | Gamification Settings | ❌ | ✅ | **ADD TO FLUTTER** |
 | Broadcast System | ❌ | ✅ | **ADD TO FLUTTER** |
 | Notification Templates | ❌ | ✅ | **ADD TO FLUTTER** |
-| **SETTINGS (22 screens)** |
-| Main Settings | ✅ | ❌ | **ADD TO WEBSITE** |
-| Semester Settings | ✅ | ❌ | **ADD TO WEBSITE** |
-| Registration Settings | ✅ | ❌ | **ADD TO WEBSITE** |
-| Appearance | ✅ | ⚠️ Toggle only | Expand Website |
-| Language | ✅ | ⚠️ Toggle only | ✅ Parity |
-| Branding | ✅ | ❌ | **ADD TO WEBSITE** |
-| Logo Assets | ✅ | ❌ | **ADD TO WEBSITE** |
-| Password Policy | ✅ | ❌ | **ADD TO WEBSITE** |
-| Two-Factor Policy | ✅ | ❌ | **ADD TO WEBSITE** |
-| Email Settings | ✅ | ❌ | **ADD TO WEBSITE** |
-| SMS Settings | ✅ | ❌ | **ADD TO WEBSITE** |
-| Push Notifications | ✅ | ❌ | **ADD TO WEBSITE** |
-| Webhooks | ✅ | ❌ | **ADD TO WEBSITE** |
-| API Settings | ✅ | ❌ | **ADD TO WEBSITE** |
-| Cloud Storage | ✅ | ❌ | **ADD TO WEBSITE** |
-| Payment Gateways | ✅ | ❌ | **ADD TO WEBSITE** |
-| Video Conferencing | ✅ | ❌ | **ADD TO WEBSITE** |
-| Backup & Restore | ✅ | ❌ | **ADD TO WEBSITE** |
-| System Updates | ✅ | ❌ | **ADD TO WEBSITE** |
-| Developer Options | ✅ | ❌ | **ADD TO WEBSITE** |
-| System Logs | ✅ | ❌ | **ADD TO WEBSITE** |
-| Blocked Users | ✅ | ❌ | **ADD TO WEBSITE** |
-| **IT ADMIN** |
-| IT Dashboard | ✅ | ✅ | ✅ Parity |
-| System Settings | ✅ | ✅ | ✅ Parity |
-| System Health | ✅ | ✅ | ✅ Parity |
-| Server Management | ✅ | ⚠️ View only | Add CRUD to Website |
-| Security Logs | ✅ | ✅ | ✅ Parity |
-| Performance Reports | ✅ | ✅ | ✅ Parity |
-| Database Management | ✅ | ✅ | ✅ Parity |
-| Cloud Services | ✅ | ❌ | **ADD TO WEBSITE** |
-| Backup Screen | ✅ | ✅ | ✅ Parity |
-| API Management | ✅ | ⚠️ Partial | Expand Website |
-| Alerts Management | ✅ | ❌ | **ADD TO WEBSITE** |
-| Error Logs | ✅ | ❌ | **ADD TO WEBSITE** |
-| AI Model Settings | ✅ | ✅ | ✅ Parity |
-| Integration Management | ✅ | ✅ | ✅ Parity |
-| Multi-Campus | ❌ | ✅ | **ADD TO FLUTTER** |
-| IT Profile | ✅ | ✅ | ✅ Parity |
-| IT Edit Profile | ✅ | ❌ | **ADD TO WEBSITE** |
-| IT Search | ✅ | ❌ | **ADD TO WEBSITE** |
-
----
-
-## 2. Feature Parity Scores by Category
-
+|x
 | Category | Flutter Score | React Score | Notes |
 |----------|:-------------:|:-----------:|-------|
 | Dashboard | 95% | 75% | Flutter has more stats, AI alerts |
