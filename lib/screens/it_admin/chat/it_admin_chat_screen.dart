@@ -4,18 +4,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
-import '../../../widgets/admin/dashboard/admin_drawer.dart';
-import '../../../widgets/admin/shared/admin_colors.dart';
+import '../../../widgets/it_admin/shared/it_drawer.dart';
 import '../../../widgets/shared/chat/shared_conversation_list.dart';
 
-class AdminMessagesScreen extends StatefulWidget {
-  const AdminMessagesScreen({super.key});
+class ITAdminChatScreen extends StatefulWidget {
+  const ITAdminChatScreen({super.key});
 
   @override
-  State<AdminMessagesScreen> createState() => _AdminMessagesScreenState();
+  State<ITAdminChatScreen> createState() => _ITAdminChatScreenState();
 }
 
-class _AdminMessagesScreenState extends State<AdminMessagesScreen> {
+class _ITAdminChatScreenState extends State<ITAdminChatScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -27,11 +26,10 @@ class _AdminMessagesScreenState extends State<AdminMessagesScreen> {
 
         return Scaffold(
           key: _scaffoldKey,
-          backgroundColor: AdminColors.getBackgroundColor(isDark),
-          drawer: const AdminDrawer(),
+          drawer: ITDrawer(currentRoute: '/it-admin/messages', isDark: isDark),
           body: SafeArea(
             child: SharedConversationList(
-              accentColor: const Color(0xFF4F46E5),
+              accentColor: const Color(0xFF3B82F6),
               isDark: isDark,
               title: l10n.messages,
               leadingIcon: Icons.menu_rounded,

@@ -31,10 +31,14 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- [ ] Does the plan enforce **BLoC State Management First** without widget logic?
-- [ ] Is there **Strict Data Layer Separation** mapping to `eduverse_db.sql` models precisely?
-- [ ] Is **Type Safety & Error Handling** fully accounted for handling API responses?
-- [ ] Are we strictly utilizing the `courses_backend_integration_plan.md` strategy across Student, Instructor, and TA endpoints?
+- [ ] Does the plan enforce **I. BLoC State Management First** — no widget-level API/WebSocket calls?
+- [ ] Is there **II. Strict Data Layer Separation** — models match backend API + website TypeScript interfaces exactly?
+- [ ] Is **III. Type Safety & Error Handling** fully accounted for — including optimistic updates and WebSocket reconnect fallback?
+- [ ] Does the plan enforce **IV. Website Feature Parity** — features added/removed to match website 1:1?
+- [ ] Is **V. Testable Architecture** ensured — services injectable, BLoCs mockable?
+- [ ] Does the plan enforce **VI. Real-Time Communication Integrity** — WebSocket lifecycle, auto-reconnect, event idempotency?
+- [ ] Is **VII. Static Data Elimination** accounted for — mock removal audit included in verification?
+- [ ] Was **VIII. Aggressive Clarification** performed — minimum 5 clarification questions on field parity, roles, edge cases, deletions, and event coverage?
 
 ## Project Structure
 

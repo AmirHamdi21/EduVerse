@@ -1,107 +1,178 @@
 import 'package:equatable/equatable.dart';
 import 'chat_models.dart';
 
-abstract class ChatState extends Equatable {
-  const ChatState();
+enum ConnectionStatus { live, offline, connecting }
 
-  @override
-  List<Object?> get props => [];
-}
+enum ChatStatus { initial, loading, success, failure }
 
-class ChatInitial extends ChatState {
-  const ChatInitial();
-}
+enum ConversationFilter { all, unread, groups }
 
-class ChatLoading extends ChatState {
-  const ChatLoading();
-}
+class ChatState extends Equatable {
+  final List<ConversationModel> conversations;
+  final List<ChatMessageModel> activeConversationMessages;
+  final int? activeConversationId;
+  final ConnectionStatus connectionStatus;
+  final Map<int, List<int>> typingUsers;
+  final Set<int> onlineUsers;
+  final ChatStatus status;
+  final String? errorMessage;
+  final List<ChatUserModel>? searchResults;
+  final bool isLoadingMore;
+  final int activePage;
+  final String conversationSearchQuery;
+  final ConversationFilter conversationFilter;
 
-class ChatLoaded extends ChatState {
-  final List<Conversation> conversations;
-  final List<Conversation> filteredConversations;
-  final ChatFilter currentFilter;
-  final String searchQuery;
-  final Conversation? selectedConversation;
-  final List<ChatMessage> currentMessages;
-  final bool isLoadingMessages;
-  final String? error;
-  final bool isSendingMessage;
-  final ChatMessage? replyingTo;
-  final List<ChatUser> availableUsers;
-  final bool isSearchingUsers;
-
-  const ChatLoaded({
-    required this.conversations,
-    required this.filteredConversations,
-    this.currentFilter = ChatFilter.all,
-    this.searchQuery = '',
-    this.selectedConversation,
-    this.currentMessages = const [],
-    this.isLoadingMessages = false,
-    this.error,
-    this.isSendingMessage = false,
-    this.replyingTo,
-    this.availableUsers = const [],
-    this.isSearchingUsers = false,
+  const ChatState({
+    this.conversations = const <ConversationModel>[],
+    this.activeConversationMessages = const <ChatMessageModel>[],
+    this.activeConversationId,
+    this.connectionStatus = ConnectionStatus.offline,
+    this.typingUsers = const <int, List<int>>{},
+    this.onlineUsers = const <int>{},
+    this.status = ChatStatus.initial,
+    this.errorMessage,
+    this.searchResults,
+    this.isLoadingMore = false,
+    this.activePage = 1,
+    this.conversationSearchQuery = '',
+    this.conversationFilter = ConversationFilter.all,
   });
 
-  ChatLoaded copyWith({
-    List<Conversation>? conversations,
-    List<Conversation>? filteredConversations,
-    ChatFilter? currentFilter,
-    String? searchQuery,
-    Conversation? selectedConversation,
-    bool clearSelectedConversation = false,
-    List<ChatMessage>? currentMessages,
-    bool? isLoadingMessages,
-    String? error,
-    bool clearError = false,
-    bool? isSendingMessage,
-    ChatMessage? replyingTo,
-    bool clearReplyingTo = false,
-    List<ChatUser>? availableUsers,
-    bool? isSearchingUsers,
+  ConversationModel? get activeConversation {
+    if (activeConversationId == null) {
+      return null;
+    }
+
+    for (final conversation in conversations) {
+      if (conversation.conversationId == activeConversationId) {
+        return conversation;
+      }
+    }
+
+    return null;
+  }
+
+  List<ConversationModel> get filteredConversations {
+    final normalizedQuery = conversationSearchQuery.trim().toLowerCase();
+
+    Iterable<ConversationModel> filtered = conversations;
+
+    switch (conversationFilter) {
+      case ConversationFilter.all:
+        break;
+      case ConversationFilter.unread:
+        filtered = filtered.where(
+          (conversation) => conversation.unreadCount > 0,
+        );
+        break;
+      case ConversationFilter.groups:
+        filtered = filtered.where(
+          (conversation) => conversation.type == ConversationType.group,
+        );
+        break;
+    }
+
+    if (normalizedQuery.isEmpty) {
+      return filtered.toList(growable: false);
+    }
+
+    return filtered
+        .where((conversation) {
+          final emailCandidates = <String>[
+            if ((conversation.directDisplayUser?.email ?? '').trim().isNotEmpty)
+              conversation.directDisplayUser!.email!,
+            ...conversation.participantUsers
+                .map((user) => user.email ?? '')
+                .where((email) => email.trim().isNotEmpty),
+          ];
+
+          final textCandidates = <String>[
+            conversation.title,
+            conversation.lastMessage ?? '',
+            conversation.lastMessageInfo?.text ?? '',
+            ...conversation.participantUsers.map((user) => user.displayName),
+            ...emailCandidates,
+          ];
+
+          return textCandidates.any(
+            (candidate) => candidate.toLowerCase().contains(normalizedQuery),
+          );
+        })
+        .toList(growable: false);
+  }
+
+  ChatState copyWith({
+    List<ConversationModel>? conversations,
+    List<ChatMessageModel>? activeConversationMessages,
+    int? activeConversationId,
+    ConnectionStatus? connectionStatus,
+    Map<int, List<int>>? typingUsers,
+    Set<int>? onlineUsers,
+    ChatStatus? status,
+    String? errorMessage,
+    List<ChatUserModel>? searchResults,
+    bool? isLoadingMore,
+    int? activePage,
+    String? conversationSearchQuery,
+    ConversationFilter? conversationFilter,
+    bool clearActiveConversationId = false,
+    bool clearErrorMessage = false,
+    bool clearSearchResults = false,
   }) {
-    return ChatLoaded(
+    return ChatState(
       conversations: conversations ?? this.conversations,
-      filteredConversations: filteredConversations ?? this.filteredConversations,
-      currentFilter: currentFilter ?? this.currentFilter,
-      searchQuery: searchQuery ?? this.searchQuery,
-      selectedConversation: clearSelectedConversation 
-          ? null 
-          : selectedConversation ?? this.selectedConversation,
-      currentMessages: currentMessages ?? this.currentMessages,
-      isLoadingMessages: isLoadingMessages ?? this.isLoadingMessages,
-      error: clearError ? null : error ?? this.error,
-      isSendingMessage: isSendingMessage ?? this.isSendingMessage,
-      replyingTo: clearReplyingTo ? null : replyingTo ?? this.replyingTo,
-      availableUsers: availableUsers ?? this.availableUsers,
-      isSearchingUsers: isSearchingUsers ?? this.isSearchingUsers,
+      activeConversationMessages:
+          activeConversationMessages ?? this.activeConversationMessages,
+      activeConversationId: clearActiveConversationId
+          ? null
+          : activeConversationId ?? this.activeConversationId,
+      connectionStatus: connectionStatus ?? this.connectionStatus,
+      typingUsers: typingUsers ?? this.typingUsers,
+      onlineUsers: onlineUsers ?? this.onlineUsers,
+      status: status ?? this.status,
+      errorMessage: clearErrorMessage
+          ? null
+          : errorMessage ?? this.errorMessage,
+      searchResults: clearSearchResults
+          ? null
+          : searchResults ?? this.searchResults,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      activePage: activePage ?? this.activePage,
+      conversationSearchQuery:
+          conversationSearchQuery ?? this.conversationSearchQuery,
+      conversationFilter: conversationFilter ?? this.conversationFilter,
     );
   }
 
   @override
   List<Object?> get props => [
-        conversations,
-        filteredConversations,
-        currentFilter,
-        searchQuery,
-        selectedConversation,
-        currentMessages,
-        isLoadingMessages,
-        error,
-        isSendingMessage,
-        replyingTo,
-        availableUsers,
-        isSearchingUsers,
-      ];
-}
+    conversations,
+    activeConversationMessages,
+    activeConversationId,
+    connectionStatus,
+    _typingUsersProps,
+    _sortedOnlineUsers,
+    status,
+    errorMessage,
+    searchResults,
+    isLoadingMore,
+    activePage,
+    conversationSearchQuery,
+    conversationFilter,
+  ];
 
-class ChatError extends ChatState {
-  final String message;
+  List<Object> get _typingUsersProps {
+    final keys = typingUsers.keys.toList()..sort();
+    return keys
+        .map((key) {
+          final values = [...typingUsers[key] ?? const <int>[]]..sort();
+          return '$key:${values.join(',')}';
+        })
+        .toList(growable: false);
+  }
 
-  const ChatError({required this.message});
-
-  @override
-  List<Object?> get props => [message];
+  List<int> get _sortedOnlineUsers {
+    final values = onlineUsers.toList()..sort();
+    return values;
+  }
 }

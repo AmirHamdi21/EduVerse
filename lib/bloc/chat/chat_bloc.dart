@@ -1,0 +1,1079 @@
+import 'dart:async';
+
+import 'package:bloc/bloc.dart';
+
+import '../../models/auth_models.dart';
+import '../../services/api/chat_service.dart';
+import '../../services/api/core_api_client.dart';
+import '../../services/chat/chat_socket_service.dart';
+import '../../services/storage_service.dart';
+import 'chat_event.dart';
+import 'chat_models.dart';
+import 'chat_state.dart';
+
+class ChatBloc extends Bloc<ChatEvent, ChatState> {
+  final IChatService _chatService;
+  final IChatSocketService _chatSocketService;
+  final StorageService _storageService;
+  final Duration _typingDebounceDuration;
+
+  StreamSubscription<ChatConnectionStatus>? _connectionStatusSubscription;
+  StreamSubscription<ChatMessageModel>? _newMessageSubscription;
+  StreamSubscription<ChatMessageModel>? _notificationMessageSubscription;
+  StreamSubscription<UserTypingEvent>? _typingSubscription;
+  StreamSubscription<int>? _messageDeletedSubscription;
+  StreamSubscription<ChatMessageModel>? _messageEditedSubscription;
+  StreamSubscription<Map<String, dynamic>>? _userStatusSubscription;
+  StreamSubscription<int>? _deleteConfirmedSubscription;
+  StreamSubscription<MessageReadEvent>? _messageReadSubscription;
+
+  Timer? _typingDebounceTimer;
+
+  final Map<int, _PendingMessage> _failedMessages = <int, _PendingMessage>{};
+  int _tempIdCounter = -1;
+
+  factory ChatBloc({
+    IChatService? chatService,
+    IChatSocketService? chatSocketService,
+    StorageService? storageService,
+    Duration typingDebounceDuration = const Duration(milliseconds: 1500),
+  }) {
+    final resolvedStorageService = storageService ?? StorageService();
+    final resolvedChatService =
+        chatService ??
+        ChatService(
+          coreApiClient: CoreApiClient(storageService: resolvedStorageService),
+        );
+    final resolvedSocketService =
+        chatSocketService ??
+        ChatSocketService(storageService: resolvedStorageService);
+
+    return ChatBloc._(
+      chatService: resolvedChatService,
+      chatSocketService: resolvedSocketService,
+      storageService: resolvedStorageService,
+      typingDebounceDuration: typingDebounceDuration,
+    );
+  }
+
+  ChatBloc._({
+    required IChatService chatService,
+    required IChatSocketService chatSocketService,
+    required StorageService storageService,
+    required Duration typingDebounceDuration,
+  }) : _chatService = chatService,
+       _chatSocketService = chatSocketService,
+       _storageService = storageService,
+       _typingDebounceDuration = typingDebounceDuration,
+       super(const ChatState()) {
+    on<LoadConversations>(_onLoadConversations);
+    on<SelectConversation>(_onSelectConversation);
+    on<LoadMoreMessages>(_onLoadMoreMessages);
+    on<SendMessage>(_onSendMessage);
+    on<RetryFailedMessage>(_onRetryFailedMessage);
+    on<SearchUsers>(_onSearchUsers);
+    on<SearchConversations>(_onSearchConversations);
+    on<FilterConversations>(_onFilterConversations);
+    on<StartNewConversation>(_onStartNewConversation);
+    on<DeleteMessage>(_onDeleteMessage);
+    on<DeleteConversation>(_onDeleteConversation);
+    on<MarkRead>(_onMarkRead);
+    on<TypingChanged>(_onTypingChanged);
+    on<WebSocketEventReceived>(_onWebSocketEventReceived);
+    on<ClearChatError>(_onClearChatError);
+
+    _subscribeToSocketStreams();
+    unawaited(_connectSocket());
+  }
+
+  Future<void> _connectSocket() async {
+    final token = (await _storageService.getAccessToken() ?? '').trim();
+    _chatSocketService.connect(token);
+  }
+
+  void _subscribeToSocketStreams() {
+    _connectionStatusSubscription = _chatSocketService.connectionStatus.listen((
+      status,
+    ) {
+      add(
+        WebSocketEventReceived(eventName: 'connection_status', payload: status),
+      );
+    });
+
+    _newMessageSubscription = _chatSocketService.newMessageStream.listen((
+      message,
+    ) {
+      add(WebSocketEventReceived(eventName: 'new_message', payload: message));
+    });
+
+    _notificationMessageSubscription = _chatSocketService
+        .newMessageNotificationStream
+        .listen((message) {
+          add(
+            WebSocketEventReceived(eventName: 'new_message', payload: message),
+          );
+        });
+
+    _typingSubscription = _chatSocketService.typingStream.listen((typingEvent) {
+      add(
+        WebSocketEventReceived(eventName: 'user_typing', payload: typingEvent),
+      );
+    });
+
+    _messageDeletedSubscription = _chatSocketService.messageDeletedStream
+        .listen((messageId) {
+          add(
+            WebSocketEventReceived(
+              eventName: 'message_deleted',
+              payload: messageId,
+            ),
+          );
+        });
+
+    _messageEditedSubscription = _chatSocketService.messageEditedStream.listen((
+      message,
+    ) {
+      add(
+        WebSocketEventReceived(eventName: 'message_edited', payload: message),
+      );
+    });
+
+    _userStatusSubscription = _chatSocketService.userStatusStream.listen((
+      event,
+    ) {
+      add(WebSocketEventReceived(eventName: 'user_status', payload: event));
+    });
+
+    _deleteConfirmedSubscription = _chatSocketService.deleteConfirmedStream
+        .listen((messageId) {
+          add(
+            WebSocketEventReceived(
+              eventName: 'delete_confirmed',
+              payload: messageId,
+            ),
+          );
+        });
+
+    _messageReadSubscription = _chatSocketService.messageReadStream.listen((
+      event,
+    ) {
+      add(WebSocketEventReceived(eventName: 'message_read', payload: event));
+    });
+  }
+
+  Future<void> _onLoadConversations(
+    LoadConversations event,
+    Emitter<ChatState> emit,
+  ) async {
+    emit(state.copyWith(status: ChatStatus.loading, clearErrorMessage: true));
+
+    try {
+      final conversations = await _chatService.listConversations();
+      emit(
+        state.copyWith(
+          conversations: _sortConversations(conversations),
+          status: ChatStatus.success,
+          clearErrorMessage: true,
+        ),
+      );
+    } catch (error) {
+      emit(
+        state.copyWith(
+          status: ChatStatus.failure,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onSelectConversation(
+    SelectConversation event,
+    Emitter<ChatState> emit,
+  ) async {
+    if (state.activeConversationId != null &&
+        state.activeConversationId != event.conversationId) {
+      _chatSocketService.leaveConversation(state.activeConversationId!);
+    }
+
+    _chatSocketService.joinConversation(event.conversationId);
+
+    emit(
+      state.copyWith(
+        status: ChatStatus.loading,
+        activeConversationId: event.conversationId,
+        activeConversationMessages: const <ChatMessageModel>[],
+        activePage: 1,
+        isLoadingMore: false,
+        clearErrorMessage: true,
+      ),
+    );
+
+    try {
+      final messages = await _chatService.getConversationMessages(
+        event.conversationId,
+        page: 1,
+      );
+      final updatedConversations = state.conversations
+          .map(
+            (conversation) =>
+                conversation.conversationId == event.conversationId
+                ? conversation.copyWith(unreadCount: 0)
+                : conversation,
+          )
+          .toList(growable: false);
+
+      emit(
+        state.copyWith(
+          conversations: _sortConversations(updatedConversations),
+          activeConversationMessages: _sortMessages(messages),
+          activeConversationId: event.conversationId,
+          activePage: 1,
+          status: ChatStatus.success,
+          clearErrorMessage: true,
+        ),
+      );
+    } catch (error) {
+      emit(
+        state.copyWith(
+          status: ChatStatus.failure,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onLoadMoreMessages(
+    LoadMoreMessages event,
+    Emitter<ChatState> emit,
+  ) async {
+    if (state.isLoadingMore ||
+        state.activeConversationId != event.conversationId) {
+      return;
+    }
+
+    emit(state.copyWith(isLoadingMore: true, clearErrorMessage: true));
+
+    try {
+      final nextPage = event.page <= 0 ? state.activePage + 1 : event.page;
+      final olderMessages = await _chatService.getConversationMessages(
+        event.conversationId,
+        page: nextPage,
+      );
+
+      final mergedMessages = _mergeMessages(
+        olderMessages,
+        state.activeConversationMessages,
+      );
+
+      emit(
+        state.copyWith(
+          activeConversationMessages: _sortMessages(mergedMessages),
+          activePage: nextPage,
+          isLoadingMore: false,
+          status: ChatStatus.success,
+        ),
+      );
+    } catch (error) {
+      emit(
+        state.copyWith(
+          isLoadingMore: false,
+          status: ChatStatus.failure,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onSendMessage(
+    SendMessage event,
+    Emitter<ChatState> emit,
+  ) async {
+    final trimmedText = event.text.trim();
+    if (trimmedText.isEmpty) {
+      return;
+    }
+
+    final currentUser = await _storageService.getUserData();
+    final localMessageId = event.retryMessageId ?? _nextTempMessageId();
+
+    final optimisticMessage = ChatMessageModel(
+      id: localMessageId,
+      text: trimmedText,
+      senderId: currentUser?.userId ?? 0,
+      senderName: _resolveSenderName(currentUser),
+      sentAt: DateTime.now().toUtc(),
+      replyToId: event.replyToId,
+      conversationId: event.conversationId,
+      status: 'sending',
+    );
+
+    final pendingMessage = _PendingMessage(
+      localMessageId: localMessageId,
+      conversationId: event.conversationId,
+      text: trimmedText,
+      replyToId: event.replyToId,
+    );
+
+    _failedMessages[localMessageId] = pendingMessage;
+
+    final optimisticList = event.retryMessageId == null
+        ? [...state.activeConversationMessages, optimisticMessage]
+        : state.activeConversationMessages
+              .map(
+                (message) => message.id == event.retryMessageId
+                    ? optimisticMessage
+                    : message,
+              )
+              .toList(growable: false);
+
+    emit(
+      state.copyWith(
+        activeConversationMessages: _sortMessages(optimisticList),
+        status: ChatStatus.success,
+        clearErrorMessage: true,
+      ),
+    );
+
+    ChatMessageModel? confirmedMessage;
+
+    try {
+      if (state.connectionStatus == ConnectionStatus.live) {
+        _chatSocketService.sendMessage(
+          event.conversationId,
+          trimmedText,
+          replyToId: event.replyToId,
+        );
+        confirmedMessage = optimisticMessage.copyWith(status: 'sent');
+      } else {
+        confirmedMessage = await _chatService.sendMessage(
+          event.conversationId,
+          trimmedText,
+          replyToId: event.replyToId,
+        );
+      }
+    } catch (_) {
+      try {
+        confirmedMessage = await _chatService.sendMessage(
+          event.conversationId,
+          trimmedText,
+          replyToId: event.replyToId,
+        );
+      } catch (error) {
+        final failedMessage = optimisticMessage.copyWith(status: 'failed');
+        final updatedFailedList = _replaceById(
+          state.activeConversationMessages,
+          failedMessage,
+        );
+
+        emit(
+          state.copyWith(
+            activeConversationMessages: updatedFailedList,
+            status: ChatStatus.failure,
+            errorMessage: error.toString(),
+          ),
+        );
+        return;
+      }
+    }
+
+    final resolvedMessage = confirmedMessage.copyWith(status: 'sent');
+    _failedMessages.remove(localMessageId);
+
+    final updatedMessages = _replaceByTempOrAppend(
+      state.activeConversationMessages,
+      localMessageId,
+      resolvedMessage,
+    );
+
+    final updatedConversations = _upsertConversationWithMessage(
+      state.conversations,
+      resolvedMessage,
+      incrementUnread: false,
+    );
+
+    emit(
+      state.copyWith(
+        activeConversationMessages: _sortMessages(updatedMessages),
+        conversations: _sortConversations(updatedConversations),
+        status: ChatStatus.success,
+        clearErrorMessage: true,
+      ),
+    );
+  }
+
+  Future<void> _onRetryFailedMessage(
+    RetryFailedMessage event,
+    Emitter<ChatState> emit,
+  ) async {
+    final pending = _failedMessages[event.messageId];
+    if (pending == null) {
+      return;
+    }
+
+    add(
+      SendMessage(
+        conversationId: pending.conversationId,
+        text: pending.text,
+        replyToId: pending.replyToId,
+        retryMessageId: pending.localMessageId,
+      ),
+    );
+  }
+
+  Future<void> _onSearchUsers(
+    SearchUsers event,
+    Emitter<ChatState> emit,
+  ) async {
+    final query = event.query.trim();
+    if (query.isEmpty) {
+      emit(state.copyWith(clearSearchResults: true));
+      return;
+    }
+
+    emit(state.copyWith(status: ChatStatus.loading, clearErrorMessage: true));
+
+    try {
+      final results = await _chatService.searchUsers(query, limit: event.limit);
+      emit(
+        state.copyWith(
+          searchResults: results,
+          status: ChatStatus.success,
+          clearErrorMessage: true,
+        ),
+      );
+    } catch (error) {
+      emit(
+        state.copyWith(
+          status: ChatStatus.failure,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onSearchConversations(
+    SearchConversations event,
+    Emitter<ChatState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        conversationSearchQuery: event.query,
+        clearErrorMessage: true,
+      ),
+    );
+  }
+
+  Future<void> _onFilterConversations(
+    FilterConversations event,
+    Emitter<ChatState> emit,
+  ) async {
+    emit(
+      state.copyWith(conversationFilter: event.filter, clearErrorMessage: true),
+    );
+  }
+
+  Future<void> _onStartNewConversation(
+    StartNewConversation event,
+    Emitter<ChatState> emit,
+  ) async {
+    final localExisting = _findExistingConversation(
+      state.conversations,
+      participantIds: event.participantIds,
+      type: event.type,
+    );
+
+    if (localExisting != null) {
+      add(SelectConversation(localExisting.conversationId));
+      return;
+    }
+
+    emit(state.copyWith(status: ChatStatus.loading, clearErrorMessage: true));
+
+    try {
+      final created = await _chatService.startConversation(
+        participantIds: event.participantIds,
+        type: event.type,
+        groupName: event.groupName,
+        text: event.text,
+        fileId: event.fileId,
+      );
+
+      final existingById = state.conversations.where(
+        (conversation) => conversation.conversationId == created.conversationId,
+      );
+      final selectedConversation = existingById.isNotEmpty
+          ? existingById.first
+          : created;
+
+      final updatedConversations = _upsertConversation(
+        state.conversations,
+        selectedConversation,
+      );
+
+      emit(
+        state.copyWith(
+          conversations: _sortConversations(updatedConversations),
+          activeConversationId: selectedConversation.conversationId,
+          status: ChatStatus.success,
+          clearErrorMessage: true,
+        ),
+      );
+
+      add(SelectConversation(selectedConversation.conversationId));
+    } catch (error) {
+      emit(
+        state.copyWith(
+          status: ChatStatus.failure,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onDeleteMessage(
+    DeleteMessage event,
+    Emitter<ChatState> emit,
+  ) async {
+    try {
+      final deleted = event.forEveryone
+          ? await _chatService.deleteForEveryone(event.messageId)
+          : await _chatService.deleteForMe(event.messageId);
+
+      if (!deleted) {
+        throw Exception('Unable to delete message ${event.messageId}.');
+      }
+
+      _chatSocketService.deleteMessage(
+        event.messageId,
+        forEveryone: event.forEveryone,
+      );
+
+      final updatedMessages = state.activeConversationMessages
+          .where((message) => message.id != event.messageId)
+          .toList(growable: false);
+
+      emit(
+        state.copyWith(
+          activeConversationMessages: updatedMessages,
+          status: ChatStatus.success,
+          clearErrorMessage: true,
+        ),
+      );
+    } catch (error) {
+      emit(
+        state.copyWith(
+          status: ChatStatus.failure,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onDeleteConversation(
+    DeleteConversation event,
+    Emitter<ChatState> emit,
+  ) async {
+    final updatedConversations = state.conversations
+        .where(
+          (conversation) => conversation.conversationId != event.conversationId,
+        )
+        .toList(growable: false);
+
+    final wasActiveConversation =
+        state.activeConversationId == event.conversationId;
+
+    if (wasActiveConversation) {
+      _chatSocketService.leaveConversation(event.conversationId);
+    }
+
+    emit(
+      state.copyWith(
+        conversations: _sortConversations(updatedConversations),
+        activeConversationMessages: wasActiveConversation
+            ? const <ChatMessageModel>[]
+            : state.activeConversationMessages,
+        clearActiveConversationId: wasActiveConversation,
+        status: ChatStatus.success,
+        clearErrorMessage: true,
+      ),
+    );
+  }
+
+  Future<void> _onMarkRead(MarkRead event, Emitter<ChatState> emit) async {
+    try {
+      final targetConversation = state.conversations.where(
+        (conversation) => conversation.conversationId == event.conversationId,
+      );
+
+      final markerId = state.activeConversationMessages.isNotEmpty
+          ? state.activeConversationMessages.last.id
+          : (targetConversation.isNotEmpty
+                ? targetConversation.first.lastMessageInfo?.id
+                : null);
+
+      if (markerId != null && markerId > 0) {
+        await _chatService.markRead(markerId);
+      }
+
+      _chatSocketService.markRead(event.conversationId);
+
+      final updatedConversations = state.conversations
+          .map(
+            (conversation) =>
+                conversation.conversationId == event.conversationId
+                ? conversation.copyWith(unreadCount: 0)
+                : conversation,
+          )
+          .toList(growable: false);
+
+      emit(
+        state.copyWith(
+          conversations: _sortConversations(updatedConversations),
+          status: ChatStatus.success,
+          clearErrorMessage: true,
+        ),
+      );
+    } catch (error) {
+      emit(
+        state.copyWith(
+          status: ChatStatus.failure,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onTypingChanged(
+    TypingChanged event,
+    Emitter<ChatState> emit,
+  ) async {
+    _chatSocketService.emitTyping(event.conversationId, event.isTyping);
+
+    if (event.isTyping) {
+      _typingDebounceTimer?.cancel();
+      _typingDebounceTimer = Timer(_typingDebounceDuration, () {
+        add(
+          TypingChanged(conversationId: event.conversationId, isTyping: false),
+        );
+      });
+    }
+  }
+
+  Future<void> _onWebSocketEventReceived(
+    WebSocketEventReceived event,
+    Emitter<ChatState> emit,
+  ) async {
+    switch (event.eventName) {
+      case 'connection_status':
+        final nextStatus = _mapConnectionStatus(event.payload);
+        emit(state.copyWith(connectionStatus: nextStatus));
+        return;
+      case 'new_message':
+        final message = event.payload is ChatMessageModel
+            ? event.payload as ChatMessageModel
+            : ChatMessageModel.fromSocketPayload(event.payload);
+
+        final mergedMessages =
+            state.activeConversationId == message.conversationId
+            ? _mergeIncomingWithOptimistic(
+                state.activeConversationMessages,
+                message,
+              )
+            : state.activeConversationMessages;
+
+        final updatedConversations = _upsertConversationWithMessage(
+          state.conversations,
+          message,
+          incrementUnread: state.activeConversationId != message.conversationId,
+        );
+
+        emit(
+          state.copyWith(
+            conversations: _sortConversations(updatedConversations),
+            activeConversationMessages: _sortMessages(mergedMessages),
+            status: ChatStatus.success,
+          ),
+        );
+        return;
+      case 'user_typing':
+        final typingEvent = event.payload is UserTypingEvent
+            ? event.payload as UserTypingEvent
+            : UserTypingEvent.fromJson(
+                Map<String, dynamic>.from(event.payload as Map),
+              );
+
+        final updatedTypingUsers = Map<int, List<int>>.from(state.typingUsers);
+        final currentUsers = [
+          ...updatedTypingUsers[typingEvent.conversationId] ?? const <int>[],
+        ];
+
+        if (typingEvent.isTyping) {
+          if (!currentUsers.contains(typingEvent.userId)) {
+            currentUsers.add(typingEvent.userId);
+          }
+        } else {
+          currentUsers.removeWhere((userId) => userId == typingEvent.userId);
+        }
+
+        updatedTypingUsers[typingEvent.conversationId] = currentUsers;
+        emit(state.copyWith(typingUsers: updatedTypingUsers));
+        return;
+      case 'message_deleted':
+      case 'delete_confirmed':
+        final messageId = _extractMessageId(event.payload);
+        if (messageId <= 0) {
+          return;
+        }
+
+        final updatedMessages = state.activeConversationMessages
+            .where((message) => message.id != messageId)
+            .toList(growable: false);
+
+        emit(
+          state.copyWith(
+            activeConversationMessages: updatedMessages,
+            status: ChatStatus.success,
+          ),
+        );
+        return;
+      case 'message_edited':
+        final editedMessage = event.payload is ChatMessageModel
+            ? event.payload as ChatMessageModel
+            : ChatMessageModel.fromSocketPayload(event.payload);
+
+        final updatedMessages = _replaceById(
+          state.activeConversationMessages,
+          editedMessage,
+        );
+
+        final updatedConversations = _upsertConversationWithMessage(
+          state.conversations,
+          editedMessage,
+          incrementUnread: false,
+        );
+
+        emit(
+          state.copyWith(
+            conversations: _sortConversations(updatedConversations),
+            activeConversationMessages: _sortMessages(updatedMessages),
+            status: ChatStatus.success,
+          ),
+        );
+        return;
+      case 'user_status':
+        final statusMap = Map<String, dynamic>.from(event.payload as Map);
+        final userId = _parseInt(statusMap['userId']);
+        if (userId <= 0) {
+          return;
+        }
+
+        final nextOnlineUsers = Set<int>.from(state.onlineUsers);
+        final isOnline = _parseBool(statusMap['isOnline']);
+        if (isOnline) {
+          nextOnlineUsers.add(userId);
+        } else {
+          nextOnlineUsers.remove(userId);
+        }
+
+        emit(state.copyWith(onlineUsers: nextOnlineUsers));
+        return;
+      case 'message_read':
+        final readEvent = event.payload is MessageReadEvent
+            ? event.payload as MessageReadEvent
+            : MessageReadEvent.fromJson(
+                Map<String, dynamic>.from(event.payload as Map),
+              );
+
+        final updatedMessages = state.activeConversationMessages
+            .map(
+              (message) => message.id == readEvent.messageId
+                  ? message.copyWith(status: 'read')
+                  : message,
+            )
+            .toList(growable: false);
+
+        emit(
+          state.copyWith(
+            activeConversationMessages: updatedMessages,
+            status: ChatStatus.success,
+          ),
+        );
+        return;
+      default:
+        return;
+    }
+  }
+
+  Future<void> _onClearChatError(
+    ClearChatError event,
+    Emitter<ChatState> emit,
+  ) async {
+    emit(state.copyWith(clearErrorMessage: true));
+  }
+
+  ConnectionStatus _mapConnectionStatus(dynamic status) {
+    if (status is! ChatConnectionStatus) {
+      return ConnectionStatus.offline;
+    }
+
+    switch (status) {
+      case ChatConnectionStatus.connected:
+        return ConnectionStatus.live;
+      case ChatConnectionStatus.reconnecting:
+        return ConnectionStatus.connecting;
+      case ChatConnectionStatus.disconnected:
+        return ConnectionStatus.offline;
+    }
+  }
+
+  List<ConversationModel> _sortConversations(
+    List<ConversationModel> conversations,
+  ) {
+    final sorted = [...conversations];
+    sorted.sort((first, second) => second.updatedAt.compareTo(first.updatedAt));
+    return sorted;
+  }
+
+  List<ChatMessageModel> _sortMessages(List<ChatMessageModel> messages) {
+    final sorted = [...messages];
+    sorted.sort((first, second) => first.sentAt.compareTo(second.sentAt));
+    return sorted;
+  }
+
+  List<ChatMessageModel> _mergeMessages(
+    List<ChatMessageModel> first,
+    List<ChatMessageModel> second,
+  ) {
+    final byId = <int, ChatMessageModel>{
+      for (final message in second) message.id: message,
+    };
+    for (final message in first) {
+      byId[message.id] = message;
+    }
+    return byId.values.toList(growable: false);
+  }
+
+  List<ConversationModel> _upsertConversation(
+    List<ConversationModel> conversations,
+    ConversationModel conversation,
+  ) {
+    final index = conversations.indexWhere(
+      (entry) => entry.conversationId == conversation.conversationId,
+    );
+
+    if (index == -1) {
+      return [...conversations, conversation];
+    }
+
+    final copy = [...conversations];
+    copy[index] = conversation;
+    return copy;
+  }
+
+  List<ConversationModel> _upsertConversationWithMessage(
+    List<ConversationModel> conversations,
+    ChatMessageModel message, {
+    required bool incrementUnread,
+  }) {
+    final index = conversations.indexWhere(
+      (conversation) => conversation.conversationId == message.conversationId,
+    );
+
+    if (index == -1) {
+      return conversations;
+    }
+
+    final target = conversations[index];
+    final updated = target.copyWith(
+      lastMessage: message.isDeleted ? message.deletedText : message.text,
+      lastMessageInfo: message,
+      lastMessageAt: message.sentAt,
+      unreadCount: incrementUnread
+          ? target.unreadCount + 1
+          : target.unreadCount,
+    );
+
+    final copy = [...conversations];
+    copy[index] = updated;
+    return copy;
+  }
+
+  List<ChatMessageModel> _replaceById(
+    List<ChatMessageModel> messages,
+    ChatMessageModel nextMessage,
+  ) {
+    final index = messages.indexWhere(
+      (message) => message.id == nextMessage.id,
+    );
+    if (index == -1) {
+      return [...messages, nextMessage];
+    }
+
+    final copy = [...messages];
+    copy[index] = nextMessage;
+    return copy;
+  }
+
+  List<ChatMessageModel> _replaceByTempOrAppend(
+    List<ChatMessageModel> messages,
+    int tempId,
+    ChatMessageModel nextMessage,
+  ) {
+    final tempIndex = messages.indexWhere((message) => message.id == tempId);
+    if (tempIndex != -1) {
+      final copy = [...messages];
+      copy[tempIndex] = nextMessage;
+      return copy;
+    }
+
+    return _replaceById(messages, nextMessage);
+  }
+
+  List<ChatMessageModel> _mergeIncomingWithOptimistic(
+    List<ChatMessageModel> messages,
+    ChatMessageModel incoming,
+  ) {
+    final byIdMatch = messages.indexWhere(
+      (message) => message.id == incoming.id,
+    );
+    if (byIdMatch != -1) {
+      final copy = [...messages];
+      copy[byIdMatch] = incoming;
+      return copy;
+    }
+
+    final optimisticIndex = messages.indexWhere(
+      (message) =>
+          message.id < 0 &&
+          message.conversationId == incoming.conversationId &&
+          message.text == incoming.text &&
+          (message.status == 'sending' || message.status == 'sent'),
+    );
+
+    if (optimisticIndex != -1) {
+      final copy = [...messages];
+      copy[optimisticIndex] = incoming;
+      return copy;
+    }
+
+    return [...messages, incoming];
+  }
+
+  ConversationModel? _findExistingConversation(
+    List<ConversationModel> conversations, {
+    required List<int> participantIds,
+    required String type,
+  }) {
+    final normalizedType = ConversationType.fromJsonValue(type);
+    if (normalizedType == ConversationType.group) {
+      return null;
+    }
+
+    final participantSet = Set<int>.from(participantIds);
+
+    for (final conversation in conversations) {
+      if (conversation.type != ConversationType.direct) {
+        continue;
+      }
+
+      final existingSet = Set<int>.from(conversation.participants);
+      if (participantSet.containsAll(existingSet) ||
+          existingSet.containsAll(participantSet)) {
+        return conversation;
+      }
+    }
+
+    return null;
+  }
+
+  int _extractMessageId(dynamic payload) {
+    if (payload is int) {
+      return payload;
+    }
+
+    if (payload is Map<String, dynamic>) {
+      return _parseInt(payload['messageId'] ?? payload['id']);
+    }
+
+    if (payload is Map) {
+      final casted = payload.map(
+        (key, value) => MapEntry(key.toString(), value),
+      );
+      return _parseInt(casted['messageId'] ?? casted['id']);
+    }
+
+    return 0;
+  }
+
+  int _nextTempMessageId() {
+    _tempIdCounter -= 1;
+    return _tempIdCounter;
+  }
+
+  String _resolveSenderName(UserDto? currentUser) {
+    if (currentUser == null) {
+      return 'Me';
+    }
+    final firstName = currentUser.firstName.trim();
+    final lastName = currentUser.lastName.trim();
+    final fullName = '$firstName $lastName'.trim();
+    return fullName.isEmpty ? 'Me' : fullName;
+  }
+
+  int _parseInt(dynamic value, {int fallback = 0}) {
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    if (value is String) {
+      return int.tryParse(value) ?? fallback;
+    }
+    return fallback;
+  }
+
+  bool _parseBool(dynamic value) {
+    if (value is bool) {
+      return value;
+    }
+    if (value is num) {
+      return value != 0;
+    }
+    if (value is String) {
+      final normalized = value.trim().toLowerCase();
+      return normalized == '1' || normalized == 'true' || normalized == 'yes';
+    }
+    return false;
+  }
+
+  @override
+  Future<void> close() async {
+    await _connectionStatusSubscription?.cancel();
+    await _newMessageSubscription?.cancel();
+    await _notificationMessageSubscription?.cancel();
+    await _typingSubscription?.cancel();
+    await _messageDeletedSubscription?.cancel();
+    await _messageEditedSubscription?.cancel();
+    await _userStatusSubscription?.cancel();
+    await _deleteConfirmedSubscription?.cancel();
+    await _messageReadSubscription?.cancel();
+    _typingDebounceTimer?.cancel();
+    _chatSocketService.disconnect();
+    return super.close();
+  }
+}
+
+class _PendingMessage {
+  final int localMessageId;
+  final int conversationId;
+  final String text;
+  final int? replyToId;
+
+  const _PendingMessage({
+    required this.localMessageId,
+    required this.conversationId,
+    required this.text,
+    this.replyToId,
+  });
+}

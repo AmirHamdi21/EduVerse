@@ -26,7 +26,8 @@ import 'package:edu_verse/screens/student/settings/privacy_policy_screen.dart';
 import 'package:edu_verse/screens/student/settings/blocked_users_screen.dart';
 import 'package:edu_verse/screens/student/settings/swipe_actions_settings_screen.dart';
 import 'package:edu_verse/screens/student/settings/notification_swipe_settings_screen.dart';
-import 'package:edu_verse/screens/student/settings/chat_swipe_settings_screen.dart' as settings_chat;
+import 'package:edu_verse/screens/student/settings/chat_swipe_settings_screen.dart'
+    as settings_chat;
 import 'package:edu_verse/screens/student/settings/file_swipe_settings_screen.dart';
 import 'package:edu_verse/screens/student/settings/note_swipe_settings_screen.dart';
 import 'package:edu_verse/screens/student/settings/share_app/share_app_screen.dart';
@@ -155,6 +156,7 @@ import 'package:edu_verse/screens/it_admin/it_api_management_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_error_logs_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_database_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_cloud_services_screen.dart';
+import 'package:edu_verse/screens/it_admin/chat/it_admin_chat_screen.dart';
 import 'package:edu_verse/screens/it_admin/search/it_search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -280,9 +282,7 @@ class AppRouter {
             );
           }
 
-          return const Scaffold(
-            body: Center(child: Text('Course not found')),
-          );
+          return const Scaffold(body: Center(child: Text('Course not found')));
         },
       ),
       GoRoute(
@@ -435,7 +435,8 @@ class AppRouter {
       ),
       GoRoute(
         path: '/settings/swipe-actions/chats',
-        builder: (context, state) => const settings_chat.ChatSwipeSettingsScreen(),
+        builder: (context, state) =>
+            const settings_chat.ChatSwipeSettingsScreen(),
       ),
       GoRoute(
         path: '/settings/swipe-actions/files',
@@ -457,7 +458,7 @@ class AppRouter {
         path: '/settings/share-app/apk',
         builder: (context, state) => const ApkShareScreen(),
       ),
-      
+
       // ============ INSTRUCTOR ROUTES ============
       GoRoute(
         path: '/instructor/dashboard',
@@ -721,7 +722,8 @@ class AppRouter {
       ),
       GoRoute(
         path: '/admin/notifications/swipe-settings',
-        builder: (context, state) => const AdminNotificationSwipeSettingsScreen(),
+        builder: (context, state) =>
+            const AdminNotificationSwipeSettingsScreen(),
       ),
       GoRoute(
         path: '/admin/settings',
@@ -880,6 +882,10 @@ class AppRouter {
       GoRoute(
         path: '/it-admin/cloud',
         builder: (context, state) => const ITCloudServicesScreen(),
+      ),
+      GoRoute(
+        path: '/it-admin/messages',
+        builder: (context, state) => const ITAdminChatScreen(),
       ),
       GoRoute(
         path: '/it-admin/search',
