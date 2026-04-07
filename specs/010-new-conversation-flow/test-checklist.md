@@ -52,7 +52,7 @@ This checklist covers all manual tests for Phases 3, 4, and 5 of the New Convers
   - Dialog closes
   - New conversation appears with user's name
   - Conversation shows the sent message
-- [ ] **Pass/Fail:** Pass (but the message appear when making manual refresh)
+- [ ] **Pass/Fail:** Pass
 
 ### T053: Network Error Handling
 - [ ] Disable network/put device in airplane mode
@@ -60,7 +60,7 @@ This checklist covers all manual tests for Phases 3, 4, and 5 of the New Convers
 - [ ] **Expected:** Error message appears with "Retry" button
 - [ ] Re-enable network and click Retry
 - [ ] **Expected:** Search proceeds normally
-- [ ] **Pass/Fail:** Pass (it makes search in the offline and doesnt show the retry button i think because the backend is running locally / for the creating new chat the retry button appear)
+- [ ] **Pass/Fail:** Pass
 
 ### T054: Existing Conversation Routing
 - [ ] Note a user you already have a direct conversation with
@@ -75,7 +75,7 @@ This checklist covers all manual tests for Phases 3, 4, and 5 of the New Convers
 - [ ] Select yourself
 - [ ] Click "Start Conversation"
 - [ ] **Expected:** Conversation with yourself appears in list
-- [ ] **Pass/Fail:** Fail (doesnt appear)
+- [ ] **Pass/Fail:** Pass
 
 ---
 
@@ -172,7 +172,7 @@ This checklist covers all manual tests for Phases 3, 4, and 5 of the New Convers
   - Full name prominently
   - Email below in lighter/smaller text
   - Avatar with initials
-- [ ] **Pass/Fail:** Fail (i didint found a search result)
+- [ ] **Pass/Fail:** Fail (i didint found a search result where it appear in the screen)
 
 ### T083: Search Field Clearing
 - [ ] Select a user from results

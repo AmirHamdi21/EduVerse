@@ -181,24 +181,24 @@ This is a **Flutter mobile application**. All paths relative to repository root:
 
 **Purpose**: Final integration, cleanup, and validation across all user stories
 
-- [ ] T085 [P] Update spec.md success criteria validation: Test SC-001 (find participant <10s), SC-002 (create conversation <30s), SC-003 (search <2s)
-- [ ] T086 [P] Validate constitution compliance: Run through checklist in plan.md ensuring all 8 principles satisfied
-- [ ] T087 Test website feature parity: Compare dialog behavior with CHAT_FEATURE_DOCUMENTATION_FRONTEND_WEBSITE.md MessagingChat component
-- [ ] T088 Test error preservation: Trigger creation error → verify participants, group name, message all preserved → click Retry → verify data still there
-- [ ] T089 Test cancel behavior: Fill dialog with data → click Cancel → reopen dialog → verify all fields reset to empty
-- [ ] T090 Test navigation flow: Create new conversation → verify dialog closes → verify conversation list updates → verify navigation to conversation detail
-- [ ] T091 Test real-time integration: Create conversation in dialog → verify WebSocket delivers messages → verify unread counts update
+- [X] T085 [P] Update spec.md success criteria validation: Test SC-001 (find participant <10s), SC-002 (create conversation <30s), SC-003 (search <2s)
+- [X] T086 [P] Validate constitution compliance: Run through checklist in plan.md ensuring all 8 principles satisfied
+- [X] T087 Test website feature parity: Compare dialog behavior with CHAT_FEATURE_DOCUMENTATION_FRONTEND_WEBSITE.md MessagingChat component
+- [X] T088 Test error preservation: Trigger creation error → verify participants, group name, message all preserved → click Retry → verify data still there
+- [X] T089 Test cancel behavior: Fill dialog with data → click Cancel → reopen dialog → verify all fields reset to empty
+- [X] T090 Test navigation flow: Create new conversation → verify dialog closes → verify conversation list updates → verify navigation to conversation detail
+- [X] T091 Test real-time integration: Create conversation in dialog → verify WebSocket delivers messages → verify unread counts update
 - [X] T092 [P] Code cleanup: Remove any console.log or debug print statements from lib/bloc/chat/chat_bloc.dart and lib/widgets/shared/chat/shared_new_chat_dialog.dart
 - [X] T093 [P] Run dart format on lib/bloc/chat/ and lib/widgets/shared/chat/ to ensure consistent formatting
 - [X] T094 [P] Run flutter analyze to check for warnings or errors in modified files
-- [ ] T095 Validate quickstart.md: Follow Step 1-6 instructions in specs/010-new-conversation-flow/quickstart.md to verify accuracy
-- [ ] T096 Test on multiple platforms: Run on iOS simulator, Android emulator, and web to verify dialog displays correctly
-- [ ] T097 Test accessibility: Verify dialog navigation with keyboard, verify screen reader labels on all interactive elements
-- [ ] T098 Performance validation: Create conversation with maximum participants → verify no lag in UI → verify list updates smoothly
+- [X] T095 Validate quickstart.md: Follow Step 1-6 instructions in specs/010-new-conversation-flow/quickstart.md to verify accuracy
+- [X] T096 Test on multiple platforms: Run on iOS simulator, Android emulator, and web to verify dialog displays correctly
+- [X] T097 Test accessibility: Verify dialog navigation with keyboard, verify screen reader labels on all interactive elements
+- [X] T098 Performance validation: Create conversation with maximum participants → verify no lag in UI → verify list updates smoothly
 - [X] T099 Search for legacy mock data: Grep for hardcoded user lists or mock conversations in lib/widgets/shared/chat/ and lib/bloc/chat/ to ensure none exist
 - [X] T100 Check for unused files: Search project for old "new conversation" or "user search" files from before backend integration and delete if found
-- [ ] T101 Final integration test: Walk through all 3 user stories sequentially → verify no conflicts → verify state resets properly between operations
-- [ ] T102 [P] Validate search performance (SC-003): Execute 20+ user searches with varied queries → measure response times → verify 95% complete within 2 seconds → log any outliers for optimization
+- [X] T101 Final integration test: Walk through all 3 user stories sequentially → verify no conflicts → verify state resets properly between operations
+- [X] T102 [P] Validate search performance (SC-003): Execute 20+ user searches with varied queries → measure response times → verify 95% complete within 2 seconds → log any outliers for optimization
 
 **Checkpoint**: Feature complete and validated against all success criteria
 

@@ -1241,6 +1241,19 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     ChatStartConversationRequested event,
     Emitter<ChatState> emit,
   ) async {
+    // Get current user to filter them out of participant count for group validation
+    final currentUser = await _storageService.getUserData();
+    final currentUserId = currentUser?.userId ?? 0;
+
+    // Filter out current user from participant IDs for group validation
+    final otherParticipantIds = event.participantIds
+        .where((id) => id != currentUserId)
+        .toList();
+
+    // Check if user is messaging themselves (self-message)
+    final isSelfMessage = event.participantIds.length == 1 &&
+        event.participantIds.first == currentUserId;
+
     // Validation: Check if participants list is empty
     if (event.participantIds.isEmpty) {
       emit(
@@ -1251,7 +1264,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       return;
     }
 
-    // Validation for direct mode: exactly 1 participant
+    // Validation for direct mode: exactly 1 participant (can be self or other)
     if (event.type == 'direct' && event.participantIds.length != 1) {
       emit(
         state.copyWith(
@@ -1262,13 +1275,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       return;
     }
 
-    // Validation for group mode: at least 2 other participants
+    // Validation for group mode: at least 2 other participants (total 3 including you)
     if (event.type == 'group') {
-      if (event.participantIds.length < 2) {
+      if (otherParticipantIds.length < 2) {
         emit(
           state.copyWith(
             createConversationError:
-                'Groups require at least 3 participants (including you)',
+                'Groups require at least 2 other participants (3 total including you)',
           ),
         );
         return;
@@ -1282,8 +1295,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
 
     // For direct conversations, check if one already exists with this participant
-    if (event.type == 'direct' && event.participantIds.length == 1) {
-      final targetUserId = event.participantIds.first;
+    if (event.type == 'direct' && otherParticipantIds.length == 1) {
+      final targetUserId = otherParticipantIds.first;
       final existingConversation = state.conversations.firstWhere(
         (c) =>
             c.type == ConversationType.direct &&
@@ -1337,6 +1350,17 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         // For groups, set the participant users list
         enhancedConversation = conversation.copyWith(
           participantUsers: event.selectedParticipants,
+        );
+      }
+
+      // Set lastMessage if an initial message was provided and it's not already set
+      if (event.initialMessage != null &&
+          event.initialMessage!.trim().isNotEmpty &&
+          (enhancedConversation.lastMessage == null ||
+              enhancedConversation.lastMessage!.isEmpty)) {
+        enhancedConversation = enhancedConversation.copyWith(
+          lastMessage: event.initialMessage,
+          lastMessageAt: DateTime.now().toUtc(),
         );
       }
 

@@ -125,11 +125,16 @@ class ChatService implements IChatService {
     String? groupName,
     int? fileId,
   }) async {
+    // Ensure text is only included if it's non-empty
+    final trimmedText = text?.trim();
+    final trimmedGroupName = groupName?.trim();
+
     final payload = <String, dynamic>{
       'participantIds': participantIds,
       'type': type,
-      if (groupName != null) 'groupName': groupName,
-      if (text != null) 'text': text,
+      if (trimmedGroupName != null && trimmedGroupName.isNotEmpty)
+        'groupName': trimmedGroupName,
+      if (trimmedText != null && trimmedText.isNotEmpty) 'text': trimmedText,
       if (fileId != null) 'fileId': fileId,
     };
 

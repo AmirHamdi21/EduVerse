@@ -367,8 +367,21 @@ class _SharedNewChatDialogState extends State<SharedNewChatDialog> {
                     ),
                   ),
                 ),
-                title: Text(user.displayName),
-                subtitle: user.email != null ? Text(user.email!) : null,
+                title: Text(
+                  user.displayName,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                subtitle: user.email != null
+                    ? Text(
+                        user.email!,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color:
+                              Theme.of(context).textTheme.bodySmall?.color ??
+                              Colors.grey,
+                        ),
+                      )
+                    : null,
                 onTap: () {
                   context.read<ChatBloc>().add(ChatParticipantAdded(user));
                   _searchController.clear();

@@ -12,6 +12,7 @@ import 'shared_chat_filter_chips.dart';
 import 'shared_chat_header.dart';
 import 'shared_chat_search_bar.dart';
 import 'shared_conversation_tile.dart';
+import 'shared_new_chat_dialog.dart';
 
 class SharedConversationList extends StatefulWidget {
   final Color accentColor;
@@ -246,17 +247,35 @@ class _SharedConversationListState extends State<SharedConversationList> {
   }
 
   void _openNewConversationModal() {
-    showModalBottomSheet<void>(
+    // Reset dialog state before showing
+    context.read<ChatBloc>().add(const ChatNewConversationDialogReset());
+
+    showDialog<int?>(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return _SharedNewConversationModal(
-          isDark: widget.isDark,
-          accentColor: widget.accentColor,
-        );
-      },
-    );
+      builder: (dialogContext) => BlocProvider.value(
+        value: context.read<ChatBloc>(),
+        child: const SharedNewChatDialog(),
+      ),
+    ).then((conversationId) {
+      if (conversationId != null && conversationId > 0) {
+        // Unhide the conversation if it was previously hidden
+        _unhideConversation(conversationId);
+      }
+    });
+  }
+
+  Future<void> _unhideConversation(int conversationId) async {
+    if (!_hiddenConversations.contains(conversationId)) {
+      return;
+    }
+
+    final updated = Set<int>.from(_hiddenConversations)..remove(conversationId);
+
+    setState(() {
+      _hiddenConversations = updated;
+    });
+
+    await _persistIds(_hiddenKey, updated);
   }
 
   @override
@@ -412,280 +431,5 @@ class _SharedConversationListState extends State<SharedConversationList> {
         );
       },
     );
-  }
-}
-
-class _SharedNewConversationModal extends StatefulWidget {
-  final bool isDark;
-  final Color accentColor;
-
-  const _SharedNewConversationModal({
-    required this.isDark,
-    required this.accentColor,
-  });
-
-  @override
-  State<_SharedNewConversationModal> createState() =>
-      _SharedNewConversationModalState();
-}
-
-class _SharedNewConversationModalState
-    extends State<_SharedNewConversationModal> {
-  final TextEditingController _searchController = TextEditingController();
-  final TextEditingController _messageController = TextEditingController();
-
-  List<ChatUserModel> _results = const <ChatUserModel>[];
-
-  @override
-  void initState() {
-    super.initState();
-    final searchResults = context.read<ChatBloc>().state.searchResults;
-    if (searchResults != null) {
-      _results = searchResults;
-    }
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _messageController.dispose();
-    super.dispose();
-  }
-
-  void _searchUsers(String rawValue) {
-    final query = rawValue.trim();
-    if (query.isEmpty) {
-      setState(() {
-        _results = const <ChatUserModel>[];
-      });
-      return;
-    }
-
-    context.read<ChatBloc>().add(SearchUsers(query));
-  }
-
-  void _startConversation(ChatUserModel user) {
-    final messageText = _messageController.text.trim();
-
-    context.read<ChatBloc>().add(
-      StartNewConversation(
-        participantIds: <int>[user.userId],
-        type: 'direct',
-        text: messageText.isEmpty ? null : messageText,
-      ),
-    );
-
-    Navigator.of(context).pop();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<ChatBloc, ChatState>(
-      listener: (context, state) {
-        if (state.searchResults != null) {
-          setState(() {
-            _results = state.searchResults!;
-          });
-        }
-      },
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.76,
-        decoration: BoxDecoration(
-          color: widget.isDark ? const Color(0xFF0F172A) : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        child: Column(
-          children: [
-            const SizedBox(height: 12),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: widget.isDark
-                    ? const Color(0xFF334155)
-                    : const Color(0xFFE2E8F0),
-                borderRadius: BorderRadius.circular(999),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-              child: Row(
-                children: [
-                  Text(
-                    'New conversation',
-                    style: TextStyle(
-                      color: widget.isDark
-                          ? Colors.white
-                          : const Color(0xFF0F172A),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(
-                      Icons.close_rounded,
-                      color: widget.isDark
-                          ? const Color(0xFF94A3B8)
-                          : const Color(0xFF64748B),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextField(
-                controller: _searchController,
-                onChanged: _searchUsers,
-                decoration: const InputDecoration(
-                  hintText: 'Search by name or email',
-                  prefixIcon: Icon(Icons.search_rounded),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextField(
-                controller: _messageController,
-                minLines: 1,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  hintText: 'Optional first message',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Expanded(
-              child: _results.isEmpty
-                  ? Center(
-                      child: Text(
-                        _searchController.text.trim().isEmpty
-                            ? 'Start typing to find users'
-                            : 'No users found',
-                        style: TextStyle(
-                          color: widget.isDark
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF64748B),
-                        ),
-                      ),
-                    )
-                  : ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      itemCount: _results.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
-                      itemBuilder: (context, index) {
-                        final user = _results[index];
-                        return _UserResultTile(
-                          user: user,
-                          isDark: widget.isDark,
-                          accentColor: widget.accentColor,
-                          onTap: () => _startConversation(user),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _UserResultTile extends StatelessWidget {
-  final ChatUserModel user;
-  final bool isDark;
-  final Color accentColor;
-  final VoidCallback onTap;
-
-  const _UserResultTile({
-    required this.user,
-    required this.isDark,
-    required this.accentColor,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
-      borderRadius: BorderRadius.circular(12),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundColor: accentColor,
-                child: Text(
-                  _initials(user.displayName),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user.displayName,
-                      style: TextStyle(
-                        color: isDark ? Colors.white : const Color(0xFF0F172A),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if ((user.email ?? '').trim().isNotEmpty)
-                      Text(
-                        user.email!,
-                        style: TextStyle(
-                          color: isDark
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF64748B),
-                          fontSize: 12,
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.chat_bubble_outline_rounded,
-                color: isDark
-                    ? const Color(0xFFCBD5E1)
-                    : const Color(0xFF475569),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  String _initials(String value) {
-    final tokens = value
-        .split(RegExp(r'\s+'))
-        .where((token) => token.trim().isNotEmpty)
-        .toList(growable: false);
-
-    if (tokens.isEmpty) {
-      return 'U';
-    }
-
-    if (tokens.length == 1) {
-      final token = tokens.first;
-      return token.length > 1
-          ? token.substring(0, 2).toUpperCase()
-          : token.toUpperCase();
-    }
-
-    return '${tokens.first[0]}${tokens[1][0]}'.toUpperCase();
   }
 }
