@@ -81,6 +81,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<TypingChanged>(_onTypingChanged);
     on<WebSocketEventReceived>(_onWebSocketEventReceived);
     on<ClearChatError>(_onClearChatError);
+    on<SetReplyContext>(_onSetReplyContext);
+    on<HideMessageLocally>(_onHideMessageLocally);
 
     _subscribeToSocketStreams();
     unawaited(_connectSocket());
@@ -809,6 +811,28 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     emit(state.copyWith(clearErrorMessage: true));
+  }
+
+  /// Sets or clears the reply context (the message being replied to).
+  void _onSetReplyContext(
+    SetReplyContext event,
+    Emitter<ChatState> emit,
+  ) {
+    if (event.message == null) {
+      emit(state.copyWith(clearReplyToMessage: true));
+    } else {
+      emit(state.copyWith(replyToMessage: event.message));
+    }
+  }
+
+  /// Hides a message locally (delete-for-me). Not synced to backend.
+  void _onHideMessageLocally(
+    HideMessageLocally event,
+    Emitter<ChatState> emit,
+  ) {
+    final updatedHiddenIds = Set<int>.from(state.hiddenMessageIds)
+      ..add(event.messageId);
+    emit(state.copyWith(hiddenMessageIds: updatedHiddenIds));
   }
 
   ConnectionStatus _mapConnectionStatus(dynamic status) {

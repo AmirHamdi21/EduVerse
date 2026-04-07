@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'chat_models.dart';
 import 'chat_state.dart';
 
 abstract class ChatEvent extends Equatable {
@@ -159,4 +160,25 @@ class WebSocketEventReceived extends ChatEvent {
 
 class ClearChatError extends ChatEvent {
   const ClearChatError();
+}
+
+/// Sets or clears the reply context (message being replied to).
+/// Pass null to clear the reply context.
+class SetReplyContext extends ChatEvent {
+  final ChatMessageModel? message;
+
+  const SetReplyContext({this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+/// Hides a message locally (delete-for-me). Not synced to backend.
+class HideMessageLocally extends ChatEvent {
+  final int messageId;
+
+  const HideMessageLocally(this.messageId);
+
+  @override
+  List<Object?> get props => [messageId];
 }

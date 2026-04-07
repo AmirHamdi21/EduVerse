@@ -22,6 +22,12 @@ class ChatState extends Equatable {
   final String conversationSearchQuery;
   final ConversationFilter conversationFilter;
 
+  /// The message being replied to (for reply context in input bar)
+  final ChatMessageModel? replyToMessage;
+
+  /// Set of message IDs hidden locally (delete-for-me, not synced to backend)
+  final Set<int> hiddenMessageIds;
+
   const ChatState({
     this.conversations = const <ConversationModel>[],
     this.activeConversationMessages = const <ChatMessageModel>[],
@@ -36,6 +42,8 @@ class ChatState extends Equatable {
     this.activePage = 1,
     this.conversationSearchQuery = '',
     this.conversationFilter = ConversationFilter.all,
+    this.replyToMessage,
+    this.hiddenMessageIds = const <int>{},
   });
 
   ConversationModel? get activeConversation {
@@ -115,9 +123,12 @@ class ChatState extends Equatable {
     int? activePage,
     String? conversationSearchQuery,
     ConversationFilter? conversationFilter,
+    ChatMessageModel? replyToMessage,
+    Set<int>? hiddenMessageIds,
     bool clearActiveConversationId = false,
     bool clearErrorMessage = false,
     bool clearSearchResults = false,
+    bool clearReplyToMessage = false,
   }) {
     return ChatState(
       conversations: conversations ?? this.conversations,
@@ -141,6 +152,10 @@ class ChatState extends Equatable {
       conversationSearchQuery:
           conversationSearchQuery ?? this.conversationSearchQuery,
       conversationFilter: conversationFilter ?? this.conversationFilter,
+      replyToMessage: clearReplyToMessage
+          ? null
+          : replyToMessage ?? this.replyToMessage,
+      hiddenMessageIds: hiddenMessageIds ?? this.hiddenMessageIds,
     );
   }
 
@@ -159,6 +174,8 @@ class ChatState extends Equatable {
     activePage,
     conversationSearchQuery,
     conversationFilter,
+    replyToMessage,
+    _sortedHiddenMessageIds,
   ];
 
   List<Object> get _typingUsersProps {
@@ -173,6 +190,11 @@ class ChatState extends Equatable {
 
   List<int> get _sortedOnlineUsers {
     final values = onlineUsers.toList()..sort();
+    return values;
+  }
+
+  List<int> get _sortedHiddenMessageIds {
+    final values = hiddenMessageIds.toList()..sort();
     return values;
   }
 }
