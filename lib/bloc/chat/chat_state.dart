@@ -28,6 +28,41 @@ class ChatState extends Equatable {
   /// Set of message IDs hidden locally (delete-for-me, not synced to backend)
   final Set<int> hiddenMessageIds;
 
+  // ============ New Conversation Dialog State (Phase 5) ============
+
+  /// User search results for new conversation dialog (max 20)
+  final List<ChatUserModel> newConversationSearchResults;
+
+  /// True while searching for users in new conversation dialog
+  final bool userSearchLoading;
+
+  /// Error message if user search fails (null if no error)
+  final String? userSearchError;
+
+  /// Last search query (for retry on error)
+  final String? lastSearchQuery;
+
+  /// Users selected for the new conversation
+  final List<ChatUserModel> selectedParticipants;
+
+  /// Current conversation mode ('direct' or 'group')
+  final String conversationMode;
+
+  /// Group name entered by user (required for groups)
+  final String? groupNameInput;
+
+  /// Optional first message text
+  final String? initialMessageInput;
+
+  /// True while conversation creation API call is in progress
+  final bool creatingConversation;
+
+  /// Error message if creation fails (null if no error)
+  final String? createConversationError;
+
+  /// ID of conversation just created (triggers navigation)
+  final int? newlyCreatedConversationId;
+
   const ChatState({
     this.conversations = const <ConversationModel>[],
     this.activeConversationMessages = const <ChatMessageModel>[],
@@ -44,6 +79,18 @@ class ChatState extends Equatable {
     this.conversationFilter = ConversationFilter.all,
     this.replyToMessage,
     this.hiddenMessageIds = const <int>{},
+    // New conversation dialog state
+    this.newConversationSearchResults = const <ChatUserModel>[],
+    this.userSearchLoading = false,
+    this.userSearchError,
+    this.lastSearchQuery,
+    this.selectedParticipants = const <ChatUserModel>[],
+    this.conversationMode = 'direct',
+    this.groupNameInput,
+    this.initialMessageInput,
+    this.creatingConversation = false,
+    this.createConversationError,
+    this.newlyCreatedConversationId,
   });
 
   ConversationModel? get activeConversation {
@@ -129,6 +176,24 @@ class ChatState extends Equatable {
     bool clearErrorMessage = false,
     bool clearSearchResults = false,
     bool clearReplyToMessage = false,
+    // New conversation dialog fields
+    List<ChatUserModel>? newConversationSearchResults,
+    bool? userSearchLoading,
+    String? userSearchError,
+    String? lastSearchQuery,
+    List<ChatUserModel>? selectedParticipants,
+    String? conversationMode,
+    String? groupNameInput,
+    String? initialMessageInput,
+    bool? creatingConversation,
+    String? createConversationError,
+    int? newlyCreatedConversationId,
+    bool clearUserSearchError = false,
+    bool clearLastSearchQuery = false,
+    bool clearGroupNameInput = false,
+    bool clearInitialMessageInput = false,
+    bool clearCreateConversationError = false,
+    bool clearNewlyCreatedConversationId = false,
   }) {
     return ChatState(
       conversations: conversations ?? this.conversations,
@@ -156,6 +221,31 @@ class ChatState extends Equatable {
           ? null
           : replyToMessage ?? this.replyToMessage,
       hiddenMessageIds: hiddenMessageIds ?? this.hiddenMessageIds,
+      // New conversation dialog fields
+      newConversationSearchResults:
+          newConversationSearchResults ?? this.newConversationSearchResults,
+      userSearchLoading: userSearchLoading ?? this.userSearchLoading,
+      userSearchError: clearUserSearchError
+          ? null
+          : userSearchError ?? this.userSearchError,
+      lastSearchQuery: clearLastSearchQuery
+          ? null
+          : lastSearchQuery ?? this.lastSearchQuery,
+      selectedParticipants: selectedParticipants ?? this.selectedParticipants,
+      conversationMode: conversationMode ?? this.conversationMode,
+      groupNameInput: clearGroupNameInput
+          ? null
+          : groupNameInput ?? this.groupNameInput,
+      initialMessageInput: clearInitialMessageInput
+          ? null
+          : initialMessageInput ?? this.initialMessageInput,
+      creatingConversation: creatingConversation ?? this.creatingConversation,
+      createConversationError: clearCreateConversationError
+          ? null
+          : createConversationError ?? this.createConversationError,
+      newlyCreatedConversationId: clearNewlyCreatedConversationId
+          ? null
+          : newlyCreatedConversationId ?? this.newlyCreatedConversationId,
     );
   }
 
@@ -176,6 +266,18 @@ class ChatState extends Equatable {
     conversationFilter,
     replyToMessage,
     _sortedHiddenMessageIds,
+    // New conversation dialog fields
+    newConversationSearchResults,
+    userSearchLoading,
+    userSearchError,
+    lastSearchQuery,
+    selectedParticipants,
+    conversationMode,
+    groupNameInput,
+    initialMessageInput,
+    creatingConversation,
+    createConversationError,
+    newlyCreatedConversationId,
   ];
 
   List<Object> get _typingUsersProps {

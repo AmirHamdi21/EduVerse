@@ -228,7 +228,14 @@ class _SharedConversationListState extends State<SharedConversationList> {
         return leftPinned ? -1 : 1;
       }
 
-      return right.updatedAt.compareTo(left.updatedAt);
+      // Primary sort: by updated time (newest first)
+      final timeComparison = right.updatedAt.compareTo(left.updatedAt);
+      if (timeComparison != 0) {
+        return timeComparison;
+      }
+
+      // Secondary sort: by conversation ID for stability
+      return right.conversationId.compareTo(left.conversationId);
     });
 
     if (_visibleCount >= filtered.length) {

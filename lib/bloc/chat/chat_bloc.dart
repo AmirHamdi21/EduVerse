@@ -1,6 +1,8 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 import '../../models/auth_models.dart';
 import '../../services/api/chat_service.dart';
@@ -10,6 +12,11 @@ import '../../services/storage_service.dart';
 import 'chat_event.dart';
 import 'chat_models.dart';
 import 'chat_state.dart';
+
+/// Debounce transformer for search events (400ms delay)
+EventTransformer<E> debounce<E>(Duration duration) {
+  return (events, mapper) => events.debounce(duration).switchMap(mapper);
+}
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final IChatService _chatService;
@@ -83,6 +90,17 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ClearChatError>(_onClearChatError);
     on<SetReplyContext>(_onSetReplyContext);
     on<HideMessageLocally>(_onHideMessageLocally);
+
+    // New conversation dialog event handlers (Phase 5)
+    on<ChatSearchUsersRequested>(
+      _onChatSearchUsersRequested,
+      transformer: debounce(const Duration(milliseconds: 400)),
+    );
+    on<ChatParticipantAdded>(_onChatParticipantAdded);
+    on<ChatParticipantRemoved>(_onChatParticipantRemoved);
+    on<ChatConversationModeChanged>(_onChatConversationModeChanged);
+    on<ChatStartConversationRequested>(_onChatStartConversationRequested);
+    on<ChatNewConversationDialogReset>(_onChatNewConversationDialogReset);
 
     _subscribeToSocketStreams();
     unawaited(_connectSocket());
@@ -814,10 +832,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   }
 
   /// Sets or clears the reply context (the message being replied to).
-  void _onSetReplyContext(
-    SetReplyContext event,
-    Emitter<ChatState> emit,
-  ) {
+  void _onSetReplyContext(SetReplyContext event, Emitter<ChatState> emit) {
     if (event.message == null) {
       emit(state.copyWith(clearReplyToMessage: true));
     } else {
@@ -1069,6 +1084,353 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       return normalized == '1' || normalized == 'true' || normalized == 'yes';
     }
     return false;
+  }
+
+  // ============ New Conversation Dialog Event Handlers (Phase 5) ============
+
+  /// Handle user search request with debounced 400ms delay
+  Future<void> _onChatSearchUsersRequested(
+    ChatSearchUsersRequested event,
+    Emitter<ChatState> emit,
+  ) async {
+    final query = event.query.trim();
+
+    // Clear results if query is empty
+    if (query.isEmpty) {
+      emit(
+        state.copyWith(
+          newConversationSearchResults: const <ChatUserModel>[],
+          userSearchLoading: false,
+          clearUserSearchError: true,
+          clearLastSearchQuery: true,
+        ),
+      );
+      return;
+    }
+
+    // Store query for retry and show loading
+    emit(
+      state.copyWith(
+        userSearchLoading: true,
+        lastSearchQuery: query,
+        clearUserSearchError: true,
+      ),
+    );
+
+    try {
+      final results = await _chatService.searchUsers(query, limit: 20);
+
+      // Sort results by relevance:
+      // 1. Exact email match
+      // 2. Partial email match
+      // 3. Name match
+      // 4. Alphabetical by displayName
+      final sortedResults = _sortSearchResults(results, query);
+
+      emit(
+        state.copyWith(
+          newConversationSearchResults: sortedResults,
+          userSearchLoading: false,
+          clearUserSearchError: true,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          userSearchLoading: false,
+          userSearchError: 'Failed to search users. Please try again.',
+        ),
+      );
+    }
+  }
+
+  /// Sort search results by relevance (exact email > partial email > name > alphabetical)
+  List<ChatUserModel> _sortSearchResults(
+    List<ChatUserModel> results,
+    String query,
+  ) {
+    final normalizedQuery = query.toLowerCase();
+
+    return [...results]..sort((a, b) {
+      final aEmail = (a.email ?? '').toLowerCase();
+      final bEmail = (b.email ?? '').toLowerCase();
+      final aName = a.displayName.toLowerCase();
+      final bName = b.displayName.toLowerCase();
+
+      // Priority 1: Exact email match
+      final aExactEmail = aEmail == normalizedQuery;
+      final bExactEmail = bEmail == normalizedQuery;
+      if (aExactEmail && !bExactEmail) return -1;
+      if (bExactEmail && !aExactEmail) return 1;
+
+      // Priority 2: Partial email match (starts with)
+      final aPartialEmail = aEmail.startsWith(normalizedQuery);
+      final bPartialEmail = bEmail.startsWith(normalizedQuery);
+      if (aPartialEmail && !bPartialEmail) return -1;
+      if (bPartialEmail && !aPartialEmail) return 1;
+
+      // Priority 3: Email contains query
+      final aEmailContains = aEmail.contains(normalizedQuery);
+      final bEmailContains = bEmail.contains(normalizedQuery);
+      if (aEmailContains && !bEmailContains) return -1;
+      if (bEmailContains && !aEmailContains) return 1;
+
+      // Priority 4: Name match
+      final aNameContains = aName.contains(normalizedQuery);
+      final bNameContains = bName.contains(normalizedQuery);
+      if (aNameContains && !bNameContains) return -1;
+      if (bNameContains && !aNameContains) return 1;
+
+      // Priority 5: Alphabetical by displayName
+      return aName.compareTo(bName);
+    });
+  }
+
+  /// Handle adding a participant to selected list
+  void _onChatParticipantAdded(
+    ChatParticipantAdded event,
+    Emitter<ChatState> emit,
+  ) {
+    final existingIds = state.selectedParticipants
+        .map((user) => user.userId)
+        .toSet();
+
+    // Prevent adding duplicate
+    if (existingIds.contains(event.user.userId)) {
+      return;
+    }
+
+    final updatedParticipants = [...state.selectedParticipants, event.user];
+
+    emit(
+      state.copyWith(
+        selectedParticipants: updatedParticipants,
+        newConversationSearchResults: const <ChatUserModel>[],
+        clearUserSearchError: true,
+      ),
+    );
+  }
+
+  /// Handle removing a participant from selected list
+  void _onChatParticipantRemoved(
+    ChatParticipantRemoved event,
+    Emitter<ChatState> emit,
+  ) {
+    final updatedParticipants = state.selectedParticipants
+        .where((user) => user.userId != event.userId)
+        .toList();
+
+    emit(state.copyWith(selectedParticipants: updatedParticipants));
+  }
+
+  /// Handle conversation mode change (direct/group)
+  void _onChatConversationModeChanged(
+    ChatConversationModeChanged event,
+    Emitter<ChatState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        conversationMode: event.mode,
+        clearCreateConversationError: true,
+      ),
+    );
+  }
+
+  /// Handle starting a new conversation
+  Future<void> _onChatStartConversationRequested(
+    ChatStartConversationRequested event,
+    Emitter<ChatState> emit,
+  ) async {
+    // Validation: Check if participants list is empty
+    if (event.participantIds.isEmpty) {
+      emit(
+        state.copyWith(
+          createConversationError: 'At least one participant required',
+        ),
+      );
+      return;
+    }
+
+    // Validation for direct mode: exactly 1 participant
+    if (event.type == 'direct' && event.participantIds.length != 1) {
+      emit(
+        state.copyWith(
+          createConversationError:
+              'Direct conversations require exactly 1 participant',
+        ),
+      );
+      return;
+    }
+
+    // Validation for group mode: at least 2 other participants
+    if (event.type == 'group') {
+      if (event.participantIds.length < 2) {
+        emit(
+          state.copyWith(
+            createConversationError:
+                'Groups require at least 3 participants (including you)',
+          ),
+        );
+        return;
+      }
+
+      // Validate group name
+      if (event.groupName == null || event.groupName!.trim().isEmpty) {
+        emit(state.copyWith(createConversationError: 'Group name is required'));
+        return;
+      }
+    }
+
+    // For direct conversations, check if one already exists with this participant
+    if (event.type == 'direct' && event.participantIds.length == 1) {
+      final targetUserId = event.participantIds.first;
+      final existingConversation = state.conversations.firstWhere(
+        (c) =>
+            c.type == ConversationType.direct &&
+            c.participants.contains(targetUserId),
+        orElse: () => ConversationModel(
+          conversationId: -1,
+          type: ConversationType.direct,
+        ),
+      );
+
+      if (existingConversation.conversationId > 0) {
+        // Existing conversation found - navigate to it instead of creating new
+        emit(
+          state.copyWith(
+            creatingConversation: false,
+            newlyCreatedConversationId: existingConversation.conversationId,
+          ),
+        );
+        return;
+      }
+    }
+
+    // Show loading state
+    emit(
+      state.copyWith(
+        creatingConversation: true,
+        clearCreateConversationError: true,
+      ),
+    );
+
+    try {
+      final conversation = await _chatService.startConversation(
+        participantIds: event.participantIds,
+        type: event.type,
+        groupName: event.groupName,
+        text: event.initialMessage,
+      );
+
+      // Enhance conversation with directDisplayUser if missing for direct chats
+      ConversationModel enhancedConversation = conversation;
+      if (event.type == 'direct' &&
+          conversation.directDisplayUser == null &&
+          event.selectedParticipants.isNotEmpty) {
+        enhancedConversation = conversation.copyWith(
+          directDisplayUser: event.selectedParticipants.first,
+          participantUsers: event.selectedParticipants,
+        );
+      } else if (event.type == 'group' &&
+          conversation.participantUsers.isEmpty &&
+          event.selectedParticipants.isNotEmpty) {
+        // For groups, set the participant users list
+        enhancedConversation = conversation.copyWith(
+          participantUsers: event.selectedParticipants,
+        );
+      }
+
+      // Check if conversation ID is valid (0 means backend didn't create it properly)
+      if (enhancedConversation.conversationId <= 0) {
+        emit(
+          state.copyWith(
+            creatingConversation: false,
+            createConversationError:
+                'Failed to create conversation. Please try again.',
+          ),
+        );
+        return;
+      }
+
+      // Prepend new conversation to list (or update if existing)
+      final existingIndex = state.conversations.indexWhere(
+        (c) => c.conversationId == enhancedConversation.conversationId,
+      );
+
+      List<ConversationModel> updatedConversations;
+      if (existingIndex >= 0) {
+        // Conversation exists - move it to top with updated data
+        updatedConversations = [
+          enhancedConversation,
+          ...state.conversations.where(
+            (c) => c.conversationId != enhancedConversation.conversationId,
+          ),
+        ];
+      } else {
+        // New conversation - prepend to list
+        updatedConversations = [enhancedConversation, ...state.conversations];
+      }
+
+      emit(
+        state.copyWith(
+          conversations: updatedConversations,
+          creatingConversation: false,
+          newlyCreatedConversationId: enhancedConversation.conversationId,
+        ),
+      );
+    } catch (e) {
+      String errorMessage = 'Failed to create conversation. Please try again.';
+
+      // Extract more specific error message if available
+      if (e is DioException) {
+        final responseData = e.response?.data;
+        if (responseData is Map<String, dynamic>) {
+          // Handle both String and List<dynamic> error messages
+          final message = responseData['message'] ?? responseData['error'];
+          if (message is String && message.isNotEmpty) {
+            errorMessage = message;
+          } else if (message is List && message.isNotEmpty) {
+            errorMessage = message.map((m) => m.toString()).join(', ');
+          }
+        } else if (responseData is String && responseData.isNotEmpty) {
+          errorMessage = responseData;
+        }
+      } else if (e is Exception) {
+        final exceptionString = e.toString();
+        if (exceptionString.startsWith('Exception: ')) {
+          errorMessage = exceptionString.substring(11);
+        }
+      }
+
+      emit(
+        state.copyWith(
+          creatingConversation: false,
+          createConversationError: errorMessage,
+        ),
+      );
+    }
+  }
+
+  /// Reset all new conversation dialog state
+  void _onChatNewConversationDialogReset(
+    ChatNewConversationDialogReset event,
+    Emitter<ChatState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        newConversationSearchResults: const <ChatUserModel>[],
+        userSearchLoading: false,
+        clearUserSearchError: true,
+        clearLastSearchQuery: true,
+        selectedParticipants: const <ChatUserModel>[],
+        conversationMode: 'direct',
+        clearGroupNameInput: true,
+        clearInitialMessageInput: true,
+        creatingConversation: false,
+        clearCreateConversationError: true,
+        clearNewlyCreatedConversationId: true,
+      ),
+    );
   }
 
   @override

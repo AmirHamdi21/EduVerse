@@ -182,3 +182,76 @@ class HideMessageLocally extends ChatEvent {
   @override
   List<Object?> get props => [messageId];
 }
+
+// ============ New Conversation Dialog Events (Phase 5) ============
+
+/// Search for users to add to a new conversation (debounced 400ms)
+class ChatSearchUsersRequested extends ChatEvent {
+  final String query;
+
+  const ChatSearchUsersRequested(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}
+
+/// Add a user to the selected participants list
+class ChatParticipantAdded extends ChatEvent {
+  final ChatUserModel user;
+
+  const ChatParticipantAdded(this.user);
+
+  @override
+  List<Object?> get props => [user];
+}
+
+/// Remove a user from the selected participants list
+class ChatParticipantRemoved extends ChatEvent {
+  final int userId;
+
+  const ChatParticipantRemoved(this.userId);
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+/// Change conversation mode between 'direct' and 'group'
+class ChatConversationModeChanged extends ChatEvent {
+  final String mode;
+
+  const ChatConversationModeChanged(this.mode);
+
+  @override
+  List<Object?> get props => [mode];
+}
+
+/// Request to create a new conversation with selected participants
+class ChatStartConversationRequested extends ChatEvent {
+  final List<int> participantIds;
+  final List<ChatUserModel> selectedParticipants;
+  final String type;
+  final String? groupName;
+  final String? initialMessage;
+
+  const ChatStartConversationRequested({
+    required this.participantIds,
+    required this.selectedParticipants,
+    required this.type,
+    this.groupName,
+    this.initialMessage,
+  });
+
+  @override
+  List<Object?> get props => [
+    participantIds,
+    selectedParticipants,
+    type,
+    groupName,
+    initialMessage,
+  ];
+}
+
+/// Reset all new conversation dialog state
+class ChatNewConversationDialogReset extends ChatEvent {
+  const ChatNewConversationDialogReset();
+}
