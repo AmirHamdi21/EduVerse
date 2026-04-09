@@ -75,6 +75,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
        super(const ChatState()) {
     on<LoadConversations>(_onLoadConversations);
     on<SelectConversation>(_onSelectConversation);
+    on<DeselectConversation>(_onDeselectConversation);
     on<LoadMoreMessages>(_onLoadMoreMessages);
     on<SendMessage>(_onSendMessage);
     on<RetryFailedMessage>(_onRetryFailedMessage);
@@ -260,6 +261,22 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ),
       );
     }
+  }
+
+  /// Clears active conversation (for mobile back navigation)
+  void _onDeselectConversation(
+    DeselectConversation event,
+    Emitter<ChatState> emit,
+  ) {
+    if (state.activeConversationId != null) {
+      _chatSocketService.leaveConversation(state.activeConversationId!);
+    }
+    emit(
+      state.copyWith(
+        clearActiveConversationId: true,
+        activeConversationMessages: const <ChatMessageModel>[],
+      ),
+    );
   }
 
   Future<void> _onLoadMoreMessages(
@@ -873,9 +890,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     return sorted;
   }
 
+  /// Sort messages with newest first (descending order).
+  /// Combined with ListView.reverse=true, this displays newest at bottom (WhatsApp-style).
   List<ChatMessageModel> _sortMessages(List<ChatMessageModel> messages) {
     final sorted = [...messages];
-    sorted.sort((first, second) => first.sentAt.compareTo(second.sentAt));
+    sorted.sort((first, second) => second.sentAt.compareTo(first.sentAt));
     return sorted;
   }
 
@@ -1251,7 +1270,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         .toList();
 
     // Check if user is messaging themselves (self-message)
-    final isSelfMessage = event.participantIds.length == 1 &&
+    final isSelfMessage =
+        event.participantIds.length == 1 &&
         event.participantIds.first == currentUserId;
 
     // Validation: Check if participants list is empty

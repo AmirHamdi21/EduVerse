@@ -4691,5 +4691,7 @@
   "itAllLogs": "All Logs",
   "itAllConfigs": "All Configurations",
   "itAllBackups": "All Backups",
-  "itSearch": "Search"
+  "itSearch": "Search",
+  "itChat": "Chat",
+  "itChatSubtitle": "Messages and communications"
 }

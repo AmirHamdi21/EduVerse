@@ -1,7 +1,6 @@
 import 'package:edu_verse/models/quiz_models.dart';
 import 'package:edu_verse/screens/student/ai_quiz_generator_screen.dart';
 import 'package:edu_verse/screens/student/assignments_screen.dart';
-import 'package:edu_verse/screens/student/chat/chat_screen.dart';
 import 'package:edu_verse/screens/student/chat/chat_swipe_settings_screen.dart';
 import 'package:edu_verse/screens/student/ai_notes/ai_notes_screen.dart';
 import 'package:edu_verse/screens/student/profile/profile_screen.dart';
@@ -70,7 +69,6 @@ import 'package:edu_verse/screens/instructor/notifications/instructor_notificati
 import 'package:edu_verse/screens/instructor/profile/instructor_profile_screen.dart';
 import 'package:edu_verse/screens/instructor/profile/instructor_edit_profile_screen.dart';
 import 'package:edu_verse/screens/instructor/settings/instructor_settings_screen.dart';
-import 'package:edu_verse/screens/instructor/chat/instructor_chat_screen.dart';
 import 'package:edu_verse/models/instructor/instructor_course_model.dart';
 // TA, Admin, IT Admin screens (placeholders for development)
 import 'package:edu_verse/screens/ta/ta_dashboard_screen.dart';
@@ -94,7 +92,6 @@ import 'package:edu_verse/screens/ta/calendar/ta_calendar_screen.dart';
 import 'package:edu_verse/screens/ta/search/ta_search_screen.dart';
 import 'package:edu_verse/screens/ta/attendance/ta_attendance_screen.dart';
 import 'package:edu_verse/screens/ta/ai_assistant/ta_ai_assistant_screen.dart';
-import 'package:edu_verse/screens/ta/messages/ta_messages_screen.dart';
 import 'package:edu_verse/screens/admin/admin_dashboard_screen.dart';
 import 'package:edu_verse/screens/admin/users/admin_user_management_screen.dart';
 import 'package:edu_verse/screens/admin/users/admin_add_new_user_screen.dart';
@@ -137,7 +134,6 @@ import 'package:edu_verse/screens/admin/settings/admin_developer_options_screen.
 import 'package:edu_verse/screens/admin/settings/admin_system_logs_screen.dart';
 import 'package:edu_verse/screens/admin/attendance/admin_attendance_screen.dart';
 import 'package:edu_verse/screens/admin/search/admin_search_screen.dart';
-import 'package:edu_verse/screens/admin/messages/admin_messages_screen.dart';
 import 'package:edu_verse/screens/admin/ai_insights/admin_ai_insights_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_admin_dashboard_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_system_settings_screen.dart';
@@ -156,8 +152,8 @@ import 'package:edu_verse/screens/it_admin/it_api_management_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_error_logs_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_database_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_cloud_services_screen.dart';
-import 'package:edu_verse/screens/it_admin/chat/it_admin_chat_screen.dart';
 import 'package:edu_verse/screens/it_admin/search/it_search_screen.dart';
+import 'package:edu_verse/screens/shared/shared_chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
@@ -166,7 +162,6 @@ import '../screens/splash/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
-import '../widgets/student/courses/course_model.dart';
 import '../models/core/enrollment_model.dart';
 
 class AppRouter {
@@ -335,7 +330,9 @@ class AppRouter {
       ),
       GoRoute(
         path: '/messages',
-        builder: (context, state) => const ChatScreen(),
+        builder: (context, state) => const SharedChatScreen(
+          accentColor: Color(0xFF3B82F6), // Student blue
+        ),
       ),
       GoRoute(
         path: '/messages/swipe-settings',
@@ -529,7 +526,9 @@ class AppRouter {
       ),
       GoRoute(
         path: '/instructor/messages',
-        builder: (context, state) => const InstructorChatScreen(),
+        builder: (context, state) => const SharedChatScreen(
+          accentColor: Color(0xFF4F46E5), // Instructor indigo
+        ),
       ),
 
       // ============ TA ROUTES (Placeholder) ============
@@ -625,7 +624,9 @@ class AppRouter {
       ),
       GoRoute(
         path: '/ta/messages',
-        builder: (context, state) => const TAMessagesScreen(),
+        builder: (context, state) => const SharedChatScreen(
+          accentColor: Color(0xFF4F46E5), // TA indigo
+        ),
       ),
 
       // ============ ADMIN ROUTES ============
@@ -710,7 +711,9 @@ class AppRouter {
       ),
       GoRoute(
         path: '/admin/messages',
-        builder: (context, state) => const AdminMessagesScreen(),
+        builder: (context, state) => const SharedChatScreen(
+          accentColor: Color(0xFF4F46E5), // Admin indigo
+        ),
       ),
       GoRoute(
         path: '/admin/ai-insights',
@@ -885,7 +888,9 @@ class AppRouter {
       ),
       GoRoute(
         path: '/it-admin/messages',
-        builder: (context, state) => const ITAdminChatScreen(),
+        builder: (context, state) => const SharedChatScreen(
+          accentColor: Color(0xFF3B82F6), // IT Admin blue
+        ),
       ),
       GoRoute(
         path: '/it-admin/search',

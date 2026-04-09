@@ -311,7 +311,160 @@ Per the [Backend API docs](file:///d:/Graduation/EduVerse/edu_verse/Flutter_Chat
 
 ---
 
-### Phase 7: Discussion Forums Backend Integration
+### Phase 7: Pro Chat UX Enhancements
+**Spec-Kit Name:** `chat-pro-ux-enhancements`
+
+> [!IMPORTANT]
+> This phase elevates the chat experience to match professional messaging apps (WhatsApp, Telegram) with three major enhancements: redesigned new conversation flow, user profile viewing, and real-time online status indicators.
+
+#### Overview
+
+The current implementation has a functional but basic dialog-based "New Conversation" flow (`SharedNewChatDialog`). This phase redesigns it to be a full-screen contact picker with a polished UX, adds user profile pages accessible from chat, and fixes the online/offline indicator to reflect real-time status from the WebSocket `user_status` event.
+
+#### Scope
+
+##### 7.1 Pro "New Conversation" Flow (WhatsApp/Telegram Style)
+
+**Current State:** `SharedNewChatDialog` is a modal dialog with search, participant selection chips, and a first message field. It works but lacks the polish of professional messaging apps.
+
+**Target State:** Full-screen contact picker with:
+- **Full-screen slide-up page** (not a small dialog) matching WhatsApp's "New Chat" screen
+- **Searchable contact list** at the top with a sticky search bar
+- **Frequently contacted users** section (last 5 users the current user has chatted with)
+- **All contacts section** with alphabetically sorted users grouped by first letter (A, B, C...)
+- **Real-time search** with debounced API calls to `GET /api/messages/users/search`
+- **Online status indicators** on each contact row (green dot for online users)
+- **Smooth transitions**: slide-up animation for the screen, fade animations for search results
+- **Group chat creation toggle**: "New Group" button at the top that expands to show:
+  - Multi-select mode for participants
+  - Group name input field
+  - Group avatar selection (optional, placeholder for now)
+- **First message composing** moved to the chat detail view after selecting a contact (like WhatsApp)
+- **Cancel/Back navigation** with proper state cleanup
+
+**API Endpoints Used:**
+- `GET /api/messages/users/search?query=&limit=20` — search users by name/email
+- `POST /api/messages/conversations` — start new conversation
+- `GET /api/messages/conversations` — to determine "frequently contacted" users from existing conversations
+
+##### 7.2 User Profile Page (Tapping Avatar/Name)
+
+**Current State:** No user profile viewing capability. Tapping avatar/name in chat does nothing.
+
+**Target State:** User profile page accessible from:
+1. **Chat list**: Tapping the avatar circle in `SharedConversationTile` opens the profile
+2. **Chat detail header**: Tapping the avatar or name in `SharedChatDetailView` header opens the profile
+3. **New conversation contact list**: Long-press on a contact shows profile preview
+
+**Profile Page Contents:**
+- **Header section**: Large avatar (with initials or image), full name, online status badge
+- **Contact info**: Email address (tappable to compose email), user role badge
+- **Chat shortcut**: "Send Message" button that navigates to the existing or new conversation
+- **Common conversations** (if applicable): List of group chats shared with this user
+- **Last seen**: Display `lastSeen` timestamp from `user_status` WebSocket event (e.g., "Last seen today at 2:30 PM")
+- **Block/Report placeholders** (UI only, not functional in this phase)
+
+**Navigation:**
+- Slide-from-right animation to the profile page
+- Back button returns to previous screen
+- Uses `go_router` for navigation with proper route parameter (userId)
+
+##### 7.3 Real-Time Online/Offline Status Indicator
+
+**Current State:** The `onlineUsers` set in `ChatState` is updated via WebSocket `user_status` event, but:
+- The initial online status list is NOT fetched on connection (only updates are received)
+- The status may become stale if the app was backgrounded
+- No periodic refresh mechanism exists
+
+**Target State:** Reliable real-time online status:
+
+1. **On WebSocket Connect:**
+   - Emit a `get_online_users` event to request the current list of online users
+   - Backend responds with `online_users_list` containing all currently online user IDs
+   - Initialize `onlineUsers` set from this response
+
+2. **On `user_status` Event:**
+   - Already implemented: add/remove from `onlineUsers` set based on `isOnline` flag
+   - **Enhancement:** Also store `lastSeen` timestamp per user in a new `Map<int, DateTime> userLastSeen` in `ChatState`
+
+3. **Periodic Refresh (Background Sync):**
+   - When app returns from background (using `WidgetsBindingObserver.didChangeAppLifecycleState`), re-emit `get_online_users` to refresh the list
+   - This handles cases where the WebSocket was disconnected while backgrounded
+
+4. **UI Updates:**
+   - `SharedConversationTile`: Already shows green dot when `isOnline`, no change needed
+   - `SharedChatDetailView` header: Already shows "Online" text, add "Last seen X" when offline
+   - New profile page: Shows online status with `lastSeen` time
+
+**WebSocket Events (Client → Backend):**
+- `get_online_users`: Request current online users list (emit on connect and on app resume)
+
+**WebSocket Events (Backend → Client):**
+- `online_users_list`: Response with `{ "userIds": [1, 2, 3, ...] }`
+- `user_status`: Already exists — `{ "userId": 42, "isOnline": true, "lastSeen": "2026-04-07T..." }`
+
+> [!NOTE]
+> The backend already sends `user_status` events per the API docs. The `get_online_users`/`online_users_list` events need to be verified with the backend team or implemented if not already present.
+
+##### 7.4 Fix "Reply to Unknown" Issue
+
+**Current State:** When replying to a message from the other participant in a direct chat or another user in a group chat, the reply preview UI and the submitted message object may show "Reply to Unknown" instead of the actual sender's name.
+**Target State:** 
+- The reply preview UI correctly displays the original sender's actual name.
+- When the message is sent, the `replyTo` context is properly hydrated using the cached message or conversation participants to resolve the correct name.
+- Ensures that when loading a conversation, any messages with a `replyToId` have their `replyTo` sender name resolved and rendered correctly in the message bubble.
+
+#### Files
+
+| Action | File |
+|--------|------|
+| **[NEW]** | `lib/screens/shared/new_conversation_screen.dart` |
+| **[NEW]** | `lib/widgets/shared/chat/contact_list_item.dart` |
+| **[NEW]** | `lib/widgets/shared/chat/frequently_contacted_section.dart` |
+| **[NEW]** | `lib/widgets/shared/chat/contacts_alphabetic_list.dart` |
+| **[NEW]** | `lib/screens/shared/user_profile_screen.dart` |
+| **[NEW]** | `lib/widgets/shared/chat/profile_header.dart` |
+| **[NEW]** | `lib/widgets/shared/chat/profile_info_section.dart` |
+| **[MODIFY]** | `lib/bloc/chat/chat_state.dart` (add `userLastSeen` map) |
+| **[MODIFY]** | `lib/bloc/chat/chat_event.dart` (add events for online status refresh) |
+| **[MODIFY]** | `lib/bloc/chat/chat_bloc.dart` (handle `get_online_users`, lifecycle sync) |
+| **[MODIFY]** | `lib/services/chat/chat_socket_service.dart` (emit/listen for online users list) |
+| **[MODIFY]** | `lib/widgets/shared/chat/shared_conversation_tile.dart` (avatar tap → profile) |
+| **[MODIFY]** | `lib/widgets/shared/chat/shared_chat_detail_view.dart` (header tap → profile, last seen text) |
+| **[MODIFY]** | `lib/widgets/shared/chat/shared_chat_header.dart` (change "+" button to open new screen) |
+| **[DELETE]** | `lib/widgets/shared/chat/shared_new_chat_dialog.dart` (replaced by full-screen) |
+| **[MODIFY]** | Router configuration (add routes for new screens) |
+
+#### Verification
+
+- **New Conversation Flow:**
+  - Full-screen contact picker opens from chat header "+" button
+  - Search returns users from API and displays with online indicators
+  - Frequently contacted section shows last 5 chatted users
+  - Alphabetic grouping works (A, B, C headers)
+  - Selecting a user starts/opens conversation correctly
+  - Group creation flow works with multi-select and group name
+  
+- **User Profile:**
+  - Tapping avatar in conversation list opens profile
+  - Tapping avatar/name in chat header opens profile
+  - Profile shows correct info: name, email, online status, last seen
+  - "Send Message" button navigates to chat
+  
+- **Online Status:**
+  - On app launch/WebSocket connect, online users list is fetched
+  - Green dot appears for online users in conversation list
+  - "Online" / "Last seen X" displays correctly in chat header
+  - Status updates in real-time when `user_status` events arrive
+  - App resume triggers status refresh
+
+- **"Reply to Unknown" Fix:**
+  - Replying to an incoming message correctly shows the sender's real name instead of "Unknown" in the reply preview bar.
+  - Successfully sent replies correctly maintain and display the original sender's name in the message bubble.
+
+---
+
+### Phase 8: Discussion Forums Backend Integration
 **Spec-Kit Name:** `chat-discussion-forums`
 
 > [!NOTE]
@@ -362,7 +515,7 @@ Per the [Backend API docs](file:///d:/Graduation/EduVerse/edu_verse/Flutter_Chat
 
 ---
 
-### Phase 8: Cleanup, Caching & Polish
+### Phase 9: Cleanup, Caching & Polish
 **Spec-Kit Name:** `chat-cleanup-polish`
 
 #### Scope
@@ -423,9 +576,10 @@ graph TD
     P3 --> P6[Phase 6: Role Integration & Unification]
     P4 --> P6
     P5 --> P6
-    P6 --> P7[Phase 7: Discussion Forums]
-    P6 --> P8[Phase 8: Cleanup & Polish]
-    P7 --> P8
+    P6 --> P7[Phase 7: Pro Chat UX Enhancements]
+    P7 --> P8[Phase 8: Discussion Forums]
+    P7 --> P9[Phase 9: Cleanup & Polish]
+    P8 --> P9
 ```
 
 ## Spec-Kit Workflow Per Phase
@@ -444,7 +598,7 @@ For each phase, run the Spec-Kit workflow in order:
 ## Open Questions
 
 > [!IMPORTANT]
-> **Q1:** The Flutter app currently has `ConversationType.course` with course-specific chat conversations. The website frontend does NOT have this — it only has `direct` and `group`. Should course discussions be handled entirely through the Discussion Forums (Phase 7), or do you want to keep some form of course-context?
+> **Q1:** The Flutter app currently has `ConversationType.course` with course-specific chat conversations. The website frontend does NOT have this — it only has `direct` and `group`. Should course discussions be handled entirely through the Discussion Forums (Phase 8), or do you want to keep some form of course-context?
 
 > [!IMPORTANT]
 > **Q2:** The website's Instructor and TA dashboards have a "Communication" page with 3 sub-tabs (Announcements / Course Chats / Direct Messages) that each embed the `MessagingChat` component. Do you want to replicate this 3-subtab communication hub in the Flutter app, or keep chat as a standalone top-level tab only?

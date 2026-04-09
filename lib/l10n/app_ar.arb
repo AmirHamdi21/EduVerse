@@ -4688,5 +4688,7 @@
   "itAllLogs": "جميع السجلات",
   "itAllConfigs": "جميع الإعدادات",
   "itAllBackups": "جميع النسخ الاحتياطية",
-  "itSearch": "بحث"
+  "itSearch": "بحث",
+  "itChat": "الدردشة",
+  "itChatSubtitle": "الرسائل والاتصالات"
 }

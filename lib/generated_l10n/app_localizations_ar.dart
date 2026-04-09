@@ -12009,4 +12009,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get itSearch => 'بحث';
+
+  @override
+  String get itChat => 'الدردشة';
+
+  @override
+  String get itChatSubtitle => 'الرسائل والاتصالات';
 }

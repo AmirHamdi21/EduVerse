@@ -356,6 +356,13 @@ class _ITDrawerState extends State<ITDrawer>
         category: 'monitoring',
       ),
       _MenuItem(
+        icon: Icons.chat_bubble_outline,
+        activeIcon: Icons.chat_bubble,
+        title: l10n.messages,
+        route: '/it-admin/messages',
+        category: 'main',
+      ),
+      _MenuItem(
         icon: Icons.storage_outlined,
         activeIcon: Icons.storage,
         title: l10n.itDatabase,

@@ -214,9 +214,7 @@ class ConversationModel extends Equatable {
   }
 
   DateTime get updatedAt =>
-      lastMessageAt ??
-      lastMessageInfo?.sentAt ??
-      DateTime.now().toUtc();
+      lastMessageAt ?? lastMessageInfo?.sentAt ?? DateTime.now().toUtc();
 
   Map<String, dynamic> toJson() {
     return {

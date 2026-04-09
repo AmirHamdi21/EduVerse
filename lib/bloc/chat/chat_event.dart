@@ -22,6 +22,11 @@ class SelectConversation extends ChatEvent {
   List<Object?> get props => [conversationId];
 }
 
+/// Clears the active conversation selection (mobile back navigation)
+class DeselectConversation extends ChatEvent {
+  const DeselectConversation();
+}
+
 class LoadMoreMessages extends ChatEvent {
   final int conversationId;
   final int page;

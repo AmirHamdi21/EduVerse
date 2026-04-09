@@ -12056,4 +12056,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get itSearch => 'Search';
+
+  @override
+  String get itChat => 'Chat';
+
+  @override
+  String get itChatSubtitle => 'Messages and communications';
 }

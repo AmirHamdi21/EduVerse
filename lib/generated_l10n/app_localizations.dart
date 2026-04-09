@@ -23623,6 +23623,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search'**
   String get itSearch;
+
+  /// No description provided for @itChat.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get itChat;
+
+  /// No description provided for @itChatSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Messages and communications'**
+  String get itChatSubtitle;
 }
 
 class _AppLocalizationsDelegate
