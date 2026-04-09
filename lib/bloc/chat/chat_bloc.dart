@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -18,7 +19,7 @@ EventTransformer<E> debounce<E>(Duration duration) {
   return (events, mapper) => events.debounce(duration).switchMap(mapper);
 }
 
-class ChatBloc extends Bloc<ChatEvent, ChatState> {
+class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
   final IChatService _chatService;
   final IChatSocketService _chatSocketService;
   final StorageService _storageService;
@@ -26,6 +27,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   StreamSubscription<ChatConnectionStatus>? _connectionStatusSubscription;
   StreamSubscription<ChatMessageModel>? _newMessageSubscription;
+  StreamSubscription<Set<int>>? _onlineUsersListSubscription;
   StreamSubscription<ChatMessageModel>? _notificationMessageSubscription;
   StreamSubscription<UserTypingEvent>? _typingSubscription;
   StreamSubscription<int>? _messageDeletedSubscription;
@@ -35,6 +37,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   StreamSubscription<MessageReadEvent>? _messageReadSubscription;
 
   Timer? _typingDebounceTimer;
+  bool _hasLifecycleObserver = false;
 
   final Map<int, _PendingMessage> _failedMessages = <int, _PendingMessage>{};
   int _tempIdCounter = -1;
@@ -73,7 +76,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
        _storageService = storageService,
        _typingDebounceDuration = typingDebounceDuration,
        super(const ChatState()) {
+    _registerLifecycleObserver();
+
     on<LoadConversations>(_onLoadConversations);
+    on<RefreshOnlineUsersRequested>(_onRefreshOnlineUsersRequested);
     on<SelectConversation>(_onSelectConversation);
     on<DeselectConversation>(_onDeselectConversation);
     on<LoadMoreMessages>(_onLoadMoreMessages);
@@ -95,7 +101,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     // New conversation dialog event handlers (Phase 5)
     on<ChatSearchUsersRequested>(
       _onChatSearchUsersRequested,
-      transformer: debounce(const Duration(milliseconds: 400)),
+      transformer: debounce(const Duration(milliseconds: 280)),
     );
     on<ChatParticipantAdded>(_onChatParticipantAdded);
     on<ChatParticipantRemoved>(_onChatParticipantRemoved);
@@ -105,6 +111,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     _subscribeToSocketStreams();
     unawaited(_connectSocket());
+  }
+
+  void _registerLifecycleObserver() {
+    try {
+      WidgetsBinding.instance.addObserver(this);
+      _hasLifecycleObserver = true;
+    } catch (_) {
+      _hasLifecycleObserver = false;
+    }
   }
 
   Future<void> _connectSocket() async {
@@ -126,6 +141,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     ) {
       add(WebSocketEventReceived(eventName: 'new_message', payload: message));
     });
+
+    _onlineUsersListSubscription = _chatSocketService.onlineUsersListStream
+        .listen((onlineUsers) {
+          add(
+            WebSocketEventReceived(
+              eventName: 'online_users_list',
+              payload: onlineUsers,
+            ),
+          );
+        });
 
     _notificationMessageSubscription = _chatSocketService
         .newMessageNotificationStream
@@ -190,13 +215,22 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
     try {
       final conversations = await _chatService.listConversations();
+      final sortedConversations = _sortConversations(conversations);
+      final participantCache = _buildParticipantCacheFromConversations(
+        sortedConversations,
+      );
+
       emit(
         state.copyWith(
-          conversations: _sortConversations(conversations),
+          conversations: sortedConversations,
+          frequentlyContacted: _deriveFrequentlyContacted(sortedConversations),
+          participantCache: participantCache,
           status: ChatStatus.success,
           clearErrorMessage: true,
         ),
       );
+
+      add(const RefreshOnlineUsersRequested());
     } catch (error) {
       emit(
         state.copyWith(
@@ -205,6 +239,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         ),
       );
     }
+  }
+
+  Future<void> _onRefreshOnlineUsersRequested(
+    RefreshOnlineUsersRequested event,
+    Emitter<ChatState> emit,
+  ) async {
+    _chatSocketService.requestOnlineUsers();
   }
 
   Future<void> _onSelectConversation(
@@ -243,12 +284,21 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           )
           .toList(growable: false);
 
+      final nextParticipantCache = _mergeParticipantCacheWithMessages(
+        base: _buildParticipantCacheFromConversations(
+          updatedConversations,
+          seed: state.participantCache,
+        ),
+        messages: messages,
+      );
+
       emit(
         state.copyWith(
           conversations: _sortConversations(updatedConversations),
           activeConversationMessages: _sortMessages(messages),
           activeConversationId: event.conversationId,
           activePage: 1,
+          participantCache: nextParticipantCache,
           status: ChatStatus.success,
           clearErrorMessage: true,
         ),
@@ -704,6 +754,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       case 'connection_status':
         final nextStatus = _mapConnectionStatus(event.payload);
         emit(state.copyWith(connectionStatus: nextStatus));
+        if (nextStatus == ConnectionStatus.live) {
+          add(const RefreshOnlineUsersRequested());
+        }
         return;
       case 'new_message':
         final message = event.payload is ChatMessageModel
@@ -724,10 +777,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           incrementUnread: state.activeConversationId != message.conversationId,
         );
 
+        final nextParticipantCache = _upsertParticipantFromMessage(
+          state.participantCache,
+          message,
+        );
+
         emit(
           state.copyWith(
             conversations: _sortConversations(updatedConversations),
             activeConversationMessages: _sortMessages(mergedMessages),
+            participantCache: nextParticipantCache,
             status: ChatStatus.success,
           ),
         );
@@ -789,10 +848,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           incrementUnread: false,
         );
 
+        final nextParticipantCache = _upsertParticipantFromMessage(
+          state.participantCache,
+          editedMessage,
+        );
+
         emit(
           state.copyWith(
             conversations: _sortConversations(updatedConversations),
             activeConversationMessages: _sortMessages(updatedMessages),
+            participantCache: nextParticipantCache,
             status: ChatStatus.success,
           ),
         );
@@ -805,14 +870,59 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         }
 
         final nextOnlineUsers = Set<int>.from(state.onlineUsers);
+        final nextLastSeen = Map<int, DateTime>.from(state.userLastSeen);
         final isOnline = _parseBool(statusMap['isOnline']);
         if (isOnline) {
           nextOnlineUsers.add(userId);
+          nextLastSeen.remove(userId);
         } else {
           nextOnlineUsers.remove(userId);
+          final lastSeen = _parseDateTime(statusMap['lastSeen']);
+          if (lastSeen != null) {
+            nextLastSeen[userId] = lastSeen;
+          }
         }
 
-        emit(state.copyWith(onlineUsers: nextOnlineUsers));
+        emit(
+          state.copyWith(
+            onlineUsers: nextOnlineUsers,
+            userLastSeen: nextLastSeen,
+          ),
+        );
+        return;
+      case 'online_users_list':
+        final incoming = event.payload;
+        final updatedOnlineUsers = <int>{};
+        if (incoming is Set<int>) {
+          updatedOnlineUsers.addAll(incoming);
+        } else if (incoming is List) {
+          for (final value in incoming) {
+            final id = _parseInt(value);
+            if (id > 0) {
+              updatedOnlineUsers.add(id);
+            }
+          }
+        } else if (incoming is Map) {
+          final map = Map<String, dynamic>.from(incoming);
+          final values = map['data'] ?? map['onlineUsers'] ?? map['users'];
+          if (values is List) {
+            for (final value in values) {
+              if (value is Map) {
+                final nested = Map<String, dynamic>.from(value);
+                final id = _parseInt(nested['userId'] ?? nested['id']);
+                if (id > 0) {
+                  updatedOnlineUsers.add(id);
+                }
+              } else {
+                final id = _parseInt(value);
+                if (id > 0) {
+                  updatedOnlineUsers.add(id);
+                }
+              }
+            }
+          }
+        }
+        emit(state.copyWith(onlineUsers: updatedOnlineUsers));
         return;
       case 'message_read':
         final readEvent = event.payload is MessageReadEvent
@@ -896,6 +1006,121 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     final sorted = [...messages];
     sorted.sort((first, second) => second.sentAt.compareTo(first.sentAt));
     return sorted;
+  }
+
+  List<ChatUserModel> _deriveFrequentlyContacted(
+    List<ConversationModel> conversations,
+  ) {
+    final byUserId = <int, ChatUserModel>{};
+    final sorted = _sortConversations(conversations);
+
+    for (final conversation in sorted) {
+      if (conversation.type != ConversationType.direct) {
+        continue;
+      }
+
+      final candidate =
+          conversation.directDisplayUser ??
+          conversation.participantUsers.firstOrNull;
+      if (candidate == null) {
+        continue;
+      }
+
+      byUserId.putIfAbsent(candidate.userId, () => candidate);
+      if (byUserId.length >= 5) {
+        break;
+      }
+    }
+
+    return byUserId.values.toList(growable: false);
+  }
+
+  Map<int, ChatUserModel> _buildParticipantCacheFromConversations(
+    List<ConversationModel> conversations, {
+    Map<int, ChatUserModel>? seed,
+  }) {
+    final cache = <int, ChatUserModel>{if (seed != null) ...seed};
+
+    for (final conversation in conversations) {
+      final directUser = conversation.directDisplayUser;
+      if (directUser != null && directUser.userId > 0) {
+        cache[directUser.userId] = directUser;
+      }
+
+      for (final participant in conversation.participantUsers) {
+        if (participant.userId > 0) {
+          cache[participant.userId] = participant;
+        }
+      }
+
+      final lastMessage = conversation.lastMessageInfo;
+      if (lastMessage != null) {
+        final updated = _upsertParticipantFromMessage(cache, lastMessage);
+        if (!identical(updated, cache)) {
+          cache
+            ..clear()
+            ..addAll(updated);
+        }
+      }
+    }
+
+    return cache;
+  }
+
+  Map<int, ChatUserModel> _mergeParticipantCacheWithMessages({
+    required Map<int, ChatUserModel> base,
+    required List<ChatMessageModel> messages,
+  }) {
+    var current = Map<int, ChatUserModel>.from(base);
+    for (final message in messages) {
+      current = _upsertParticipantFromMessage(current, message);
+    }
+    return current;
+  }
+
+  Map<int, ChatUserModel> _upsertParticipantFromMessage(
+    Map<int, ChatUserModel> cache,
+    ChatMessageModel message,
+  ) {
+    final senderId = message.senderId;
+    if (senderId <= 0) {
+      return cache;
+    }
+
+    final senderName = message.senderName?.trim();
+    final existing = cache[senderId];
+    if ((senderName == null || senderName.isEmpty) && existing != null) {
+      return cache;
+    }
+
+    final tokens = (senderName ?? '').split(RegExp(r'\s+'))
+      ..removeWhere((entry) => entry.trim().isEmpty);
+
+    final firstName = tokens.isNotEmpty ? tokens.first : existing?.firstName;
+    final lastName = tokens.length > 1
+        ? tokens.sublist(1).join(' ')
+        : existing?.lastName;
+
+    final next = Map<int, ChatUserModel>.from(cache);
+    next[senderId] = ChatUserModel(
+      userId: senderId,
+      firstName: firstName,
+      lastName: lastName,
+      fullName: senderName ?? existing?.fullName,
+      email: existing?.email,
+      role: existing?.role,
+    );
+    return next;
+  }
+
+  DateTime? _parseDateTime(dynamic value) {
+    if (value is DateTime) {
+      return value.toUtc();
+    }
+    if (value is String && value.trim().isNotEmpty) {
+      return DateTime.tryParse(value)?.toUtc();
+    }
+    return null;
   }
 
   List<ChatMessageModel> _mergeMessages(
@@ -1068,6 +1293,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     return _tempIdCounter;
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      add(const RefreshOnlineUsersRequested());
+    }
+  }
+
   String _resolveSenderName(UserDto? currentUser) {
     if (currentUser == null) {
       return 'Me';
@@ -1119,6 +1351,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       emit(
         state.copyWith(
           newConversationSearchResults: const <ChatUserModel>[],
+          contactSearchResults: const <ChatUserModel>[],
           userSearchLoading: false,
           clearUserSearchError: true,
           clearLastSearchQuery: true,
@@ -1149,6 +1382,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       emit(
         state.copyWith(
           newConversationSearchResults: sortedResults,
+          contactSearchResults: sortedResults,
           userSearchLoading: false,
           clearUserSearchError: true,
         ),
@@ -1225,6 +1459,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       state.copyWith(
         selectedParticipants: updatedParticipants,
         newConversationSearchResults: const <ChatUserModel>[],
+        contactSearchResults: const <ChatUserModel>[],
         clearUserSearchError: true,
       ),
     );
@@ -1268,11 +1503,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     final otherParticipantIds = event.participantIds
         .where((id) => id != currentUserId)
         .toList();
-
-    // Check if user is messaging themselves (self-message)
-    final isSelfMessage =
-        event.participantIds.length == 1 &&
-        event.participantIds.first == currentUserId;
 
     // Validation: Check if participants list is empty
     if (event.participantIds.isEmpty) {
@@ -1415,9 +1645,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         updatedConversations = [enhancedConversation, ...state.conversations];
       }
 
+      final nextParticipantCache = Map<int, ChatUserModel>.from(
+        state.participantCache,
+      );
+      for (final participant in event.selectedParticipants) {
+        if (participant.userId > 0) {
+          nextParticipantCache[participant.userId] = participant;
+        }
+      }
+
       emit(
         state.copyWith(
           conversations: updatedConversations,
+          frequentlyContacted: _deriveFrequentlyContacted(updatedConversations),
+          participantCache: nextParticipantCache,
           creatingConversation: false,
           newlyCreatedConversationId: enhancedConversation.conversationId,
         ),
@@ -1463,6 +1704,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(
       state.copyWith(
         newConversationSearchResults: const <ChatUserModel>[],
+        contactSearchResults: const <ChatUserModel>[],
         userSearchLoading: false,
         clearUserSearchError: true,
         clearLastSearchQuery: true,
@@ -1479,8 +1721,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   @override
   Future<void> close() async {
+    if (_hasLifecycleObserver) {
+      WidgetsBinding.instance.removeObserver(this);
+    }
     await _connectionStatusSubscription?.cancel();
     await _newMessageSubscription?.cancel();
+    await _onlineUsersListSubscription?.cancel();
     await _notificationMessageSubscription?.cancel();
     await _typingSubscription?.cancel();
     await _messageDeletedSubscription?.cancel();

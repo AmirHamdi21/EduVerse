@@ -14,6 +14,8 @@ abstract class IChatSocketService {
 
   Stream<ChatMessageModel> get newMessageStream;
 
+  Stream<Set<int>> get onlineUsersListStream;
+
   Stream<ChatMessageModel> get newMessageNotificationStream;
 
   Stream<UserTypingEvent> get typingStream;
@@ -29,6 +31,8 @@ abstract class IChatSocketService {
   Stream<MessageReadEvent> get messageReadStream;
 
   void connect(String jwtToken);
+
+  void requestOnlineUsers();
 
   void disconnect();
 
@@ -154,6 +158,8 @@ class ChatSocketService implements IChatSocketService {
       StreamController<ChatConnectionStatus>.broadcast();
   final StreamController<ChatMessageModel> _newMessageController =
       StreamController<ChatMessageModel>.broadcast();
+  final StreamController<Set<int>> _onlineUsersListController =
+      StreamController<Set<int>>.broadcast();
   final StreamController<ChatMessageModel> _newMessageNotificationController =
       StreamController<ChatMessageModel>.broadcast();
   final StreamController<UserTypingEvent> _typingController =
@@ -214,6 +220,10 @@ class ChatSocketService implements IChatSocketService {
 
   @override
   Stream<ChatMessageModel> get newMessageStream => _newMessageController.stream;
+
+  @override
+  Stream<Set<int>> get onlineUsersListStream =>
+      _onlineUsersListController.stream;
 
   @override
   Stream<ChatMessageModel> get newMessageNotificationStream =>
@@ -285,6 +295,11 @@ class ChatSocketService implements IChatSocketService {
   }
 
   @override
+  void requestOnlineUsers() {
+    _emit('get_online_users', <String, dynamic>{});
+  }
+
+  @override
   void joinConversation(int conversationId) {
     _emit('join_conversation', {'conversationId': conversationId});
   }
@@ -335,6 +350,7 @@ class ChatSocketService implements IChatSocketService {
   void _registerCoreListeners(ChatSocketClient socket) {
     socket.onConnect((_) {
       _setConnectionStatus(ChatConnectionStatus.connected);
+      requestOnlineUsers();
     });
 
     socket.onDisconnect((_) {
@@ -413,6 +429,11 @@ class ChatSocketService implements IChatSocketService {
       if (map.isNotEmpty) {
         _userStatusController.add(map);
       }
+    });
+
+    socket.on('online_users_list', (data) {
+      final normalized = _extractOnlineUsers(data);
+      _onlineUsersListController.add(normalized);
     });
 
     socket.on('message_read', (data) {
@@ -522,6 +543,40 @@ class ChatSocketService implements IChatSocketService {
     return fallback;
   }
 
+  Set<int> _extractOnlineUsers(dynamic payload) {
+    dynamic data = payload;
+    final payloadMap = _asMap(payload);
+    if (payloadMap['data'] is List) {
+      data = payloadMap['data'];
+    } else if (payloadMap['onlineUsers'] is List) {
+      data = payloadMap['onlineUsers'];
+    } else if (payloadMap['users'] is List) {
+      data = payloadMap['users'];
+    }
+
+    if (data is! List) {
+      return <int>{};
+    }
+
+    final ids = <int>{};
+    for (final entry in data) {
+      if (entry is Map || entry is Map<String, dynamic>) {
+        final map = _asMap(entry);
+        final id = _parseInt(map['userId'] ?? map['id']);
+        if (id > 0) {
+          ids.add(id);
+        }
+      } else {
+        final id = _parseInt(entry);
+        if (id > 0) {
+          ids.add(id);
+        }
+      }
+    }
+
+    return ids;
+  }
+
   Map<String, dynamic> _unwrapPayload(dynamic payload) {
     final map = _asMap(payload);
     if (map['data'] is Map) {
@@ -549,6 +604,7 @@ class ChatSocketService implements IChatSocketService {
 
     _connectionStatusController.close();
     _newMessageController.close();
+    _onlineUsersListController.close();
     _newMessageNotificationController.close();
     _typingController.close();
     _messageDeletedController.close();

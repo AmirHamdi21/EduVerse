@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../bloc/chat/chat_bloc.dart';
 import '../../../bloc/chat/chat_event.dart';
 import '../../../bloc/chat/chat_models.dart';
 import '../../../bloc/chat/chat_state.dart';
+import '../../../models/chat/chat_models.dart';
 import 'shared_emoji_row.dart';
 import 'shared_message_bubble.dart';
 import 'shared_typing_indicator.dart';
@@ -68,6 +70,8 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
+  final Map<int, GlobalKey> _messageKeys = <int, GlobalKey>{};
+  final Map<int, int> _messageIndexById = <int, int>{};
   bool _showEmojiPicker = false;
   Timer? _typingDebounce;
 
@@ -132,6 +136,86 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
     }
   }
 
+  void _syncMessageAnchors(List<ChatMessageModel> messages) {
+    final activeIds = messages.map((message) => message.id).toSet();
+    _messageKeys.removeWhere((id, _) => !activeIds.contains(id));
+
+    _messageIndexById
+      ..clear()
+      ..addEntries(
+        messages.asMap().entries.map((entry) {
+          return MapEntry(entry.value.id, entry.key);
+        }),
+      );
+
+    for (final message in messages) {
+      _messageKeys.putIfAbsent(
+        message.id,
+        () => GlobalKey(debugLabel: 'msg-${message.id}'),
+      );
+    }
+  }
+
+  void _showMissingMessageToast() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Message is too old to display')),
+    );
+  }
+
+  void _scrollToMessage(int messageId) {
+    if (!_messageIndexById.containsKey(messageId)) {
+      _showMissingMessageToast();
+      return;
+    }
+
+    _attemptScrollToMessage(messageId, attempt: 0);
+  }
+
+  void _attemptScrollToMessage(int messageId, {required int attempt}) {
+    final targetKey = _messageKeys[messageId];
+    final targetContext = targetKey?.currentContext;
+    if (targetContext != null) {
+      Scrollable.ensureVisible(
+        targetContext,
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeInOut,
+        alignment: 0.5,
+      );
+      return;
+    }
+
+    if (!_scrollController.hasClients || attempt >= 6) {
+      _showMissingMessageToast();
+      return;
+    }
+
+    final targetIndex = _messageIndexById[messageId];
+    final messageCount = _messageIndexById.length;
+    if (targetIndex == null || messageCount <= 1) {
+      _showMissingMessageToast();
+      return;
+    }
+
+    final maxExtent = _scrollController.position.maxScrollExtent;
+    final ratio = targetIndex / (messageCount - 1);
+    final nextOffset = (maxExtent * ratio).clamp(0.0, maxExtent);
+
+    _scrollController
+        .animateTo(
+          nextOffset,
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+        )
+        .whenComplete(() {
+          if (!mounted) {
+            return;
+          }
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            _attemptScrollToMessage(messageId, attempt: attempt + 1);
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ChatBloc, ChatState>(
@@ -151,6 +235,11 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
         }
       },
       builder: (context, state) {
+        final visibleMessages = state.activeConversationMessages
+            .where((msg) => !state.hiddenMessageIds.contains(msg.id))
+            .toList(growable: false);
+        _syncMessageAnchors(visibleMessages);
+
         return Scaffold(
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight + 40),
@@ -160,10 +249,14 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
               typingUsers:
                   state.typingUsers[widget.conversation.conversationId] ?? [],
               onlineUsers: state.onlineUsers,
+              userLastSeen: state.userLastSeen,
               accentColor: widget.accentColor,
               isDark: widget.isDark,
               showVoiceCall: widget.showVoiceCall,
               showVideoCall: widget.showVideoCall,
+              onOpenProfile: (userId) {
+                context.push('/messages/profile/$userId');
+              },
               onBack: widget.onBack,
             ),
           ),
@@ -171,19 +264,20 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
             children: [
               Expanded(
                 child: _MessageList(
-                  messages: state.activeConversationMessages
-                      .where((msg) => !state.hiddenMessageIds.contains(msg.id))
-                      .toList(),
+                  messages: visibleMessages,
                   conversation: widget.conversation,
                   currentUserId: widget.currentUserId,
                   scrollController: _scrollController,
+                  messageKeys: _messageKeys,
                   accentColor: widget.accentColor,
                   isDark: widget.isDark,
+                  participantCache: state.participantCache,
                   onReply: (message) {
                     context.read<ChatBloc>().add(
                       SetReplyContext(message: message),
                     );
                   },
+                  onTapReplyContext: _scrollToMessage,
                   onDeleteForMe: (messageId) {
                     context.read<ChatBloc>().add(HideMessageLocally(messageId));
                   },
@@ -204,6 +298,7 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
               if (state.replyToMessage != null)
                 _ReplyPreviewBar(
                   replyToMessage: state.replyToMessage!,
+                  participantCache: state.participantCache,
                   accentColor: widget.accentColor,
                   isDark: widget.isDark,
                   onDismiss: () {
@@ -283,10 +378,12 @@ class _ConversationHeader extends StatelessWidget {
   final ConnectionStatus connectionStatus;
   final List<int> typingUsers;
   final Set<int> onlineUsers;
+  final Map<int, DateTime> userLastSeen;
   final Color accentColor;
   final bool isDark;
   final bool showVoiceCall;
   final bool showVideoCall;
+  final void Function(int userId)? onOpenProfile;
   final VoidCallback? onBack;
 
   const _ConversationHeader({
@@ -294,10 +391,12 @@ class _ConversationHeader extends StatelessWidget {
     required this.connectionStatus,
     required this.typingUsers,
     required this.onlineUsers,
+    required this.userLastSeen,
     required this.accentColor,
     required this.isDark,
     required this.showVoiceCall,
     required this.showVideoCall,
+    this.onOpenProfile,
     this.onBack,
   });
 
@@ -315,6 +414,16 @@ class _ConversationHeader extends StatelessWidget {
         conversation.directDisplayUser != null &&
         onlineUsers.contains(conversation.directDisplayUser!.userId);
 
+    final directUser = conversation.directDisplayUser;
+    final lastSeen = directUser != null
+        ? userLastSeen[directUser.userId]
+        : null;
+    final subtitleText = isOnline
+        ? 'Online'
+        : (lastSeen != null
+              ? 'Last seen ${_formatLastSeen(lastSeen)}'
+              : 'Offline');
+
     return AppBar(
       leading: onBack != null
           ? IconButton(icon: const Icon(Icons.arrow_back), onPressed: onBack)
@@ -322,17 +431,35 @@ class _ConversationHeader extends StatelessWidget {
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  conversation.title,
-                  style: const TextStyle(fontSize: 16),
-                  overflow: TextOverflow.ellipsis,
+          GestureDetector(
+            onTap: directUser == null || onOpenProfile == null
+                ? null
+                : () => onOpenProfile!(directUser.userId),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: accentColor.withOpacity(0.2),
+                  child: Text(
+                    _titleInitial(conversation.title),
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: accentColor,
+                    ),
+                  ),
                 ),
-              ),
-              _buildConnectionBadge(),
-            ],
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    conversation.title,
+                    style: const TextStyle(fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                _buildConnectionBadge(),
+              ],
+            ),
           ),
           if (typingUserNames.isNotEmpty)
             SharedTypingIndicator(
@@ -340,10 +467,15 @@ class _ConversationHeader extends StatelessWidget {
               accentColor: accentColor,
               isDark: isDark,
             )
-          else if (isOnline)
+          else
             Text(
-              'Online',
-              style: TextStyle(fontSize: 12, color: Colors.green[400]),
+              subtitleText,
+              style: TextStyle(
+                fontSize: 12,
+                color: isOnline
+                    ? Colors.green[400]
+                    : (isDark ? Colors.grey[400] : Colors.grey[700]),
+              ),
             ),
         ],
       ),
@@ -368,6 +500,30 @@ class _ConversationHeader extends StatelessWidget {
           ),
       ],
     );
+  }
+
+  String _titleInitial(String title) {
+    final normalized = title.trim();
+    if (normalized.isEmpty) {
+      return '?';
+    }
+    return normalized[0].toUpperCase();
+  }
+
+  String _formatLastSeen(DateTime lastSeen) {
+    final now = DateTime.now();
+    final diff = now.difference(lastSeen);
+
+    if (diff.inMinutes < 1) {
+      return 'just now';
+    }
+    if (diff.inMinutes < 60) {
+      return '${diff.inMinutes}m ago';
+    }
+    if (diff.inHours < 24) {
+      return '${diff.inHours}h ago';
+    }
+    return '${lastSeen.day}/${lastSeen.month}/${lastSeen.year}';
   }
 
   Widget _buildConnectionBadge() {
@@ -413,9 +569,12 @@ class _MessageList extends StatelessWidget {
   final ConversationModel conversation;
   final int currentUserId;
   final ScrollController scrollController;
+  final Map<int, GlobalKey> messageKeys;
   final Color accentColor;
   final bool isDark;
+  final Map<int, ChatUserModel> participantCache;
   final void Function(ChatMessageModel) onReply;
+  final void Function(int) onTapReplyContext;
   final void Function(int) onDeleteForMe;
   final void Function(int) onDeleteForEveryone;
   final void Function(int) onRetry;
@@ -425,9 +584,12 @@ class _MessageList extends StatelessWidget {
     required this.conversation,
     required this.currentUserId,
     required this.scrollController,
+    required this.messageKeys,
     required this.accentColor,
     required this.isDark,
+    required this.participantCache,
     required this.onReply,
+    required this.onTapReplyContext,
     required this.onDeleteForMe,
     required this.onDeleteForEveryone,
     required this.onRetry,
@@ -469,7 +631,19 @@ class _MessageList extends StatelessWidget {
           replyToMsg = messages
               .where((m) => m.id == message.replyToId)
               .firstOrNull;
+
+          replyToMsg ??= ChatMessageModel(
+            id: message.replyToId!,
+            text: 'Original message unavailable',
+            senderId: 0,
+            senderName: 'Unknown User',
+            sentAt: message.sentAt,
+            conversationId: message.conversationId,
+            status: 'sent',
+          );
         }
+
+        final bubbleKey = messageKeys[message.id]!;
 
         // Calculate if can delete for everyone (24h window)
         final canDeleteForEveryone =
@@ -478,19 +652,26 @@ class _MessageList extends StatelessWidget {
             message.status != 'pending' &&
             DateTime.now().difference(message.sentAt).inHours < 24;
 
-        return SharedMessageBubble(
-          message: message,
-          isMe: isMe,
-          isGroup: isGroup,
-          showSenderInfo: showSenderInfo,
-          replyToMessage: replyToMsg,
-          accentColor: accentColor,
-          isDark: isDark,
-          canDeleteForEveryone: canDeleteForEveryone,
-          onReply: () => onReply(message),
-          onDeleteForMe: () => onDeleteForMe(message.id),
-          onDeleteForEveryone: () => onDeleteForEveryone(message.id),
-          onRetry: message.isFailed ? () => onRetry(message.id) : null,
+        return KeyedSubtree(
+          key: bubbleKey,
+          child: SharedMessageBubble(
+            message: message,
+            isMe: isMe,
+            isGroup: isGroup,
+            showSenderInfo: showSenderInfo,
+            replyToMessage: replyToMsg,
+            participantCache: participantCache,
+            accentColor: accentColor,
+            isDark: isDark,
+            canDeleteForEveryone: canDeleteForEveryone,
+            onReply: () => onReply(message),
+            onDeleteForMe: () => onDeleteForMe(message.id),
+            onDeleteForEveryone: () => onDeleteForEveryone(message.id),
+            onTapReplyContext: message.replyToId == null
+                ? null
+                : () => onTapReplyContext(message.replyToId!),
+            onRetry: message.isFailed ? () => onRetry(message.id) : null,
+          ),
         );
       },
     );
@@ -500,12 +681,14 @@ class _MessageList extends StatelessWidget {
 /// Private widget: Reply preview bar showing quoted message
 class _ReplyPreviewBar extends StatelessWidget {
   final ChatMessageModel replyToMessage;
+  final Map<int, ChatUserModel> participantCache;
   final Color accentColor;
   final bool isDark;
   final VoidCallback onDismiss;
 
   const _ReplyPreviewBar({
     required this.replyToMessage,
+    required this.participantCache,
     required this.accentColor,
     required this.isDark,
     required this.onDismiss,
@@ -537,7 +720,7 @@ class _ReplyPreviewBar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Replying to ${replyToMessage.senderName ?? 'Unknown'}',
+                  'Replying to ${replyToMessage.hydratedReplyToName(participantCache)}',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,

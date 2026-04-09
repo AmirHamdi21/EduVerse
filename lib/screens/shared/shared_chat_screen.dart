@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_state.dart';
@@ -9,7 +10,6 @@ import '../../bloc/chat/chat_state.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../widgets/shared/chat/shared_chat_detail_view.dart';
 import '../../widgets/shared/chat/shared_conversation_list.dart';
-import '../../widgets/shared/chat/shared_new_chat_dialog.dart';
 
 /// Layout mode for responsive chat screen.
 ///
@@ -268,7 +268,7 @@ class _MobileLayout extends StatelessWidget {
           ),
           floatingActionButton: FloatingActionButton(
             backgroundColor: accentColor,
-            onPressed: () => _showNewConversationDialog(context),
+            onPressed: () => _openNewConversationScreen(context),
             tooltip: 'New Conversation',
             child: const Icon(Icons.add),
           ),
@@ -277,16 +277,12 @@ class _MobileLayout extends StatelessWidget {
     );
   }
 
-  void _showNewConversationDialog(BuildContext context) {
-    context.read<ChatBloc>().add(const ChatNewConversationDialogReset());
-
-    showDialog<int?>(
-      context: context,
-      builder: (dialogContext) => BlocProvider.value(
-        value: context.read<ChatBloc>(),
-        child: const SharedNewChatDialog(),
-      ),
-    );
+  Future<void> _openNewConversationScreen(BuildContext context) async {
+    final conversationId = await context.push<int>('/messages/new');
+    if (conversationId != null && conversationId > 0 && context.mounted) {
+      context.read<ChatBloc>().add(SelectConversation(conversationId));
+      context.read<ChatBloc>().add(MarkRead(conversationId));
+    }
   }
 }
 
@@ -349,7 +345,7 @@ class _TabletDesktopLayout extends StatelessWidget {
                         style: FilledButton.styleFrom(
                           backgroundColor: accentColor,
                         ),
-                        onPressed: () => _showNewConversationDialog(context),
+                        onPressed: () => _openNewConversationScreen(context),
                         icon: const Icon(Icons.add),
                         label: const Text('New Conversation'),
                       ),
@@ -445,15 +441,11 @@ class _TabletDesktopLayout extends StatelessWidget {
     );
   }
 
-  void _showNewConversationDialog(BuildContext context) {
-    context.read<ChatBloc>().add(const ChatNewConversationDialogReset());
-
-    showDialog<int?>(
-      context: context,
-      builder: (dialogContext) => BlocProvider.value(
-        value: context.read<ChatBloc>(),
-        child: const SharedNewChatDialog(),
-      ),
-    );
+  Future<void> _openNewConversationScreen(BuildContext context) async {
+    final conversationId = await context.push<int>('/messages/new');
+    if (conversationId != null && conversationId > 0 && context.mounted) {
+      context.read<ChatBloc>().add(SelectConversation(conversationId));
+      context.read<ChatBloc>().add(MarkRead(conversationId));
+    }
   }
 }

@@ -154,6 +154,8 @@ import 'package:edu_verse/screens/it_admin/it_database_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_cloud_services_screen.dart';
 import 'package:edu_verse/screens/it_admin/search/it_search_screen.dart';
 import 'package:edu_verse/screens/shared/shared_chat_screen.dart';
+import 'package:edu_verse/screens/shared/chat/new_conversation_screen.dart';
+import 'package:edu_verse/screens/shared/chat/user_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
@@ -333,6 +335,22 @@ class AppRouter {
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF3B82F6), // Student blue
         ),
+      ),
+      GoRoute(
+        path: '/messages/new',
+        builder: (context, state) => const NewConversationScreen(),
+      ),
+      GoRoute(
+        path: '/messages/profile/:userId',
+        builder: (context, state) {
+          final userId = int.tryParse(state.pathParameters['userId'] ?? '');
+          if (userId == null || userId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid user profile request')),
+            );
+          }
+          return UserProfileScreen(userId: userId);
+        },
       ),
       GoRoute(
         path: '/messages/swipe-settings',

@@ -124,6 +124,12 @@ void main() {
         expect(capturedToken, 'jwt-token-123');
         expect(states, contains(ChatConnectionStatus.reconnecting));
         expect(states, contains(ChatConnectionStatus.connected));
+        expect(
+          fakeSocket.emittedEvents.any(
+            (event) => event.event == 'get_online_users',
+          ),
+          isTrue,
+        );
 
         await sub.cancel();
         ChatSocketService.resetInstanceForTest();
@@ -153,6 +159,7 @@ void main() {
       service.leaveConversation(10);
       service.sendMessage(10, 'hello', fileId: 5, replyToId: 2);
       service.emitTyping(10, true);
+      service.requestOnlineUsers();
       service.markRead(10);
       service.editMessage(200, 'edited');
       service.deleteMessage(200, forEveryone: true);
@@ -165,6 +172,7 @@ void main() {
       expect(names, contains('leave_conversation'));
       expect(names, contains('send_message'));
       expect(names, contains('typing'));
+      expect(names, contains('get_online_users'));
       expect(names, contains('mark_read'));
       expect(names, contains('edit_message'));
       expect(names, contains('delete_message'));
@@ -202,6 +210,7 @@ void main() {
       final newMessages = <ChatMessageModel>[];
       final notifications = <ChatMessageModel>[];
       final typing = <UserTypingEvent>[];
+      final onlineUsersLists = <Set<int>>[];
       final deletedIds = <int>[];
       final editedMessages = <ChatMessageModel>[];
       final statusEvents = <Map<String, dynamic>>[];
@@ -212,6 +221,7 @@ void main() {
         service.newMessageStream.listen(newMessages.add),
         service.newMessageNotificationStream.listen(notifications.add),
         service.typingStream.listen(typing.add),
+        service.onlineUsersListStream.listen(onlineUsersLists.add),
         service.messageDeletedStream.listen(deletedIds.add),
         service.messageEditedStream.listen(editedMessages.add),
         service.userStatusStream.listen(statusEvents.add),
@@ -266,6 +276,14 @@ void main() {
         'lastSeen': '2026-04-06T13:03:00Z',
       });
 
+      fakeSocket.simulateEvent('online_users_list', {
+        'data': [
+          7,
+          {'userId': 8},
+          {'id': 9},
+        ],
+      });
+
       fakeSocket.simulateEvent('message_read', {
         'messageId': 45,
         'conversationId': 9,
@@ -287,6 +305,8 @@ void main() {
       expect(editedMessages.first.id, 45);
       expect(statusEvents, hasLength(1));
       expect(statusEvents.first['userId'], 7);
+      expect(onlineUsersLists, hasLength(1));
+      expect(onlineUsersLists.first, containsAll(<int>{7, 8, 9}));
       expect(readEvents, hasLength(1));
       expect(readEvents.first.messageId, 45);
 

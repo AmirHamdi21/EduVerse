@@ -12,6 +12,7 @@ class SharedConversationTile extends StatelessWidget {
   final bool isPinned;
   final bool isMuted;
   final VoidCallback onTap;
+  final VoidCallback? onAvatarTap;
   final VoidCallback onPin;
   final VoidCallback onMute;
   final VoidCallback onDelete;
@@ -25,6 +26,7 @@ class SharedConversationTile extends StatelessWidget {
     required this.isPinned,
     required this.isMuted,
     required this.onTap,
+    this.onAvatarTap,
     required this.onPin,
     required this.onMute,
     required this.onDelete,
@@ -74,33 +76,36 @@ class SharedConversationTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
               children: [
-                Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 24,
-                      backgroundColor: _avatarColor(),
-                      child: _avatarChild(),
-                    ),
-                    if (isOnline)
-                      Positioned(
-                        right: 0,
-                        bottom: 1,
-                        child: Container(
-                          width: 11,
-                          height: 11,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF16A34A),
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: isDark
-                                  ? const Color(0xFF0F172A)
-                                  : Colors.white,
-                              width: 2,
+                GestureDetector(
+                  onTap: onAvatarTap,
+                  child: Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 24,
+                        backgroundColor: _avatarColor(),
+                        child: _avatarChild(),
+                      ),
+                      if (isOnline)
+                        Positioned(
+                          right: 0,
+                          bottom: 1,
+                          child: Container(
+                            width: 11,
+                            height: 11,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF16A34A),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isDark
+                                    ? const Color(0xFF0F172A)
+                                    : Colors.white,
+                                width: 2,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

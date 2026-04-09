@@ -171,9 +171,7 @@ class _FakeChatService implements IChatService {
       throw Exception('Network error: Search failed');
     }
 
-    return searchResults.isNotEmpty
-        ? searchResults
-        : [_targetUser];
+    return searchResults.isNotEmpty ? searchResults : [_targetUser];
   }
 
   @override
@@ -204,6 +202,8 @@ class _FakeSocketService implements IChatSocketService {
       StreamController<ChatConnectionStatus>.broadcast();
   final StreamController<ChatMessageModel> _newMessageController =
       StreamController<ChatMessageModel>.broadcast();
+  final StreamController<Set<int>> _onlineUsersListController =
+      StreamController<Set<int>>.broadcast();
   final StreamController<ChatMessageModel> _notificationController =
       StreamController<ChatMessageModel>.broadcast();
   final StreamController<UserTypingEvent> _typingController =
@@ -227,6 +227,10 @@ class _FakeSocketService implements IChatSocketService {
 
   @override
   Stream<ChatMessageModel> get newMessageStream => _newMessageController.stream;
+
+  @override
+  Stream<Set<int>> get onlineUsersListStream =>
+      _onlineUsersListController.stream;
 
   @override
   Stream<ChatMessageModel> get newMessageNotificationStream =>
@@ -258,6 +262,9 @@ class _FakeSocketService implements IChatSocketService {
   }
 
   @override
+  void requestOnlineUsers() {}
+
+  @override
   void disconnect() {
     _connectionController.add(ChatConnectionStatus.disconnected);
   }
@@ -271,7 +278,12 @@ class _FakeSocketService implements IChatSocketService {
   void leaveConversation(int conversationId) {}
 
   @override
-  void sendMessage(int conversationId, String text, {int? fileId, int? replyToId}) {}
+  void sendMessage(
+    int conversationId,
+    String text, {
+    int? fileId,
+    int? replyToId,
+  }) {}
 
   @override
   void emitTyping(int conversationId, bool isTyping) {}
@@ -292,6 +304,7 @@ class _FakeSocketService implements IChatSocketService {
   Future<void> dispose() async {
     await _connectionController.close();
     await _newMessageController.close();
+    await _onlineUsersListController.close();
     await _notificationController.close();
     await _typingController.close();
     await _messageDeletedController.close();
@@ -350,7 +363,10 @@ void main() {
       await _settleSearch();
 
       expect(bloc.state.newConversationSearchResults, hasLength(2));
-      expect(bloc.state.newConversationSearchResults.first.fullName, 'Target User');
+      expect(
+        bloc.state.newConversationSearchResults.first.fullName,
+        'Target User',
+      );
       expect(bloc.state.userSearchLoading, isFalse);
     });
 
@@ -360,12 +376,14 @@ void main() {
       bloc.add(const ChatParticipantAdded(_targetUser));
       await _settle();
 
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [42],
-        selectedParticipants: [_targetUser],
-        type: 'direct',
-        initialMessage: 'Hello!',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [42],
+          selectedParticipants: [_targetUser],
+          type: 'direct',
+          initialMessage: 'Hello!',
+        ),
+      );
       await _settle();
 
       stopwatch.stop();
@@ -424,12 +442,14 @@ void main() {
       bloc.add(const ChatParticipantAdded(_targetUser));
       await _settle();
 
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [42],
-        selectedParticipants: [_targetUser],
-        type: 'direct',
-        initialMessage: 'Hello!',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [42],
+          selectedParticipants: [_targetUser],
+          type: 'direct',
+          initialMessage: 'Hello!',
+        ),
+      );
       await _settle();
 
       expect(bloc.state.createConversationError, isNotNull);
@@ -444,13 +464,15 @@ void main() {
       bloc.add(const ChatParticipantAdded(_user2));
       await _settle();
 
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [43, 44],
-        selectedParticipants: [_user1, _user2],
-        type: 'group',
-        groupName: 'Test Group',
-        initialMessage: 'Hello group!',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [43, 44],
+          selectedParticipants: [_user1, _user2],
+          type: 'group',
+          groupName: 'Test Group',
+          initialMessage: 'Hello group!',
+        ),
+      );
       await _settle();
 
       expect(bloc.state.conversationMode, 'group');
@@ -461,22 +483,26 @@ void main() {
       bloc.add(const ChatParticipantAdded(_targetUser));
       await _settle();
 
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [42],
-        selectedParticipants: [_targetUser],
-        type: 'direct',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [42],
+          selectedParticipants: [_targetUser],
+          type: 'direct',
+        ),
+      );
       await _settle();
 
       expect(bloc.state.createConversationError, isNotNull);
 
       chatService.throwOnStartConversation = false;
 
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [42],
-        selectedParticipants: [_targetUser],
-        type: 'direct',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [42],
+          selectedParticipants: [_targetUser],
+          type: 'direct',
+        ),
+      );
       await _settle();
 
       expect(bloc.state.createConversationError, isNull);
@@ -539,11 +565,13 @@ void main() {
       bloc.add(const ChatParticipantAdded(_targetUser));
       await _settle();
 
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [42],
-        selectedParticipants: [_targetUser],
-        type: 'direct',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [42],
+          selectedParticipants: [_targetUser],
+          type: 'direct',
+        ),
+      );
       await _settle();
 
       expect(bloc.state.newlyCreatedConversationId, isNotNull);
@@ -591,12 +619,14 @@ void main() {
 
       expect(bloc.state.conversations, isEmpty);
 
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [42],
-        selectedParticipants: [_targetUser],
-        type: 'direct',
-        initialMessage: 'Hello!',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [42],
+          selectedParticipants: [_targetUser],
+          type: 'direct',
+          initialMessage: 'Hello!',
+        ),
+      );
       await _settle();
 
       expect(bloc.state.conversations, hasLength(1));
@@ -604,11 +634,13 @@ void main() {
     });
 
     test('newly created conversation ID available for navigation', () async {
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [42],
-        selectedParticipants: [_targetUser],
-        type: 'direct',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [42],
+          selectedParticipants: [_targetUser],
+          type: 'direct',
+        ),
+      );
       await _settle();
 
       expect(bloc.state.newlyCreatedConversationId, 999);
@@ -627,11 +659,13 @@ void main() {
       bloc.add(const LoadConversations());
       await _settle();
 
-      bloc.add(const StartNewConversation(
-        participantIds: [42],
-        type: 'direct',
-        text: 'Hello existing!',
-      ));
+      bloc.add(
+        const StartNewConversation(
+          participantIds: [42],
+          type: 'direct',
+          text: 'Hello existing!',
+        ),
+      );
       await _settle();
 
       expect(chatService.startConversationCalls, 0);
@@ -669,11 +703,13 @@ void main() {
     });
 
     test('websocket messages update new conversation', () async {
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [42],
-        selectedParticipants: [_targetUser],
-        type: 'direct',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [42],
+          selectedParticipants: [_targetUser],
+          type: 'direct',
+        ),
+      );
       await _settle();
 
       final conversationId = bloc.state.newlyCreatedConversationId!;
@@ -731,7 +767,10 @@ void main() {
     });
 
     test('state fields from quickstart exist', () {
-      expect(bloc.state.newConversationSearchResults, isA<List<ChatUserModel>>());
+      expect(
+        bloc.state.newConversationSearchResults,
+        isA<List<ChatUserModel>>(),
+      );
       expect(bloc.state.userSearchLoading, isA<bool>());
       expect(bloc.state.userSearchError, isNull);
       expect(bloc.state.selectedParticipants, isA<List<ChatUserModel>>());
@@ -849,15 +888,17 @@ void main() {
 
     test('handles maximum participants without lag', () async {
       for (var i = 0; i < 50; i++) {
-        bloc.add(ChatParticipantAdded(
-          ChatUserModel(
-            userId: i,
-            firstName: 'User',
-            lastName: '$i',
-            fullName: 'User $i',
-            email: 'user$i@example.com',
+        bloc.add(
+          ChatParticipantAdded(
+            ChatUserModel(
+              userId: i,
+              firstName: 'User',
+              lastName: '$i',
+              fullName: 'User $i',
+              email: 'user$i@example.com',
+            ),
           ),
-        ));
+        );
       }
       await _settle();
 
@@ -872,24 +913,27 @@ void main() {
       expect(stopwatch.elapsedMilliseconds, lessThan(100));
     });
 
-    test('conversation list updates smoothly with many conversations', () async {
-      chatService.conversations = List.generate(
-        100,
-        (i) => ConversationModel(
-          conversationId: i,
-          type: ConversationType.direct,
-          participants: [10, i + 100],
-        ),
-      );
+    test(
+      'conversation list updates smoothly with many conversations',
+      () async {
+        chatService.conversations = List.generate(
+          100,
+          (i) => ConversationModel(
+            conversationId: i,
+            type: ConversationType.direct,
+            participants: [10, i + 100],
+          ),
+        );
 
-      final stopwatch = Stopwatch()..start();
-      bloc.add(const LoadConversations());
-      await _settle();
-      stopwatch.stop();
+        final stopwatch = Stopwatch()..start();
+        bloc.add(const LoadConversations());
+        await _settle();
+        stopwatch.stop();
 
-      expect(bloc.state.conversations, hasLength(100));
-      expect(stopwatch.elapsedMilliseconds, lessThan(1000));
-    });
+        expect(bloc.state.conversations, hasLength(100));
+        expect(stopwatch.elapsedMilliseconds, lessThan(1000));
+      },
+    );
   });
 
   group('T101: Final Integration Test', () {
@@ -926,17 +970,21 @@ void main() {
       await _settleSearch();
       expect(bloc.state.newConversationSearchResults, isNotEmpty);
 
-      bloc.add(ChatParticipantAdded(bloc.state.newConversationSearchResults.first));
+      bloc.add(
+        ChatParticipantAdded(bloc.state.newConversationSearchResults.first),
+      );
       await _settle();
       expect(bloc.state.selectedParticipants, hasLength(1));
 
       final participant = bloc.state.selectedParticipants.first;
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [participant.userId],
-        selectedParticipants: [participant],
-        type: 'direct',
-        initialMessage: 'Hello!',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [participant.userId],
+          selectedParticipants: [participant],
+          type: 'direct',
+          initialMessage: 'Hello!',
+        ),
+      );
       await _settle();
 
       expect(bloc.state.newlyCreatedConversationId, isNotNull);
@@ -957,13 +1005,15 @@ void main() {
       await _settle();
       expect(bloc.state.selectedParticipants, hasLength(2));
 
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [43, 44],
-        selectedParticipants: [_user1, _user2],
-        type: 'group',
-        groupName: 'Test Group',
-        initialMessage: 'Welcome everyone!',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [43, 44],
+          selectedParticipants: [_user1, _user2],
+          type: 'group',
+          groupName: 'Test Group',
+          initialMessage: 'Welcome everyone!',
+        ),
+      );
       await _settle();
 
       expect(bloc.state.newlyCreatedConversationId, isNotNull);
@@ -989,18 +1039,23 @@ void main() {
       final selectedUser = bloc.state.newConversationSearchResults[1];
       bloc.add(ChatParticipantAdded(selectedUser));
       await _settle();
-      expect(bloc.state.selectedParticipants.first.fullName, selectedUser.fullName);
+      expect(
+        bloc.state.selectedParticipants.first.fullName,
+        selectedUser.fullName,
+      );
     });
 
     test('state resets properly between operations', () async {
       bloc.add(const ChatParticipantAdded(_targetUser));
       await _settle();
 
-      bloc.add(ChatStartConversationRequested(
-        participantIds: [42],
-        selectedParticipants: [_targetUser],
-        type: 'direct',
-      ));
+      bloc.add(
+        ChatStartConversationRequested(
+          participantIds: [42],
+          selectedParticipants: [_targetUser],
+          type: 'direct',
+        ),
+      );
       await _settle();
 
       expect(bloc.state.conversations, hasLength(1));
@@ -1053,11 +1108,31 @@ void main() {
     test('20+ searches complete with 95% under 2 seconds', () async {
       final tracker = _TimingTracker();
       final queries = [
-        'john', 'jane', 'alice', 'bob', 'charlie',
-        'david', 'eve', 'frank', 'grace', 'henry',
-        'ivy', 'jack', 'kate', 'leo', 'mia',
-        'nick', 'olivia', 'peter', 'quinn', 'rose',
-        'sam', 'tina', 'uma', 'victor', 'wendy',
+        'john',
+        'jane',
+        'alice',
+        'bob',
+        'charlie',
+        'david',
+        'eve',
+        'frank',
+        'grace',
+        'henry',
+        'ivy',
+        'jack',
+        'kate',
+        'leo',
+        'mia',
+        'nick',
+        'olivia',
+        'peter',
+        'quinn',
+        'rose',
+        'sam',
+        'tina',
+        'uma',
+        'victor',
+        'wendy',
       ];
 
       for (final query in queries) {

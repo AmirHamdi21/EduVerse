@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../bloc/chat/chat_state.dart';
 
@@ -8,7 +9,7 @@ class SharedChatHeader extends StatelessWidget {
   final ConnectionStatus connectionStatus;
   final bool isSearching;
   final VoidCallback onToggleSearch;
-  final VoidCallback onNewChat;
+  final Future<void> Function(int conversationId)? onConversationCreated;
   final String title;
   final IconData? leadingIcon;
   final VoidCallback? onLeadingPressed;
@@ -20,11 +21,18 @@ class SharedChatHeader extends StatelessWidget {
     required this.connectionStatus,
     required this.isSearching,
     required this.onToggleSearch,
-    required this.onNewChat,
+    this.onConversationCreated,
     this.title = 'Messages',
     this.leadingIcon,
     this.onLeadingPressed,
   });
+
+  Future<void> _openNewConversation(BuildContext context) async {
+    final conversationId = await context.push<int>('/messages/new');
+    if (conversationId != null && conversationId > 0) {
+      await onConversationCreated?.call(conversationId);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +114,7 @@ class SharedChatHeader extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           FilledButton.icon(
-            onPressed: onNewChat,
+            onPressed: () => _openNewConversation(context),
             style: FilledButton.styleFrom(
               backgroundColor: accentColor,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),

@@ -138,6 +138,8 @@ class _FakeSocketService implements IChatSocketService {
       StreamController<ChatConnectionStatus>.broadcast();
   final StreamController<ChatMessageModel> _newMessageController =
       StreamController<ChatMessageModel>.broadcast();
+  final StreamController<Set<int>> _onlineUsersListController =
+      StreamController<Set<int>>.broadcast();
   final StreamController<ChatMessageModel> _notificationController =
       StreamController<ChatMessageModel>.broadcast();
   final StreamController<UserTypingEvent> _typingController =
@@ -157,6 +159,7 @@ class _FakeSocketService implements IChatSocketService {
   final List<int> leftConversationIds = <int>[];
   final List<Map<String, dynamic>> typingEvents = <Map<String, dynamic>>[];
   final List<int> markReadCalls = <int>[];
+  int requestOnlineUsersCalls = 0;
 
   @override
   Stream<ChatConnectionStatus> get connectionStatus =>
@@ -164,6 +167,10 @@ class _FakeSocketService implements IChatSocketService {
 
   @override
   Stream<ChatMessageModel> get newMessageStream => _newMessageController.stream;
+
+  @override
+  Stream<Set<int>> get onlineUsersListStream =>
+      _onlineUsersListController.stream;
 
   @override
   Stream<ChatMessageModel> get newMessageNotificationStream =>
@@ -192,6 +199,11 @@ class _FakeSocketService implements IChatSocketService {
   @override
   void connect(String jwtToken) {
     _connectionController.add(ChatConnectionStatus.connected);
+  }
+
+  @override
+  void requestOnlineUsers() {
+    requestOnlineUsersCalls += 1;
   }
 
   @override
@@ -245,6 +257,10 @@ class _FakeSocketService implements IChatSocketService {
     _statusController.add(event);
   }
 
+  void emitOnlineUsersList(Set<int> onlineUsers) {
+    _onlineUsersListController.add(onlineUsers);
+  }
+
   void emitDeleteConfirmed(int messageId) {
     _deleteConfirmedController.add(messageId);
   }
@@ -260,6 +276,7 @@ class _FakeSocketService implements IChatSocketService {
   Future<void> dispose() async {
     await _connectionController.close();
     await _newMessageController.close();
+    await _onlineUsersListController.close();
     await _notificationController.close();
     await _typingController.close();
     await _messageDeletedController.close();
@@ -344,6 +361,31 @@ void main() {
       expect(bloc.state.status, ChatStatus.success);
       expect(bloc.state.conversations, hasLength(1));
       expect(bloc.state.conversations.first.conversationId, 1);
+    });
+
+    test('derives frequentlyContacted and participantCache on load', () async {
+      chatService.conversations = <ConversationModel>[
+        _conversation(1),
+        ConversationModel(
+          conversationId: 2,
+          type: ConversationType.direct,
+          participants: const <int>[3],
+          directDisplayUser: const ChatUserModel(
+            userId: 3,
+            firstName: 'Jane',
+            lastName: 'Roe',
+            fullName: 'Jane Roe',
+            email: 'jane@example.com',
+          ),
+        ),
+      ];
+
+      bloc.add(const LoadConversations());
+      await _settle();
+
+      expect(bloc.state.frequentlyContacted, isNotEmpty);
+      expect(bloc.state.frequentlyContacted.length, lessThanOrEqualTo(5));
+      expect(bloc.state.participantCache.keys, containsAll(<int>[2, 3]));
     });
 
     test(
@@ -476,6 +518,46 @@ void main() {
         expect(
           bloc.state.activeConversationMessages.any((m) => m.id == 2),
           isFalse,
+        );
+      },
+    );
+
+    test(
+      'tracks online users list and lastSeen for offline transitions',
+      () async {
+        socketService.emitOnlineUsersList(<int>{20, 21});
+        await _settle();
+
+        expect(bloc.state.onlineUsers, containsAll(<int>{20, 21}));
+
+        socketService.emitUserStatus({'userId': 20, 'isOnline': false});
+        await _settle();
+        expect(bloc.state.onlineUsers.contains(20), isFalse);
+        expect(bloc.state.userLastSeen.containsKey(20), isFalse);
+
+        socketService.emitUserStatus({
+          'userId': 21,
+          'isOnline': false,
+          'lastSeen': '2026-04-07T10:00:00Z',
+        });
+        await _settle();
+
+        expect(bloc.state.onlineUsers.contains(21), isFalse);
+        expect(bloc.state.userLastSeen[21], isNotNull);
+      },
+    );
+
+    test(
+      'requests online users when explicit refresh event is dispatched',
+      () async {
+        final baselineCalls = socketService.requestOnlineUsersCalls;
+
+        bloc.add(const RefreshOnlineUsersRequested());
+        await _settle();
+
+        expect(
+          socketService.requestOnlineUsersCalls,
+          greaterThanOrEqualTo(baselineCalls + 1),
         );
       },
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../bloc/chat/chat_bloc.dart';
@@ -12,7 +13,6 @@ import 'shared_chat_filter_chips.dart';
 import 'shared_chat_header.dart';
 import 'shared_chat_search_bar.dart';
 import 'shared_conversation_tile.dart';
-import 'shared_new_chat_dialog.dart';
 
 class SharedConversationList extends StatefulWidget {
   final Color accentColor;
@@ -246,22 +246,21 @@ class _SharedConversationListState extends State<SharedConversationList> {
     return filtered.take(_visibleCount).toList(growable: false);
   }
 
-  void _openNewConversationModal() {
-    // Reset dialog state before showing
-    context.read<ChatBloc>().add(const ChatNewConversationDialogReset());
+  Future<void> _openNewConversationScreen() async {
+    final conversationId = await context.push<int>('/messages/new');
+    if (conversationId != null && conversationId > 0) {
+      await _handleConversationCreated(conversationId);
+    }
+  }
 
-    showDialog<int?>(
-      context: context,
-      builder: (dialogContext) => BlocProvider.value(
-        value: context.read<ChatBloc>(),
-        child: const SharedNewChatDialog(),
-      ),
-    ).then((conversationId) {
-      if (conversationId != null && conversationId > 0) {
-        // Unhide the conversation if it was previously hidden
-        _unhideConversation(conversationId);
-      }
-    });
+  Future<void> _handleConversationCreated(int conversationId) async {
+    await _unhideConversation(conversationId);
+    if (!mounted) {
+      return;
+    }
+
+    context.read<ChatBloc>().add(SelectConversation(conversationId));
+    context.read<ChatBloc>().add(MarkRead(conversationId));
   }
 
   Future<void> _unhideConversation(int conversationId) async {
@@ -336,7 +335,7 @@ class _SharedConversationListState extends State<SharedConversationList> {
                   }
                 });
               },
-              onNewChat: _openNewConversationModal,
+              onConversationCreated: _handleConversationCreated,
               title: widget.title,
               leadingIcon: widget.leadingIcon,
               onLeadingPressed: widget.onLeadingPressed,
@@ -364,7 +363,7 @@ class _SharedConversationListState extends State<SharedConversationList> {
                       isDark: widget.isDark,
                       isFiltered: isFiltered,
                       accentColor: widget.accentColor,
-                      onStartNewChat: _openNewConversationModal,
+                      onStartNewChat: _openNewConversationScreen,
                       onClearFilters: _clearFilters,
                     )
                   : RefreshIndicator(
@@ -419,6 +418,13 @@ class _SharedConversationListState extends State<SharedConversationList> {
                                 MarkRead(conversation.conversationId),
                               );
                             },
+                            onAvatarTap: conversation.directDisplayUser == null
+                                ? null
+                                : () {
+                                    context.push(
+                                      '/messages/profile/${conversation.directDisplayUser!.userId}',
+                                    );
+                                  },
                             onPin: () => _togglePinned(conversation),
                             onMute: () => _toggleMuted(conversation),
                             onDelete: () => _deleteConversation(conversation),

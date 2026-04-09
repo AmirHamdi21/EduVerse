@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../bloc/chat/chat_models.dart';
+import '../../../models/chat/chat_models.dart';
 
 /// Individual message bubble with alignment, sender info, and actions.
 /// Supports reply context, delete states, and long-press menu.
@@ -18,6 +19,9 @@ class SharedMessageBubble extends StatelessWidget {
 
   /// The message this is replying to (for reply context display)
   final ChatMessageModel? replyToMessage;
+
+  /// Participant cache for resolving sender names in reply contexts.
+  final Map<int, ChatUserModel> participantCache;
 
   /// Primary accent color for sent message bubbles
   final Color accentColor;
@@ -50,6 +54,7 @@ class SharedMessageBubble extends StatelessWidget {
     required this.isGroup,
     this.showSenderInfo = true,
     this.replyToMessage,
+    this.participantCache = const <int, ChatUserModel>{},
     this.accentColor = const Color(0xFF4F46E5),
     this.isDark = false,
     this.onReply,
@@ -112,10 +117,11 @@ class SharedMessageBubble extends StatelessWidget {
   }
 
   Widget _buildSenderName() {
+    final resolvedName = message.hydratedReplyToName(participantCache);
     return Padding(
       padding: const EdgeInsets.only(left: 12, bottom: 2),
       child: Text(
-        message.senderName ?? 'Unknown',
+        resolvedName,
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w500,
@@ -127,6 +133,7 @@ class SharedMessageBubble extends StatelessWidget {
 
   Widget _buildReplyContext() {
     final replyMsg = replyToMessage!;
+    final resolvedReplyName = replyMsg.hydratedReplyToName(participantCache);
     return GestureDetector(
       onTap: onTapReplyContext,
       child: Container(
@@ -141,7 +148,7 @@ class SharedMessageBubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              replyMsg.senderName ?? 'Unknown',
+              resolvedReplyName,
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,

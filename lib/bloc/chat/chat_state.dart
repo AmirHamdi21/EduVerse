@@ -14,6 +14,7 @@ class ChatState extends Equatable {
   final ConnectionStatus connectionStatus;
   final Map<int, List<int>> typingUsers;
   final Set<int> onlineUsers;
+  final Map<int, DateTime> userLastSeen;
   final ChatStatus status;
   final String? errorMessage;
   final List<ChatUserModel>? searchResults;
@@ -32,6 +33,15 @@ class ChatState extends Equatable {
 
   /// User search results for new conversation dialog (max 20)
   final List<ChatUserModel> newConversationSearchResults;
+
+  /// Dedicated contact search results for the full-screen flow
+  final List<ChatUserModel> contactSearchResults;
+
+  /// Up to five most recently contacted users for quick access
+  final List<ChatUserModel> frequentlyContacted;
+
+  /// Lightweight participant cache to hydrate sender names in reply contexts
+  final Map<int, ChatUserModel> participantCache;
 
   /// True while searching for users in new conversation dialog
   final bool userSearchLoading;
@@ -70,6 +80,7 @@ class ChatState extends Equatable {
     this.connectionStatus = ConnectionStatus.offline,
     this.typingUsers = const <int, List<int>>{},
     this.onlineUsers = const <int>{},
+    this.userLastSeen = const <int, DateTime>{},
     this.status = ChatStatus.initial,
     this.errorMessage,
     this.searchResults,
@@ -81,6 +92,9 @@ class ChatState extends Equatable {
     this.hiddenMessageIds = const <int>{},
     // New conversation dialog state
     this.newConversationSearchResults = const <ChatUserModel>[],
+    this.contactSearchResults = const <ChatUserModel>[],
+    this.frequentlyContacted = const <ChatUserModel>[],
+    this.participantCache = const <int, ChatUserModel>{},
     this.userSearchLoading = false,
     this.userSearchError,
     this.lastSearchQuery,
@@ -163,6 +177,7 @@ class ChatState extends Equatable {
     ConnectionStatus? connectionStatus,
     Map<int, List<int>>? typingUsers,
     Set<int>? onlineUsers,
+    Map<int, DateTime>? userLastSeen,
     ChatStatus? status,
     String? errorMessage,
     List<ChatUserModel>? searchResults,
@@ -178,6 +193,9 @@ class ChatState extends Equatable {
     bool clearReplyToMessage = false,
     // New conversation dialog fields
     List<ChatUserModel>? newConversationSearchResults,
+    List<ChatUserModel>? contactSearchResults,
+    List<ChatUserModel>? frequentlyContacted,
+    Map<int, ChatUserModel>? participantCache,
     bool? userSearchLoading,
     String? userSearchError,
     String? lastSearchQuery,
@@ -205,6 +223,7 @@ class ChatState extends Equatable {
       connectionStatus: connectionStatus ?? this.connectionStatus,
       typingUsers: typingUsers ?? this.typingUsers,
       onlineUsers: onlineUsers ?? this.onlineUsers,
+      userLastSeen: userLastSeen ?? this.userLastSeen,
       status: status ?? this.status,
       errorMessage: clearErrorMessage
           ? null
@@ -224,6 +243,9 @@ class ChatState extends Equatable {
       // New conversation dialog fields
       newConversationSearchResults:
           newConversationSearchResults ?? this.newConversationSearchResults,
+      contactSearchResults: contactSearchResults ?? this.contactSearchResults,
+      frequentlyContacted: frequentlyContacted ?? this.frequentlyContacted,
+      participantCache: participantCache ?? this.participantCache,
       userSearchLoading: userSearchLoading ?? this.userSearchLoading,
       userSearchError: clearUserSearchError
           ? null
@@ -257,6 +279,7 @@ class ChatState extends Equatable {
     connectionStatus,
     _typingUsersProps,
     _sortedOnlineUsers,
+    _userLastSeenProps,
     status,
     errorMessage,
     searchResults,
@@ -268,6 +291,9 @@ class ChatState extends Equatable {
     _sortedHiddenMessageIds,
     // New conversation dialog fields
     newConversationSearchResults,
+    contactSearchResults,
+    frequentlyContacted,
+    _participantCacheProps,
     userSearchLoading,
     userSearchError,
     lastSearchQuery,
@@ -293,6 +319,25 @@ class ChatState extends Equatable {
   List<int> get _sortedOnlineUsers {
     final values = onlineUsers.toList()..sort();
     return values;
+  }
+
+  List<String> get _userLastSeenProps {
+    final entries = userLastSeen.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    return entries
+        .map((entry) => '${entry.key}:${entry.value.toUtc().toIso8601String()}')
+        .toList(growable: false);
+  }
+
+  List<String> get _participantCacheProps {
+    final entries = participantCache.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    return entries
+        .map(
+          (entry) =>
+              '${entry.key}:${entry.value.displayName}:${entry.value.email ?? ''}:${entry.value.role ?? ''}',
+        )
+        .toList(growable: false);
   }
 
   List<int> get _sortedHiddenMessageIds {

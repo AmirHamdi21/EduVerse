@@ -21,6 +21,7 @@ class ChatUserModel extends Equatable {
   final String? lastName;
   final String? fullName;
   final String? email;
+  final String? role;
 
   const ChatUserModel({
     required this.userId,
@@ -28,6 +29,7 @@ class ChatUserModel extends Equatable {
     this.lastName,
     this.fullName,
     this.email,
+    this.role,
   });
 
   factory ChatUserModel.fromJson(Map<String, dynamic> json) {
@@ -37,6 +39,7 @@ class ChatUserModel extends Equatable {
       lastName: _parseStringOrNull(json['lastName']),
       fullName: _parseStringOrNull(json['fullName']),
       email: _parseStringOrNull(json['email']),
+      role: _parseUserRole(json),
     );
   }
 
@@ -46,6 +49,7 @@ class ChatUserModel extends Equatable {
     String? lastName,
     String? fullName,
     String? email,
+    String? role,
   }) {
     return ChatUserModel(
       userId: userId ?? this.userId,
@@ -53,6 +57,7 @@ class ChatUserModel extends Equatable {
       lastName: lastName ?? this.lastName,
       fullName: fullName ?? this.fullName,
       email: email ?? this.email,
+      role: role ?? this.role,
     );
   }
 
@@ -77,11 +82,19 @@ class ChatUserModel extends Equatable {
       if (lastName != null) 'lastName': lastName,
       if (fullName != null) 'fullName': fullName,
       if (email != null) 'email': email,
+      if (role != null) 'role': role,
     };
   }
 
   @override
-  List<Object?> get props => [userId, firstName, lastName, fullName, email];
+  List<Object?> get props => [
+    userId,
+    firstName,
+    lastName,
+    fullName,
+    email,
+    role,
+  ];
 }
 
 class ConversationModel extends Equatable {
@@ -637,5 +650,55 @@ String? _firstNonEmptyString(List<String?> values) {
       return normalized;
     }
   }
+  return null;
+}
+
+String? _parseUserRole(Map<String, dynamic> json) {
+  final directRole = _normalizeNullableString(
+    json['role'] is String ? json['role'] as String : null,
+  );
+  if (directRole != null) {
+    return directRole;
+  }
+
+  final directUserRole = _normalizeNullableString(
+    json['userRole'] is String ? json['userRole'] as String : null,
+  );
+  if (directUserRole != null) {
+    return directUserRole;
+  }
+
+  final roleMap = _asMap(json['role']);
+  if (roleMap.isNotEmpty) {
+    final roleFromMap = _firstNonEmptyString([
+      _parseStringOrNull(roleMap['name']),
+      _parseStringOrNull(roleMap['role']),
+      _parseStringOrNull(roleMap['displayName']),
+    ]);
+    if (roleFromMap != null) {
+      return roleFromMap;
+    }
+  }
+
+  for (final rawRole in _asList(json['roles'])) {
+    if (rawRole is String) {
+      final normalizedRole = _normalizeNullableString(rawRole);
+      if (normalizedRole != null) {
+        return normalizedRole;
+      }
+      continue;
+    }
+
+    final roleEntry = _asMap(rawRole);
+    final roleFromEntry = _firstNonEmptyString([
+      _parseStringOrNull(roleEntry['name']),
+      _parseStringOrNull(roleEntry['role']),
+      _parseStringOrNull(roleEntry['displayName']),
+    ]);
+    if (roleFromEntry != null) {
+      return roleFromEntry;
+    }
+  }
+
   return null;
 }

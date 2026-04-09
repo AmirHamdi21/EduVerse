@@ -13,6 +13,11 @@ class LoadConversations extends ChatEvent {
   const LoadConversations();
 }
 
+/// Explicitly request an online users refresh from the socket backend.
+class RefreshOnlineUsersRequested extends ChatEvent {
+  const RefreshOnlineUsersRequested();
+}
+
 class SelectConversation extends ChatEvent {
   final int conversationId;
 
