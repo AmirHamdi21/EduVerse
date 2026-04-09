@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
@@ -14,7 +15,7 @@ import 'chat_event.dart';
 import 'chat_models.dart';
 import 'chat_state.dart';
 
-/// Debounce transformer for search events (400ms delay)
+/// Debounce transformer for search events.
 EventTransformer<E> debounce<E>(Duration duration) {
   return (events, mapper) => events.debounce(duration).switchMap(mapper);
 }
@@ -97,11 +98,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     on<ClearChatError>(_onClearChatError);
     on<SetReplyContext>(_onSetReplyContext);
     on<HideMessageLocally>(_onHideMessageLocally);
+    on<ClearChatCache>(_onClearChatCache);
 
     // New conversation dialog event handlers (Phase 5)
     on<ChatSearchUsersRequested>(
       _onChatSearchUsersRequested,
-      transformer: debounce(const Duration(milliseconds: 280)),
+      transformer: debounce(const Duration(milliseconds: 300)),
     );
     on<ChatParticipantAdded>(_onChatParticipantAdded);
     on<ChatParticipantRemoved>(_onChatParticipantRemoved);
@@ -213,6 +215,45 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
   ) async {
     emit(state.copyWith(status: ChatStatus.loading, clearErrorMessage: true));
 
+    var emittedCachedData = false;
+
+    try {
+      final cachedConversationsJson = await _storageService
+          .getCachedConversations();
+      if ((cachedConversationsJson ?? '').trim().isNotEmpty &&
+          state.conversations.isEmpty) {
+        final cachedConversations = _parseCachedConversations(
+          cachedConversationsJson!,
+        );
+
+        if (cachedConversations.isNotEmpty) {
+          final sortedCachedConversations = _sortConversations(
+            cachedConversations,
+          );
+          final cachedParticipantCache =
+              _buildParticipantCacheFromConversations(
+                sortedCachedConversations,
+                seed: state.participantCache,
+              );
+
+          emit(
+            state.copyWith(
+              conversations: sortedCachedConversations,
+              frequentlyContacted: _deriveFrequentlyContacted(
+                sortedCachedConversations,
+              ),
+              participantCache: cachedParticipantCache,
+              status: ChatStatus.success,
+              clearErrorMessage: true,
+            ),
+          );
+          emittedCachedData = true;
+        }
+      }
+    } catch (_) {
+      // Ignore malformed cache and continue with network fetch.
+    }
+
     try {
       final conversations = await _chatService.listConversations();
       final sortedConversations = _sortConversations(conversations);
@@ -230,8 +271,30 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
         ),
       );
 
+      final cacheableConversations = sortedConversations
+          .take(200)
+          .toList(growable: false);
+      final jsonString = jsonEncode(
+        cacheableConversations
+            .map((conversation) => conversation.toJson())
+            .toList(growable: false),
+      );
+      final didCache = await _storageService.cacheConversations(jsonString);
+      if (!didCache) {
+        emit(
+          state.copyWith(
+            errorMessage: 'Storage full — offline mode unavailable',
+          ),
+        );
+      }
+
       add(const RefreshOnlineUsersRequested());
     } catch (error) {
+      if (emittedCachedData || state.conversations.isNotEmpty) {
+        emit(state.copyWith(errorMessage: error.toString()));
+        return;
+      }
+
       emit(
         state.copyWith(
           status: ChatStatus.failure,
@@ -270,6 +333,52 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
       ),
     );
 
+    var emittedCachedMessages = false;
+
+    try {
+      final cachedMessagesJson = await _storageService.getCachedMessages(
+        event.conversationId,
+      );
+
+      if ((cachedMessagesJson ?? '').trim().isNotEmpty) {
+        final cachedMessages = _parseCachedMessages(cachedMessagesJson!);
+        if (cachedMessages.isNotEmpty) {
+          final updatedConversations = state.conversations
+              .map(
+                (conversation) =>
+                    conversation.conversationId == event.conversationId
+                    ? conversation.copyWith(unreadCount: 0)
+                    : conversation,
+              )
+              .toList(growable: false);
+
+          final sortedCachedMessages = _sortMessages(cachedMessages);
+          final nextParticipantCache = _mergeParticipantCacheWithMessages(
+            base: _buildParticipantCacheFromConversations(
+              updatedConversations,
+              seed: state.participantCache,
+            ),
+            messages: sortedCachedMessages,
+          );
+
+          emit(
+            state.copyWith(
+              conversations: _sortConversations(updatedConversations),
+              activeConversationMessages: sortedCachedMessages,
+              activeConversationId: event.conversationId,
+              activePage: 1,
+              participantCache: nextParticipantCache,
+              status: ChatStatus.success,
+              clearErrorMessage: true,
+            ),
+          );
+          emittedCachedMessages = true;
+        }
+      }
+    } catch (_) {
+      // Ignore malformed cache and continue with network fetch.
+    }
+
     try {
       final messages = await _chatService.getConversationMessages(
         event.conversationId,
@@ -289,13 +398,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
           updatedConversations,
           seed: state.participantCache,
         ),
-        messages: messages,
+        messages: _sortMessages(messages),
       );
+
+      final sortedMessages = _sortMessages(messages);
 
       emit(
         state.copyWith(
           conversations: _sortConversations(updatedConversations),
-          activeConversationMessages: _sortMessages(messages),
+          activeConversationMessages: sortedMessages,
           activeConversationId: event.conversationId,
           activePage: 1,
           participantCache: nextParticipantCache,
@@ -303,7 +414,31 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
           clearErrorMessage: true,
         ),
       );
+
+      final cacheableMessages = sortedMessages.take(50).toList(growable: false);
+      final jsonString = jsonEncode(
+        cacheableMessages
+            .map((message) => message.toJson())
+            .toList(growable: false),
+      );
+      final didCache = await _storageService.cacheMessages(
+        event.conversationId,
+        jsonString,
+      );
+      if (!didCache) {
+        emit(
+          state.copyWith(
+            errorMessage: 'Storage full — offline mode unavailable',
+          ),
+        );
+      }
     } catch (error) {
+      if (emittedCachedMessages ||
+          state.activeConversationMessages.isNotEmpty) {
+        emit(state.copyWith(errorMessage: error.toString()));
+        return;
+      }
+
       emit(
         state.copyWith(
           status: ChatStatus.failure,
@@ -977,6 +1112,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     emit(state.copyWith(hiddenMessageIds: updatedHiddenIds));
   }
 
+  Future<void> _onClearChatCache(
+    ClearChatCache event,
+    Emitter<ChatState> emit,
+  ) async {
+    await _storageService.clearChatCache();
+    emit(const ChatState());
+  }
+
   ConnectionStatus _mapConnectionStatus(dynamic status) {
     if (status is! ChatConnectionStatus) {
       return ConnectionStatus.offline;
@@ -1006,6 +1149,36 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     final sorted = [...messages];
     sorted.sort((first, second) => second.sentAt.compareTo(first.sentAt));
     return sorted;
+  }
+
+  List<ConversationModel> _parseCachedConversations(String jsonString) {
+    final decoded = jsonDecode(jsonString);
+    if (decoded is! List) {
+      return const <ConversationModel>[];
+    }
+
+    return decoded
+        .whereType<Map>()
+        .map(
+          (item) => ConversationModel.fromJson(Map<String, dynamic>.from(item)),
+        )
+        .where((conversation) => conversation.conversationId > 0)
+        .toList(growable: false);
+  }
+
+  List<ChatMessageModel> _parseCachedMessages(String jsonString) {
+    final decoded = jsonDecode(jsonString);
+    if (decoded is! List) {
+      return const <ChatMessageModel>[];
+    }
+
+    return decoded
+        .whereType<Map>()
+        .map(
+          (item) => ChatMessageModel.fromJson(Map<String, dynamic>.from(item)),
+        )
+        .where((message) => message.id != 0)
+        .toList(growable: false);
   }
 
   List<ChatUserModel> _deriveFrequentlyContacted(

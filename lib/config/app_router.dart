@@ -78,7 +78,6 @@ import 'package:edu_verse/screens/ta/labs/ta_labs_list_screen.dart';
 import 'package:edu_verse/screens/ta/labs/ta_lab_detail_screen.dart';
 import 'package:edu_verse/screens/ta/student_performance/ta_student_performance_screen.dart';
 import 'package:edu_verse/screens/ta/notifications/ta_notifications_screen.dart';
-import 'package:edu_verse/screens/ta/discussions/ta_discussions_screen.dart';
 import 'package:edu_verse/screens/ta/upload_materials/ta_upload_materials_screen.dart';
 import 'package:edu_verse/screens/ta/ai_grading/ta_ai_grading_screen.dart';
 import 'package:edu_verse/screens/ta/student_inbox/ta_student_inbox_screen.dart';
@@ -154,6 +153,7 @@ import 'package:edu_verse/screens/it_admin/it_database_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_cloud_services_screen.dart';
 import 'package:edu_verse/screens/it_admin/search/it_search_screen.dart';
 import 'package:edu_verse/screens/shared/shared_chat_screen.dart';
+import 'package:edu_verse/screens/shared/discussion_screen.dart';
 import 'package:edu_verse/screens/shared/chat/new_conversation_screen.dart';
 import 'package:edu_verse/screens/shared/chat/user_profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -334,6 +334,33 @@ class AppRouter {
         path: '/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF3B82F6), // Student blue
+        ),
+      ),
+      GoRoute(
+        path: '/course/:courseId/discussions',
+        builder: (context, state) {
+          final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
+          if (courseId == null || courseId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid course discussions route')),
+            );
+          }
+
+          return DiscussionScreen(
+            courseId: courseId,
+            accentColor: const Color(0xFF3B82F6),
+            title: 'Course Discussions',
+            leadingIcon: Icons.arrow_back_ios_new_rounded,
+            onLeadingPressed: () => Navigator.of(context).maybePop(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/discussions',
+        builder: (context, state) => const DiscussionScreen(
+          accentColor: Color(0xFF3B82F6),
+          title: 'Discussions',
+          leadingIcon: Icons.arrow_back_ios_new_rounded,
         ),
       ),
       GoRoute(
@@ -548,6 +575,32 @@ class AppRouter {
           accentColor: Color(0xFF4F46E5), // Instructor indigo
         ),
       ),
+      GoRoute(
+        path: '/instructor/discussions',
+        builder: (context, state) => const DiscussionScreen(
+          accentColor: Color(0xFF4F46E5),
+          title: 'Instructor Discussions',
+          leadingIcon: Icons.arrow_back_ios_new_rounded,
+        ),
+      ),
+      GoRoute(
+        path: '/instructor/course/:courseId/discussions',
+        builder: (context, state) {
+          final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
+          if (courseId == null || courseId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid instructor discussion route')),
+            );
+          }
+          return DiscussionScreen(
+            courseId: courseId,
+            accentColor: const Color(0xFF4F46E5),
+            title: 'Course Discussions',
+            leadingIcon: Icons.arrow_back_ios_new_rounded,
+            onLeadingPressed: () => Navigator.of(context).maybePop(),
+          );
+        },
+      ),
 
       // ============ TA ROUTES (Placeholder) ============
       GoRoute(
@@ -586,7 +639,36 @@ class AppRouter {
       ),
       GoRoute(
         path: '/ta/discussions',
-        builder: (context, state) => const TADiscussionsScreen(),
+        builder: (context, state) {
+          final courseId = int.tryParse(
+            state.uri.queryParameters['courseId'] ?? '',
+          );
+          return DiscussionScreen(
+            courseId: courseId,
+            accentColor: const Color(0xFF4F46E5),
+            title: 'TA Discussions',
+            leadingIcon: Icons.arrow_back_ios_new_rounded,
+            onLeadingPressed: () => Navigator.of(context).maybePop(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/ta/course/:courseId/discussions',
+        builder: (context, state) {
+          final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
+          if (courseId == null || courseId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid TA discussion route')),
+            );
+          }
+          return DiscussionScreen(
+            courseId: courseId,
+            accentColor: const Color(0xFF4F46E5),
+            title: 'Course Discussions',
+            leadingIcon: Icons.arrow_back_ios_new_rounded,
+            onLeadingPressed: () => Navigator.of(context).maybePop(),
+          );
+        },
       ),
       GoRoute(
         path: '/ta/upload-materials',
@@ -731,6 +813,14 @@ class AppRouter {
         path: '/admin/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF4F46E5), // Admin indigo
+        ),
+      ),
+      GoRoute(
+        path: '/admin/discussions',
+        builder: (context, state) => const DiscussionScreen(
+          accentColor: Color(0xFF4F46E5),
+          title: 'Admin Discussions',
+          leadingIcon: Icons.arrow_back_ios_new_rounded,
         ),
       ),
       GoRoute(
@@ -908,6 +998,14 @@ class AppRouter {
         path: '/it-admin/messages',
         builder: (context, state) => const SharedChatScreen(
           accentColor: Color(0xFF3B82F6), // IT Admin blue
+        ),
+      ),
+      GoRoute(
+        path: '/it-admin/discussions',
+        builder: (context, state) => const DiscussionScreen(
+          accentColor: Color(0xFF3B82F6),
+          title: 'IT Admin Discussions',
+          leadingIcon: Icons.arrow_back_ios_new_rounded,
         ),
       ),
       GoRoute(

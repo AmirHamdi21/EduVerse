@@ -73,6 +73,8 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
   final Map<int, GlobalKey> _messageKeys = <int, GlobalKey>{};
   final Map<int, int> _messageIndexById = <int, int>{};
   bool _showEmojiPicker = false;
+  int _newMessageCount = 0;
+  bool _isNearBottom = true;
   Timer? _typingDebounce;
 
   @override
@@ -92,6 +94,20 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
   }
 
   void _onScroll() {
+    if (!_scrollController.hasClients) {
+      return;
+    }
+
+    final isNear = _scrollController.position.pixels <= 200;
+    if (isNear != _isNearBottom) {
+      setState(() {
+        _isNearBottom = isNear;
+        if (_isNearBottom) {
+          _newMessageCount = 0;
+        }
+      });
+    }
+
     // Load more messages when scrolled near top
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 100) {
@@ -216,22 +232,63 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
         });
   }
 
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+    setState(() {
+      _newMessageCount = 0;
+      _isNearBottom = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ChatBloc, ChatState>(
+      listenWhen: (previous, current) {
+        if (current.activeConversationId !=
+            widget.conversation.conversationId) {
+          return false;
+        }
+
+        if (previous.activeConversationMessages.length ==
+            current.activeConversationMessages.length) {
+          return false;
+        }
+
+        if (current.activeConversationMessages.isEmpty) {
+          return false;
+        }
+
+        final previousNewestId = previous.activeConversationMessages.isNotEmpty
+            ? previous.activeConversationMessages.first.id
+            : null;
+        final currentNewestId = current.activeConversationMessages.first.id;
+
+        return previousNewestId != currentNewestId;
+      },
       listener: (context, state) {
-        // Auto-scroll on new message
         if (state.activeConversationMessages.isNotEmpty &&
             _scrollController.hasClients) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (_scrollController.hasClients) {
-              _scrollController.animateTo(
-                0,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOut,
-              );
-            }
-          });
+          if (_isNearBottom) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (_scrollController.hasClients) {
+                _scrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                );
+              }
+            });
+          } else {
+            setState(() {
+              _newMessageCount++;
+            });
+          }
         }
       },
       builder: (context, state) {
@@ -263,36 +320,67 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
           body: Column(
             children: [
               Expanded(
-                child: _MessageList(
-                  messages: visibleMessages,
-                  conversation: widget.conversation,
-                  currentUserId: widget.currentUserId,
-                  scrollController: _scrollController,
-                  messageKeys: _messageKeys,
-                  accentColor: widget.accentColor,
-                  isDark: widget.isDark,
-                  participantCache: state.participantCache,
-                  onReply: (message) {
-                    context.read<ChatBloc>().add(
-                      SetReplyContext(message: message),
-                    );
-                  },
-                  onTapReplyContext: _scrollToMessage,
-                  onDeleteForMe: (messageId) {
-                    context.read<ChatBloc>().add(HideMessageLocally(messageId));
-                  },
-                  onDeleteForEveryone: (messageId) {
-                    context.read<ChatBloc>().add(
-                      DeleteMessage(
-                        messageId: messageId,
-                        forEveryone: true,
-                        conversationId: widget.conversation.conversationId,
+                child: Stack(
+                  children: [
+                    _MessageList(
+                      messages: visibleMessages,
+                      conversation: widget.conversation,
+                      currentUserId: widget.currentUserId,
+                      scrollController: _scrollController,
+                      messageKeys: _messageKeys,
+                      accentColor: widget.accentColor,
+                      isDark: widget.isDark,
+                      status: state.status,
+                      errorMessage: state.errorMessage,
+                      participantCache: state.participantCache,
+                      onReply: (message) {
+                        context.read<ChatBloc>().add(
+                          SetReplyContext(message: message),
+                        );
+                      },
+                      onTapReplyContext: _scrollToMessage,
+                      onDeleteForMe: (messageId) {
+                        context.read<ChatBloc>().add(
+                          HideMessageLocally(messageId),
+                        );
+                      },
+                      onDeleteForEveryone: (messageId) {
+                        context.read<ChatBloc>().add(
+                          DeleteMessage(
+                            messageId: messageId,
+                            forEveryone: true,
+                            conversationId: widget.conversation.conversationId,
+                          ),
+                        );
+                      },
+                      onRetry: (messageId) {
+                        context.read<ChatBloc>().add(
+                          RetryFailedMessage(messageId),
+                        );
+                      },
+                      onRetryLoad: () {
+                        context.read<ChatBloc>().add(
+                          SelectConversation(
+                            widget.conversation.conversationId,
+                          ),
+                        );
+                      },
+                    ),
+                    if (_newMessageCount > 0)
+                      Positioned(
+                        bottom: 16,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: _NewMessagesIndicator(
+                            count: _newMessageCount,
+                            onTap: _scrollToBottom,
+                            accentColor: widget.accentColor,
+                            isDark: widget.isDark,
+                          ),
+                        ),
                       ),
-                    );
-                  },
-                  onRetry: (messageId) {
-                    context.read<ChatBloc>().add(RetryFailedMessage(messageId));
-                  },
+                  ],
                 ),
               ),
               if (state.replyToMessage != null)
@@ -439,7 +527,7 @@ class _ConversationHeader extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 16,
-                  backgroundColor: accentColor.withOpacity(0.2),
+                  backgroundColor: accentColor.withValues(alpha: 0.2),
                   child: Text(
                     _titleInitial(conversation.title),
                     style: TextStyle(
@@ -548,7 +636,7 @@ class _ConversationHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
@@ -572,12 +660,15 @@ class _MessageList extends StatelessWidget {
   final Map<int, GlobalKey> messageKeys;
   final Color accentColor;
   final bool isDark;
+  final ChatStatus status;
+  final String? errorMessage;
   final Map<int, ChatUserModel> participantCache;
   final void Function(ChatMessageModel) onReply;
   final void Function(int) onTapReplyContext;
   final void Function(int) onDeleteForMe;
   final void Function(int) onDeleteForEveryone;
   final void Function(int) onRetry;
+  final VoidCallback onRetryLoad;
 
   const _MessageList({
     required this.messages,
@@ -587,20 +678,74 @@ class _MessageList extends StatelessWidget {
     required this.messageKeys,
     required this.accentColor,
     required this.isDark,
+    required this.status,
+    required this.errorMessage,
     required this.participantCache,
     required this.onReply,
     required this.onTapReplyContext,
     required this.onDeleteForMe,
     required this.onDeleteForEveryone,
     required this.onRetry,
+    required this.onRetryLoad,
   });
 
   @override
   Widget build(BuildContext context) {
+    if (status == ChatStatus.loading && messages.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (status == ChatStatus.failure && messages.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.error_outline_rounded,
+                size: 42,
+                color: isDark ? Colors.red[300] : Colors.red[600],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Something went wrong',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : const Color(0xFF0F172A),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                (errorMessage ?? '').trim().isNotEmpty
+                    ? errorMessage!
+                    : "We couldn't load messages. Please try again.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark
+                      ? const Color(0xFF94A3B8)
+                      : const Color(0xFF64748B),
+                ),
+              ),
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: onRetryLoad,
+                style: FilledButton.styleFrom(backgroundColor: accentColor),
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Try again'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     if (messages.isEmpty) {
       return Center(
         child: Text(
-          'No messages yet. Start the conversation!',
+          'No messages yet — say hello! 👋',
           style: TextStyle(
             fontSize: 14,
             color: isDark ? Colors.grey[500] : Colors.grey[600],
@@ -701,7 +846,7 @@ class _ReplyPreviewBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? Colors.grey[850] : Colors.grey[100],
         border: Border(
-          top: BorderSide(color: accentColor.withOpacity(0.3), width: 2),
+          top: BorderSide(color: accentColor.withValues(alpha: 0.3), width: 2),
         ),
       ),
       child: Row(
@@ -791,7 +936,7 @@ class _InputBar extends StatelessWidget {
         color: isDark ? Colors.grey[900] : Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, -2),
           ),
@@ -851,6 +996,65 @@ class _InputBar extends StatelessWidget {
             onPressed: onSend,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _NewMessagesIndicator extends StatelessWidget {
+  final int count;
+  final VoidCallback onTap;
+  final Color accentColor;
+  final bool isDark;
+
+  const _NewMessagesIndicator({
+    required this.count,
+    required this.onTap,
+    required this.accentColor,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(20),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: accentColor,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: accentColor.withValues(alpha: isDark ? 0.45 : 0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.arrow_downward_rounded,
+                size: 16,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '$count new message${count == 1 ? '' : 's'}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -134,6 +134,16 @@ class AdminQuickActionsGrid extends StatelessWidget {
                     ),
                     onTap: () => context.push('/admin/settings'),
                   ),
+                  _buildQuickActionItem(
+                    context,
+                    isDark: isDark,
+                    title: 'Discussions',
+                    icon: Icons.forum_rounded,
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFF4F46E5), Color(0xFF3730A3)],
+                    ),
+                    onTap: () => context.push('/admin/discussions'),
+                  ),
                 ],
               ),
             ],

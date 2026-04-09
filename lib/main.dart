@@ -1,10 +1,13 @@
 import 'dart:io';
+import 'dart:async';
 
 import 'package:edu_verse/bloc/admin_notifications/admin_notification_cubit.dart';
 import 'package:edu_verse/bloc/assignments/assignments_cubit.dart';
 import 'package:edu_verse/bloc/attendance/attendance_cubit.dart';
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
+import 'package:edu_verse/bloc/auth/auth_event.dart';
 import 'package:edu_verse/bloc/chat/chat_bloc.dart';
+import 'package:edu_verse/bloc/discussions/discussion_bloc.dart';
 import 'package:edu_verse/bloc/ai_notes/ai_notes_cubit.dart';
 import 'package:edu_verse/bloc/profile/profile_cubit.dart';
 import 'package:edu_verse/bloc/grades/grades_cubit.dart';
@@ -22,6 +25,7 @@ import 'package:edu_verse/config/app_theme.dart';
 import 'package:edu_verse/services/api_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
 import 'package:edu_verse/services/api/core_api_client.dart';
+import 'package:edu_verse/services/session_expiry_notifier.dart';
 import 'package:edu_verse/services/api/course_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/api/material_service.dart';
@@ -67,11 +71,15 @@ class _MyAppState extends State<MyApp> {
   late SummarizerCubit _summarizerCubit;
   late SmartStudyCubit _smartStudyCubit;
   late ChatBloc _chatBloc;
+  late DiscussionBloc _discussionBloc;
   late AINoteCubit _aiNoteCubit;
   late ProfileCubit _profileCubit;
   late SearchCubit _searchCubit;
   late AdminNotificationCubit _adminNotificationCubit;
   late CoursesBloc _coursesBloc;
+  StreamSubscription<String>? _sessionExpirySubscription;
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   @override
   void initState() {
@@ -92,10 +100,35 @@ class _MyAppState extends State<MyApp> {
     _summarizerCubit = SummarizerCubit();
     _smartStudyCubit = SmartStudyCubit();
     _chatBloc = ChatBloc();
+    _discussionBloc = DiscussionBloc();
     _aiNoteCubit = AINoteCubit();
     _profileCubit = ProfileCubit()..loadProfile();
     _searchCubit = SearchCubit();
     _adminNotificationCubit = AdminNotificationCubit();
+
+    _sessionExpirySubscription = SessionExpiryNotifier.stream.listen((message) {
+      if (!mounted) {
+        return;
+      }
+
+      _authBloc.add(const LogoutRequested());
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+
+        AppRouter.router.go('/login');
+        _scaffoldMessengerKey.currentState
+          ?..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(message),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+      });
+    });
 
     // ── Course API layer (Phase 1) ─────────────────────────
     final coreApiClient = CoreApiClient(storageService: _storageService);
@@ -133,11 +166,13 @@ class _MyAppState extends State<MyApp> {
     _summarizerCubit.close();
     _smartStudyCubit.close();
     _chatBloc.close();
+    _discussionBloc.close();
     _aiNoteCubit.close();
     _profileCubit.close();
     _searchCubit.close();
     _adminNotificationCubit.close();
     _coursesBloc.close();
+    _sessionExpirySubscription?.cancel();
     super.dispose();
   }
 
@@ -157,6 +192,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _summarizerCubit),
         BlocProvider.value(value: _smartStudyCubit),
         BlocProvider.value(value: _chatBloc),
+        BlocProvider.value(value: _discussionBloc),
         BlocProvider.value(value: _aiNoteCubit),
         BlocProvider.value(value: _profileCubit),
         BlocProvider.value(value: _searchCubit),
@@ -170,6 +206,7 @@ class _MyAppState extends State<MyApp> {
               return MaterialApp.router(
                 title: 'EduVerse App',
                 debugShowCheckedModeBanner: false,
+                scaffoldMessengerKey: _scaffoldMessengerKey,
                 locale: locale,
                 supportedLocales: const [Locale('en'), Locale('ar')],
                 localizationsDelegates: [

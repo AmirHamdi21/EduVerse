@@ -7,4 +7,3 @@ export 'ta_course_insights_card.dart';
 export 'ta_course_overview_tab.dart';
 export 'ta_course_labs_tab.dart';
 export 'ta_course_grading_tab.dart';
-export 'ta_course_discussions_tab.dart';

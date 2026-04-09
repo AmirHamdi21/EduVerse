@@ -335,6 +335,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // Continue with logout even if API call fails
     } finally {
       await _storageService.clearAll();
+      await _storageService.clearChatCache();
       emit(const AuthUnauthenticated());
     }
   }

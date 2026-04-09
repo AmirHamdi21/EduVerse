@@ -464,37 +464,213 @@ The current implementation has a functional but basic dialog-based "New Conversa
 
 ---
 
-### Phase 8: Discussion Forums Backend Integration
+### Phase 8: Discussion Forums — Backend Integration & Unified UI/UX
 **Spec-Kit Name:** `chat-discussion-forums`
 
 > [!NOTE]
-> Discussions are a **separate module** from messaging in the backend (`/api/discussions`). The website treats them separately too. This phase adds the forums feature matching the backend's discussion endpoints.
+> Discussions are a **separate module** from messaging in the backend (`/api/discussions`). The website treats them separately too. This phase adds the forums feature matching the backend's discussion endpoints **and applies the exact same unification/shared-widget strategy used for chat in Phases 3–6**: one shared widget tree for all roles, role-based props instead of role-specific screens, `DiscussionBloc` as the single source of truth, and full API alignment with the backend and the website frontend reference docs.
 
-#### Scope
-- Create `DiscussionService` in `lib/services/api/discussion_service.dart`:
-  - `listThreads(courseId, {page, limit})` → `GET /api/discussions?courseId=`
-  - `createThread(courseId, title, description)` → `POST /api/discussions`
-  - `getThread(id)` → `GET /api/discussions/:id` (returns thread + paginated replies)
-  - `postReply(threadId, messageText, {parentMessageId})` → `POST /api/discussions/:id/reply`
-  - `updateThread(id, title, description)` → `PUT /api/discussions/:id`
-  - `deleteThread(id)` → `DELETE /api/discussions/:id`
-  - `togglePin(id)` → `PATCH /api/discussions/:id/pin`
-  - `toggleLock(id)` → `PATCH /api/discussions/:id/lock`
-  - `markAsAnswer(replyId)` → `PATCH /api/discussions/replies/:replyId/mark-answer`
-  - `endorseReply(replyId)` → `PATCH /api/discussions/replies/:replyId/endorse`
-- Create `DiscussionBloc` with events/states for thread CRUD and moderation
-- Create discussion UI widgets:
-  - `discussion_thread_list.dart` — list of threads (pinned first), with view count, reply count, locked/pinned badges
-  - `discussion_thread_detail.dart` — thread view with paginated replies, answer/endorsed badges
-  - `discussion_create_thread.dart` — dialog for creating new threads
-  - `discussion_reply_input.dart` — reply input with nested reply support
-- **Role-based UI rendering** (matching backend §4 Action Matrix):
-  - **Students**: can create/reply threads for enrolled courses only; CANNOT see Pin/Lock/Endorse/Mark Answer buttons; CAN edit/delete own threads/replies
-  - **Instructors & TAs**: full moderation UI (Pin, Lock, Delete Thread, Endorse Reply, Mark as Answer)
-  - **Admins & IT Admins**: global access to all discussions, full moderation powers
-- Integrate into Instructor & TA Communication hubs (matching website's 3 sub-tabs: Announcements / Course Chats / Direct Messages)
+---
+
+#### 8.1 — Discussion Service (REST API Layer)
+
+Mirror the same pattern as `ChatService` (`lib/services/api/chat_service.dart`). Create `DiscussionService` in `lib/services/api/discussion_service.dart` wrapping every backend endpoint:
+
+| Method | HTTP | Endpoint | Access |
+|--------|------|----------|--------|
+| `listThreads(courseId, {page, limit})` | `GET` | `/api/discussions?courseId=` | All roles (students: enrolled only) |
+| `createThread(courseId, title, description)` | `POST` | `/api/discussions` | Students (enrolled), Instructors, TAs, Admins |
+| `getThread(id)` | `GET` | `/api/discussions/:id` | All roles (increments `viewCount`) |
+| `postReply(threadId, messageText, {parentMessageId})` | `POST` | `/api/discussions/:id/reply` | All roles (fails 400 if `isLocked`) |
+| `updateThread(id, title, description)` | `PUT` | `/api/discussions/:id` | Author / Moderators |
+| `deleteThread(id)` | `DELETE` | `/api/discussions/:id` | Instructors, Admins, IT Admins |
+| `togglePin(id)` | `PATCH` | `/api/discussions/:id/pin` | Instructors, TAs, Admins, IT Admins |
+| `toggleLock(id)` | `PATCH` | `/api/discussions/:id/lock` | Instructors, TAs, Admins, IT Admins |
+| `markAsAnswer(replyId)` | `PATCH` | `/api/discussions/replies/:replyId/mark-answer` | Instructors, TAs, Admins, IT Admins |
+| `endorseReply(replyId)` | `PATCH` | `/api/discussions/replies/:replyId/endorse` | Instructors, TAs, Admins, IT Admins |
+
+**Response alignment** — `DiscussionThreadModel` must map to the backend shape (see `Flutter_Chat_API_Docs_BACKEND.md §3.2`):
+- `id`, `courseId`, `createdBy`, `title`, `description`, `isPinned`, `isLocked`, `viewCount`, `replyCount`, `createdAt`
+
+**Reply model** must include `isAnswer`, `isEndorsed`, `endorsedBy` (used for badge rendering).
+
+---
+
+#### 8.2 — Unified Discussion BLoC (Single Source of Truth)
+
+Following the same pattern established by `ChatBloc` (Phase 2), create a single `DiscussionBloc` that all roles share:
+
+**Events:**
+| Event | Action |
+|-------|--------|
+| `LoadThreads(courseId)` | Calls `listThreads()`, emits paginated results (pinned first) |
+| `SelectThread(id)` | Calls `getThread(id)`, loads replies |
+| `CreateThread(courseId, title, desc)` | Calls `createThread()`, prepends to list |
+| `PostReply(threadId, text, {parentId})` | Calls `postReply()`, appends reply optimistically |
+| `UpdateThread(id, title, desc)` | Calls `updateThread()`, updates list in-place |
+| `DeleteThread(id)` | Calls `deleteThread()`, removes from list |
+| `TogglePin(id)` | Calls `togglePin()`, re-sorts threads (pinned → top) |
+| `ToggleLock(id)` | Calls `toggleLock()`, updates `isLocked` flag |
+| `MarkAsAnswer(replyId)` | Calls `markAsAnswer()`, moves reply to top + badge |
+| `EndorseReply(replyId)` | Calls `endorseReply()`, adds endorsed badge |
+| `PaginateThreads` | Loads next page, appends to state |
+| `PaginateReplies` | Loads next reply page, appends to current thread |
+
+**State** must include:
+- `threads` — current paginated thread list
+- `selectedThread` — currently open thread + replies
+- `isLoading` / `isSubmitting` / `error`
+- `canModerate` — derived from `AuthBloc` user role (used by UI to show/hide mod buttons)
+- `currentCourseId` — active course filter
+
+---
+
+#### 8.3 — Unified Discussion UI (Shared Widget Tree — Same Pattern as Chat)
+
+> [!IMPORTANT]
+> Just as Phases 3–6 replaced 4 role-specific chat implementations with a **single shared widget tree**, this section does the same for discussions. There must be **no role-specific discussion screen**. All roles use the same shared widgets located in `lib/widgets/shared/discussions/`. Role-based differences are expressed via **props and `DiscussionBloc` state** only (identical to how `accentColor` and `isDark` are used in chat).
+
+##### 8.3.1 — Shared Discussion Screen
+
+Create **one** shared screen at `lib/screens/shared/discussion_screen.dart` with the following props (mirroring the chat screen pattern from Phase 6):
+
+```dart
+// Props interface — same concept as SharedChatScreen
+DiscussionScreen({
+  required int courseId,         // Which course's threads to load
+  required Color accentColor,    // Per-role color (same values as chat accent)
+  required bool isDark,          // Dark mode flag
+  String? courseTitle,           // Optional header subtitle
+})
+```
+
+**Per-role accent colors** (identical to chat, per `CHAT_FEATURE_DOCUMENTATION_FRONTEND_WEBSITE.md` Role Comparison Matrix):
+
+| Role | Accent Color | Notes |
+|------|-------------|-------|
+| **Student** | `#3B82F6` (blue) | Same as student chat |
+| **Instructor** | `#4F46E5` (indigo) | Same as instructor chat |
+| **TA** | `#4F46E5` (indigo) | Same as TA chat |
+| **Admin** | `#4F46E5` (indigo) | Same as admin chat |
+| **IT Admin** | `#3B82F6` (blue) | Same as IT Admin chat |
+
+##### 8.3.2 — Shared Discussion Header Widget
+
+`lib/widgets/shared/discussions/shared_discussion_header.dart`
+
+Mirrors `shared_chat_header.dart` in pattern:
+- Title: course name or \"Discussions\"
+- \"+ New Thread\" button (hidden for students in non-enrolled courses — controlled by `canModerate` or `isEnrolled` flag from bloc)
+- Search/filter toggle
+- Course selector (if globally accessed by Admin/IT Admin)
+
+##### 8.3.3 — Shared Thread List Widget
+
+`lib/widgets/shared/discussions/shared_discussion_thread_list.dart`
+
+- `ListView.builder` consuming `DiscussionBloc` state
+- **Pinned threads appear first** (matching backend sort behavior, `Flutter_Chat_API_Docs_BACKEND.md §3.2.1`)
+- Each row renders `SharedDiscussionThreadTile`
+
+##### 8.3.4 — Shared Thread Tile Widget
+
+`lib/widgets/shared/discussions/shared_discussion_thread_tile.dart`
+
+Each tile shows (matching backend `DiscussionThread` response shape):
+- Thread `title`
+- `description` preview (truncated)
+- View count icon + count
+- Reply count icon + count
+- `isPinned` badge (📌)
+- `isLocked` badge (🔒)
+- Time since creation
+- Author name/initials avatar
+- **Moderation action buttons** (Pin, Lock, Delete) — visible only when `DiscussionBloc.canModerate == true` (i.e., Instructor, TA, Admin, IT Admin roles)
+
+Implements the same role-visibility pattern as the backend Action Matrix (`Flutter_Chat_API_Docs_BACKEND.md §4`):
+```dart
+// Flutter equivalent of the website's isModerator check
+bool isModerator = currentUser.roles.any((r) =>
+  ['instructor', 'teaching_assistant', 'admin', 'it_admin'].contains(r.roleName)
+);
+```
+
+##### 8.3.5 — Shared Thread Detail View Widget
+
+`lib/widgets/shared/discussions/shared_discussion_thread_detail.dart`
+
+Mirrors `shared_chat_detail_view.dart` structure:
+- **Thread header**: title, author, creation date, `isPinned`/`isLocked` status badges, moderation buttons (Pin, Lock, Delete — moderators only)
+- **Replies list**: paginated, scroll-to-load-more
+  - Answers (`isAnswer: true`) pinned to top of replies list
+  - Endorsed replies (`isEndorsed: true`) show staff-approval badge
+  - Nested reply support (indent child replies under parent)
+- **Reply input bar** at bottom (disabled + locked icon when `isLocked == true`)
+
+##### 8.3.6 — Shared Reply Bubble Widget
+
+`lib/widgets/shared/discussions/shared_discussion_reply_bubble.dart`
+
+Mirrors `shared_message_bubble.dart`:
+- Author avatar (initials), name, role badge
+- Reply text
+- `isAnswer` badge: \"✅ Accepted Answer\" (accent-colored)
+- `isEndorsed` badge: \"⭐ Staff Endorsed\" (accent-colored)
+- Long-press actions:
+  - **All roles**: Edit own reply, Delete own reply
+  - **Moderators only**: Mark as Answer, Endorse Reply, Delete any reply
+- Nested reply context (shows parent reply preview if `parentMessageId` set)
+
+##### 8.3.7 — Shared Create Thread Dialog
+
+`lib/widgets/shared/discussions/shared_discussion_create_thread.dart`
+
+Mirrors `shared_new_chat_dialog.dart` in design language:
+- Course selector (pre-filled from `courseId` prop; Admin/IT Admin can pick any course)
+- Title input (required)
+- Description/body input (required, multiline)
+- \"Post Thread\" action button (uses `accentColor`)
+- Dispatches `CreateThread` event to `DiscussionBloc`
+
+##### 8.3.8 — Shared Reply Input Widget
+
+`lib/widgets/shared/discussions/shared_discussion_reply_input.dart`
+
+Mirrors `shared_chat_detail_view.dart`'s input bar:
+- Text input field
+- Optional: parent reply context preview (for nested replies)
+- Submit button (uses `accentColor`)
+- Disabled state + lock icon when `isLocked == true`
+- Dispatches `PostReply` event to `DiscussionBloc`
+
+##### 8.3.9 — Shared Empty State Widget
+
+`lib/widgets/shared/discussions/shared_discussion_empty_state.dart`
+
+Mirrors `shared_chat_empty_state.dart`:
+- \"No threads yet\" with a CTA to create the first thread (hidden for locked or non-enrolled students)
+
+---
+
+#### 8.4 — Role-Specific Integration (Navigation & Dashboard Wiring)
+
+Each role's dashboard navigates to `DiscussionScreen` instead of having its own discussion widget — identical to how Phase 6 wired all roles to `ChatScreen`.
+
+| Role | Integration Point | Access Scope | Accent Color |
+|------|-----------------|--------------|-------------|
+| **Student** | Course detail page → \"Discussions\" tab | Enrolled courses only | `#3B82F6` |
+| **Instructor** | Communication hub (\"Course Chats\" sub-tab) + Course management | Taught courses | `#4F46E5` |
+| **TA** | Announcements page (\"Course Chats\" sub-tab) + Course management | Assigned sections | `#4F46E5` |
+| **Admin** | Admin panel → any course discussions | Global (all courses) | `#4F46E5` |
+| **IT Admin** | IT Admin panel → any course discussions | Global (all courses) | `#3B82F6` |
+
+> [!NOTE]
+> Instructor and TA Communication hubs already have \"Course Chats\" and \"Direct Messages\" sub-tabs (matching `CHAT_FEATURE_DOCUMENTATION_FRONTEND_WEBSITE.md §5.2` and `§6.2`). This integration adds Discussions as a natural sub-tab alongside those in the same communication hub — not as a separate top-level tab.
+
+---
 
 #### Files
+
 | Action | File |
 |--------|------|
 | **[NEW]** | `lib/services/api/discussion_service.dart` |
@@ -502,16 +678,48 @@ The current implementation has a functional but basic dialog-based "New Conversa
 | **[NEW]** | `lib/bloc/discussions/discussion_event.dart` |
 | **[NEW]** | `lib/bloc/discussions/discussion_state.dart` |
 | **[NEW]** | `lib/models/discussion/discussion_models.dart` |
-| **[NEW]** | `lib/widgets/shared/discussions/discussion_thread_list.dart` |
-| **[NEW]** | `lib/widgets/shared/discussions/discussion_thread_detail.dart` |
-| **[NEW]** | `lib/widgets/shared/discussions/discussion_create_thread.dart` |
-| **[NEW]** | `lib/widgets/shared/discussions/discussion_reply_input.dart` |
+| **[NEW]** | `lib/screens/shared/discussion_screen.dart` |
+| **[NEW]** | `lib/widgets/shared/discussions/shared_discussion_header.dart` |
+| **[NEW]** | `lib/widgets/shared/discussions/shared_discussion_thread_list.dart` |
+| **[NEW]** | `lib/widgets/shared/discussions/shared_discussion_thread_tile.dart` |
+| **[NEW]** | `lib/widgets/shared/discussions/shared_discussion_thread_detail.dart` |
+| **[NEW]** | `lib/widgets/shared/discussions/shared_discussion_reply_bubble.dart` |
+| **[NEW]** | `lib/widgets/shared/discussions/shared_discussion_create_thread.dart` |
+| **[NEW]** | `lib/widgets/shared/discussions/shared_discussion_reply_input.dart` |
+| **[NEW]** | `lib/widgets/shared/discussions/shared_discussion_empty_state.dart` |
+| **[MODIFY]** | `lib/main.dart` (register `DiscussionBloc` provider) |
+| **[MODIFY]** | Router configuration (add `/discussions/:courseId` route) |
+| **[MODIFY]** | Student course detail screen (add Discussions tab → `DiscussionScreen`) |
+| **[MODIFY]** | Instructor Communication hub (add \"Discussions\" sub-tab → `DiscussionScreen`) |
+| **[MODIFY]** | TA Announcements/Communication hub (add \"Discussions\" sub-tab → `DiscussionScreen`) |
+| **[MODIFY]** | Admin dashboard (wire global discussion access → `DiscussionScreen`) |
+| **[MODIFY]** | IT Admin dashboard (wire global discussion access → `DiscussionScreen`) |
+
+---
 
 #### Verification
-- Students see only enrolled course discussions
-- Instructors/TAs see moderation buttons
-- Pin moves thread to top; Lock prevents new replies
-- Mark as Answer and Endorse badges render correctly
+
+**8.1 API Layer:**
+- Unit-test `DiscussionService` methods with mock Dio
+- Verify each endpoint returns expected shape matching backend docs (`Flutter_Chat_API_Docs_BACKEND.md §3.2`)
+
+**8.2 BLoC:**
+- `LoadThreads` returns pinned threads first, then by `createdAt`
+- `PostReply` fails gracefully when `isLocked == true`
+- `TogglePin` / `ToggleLock` update state reactively without page reload
+
+**8.3 Unified UI (Role-Agnostic):**
+- All 5 roles render the **same** shared widget tree; no role-specific discussion screen exists
+- `accentColor` applied consistently (blue for Student/IT Admin, indigo for others)
+- Moderation buttons (Pin, Lock, Delete Topic, Endorse, Mark Answer) are **visible** for Instructor/TA/Admin/IT Admin and **hidden** for Student
+- Locked thread: reply input is disabled with a lock icon; new replies return 400 (handled gracefully)
+- `isAnswer` replies always appear at the top of the reply list
+- `isEndorsed` badge rendered correctly on endorsed replies
+
+**8.4 Role Access:**
+- Student: Only enrolled course discussions accessible; attempting to access non-enrolled course returns permission denied state
+- Admin / IT Admin: Can view and moderate any course discussion without enrollment check
+- Instructor / TA: Can access only taught/assigned courses and have full moderation controls
 
 ---
 

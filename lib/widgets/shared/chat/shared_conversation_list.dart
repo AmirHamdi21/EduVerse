@@ -35,7 +35,8 @@ class SharedConversationList extends StatefulWidget {
 }
 
 class _SharedConversationListState extends State<SharedConversationList> {
-  static const int _pageSize = 20;
+  static const int _initialVisibleCount = 50;
+  static const int _visibleIncrement = 25;
   static const String _pinnedKey = 'chat_pinned_conversation_ids';
   static const String _mutedKey = 'chat_muted_conversation_ids';
   static const String _hiddenKey = 'chat_hidden_conversation_ids';
@@ -47,7 +48,7 @@ class _SharedConversationListState extends State<SharedConversationList> {
   Set<int> _mutedConversations = <int>{};
   Set<int> _hiddenConversations = <int>{};
 
-  int _visibleCount = _pageSize;
+  int _visibleCount = _initialVisibleCount;
   bool _isSearchVisible = false;
   ChatListFilter _currentFilter = ChatListFilter.all;
 
@@ -106,7 +107,7 @@ class _SharedConversationListState extends State<SharedConversationList> {
 
     if (_scrollController.position.extentAfter < 280) {
       setState(() {
-        _visibleCount += _pageSize;
+        _visibleCount += _visibleIncrement;
       });
     }
   }
@@ -164,7 +165,7 @@ class _SharedConversationListState extends State<SharedConversationList> {
 
   void _onQueryChanged(String value) {
     setState(() {
-      _visibleCount = _pageSize;
+      _visibleCount = _initialVisibleCount;
     });
     context.read<ChatBloc>().add(SearchConversations(value));
   }
@@ -172,7 +173,7 @@ class _SharedConversationListState extends State<SharedConversationList> {
   void _onFilterChanged(ChatListFilter nextFilter) {
     setState(() {
       _currentFilter = nextFilter;
-      _visibleCount = _pageSize;
+      _visibleCount = _initialVisibleCount;
     });
 
     context.read<ChatBloc>().add(
@@ -239,7 +240,8 @@ class _SharedConversationListState extends State<SharedConversationList> {
       return right.conversationId.compareTo(left.conversationId);
     });
 
-    if (_visibleCount >= filtered.length) {
+    if (filtered.length <= _initialVisibleCount ||
+        _visibleCount >= filtered.length) {
       return filtered;
     }
 
@@ -362,9 +364,20 @@ class _SharedConversationListState extends State<SharedConversationList> {
                   ? SharedChatEmptyState(
                       isDark: widget.isDark,
                       isFiltered: isFiltered,
+                      isError: state.status == ChatStatus.failure,
+                      isOffline:
+                          state.connectionStatus == ConnectionStatus.offline &&
+                          state.conversations.isEmpty,
+                      searchQuery:
+                          state.conversationSearchQuery.trim().isNotEmpty
+                          ? state.conversationSearchQuery
+                          : null,
                       accentColor: widget.accentColor,
                       onStartNewChat: _openNewConversationScreen,
                       onClearFilters: _clearFilters,
+                      onRetry: () => context.read<ChatBloc>().add(
+                        const LoadConversations(),
+                      ),
                     )
                   : RefreshIndicator(
                       onRefresh: () async {

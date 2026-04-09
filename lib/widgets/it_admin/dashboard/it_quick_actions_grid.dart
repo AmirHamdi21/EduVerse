@@ -65,6 +65,12 @@ class ITQuickActionsGrid extends StatelessWidget {
         label: l10n.itCloud,
         color: ITColors.primary,
       ),
+      _QuickAction(
+        id: 'discussions',
+        icon: Icons.forum_rounded,
+        label: 'Discussions',
+        color: ITColors.purple,
+      ),
     ];
 
     return Container(

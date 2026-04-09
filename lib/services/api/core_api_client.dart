@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import '../storage_service.dart';
 import '../api_service.dart';
+import '../session_expiry_notifier.dart';
 
 /// Central Dio-based HTTP client with:
 /// - Automatic Bearer token injection
@@ -14,7 +15,7 @@ class CoreApiClient {
   bool _isRefreshing = false;
 
   CoreApiClient({StorageService? storageService})
-      : _storageService = storageService ?? StorageService() {
+    : _storageService = storageService ?? StorageService() {
     dio = Dio(
       BaseOptions(
         baseUrl: ApiService.baseUrl,
@@ -28,18 +29,15 @@ class CoreApiClient {
     );
 
     dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: _onRequest,
-        onError: _onError,
-      ),
+      InterceptorsWrapper(onRequest: _onRequest, onError: _onError),
     );
   }
 
   /// Test-only constructor: accepts a pre-built [Dio] with no auth
   /// interceptors, avoiding platform-channel issues in unit tests.
-  CoreApiClient.test({Dio? dioOverride})
-      : _storageService = null {
-    dio = dioOverride ??
+  CoreApiClient.test({Dio? dioOverride}) : _storageService = null {
+    dio =
+        dioOverride ??
         Dio(
           BaseOptions(
             baseUrl: ApiService.baseUrl,
@@ -90,6 +88,7 @@ class CoreApiClient {
       final refreshToken = await _storageService?.getRefreshToken();
       if (refreshToken == null) {
         _isRefreshing = false;
+        await _handleSessionExpired();
         return handler.next(err);
       }
 
@@ -102,10 +101,7 @@ class CoreApiClient {
             'Accept': 'application/json',
           },
         ),
-      ).post(
-        '/auth/refresh-token',
-        data: {'refreshToken': refreshToken},
-      );
+      ).post('/auth/refresh-token', data: {'refreshToken': refreshToken});
 
       if (refreshResponse.statusCode == 200) {
         final newAccessToken = refreshResponse.data['accessToken'] as String;
@@ -130,6 +126,18 @@ class CoreApiClient {
     }
 
     _isRefreshing = false;
+    await _handleSessionExpired();
     handler.next(err);
+  }
+
+  Future<void> _handleSessionExpired() async {
+    try {
+      await _storageService?.clearAll();
+      await _storageService?.clearChatCache();
+    } catch (_) {
+      // Keep behavior non-throwing during auth teardown.
+    }
+
+    SessionExpiryNotifier.notify();
   }
 }

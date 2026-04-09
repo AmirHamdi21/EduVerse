@@ -229,6 +229,7 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
       'logs': '/it-admin/logs',
       'database': '/it-admin/database',
       'cloud': '/it-admin/cloud',
+      'discussions': '/it-admin/discussions',
     };
 
     final route = routes[action];
@@ -245,6 +246,7 @@ class _ITAdminDashboardScreenState extends State<ITAdminDashboardScreen> {
         'logs': l10n.itLogs,
         'database': l10n.itDatabase,
         'cloud': l10n.itCloudServices,
+        'discussions': 'Discussions',
       };
       final title = titles[action] ?? action;
       _showFeatureDialog(title);

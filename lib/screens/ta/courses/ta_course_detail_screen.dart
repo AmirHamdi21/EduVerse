@@ -10,6 +10,7 @@ import '../../../bloc/courses/courses_state.dart';
 import '../../../bloc/courses/courses_event.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../screens/shared/discussion_screen.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/courses/ta_courses_barrel.dart';
 
@@ -335,8 +336,10 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
             isDark: isDark,
             studentsCount: tc.section.currentEnrollment,
             labsCount: 0, // Will be populated from future lab endpoints
-            assignmentsCount: 0, // Will be populated from future assignment endpoints
-            discussionsCount: 0, // Will be populated from future discussion endpoints
+            assignmentsCount:
+                0, // Will be populated from future assignment endpoints
+            discussionsCount:
+                0, // Will be populated from future discussion endpoints
           ),
           const SizedBox(height: 16),
           // T015/T018: Quick actions — TA-safe actions only (no destructive ops)
@@ -432,7 +435,8 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
         recentActivities: [
           TARecentActivity(
             id: '1',
-            title: 'Course ${tc.course.courseCode} assigned for ${tc.semester.name}',
+            title:
+                'Course ${tc.course.courseCode} assigned for ${tc.semester.name}',
             timeAgo: 'Recent',
             icon: Icons.school_rounded,
             color: TAColors.primary,
@@ -471,7 +475,8 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
       padding: const EdgeInsets.all(16),
       child: TACourseGradingTab(
         isDark: isDark,
-        gradingTasks: const [], // Will be populated from future grading endpoints
+        gradingTasks:
+            const [], // Will be populated from future grading endpoints
         onStartReview: (task) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -488,16 +493,21 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
 
   /// T013: Discussions tab — dynamically ready for future discussion endpoints.
   Widget _buildDiscussionsTab(bool isDark, AppLocalizations l10n) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: TACourseDiscussionsTab(
-        isDark: isDark,
-        discussions: const [], // Will be populated from future discussion endpoints
-        onReplyAsTA: (discussion) {
-          _showReplyDialog(discussion);
-        },
-        onFilterChanged: (filter) {},
-      ),
+    final courseId = int.tryParse(widget.courseId);
+    if (courseId == null) {
+      return Center(
+        child: Text(
+          'Invalid course context for discussions',
+          style: TextStyle(color: TAColors.textSecondaryColor(isDark)),
+        ),
+      );
+    }
+
+    return DiscussionScreen(
+      courseId: courseId,
+      accentColor: const Color(0xFF4F46E5),
+      title: 'Course Discussions',
+      embedMode: true,
     );
   }
 
@@ -532,148 +542,6 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
             onTap: () => _tabController.animateTo(3),
           ),
         ],
-      ),
-    );
-  }
-
-  void _showReplyDialog(TADiscussionItem discussion) {
-    final isDark = context.read<ThemeBloc>().state.isDark;
-    final controller = TextEditingController();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-        child: Container(
-          decoration: BoxDecoration(
-            color: TAColors.cardColor(isDark),
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: TAColors.borderColor(isDark),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Reply to ${discussion.studentName}',
-                style: TextStyle(
-                  color: TAColors.textPrimaryColor(isDark),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: TAColors.surfaceColor(isDark),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  discussion.question,
-                  style: TextStyle(
-                    color: TAColors.textSecondaryColor(isDark),
-                    fontSize: 13,
-                    height: 1.4,
-                  ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: controller,
-                maxLines: 4,
-                decoration: InputDecoration(
-                  hintText: 'Type your reply...',
-                  hintStyle: TextStyle(
-                    color: TAColors.textTertiaryColor(isDark),
-                  ),
-                  filled: true,
-                  fillColor: TAColors.surfaceColor(isDark),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        BorderSide(color: TAColors.borderColor(isDark)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide:
-                        BorderSide(color: TAColors.borderColor(isDark)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: TAColors.primary),
-                  ),
-                ),
-                style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor:
-                            TAColors.textSecondaryColor(isDark),
-                        side: BorderSide(
-                            color: TAColors.borderColor(isDark)),
-                        padding:
-                            const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text('Cancel'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content:
-                                const Text('Reply posted successfully'),
-                            behavior: SnackBarBehavior.floating,
-                            backgroundColor: TAColors.success,
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: TAColors.primary,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding:
-                            const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: const Text('Post Reply'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

@@ -129,6 +129,19 @@ class InstructorQuickAccessGrid extends StatelessWidget {
                   context.push('/ai-chat');
                 },
               ),
+              _buildQuickAccessItem(
+                context,
+                title: 'Discussions',
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF6366F1), Color(0xFF4338CA)],
+                ),
+                icon: Icons.forum_outlined,
+                onTap: () {
+                  context.push('/instructor/discussions');
+                },
+              ),
             ],
           ),
         );

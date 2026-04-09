@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CourseModel {
+  final int? courseId;
   final String title;
   final String instructor;
   final double progress;
@@ -15,6 +16,7 @@ class CourseModel {
   final List<CourseModule>? modules;
 
   CourseModel({
+    this.courseId,
     required this.title,
     required this.instructor,
     required this.progress,
@@ -31,8 +33,18 @@ class CourseModel {
 
   int get eventDateAsNumber {
     final monthMap = {
-      'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
-      'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12,
+      'Jan': 1,
+      'Feb': 2,
+      'Mar': 3,
+      'Apr': 4,
+      'May': 5,
+      'Jun': 6,
+      'Jul': 7,
+      'Aug': 8,
+      'Sep': 9,
+      'Oct': 10,
+      'Nov': 11,
+      'Dec': 12,
     };
     final parts = eventDate.split(' ');
     if (parts.length == 2) {
@@ -66,10 +78,7 @@ class ModuleContent {
   final String type; // video, pdf, slides
   final String? icon;
 
-  ModuleContent({
-    required this.type,
-    this.icon,
-  });
+  ModuleContent({required this.type, this.icon});
 }
 
 class Lab {
@@ -115,4 +124,3 @@ class Assignment {
 }
 
 enum AssignmentStatus { completed, inProgress, notStarted }
-

@@ -10,5 +10,4 @@ export 'labs_tab_content.dart';
 export 'assignment_card.dart';
 export 'assignments_tab_content.dart';
 export 'statistics_tab_content.dart';
-export 'discussion_card.dart';
 export 'discussion_tab_content.dart';

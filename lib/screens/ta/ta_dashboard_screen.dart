@@ -20,7 +20,6 @@ class _TADashboardScreenState extends State<TADashboardScreen> {
 
   late List<TACourseModel> _courses;
   late List<TATaskModel> _tasks;
-  late List<TADiscussionModel> _discussions;
 
   @override
   void initState() {
@@ -40,7 +39,6 @@ class _TADashboardScreenState extends State<TADashboardScreen> {
 
       _courses = _getMockCourses();
       _tasks = _getMockTasks();
-      _discussions = _getMockDiscussions();
 
       if (mounted) {
         setState(() => _isLoading = false);
@@ -168,41 +166,6 @@ class _TADashboardScreenState extends State<TADashboardScreen> {
     ];
   }
 
-  List<TADiscussionModel> _getMockDiscussions() {
-    return [
-      TADiscussionModel(
-        id: '1',
-        studentName: 'Alex Thompson',
-        courseCode: 'CS101 • Operating Systems',
-        question:
-            'How does context switching work exactly? I\'m confused about the difference between process and thread context switching.',
-        timeAgo: '2 hours ago',
-        viewCount: 24,
-        upvoteCount: 5,
-      ),
-      TADiscussionModel(
-        id: '2',
-        studentName: 'Emma Wilson',
-        courseCode: 'CS205 • Data Structures',
-        question:
-            'Confused about AVL rotations - when do we use left-right vs right-left rotation?',
-        timeAgo: '4 hours ago',
-        viewCount: 18,
-        upvoteCount: 3,
-      ),
-      TADiscussionModel(
-        id: '3',
-        studentName: 'James Miller',
-        courseCode: 'CS301 • Algorithms',
-        question:
-            'Can someone explain the time complexity of Dijkstra\'s algorithm with different data structures?',
-        timeAgo: '6 hours ago',
-        viewCount: 31,
-        upvoteCount: 8,
-      ),
-    ];
-  }
-
   void _handleQuickAction(String action) {
     switch (action) {
       case 'exam_grading':
@@ -309,7 +272,8 @@ class _TADashboardScreenState extends State<TADashboardScreen> {
                   isDark: isDark,
                   courses: _courses,
                   // onCourseTap: (course) => _showSnackBar('Opening ${course.name}'),
-                  onCourseTap: (course) => context.push('/ta/course/${course.id}'),
+                  onCourseTap: (course) =>
+                      context.push('/ta/course/${course.id}'),
                   onViewTasks: (course) =>
                       _showSnackBar('Viewing tasks for ${course.code}'),
                   onViewAll: () => context.push('/ta/courses'),
@@ -323,16 +287,6 @@ class _TADashboardScreenState extends State<TADashboardScreen> {
                   onStartTask: (task) =>
                       _showSnackBar('Starting: ${task.title}'),
                   onViewAll: () => context.push('/ta/tasks'),
-                ),
-                const SizedBox(height: 24),
-                TADiscussionMonitorSection(
-                  isDark: isDark,
-                  discussions: _discussions,
-                  onDiscussionTap: (discussion) =>
-                      _showSnackBar('Opening discussion'),
-                  onReplyNow: (discussion) =>
-                      _showSnackBar('Replying to ${discussion.studentName}'),
-                  onViewAll: () => context.push('/ta/discussions'),
                 ),
                 const SizedBox(height: 24),
               ]),

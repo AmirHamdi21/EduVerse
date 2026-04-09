@@ -24,8 +24,7 @@ class CourseTabs extends StatefulWidget {
   State<CourseTabs> createState() => _CourseTabsState();
 }
 
-class _CourseTabsState extends State<CourseTabs>
-    with TickerProviderStateMixin {
+class _CourseTabsState extends State<CourseTabs> with TickerProviderStateMixin {
   final List<Map<String, dynamic>> tabs = [
     {'icon': Icons.video_library_outlined, 'label': 'Lectures'},
     {'icon': Icons.science_outlined, 'label': 'Labs'},
@@ -51,8 +50,8 @@ class _CourseTabsState extends State<CourseTabs>
 
     _slideAnimation =
         Tween<Offset>(begin: const Offset(0, 0.05), end: Offset.zero).animate(
-      CurvedAnimation(parent: _contentController, curve: Curves.easeOut),
-    );
+          CurvedAnimation(parent: _contentController, curve: Curves.easeOut),
+        );
 
     _contentController.forward();
   }
@@ -94,7 +93,9 @@ class _CourseTabsState extends State<CourseTabs>
             children: List.generate(
               tabs.length,
               (index) => Padding(
-                padding: EdgeInsets.only(right: index == tabs.length - 1 ? 0 : 10),
+                padding: EdgeInsets.only(
+                  right: index == tabs.length - 1 ? 0 : 10,
+                ),
                 child: _buildTabButton(index),
               ),
             ),
@@ -123,23 +124,18 @@ class _CourseTabsState extends State<CourseTabs>
       );
     } else if (widget.selectedIndex == 1) {
       // Labs tab
-      return LabsTabContent(
-        isDark: widget.isDark,
-      );
+      return LabsTabContent(isDark: widget.isDark);
     } else if (widget.selectedIndex == 2) {
       // Assignments tab
-      return AssignmentsTabContent(
-        isDark: widget.isDark,
-      );
+      return AssignmentsTabContent(isDark: widget.isDark);
     } else if (widget.selectedIndex == 3) {
       // Statistics tab
-      return StatisticsTabContent(
-        isDark: widget.isDark,
-      );
+      return StatisticsTabContent(isDark: widget.isDark);
     } else if (widget.selectedIndex == 4) {
       // Discussion tab
       return DiscussionTabContent(
         isDark: widget.isDark,
+        courseId: widget.course.courseId,
       );
     } else {
       // Placeholder for other tabs
@@ -202,7 +198,9 @@ class _CourseTabsState extends State<CourseTabs>
                   tabData['icon'],
                   color: isSelected
                       ? Colors.white
-                      : (widget.isDark ? Colors.white54 : const Color(0xFF667085)),
+                      : (widget.isDark
+                            ? Colors.white54
+                            : const Color(0xFF667085)),
                   size: 20,
                 ),
                 if (isSelected) ...[

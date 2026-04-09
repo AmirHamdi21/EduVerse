@@ -35,6 +35,7 @@ class _StudentCoursesSectionState extends State<StudentCoursesSection>
   void _initCourses(AppLocalizations l10n) {
     _courses = [
       CourseModel(
+        courseId: 101,
         title: l10n.introductionToAI,
         instructor: l10n.drSarahFarley,
         progress: 0.68,
@@ -64,6 +65,7 @@ class _StudentCoursesSectionState extends State<StudentCoursesSection>
         ],
       ),
       CourseModel(
+        courseId: 205,
         title: l10n.dataStructures,
         instructor: l10n.drMarkGoldberg,
         progress: 0.45,
@@ -85,13 +87,12 @@ class _StudentCoursesSectionState extends State<StudentCoursesSection>
             title: 'Trees and Graphs',
             description: 'Non-linear data structures',
             status: ModuleStatus.inProgress,
-            contents: [
-              ModuleContent(type: 'video'),
-            ],
+            contents: [ModuleContent(type: 'video')],
           ),
         ],
       ),
       CourseModel(
+        courseId: 202,
         title: l10n.calculusII,
         instructor: l10n.drJessicaPeterson,
         progress: 0.72,
@@ -141,11 +142,15 @@ class _StudentCoursesSectionState extends State<StudentCoursesSection>
     super.dispose();
   }
 
-  void _navigateToCourseDetails(BuildContext context, CourseModel course, {int initialTab = 0}) {
-    context.push('/course-details', extra: {
-      'course': course,
-      'initialTab': initialTab,
-    });
+  void _navigateToCourseDetails(
+    BuildContext context,
+    CourseModel course, {
+    int initialTab = 0,
+  }) {
+    context.push(
+      '/course-details',
+      extra: {'course': course, 'initialTab': initialTab},
+    );
   }
 
   @override
@@ -154,7 +159,7 @@ class _StudentCoursesSectionState extends State<StudentCoursesSection>
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
-        
+
         // Initialize courses with localized strings
         _initCourses(l10n);
 
@@ -190,14 +195,26 @@ class _StudentCoursesSectionState extends State<StudentCoursesSection>
             const SizedBox(height: 12),
             ...List.generate(_courses.length, (index) {
               return Padding(
-                padding: EdgeInsets.only(bottom: index < _courses.length - 1 ? 12 : 0),
+                padding: EdgeInsets.only(
+                  bottom: index < _courses.length - 1 ? 12 : 0,
+                ),
                 child: _buildAnimatedCourseCard(
                   _cardControllers[index],
                   course: _courses[index],
                   isDark: isDark,
                   l10n: l10n,
-                  onContinue: () => _navigateToCourseDetails(context, _courses[index]),
-                  onMaterials: () => _navigateToCourseDetails(context, _courses[index], initialTab: 0),
+                  onContinue: () =>
+                      _navigateToCourseDetails(context, _courses[index]),
+                  onMaterials: () => _navigateToCourseDetails(
+                    context,
+                    _courses[index],
+                    initialTab: 0,
+                  ),
+                  onDiscussions: () {
+                    final activeCourseId =
+                        _courses[index].courseId ?? (index + 1);
+                    context.push('/course/$activeCourseId/discussions');
+                  },
                 ),
               );
             }),
@@ -214,6 +231,7 @@ class _StudentCoursesSectionState extends State<StudentCoursesSection>
     required AppLocalizations l10n,
     required VoidCallback onContinue,
     required VoidCallback onMaterials,
+    required VoidCallback onDiscussions,
   }) {
     final fadeAnimation = Tween<double>(
       begin: 0.0,
@@ -237,6 +255,7 @@ class _StudentCoursesSectionState extends State<StudentCoursesSection>
             l10n: l10n,
             onContinue: onContinue,
             onMaterials: onMaterials,
+            onDiscussions: onDiscussions,
           ),
         ),
       ),
@@ -249,6 +268,7 @@ class _StudentCoursesSectionState extends State<StudentCoursesSection>
     required AppLocalizations l10n,
     required VoidCallback onContinue,
     required VoidCallback onMaterials,
+    required VoidCallback onDiscussions,
   }) => Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -396,6 +416,23 @@ class _StudentCoursesSectionState extends State<StudentCoursesSection>
                   ),
                 ),
               ),
+            ),
+            const SizedBox(width: 12),
+            OutlinedButton.icon(
+              onPressed: onDiscussions,
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF155CFB),
+                side: const BorderSide(color: Color(0xFF155CFB), width: 1.5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+              icon: const Icon(Icons.forum_outlined, size: 18),
+              label: const Text('Discussion'),
             ),
           ],
         ),

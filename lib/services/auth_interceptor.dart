@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'storage_service.dart';
+import 'session_expiry_notifier.dart';
 
 /// Dio interceptor that handles:
 /// 1. Automatically injecting Bearer accessToken into request headers
@@ -17,9 +18,9 @@ class AuthInterceptor extends Interceptor {
     required Dio dio,
     required StorageService storage,
     required String baseUrl,
-  })  : _dio = dio,
-        _storage = storage,
-        _baseUrl = baseUrl;
+  }) : _dio = dio,
+       _storage = storage,
+       _baseUrl = baseUrl;
 
   @override
   void onRequest(
@@ -59,17 +60,20 @@ class AuthInterceptor extends Interceptor {
       final refreshToken = await _storage.getRefreshToken();
       if (refreshToken == null) {
         _isRefreshing = false;
+        await _handleSessionExpired();
         return handler.next(err);
       }
 
       // Use a separate Dio instance to avoid interceptor loops
-      final refreshDio = Dio(BaseOptions(
-        baseUrl: _baseUrl,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      ));
+      final refreshDio = Dio(
+        BaseOptions(
+          baseUrl: _baseUrl,
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      );
 
       final response = await refreshDio.post(
         '/auth/refresh-token',
@@ -101,7 +105,18 @@ class AuthInterceptor extends Interceptor {
     _isRefreshing = false;
 
     // Refresh failed — clear tokens (session is dead)
-    await _storage.clearAll();
+    await _handleSessionExpired();
     handler.next(err);
+  }
+
+  Future<void> _handleSessionExpired() async {
+    try {
+      await _storage.clearAll();
+      await _storage.clearChatCache();
+    } catch (_) {
+      // Keep behavior non-throwing during auth teardown.
+    }
+
+    SessionExpiryNotifier.notify();
   }
 }

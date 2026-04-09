@@ -43,7 +43,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   String get _title {
     if (widget.enrollment != null) {
       return CourseUiUtils.safeCourseTitle(
-          widget.enrollment!.course?.courseName);
+        widget.enrollment!.course?.courseName,
+      );
     }
     return widget.legacyCourse?.title ?? 'Course';
   }
@@ -51,7 +52,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   String get _courseCode {
     if (widget.enrollment != null) {
       return CourseUiUtils.safeCourseCode(
-          widget.enrollment!.course?.courseCode);
+        widget.enrollment!.course?.courseCode,
+      );
     }
     return '';
   }
@@ -94,10 +96,20 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
     return widget.enrollment?.course?.description;
   }
 
+  int? get _resolvedCourseId {
+    final directId = widget.enrollment?.course?.courseId;
+    if (directId != null) return directId;
+
+    final fallbackId = widget.enrollment?.courseId;
+    if (fallbackId == null || fallbackId.isEmpty) return null;
+    return int.tryParse(fallbackId);
+  }
+
   List<Color> get _gradientColors {
     if (widget.enrollment != null) {
       return CourseUiUtils.gradientForCourseId(
-          widget.enrollment!.course?.courseId ?? widget.enrollment!.courseId);
+        _resolvedCourseId ?? widget.enrollment!.courseId,
+      );
     }
     return [const Color(0xFF2B7FFF), const Color(0xFF155DFC)];
   }
@@ -166,7 +178,10 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: isDark
-                              ? [const Color(0xFF1E293B), const Color(0xFF0F172A)]
+                              ? [
+                                  const Color(0xFF1E293B),
+                                  const Color(0xFF0F172A),
+                                ]
                               : _gradientColors,
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
@@ -244,7 +259,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                               if (_courseCode.isNotEmpty) ...[
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 6),
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: isDark
                                         ? Colors.white.withOpacity(0.08)
@@ -308,7 +325,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                               // T008: Course Structure Viewer
                               if (widget.enrollment != null)
                                 CourseStructureViewer(
-                                  courseId: widget.enrollment!.course?.courseId ??
+                                  courseId:
+                                      widget.enrollment!.course?.courseId ??
                                       widget.enrollment!.courseId,
                                   isDark: isDark,
                                 ),
@@ -345,6 +363,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   CourseModel _buildLegacyCourseForTabs() {
     if (widget.legacyCourse != null) return widget.legacyCourse!;
     return CourseModel(
+      courseId: _resolvedCourseId,
       title: _title,
       instructor: _instructor,
       progress: _progress,

@@ -265,3 +265,7 @@ class ChatStartConversationRequested extends ChatEvent {
 class ChatNewConversationDialogReset extends ChatEvent {
   const ChatNewConversationDialogReset();
 }
+
+class ClearChatCache extends ChatEvent {
+  const ClearChatCache();
+}
