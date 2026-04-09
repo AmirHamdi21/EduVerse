@@ -33,12 +33,15 @@
 
 - [ ] Does the plan enforce **I. BLoC State Management First** — no widget-level API/WebSocket calls?
 - [ ] Is there **II. Strict Data Layer Separation** — models match backend API + website TypeScript interfaces exactly?
-- [ ] Is **III. Type Safety & Error Handling** fully accounted for — including optimistic updates and WebSocket reconnect fallback?
+- [ ] Is **III. Type Safety & Error Handling** fully accounted for — including optimistic updates, WebSocket reconnect fallback, isLate int/bool divergence, and decimal field parsing?
 - [ ] Does the plan enforce **IV. Website Feature Parity** — features added/removed to match website 1:1?
 - [ ] Is **V. Testable Architecture** ensured — services injectable, BLoCs mockable?
 - [ ] Does the plan enforce **VI. Real-Time Communication Integrity** — WebSocket lifecycle, auto-reconnect, event idempotency?
-- [ ] Is **VII. Static Data Elimination** accounted for — mock removal audit included in verification?
-- [ ] Was **VIII. Aggressive Clarification** performed — minimum 5 clarification questions on field parity, roles, edge cases, deletions, and event coverage?
+- [ ] Is **VII. Static Data Elimination** accounted for — mock removal audit included in verification (including hardcoded lists, _generateSample patterns, setState bypasses)?
+- [ ] Was **VIII. Aggressive Clarification** performed — minimum 5 clarification questions on field parity, roles, edge cases, deletions, and API/event coverage?
+- [ ] Does the plan enforce **IX. Role-Based Access Control Enforcement** — UI buttons/forms conditionally rendered per role matrix?
+- [ ] Is **X. File Upload & Google Drive/YouTube Integration** accounted for — correct FormData field names, progress tracking, preview URL logic, client-side validation?
+- [ ] Does the plan follow **XI. Multi-Phase Plan Adherence** — phase gating, completion criteria, dependency order per integration plan?
 
 ## Project Structure
 
