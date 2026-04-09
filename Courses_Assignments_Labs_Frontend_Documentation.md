@@ -18,6 +18,7 @@
 8. [Role: IT Admin](#8-role-it-admin)
 9. [File Upload & Google Drive Integration](#9-file-upload--google-drive-integration)
 10. [Endpoint Reference Summary](#10-endpoint-reference-summary)
+11. [Course Video Lectures & Material Viewing System](#11-course-video-lectures--material-viewing-system)
 
 ---
 
@@ -1143,6 +1144,660 @@ Both Assignments and Labs support instruction file uploads:
 | `POST` | `/schedules/section/{sectionId}` | Admin |
 | `DELETE` | `/schedules/{scheduleId}` | Admin |
 | `GET` | `/semesters` | Admin |
+
+---
+
+## 11. Course Video Lectures & Material Viewing System
+
+This section documents the full lifecycle of course video lectures: how they are **uploaded** (by Instructors), **structured** (via the Course Structure / Organization system), **bundled** (video + companion files), **viewed** (by Students in the CourseView player), and what **backend endpoints** drive the entire flow.
+
+---
+
+### 11.1 Data Models
+
+#### 11.1.1 CourseMaterial
+
+> Source: `src/services/api/courseService.ts` (lines 30-66)
+
+This is the central model for every piece of course content — videos, documents, slides, readings, and external links.
+
+```typescript
+interface CourseMaterial {
+  materialId: string;           // Required — Primary key (UUID)
+  courseId: string;              // Required — FK to Course
+  course?: {                    // Optional — resolved course info
+    id: string;
+    name: string;
+    code: string;
+    credits: number;
+    level: string;
+  } | null;
+  fileId?: string | null;       // Legacy internal file reference
+  file?: unknown | null;        // Legacy file object
+  driveFileId?: string | null;  // Google Drive file ID (used for preview fallback)
+  materialType: 'document' | 'video' | 'lecture' | 'slide' | 'reading' | 'link' | 'other';
+  title: string;                // Required — display title
+  description?: string;         // Optional — shown below preview
+  externalUrl?: string | null;  // YouTube embed URL or external link
+  driveViewUrl?: string | null; // Google Drive view URL
+  driveDownloadUrl?: string | null; // Google Drive download URL
+  fileName?: string | null;     // Original uploaded filename
+  youtubeVideoId?: string | null; // Extracted YouTube video ID (for thumbnails)
+  orderIndex?: number;          // Sort order within a week
+  weekNumber?: number | null;   // Week grouping (null = "General")
+  viewCount?: number;           // Read-only — tracks views
+  downloadCount?: number;       // Read-only — tracks downloads
+  uploadedBy?: number;          // FK to uploading user
+  uploader?: {                  // Resolved uploader info
+    userId: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+  } | null;
+  isPublished: number;          // 0 = Draft, 1 = Published (students only see 1)
+  publishedAt?: string | null;  // ISO 8601
+  createdAt: string;            // ISO 8601
+  updatedAt?: string;           // ISO 8601
+}
+```
+
+#### 11.1.2 CourseStructure (Organization Item)
+
+> Source: `src/services/api/courseService.ts` (lines 68-80)
+
+Represents a structural element (a lecture, lab, section, or tutorial slot) in the course outline. Each item can optionally link to a `CourseMaterial`.
+
+```typescript
+interface CourseStructure {
+  organizationId: string;       // Required — Primary key (UUID)
+  courseId: string;              // Required — FK to Course
+  materialId: string | null;    // Optional — FK to CourseMaterial (linked content)
+  material: CourseMaterial | null; // Resolved material if linked
+  organizationType: 'lecture' | 'lab' | 'section' | 'tutorial';
+  title: string;                // Required — display title (e.g. "Intro to Algorithms")
+  weekNumber: number;           // Required — week grouping
+  orderIndex: number;           // Required — sort order within a week
+  description?: string;         // Optional
+  createdAt?: string;
+  updatedAt?: string;
+}
+```
+
+#### 11.1.3 CourseStructureResponse
+
+```typescript
+interface CourseStructureResponse {
+  data: CourseStructure[];                          // Flat list of all items
+  byWeek: Record<string, CourseStructure[]>;        // Pre-grouped by weekNumber
+}
+```
+
+#### 11.1.4 CourseMaterialsResponse
+
+```typescript
+interface CourseMaterialsResponse {
+  data: CourseMaterial[];
+  meta?: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+```
+
+#### 11.1.5 MaterialBundle (Frontend Utility)
+
+> Source: `src/utils/materialBundles.ts`
+
+A **MaterialBundle** is a purely frontend concept that groups multiple `CourseMaterial` items together when they share the same base title. For example, materials named `"Lecture 3 - Video"` and `"Lecture 3 - Slides"` are automatically grouped into a single `"Lecture 3"` bundle.
+
+```typescript
+interface MaterialBundle {
+  key: string;                  // Computed — e.g. "3::lecture 3" (weekNumber::baseTitle)
+  baseTitle: string;            // e.g. "Lecture 3"
+  items: CourseMaterial[];      // All materials in the bundle
+  video: CourseMaterial | null; // The video item (materialType === 'video')
+  documents: CourseMaterial[];  // All non-video items
+  instructions: string;        // First non-empty description from any item
+  weekNumber: number | null;    // Shared week number
+  isPublished: boolean;         // True only if ALL items are published
+}
+```
+
+**Bundle Detection Logic** (`parseBundleTitle`):
+- Title must contain ` - ` (space-dash-space) separator
+- Everything before the last ` - ` is the `baseTitle`
+- Everything after is the `suffix` (e.g. "Video", "Slides", "Notes")
+- Materials with identical `baseTitle` AND same `weekNumber` are grouped
+- A group becomes a bundle if it has **more than 1 item** OR has a **video-like item**
+
+**Bundle Title Convention:**
+```
+"{Base Title} - {Suffix}"
+Examples:
+  "Lecture 3 - Video"      → baseTitle: "Lecture 3", suffix: "Video"
+  "Lecture 3 - Slides"     → baseTitle: "Lecture 3", suffix: "Slides"
+  "Lecture 3 - Homework"   → baseTitle: "Lecture 3", suffix: "Homework"
+```
+
+---
+
+### 11.2 materialService API Layer
+
+> Source: `src/services/api/courseService.ts` (lines 264-393)
+
+The `materialService` object provides all CRUD and interaction methods for course materials. Unlike the class-based `CourseService`, this is an object-based service layer.
+
+#### 11.2.1 Full Endpoint Table
+
+| Method | Service Function | HTTP | Endpoint | Request Params | Response |
+|---|---|---|---|---|---|
+| **Get Materials** | `getMaterials(courseId, params?)` | `GET` | `/courses/{courseId}/materials` | Query: `?materialType=&weekNumber=&page=&limit=&search=` | `CourseMaterialsResponse` |
+| **Get Single Material** | `getMaterial(courseId, materialId)` | `GET` | `/courses/{courseId}/materials/{materialId}` | — | `CourseMaterial` |
+| **Create Material (Text/Link)** | `createMaterial(courseId, data)` | `POST` | `/courses/{courseId}/materials` | Body (JSON): see below | `CourseMaterial` |
+| **Upload Document** | `uploadDocument(courseId, formData)` | `POST` | `/courses/{courseId}/materials/document` | **FormData** | `CourseMaterial` |
+| **Upload Video** | `uploadVideo(courseId, file, metadata, onProgress?)` | `POST` | `/courses/{courseId}/materials/video` | **FormData**: see below | YouTube-processed `CourseMaterial` |
+| **Upload File** | `uploadFile(courseId, file, metadata, onProgress?)` | `POST` | `/courses/{courseId}/materials/document` | **FormData**: see below | `CourseMaterial` |
+| **Update Material** | `updateMaterial(courseId, materialId, data)` | `PUT` | `/courses/{courseId}/materials/{materialId}` | Body (JSON) | `CourseMaterial` |
+| **Delete Material** | `deleteMaterial(courseId, materialId)` | `DELETE` | `/courses/{courseId}/materials/{materialId}` | — | `{ message: string }` |
+| **Toggle Visibility** | `toggleVisibility(courseId, materialId, isPublished)` | `PATCH` | `/courses/{courseId}/materials/{materialId}/visibility` | Body: `{ isPublished: boolean }` | `CourseMaterial` |
+| **Track View** | `trackView(courseId, materialId)` | `POST` | `/courses/{courseId}/materials/{materialId}/view` | — | `{ message, materialId, viewCount }` |
+| **Get Embed** | `getEmbed(courseId, materialId)` | `GET` | `/courses/{courseId}/materials/{materialId}/embed` | — | `{ videoId, embedUrl, iframeHtml }` |
+| **Get Download URL** | `getDownloadUrl(courseId, materialId)` | — (constructs URL) | `/courses/{courseId}/materials/{materialId}/download` | — | `string` (URL) |
+| **Get YouTube Auth URL** | `getYouTubeAuthUrl()` | `GET` | `/youtube/auth` | — | `{ authUrl: string }` |
+| **Get Google Drive Auth URL** | `getGoogleDriveAuthUrl()` | `GET` | `/google-drive/auth` | — | `{ authUrl, scopes[], instructions }` |
+
+#### 11.2.2 Create Material Request Body (Text/Link)
+
+```typescript
+{
+  title: string;           // Required
+  materialType: string;    // Required — 'document' | 'video' | 'lecture' | 'slide' | 'link' | 'reading' | 'other'
+  description?: string;    // Optional
+  weekNumber?: number;     // Optional
+  isPublished?: boolean;   // Optional — defaults to false
+}
+```
+
+#### 11.2.3 Upload Video FormData Fields
+
+> Source: `courseService.ts` lines 311-349
+
+The **video upload** uses raw `axios` (not the `ApiClient` wrapper) to support `onUploadProgress` callbacks for a real-time progress bar.
+
+| FormData Field | Type | Required | Description |
+|---|---|---|---|
+| `video` | `File` | ✅ **Yes** | The video file — field name **MUST** be `"video"` |
+| `title` | `string` | ✅ **Yes** | Material title |
+| `description` | `string` | ❌ No | Optional description |
+| `weekNumber` | `string` (number) | ❌ No | Week assignment |
+| `orderIndex` | `string` (number) | ❌ No | Sort order |
+| `isPublished` | `string` (boolean) | ❌ No | `"true"` or `"false"` |
+| `tags` | `string` | ❌ No | Comma-separated tags |
+
+**Endpoint:** `POST /courses/{courseId}/materials/video`
+
+**Auth:** Bearer token retrieved from `localStorage` via `TOKEN_KEYS.ACCESS_TOKEN`
+
+**Progress:** `onUploadProgress(e)` → `Math.round((e.loaded * 100) / e.total)` — reported to the caller's callback
+
+**Backend Behavior:** The backend receives the video, uploads it to **YouTube** via the YouTube Data API, then stores the resulting YouTube `videoId` and `externalUrl` (embed URL) in the `CourseMaterial` record.
+
+#### 11.2.4 Upload File (Document) FormData Fields
+
+> Source: `courseService.ts` lines 351-386
+
+| FormData Field | Type | Required | Description |
+|---|---|---|---|
+| `document` | `File` | ✅ **Yes** | The file — field name **MUST** be `"document"` |
+| `title` | `string` | ✅ **Yes** | Material title |
+| `materialType` | `string` | ✅ **Yes** | `'document'` \| `'lecture'` \| `'slide'` \| `'reading'` |
+| `description` | `string` | ❌ No | Optional description |
+| `weekNumber` | `string` (number) | ❌ No | Week assignment |
+| `isPublished` | `string` (boolean) | ❌ No | `"true"` or `"false"` |
+
+**Endpoint:** `POST /courses/{courseId}/materials/document`
+
+**Backend Behavior:** The backend uploads the file to **Google Drive**, then stores the resulting `driveFileId`, `driveViewUrl`, and `driveDownloadUrl` in the `CourseMaterial` record.
+
+#### 11.2.5 File Validation Rules (Frontend)
+
+> Source: `UploadMaterialsPage.tsx` lines 95-165
+
+| Category | Allowed MIME Types | Allowed Extensions | Max Size |
+|---|---|---|---|
+| **Documents** | `application/pdf`, `application/msword`, `application/vnd.openxmlformats-officedocument.*`, `application/vnd.ms-*`, `text/plain`, `text/markdown`, `application/zip` | `.pdf, .doc, .docx, .ppt, .pptx, .xls, .xlsx, .txt, .md, .zip` | **50 MB** |
+| **Images** | `image/jpeg`, `image/png`, `image/gif`, `image/webp`, `image/svg+xml` | `.jpg, .jpeg, .png, .gif, .webp, .svg` | **10 MB** |
+| **Videos** | Any video MIME type | No client-side extension check | No client-side size limit (progress-tracked) |
+
+---
+
+### 11.3 structureService API Layer
+
+> Source: `src/services/api/courseService.ts` (lines 396-419)
+
+| Method | Service Function | HTTP | Endpoint | Request Body | Response |
+|---|---|---|---|---|---|
+| **Get Structure** | `getStructure(courseId)` | `GET` | `/courses/{courseId}/structure` | — | `CourseStructureResponse` |
+| **Create Item** | `createStructureItem(courseId, data)` | `POST` | `/courses/{courseId}/structure` | `{ title, organizationType, weekNumber, orderIndex?, description? }` | `CourseStructure` |
+| **Update Item** | `updateStructureItem(courseId, orgId, data)` | `PUT` | `/courses/{courseId}/structure/{organizationId}` | Partial update body | `CourseStructure` |
+| **Delete Item** | `deleteStructureItem(courseId, orgId)` | `DELETE` | `/courses/{courseId}/structure/{organizationId}` | — | `{ message: string }` |
+| **Reorder** | `reorderStructure(courseId, orderIds)` | `PATCH` | `/courses/{courseId}/structure/reorder` | `{ orderIds: number[] }` | `{ message: string }` |
+
+#### Create Structure Item Request Body
+
+```typescript
+{
+  title: string;                // Required — e.g. "Introduction to Algorithms"
+  organizationType: string;     // Required — 'lecture' | 'lab' | 'section' | 'tutorial'
+  weekNumber: number;           // Required — e.g. 1, 2, 3…
+  orderIndex?: number;          // Optional — sort position within the week
+  description?: string;         // Optional
+}
+```
+
+---
+
+### 11.4 Preview URL Resolution
+
+> Source: `src/services/api/courseService.ts` — `getCourseMaterialPreviewUrl()` (lines 250-262)
+
+This pure function determines the correct preview URL for any `CourseMaterial`:
+
+```
+1. Check externalUrl → driveViewUrl → driveDownloadUrl (first non-empty wins)
+2. If the URL is a YouTube link → return as-is
+3. If the URL is a Google Drive link:
+   a. If it already contains "/preview" → return as-is
+   b. Otherwise extract the Drive file ID → return "https://drive.google.com/file/d/{id}/preview"
+4. If none of the URLs exist, check driveFileId:
+   → return "https://drive.google.com/file/d/{driveFileId}/preview"
+5. If nothing matches → return null (preview unavailable)
+```
+
+**Google Drive ID Extraction** (`extractGoogleDriveId`):
+- Matches `/d/{id}/` path format
+- Falls back to `?id={id}` query parameter format
+
+---
+
+### 11.5 Student: CourseView Video Player
+
+> Source: `src/pages/student-dashboard/pages/CourseView.tsx` (1070 lines)
+
+**Route:** `/studentdashboard/courses` → click on a course card → loads `CourseViewPage`
+
+#### 11.5.1 Layout
+
+```
+CourseViewPage
+ ├─ Header
+ │   ├─ Back Button ("Back to My Classes")
+ │   ├─ Course Name (h1)
+ │   ├─ Meta Badges: Code, Credits, Level, Section, Semester, Status
+ │   └─ Stats Row: Students enrolled, Materials count, Location, Enrollment date
+ │
+ ├─ Main Content Area (left, flexible width)
+ │   ├─ Preview Viewer (large area — 70-76vh when content selected)
+ │   │   ├─ "Generate AI Notes" Button (top-right overlay)
+ │   │   ├─ Welcome Screen (when no material selected)
+ │   │   ├─ Bundle Viewer (when a lecture bundle is selected)
+ │   │   │   ├─ Video iframe (from bundle.video.externalUrl)
+ │   │   │   ├─ Instructions block
+ │   │   │   ├─ Lecture Files list (selectable, with Open/Download)
+ │   │   │   └─ Document Preview iframe (for selected file)
+ │   │   ├─ Video Player (standalone video, non-bundle)
+ │   │   │   └─ iframe (src=material.externalUrl)
+ │   │   ├─ Document Viewer (non-video material)
+ │   │   │   └─ iframe (src=previewUrl from getCourseMaterialPreviewUrl)
+ │   │   └─ Link/Other Viewer (external link materials)
+ │   │       └─ Title, Description, "Open Link" button
+ │   │
+ │   └─ Tab Content (below preview)
+ │       ├─ Overview: Course description, Section info, Semester, Prerequisites
+ │       ├─ Notes: "Coming soon" placeholder
+ │       ├─ Announcements: Live course announcements (from announcementService)
+ │       └─ Reviews: "Coming soon" placeholder
+ │
+ └─ Right Sidebar (fixed 384px)
+     ├─ Progress Card: "0 / {materialsCount} materials" with progress bar
+     └─ Course Content Panel:
+         ├─ If hasStructure → Week-based accordion (expandable sections)
+         │   └─ Lesson items (icon + title + type badge + "Bundle"/"Video"/"Resource")
+         └─ If !hasStructure && hasMaterials → Flat material list
+             └─ Material rows (icon + title + type + week)
+```
+
+#### 11.5.2 Data Loading Flow
+
+When `CourseViewPage` mounts:
+
+```
+1. enrollmentService.getMyCourses() → find matching enrollment by enrollmentId
+2. Extract resolvedCourseId from enrollment.course.id
+3. Parallel fetch:
+   a. structureService.getStructure(resolvedCourseId)  → structure/organization
+   b. materialService.getMaterials(resolvedCourseId, { page: 1, limit: 200 })  → all materials
+4. Filter materials to only isPublished === 1
+5. Group materials into bundles via groupMaterialsIntoBundles()
+6. Build courseSections from structure (byWeek grouped accordion)
+7. Auto-expand first week section
+```
+
+**API Calls on Mount:**
+
+| Action | Endpoint | Method | Response |
+|---|---|---|---|
+| Load enrollments | `GET /enrollments/my-courses` | GET | `Enrollment[]` |
+| Load course structure | `GET /courses/{courseId}/structure` | GET | `CourseStructureResponse` |
+| Load all materials | `GET /courses/{courseId}/materials?page=1&limit=200` | GET | `CourseMaterialsResponse` |
+
+#### 11.5.3 Material Selection & View Tracking
+
+When a student clicks on a material/lesson:
+
+```typescript
+handleMaterialClick(materialId) {
+  1. Find the CourseMaterial by materialId
+  2. Check if it belongs to a bundle (via bundleByMaterialId lookup)
+  3. If bundle:
+     - Set selectedBundleKey → renders Bundle Viewer
+     - Set selectedBundleDocumentId → first document in bundle
+     - Set selectedMaterial → bundle.video || first document
+  4. If standalone:
+     - Clear bundle state
+     - Set selectedMaterial → the material itself
+  5. Call materialService.trackView(courseId, materialId)  ← fire & forget
+}
+```
+
+**View Tracking API Call:**
+
+| Action | Endpoint | Method | Response |
+|---|---|---|---|
+| Track material view | `POST /courses/{courseId}/materials/{materialId}/view` | POST | `{ message, materialId, viewCount }` |
+
+#### 11.5.4 Video Rendering
+
+**Standalone Video:**
+```html
+<iframe
+  src="{material.externalUrl}"    <!-- YouTube embed URL -->
+  allowFullScreen
+  title="{material.title}"
+  class="w-full h-[52vh] min-h-[420px] rounded-lg border-0"
+/>
+```
+
+**Bundle Video (inside Bundle Viewer):**
+```html
+<iframe
+  src="{bundle.video.externalUrl}"
+  allowFullScreen
+  title="{bundle.baseTitle}"
+  class="w-full h-[44vh] min-h-[340px] rounded-lg border-0"
+/>
+```
+
+**Document Preview (standalone or in bundle):**
+```html
+<iframe
+  src="{getCourseMaterialPreviewUrl(material)}"    <!-- Google Drive /preview URL -->
+  title="{material.title}"
+  class="w-full h-[52vh] min-h-[420px] rounded-lg border-0"
+/>
+```
+
+#### 11.5.5 Bundle Viewer Features
+
+When a lecture bundle is selected, the student sees:
+
+| Section | Content |
+|---|---|
+| **Title** | `bundle.baseTitle` (e.g. "Lecture 3") |
+| **Video iframe** | Embedded YouTube player from `bundle.video.externalUrl` |
+| **Instructions** | Text block from `bundle.instructions` (first non-empty description in the bundle) |
+| **Lecture Files** | Selectable list of companion documents, each with an "Open" button that triggers `materialService.getDownloadUrl()` |
+| **Document Preview** | iframe showing the currently selected document's Google Drive preview |
+
+#### 11.5.6 Course Content Sidebar
+
+The right sidebar renders course content in one of two modes:
+
+**Mode 1: Structure-based (when `byWeek` has data)**
+- Accordion sections for each week (e.g. "Week 1", "Week 2")
+- Each section shows lesson items from the structure
+- Bundle deduplication: if multiple structure items link to materials in the same bundle, only the first is shown
+- Item display: icon (Lecture=`BookOpen`, Lab=`FlaskConical`, Tutorial=`User`, Section=`Users`) + title + badge ("Bundle" / "Video" / "Resource")
+
+**Mode 2: Flat material list (when no structure exists)**
+- Simple list of all published materials, deduplicated by bundle
+- Each row: icon + title + type label + week number
+
+---
+
+### 11.6 Instructor: Upload & Manage Materials
+
+> Source: `src/pages/instructor-dashboard/components/UploadMaterialsPage.tsx` (1892 lines)
+
+**Route:** `/instructordashboard/materials`  
+**Sidebar Item:** `Materials` (icon: `Upload`)
+
+#### 11.6.1 Component Tree
+
+```
+InstructorDashboard
+ └─ UploadMaterialsPage
+     ├─ Course Selector (dropdown from getTeachingCourses)
+     ├─ Tabs: "Upload Queue" | "Library"
+     ├─ Filters: Search + Type filter + Week filter
+     │
+     ├─ Library View
+     │   ├─ Week-grouped sections
+     │   │   ├─ Bundle Cards (expandable — video preview + document list)
+     │   │   └─ Single Material Cards (with inline preview)
+     │   └─ General (ungrouped materials)
+     │
+     ├─ Create Modal (4 upload types)
+     │   ├─ Text/Link — metadata only (title, type, description, week)
+     │   ├─ File — document upload with validation
+     │   ├─ Video — YouTube upload with progress bar
+     │   └─ Bundle — video + multiple documents as one lecture
+     │
+     ├─ Edit Modal (update title, description, week, visibility)
+     ├─ Delete Confirmation Dialog
+     └─ Activity Log (recent upload history)
+```
+
+#### 11.6.2 Upload Types
+
+| Upload Type | Icon | Description |
+|---|---|---|
+| `text` | `FileText` | Create a text/link material — no file upload, metadata only |
+| `file` | `Upload` | Upload a single document to Google Drive |
+| `video` | `Film` | Upload a video to YouTube via backend |
+| `bundle` | `Package` | Upload a lecture bundle: one video + multiple documents |
+
+#### 11.6.3 Create Material Form
+
+| Field | Type | Required | Default | Notes |
+|---|---|---|---|---|
+| `title` | `string` (text input) | ✅ **Yes** | `""` | Non-empty |
+| `materialType` | `'document'\|'video'\|'lecture'\|'slide'\|'link'\|'reading'\|'other'` (select) | ✅ **Yes** | `'document'` | Determines icon/badge |
+| `description` | `string` (textarea) | ❌ No | `""` | Shown in previews |
+| `weekNumber` | `string` (number input) | ❌ No | `""` | Assigns to a week group |
+| `isPublished` | `boolean` (checkbox) | ❌ No | `false` | Controls student visibility |
+
+**Additional fields for Bundle type:**
+- **Video file** (file picker — any video type)
+- **Document files** (multi-file picker — validated per rules above)
+
+#### 11.6.4 Bundle Upload Flow
+
+When upload type is `bundle`:
+
+```
+1. Validate: must have at least a video OR a document
+2. Validate all documents against file size/type rules
+3. Set bundleUploadStatus = 'uploading'
+4. For the video (if present):
+   a. Set step label: "Uploading video: {filename}"
+   b. Call materialService.uploadVideo(courseId, file, {
+        title: "{baseTitle} - Video",
+        description, weekNumber, isPublished
+      }, progressCallback)
+5. For each document (sequentially):
+   a. Set step label: "Uploading file {i}/{total}: {filename}"
+   b. Call materialService.uploadFile(courseId, file, {
+        title: "{baseTitle} - {fileBaseName}",
+        materialType, description, weekNumber, isPublished
+      }, progressCallback)
+6. Progress: each item contributes (1/totalItems) to overall progress
+7. On success: toast, close modal, refresh materials
+8. On YouTube OAuth error: show "YouTube not authorized" message
+```
+
+**Naming Convention:** The bundle automatically prefixes each item:
+- Video → `"{Title} - Video"`
+- Documents → `"{Title} - {originalFilenameWithoutExtension}"`
+
+This naming convention is what the `groupMaterialsIntoBundles()` utility uses to reconstruct bundles from flat material lists.
+
+#### 11.6.5 Material Card Actions (Library View)
+
+| Button | Icon | Action | API Call |
+|---|---|---|---|
+| **Load Embed** | `Eye` | Fetch YouTube embed URL (for videos without a cached embed) | `GET /courses/{courseId}/materials/{materialId}/embed` |
+| **Toggle Visibility** | `Eye` / `EyeOff` | Publish or unpublish the material | `PATCH /courses/{courseId}/materials/{materialId}/visibility` |
+| **Edit** | `Edit` | Opens Edit Modal | — |
+| **Delete** | `Trash2` | Opens Delete Confirmation | `DELETE /courses/{courseId}/materials/{materialId}` |
+| **Download** | `Download` | Opens download URL in new tab (non-video, non-link only) | Constructs URL: `/courses/{courseId}/materials/{materialId}/download` |
+
+#### 11.6.6 Bundle-Specific Actions
+
+| Action | Description | API Call |
+|---|---|---|
+| **Toggle Bundle Visibility** | Toggles `isPublished` for ALL items in the bundle | Multiple parallel `PATCH .../visibility` calls |
+| **Edit Bundle** | Updates `title`, `description`, `weekNumber`, `isPublished` for ALL items (renames each to `"{newTitle} - {suffix}"`) | Multiple parallel `PUT .../materials/{materialId}` calls |
+| **Delete Bundle** | Deletes ALL items in the bundle | Multiple parallel `DELETE .../materials/{materialId}` calls |
+| **Expand/Collapse Preview** | Shows/hides the embedded video + document preview pane | `GET .../embed` (lazy load for video) |
+
+#### 11.6.7 Material Card Display
+
+Each material card shows:
+- **YouTube Thumbnail** (if `youtubeVideoId` exists): `https://img.youtube.com/vi/{videoId}/mqdefault.jpg`
+- **Material Type Badge**: Color-coded — video (blue), document (green), lecture (purple), slide (orange), link (slate)
+- **YouTube Badge**: Red badge with YouTube icon when `youtubeVideoId` is set
+- **Published/Draft Badge**: Green for published, slate for draft
+- **Stats**: `{viewCount} views • {downloadCount} downloads • Uploader: {name}`
+- **Inline Video Preview**: `<iframe src="{embedUrl || externalUrl}">` (315px height)
+- **Inline Document Preview**: `<iframe src="{getCourseMaterialPreviewUrl(material)}">` (380px height)
+
+---
+
+### 11.7 Instructor: CourseDetail Lectures Tab
+
+> Source: `src/pages/instructor-dashboard/components/CourseDetail.tsx`
+
+When an instructor clicks on a course from `CoursesPage`, the `CourseDetail` component renders with a **Lectures** sub-tab.
+
+**Route:** `/instructordashboard/courses` → click course → `CourseDetail` → select "Lectures" tab
+
+#### 11.7.1 Lectures Tab Layout
+
+```
+CourseDetail → Lectures Tab
+ ├─ Header: "Lectures" + "Upload Material" button
+ └─ Week Cards (accordion-like)
+     ├─ Week {N} Card
+     │   ├─ Lecture {N}.1 — Introduction (static label with Video icon)
+     │   └─ Materials list (fetched from backend)
+     │       └─ Material row: icon + title + created date
+     └─ Upload Material Modal
+         ├─ Title input (Required)
+         ├─ Lecture selector (dropdown — week-based)
+         ├─ File upload (drag-and-drop via FileUploadDropzone)
+         └─ Save Button
+```
+
+#### 11.7.2 Upload Material Modal Form
+
+| Field | Type | Required | Default |
+|---|---|---|---|
+| `title` | `string` (text input) | ✅ **Yes** | `""` |
+| `lectureId` | `string` (select — e.g. "1.1", "2.1") | ✅ **Yes** | `""` |
+| `file` | `File` (drag-and-drop) | ❌ No | `null` |
+
+**Upload behavior:**
+- If a file is selected → creates `FormData` with fields: `document`, `title`, `materialType: 'document'`, `weekNumber`, `isPublished: 'true'` → calls `POST /courses/{courseId}/materials/document`
+- If no file → creates text-only material → calls `POST /courses/{courseId}/materials` with JSON body
+
+**API Calls:**
+
+| Action | Endpoint | Method |
+|---|---|---|
+| Load course materials | `GET /courses/{courseId}/materials` | `CourseService.getMaterials(courseId)` |
+| Upload document | `POST /courses/{courseId}/materials/document` | `CourseService.uploadDocument(courseId, formData)` |
+| Create metadata-only material | `POST /courses/{courseId}/materials` | `CourseService.createMaterial(courseId, data)` |
+
+---
+
+### 11.8 YouTube & Google Drive Integration
+
+#### 11.8.1 YouTube Integration
+
+**Flow:**
+1. Instructor selects "Video" upload type → picks a video file
+2. Frontend checks YouTube auth status: `GET /youtube/auth` → returns `{ authUrl }`
+3. Frontend uploads video via `POST /courses/{courseId}/materials/video` (FormData)
+4. **Backend** receives the file, uses stored YouTube OAuth tokens to upload to YouTube
+5. Backend stores the resulting `youtubeVideoId` and `externalUrl` (embed URL) in the material record
+6. Frontend displays the video via `<iframe src="{externalUrl}" allowFullScreen />`
+
+**YouTube OAuth Error Handling:**
+- If the upload fails with an OAuth/token/authorization error, the frontend displays: _"YouTube not authorized. Please contact admin to set up YouTube integration."_
+- The `youtubeAuthUrl` obtained from `GET /youtube/auth` can be used to trigger the OAuth consent flow
+
+#### 11.8.2 Google Drive Integration
+
+**Flow:**
+1. Instructor uploads a document via `POST /courses/{courseId}/materials/document`
+2. **Backend** uploads the file to Google Drive
+3. Backend stores `driveFileId`, `driveViewUrl`, and `driveDownloadUrl` in the material record
+4. Frontend previews documents via `<iframe src="{driveViewUrl converted to /preview}">`
+5. Downloads are handled via: `GET /courses/{courseId}/materials/{materialId}/download` (opens in new tab)
+
+**Google Drive Auth Endpoint:**
+
+| Endpoint | Method | Response |
+|---|---|---|
+| `GET /google-drive/auth` | GET | `{ authUrl: string, scopes: string[], instructions: string }` |
+
+---
+
+### 11.9 Video Lectures Endpoint Reference Summary
+
+| Method | Endpoint | Used By | Description |
+|---|---|---|---|
+| `GET` | `/courses/{courseId}/materials` | Student, Instructor | Get all materials (supports pagination, filtering by type/week/search) |
+| `GET` | `/courses/{courseId}/materials/{materialId}` | Instructor | Get single material |
+| `POST` | `/courses/{courseId}/materials` | Instructor | Create text/link material (JSON body) |
+| `POST` | `/courses/{courseId}/materials/document` | Instructor | Upload document file (FormData — field: `document`) |
+| `POST` | `/courses/{courseId}/materials/video` | Instructor | Upload video to YouTube (FormData — field: `video`) |
+| `PUT` | `/courses/{courseId}/materials/{materialId}` | Instructor | Update material metadata |
+| `DELETE` | `/courses/{courseId}/materials/{materialId}` | Instructor | Delete material |
+| `PATCH` | `/courses/{courseId}/materials/{materialId}/visibility` | Instructor | Toggle published status |
+| `POST` | `/courses/{courseId}/materials/{materialId}/view` | Student | Track view (increments viewCount) |
+| `GET` | `/courses/{courseId}/materials/{materialId}/embed` | Instructor | Get YouTube embed data (`{ videoId, embedUrl, iframeHtml }`) |
+| `GET` | `/courses/{courseId}/materials/{materialId}/download` | Student, Instructor | Download file (direct URL construction) |
+| `GET` | `/courses/{courseId}/structure` | Student, Instructor | Get course structure (organized by weeks) |
+| `POST` | `/courses/{courseId}/structure` | Instructor | Create structure item |
+| `PUT` | `/courses/{courseId}/structure/{organizationId}` | Instructor | Update structure item |
+| `DELETE` | `/courses/{courseId}/structure/{organizationId}` | Instructor | Delete structure item |
+| `PATCH` | `/courses/{courseId}/structure/reorder` | Instructor | Reorder items (body: `{ orderIds: number[] }`) |
+| `GET` | `/youtube/auth` | Instructor | Get YouTube OAuth consent URL |
+| `GET` | `/google-drive/auth` | Instructor | Get Google Drive OAuth consent URL |
 
 ---
 

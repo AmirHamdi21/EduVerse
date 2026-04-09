@@ -19,6 +19,9 @@
 8. [Role-Based Access Matrix](#8-role-based-access-matrix)
 9. [Error Handling](#9-error-handling)
 10. [Flutter Integration Tips](#10-flutter-integration-tips)
+11. [Course Materials & Video Lectures Module](#11-course-materials--video-lectures-module)
+12. [Course Structure Module](#12-course-structure-module)
+13. [YouTube Integration Module](#13-youtube-integration-module)
 
 ---
 
@@ -2505,7 +2508,1421 @@ final isLate = submission['isLate'] as bool;
 
 ---
 
+## 11. Course Materials & Video Lectures Module
+
+**Base Path**: `/api/courses/:courseId/materials`
+
+> **All endpoints require JWT authentication** (`@UseGuards(JwtAuthGuard, RolesGuard)`).
+> This module handles uploading, viewing, organizing, and managing all course materials — including **video lectures** uploaded to YouTube and **documents** stored on Google Drive.
+
+### 11.0 Enums Reference (Course Materials)
+
+#### MaterialType
+| Value | Description |
+|---|---|
+| `lecture` | Lecture content (notes, handouts) |
+| `slide` | Presentation slides |
+| `video` | Video content (YouTube integration) |
+| `reading` | Reading material |
+| `link` | External link |
+| `document` | Generic document |
+| `other` | Uncategorized material |
+
+#### OrganizationType (for Course Structure)
+| Value | Description |
+|---|---|
+| `lecture` | Main lecture content |
+| `section` | Discussion or tutorial section |
+| `lab` | Hands-on lab session |
+| `tutorial` | Tutorial session |
+
+### 11.0.1 Database Entities
+
+#### `course_materials` Table
+
+| Column | DB Type | TS Type | Nullable | Default | Description |
+|---|---|---|---|---|---|
+| `material_id` | `bigint unsigned` | `number` | ❌ (PK) | Auto | Primary key |
+| `course_id` | `bigint unsigned` | `number` | ❌ | — | FK → `courses` |
+| `file_id` | `bigint unsigned` | `number \| null` | ✅ | `null` | FK → `files` (local files) |
+| `drive_file_id` | `bigint unsigned` | `number \| null` | ✅ | `null` | FK → `drive_files` (Google Drive) |
+| `material_type` | `enum('lecture','slide','video','reading','link','document','other')` | `MaterialType` | ❌ | `'document'` | Type of material |
+| `title` | `varchar(255)` | `string` | ❌ | — | Material title |
+| `description` | `text` | `string \| null` | ✅ | `null` | Description |
+| `external_url` | `varchar(500)` | `string \| null` | ✅ | `null` | External URL (YouTube embed URL, Google Drive link, etc.) |
+| `youtube_video_id` | `varchar(50)` | `string \| null` | ✅ | `null` | YouTube video ID (for video materials) |
+| `order_index` | `int` | `number` | ❌ | `0` | Sort order within week |
+| `week_number` | `int` | `number \| null` | ✅ | `null` | Week number for organizing by course week |
+| `view_count` | `int` | `number` | ❌ | `0` | Number of times viewed |
+| `download_count` | `int` | `number` | ❌ | `0` | Number of times downloaded |
+| `uploaded_by` | `bigint unsigned` | `number` | ❌ | — | FK → `users` (creator) |
+| `is_published` | `tinyint` | `boolean` | ❌ | `0` | `0` = draft (hidden), `1` = published (visible to students) |
+| `published_at` | `timestamp` | `Date \| null` | ✅ | `null` | When material was first published |
+| `created_at` | `timestamp` | `Date` | ❌ | Auto | Creation timestamp |
+| `updated_at` | `timestamp` | `Date` | ❌ | Auto | Last update timestamp |
+
+**Indexes**: `course_id`, `uploaded_by`, `material_type`, `week_number`
+
+#### `lecture_sections_labs` Table (Course Structure)
+
+| Column | DB Type | TS Type | Nullable | Default | Description |
+|---|---|---|---|---|---|
+| `organization_id` | `bigint unsigned` | `number` | ❌ (PK) | Auto | Primary key |
+| `course_id` | `bigint unsigned` | `number` | ❌ | — | FK → `courses` |
+| `material_id` | `bigint unsigned` | `number \| null` | ✅ | `null` | FK → `course_materials` |
+| `organization_type` | `enum('lecture','section','lab','tutorial')` | `OrganizationType \| null` | ✅ | `null` | Type of content organization |
+| `title` | `varchar(255)` | `string` | ❌ | — | Structure item title |
+| `week_number` | `int` | `number \| null` | ✅ | `null` | Week number |
+| `order_index` | `int` | `number` | ❌ | `0` | Sort order |
+| `description` | `text` | `string \| null` | ✅ | `null` | Description |
+| `created_at` | `timestamp` | `Date` | ❌ | Auto | Creation timestamp |
+| `updated_at` | `timestamp` | `Date` | ❌ | Auto | Last update timestamp |
+
+**Indexes**: `course_id`, `week_number`
+
+---
+
+### 11.1 List Course Materials
+
+```
+GET /api/courses/:courseId/materials
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: All authenticated users (role-based visibility filtering)
+
+#### Role-Based Visibility
+
+| Role | Can See |
+|---|---|
+| `student` | Only **published** materials (`is_published = 1`) |
+| `instructor` | All materials (including drafts) |
+| `teaching_assistant` | All materials (including drafts) |
+| `admin` / `it_admin` | All materials (including drafts) |
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+
+#### Query Parameters
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `materialType` | `string` | ❌ | — | Filter by `MaterialType` enum (`lecture`, `slide`, `video`, `reading`, `link`, `document`, `other`) |
+| `weekNumber` | `integer` | ❌ | — | Filter by week number |
+| `isPublished` | `boolean` | ❌ | — | Filter by visibility. Only effective for `instructor`, `ta`, `admin` roles. Ignored for students. |
+| `search` | `string` | ❌ | — | Search in title and description (partial match / `LIKE`) |
+| `sortBy` | `string` | ❌ | `orderIndex` | Sort field: `createdAt`, `title`, `orderIndex` |
+| `sortOrder` | `string` | ❌ | `ASC` | Sort order: `ASC` or `DESC` |
+| `page` | `integer` | ❌ | `1` | Page number (1-indexed, min: 1) |
+| `limit` | `integer` | ❌ | `10` | Items per page (1-100) |
+
+#### Response `200 OK`
+
+```json
+{
+  "data": [
+    {
+      "materialId": 1,                              // number (bigint) — Material ID (PK)
+      "courseId": 1,                                 // number — FK to courses
+      "fileId": null,                               // number | null — FK to local files
+      "driveFileId": 123,                           // number | null — FK to drive_files
+      "materialType": "video",                      // string — MaterialType enum
+      "title": "Lecture 1: Introduction to DS",     // string — Material title (max 255)
+      "description": "Covers basics of...",         // string | null — Description
+      "externalUrl": "https://www.youtube.com/embed/abc123",  // string | null — YouTube embed URL or Drive view URL
+      "youtubeVideoId": "abc123",                   // string | null — YouTube video ID
+      "orderIndex": 0,                              // number — Sort position
+      "weekNumber": 1,                              // number | null — Week number
+      "viewCount": 42,                              // number — Times viewed
+      "downloadCount": 10,                          // number — Times downloaded
+      "uploadedBy": 5,                              // number — Creator user ID
+      "isPublished": true,                          // boolean — Visibility state (tinyint 0/1 mapped to boolean)
+      "publishedAt": "2025-06-01T10:00:00Z",        // string | null — ISO 8601 timestamp
+      "createdAt": "2025-06-01T08:00:00Z",           // string — ISO 8601
+      "updatedAt": "2025-06-01T08:00:00Z",           // string — ISO 8601
+      "course": {                                    // object — Joined course relation
+        "id": 1,
+        "departmentId": 3,
+        "name": "Introduction to CS",
+        "code": "CS101"
+      },
+      "file": null,                                  // object | null — Joined local file relation
+      "uploader": {                                  // object — Joined uploader user relation
+        "user_id": 5,
+        "first_name": "Dr. Jane",
+        "last_name": "Smith",
+        "email": "jane@example.com"
+      }
+    }
+  ],
+  "meta": {
+    "total": 25,         // number — Total matching records
+    "page": 1,           // number — Current page
+    "limit": 10,         // number — Items per page
+    "totalPages": 3      // number — Total pages
+  }
+}
+```
+
+---
+
+### 11.2 Get Material by ID
+
+```
+GET /api/courses/:courseId/materials/:id
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: All authenticated users
+
+> **Students** can only view materials where `isPublished = true`. Requesting an unpublished material as a student returns `404 Not Found`.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+| `id` | `integer` | ✅ | Material ID |
+
+#### Response `200 OK`
+
+Returns a single material object (same shape as items in 11.1 `data` array, including `course`, `file`, and `uploader` relations).
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `401` | Unauthorized — missing or invalid token |
+| `404` | Material not found (or unpublished material accessed by student) |
+
+---
+
+### 11.3 Create Course Material
+
+```
+POST /api/courses/:courseId/materials
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`, `it_admin`
+
+> **Authorization**: Non-admin users must be **assigned to the course** (as instructor of a section or TA of a section). Unassigned instructors/TAs receive `403 Forbidden`.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+
+#### Request Body (`application/json`)
+
+| Field | Type | Required | Constraints | Description |
+|---|---|---|---|---|
+| `title` | `string` | ✅ | Max 255 chars, non-empty | Material title |
+| `materialType` | `string` | ✅ | `MaterialType` enum | Type of material |
+| `description` | `string` | ❌ | — | Material description |
+| `fileId` | `number` | ❌ | Must reference valid file ID | File ID from the Files module |
+| `externalUrl` | `string` | ❌ | Max 500 chars | External URL (YouTube link, external resource, etc.) |
+| `orderIndex` | `number` | ❌ | Min 0 | Sort order for display |
+| `weekNumber` | `number` | ❌ | Min 1 | Week number for content organization |
+| `isPublished` | `boolean` | ❌ | — | Publish immediately (`true`) or save as draft (`false`). **Default: `false`** |
+
+#### Example Request
+
+```json
+{
+  "title": "Lecture 1: Introduction to Programming",
+  "materialType": "video",
+  "description": "Introduction to basic programming concepts.",
+  "externalUrl": "https://www.youtube.com/watch?v=example",
+  "weekNumber": 1,
+  "orderIndex": 0,
+  "isPublished": false
+}
+```
+
+#### Response `201 Created`
+
+Returns the created material object (same shape as items in 11.1 response without `course`/`file`/`uploader` relations — raw entity).
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Invalid input data (validation failure) |
+| `403` | Forbidden — user not assigned to this course |
+
+---
+
+### 11.4 Bulk Create Materials
+
+```
+POST /api/courses/:courseId/materials/bulk
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`, `it_admin`
+
+> Maximum **50 materials** per request. Non-admin users must be assigned to the course.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+
+#### Request Body (`application/json`)
+
+| Field | Type | Required | Constraints | Description |
+|---|---|---|---|---|
+| `materials` | `CreateMaterialDto[]` | ✅ | 1-50 items, validated individually | Array of material objects (same shape as 11.3 request body) |
+
+#### Example Request
+
+```json
+{
+  "materials": [
+    {
+      "title": "Lecture 1: Introduction",
+      "materialType": "lecture",
+      "description": "Introduction to the course",
+      "weekNumber": 1
+    },
+    {
+      "title": "Lecture 2: Fundamentals",
+      "materialType": "lecture",
+      "description": "Fundamentals of the subject",
+      "weekNumber": 1
+    }
+  ]
+}
+```
+
+#### Response `201 Created`
+
+```json
+{
+  "message": "Successfully created 2 materials",  // string — Success message
+  "count": 2,                                      // number — Count of created items
+  "data": [                                        // CourseMaterial[] — Created material objects
+    {
+      "materialId": 10,
+      "courseId": 1,
+      "title": "Lecture 1: Introduction",
+      "materialType": "lecture",
+      "description": "Introduction to the course",
+      "weekNumber": 1,
+      "orderIndex": 0,
+      "isPublished": false,
+      "uploadedBy": 5,
+      "createdAt": "2025-06-01T08:00:00Z",
+      "updatedAt": "2025-06-01T08:00:00Z"
+    }
+  ]
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Invalid input data — minimum 1 material required, maximum 50 allowed |
+| `403` | Forbidden — user not assigned to this course |
+
+---
+
+### 11.5 Upload Video Material (YouTube)
+
+```
+POST /api/courses/:courseId/materials/video
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`, `it_admin`
+**Content-Type**: `multipart/form-data`
+
+> **This is the primary endpoint for uploading video lectures.**
+> The backend uploads the video to YouTube as **unlisted**, then creates a `course_materials` record with the YouTube embed URL and video ID.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+
+#### Form Data Fields
+
+| Field | Type | Required | Constraints | Description |
+|---|---|---|---|---|
+| `video` | `binary (file)` | ✅ | Formats: `mp4`, `avi`, `mov`, `webm`, `mkv`, `flv`, `wmv` | Video file to upload |
+| `title` | `string` | ✅ | Max 255 chars, non-empty | Video title |
+| `description` | `string` | ❌ | — | Video description |
+| `tags` | `string[]` | ❌ | Array of strings | Tags for the YouTube video |
+| `weekNumber` | `integer` | ❌ | 1–52 | Week to assign the video to |
+| `orderIndex` | `integer` | ❌ | Min 0, default: `0` | Sort order within the week |
+| `isPublished` | `boolean` | ❌ | Default: `false` | Publish immediately or save as draft |
+
+#### Upload Flow (Internal)
+
+1. Backend validates user is authorized for this course
+2. Video file buffer is uploaded to **YouTube** (privacy: `unlisted`)
+3. YouTube returns `videoId` and URL
+4. A `course_materials` record is created with:
+   - `materialType` = `video`
+   - `externalUrl` = `https://www.youtube.com/embed/{videoId}`
+   - `youtubeVideoId` = the YouTube video ID
+   - Other metadata (`weekNumber`, `orderIndex`, `isPublished`)
+
+#### Response `201 Created`
+
+```json
+{
+  "materialId": 1,                                           // number — Created material ID
+  "courseId": 1,                                             // number — Course ID
+  "title": "Lecture 1: Introduction",                        // string — Video title
+  "materialType": "video",                                   // string — Always "video"
+  "description": "This covers the basics...",                // string | null
+  "externalUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ", // string — YouTube embed URL
+  "youtubeVideoId": "dQw4w9WgXcQ",                          // string — YouTube video ID
+  "weekNumber": 1,                                           // number | null
+  "orderIndex": 0,                                           // number
+  "isPublished": false,                                      // boolean
+  "publishedAt": null,                                       // string | null
+  "uploadedBy": 5,                                           // number
+  "viewCount": 0,                                            // number
+  "downloadCount": 0,                                        // number
+  "createdAt": "2025-06-01T08:00:00Z",                       // string — ISO 8601
+  "updatedAt": "2025-06-01T08:00:00Z",                       // string — ISO 8601
+  "youtubeUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // string — Full YouTube watch URL (appended by service)
+  "embedUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"    // string — Embed URL for iframe (appended by service)
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | No video file provided / YouTube upload failed / Invalid input data |
+| `403` | Forbidden — user not assigned to this course |
+| `413` | Video file too large (YouTube account limits apply) |
+
+---
+
+### 11.6 Upload Document Material (Google Drive)
+
+```
+POST /api/courses/:courseId/materials/document
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`, `it_admin`
+**Content-Type**: `multipart/form-data`
+
+> Uploads a document to **Google Drive** in the appropriate course folder hierarchy and creates a material record.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+
+#### Form Data Fields
+
+| Field | Type | Required | Constraints | Description |
+|---|---|---|---|---|
+| `document` | `binary (file)` | ✅ | Formats: `pdf`, `ppt`, `pptx`, `doc`, `docx`, `xls`, `xlsx`, `txt`, `md`, `zip` | Document file to upload |
+| `title` | `string` | ✅ | Max 255 chars, non-empty | Document title |
+| `description` | `string` | ❌ | — | Document description |
+| `materialType` | `string` | ❌ | `MaterialType` enum, default: `document` | Document type: `lecture`, `slide`, `reading`, `document`, `link` |
+| `weekNumber` | `integer` | ❌ | 1–52 | Week to assign the document to |
+| `orderIndex` | `integer` | ❌ | Min 0, default: `0` | Sort order within the week |
+| `isPublished` | `boolean` | ❌ | Default: `false` | Publish immediately or save as draft |
+
+#### Folder Placement Rules
+
+| `materialType` value | Google Drive folder target |
+|---|---|
+| `lecture` | `Course/Lectures/` |
+| `slide` | `Course/Lectures/` (slides grouped with lectures) |
+| `reading` | `Course/General/` |
+| `document` | `Course/General/` |
+| `link` | `Course/General/` |
+| _other_ | `Course/General/` |
+
+#### File Naming Convention
+
+Files are renamed following the pattern:
+```
+{WeekNN_}{SafeTitle}_v1.{ext}
+```
+- Example: `Week01_Introduction_to_Data_Structures_v1.pdf`
+
+#### Response `201 Created`
+
+```json
+{
+  "materialId": 2,                                                          // number — Created material ID
+  "courseId": 1,                                                            // number
+  "title": "Week 1 Lecture Notes",                                          // string
+  "materialType": "lecture",                                                // string — MaterialType enum
+  "description": "Comprehensive lecture notes covering the basics.",         // string | null
+  "externalUrl": "https://drive.google.com/file/d/abc123/view",             // string — Google Drive view URL
+  "driveFileId": 123,                                                       // number — FK to drive_files table
+  "weekNumber": 1,                                                          // number | null
+  "orderIndex": 0,                                                          // number
+  "isPublished": false,                                                     // boolean
+  "publishedAt": null,                                                      // string | null
+  "uploadedBy": 5,                                                          // number
+  "createdAt": "2025-06-01T08:00:00Z",                                      // string — ISO 8601
+  "updatedAt": "2025-06-01T08:00:00Z",                                      // string — ISO 8601
+  "driveId": "abc123",                                                      // string — Google Drive file ID (appended)
+  "driveViewUrl": "https://drive.google.com/file/d/abc123/view",            // string — View URL (appended)
+  "driveDownloadUrl": "https://drive.google.com/uc?id=abc123&export=download", // string — Download URL (appended)
+  "fileName": "Week01_Week_1_Lecture_Notes_v1.pdf"                          // string — Generated file name (appended)
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | No document file / Google Drive upload failed / Invalid input data |
+| `403` | Forbidden — user not assigned to this course |
+
+---
+
+### 11.7 Update Material
+
+```
+PUT /api/courses/:courseId/materials/:id
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`, `it_admin`
+
+> **Ownership**: Non-admin users can only update materials **they uploaded** (`uploadedBy` must match the requesting user). Admins can update any material.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+| `id` | `integer` | ✅ | Material ID |
+
+#### Request Body (`application/json`) — All fields optional (uses `PartialType` of `CreateMaterialDto`)
+
+| Field | Type | Required | Constraints | Description |
+|---|---|---|---|---|
+| `title` | `string` | ❌ | Max 255 chars | Updated title |
+| `materialType` | `string` | ❌ | `MaterialType` enum | Updated type |
+| `description` | `string` | ❌ | — | Updated description |
+| `fileId` | `number` | ❌ | Must exist | Updated file reference |
+| `externalUrl` | `string` | ❌ | Max 500 chars | Updated external URL |
+| `orderIndex` | `number` | ❌ | Min 0 | Updated sort order |
+| `weekNumber` | `number` | ❌ | Min 1 | Updated week number |
+| `isPublished` | `boolean` | ❌ | — | Updated visibility. If changing from `false` → `true`, `publishedAt` is set automatically. |
+
+#### Response `200 OK`
+
+Returns the updated material object (with `course`, `file`, `uploader` relations).
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `403` | Forbidden — you can only update materials you uploaded (non-admin) |
+| `404` | Material not found |
+
+---
+
+### 11.8 Delete Material
+
+```
+DELETE /api/courses/:courseId/materials/:id
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`, `it_admin`
+
+> **Ownership**: Non-admin users can only delete materials **they uploaded**. Admins can delete any material.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+| `id` | `integer` | ✅ | Material ID |
+
+#### Response `200 OK`
+
+```json
+{
+  "message": "Material deleted successfully"   // string
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `403` | Forbidden — you can only delete materials you uploaded (non-admin) |
+| `404` | Material not found |
+
+---
+
+### 11.9 Toggle Material Visibility
+
+```
+PATCH /api/courses/:courseId/materials/:id/visibility
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`, `it_admin`
+
+> Controls whether a material is visible to students. Non-admin users can only toggle visibility of materials **they uploaded**.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+| `id` | `integer` | ✅ | Material ID |
+
+#### Request Body (`application/json`)
+
+| Field | Type | Required | Constraints | Description |
+|---|---|---|---|---|
+| `isPublished` | `boolean` | ✅ | — | `true` = visible to students, `false` = draft (hidden) |
+
+#### Example Request
+
+```json
+{
+  "isPublished": true
+}
+```
+
+#### Response `200 OK`
+
+Returns the updated material object (full entity with `course`, `file`, `uploader` relations). `publishedAt` is set to current timestamp on first publish, preserved on subsequent toggles.
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `403` | Forbidden — you can only change visibility of materials you uploaded (non-admin) |
+| `404` | Material not found |
+
+---
+
+### 11.10 Download Material
+
+```
+GET /api/courses/:courseId/materials/:id/download
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: All authenticated users
+
+> Students can only download **published** materials. Increments `downloadCount` on each successful call.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+| `id` | `integer` | ✅ | Material ID |
+
+#### Response `200 OK`
+
+```json
+{
+  "material": {                          // object — Full material entity
+    "materialId": 1,
+    "title": "Lecture Notes Week 1",
+    "materialType": "lecture",
+    "fileId": 12,
+    "externalUrl": null,
+    "viewCount": 42,
+    "downloadCount": 11
+    // ... full material object fields
+  },
+  "file": {                              // object — Associated file entity
+    "fileId": 12,
+    "fileName": "lecture_notes_w1.pdf",
+    "filePath": "/uploads/materials/lecture_notes_w1.pdf",
+    "fileSize": 2048576,
+    "mimeType": "application/pdf"
+    // ... full file object fields
+  },
+  "downloadUrl": "/uploads/materials/lecture_notes_w1.pdf"   // string — Direct download path
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Material does not have a downloadable file (`fileId` is null) |
+| `404` | Material or associated file not found |
+
+---
+
+### 11.11 Track Material View
+
+```
+POST /api/courses/:courseId/materials/:id/view
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: All authenticated users
+
+> Records that a user viewed a material. Increments `viewCount` counter. Used for analytics and engagement tracking.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+| `id` | `integer` | ✅ | Material ID |
+
+#### Request Body
+
+_None_ (empty body)
+
+#### Response `200 OK`
+
+```json
+{
+  "message": "View tracked successfully",   // string
+  "materialId": 1,                          // number — Material ID
+  "viewCount": 43                           // number — New total view count
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `404` | Material not found |
+
+---
+
+### 11.12 Get Embed URL (Video Materials)
+
+```
+GET /api/courses/:courseId/materials/:id/embed
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: All authenticated users
+
+> For **video** materials only. Returns the YouTube embed URL and ready-to-use iframe HTML.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+| `id` | `integer` | ✅ | Material ID |
+
+#### Response `200 OK` (YouTube video)
+
+```json
+{
+  "videoId": "dQw4w9WgXcQ",                                    // string — YouTube video ID
+  "embedUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",     // string — Embed URL for iframe
+  "iframeHtml": "<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/dQw4w9WgXcQ\" frameborder=\"0\" allowfullscreen></iframe>"  // string — Ready-to-use iframe HTML
+}
+```
+
+#### Response `200 OK` (Non-YouTube external URL)
+
+```json
+{
+  "externalUrl": "https://example.com/video.mp4"   // string — Raw external URL
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Material is not a video (`materialType !== 'video'`) or has no external URL |
+| `404` | Material not found |
+
+---
+
+## 12. Course Structure Module
+
+**Base Path**: `/api/courses/:courseId/structure`
+
+> **All endpoints require JWT authentication** (`@UseGuards(JwtAuthGuard, RolesGuard)`).
+> This module provides the organizational layer for course content — mapping materials into weeks, lectures, sections, and labs.
+
+---
+
+### 12.1 Get Course Structure
+
+```
+GET /api/courses/:courseId/structure
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: All authenticated users
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+
+#### Response `200 OK`
+
+```json
+{
+  "data": [                                   // LectureSectionLab[] — Flat list of all structure items
+    {
+      "organizationId": 1,                   // number — Structure item ID (PK)
+      "courseId": 1,                          // number — FK to courses
+      "materialId": 5,                        // number | null — FK to course_materials
+      "organizationType": "lecture",          // string | null — OrganizationType enum
+      "title": "Week 1: Introduction",        // string — Item title
+      "weekNumber": 1,                        // number | null — Week number
+      "orderIndex": 0,                        // number — Sort position
+      "description": "Overview of course",    // string | null
+      "createdAt": "2025-06-01T08:00:00Z",    // string — ISO 8601
+      "updatedAt": "2025-06-01T08:00:00Z",    // string — ISO 8601
+      "material": {                           // object | null — Joined material relation
+        "materialId": 5,
+        "title": "Lecture 1 Slides",
+        "materialType": "slide",
+        "externalUrl": "https://drive.google.com/...",
+        "youtubeVideoId": null,
+        "weekNumber": 1,
+        "viewCount": 20,
+        "isPublished": true
+      }
+    }
+  ],
+  "byWeek": {                                // Record<number, LectureSectionLab[]> — Grouped by week
+    "0": [ /* items without a week */ ],
+    "1": [ /* week 1 items */ ],
+    "2": [ /* week 2 items */ ]
+  }
+}
+```
+
+> **Sorting**: Items sorted by `weekNumber ASC`, then `orderIndex ASC`.
+
+---
+
+### 12.2 Get Structure Item by ID
+
+```
+GET /api/courses/:courseId/structure/:id
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: All authenticated users
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+| `id` | `integer` | ✅ | Structure item ID |
+
+#### Response `200 OK`
+
+Returns a single structure item with `course` and `material` relations joined.
+
+```json
+{
+  "organizationId": 1,
+  "courseId": 1,
+  "materialId": 5,
+  "organizationType": "lecture",
+  "title": "Week 1: Introduction",
+  "weekNumber": 1,
+  "orderIndex": 0,
+  "description": "Overview of the course",
+  "createdAt": "2025-06-01T08:00:00Z",
+  "updatedAt": "2025-06-01T08:00:00Z",
+  "course": {
+    "id": 1,
+    "name": "Introduction to CS",
+    "code": "CS101"
+  },
+  "material": {
+    "materialId": 5,
+    "title": "Lecture 1 Slides",
+    "materialType": "slide"
+  }
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `404` | Structure item not found |
+
+---
+
+### 12.3 Create Structure Item
+
+```
+POST /api/courses/:courseId/structure
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `admin`, `it_admin`
+
+> **Note**: TAs **cannot** create structure items. Non-admin instructors must be assigned to the course.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+
+#### Request Body (`application/json`)
+
+| Field | Type | Required | Constraints | Description |
+|---|---|---|---|---|
+| `title` | `string` | ✅ | Max 255 chars, non-empty | Structure item title |
+| `organizationType` | `string` | ✅ | `OrganizationType` enum (`lecture`, `section`, `lab`, `tutorial`) | Type of content |
+| `description` | `string` | ❌ | — | Description of this content section |
+| `weekNumber` | `number` | ❌ | Min 1 | Week number for this content |
+| `orderIndex` | `number` | ❌ | Min 0. **Auto-calculated** if omitted (max existing + 1 within the week). | Sort order |
+| `materialId` | `number` | ❌ | Must reference valid material ID | Link to an existing material |
+
+#### Example Request
+
+```json
+{
+  "title": "Week 1: Introduction to Data Structures",
+  "organizationType": "lecture",
+  "description": "Introduction to the course and basic concepts",
+  "weekNumber": 1,
+  "materialId": 5
+}
+```
+
+#### Response `201 Created`
+
+Returns the created structure item entity.
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Invalid input data |
+| `403` | Forbidden — only instructors/admins; must be assigned to course |
+
+---
+
+### 12.4 Update Structure Item
+
+```
+PUT /api/courses/:courseId/structure/:id
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `admin`, `it_admin`
+
+> All fields from `CreateStructureDto` are optional (`PartialType`). TAs cannot update structure. Non-admin instructors must be assigned to the course.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+| `id` | `integer` | ✅ | Structure item ID |
+
+#### Request Body (`application/json`) — All fields optional
+
+| Field | Type | Required | Constraints | Description |
+|---|---|---|---|---|
+| `title` | `string` | ❌ | Max 255 chars | Updated title |
+| `organizationType` | `string` | ❌ | `OrganizationType` enum | Updated type |
+| `description` | `string` | ❌ | — | Updated description |
+| `weekNumber` | `number` | ❌ | Min 1 | Updated week number |
+| `orderIndex` | `number` | ❌ | Min 0 | Updated sort order |
+| `materialId` | `number` | ❌ | Valid material ID | Updated material link |
+
+#### Response `200 OK`
+
+Returns the updated structure item entity.
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `403` | Forbidden — only instructors/admins; must be assigned |
+| `404` | Structure item not found |
+
+---
+
+### 12.5 Delete Structure Item
+
+```
+DELETE /api/courses/:courseId/structure/:id
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `admin`, `it_admin`
+
+> **Important**: Deleting a structure item does **NOT** delete associated materials. The material remains in the `course_materials` table.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+| `id` | `integer` | ✅ | Structure item ID |
+
+#### Response `200 OK`
+
+```json
+{
+  "message": "Structure item deleted successfully"   // string
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `403` | Forbidden — only instructors/admins; must be assigned |
+| `404` | Structure item not found |
+
+---
+
+### 12.6 Reorder Structure Items
+
+```
+PATCH /api/courses/:courseId/structure/reorder
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `admin`, `it_admin`
+
+> Reorders multiple structure items in a single request. All IDs must belong to the specified course.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+
+#### Request Body (`application/json`)
+
+| Field | Type | Required | Constraints | Description |
+|---|---|---|---|---|
+| `orderIds` | `number[]` | ✅ | Non-empty array of existing structure item IDs | Array of item IDs in the desired new order |
+
+#### Example Request
+
+```json
+{
+  "orderIds": [3, 1, 2, 4]
+}
+```
+
+> This would set:
+> - ID 3 → `orderIndex: 0`
+> - ID 1 → `orderIndex: 1`
+> - ID 2 → `orderIndex: 2`
+> - ID 4 → `orderIndex: 3`
+
+#### Response `200 OK`
+
+```json
+{
+  "message": "Structure reordered successfully"   // string
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Invalid input data (empty array, non-number values) |
+| `403` | Forbidden — only instructors/admins; must be assigned |
+| `404` | Some structure items not found or do not belong to this course |
+
+---
+
+## 13. YouTube Integration Module
+
+**Base Path**: `/youtube`
+
+> This module provides **standalone YouTube API integration** for OAuth authentication, video upload, search, and video details retrieval.
+> ⚠️ These endpoints are primarily used internally by the Course Materials module (section 11.5) but are also exposed directly for advanced use cases.
+
+---
+
+### 13.1 Get YouTube Auth URL
+
+```
+GET /youtube/auth
+```
+
+**Auth Required**: ❌ No (Public endpoint)
+**Roles**: None
+
+> Returns the Google OAuth2 authorization URL. The user must visit this URL to grant YouTube upload permission.
+
+#### Response `200 OK`
+
+```json
+{
+  "authUrl": "https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fyoutube.upload&response_type=code&client_id=xxx&redirect_uri=xxx&prompt=consent"
+  // string — Full OAuth2 URL to redirect the user to
+}
+```
+
+---
+
+### 13.2 Handle YouTube OAuth Callback
+
+```
+GET /youtube/callback
+```
+
+**Auth Required**: ❌ No (Called by Google redirect)
+**Roles**: None
+
+> Exchanges the authorization code (received from Google after user consent) for access/refresh tokens.
+
+#### Query Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `code` | `string` | ✅ | Authorization code from Google OAuth redirect |
+
+#### Response `200 OK`
+
+```json
+{
+  "message": "Authentication successful",          // string
+  "refreshToken": "ya29.a0AfB_byC..."              // string — Refresh token for future API calls
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Invalid or expired authorization code |
+
+---
+
+### 13.3 Upload Video to YouTube (Standalone)
+
+```
+POST /youtube/upload
+```
+
+**Auth Required**: ✅ Requires YouTube OAuth configured (refresh token in environment)
+**Roles**: Any user with YouTube credentials
+**Content-Type**: `multipart/form-data`
+
+> **Note**: For uploading course lecture videos, prefer the dedicated endpoint `POST /api/courses/:courseId/materials/video` (section 11.5) which also creates the material record.
+
+#### Form Data Fields
+
+| Field | Type | Required | Constraints | Description |
+|---|---|---|---|---|
+| `video` | `binary (file)` | ✅ | MP4, AVI, MOV, WMV, FLV, WebM | Video file |
+| `title` | `string` | ✅ | — | Video title |
+| `description` | `string` | ✅ | — | Video description |
+| `tags` | `string` | ❌ | Comma-separated string | Tags (e.g. `"education,course,lecture"`) |
+
+> **Note**: `tags` here is a **comma-separated string**, not an array (unlike the Course Materials video endpoint).
+
+#### Response `201 Created`
+
+```json
+{
+  "success": true,                                              // boolean
+  "videoId": "dQw4w9WgXcQ",                                    // string — YouTube video ID
+  "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",   // string — Full watch URL
+  "data": {                                                     // object — Full YouTube API response data
+    "kind": "youtube#video",
+    "etag": "...",
+    "id": "dQw4w9WgXcQ",
+    "snippet": {
+      "title": "My Course Lecture",
+      "description": "Lecture about...",
+      "tags": ["education", "course", "lecture"],
+      "categoryId": "22"
+    },
+    "status": {
+      "privacyStatus": "unlisted"
+    }
+  }
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | No video file or invalid format |
+| `401` | YouTube authentication required (no valid refresh token) |
+| `413` | Video file too large |
+
+---
+
+### 13.4 Search YouTube Videos
+
+```
+GET /youtube/search
+```
+
+**Auth Required**: ❌ No (Uses service account OAuth2)
+**Roles**: None
+
+#### Query Parameters
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `query` | `string` | ✅ | — | Search terms |
+| `maxResults` | `integer` | ❌ | `10` | Max number of results (capped at 50) |
+
+#### Response `200 OK`
+
+```json
+{
+  "success": true,                                              // boolean
+  "items": [                                                    // array — Search results
+    {
+      "videoId": "dQw4w9WgXcQ",                                // string — YouTube video ID
+      "title": "Example Video Title",                           // string — Video title
+      "description": "Video description...",                    // string — Truncated description
+      "thumbnail": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",  // string — HQ thumbnail URL
+      "channelTitle": "Channel Name",                           // string — Channel name
+      "publishedAt": "2023-01-15T10:30:00Z",                    // string — ISO 8601 publish date
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // string — Watch URL
+      "embedUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"   // string — Embed URL
+    }
+  ],
+  "totalResults": 1000000,                                      // number — Total matching results
+  "resultsPerPage": 10                                          // number — Results returned
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Invalid query parameters (missing `query`) |
+
+---
+
+### 13.5 Get Video Details by ID
+
+```
+GET /youtube/videos/:videoId
+```
+
+**Auth Required**: ❌ No (Uses service account OAuth2)
+**Roles**: None
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `videoId` | `string` | ✅ | YouTube video ID (e.g. `dQw4w9WgXcQ`) |
+
+#### Response `200 OK` (Found)
+
+```json
+{
+  "success": true,                                              // boolean
+  "video": {                                                    // object — Complete video info
+    "videoId": "dQw4w9WgXcQ",                                  // string — YouTube ID
+    "title": "Example Video",                                   // string — Title
+    "description": "Full video description...",                 // string — Full description
+    "thumbnail": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",  // string — Thumbnail
+    "channelId": "UC1234567890",                                // string — Channel ID
+    "channelTitle": "Channel Name",                             // string — Channel name
+    "publishedAt": "2023-01-15T10:30:00Z",                      // string — Publish date
+    "duration": "PT4M33S",                                      // string — ISO 8601 duration
+    "viewCount": "1000000",                                     // string — View count
+    "likeCount": "50000",                                       // string — Like count
+    "commentCount": "2000",                                     // string — Comment count
+    "privacyStatus": "public",                                  // string — "public" | "private" | "unlisted"
+    "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",  // string — Watch URL
+    "embedUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"     // string — Embed URL
+  }
+}
+```
+
+#### Response `200 OK` (Not Found)
+
+```json
+{
+  "success": false,                       // boolean
+  "message": "Video not found"            // string
+}
+```
+
+> **Note**: Returns `200` with `success: false` when video doesn't exist — not a `404`.
+
+---
+
+### 13.6 Get Channel Videos
+
+```
+GET /youtube/channel/:channelId/videos
+```
+
+**Auth Required**: ❌ No (Uses service account OAuth2)
+**Roles**: None
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `channelId` | `string` | ✅ | YouTube channel ID (e.g. `UC1234567890`) |
+
+#### Query Parameters
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `maxResults` | `integer` | ❌ | `10` | Max number of results (capped at 50) |
+
+#### Response `200 OK`
+
+```json
+{
+  "success": true,                                              // boolean
+  "items": [                                                    // array — Channel videos (newest first)
+    {
+      "videoId": "dQw4w9WgXcQ",                                // string — Video ID
+      "title": "Latest Video",                                  // string — Title
+      "description": "Video description...",                    // string
+      "thumbnail": "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",  // string
+      "publishedAt": "2023-01-15T10:30:00Z",                    // string — ISO 8601
+      "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", // string
+      "embedUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ"   // string
+    }
+  ],
+  "totalResults": 150,                                          // number — Total channel videos
+  "resultsPerPage": 10                                          // number — Results returned
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `404` | Channel not found |
+
+---
+
+## 14. Course Materials Role-Based Access Matrix
+
+| Endpoint | Student | Instructor (assigned) | TA (assigned) | Admin / IT Admin |
+|---|---|---|---|---|
+| `GET .../materials` | ✅ (published only) | ✅ (all) | ✅ (all) | ✅ (all) |
+| `GET .../materials/:id` | ✅ (published only) | ✅ | ✅ | ✅ |
+| `POST .../materials` | ❌ | ✅ | ✅ | ✅ |
+| `POST .../materials/bulk` | ❌ | ✅ | ✅ | ✅ |
+| `POST .../materials/video` | ❌ | ✅ | ✅ | ✅ |
+| `POST .../materials/document` | ❌ | ✅ | ✅ | ✅ |
+| `PUT .../materials/:id` | ❌ | ✅ (own only) | ✅ (own only) | ✅ (any) |
+| `DELETE .../materials/:id` | ❌ | ✅ (own only) | ✅ (own only) | ✅ (any) |
+| `PATCH .../materials/:id/visibility` | ❌ | ✅ (own only) | ✅ (own only) | ✅ (any) |
+| `GET .../materials/:id/download` | ✅ (published only) | ✅ | ✅ | ✅ |
+| `POST .../materials/:id/view` | ✅ | ✅ | ✅ | ✅ |
+| `GET .../materials/:id/embed` | ✅ | ✅ | ✅ | ✅ |
+| `GET .../structure` | ✅ | ✅ | ✅ | ✅ |
+| `GET .../structure/:id` | ✅ | ✅ | ✅ | ✅ |
+| `POST .../structure` | ❌ | ✅ | ❌ | ✅ |
+| `PUT .../structure/:id` | ❌ | ✅ | ❌ | ✅ |
+| `DELETE .../structure/:id` | ❌ | ✅ | ❌ | ✅ |
+| `PATCH .../structure/reorder` | ❌ | ✅ | ❌ | ✅ |
+
+---
+
+## 15. Video Lecture Viewing — End-to-End Flow
+
+### 15.1 Instructor Uploads a Video Lecture
+
+```mermaid
+sequenceDiagram
+    participant I as Instructor
+    participant API as Backend API
+    participant YT as YouTube API
+    participant DB as Database
+
+    I->>API: POST /api/courses/1/materials/video (multipart: video + metadata)
+    API->>API: Validate user is assigned to course
+    API->>YT: Upload video buffer (unlisted)
+    YT-->>API: Return { videoId, videoUrl }
+    API->>DB: INSERT INTO course_materials (materialType='video', youtubeVideoId, externalUrl=embed URL)
+    DB-->>API: Return saved material entity
+    API-->>I: 201 { materialId, youtubeVideoId, embedUrl, youtubeUrl }
+```
+
+### 15.2 Student Views a Video Lecture
+
+```mermaid
+sequenceDiagram
+    participant S as Student
+    participant API as Backend API
+    participant DB as Database
+
+    S->>API: GET /api/courses/1/materials?materialType=video
+    API->>DB: SELECT WHERE course_id=1 AND material_type='video' AND is_published=1
+    DB-->>API: Return published video materials
+    API-->>S: 200 { data: [...], meta: { total, page, limit, totalPages } }
+    Note over S: Student selects a video
+    S->>API: POST /api/courses/1/materials/5/view
+    API->>DB: UPDATE viewCount = viewCount + 1
+    API-->>S: 200 { message, materialId, viewCount }
+    S->>API: GET /api/courses/1/materials/5/embed
+    API-->>S: 200 { videoId, embedUrl, iframeHtml }
+    Note over S: Flutter renders YouTube video using embedUrl in WebView/iframe
+```
+
+### 15.3 Flutter Integration Example (Video Player)
+
+```dart
+// Fetch video material
+final response = await dio.get(
+  '$baseUrl/api/courses/$courseId/materials/$materialId/embed',
+  options: Options(headers: {'Authorization': 'Bearer $token'}),
+);
+
+final embedUrl = response.data['embedUrl'] as String;
+final videoId = response.data['videoId'] as String;
+
+// Option 1: Use WebView for embedded YouTube
+WebViewWidget(controller: WebViewController()
+  ..loadRequest(Uri.parse(embedUrl)));
+
+// Option 2: Use youtube_player_flutter package
+YoutubePlayer(
+  controller: YoutubePlayerController(
+    initialVideoId: videoId,
+    flags: YoutubePlayerFlags(autoPlay: false),
+  ),
+);
+```
+
+---
+
 > **Last Updated**: April 2026
 > **Backend Framework**: NestJS (TypeScript)
 > **Database**: MySQL with TypeORM
 > **File Storage**: Google Drive API
+> **Video Storage**: YouTube API (unlisted uploads)
