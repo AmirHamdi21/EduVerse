@@ -8,6 +8,7 @@ import '../../services/api/course_service.dart';
 import '../../services/api/enrollment_service.dart';
 import '../../services/api/material_service.dart';
 import '../../services/api/communication_service.dart';
+import '../../common/service_error.dart';
 import '../../models/core/enrollment_model.dart';
 import '../../models/core/course_model.dart';
 import '../../models/core/course_structure_model.dart';
@@ -64,7 +65,14 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     emit(CoursesLoading(cachedData: cached));
 
     try {
-      final enrollments = await _enrollmentService.getMyCourses();
+      final enrollmentsResult = await _enrollmentService.getMyCourses();
+      if (!enrollmentsResult.isSuccess || enrollmentsResult.data == null) {
+        throw Exception(
+          enrollmentsResult.error?.message ?? 'Failed to load courses',
+        );
+      }
+
+      final enrollments = enrollmentsResult.data!;
       await _cacheEnrollments(enrollments);
       emit(CoursesLoaded(enrollments: enrollments));
     } catch (e) {
@@ -86,7 +94,17 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     emit(CoursesLoading(cachedData: cached));
 
     try {
-      final teachingCourses = await _enrollmentService.getTeachingCourses();
+      final teachingCoursesResult = await _enrollmentService
+          .getTeachingCourses();
+      if (!teachingCoursesResult.isSuccess ||
+          teachingCoursesResult.data == null) {
+        throw Exception(
+          teachingCoursesResult.error?.message ??
+              'Failed to load teaching courses',
+        );
+      }
+
+      final teachingCourses = teachingCoursesResult.data!;
       await _cacheTeachingCourses(teachingCourses);
       emit(InstructorCoursesLoaded(teachingCourses: teachingCourses));
     } catch (e) {
@@ -108,7 +126,17 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     emit(CoursesLoading(cachedData: cached));
 
     try {
-      final teachingCourses = await _enrollmentService.getTeachingCourses();
+      final teachingCoursesResult = await _enrollmentService
+          .getTeachingCourses();
+      if (!teachingCoursesResult.isSuccess ||
+          teachingCoursesResult.data == null) {
+        throw Exception(
+          teachingCoursesResult.error?.message ??
+              'Failed to load teaching courses',
+        );
+      }
+
+      final teachingCourses = teachingCoursesResult.data!;
       await _cacheTeachingCourses(teachingCourses);
       emit(TACoursesLoaded(teachingCourses: teachingCourses));
     } catch (e) {
@@ -314,7 +342,9 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
 
   // ── Course Structure Cache ────────────────────────────────────────────────
 
-  Future<List<CourseStructureModel>> _loadCachedStructure(dynamic courseId) async {
+  Future<List<CourseStructureModel>> _loadCachedStructure(
+    dynamic courseId,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final raw = prefs.getString('$_cacheKeyStructurePrefix$courseId');
@@ -328,7 +358,10 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     }
   }
 
-  Future<void> _cacheStructure(dynamic courseId, List<CourseStructureModel> structure) async {
+  Future<void> _cacheStructure(
+    dynamic courseId,
+    List<CourseStructureModel> structure,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final encoded = jsonEncode(structure.map((e) => e.toJson()).toList());
@@ -356,6 +389,10 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
       if (statusCode != null && statusCode >= 500) {
         return 'Server error. Please try again later';
       }
+    }
+
+    if (error is ServiceError) {
+      return error.message;
     }
 
     final raw = error.toString();

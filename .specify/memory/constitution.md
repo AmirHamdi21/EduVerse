@@ -1,31 +1,30 @@
 <!--
 SYNC IMPACT REPORT
-- Version Change: 2.0.0 -> 3.0.0
+- Version Change: 3.0.0 → 4.0.0 (MAJOR — new feature domain: Courses/Assignments/Labs)
 - Modified Principles:
-  - "I. BLoC State Management First" -> "I. BLoC State Management First" (unchanged)
-  - "II. Strict Data Layer Separation" -> "II. Strict Data Layer Separation" (expanded: added AssignmentService, LabService, SectionService, ScheduleService, MaterialService; added file upload via Dio FormData rules)
-  - "III. Type Safety & Error Handling" -> "III. Type Safety & Error Handling" (expanded: added isLate int/bool divergence, allowedFileTypes JSON-string parsing, decimal field parsing, PaginatedResponse generic)
-  - "IV. Website Feature Parity" -> "IV. Website Feature Parity" (expanded: updated source-of-truth docs to include Courses_Assignments_Labs_Frontend_Documentation.md)
-  - "V. Testable Architecture" -> "V. Testable Architecture" (unchanged)
-  - "VI. Real-Time Communication Integrity" -> "VI. Real-Time Communication Integrity" (unchanged — still applies to chat)
-  - "VII. Static Data Elimination" -> "VII. Static Data Elimination" (expanded: added Courses/Assignments/Labs mock targets)
-  - "VIII. Aggressive Clarification" -> "VIII. Aggressive Clarification" (expanded: added file upload, grading, and attendance clarification areas)
+  - I. BLoC State Management First — unchanged
+  - II. Strict Data Layer Separation — expanded: added AssignmentService, LabService, SectionService, ScheduleService, MaterialService; added file upload via Dio FormData rules
+  - III. Type Safety & Error Handling — expanded: added isLate int/bool divergence, allowedFileTypes JSON-string parsing, decimal field parsing, PaginatedResponse generic
+  - IV. Website Feature Parity — expanded: added Courses_Assignments_Labs_Frontend_Documentation.md as source of truth
+  - V. Testable Architecture — unchanged
+  - VI. Real-Time Communication Integrity — unchanged (still applies to chat)
+  - VII. Static Data Elimination — expanded: added courses/assignments/labs mock targets
+  - VIII. Aggressive Clarification — expanded: added file upload, grading, attendance clarification areas
 - Added Principles:
-  - "IX. Role-Based Access Control Enforcement" (new: UI gating per role matrix)
-  - "X. File Upload & Google Drive/YouTube Integration" (new: FormData, progress, preview rules)
-  - "XI. Multi-Phase Plan Adherence" (new: phase gating against courses_assignments_labs_integration_plan.md)
+  - IX. Role-Based Access Control Enforcement (new: UI gating per role matrix)
+  - X. File Upload & Google Drive/YouTube Integration (new: FormData, progress, preview rules)
+  - XI. Multi-Phase Plan Adherence (new: phase gating against integration plan)
 - Added Sections:
-  - "Courses, Assignments & Labs Integration Constraints" (replaces scope to cover new feature)
-  - "Role-Based UI Enforcement Matrix" (new)
-  - "File Upload & Preview Policy" (new)
-- Removed Sections:
-  - None (all expanded, not deleted)
+  - "Courses, Assignments & Labs Integration Constraints" (replaces chat-only scope)
+  - "Role-Based UI Enforcement Matrix" (new table: 15 features × 5 roles)
+  - "File Upload & Preview Policy" (new: validation, progress, rendering rules)
+  - "Static Data & Mock Removal Policy" (new: 4-step audit process)
+- Removed Sections: None
 - Templates Requiring Updates:
-  - ✅ plan-template.md — Constitution Check items updated to include new principles IX, X, XI
-  - ✅ spec-template.md — No structural changes needed (template is generic)
-  - ✅ tasks-template.md — No structural changes needed (template is generic)
-- Follow-up TODOs:
-  - None
+  - ✅ plan-template.md — Constitution Check updated to reference new principles IX, X, XI
+  - ✅ spec-template.md — No changes needed (generic structure)
+  - ✅ tasks-template.md — No changes needed (generic structure)
+- Follow-up TODOs: None
 -->
 # EduVerse Flutter Backend Integration Constitution
 
@@ -416,4 +415,4 @@ to the next phase.
 - MINOR version bump for new principle or section addition.
 - PATCH version bump for clarification or typo fixes.
 
-**Version**: 3.0.0 | **Ratified**: 2026-04-05 | **Last Amended**: 2026-04-10
+**Version**: 4.0.0 | **Ratified**: 2026-04-05 | **Last Amended**: 2026-04-10

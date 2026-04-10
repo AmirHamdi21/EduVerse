@@ -1,4 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+
+import '../core/drive_file_model.dart';
+import '../core/enums/assignment_enums.dart' as api;
+import '../core/shared_models.dart';
 
 enum AssignmentStatus { pending, submitted, graded, late, overdue }
 
@@ -165,7 +171,9 @@ class AssignmentAttachment {
   String get formattedSize {
     if (fileSize == null) return '';
     if (fileSize! < 1024) return '${fileSize}B';
-    if (fileSize! < 1024 * 1024) return '${(fileSize! / 1024).toStringAsFixed(1)}KB';
+    if (fileSize! < 1024 * 1024) {
+      return '${(fileSize! / 1024).toStringAsFixed(1)}KB';
+    }
     return '${(fileSize! / (1024 * 1024)).toStringAsFixed(1)}MB';
   }
 }
@@ -198,6 +206,7 @@ class SubmissionModel {
 }
 
 class AssignmentModel {
+  // Legacy UI-facing fields
   final String id;
   final String title;
   final String? description;
@@ -215,6 +224,23 @@ class AssignmentModel {
   final SubmissionModel? submission;
   final bool isBookmarked;
   final DateTime createdAt;
+
+  // Backend contract fields
+  final int assignmentId;
+  final int courseId;
+  final String? instructionsText;
+  final double weight;
+  final DateTime? availableFrom;
+  final bool lateSubmissionAllowed;
+  final double latePenaltyPercent;
+  final api.SubmissionType submissionType;
+  final int maxFileSizeMb;
+  final List<String>? allowedFileTypes;
+  final api.AssignmentStatus apiStatus;
+  final int createdBy;
+  final DateTime? updatedAt;
+  final CourseInfo? course;
+  final List<DriveFileModel>? instructionFiles;
 
   const AssignmentModel({
     required this.id,
@@ -234,7 +260,118 @@ class AssignmentModel {
     this.submission,
     this.isBookmarked = false,
     required this.createdAt,
+    this.assignmentId = 0,
+    this.courseId = 0,
+    this.instructionsText,
+    this.weight = 0,
+    this.availableFrom,
+    this.lateSubmissionAllowed = false,
+    this.latePenaltyPercent = 0,
+    this.submissionType = api.SubmissionType.unknown,
+    this.maxFileSizeMb = 0,
+    this.allowedFileTypes,
+    this.apiStatus = api.AssignmentStatus.unknown,
+    this.createdBy = 0,
+    this.updatedAt,
+    this.course,
+    this.instructionFiles,
   });
+
+  factory AssignmentModel.fromJson(Map<String, dynamic> json) {
+    final parsedId = _parseInt(json['id']);
+    final parsedSubmissionType = api.SubmissionType.fromString(
+      _parseString(json['submissionType']),
+    );
+    final parsedStatus = api.AssignmentStatus.fromString(
+      _parseString(json['status']),
+    );
+    final parsedInstructions = json['instructions']?.toString();
+    final parsedInstructionFiles = _parseDriveFiles(json['instructionFiles']);
+
+    return AssignmentModel(
+      id: parsedId.toString(),
+      assignmentId: parsedId,
+      courseId: _parseInt(json['courseId']),
+      title: _parseString(json['title']),
+      description: json['description']?.toString(),
+      courseName: _parseString(
+        (json['course'] as Map<String, dynamic>?)?['name'],
+      ),
+      courseCode: _parseString(
+        (json['course'] as Map<String, dynamic>?)?['code'],
+      ),
+      instructorName: _resolveInstructorName(json),
+      type: _mapLegacyType(parsedSubmissionType),
+      status: _mapLegacyStatus(parsedStatus),
+      priority: AssignmentPriority.medium,
+      dueDate: _parseDateTime(json['dueDate']) ?? DateTime.now(),
+      assignedDate: _parseDateTime(json['availableFrom']),
+      maxGrade: _parseDouble(json['maxScore']),
+      attachments: parsedInstructionFiles
+          ?.map(
+            (file) => AssignmentAttachment(
+              id: file.driveFileId.toString(),
+              name: file.fileName,
+              url: file.downloadUrl,
+            ),
+          )
+          .toList(),
+      instructions: parsedInstructions == null || parsedInstructions.isEmpty
+          ? null
+          : <String>[parsedInstructions],
+      submission: null,
+      isBookmarked: false,
+      createdAt: _parseDateTime(json['createdAt']) ?? DateTime.now(),
+      instructionsText: parsedInstructions,
+      weight: _parseDouble(json['weight']),
+      availableFrom: _parseDateTime(json['availableFrom']),
+      lateSubmissionAllowed: _parseInt(json['lateSubmissionAllowed']) == 1,
+      latePenaltyPercent: _parseDouble(json['latePenaltyPercent']),
+      submissionType: parsedSubmissionType,
+      maxFileSizeMb: _parseInt(json['maxFileSizeMb']),
+      allowedFileTypes: _parseAllowedFileTypes(json['allowedFileTypes']),
+      apiStatus: parsedStatus,
+      createdBy: _parseInt(json['createdBy']),
+      updatedAt: _parseDateTime(json['updatedAt']),
+      course: json['course'] is Map<String, dynamic>
+          ? CourseInfo.fromJson(json['course'] as Map<String, dynamic>)
+          : null,
+      instructionFiles: parsedInstructionFiles,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'id': assignmentId,
+      'courseId': courseId,
+      'title': title,
+      'description': description,
+      'instructions': instructionsText,
+      'maxScore': maxGrade,
+      'weight': weight,
+      'dueDate': dueDate.toIso8601String(),
+      'availableFrom': availableFrom?.toIso8601String(),
+      'lateSubmissionAllowed': lateSubmissionAllowed ? 1 : 0,
+      'latePenaltyPercent': latePenaltyPercent,
+      'submissionType': submissionType.toJson(),
+      'maxFileSizeMb': maxFileSizeMb,
+      'allowedFileTypes': allowedFileTypes == null
+          ? null
+          : jsonEncode(allowedFileTypes),
+      'status': apiStatus.toJson(),
+      'createdBy': createdBy,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
+      'course': course?.toJson(),
+      'instructionFiles': instructionFiles?.map((e) => e.toJson()).toList(),
+      // Compatibility keys
+      'courseName': courseName,
+      'courseCode': courseCode,
+      'instructorName': instructorName,
+      'maxGrade': maxGrade,
+      'assignedDate': assignedDate?.toIso8601String(),
+    };
+  }
 
   AssignmentModel copyWith({
     String? id,
@@ -254,6 +391,21 @@ class AssignmentModel {
     SubmissionModel? submission,
     bool? isBookmarked,
     DateTime? createdAt,
+    int? assignmentId,
+    int? courseId,
+    String? instructionsText,
+    double? weight,
+    DateTime? availableFrom,
+    bool? lateSubmissionAllowed,
+    double? latePenaltyPercent,
+    api.SubmissionType? submissionType,
+    int? maxFileSizeMb,
+    List<String>? allowedFileTypes,
+    api.AssignmentStatus? apiStatus,
+    int? createdBy,
+    DateTime? updatedAt,
+    CourseInfo? course,
+    List<DriveFileModel>? instructionFiles,
   }) {
     return AssignmentModel(
       id: id ?? this.id,
@@ -273,6 +425,22 @@ class AssignmentModel {
       submission: submission ?? this.submission,
       isBookmarked: isBookmarked ?? this.isBookmarked,
       createdAt: createdAt ?? this.createdAt,
+      assignmentId: assignmentId ?? this.assignmentId,
+      courseId: courseId ?? this.courseId,
+      instructionsText: instructionsText ?? this.instructionsText,
+      weight: weight ?? this.weight,
+      availableFrom: availableFrom ?? this.availableFrom,
+      lateSubmissionAllowed:
+          lateSubmissionAllowed ?? this.lateSubmissionAllowed,
+      latePenaltyPercent: latePenaltyPercent ?? this.latePenaltyPercent,
+      submissionType: submissionType ?? this.submissionType,
+      maxFileSizeMb: maxFileSizeMb ?? this.maxFileSizeMb,
+      allowedFileTypes: allowedFileTypes ?? this.allowedFileTypes,
+      apiStatus: apiStatus ?? this.apiStatus,
+      createdBy: createdBy ?? this.createdBy,
+      updatedAt: updatedAt ?? this.updatedAt,
+      course: course ?? this.course,
+      instructionFiles: instructionFiles ?? this.instructionFiles,
     );
   }
 
@@ -303,4 +471,102 @@ class AssignmentModel {
   double? get grade => submission?.grade;
   double? get gradePercentage => submission?.gradePercentage;
   String? get feedback => submission?.feedback;
+
+  static int _parseInt(dynamic value) {
+    if (value is int) {
+      return value;
+    }
+    return int.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  static double _parseDouble(dynamic value) {
+    return double.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    return DateTime.tryParse(value.toString());
+  }
+
+  static String _parseString(dynamic value) {
+    return value?.toString() ?? '';
+  }
+
+  static List<String>? _parseAllowedFileTypes(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+
+    if (value is List) {
+      return value.map((dynamic item) => item.toString()).toList();
+    }
+
+    if (value is String) {
+      try {
+        final decoded = jsonDecode(value);
+        if (decoded is List) {
+          return decoded.map((dynamic item) => item.toString()).toList();
+        }
+      } catch (_) {
+        return null;
+      }
+    }
+
+    return null;
+  }
+
+  static List<DriveFileModel>? _parseDriveFiles(dynamic value) {
+    if (value is! List) {
+      return null;
+    }
+
+    return value
+        .whereType<Map<String, dynamic>>()
+        .map(DriveFileModel.fromJson)
+        .toList();
+  }
+
+  static AssignmentStatus _mapLegacyStatus(api.AssignmentStatus status) {
+    switch (status) {
+      case api.AssignmentStatus.draft:
+      case api.AssignmentStatus.published:
+        return AssignmentStatus.pending;
+      case api.AssignmentStatus.closed:
+        return AssignmentStatus.submitted;
+      case api.AssignmentStatus.archived:
+        return AssignmentStatus.graded;
+      case api.AssignmentStatus.unknown:
+        return AssignmentStatus.pending;
+    }
+  }
+
+  static AssignmentType _mapLegacyType(api.SubmissionType type) {
+    switch (type) {
+      case api.SubmissionType.file:
+        return AssignmentType.document;
+      case api.SubmissionType.text:
+        return AssignmentType.quiz;
+      case api.SubmissionType.link:
+        return AssignmentType.presentation;
+      case api.SubmissionType.multiple:
+        return AssignmentType.project;
+      case api.SubmissionType.unknown:
+        return AssignmentType.other;
+    }
+  }
+
+  static String _resolveInstructorName(Map<String, dynamic> json) {
+    final instructor = json['instructor'];
+    if (instructor is Map<String, dynamic>) {
+      final firstName = instructor['firstName']?.toString() ?? '';
+      final lastName = instructor['lastName']?.toString() ?? '';
+      final fullName = '$firstName $lastName'.trim();
+      if (fullName.isNotEmpty) {
+        return fullName;
+      }
+    }
+    return '';
+  }
 }

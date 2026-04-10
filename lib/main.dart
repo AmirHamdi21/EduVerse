@@ -28,8 +28,13 @@ import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/session_expiry_notifier.dart';
 import 'package:edu_verse/services/api/course_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
+import 'package:edu_verse/services/api/assignment_service.dart';
+import 'package:edu_verse/services/api/lab_service.dart';
 import 'package:edu_verse/services/api/material_service.dart';
 import 'package:edu_verse/services/api/communication_service.dart';
+import 'package:edu_verse/services/api/section_service.dart';
+import 'package:edu_verse/services/api/schedule_service.dart';
+import 'package:edu_verse/services/api/semester_service.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -77,6 +82,15 @@ class _MyAppState extends State<MyApp> {
   late SearchCubit _searchCubit;
   late AdminNotificationCubit _adminNotificationCubit;
   late CoursesBloc _coursesBloc;
+  late CourseService _courseService;
+  late EnrollmentService _enrollmentService;
+  late AssignmentService _assignmentService;
+  late LabService _labService;
+  late SectionService _sectionService;
+  late ScheduleService _scheduleService;
+  late SemesterService _semesterService;
+  late MaterialService _materialService;
+  late CommunicationService _communicationService;
   StreamSubscription<String>? _sessionExpirySubscription;
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
@@ -132,11 +146,21 @@ class _MyAppState extends State<MyApp> {
 
     // ── Course API layer (Phase 1) ─────────────────────────
     final coreApiClient = CoreApiClient(storageService: _storageService);
+    _courseService = CourseService(coreApiClient: coreApiClient);
+    _enrollmentService = EnrollmentService(coreApiClient: coreApiClient);
+    _assignmentService = AssignmentService(coreApiClient: coreApiClient);
+    _labService = LabService(coreApiClient: coreApiClient);
+    _sectionService = SectionService(coreApiClient: coreApiClient);
+    _scheduleService = ScheduleService(coreApiClient: coreApiClient);
+    _semesterService = SemesterService(coreApiClient: coreApiClient);
+    _materialService = MaterialService(coreApiClient: coreApiClient);
+    _communicationService = CommunicationService(coreApiClient: coreApiClient);
+
     _coursesBloc = CoursesBloc(
-      courseService: CourseService(coreApiClient: coreApiClient),
-      enrollmentService: EnrollmentService(coreApiClient: coreApiClient),
-      materialService: MaterialService(coreApiClient: coreApiClient),
-      communicationService: CommunicationService(coreApiClient: coreApiClient),
+      courseService: _courseService,
+      enrollmentService: _enrollmentService,
+      materialService: _materialService,
+      communicationService: _communicationService,
     );
 
     // Initialize theme and language from storage

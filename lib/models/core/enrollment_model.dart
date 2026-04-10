@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'course_model.dart';
+import 'enums/enrollment_enums.dart';
 import 'section_model.dart';
 import 'semester_model.dart';
 
@@ -26,13 +27,14 @@ class CourseEnrollmentModel extends Equatable {
   final String id;
   final int userId;
   final int sectionId;
-  final String status; // 'enrolled' | 'waitlisted' | 'dropped' | 'completed' | 'failed'
+  final EnrollmentStatus enrollmentStatus;
   final String? grade;
   final double? finalScore;
   final DateTime enrollmentDate;
   final bool canDrop;
   final DateTime? dropDeadline;
-  final String role; // kept for backward compat — 'student' | 'instructor' | 'ta'
+  final String
+  role; // kept for backward compat — 'student' | 'instructor' | 'ta'
 
   // Nested relationships
   final CourseModel? course;
@@ -43,7 +45,7 @@ class CourseEnrollmentModel extends Equatable {
     required this.id,
     required this.userId,
     required this.sectionId,
-    required this.status,
+    required this.enrollmentStatus,
     this.grade,
     this.finalScore,
     required this.enrollmentDate,
@@ -54,6 +56,8 @@ class CourseEnrollmentModel extends Equatable {
     this.section,
     this.semester,
   });
+
+  String get status => enrollmentStatus.toJson();
 
   /// Derived courseId for backward compatibility with widgets that use it.
   String get courseId => course?.courseId.toString() ?? '';
@@ -67,16 +71,16 @@ class CourseEnrollmentModel extends Equatable {
       sectionId: json['sectionId'] is int
           ? json['sectionId'] as int
           : int.tryParse(json['sectionId']?.toString() ?? '') ?? 0,
-      status: json['status'] as String? ?? 'enrolled',
+      enrollmentStatus: EnrollmentStatus.fromString(
+        json['status']?.toString() ?? 'unknown',
+      ),
       grade: json['grade'] as String?,
       finalScore: json['finalScore'] is num
           ? (json['finalScore'] as num).toDouble()
           : json['finalScore'] != null
-              ? double.tryParse(json['finalScore'].toString())
-              : null,
-      enrollmentDate: _parseDate(
-        json['enrollmentDate'] ?? json['createdAt'],
-      ),
+          ? double.tryParse(json['finalScore'].toString())
+          : null,
+      enrollmentDate: _parseDate(json['enrollmentDate'] ?? json['createdAt']),
       canDrop: json['canDrop'] == true,
       dropDeadline: json['dropDeadline'] != null
           ? DateTime.tryParse(json['dropDeadline'].toString())
@@ -109,7 +113,7 @@ class CourseEnrollmentModel extends Equatable {
       'id': id,
       'userId': userId,
       'sectionId': sectionId,
-      'status': status,
+      'status': enrollmentStatus.toJson(),
       'grade': grade,
       'finalScore': finalScore,
       'enrollmentDate': enrollmentDate.toIso8601String(),
@@ -124,18 +128,93 @@ class CourseEnrollmentModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        userId,
-        sectionId,
-        status,
-        grade,
-        finalScore,
-        enrollmentDate,
-        canDrop,
-        dropDeadline,
-        role,
-        course,
-        section,
-        semester,
-      ];
+    id,
+    userId,
+    sectionId,
+    enrollmentStatus,
+    grade,
+    finalScore,
+    enrollmentDate,
+    canDrop,
+    dropDeadline,
+    role,
+    course,
+    section,
+    semester,
+  ];
+}
+
+class EnrollmentModel extends Equatable {
+  final int id;
+  final int userId;
+  final int sectionId;
+  final EnrollmentStatus enrollmentStatus;
+  final String role;
+  final UserLite? user;
+
+  const EnrollmentModel({
+    required this.id,
+    required this.userId,
+    required this.sectionId,
+    required this.enrollmentStatus,
+    required this.role,
+    this.user,
+  });
+
+  factory EnrollmentModel.fromJson(Map<String, dynamic> json) {
+    final rawUser = json['user'];
+    return EnrollmentModel(
+      id: _parseInt(json['id']),
+      userId: _parseInt(json['userId']),
+      sectionId: _parseInt(json['sectionId']),
+      enrollmentStatus: EnrollmentStatus.fromString(
+        json['status']?.toString() ?? 'unknown',
+      ),
+      role: json['role']?.toString() ?? '',
+      user: rawUser is Map<String, dynamic> ? UserLite.fromJson(rawUser) : null,
+    );
+  }
+
+  static int _parseInt(dynamic value) {
+    if (value is int) {
+      return value;
+    }
+    return int.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  @override
+  List<Object?> get props => <Object?>[
+    id,
+    userId,
+    sectionId,
+    enrollmentStatus,
+    role,
+    user,
+  ];
+}
+
+class UserLite extends Equatable {
+  final int userId;
+  final String firstName;
+  final String lastName;
+  final String email;
+
+  const UserLite({
+    required this.userId,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+  });
+
+  factory UserLite.fromJson(Map<String, dynamic> json) {
+    return UserLite(
+      userId: EnrollmentModel._parseInt(json['userId'] ?? json['id']),
+      firstName: json['firstName']?.toString() ?? '',
+      lastName: json['lastName']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+    );
+  }
+
+  @override
+  List<Object?> get props => <Object?>[userId, firstName, lastName, email];
 }

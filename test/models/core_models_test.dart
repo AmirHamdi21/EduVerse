@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:edu_verse/models/core/course_model.dart';
 import 'package:edu_verse/models/core/enrollment_model.dart';
 import 'package:edu_verse/models/core/course_structure_model.dart';
+import 'package:edu_verse/models/core/enums/course_enums.dart';
 
 void main() {
   group('CourseModel', () {
@@ -13,11 +14,11 @@ void main() {
         'description': 'A beginner course.',
         'credits': 3,
         'departmentId': 5,
-        'departmentName': 'Computer Science',
-        'level': 'undergraduate',
-        'status': 'active',
+        'department': {'id': 5, 'name': 'Computer Science', 'code': 'CS'},
+        'level': 'FRESHMAN',
+        'status': 'ACTIVE',
         'prerequisites': [
-          {'courseId': 0, 'courseName': 'None'}
+          {'courseId': 0, 'courseName': 'None'},
         ],
       };
 
@@ -30,8 +31,8 @@ void main() {
       expect(model.credits, 3);
       expect(model.departmentId, 5);
       expect(model.departmentName, 'Computer Science');
-      expect(model.level, 'undergraduate');
-      expect(model.status, 'active');
+      expect(model.level, 'FRESHMAN');
+      expect(model.status, 'ACTIVE');
       expect(model.prerequisites, isNotNull);
       expect(model.prerequisites!.length, 1);
     });
@@ -61,19 +62,22 @@ void main() {
       final model = CourseModel.fromJson(json);
 
       expect(model.description, isNull);
-      expect(model.departmentId, isNull);
+      expect(model.departmentId, 0);
       expect(model.departmentName, isNull);
-      expect(model.level, isNull);
-      expect(model.status, isNull);
+      expect(model.level, 'unknown');
+      expect(model.status, 'unknown');
       expect(model.prerequisites, isNull);
     });
 
     test('toJson produces valid map', () {
       const model = CourseModel(
-        courseId: 1,
-        courseCode: 'CS101',
-        courseName: 'Test',
+        id: 1,
+        departmentId: 5,
+        code: 'CS101',
+        name: 'Test',
         credits: 3,
+        courseLevel: CourseLevel.freshman,
+        courseStatus: CourseStatus.active,
       );
 
       final json = model.toJson();
@@ -84,16 +88,22 @@ void main() {
 
     test('Equatable equality works', () {
       const a = CourseModel(
-        courseId: 1,
-        courseCode: 'CS101',
-        courseName: 'Test',
+        id: 1,
+        departmentId: 5,
+        code: 'CS101',
+        name: 'Test',
         credits: 3,
+        courseLevel: CourseLevel.freshman,
+        courseStatus: CourseStatus.active,
       );
       const b = CourseModel(
-        courseId: 1,
-        courseCode: 'CS101',
-        courseName: 'Test',
+        id: 1,
+        departmentId: 5,
+        code: 'CS101',
+        name: 'Test',
         credits: 3,
+        courseLevel: CourseLevel.freshman,
+        courseStatus: CourseStatus.active,
       );
 
       expect(a, equals(b));
@@ -106,14 +116,18 @@ void main() {
         'id': '101',
         'courseId': '1',
         'userId': 42,
+        'sectionId': 1,
         'enrollmentDate': '2026-01-15T00:00:00.000Z',
         'role': 'student',
-        'status': 'active',
+        'status': 'enrolled',
         'course': {
-          'courseId': 1,
-          'courseCode': 'CS101',
-          'courseName': 'Intro to CS',
+          'id': 1,
+          'departmentId': 5,
+          'code': 'CS101',
+          'name': 'Intro to CS',
           'credits': 3,
+          'level': 'FRESHMAN',
+          'status': 'ACTIVE',
         },
         'createdAt': '2026-01-15T10:00:00.000Z',
         'updatedAt': '2026-01-15T10:00:00.000Z',
@@ -125,7 +139,7 @@ void main() {
       expect(model.courseId, '1');
       expect(model.userId, 42);
       expect(model.role, 'student');
-      expect(model.status, 'active');
+      expect(model.status, 'enrolled');
       expect(model.course, isNotNull);
       expect(model.course!.courseCode, 'CS101');
     });
@@ -135,9 +149,10 @@ void main() {
         'id': '102',
         'courseId': '2',
         'userId': 43,
+        'sectionId': 2,
         'enrollmentDate': '2026-02-01T00:00:00.000Z',
         'role': 'instructor',
-        'status': 'active',
+        'status': 'enrolled',
         'createdAt': '2026-02-01T00:00:00.000Z',
         'updatedAt': '2026-02-01T00:00:00.000Z',
       };
@@ -153,9 +168,10 @@ void main() {
         'id': '101',
         'courseId': '1',
         'userId': 42,
+        'sectionId': 1,
         'enrollmentDate': '2026-01-15T00:00:00.000Z',
         'role': 'student',
-        'status': 'active',
+        'status': 'enrolled',
         'createdAt': '2026-01-15T10:00:00.000Z',
         'updatedAt': '2026-01-15T10:00:00.000Z',
       };

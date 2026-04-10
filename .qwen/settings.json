@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell *)",
+      "Bash(mkdir *)",
+      "Bash(.specify/scripts/powershell/update-agent-context.ps1 *)"
+    ]
+  },
+  "$version": 3
+}
