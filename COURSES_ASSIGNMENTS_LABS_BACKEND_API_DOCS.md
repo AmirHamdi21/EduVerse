@@ -2254,79 +2254,765 @@ POST /api/labs/:id/submissions/upload
 
 ### 8.1 Courses
 
-| Endpoint | Student | Instructor | TA | Admin | IT Admin |
-|---|:---:|:---:|:---:|:---:|:---:|
-| `GET /api/courses` (list) | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
-| `GET /api/courses/:id` (details) | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
-| `GET /api/courses/department/:deptId` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
-| `POST /api/courses` (create) | ❌ | ✅ | ❌ | ✅ | ✅ |
-| `PATCH /api/courses/:id` (update) | ❌ | ✅ | ❌ | ✅ | ✅ |
-| `DELETE /api/courses/:id` (delete) | ❌ | ❌ | ❌ | ✅ | ✅ |
-| `GET /api/courses/:id/prerequisites` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
-| `POST /api/courses/:id/prerequisites` | ❌ | ❌ | ❌ | ✅ | ✅ |
-| `DELETE /api/courses/:id/prerequisites/:id` | ❌ | ❌ | ❌ | ✅ | ✅ |
+| Endpoint | Student | Instructor | TA | Admin | IT Admin | Dept Head |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| `GET /api/courses` (list) | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
+| `GET /api/courses/:id` (details) | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
+| `GET /api/courses/department/:deptId` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
+| `POST /api/courses` (create) | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ |
+| `PATCH /api/courses/:id` (update) | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ |
+| `DELETE /api/courses/:id` (delete) | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
+| `GET /api/courses/:id/prerequisites` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
+| `POST /api/courses/:id/prerequisites` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
+| `DELETE /api/courses/:id/prerequisites/:id` | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
 
 ### 8.2 Course Sections
 
-| Endpoint | Student | Instructor | TA | Admin | IT Admin |
-|---|:---:|:---:|:---:|:---:|:---:|
-| `GET /api/sections/course/:courseId` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
-| `GET /api/sections/:id` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
-| `POST /api/sections` (create) | ❌ | ✅ | ❌ | ✅ | ✅ |
-| `PATCH /api/sections/:id` (update) | ❌ | ✅ | ❌ | ✅ | ✅ |
-| `PATCH /api/sections/:id/enrollment` | ❌ | ✅ | ❌ | ✅ | ✅ |
+| Endpoint | Student | Instructor | TA | Admin | IT Admin | Dept Head |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| `GET /api/sections/course/:courseId` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
+| `GET /api/sections/:id` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
+| `POST /api/sections` (create) | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ |
+| `PATCH /api/sections/:id` (update) | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ |
+| `PATCH /api/sections/:id/enrollment` | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ |
 
 ### 8.3 Course Schedules
 
-| Endpoint | Student | Instructor | TA | Admin | IT Admin |
-|---|:---:|:---:|:---:|:---:|:---:|
-| `GET /api/schedules/section/:sectionId` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
-| `GET /api/schedules/:id` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
-| `POST /api/schedules/section/:sectionId` | ❌ | ✅ | ❌ | ✅ | ✅ |
-| `DELETE /api/schedules/:id` | ❌ | ✅ | ❌ | ✅ | ✅ |
+| Endpoint | Student | Instructor | TA | Admin | IT Admin | Dept Head |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| `GET /api/schedules/section/:sectionId` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
+| `GET /api/schedules/:id` | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public | ✅ Public |
+| `POST /api/schedules/section/:sectionId` | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ |
+| `DELETE /api/schedules/:id` | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ |
 
 ### 8.4 Assignments
 
-| Endpoint | Student | Instructor | TA | Admin | IT Admin |
-|---|:---:|:---:|:---:|:---:|:---:|
-| `GET /api/assignments` (list) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `GET /api/assignments/:id` (details) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `POST /api/assignments` (create) | ❌ | ✅ | ❌ | ✅ | ❌ |
-| `PATCH /api/assignments/:id` (update) | ❌ | ✅ | ❌ | ✅ | ❌ |
-| `DELETE /api/assignments/:id` (delete) | ❌ | ✅ | ❌ | ✅ | ❌ |
-| `PATCH /api/assignments/:id/status` | ❌ | ✅ | ❌ | ✅ | ❌ |
-| `POST /api/assignments/:id/submit` | ✅ | ❌ | ❌ | ❌ | ❌ |
-| `GET /api/assignments/:id/submissions/my` | ✅ | ❌ | ❌ | ❌ | ❌ |
-| `GET /api/assignments/:id/submissions` | ❌ | ✅ | ✅ | ✅ | ❌ |
-| `PATCH /:id/submissions/:subId/grade` | ❌ | ✅ | ✅ | ❌ | ❌ |
-| `POST /:id/instructions/upload` | ❌ | ✅ | ✅ | ✅ | ❌ |
-| `POST /:id/submissions/upload` | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Endpoint | Student | Instructor | TA | Admin | IT Admin | Dept Head |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| `GET /api/assignments` (list) | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `GET /api/assignments/:id` (details) | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `POST /api/assignments` (create) | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `PATCH /api/assignments/:id` (update) | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `DELETE /api/assignments/:id` (delete) | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `PATCH /api/assignments/:id/status` | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `POST /api/assignments/:id/submit` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `GET /api/assignments/:id/submissions/my` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `GET /api/assignments/:id/submissions` | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `PATCH /:id/submissions/:subId/grade` | ❌ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| `POST /:id/instructions/upload` | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `POST /:id/submissions/upload` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
 ### 8.5 Labs
 
-| Endpoint | Student | Instructor | TA | Admin | IT Admin |
-|---|:---:|:---:|:---:|:---:|:---:|
-| `GET /api/labs` (list) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `GET /api/labs/:id` (details) | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `POST /api/labs` (create) | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `PUT /api/labs/:id` (update) | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `DELETE /api/labs/:id` (delete) | ❌ | ✅ | ❌ | ✅ | ✅ |
-| `PATCH /api/labs/:id/status` | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `GET /api/labs/:id/instructions` | ✅ | ✅ | ✅ | ✅ | ✅ |
-| `POST /api/labs/:id/instructions` | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `POST /api/labs/:id/submit` | ✅ | ❌ | ❌ | ❌ | ❌ |
-| `GET /api/labs/:id/submissions` | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `GET /api/labs/:id/submissions/my` | ✅ | ❌ | ❌ | ❌ | ❌ |
-| `PATCH /:id/submissions/:subId/grade` | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `POST /api/labs/:id/attendance` | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `GET /api/labs/:id/attendance` | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `POST /:id/instructions/upload` | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `POST /:id/ta-materials/upload` | ❌ | ✅ | ✅ | ✅ | ✅ |
-| `POST /:id/submissions/upload` | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Endpoint | Student | Instructor | TA | Admin | IT Admin | Dept Head |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| `GET /api/labs` (list) | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `GET /api/labs/:id` (details) | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `POST /api/labs` (create) | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `PUT /api/labs/:id` (update) | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `DELETE /api/labs/:id` (delete) | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `PATCH /api/labs/:id/status` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `GET /api/labs/:id/instructions` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `POST /api/labs/:id/instructions` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `POST /api/labs/:id/submit` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `GET /api/labs/:id/submissions` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `GET /api/labs/:id/submissions/my` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `PATCH /:id/submissions/:subId/grade` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `POST /api/labs/:id/attendance` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `GET /api/labs/:id/attendance` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `POST /:id/instructions/upload` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `POST /:id/ta-materials/upload` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `POST /:id/submissions/upload` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+
+### 8.6 Enrollments
+
+| Endpoint | Student | Instructor | TA | Admin | IT Admin | Dept Head |
+|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| `GET /api/enrollments/my-courses` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `GET /api/enrollments/available` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `POST /api/enrollments/register` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| `DELETE /api/enrollments/:id` | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `GET /api/enrollments/teaching` | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `GET /api/enrollments/periods` | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| `GET /api/sections/:sectionId/students` | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `GET /api/sections/:sectionId/waitlist` | ❌ | ✅ | ❌ | ✅ | ❌ | ❌ |
+| `POST /api/enrollments/sections/:sectionId/instructors` | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `DELETE /api/enrollments/sections/:sectionId/instructors/:id` | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `GET /api/enrollments/sections/:sectionId/instructors` | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `POST /api/enrollments/sections/:sectionId/tas` | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `DELETE /api/enrollments/sections/:sectionId/tas/:id` | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| `GET /api/enrollments/sections/:sectionId/tas` | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
+
+> **Note**: `department_head` role currently has **NO access** to courses/assignments/labs features. This role only has access to schedule templates and campus events.
 
 ---
 
-## 9. Error Handling
+## 9. Course Enrollment Module
+
+**Base Path**: `/api/enrollments`
+
+> **All endpoints require JWT authentication** (`@UseGuards(JwtAuthGuard, RolesGuard)`).
+> This module handles student enrollment in courses, including registration, dropping, available courses with prerequisites validation, and instructor/TA assignment to sections.
+
+### 9.0 Enrollment Enums
+
+#### EnrollmentStatus
+| Value | Description |
+|---|---|
+| `enrolled` | Student is actively enrolled in the section |
+| `waitlisted` | Student is on the waitlist (not currently implemented) |
+| `dropped` | Student has dropped/withdrawn from the section |
+| `completed` | Student has completed the course with a grade |
+| `failed` | Student failed the course |
+
+#### DropReason
+| Value | Description |
+|---|---|
+| `student_request` | Student voluntarily dropped |
+| `administrative` | Admin-initiated drop |
+| `academic` | Academic reasons (e.g., failed prerequisite) |
+| `schedule_conflict` | Schedule conflict detected |
+
+### 9.0.1 Database Entity
+
+#### `course_enrollments` Table
+
+| Column | DB Type | TS Type | Nullable | Default | Description |
+|---|---|---|---|---|---|
+| `enrollment_id` | `bigint unsigned` | `number` | ❌ (PK) | Auto | Primary key |
+| `user_id` | `bigint unsigned` | `number` | ❌ | — | FK → `users` (student) |
+| `section_id` | `bigint unsigned` | `number` | ❌ | — | FK → `course_sections` |
+| `program_id` | `bigint unsigned` | `number \| null` | ✅ | `null` | FK → `programs` |
+| `enrollment_status` | `enum('enrolled','waitlisted','dropped','completed','failed')` | `EnrollmentStatus` | ❌ | `'enrolled'` | Enrollment status |
+| `grade` | `varchar(5)` | `string \| null` | ✅ | `null` | Letter grade (A, A-, B+, etc.) |
+| `final_score` | `decimal(5,2)` | `number \| null` | ✅ | `null` | Final numeric score |
+| `enrollment_date` | `datetime` | `Date` | ❌ | Auto | When student enrolled |
+| `dropped_at` | `datetime` | `Date \| null` | ✅ | `null` | When student dropped |
+| `completed_at` | `datetime` | `Date \| null` | ✅ | `null` | When course was completed |
+| `updated_at` | `timestamp` | `Date` | ❌ | Auto | Last update timestamp |
+
+**Indexes**: `(user_id, status)`, `(section_id, status)`, unique constraint on `(user_id, section_id)`
+
+---
+
+### 9.1 Get My Enrolled Courses (Student)
+
+```
+GET /api/enrollments/my-courses
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `student` only
+
+#### Query Parameters
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `semester` | `integer` | ❌ | — | Filter by semester ID |
+
+#### Response `200 OK`
+
+```json
+[
+  {
+    "id": 1,                                // number — Enrollment ID
+    "userId": 57,                            // number — Student user ID
+    "sectionId": 11,                          // number — Section ID
+    "status": "enrolled",                     // string — EnrollmentStatus enum
+    "grade": null,                           // string | null — Letter grade
+    "finalScore": null,                      // number | null — Final numeric score
+    "enrollmentDate": "2025-09-01T10:00:00Z", // string — ISO 8601
+    "droppedAt": null,                       // string | null
+    "completedAt": null,                     // string | null
+    "updatedAt": "2025-09-01T10:00:00Z",     // string — ISO 8601
+    "canDrop": true,                         // boolean — Whether student can still drop
+    "dropDeadline": "2025-10-15T23:59:59Z",  // string | null — Drop deadline
+    "course": {
+      "id": 1,
+      "name": "Introduction to CS",
+      "code": "CS101",
+      "description": "...",
+      "credits": 3,
+      "level": "FRESHMAN"
+    },
+    "section": {
+      "id": 11,
+      "sectionNumber": "1",
+      "maxCapacity": 30,
+      "currentEnrollment": 25,
+      "location": "Room A101",
+      "status": "OPEN"
+    },
+    "semester": {
+      "id": 1,
+      "name": "Fall 2025",
+      "startDate": "2025-09-01",
+      "endDate": "2025-12-15"
+    },
+    "instructor": null,                      // object | null — Currently disabled
+    "prerequisites": [                       // array — Prerequisites with completion status
+      {
+        "id": 1,
+        "courseId": 1,
+        "prerequisiteCourseId": 2,
+        "courseCode": "CS100",
+        "courseName": "Programming Basics",
+        "isMandatory": true,
+        "studentCompleted": true,
+        "studentGrade": "A"
+      }
+    ]
+  }
+]
+```
+
+---
+
+### 9.2 Get Available Courses (Student)
+
+```
+GET /api/enrollments/available
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `student` only
+
+> Returns courses the student **can enroll in**, checking:
+> - Prerequisites completed with grade **B- or higher**
+> - Section has available seats
+> - No schedule conflicts with current enrollments
+> - Course is active and not cancelled
+
+#### Query Parameters
+
+| Parameter | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `departmentId` | `integer` | ❌ | — | Filter by department |
+| `semesterId` | `integer` | ❌ | — | Filter by semester |
+| `search` | `string` | ❌ | — | Search in course name/code |
+| `level` | `string` | ❌ | — | Filter by course level |
+| `page` | `integer` | ❌ | `1` | Page number |
+| `limit` | `integer` | ❌ | `20` | Items per page |
+
+#### Response `200 OK`
+
+```json
+[
+  {
+    "id": 1,                                // number — Course ID
+    "name": "Introduction to CS",           // string
+    "code": "CS101",                         // string
+    "description": "...",                    // string | null
+    "credits": 3,                            // number
+    "level": "FRESHMAN",                     // string — CourseLevel enum
+    "departmentId": 3,                       // number
+    "departmentName": "Computer Science",    // string
+    "sections": [                            // array — Available sections
+      {
+        "id": 11,
+        "sectionNumber": "1",
+        "maxCapacity": 30,
+        "currentEnrollment": 25,
+        "availableSeats": 5,
+        "location": "Room A101",
+        "semesterId": 1,
+        "semesterName": "Fall 2025"
+      }
+    ],
+    "prerequisites": [                       // array — Required prerequisites
+      {
+        "id": 1,
+        "courseId": 1,
+        "prerequisiteCourseId": 2,
+        "courseCode": "CS100",
+        "courseName": "Programming Basics",
+        "isMandatory": true
+      }
+    ],
+    "canEnroll": true,                       // boolean — Whether student meets all requirements
+    "enrollmentStatus": null                 // string | null — Current enrollment status if already enrolled
+  }
+]
+```
+
+---
+
+### 9.3 Enroll in a Course (Student)
+
+```
+POST /api/enrollments/register
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `student` only
+
+#### Request Body
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `sectionId` | `number` | ✅ | Section ID to enroll in |
+
+#### Example Request
+
+```json
+{
+  "sectionId": 11
+}
+```
+
+#### Response `201 Created`
+
+Returns enrollment response object (same shape as items in 9.1 response).
+
+#### Business Rules & Validation
+
+1. **Already Enrolled**: Cannot enroll if already enrolled in the same section (throws `409`)
+2. **Prerequisites**: All prerequisites must be completed with grade **B- or higher**
+3. **Schedule Conflicts**: No time overlap with current enrollments in the same semester
+4. **Capacity**: If section is full, student is still enrolled (waitlist not implemented)
+5. **Retake Logic**:
+   - If previously **failed** (grade F): Can retake freely
+   - If previously **passed** with B- or better and wants to improve: Requires **admin approval** (throws `400` with `RetakeRequiresAdminApprovalException`)
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Prerequisites not met / Schedule conflict / User or section not found |
+| `409` | Already enrolled in this section |
+
+---
+
+### 9.4 Drop/Withdraw from a Course
+
+```
+DELETE /api/enrollments/:id
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `student` (own enrollments), `admin` (any enrollment)
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `id` | `integer` | ✅ | Enrollment ID |
+
+#### Request Body (Optional)
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `reason` | `string` | ❌ | Drop reason from `DropReason` enum |
+
+#### Response `200 OK`
+
+Returns the updated enrollment object with `status: "dropped"` and `droppedAt` timestamp.
+
+#### Business Rules
+
+1. **Permission**: Students can only drop their own enrollments; admins can drop any
+2. **Drop Deadline**: Students can only drop before **50% of semester has elapsed** (admins can override)
+3. **Status Changes**: Enrollment status changes from `enrolled` → `dropped`
+4. **Section Count**: Section's `currentEnrollment` is decremented
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Drop deadline passed / Cannot drop past enrollment |
+| `403` | Forbidden — not your enrollment |
+| `404` | Enrollment not found |
+
+---
+
+### 9.5 Get Teaching Courses (Instructor/TA)
+
+```
+GET /api/enrollments/teaching
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`
+
+> Returns all course sections where the user is assigned as an instructor or TA.
+
+#### Response `200 OK`
+
+```json
+[
+  {
+    "sectionId": 11,
+    "courseId": 1,
+    "course": {
+      "id": 1,
+      "name": "Introduction to CS",
+      "code": "CS101",
+      "description": "...",
+      "credits": 3,
+      "level": "FRESHMAN"
+    },
+    "section": {
+      "id": 11,
+      "sectionNumber": "1",
+      "maxCapacity": 30,
+      "currentEnrollment": 25,
+      "location": "Room A101"
+    },
+    "semester": {
+      "id": 1,
+      "name": "Fall 2025",
+      "startDate": "2025-09-01",
+      "endDate": "2025-12-15"
+    }
+  }
+]
+```
+
+---
+
+### 9.6 Get Section Students
+
+```
+GET /api/sections/:sectionId/students
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`
+
+> Returns all **actively enrolled** students (status = `enrolled`) in a section.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `sectionId` | `integer` | ✅ | Section ID |
+
+#### Response `200 OK`
+
+Returns array of enrollment objects (same shape as 9.1), sorted by `enrollmentDate ASC`.
+
+---
+
+### 9.7 Get Section Waitlist
+
+```
+GET /api/sections/:sectionId/waitlist
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `admin`
+
+> **Currently Not Implemented**: Returns empty array. Waitlist functionality requires a separate waitlist table.
+
+#### Response `200 OK`
+
+```json
+[]
+```
+
+---
+
+### 9.8 Assign Instructor to Section (Admin)
+
+```
+POST /api/enrollments/sections/:sectionId/instructors
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `admin` only
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `sectionId` | `integer` | ✅ | Section ID |
+
+#### Request Body
+
+| Field | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `userId` | `number` | ✅ | — | User ID of instructor (must have `instructor` role) |
+| `role` | `string` | ❌ | `primary` | One of: `primary`, `co_instructor`, `guest` |
+| `responsibilities` | `string` | ❌ | — | Free-text description |
+
+#### Example Request
+
+```json
+{
+  "userId": 58,
+  "role": "primary",
+  "responsibilities": "Lead lectures, grade assignments"
+}
+```
+
+#### Response `201 Created`
+
+```json
+{
+  "id": 1,                   // number — Instructor assignment ID
+  "sectionId": 11,
+  "userId": 58,
+  "role": "primary",
+  "responsibilities": "Lead lectures, grade assignments",
+  "assignedAt": "2025-09-01T10:00:00Z",
+  "user": {
+    "userId": 58,
+    "firstName": "Tarek",
+    "lastName": "Instructor",
+    "email": "tarek@example.com"
+  }
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Invalid user ID or section ID |
+| `404` | Section or user not found |
+| `409` | Instructor already assigned to this section |
+
+---
+
+### 9.9 Get Section Instructors
+
+```
+GET /api/enrollments/sections/:sectionId/instructors
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `admin`, `instructor`, `teaching_assistant`
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `sectionId` | `integer` | ✅ | Section ID |
+
+#### Response `200 OK`
+
+Returns array of instructor assignment objects (same shape as 9.8 response).
+
+---
+
+### 9.10 Remove Instructor from Section (Admin)
+
+```
+DELETE /api/enrollments/sections/:sectionId/instructors/:assignmentId
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `admin` only
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `sectionId` | `integer` | ✅ | Section ID |
+| `assignmentId` | `integer` | ✅ | Instructor assignment ID |
+
+#### Response `204 No Content`
+
+Empty body.
+
+---
+
+### 9.11 Assign TA to Section (Admin)
+
+```
+POST /api/enrollments/sections/:sectionId/tas
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `admin` only
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `sectionId` | `integer` | ✅ | Section ID |
+
+#### Request Body
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `userId` | `number` | ✅ | User ID of TA (must have `teaching_assistant` role) |
+| `responsibilities` | `string` | ❌ | Free-text description (e.g., "Grading labs, office hours Mon/Wed") |
+
+#### Example Request
+
+```json
+{
+  "userId": 60,
+  "responsibilities": "Grade lab submissions, hold office hours on Tuesday"
+}
+```
+
+#### Response `201 Created`
+
+```json
+{
+  "id": 2,                   // number — TA assignment ID
+  "sectionId": 11,
+  "userId": 60,
+  "responsibilities": "Grade lab submissions, hold office hours on Tuesday",
+  "assignedAt": "2025-09-01T10:00:00Z",
+  "user": {
+    "userId": 60,
+    "firstName": "John",
+    "lastName": "TA",
+    "email": "ta@example.com"
+  }
+}
+```
+
+#### Error Responses
+
+| Status | Description |
+|---|---|
+| `400` | Invalid user ID or section ID |
+| `404` | Section or user not found |
+| `409` | TA already assigned to this section |
+
+---
+
+### 9.12 Get Section TAs
+
+```
+GET /api/enrollments/sections/:sectionId/tas
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `admin`, `instructor`, `teaching_assistant`
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `sectionId` | `integer` | ✅ | Section ID |
+
+#### Response `200 OK`
+
+Returns array of TA assignment objects (same shape as 9.11 response).
+
+---
+
+### 9.13 Remove TA from Section (Admin)
+
+```
+DELETE /api/enrollments/sections/:sectionId/tas/:assignmentId
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `admin` only
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `sectionId` | `integer` | ✅ | Section ID |
+| `assignmentId` | `integer` | ✅ | TA assignment ID |
+
+#### Response `204 No Content`
+
+Empty body.
+
+---
+
+### 9.14 Get Section Instructor Summary
+
+```
+GET /api/enrollments/section/:sectionId/instructor
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `admin`, `instructor`, `teaching_assistant`, `student`
+
+> Returns simplified instructor info for a section.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `sectionId` | `integer` | ✅ | Section ID |
+
+#### Response `200 OK`
+
+```json
+{
+  "instructorId": 58,
+  "instructor": {
+    "userId": 58,
+    "fullName": "Tarek Instructor",
+    "email": "tarek@example.com"
+  }
+}
+```
+
+---
+
+### 9.15 Get Section TA Summaries
+
+```
+GET /api/enrollments/section/:sectionId/tas
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `admin`, `instructor`, `teaching_assistant`, `student`
+
+> Returns simplified TA info for a section.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `sectionId` | `integer` | ✅ | Section ID |
+
+#### Response `200 OK`
+
+```json
+[
+  {
+    "userId": 60,
+    "fullName": "Tarek TA",
+    "email": "ta@example.com"
+  }
+]
+```
+
+---
+
+### 9.16 Get Enrollment Periods
+
+```
+GET /api/enrollments/periods
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: All authenticated users
+
+> Returns semesters with registration date ranges.
+
+#### Response `200 OK`
+
+```json
+[
+  {
+    "id": 1,
+    "semesterName": "Fall 2025",
+    "semesterCode": "FA25",
+    "registrationStart": "2025-08-01T00:00:00Z",
+    "registrationEnd": "2025-08-25T23:59:59Z",
+    "semesterStart": "2025-09-01T00:00:00Z",
+    "semesterEnd": "2025-12-15T23:59:59Z",
+    "status": "active"
+  }
+]
+```
+
+---
+
+## 10. Error Handling
 
 ### 9.1 Standard Error Response Shape
 
@@ -3921,8 +4607,650 @@ YoutubePlayer(
 
 ---
 
+## 16. Course Details Handling — What Each Role Sees
+
+### 16.1 Course Visibility & Access Per Role
+
+#### **Student View**
+- **Course Catalog**: Can browse all courses (public endpoints, no auth required)
+- **Course Details** (`GET /api/courses/:id`):
+  - Full course information (name, code, description, credits, level)
+  - Prerequisites list
+  - Available sections count
+  - **Cannot see**: Other students' information, unpublished materials
+- **Course Materials**:
+  - Only **published** materials (`isPublished = true`)
+  - Can view videos, download documents, track views
+  - **Cannot see**: Draft materials, other students' submissions
+- **Assignments**:
+  - Only **published** assignments
+  - Can submit if enrolled in the course section
+  - Can view own submissions and grades
+  - **Cannot see**: Other students' submissions
+- **Labs**:
+  - Only **published** labs
+  - Can submit if enrolled (currently **no enrollment check** for labs — missing validation)
+  - Can view own submissions and grades
+  - Can view lab instructions
+- **Sections & Schedules**: Can view all sections and schedules (public)
+
+#### **Instructor View**
+- **Teaching Courses** (`GET /api/enrollments/teaching`):
+  - All sections where instructor is assigned
+  - Course details, section info, semester dates
+- **Course Details**:
+  - Same as student view PLUS:
+  - Can create/update/delete courses (if authorized)
+  - Can manage sections and schedules
+- **Course Materials**:
+  - **All materials** (including drafts) for courses they teach
+  - Can upload videos to YouTube, documents to Google Drive
+  - Can organize materials by weeks using course structure
+  - Can update/delete **own** materials only (admins can manage any)
+- **Assignments**:
+  - Can create/update/publish/close assignments
+  - Can view **all submissions** for assignments in their courses
+  - Can grade submissions (creates central grade record)
+  - Can upload instruction files to Google Drive
+- **Labs**:
+  - Can create/update/publish/close labs
+  - Can add instructions with file attachments
+  - Can view **all submissions** and grade them
+  - Can mark student attendance
+  - Can upload TA materials (answer keys, rubrics)
+  - **Can delete** labs
+
+#### **Teaching Assistant (TA) View**
+- **Teaching Courses**: Same as instructor (sections where assigned as TA)
+- **Course Materials**:
+  - **All materials** (including drafts) for courses they're assigned to
+  - Can upload/create materials
+  - Can update/delete **own** materials only
+  - **Cannot** create/update course structure (weeks, lectures organization)
+- **Assignments**:
+  - Can create/update/delete assignments (same as instructor)
+  - Can view all submissions and grade them
+  - Can upload instruction files
+- **Labs**:
+  - Can create/update labs
+  - Can add instructions and upload files
+  - Can view all submissions and grade them
+  - Can mark attendance
+  - Can upload TA materials
+  - **Cannot delete** labs (only instructors/admins)
+- **Sections & Students**:
+  - Can view enrolled students in their sections
+  - Can view instructor/TA assignments
+
+#### **Admin / IT Admin View**
+- **Full Access** to all courses, sections, schedules, materials, assignments, labs
+- Can manage any material (not just own)
+- Can manage course structure
+- Can assign instructors/TAs to sections
+- Can manage student enrollments
+- Can delete any resource
+- IT Admin additionally has system-level access (backup, monitoring, security)
+
+#### **Department Head View**
+- **Currently NO specific access** to courses/assignments/labs features
+- Only has access to:
+  - Schedule templates (`/api/schedule-templates`)
+  - Campus events (`/api/campus-events`)
+- **Enhancement Needed**: Would need additional endpoints to view department courses overview, instructor assignments, etc.
+
+### 16.2 Course Details Response Fields
+
+When calling `GET /api/courses/:id`, the response includes:
+
+```json
+{
+  "id": 1,
+  "departmentId": 3,
+  "name": "Introduction to CS",
+  "code": "CS101",
+  "description": "Fundamentals of programming...",
+  "credits": 3,
+  "level": "FRESHMAN",
+  "syllabusUrl": "https://example.com/syllabus.pdf",
+  "instructorId": 5,                   // ⭐ Primary instructor ID (may be null)
+  "taIds": [1, 2],                     // ⭐ Array of TA user IDs (may be null)
+  "status": "ACTIVE",
+  "createdAt": "2025-01-15T10:00:00Z",
+  "updatedAt": "2025-01-15T10:00:00Z",
+  "department": {
+    "id": 3,
+    "name": "Computer Science",
+    "code": "CS"
+  },
+  "prerequisites": [],                 // Array of prerequisite objects
+  "sections": [],                      // Array of section objects
+  "prerequisitesCount": 0,             // ⭐ Convenience field
+  "sectionsCount": 2                   // ⭐ Convenience field
+}
+```
+
+> **Note**: `instructorId` and `taIds` are stored in the `courses` table but actual section-level instructor/TA assignments are managed separately in `course_instructors` and `course_tas` tables via the enrollments module.
+
+---
+
+## 17. Business Logic Details
+
+### 17.1 Assignment Submission — Enrollment Check
+
+**Critical**: Assignment submission (`POST /api/assignments/:id/submit` and `POST /api/assignments/:id/submissions/upload`) **requires** the student to be enrolled in the assignment's course.
+
+```typescript
+// Enrollment validation in assignments.service.ts
+const enrollment = await this.enrollmentRepo
+  .createQueryBuilder('enrollment')
+  .innerJoin('course_sections', 'section', 'section.section_id = enrollment.section_id')
+  .where('enrollment.user_id = :userId', { userId })
+  .andWhere('section.course_id = :courseId', { courseId: assignment.courseId })
+  .andWhere('enrollment.enrollment_status = :status', { status: 'enrolled' })
+  .getOne();
+
+if (!enrollment) {
+  throw new BadRequestException('Student is not enrolled in this course');
+}
+```
+
+**Business Rules**:
+1. Assignment must be in `published` status
+2. If `availableFrom` is set, current time must be after it
+3. If past `dueDate`:
+   - If `lateSubmissionAllowed = false`: Throws `SubmissionDeadlinePassedException`
+   - If `lateSubmissionAllowed = true`: Sets `isLate = 1`
+4. **Student must be enrolled** in the course's section with status `enrolled`
+5. **UPSERT Logic**: 
+   - If latest submission is `graded`: Creates new attempt (increment `attemptNumber`)
+   - If latest submission is not graded: Updates existing submission
+
+### 17.2 Lab Submission — Missing Enrollment Check
+
+**Important**: Lab submission (`POST /api/labs/:id/submit` and `POST /api/labs/:id/submissions/upload`) currently **does NOT check** if the student is enrolled in the course.
+
+```typescript
+// labs.service.ts — submit() method
+// ⚠️ NO enrollment validation found
+async submit(labId: number, userId: number, dto: SubmitLabDto): Promise<LabSubmission> {
+  const lab = await this.findById(labId);
+  
+  let isLate = false;
+  if (lab.dueDate && new Date() > new Date(lab.dueDate)) {
+    isLate = true;
+  }
+  
+  // UPSERT logic...
+}
+```
+
+**Recommendation**: Add enrollment check similar to assignments for consistency.
+
+### 17.3 Assignment vs Lab Submission Differences
+
+| Feature | Assignments | Labs |
+|---|---|---|
+| **Late Detection** | `isLate: number` (0 or 1) | `isLate: boolean` (true/false) |
+| **Attempt Tracking** | `attemptNumber` auto-incremented | No attempt tracking |
+| **UPSERT Behavior** | Updates if not graded, new attempt if graded | Updates existing or creates new |
+| **Enrollment Check** | ✅ Required | ❌ Missing (should be added) |
+| **Get My Submission** | Returns single latest submission | Returns **array** of all submissions |
+| **Submission Types** | `file`, `text`, `link`, `multiple` | `text`, `file` only |
+| **Grade Integration** | Creates central grade record | Creates central grade record (only if status=`graded`) |
+
+### 17.4 Grade Integration
+
+Both assignments and labs automatically create records in the central `grades` table when graded:
+
+**Assignment Grading** (`PATCH /api/assignments/:id/submissions/:subId/grade`):
+```typescript
+await this.gradesService.createGrade({
+  userId: submission.userId,
+  courseId: assignment.courseId,
+  gradeType: GradeType.ASSIGNMENT,
+  assignmentId: assignmentId,
+  score: dto.score,
+  maxScore: Number(assignment.maxScore),
+  feedback: dto.feedback,
+  isPublished: true,  // Immediately visible
+}, graderId);
+```
+
+**Lab Grading** (`PATCH /api/labs/:id/submissions/:subId/grade`):
+```typescript
+// Only creates grade if status is 'graded' and score provided
+if (dto.score !== undefined && dto.status === 'graded') {
+  await this.gradesService.createGrade({
+    userId: submission.userId,
+    courseId: lab.courseId,
+    gradeType: GradeType.LAB,
+    labId: labId,
+    score: dto.score,
+    maxScore: Number(lab.maxScore),
+    feedback: dto.feedback,
+    isPublished: true,
+  }, graderId);
+}
+```
+
+### 17.5 Google Drive File Organization
+
+**Assignment Instructions**:
+- Folder: `EduVerse/Courses/{CourseCode}/Assignments/Assignment_{ID}/Instructions/`
+- File naming: `{Title}_v1.{ext}`
+
+**Assignment Submissions**:
+- Folder: `EduVerse/Courses/{CourseCode}/Assignments/Assignment_{ID}/Submissions/User_{UserID}/`
+- File naming: `Assignment_{ID}_Submission_{YYYYMMDD}.{ext}`
+
+**Lab Instructions**:
+- Folder: `EduVerse/Courses/{CourseCode}/Labs/Lab_{LabNumber}/Instructions/`
+- File naming: `{Title}_v1.{ext}`
+
+**Lab TA Materials**:
+- Folder: `EduVerse/Courses/{CourseCode}/Labs/Lab_{LabNumber}/TA_Materials/`
+- File naming: `{Type}_{Title}.{ext}` (e.g., `solution_Lab_1_Answer_Key.pdf`)
+
+**Lab Submissions**:
+- Folder: `EduVerse/Courses/{CourseCode}/Labs/Lab_{LabNumber}/Submissions/User_{UserID}/`
+- File naming: `Lab{LabNumber}_Submission_{YYYYMMDD}.{ext}`
+
+### 17.6 Course Section Status Auto-Calculation
+
+Section status is automatically calculated based on enrollment:
+
+```typescript
+private calculateSectionStatus(maxCapacity: number, currentEnrollment: number): SectionStatus {
+  if (currentEnrollment >= maxCapacity) {
+    return SectionStatus.FULL;
+  }
+  return SectionStatus.OPEN;
+}
+```
+
+- `OPEN`: Enrollment < Capacity
+- `FULL`: Enrollment >= Capacity
+- `CLOSED`: Manually set by instructor/admin
+- `CANCELLED`: Manually set by instructor/admin
+
+---
+
+## 18. End-to-End Flow Diagrams
+
+### 18.1 Student Course Enrollment Flow
+
+```mermaid
+sequenceDiagram
+    participant S as Student
+    participant API as Backend API
+    participant DB as Database
+
+    S->>API: GET /api/enrollments/available
+    API->>DB: Query active courses with sections
+    DB-->>API: Return courses
+    API->>API: Check prerequisites, capacity, conflicts
+    API-->>S: 200 { courses with canEnroll flag }
+    
+    Note over S: Student selects a section
+    
+    S->>API: POST /api/enrollments/register { sectionId }
+    API->>DB: Check prerequisites (grade B- or higher)
+    API->>DB: Check schedule conflicts
+    API->>DB: Check existing enrollment
+    API->>DB: INSERT course_enrollments
+    API->>DB: UPDATE sections SET currentEnrollment + 1
+    API-->>S: 201 { enrollment details }
+```
+
+### 18.2 Assignment Submission Flow (with Enrollment Check)
+
+```mermaid
+sequenceDiagram
+    participant S as Student
+    participant API as Backend API
+    participant DB as Database
+    participant GD as Google Drive
+
+    S->>API: GET /api/assignments/:id
+    API->>DB: Get assignment with course info
+    API-->>S: 200 { assignment details }
+    
+    Note over S: Student prepares submission
+    
+    S->>API: POST /api/assignments/:id/submissions/upload (multipart)
+    API->>DB: Check assignment status = published
+    API->>DB: Check availableFrom <= now
+    API->>DB: Check dueDate (late detection)
+    API->>DB: CHECK enrollment in course section ⭐
+    alt Not enrolled
+        API-->>S: 400 "Student is not enrolled in this course"
+    else Enrolled
+        API->>GD: Upload file to student folder
+        GD-->>API: Return driveFileId, URLs
+        API->>DB: UPSERT submission (check if graded)
+        API-->>S: 201 { submission + driveFile }
+    end
+```
+
+### 18.3 Lab Submission Flow (without Enrollment Check)
+
+```mermaid
+sequenceDiagram
+    participant S as Student
+    participant API as Backend API
+    participant DB as Database
+    participant GD as Google Drive
+
+    S->>API: GET /api/labs/:id
+    API->>DB: Get lab with instructions
+    API-->>S: 200 { lab + instructions }
+    
+    Note over S: Student prepares submission
+    
+    S->>API: POST /api/labs/:id/submissions/upload (multipart)
+    API->>DB: Check lab exists
+    API->>DB: Check dueDate (late detection)
+    API->>DB: ⚠️ NO enrollment check
+    API->>GD: Upload file to student folder
+    GD-->>API: Return driveFileId, URLs
+    API->>DB: UPSERT submission
+    API-->>S: 201 { submission + driveFile }
+```
+
+### 18.4 Grading Flow (Central Gradebook Integration)
+
+```mermaid
+sequenceDiagram
+    participant I as Instructor/TA
+    participant API as Backend API
+    participant DB as Database
+    participant GB as Grades Module
+
+    I->>API: PATCH /api/assignments/:id/submissions/:subId/grade
+    API->>DB: Get submission + assignment
+    API->>DB: UPDATE submission (status=graded, score, feedback)
+    API->>GB: createGrade({ assignment, score, maxScore })
+    GB->>DB: INSERT grades (gradeType='assignment', isPublished=true)
+    GB-->>API: Return gradeId
+    API-->>I: 200 { submissionId, score, maxScore, gradeId }
+```
+
+---
+
+## 19. UI Shape for 5 Roles
+
+This section describes the **expected UI structure** for each role based on the backend API capabilities.
+
+### 19.1 Student UI
+
+#### **Dashboard / Home**
+- **My Courses**: Grid/list of enrolled courses with:
+  - Course name, code, instructor
+  - Current grade (if available)
+  - Quick links to materials, assignments, labs
+- **Upcoming Deadlines**: Assignments and labs due soon
+- **Recent Grades**: Latest graded submissions
+
+#### **Course Catalog** (Public)
+- Browse all courses by department, level, search
+- View course details:
+  - Description, credits, prerequisites
+  - Available sections with schedules
+  - Enroll button (if `canEnroll = true`)
+
+#### **Course Details Page** (Per Course)
+- **Tabs**:
+  1. **Overview**: Description, syllabus, instructor/TA info
+  2. **Materials**: Published videos, documents (organized by weeks)
+     - Video player (YouTube embed)
+     - Document viewer/download
+     - View tracking (analytics for instructor)
+  3. **Assignments**: Published assignments list
+     - Title, due date, status
+     - Submit button → Modal with:
+       - Text editor
+       - File upload
+       - Link input
+       - Late warning if past due
+     - View submission history with grades/feedback
+  4. **Labs**: Published labs list
+     - Title, due date, lab number
+     - View instructions (with file attachments)
+     - Submit button → Modal with:
+       - Text/code editor
+       - File upload
+     - View submission history with grades/feedback
+  5. **Grades**: All graded work with scores, feedback, overall grade
+  6. **Schedule**: Section schedule (days, times, rooms)
+
+#### **Enrollment Management**
+- **My Enrollments**: List of current/past courses
+- **Available Courses**: Browse and register (with prerequisites check)
+- **Drop Course**: Button with deadline warning
+
+---
+
+### 19.2 Instructor UI
+
+#### **Dashboard / Home**
+- **Teaching Courses**: Grid of assigned sections with:
+  - Course name, section number
+  - Enrollment count
+  - Quick stats: pending submissions, upcoming deadlines
+- **Recent Activity**: New submissions, recent grading
+
+#### **Course Management** (Per Assigned Section)
+- **Tabs**:
+  1. **Overview**:
+     - Course details (edit if assigned)
+     - Section info (capacity, location)
+     - Instructor/TA assignments (view only, admin manages)
+     - Enrolled students list (with contact info)
+  
+  2. **Materials**:
+     - **All materials** (including drafts)
+     - Upload buttons:
+       - 📹 **Upload Video** → YouTube upload modal (title, description, tags, week)
+       - 📄 **Upload Document** → Google Drive upload (title, type, week)
+     - Organize by weeks (course structure):
+       - Create/edit weeks, lectures, sections, labs
+       - Drag-and-drop reorder
+     - Toggle visibility (publish/draft)
+     - View analytics (view count, download count)
+  
+  3. **Assignments**:
+     - List all assignments (draft/published/closed/archived)
+     - **Create Assignment** modal:
+       - Title, description, instructions
+       - Submission type (file/text/link/multiple)
+       - Due date, available from date
+       - Late submission settings
+       - Max score, weight
+       - Allowed file types, max size
+     - **View Submissions**:
+       - Table of all students with:
+         - Name, submission time, late flag
+         - Status (submitted/graded/returned)
+         - Attempt number
+         - Grade input (score, feedback)
+       - Bulk actions: download all, grade selected
+     - **Grade Submission**:
+       - Side-by-side view:
+         - Left: Student submission (file viewer, text, link)
+         - Right: Grade input (score, feedback, status)
+  
+  4. **Labs**:
+     - List all labs (draft/published/closed/archived)
+     - **Create Lab** modal:
+       - Title, description, lab number
+       - Due date, available from
+       - Max score, weight
+     - **Manage Instructions**:
+       - Add steps (markdown text, file attachments)
+       - Reorder instructions
+       - Upload instruction files to Drive
+     - **View Submissions**: Same as assignments
+     - **Grade Submissions**: Same as assignments
+     - **Attendance**:
+       - Student list with attendance status
+       - Mark present/absent/excused/late
+       - Export attendance
+  
+  5. **Grades**:
+     - Gradebook view with all graded work
+     - Assignment grades, lab grades
+     - Calculate overall grades
+     - Export grades
+  
+  6. **Schedule**:
+     - Section schedules (days, times, rooms)
+     - Create/edit schedules with conflict detection
+  
+  7. **Analytics** (if available):
+     - Student engagement (material views, downloads)
+     - Grade distribution
+     - Submission patterns
+
+---
+
+### 19.3 Teaching Assistant (TA) UI
+
+**Similar to Instructor UI with these differences**:
+
+#### **Restrictions**:
+- ❌ **Cannot** delete labs
+- ❌ **Cannot** manage course structure (weeks, lectures organization)
+- ❌ **Cannot** assign/remove instructors or TAs
+- ✅ **Can** create/edit/delete assignments
+- ✅ **Can** create/edit labs (but not delete)
+- ✅ **Can** grade all submissions
+- ✅ **Can** upload instructions and TA materials
+- ✅ **Can** mark lab attendance
+- ✅ **Can** view all materials (including drafts)
+
+#### **Additional TA-Specific Features**:
+- **TA Materials Tab** (in Labs):
+  - Upload answer keys, grading rubrics, solutions
+  - Visible only to instructors and TAs (not students)
+- **Responsibilities View**:
+  - Shows assigned duties (e.g., "Grading labs, office hours Mon/Wed")
+
+---
+
+### 19.4 Admin UI
+
+#### **Full System Access**
+- All instructor/TA capabilities **without restrictions**
+- Can manage **any** material (not just own)
+- Can manage course structure
+- Can delete any resource
+
+#### **Admin-Specific Features**:
+
+1. **Course Catalog Management**:
+   - Create/edit/delete courses
+   - Manage prerequisites (with circular dependency detection)
+   - Assign departments, instructors, TAs at course level
+
+2. **Section Management**:
+   - Create/edit/delete sections
+   - Set capacity, location, status
+   - Override enrollment counts
+
+3. **Instructor/TA Assignment**:
+   - Assign instructors to sections (primary, co_instructor, guest)
+   - Assign TAs to sections
+   - View all assignments across sections
+
+4. **Enrollment Management**:
+   - View all student enrollments
+   - Manually enroll/drop students
+   - Override drop deadlines
+   - Approve retake requests
+
+5. **System Administration**:
+   - Manage departments, semesters, programs
+   - User management (create, assign roles)
+   - System settings, integrations
+
+---
+
+### 19.5 IT Admin UI
+
+**All Admin capabilities PLUS**:
+
+1. **System Monitoring**:
+   - Server health, performance metrics
+   - Error tracking, alerts
+   - SSL certificate status
+
+2. **Database Management**:
+   - Backup/restore
+   - Database migrations
+   - Query performance
+
+3. **Security**:
+   - Audit logs
+   - IP blocking/unblocking
+   - Security settings
+
+4. **Integrations**:
+   - Google Drive configuration
+   - YouTube API setup
+   - Email service configuration
+
+---
+
+### 19.6 Department Head UI
+
+**Current State**: **Minimal access** to courses/assignments/labs
+
+**Currently Available**:
+- Schedule templates (create/manage templates)
+- Campus events (create/manage events)
+
+**Recommended Enhancements** (not yet implemented):
+- Department courses overview
+- Instructor assignments per course
+- Enrollment statistics
+- Department-level analytics
+
+---
+
+## 20. Missing Endpoints & Future Enhancements
+
+### 20.1 Currently Missing Endpoints
+
+1. **Lab Submission Enrollment Check**: Labs should validate student enrollment like assignments do
+2. **Department Head Course Access**: Endpoints for department heads to view/manage department courses
+3. **Waitlist Management**: Full waitlist table and enrollment logic
+4. **Course Copy/Duplicate**: Clone a course with all materials, assignments, labs
+5. **Bulk Enrollment**: Admin enroll multiple students at once
+6. **Grade Export**: Export grades to CSV/Excel
+7. **Assignment/Lab Cloning**: Duplicate for reuse in future semesters
+8. **Discussion Forums**: Per-course discussion boards
+9. **Announcements**: Course-wide announcements
+10. **Notifications**: Push/email notifications for deadlines, grades
+
+### 20.2 Recommended Improvements
+
+1. **Add enrollment check to lab submission** endpoints for consistency
+2. **Implement department_head role** permissions for course oversight
+3. **Add soft delete** to labs (currently hard delete)
+4. **Add attempt tracking** to lab submissions (like assignments)
+5. **Implement waitlist** with auto-enrollment when seats open
+6. **Add grade curves** and grading policies
+7. **Add plagiarism detection** integration
+8. **Implement real-time notifications** (WebSockets)
+9. **Add course templates** for quick setup
+10. **Add analytics dashboard** for instructors (engagement, grade distribution)
+
+---
+
 > **Last Updated**: April 2026
 > **Backend Framework**: NestJS (TypeScript)
 > **Database**: MySQL with TypeORM
 > **File Storage**: Google Drive API
 > **Video Storage**: YouTube API (unlisted uploads)
+> **Authentication**: JWT with role-based access control
+
