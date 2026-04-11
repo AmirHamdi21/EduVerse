@@ -1,6 +1,6 @@
 <!--
 SYNC IMPACT REPORT
-- Version Change: 3.0.0 → 4.0.0 (MAJOR — new feature domain: Courses/Assignments/Labs)
+- Version Change: 4.0.0 → 5.0.0 (MAJOR — new principle: UI Consistency & Visual Preservation)
 - Modified Principles:
   - I. BLoC State Management First — unchanged
   - II. Strict Data Layer Separation — expanded: added AssignmentService, LabService, SectionService, ScheduleService, MaterialService; added file upload via Dio FormData rules
@@ -14,6 +14,7 @@ SYNC IMPACT REPORT
   - IX. Role-Based Access Control Enforcement (new: UI gating per role matrix)
   - X. File Upload & Google Drive/YouTube Integration (new: FormData, progress, preview rules)
   - XI. Multi-Phase Plan Adherence (new: phase gating against integration plan)
+  - XII. UI Consistency & Visual Preservation (new: ≥85% visual similarity requirement, layout/color preservation, empty state rules)
 - Added Sections:
   - "Courses, Assignments & Labs Integration Constraints" (replaces chat-only scope)
   - "Role-Based UI Enforcement Matrix" (new table: 15 features × 5 roles)
@@ -21,7 +22,7 @@ SYNC IMPACT REPORT
   - "Static Data & Mock Removal Policy" (new: 4-step audit process)
 - Removed Sections: None
 - Templates Requiring Updates:
-  - ✅ plan-template.md — Constitution Check updated to reference new principles IX, X, XI
+  - ✅ plan-template.md — Constitution Check updated to reference new principles IX, X, XI, XII
   - ✅ spec-template.md — No changes needed (generic structure)
   - ✅ tasks-template.md — No changes needed (generic structure)
 - Follow-up TODOs: None
@@ -263,6 +264,36 @@ phased plan defined in `courses_assignments_labs_integration_plan.md`.
 - Website frontend: `Courses_Assignments_Labs_Frontend_Documentation.md`
 - Integration plan: `courses_assignments_labs_integration_plan.md`
 
+### XII. UI Consistency & Visual Preservation
+The visual design, layout structure, colors, and component hierarchy of 
+all screens MUST be preserved across all phases of integration work.
+
+**Non-negotiable rules:**
+- Modified screens MUST maintain at least **85% visual similarity** to 
+  their previous state after each phase
+- Colors, spacing, typography, and theme MUST remain unchanged
+- Layout structure (cards, lists, navigation, modals) MUST not be 
+  reorganized or redesigned
+- Mock/static data removal MUST NOT alter the UI space where data was 
+  displayed — show empty states instead of removing UI elements
+- New screens MUST follow existing app design patterns and conventions
+- No wholesale redesigns or visual overhauls are permitted
+- Users must NOT experience jarring visual differences between versions
+- Widget trees, nesting order, and layout widgets (Rows, Columns, 
+  Stacks, Flex) MUST not be reorganized unless absolutely necessary 
+  for API integration
+
+**Exception**: Minor responsive adjustments (e.g., converting tables 
+to card lists on mobile) are permitted if they improve usability without 
+altering the overall visual design language.
+
+**Verification**: Every phase completion MUST include a visual parity 
+check comparing before/after screenshots to ensure ≥85% similarity.
+
+**Application scope**: This principle applies to **ALL phases from 
+Phase 2 through Phase 9** of the Courses/Assignments/Labs integration 
+plan, and to ALL future SpeKit specifications that modify existing UI.
+
 ## Chat Integration Constraints
 
 All chat backend integration MUST precisely follow the phases and structures
@@ -415,4 +446,4 @@ to the next phase.
 - MINOR version bump for new principle or section addition.
 - PATCH version bump for clarification or typo fixes.
 
-**Version**: 4.0.0 | **Ratified**: 2026-04-05 | **Last Amended**: 2026-04-10
+**Version**: 5.0.0 | **Ratified**: 2026-04-05 | **Last Amended**: 2026-04-11

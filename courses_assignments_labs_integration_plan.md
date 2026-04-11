@@ -46,6 +46,33 @@
 
 ---
 
+## ⚠️ CRITICAL REQUIREMENT: UI Consistency & Visual Preservation
+
+> **[!IMPORTANT]**
+> **The UI layout, colors, structure, and visual design of all screens MUST remain at least 85% identical to the existing UI after each phase.** This is a **non-negotiable requirement** that applies to **ALL phases from Phase 2 to Phase 9**.
+
+### UI Preservation Rules
+
+1. **No Visual Overhauls**: Do NOT redesign, restructure, or significantly alter the visual appearance of existing screens
+2. **Colors Must Match**: All existing color schemes, gradients, backgrounds, and theme colors MUST remain unchanged
+3. **Layout Structure Preserved**: Card layouts, list structures, navigation patterns, and component hierarchies MUST stay consistent
+4. **Mock Data Removal Only**: Only remove static/mock data and replace with live API data — **the UI space where that data was displayed MUST remain** (show empty states when no data)
+5. **Minimum 85% Visual Similarity**: After each phase, modified screens must maintain at least 85% visual similarity to their previous state
+6. **Follow Existing App Patterns**: New screens must follow the existing app's UI patterns, component styles, and design language
+7. **No Breaking Changes**: Users should not experience jarring visual differences between versions
+8. **Component Structure Locked**: Widget trees, nesting order, and layout widgets (Rows, Columns, Stacks, Flex) MUST not be reorganized unless absolutely necessary for API integration
+
+### UI Consistency Acceptance Criteria (Applies to ALL Phases 2-9)
+
+- [ ] Modified screens maintain consistent visual structure with previous version
+- [ ] No wholesale redesigns or layout reorganizations
+- [ ] Colors, spacing, and typography match existing app theme
+- [ ] Mock data removed but UI space preserved (empty states shown when no data)
+- [ ] New components follow existing design patterns and conventions
+- [ ] Overall screen layout is ≥85% visually identical to pre-integration state
+
+---
+
 ## Executive Summary
 
 The Flutter mobile app currently has **static/mock UI** for most Courses, Assignments, and Labs screens. Some API services exist (`CourseService`, `EnrollmentService`, `MaterialService`) but many are incomplete or unused. The website frontend is fully integrated with the backend across **5 roles** (Student, Instructor, TA, Admin, IT Admin). This plan replaces all static data with live backend data, adds missing screens to match the website, and removes screens not present on the website.
@@ -555,6 +582,8 @@ Build the foundational service layer and domain models that all subsequent phase
 <a id="phase-2"></a>
 ## Phase 2: Student — Courses & Lecture Viewer
 
+> **[!UI CONSISTENCY]** This phase MUST preserve the existing UI structure with ≥85% visual similarity. Only mock data is removed — layout, colors, and component structure remain unchanged. See "UI Consistency & Visual Preservation" section above.
+
 ### Objective
 Replace all static course data on the student dashboard with live API data. Build the full CourseView lecture player matching the website's `CourseViewPage`.
 
@@ -647,6 +676,8 @@ The website's student `CourseViewPage` (1070+ lines) has these sections that the
 <a id="phase-3"></a>
 ## Phase 3: Student — Assignments
 
+> **[!UI CONSISTENCY]** This phase MUST preserve the existing UI structure with ≥85% visual similarity. Only mock data is removed — layout, colors, and component structure remain unchanged. See "UI Consistency & Visual Preservation" section above.
+
 ### Objective
 Fully integrate the student assignment workflow: list → detail → submit → view grade. Must match the website's Student Assignment screens exactly.
 
@@ -707,6 +738,8 @@ Fully integrate the student assignment workflow: list → detail → submit → 
 
 <a id="phase-4"></a>
 ## Phase 4: Student — Labs
+
+> **[!UI CONSISTENCY]** This phase MUST preserve the existing UI structure with ≥85% visual similarity. Only mock data is removed — layout, colors, and component structure remain unchanged. See "UI Consistency & Visual Preservation" section above.
 
 ### Objective
 Fully integrate the student lab workflow: list → detail → instructions → submit → view grade.
@@ -772,6 +805,8 @@ Fully integrate the student lab workflow: list → detail → instructions → s
 <a id="phase-5"></a>
 ## Phase 5: Instructor — Courses & Materials Management
 
+> **[!UI CONSISTENCY]** This phase MUST preserve the existing UI structure with ≥85% visual similarity. Only mock data is removed — layout, colors, and component structure remain unchanged. See "UI Consistency & Visual Preservation" section above.
+
 ### Objective
 Integrate the instructor's course management and full materials upload system matching the website's `UploadMaterialsPage` and `CourseDetail` Lectures tab.
 
@@ -835,6 +870,8 @@ Integrate the instructor's course management and full materials upload system ma
 <a id="phase-6"></a>
 ## Phase 6: Instructor — Assignments CRUD & Grading
 
+> **[!UI CONSISTENCY]** This phase MUST preserve the existing UI structure with ≥85% visual similarity. Only mock data is removed — layout, colors, and component structure remain unchanged. See "UI Consistency & Visual Preservation" section above.
+
 ### Objective
 Full assignment management for instructors: create, edit, delete, change status, view submissions, and grade.
 
@@ -896,6 +933,8 @@ Full assignment management for instructors: create, edit, delete, change status,
 
 <a id="phase-7"></a>
 ## Phase 7: Instructor — Labs CRUD & Grading
+
+> **[!UI CONSISTENCY]** This phase MUST preserve the existing UI structure with ≥85% visual similarity. Only mock data is removed — layout, colors, and component structure remain unchanged. See "UI Consistency & Visual Preservation" section above.
 
 ### Objective
 Full lab management for instructors: create, edit, delete, manage instructions, view submissions, grade, and manage attendance.
@@ -970,6 +1009,8 @@ Full lab management for instructors: create, edit, delete, manage instructions, 
 
 <a id="phase-8"></a>
 ## Phase 8: TA — Courses, Assignments & Labs Integration
+
+> **[!UI CONSISTENCY]** This phase MUST preserve the existing UI structure with ≥85% visual similarity. Only mock data is removed — layout, colors, and component structure remain unchanged. See "UI Consistency & Visual Preservation" section above.
 
 ### Objective
 Integrate the TA dashboard's full workflow: view assigned courses, **create/edit/delete assignments and labs**, grade submissions, mark attendance, and upload materials. 
@@ -1063,6 +1104,8 @@ Integrate the TA dashboard's full workflow: view assigned courses, **create/edit
 
 <a id="phase-9"></a>
 ## Phase 9: Admin — Course Management
+
+> **[!UI CONSISTENCY]** This phase MUST preserve the existing UI structure with ≥85% visual similarity. Only mock data is removed — layout, colors, and component structure remain unchanged. See "UI Consistency & Visual Preservation" section above.
 
 ### Objective
 Full course lifecycle management for the Admin (Department Head): 3-step course wizard, section/schedule management, and staff assignment.
