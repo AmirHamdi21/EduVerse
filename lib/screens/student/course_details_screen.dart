@@ -1,6 +1,10 @@
 import 'package:edu_verse/widgets/student/course_details/course_details_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../bloc/courses/courses_bloc.dart';
+import '../../features/courses/bloc/course_detail/course_detail_bloc.dart';
+import '../../features/courses/bloc/course_detail/course_detail_event.dart';
+import '../../features/courses/bloc/course_detail/course_detail_state.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../common/utils/course_ui_utils.dart';
@@ -33,7 +37,7 @@ class CourseDetailsScreen extends StatefulWidget {
 
 class _CourseDetailsScreenState extends State<CourseDetailsScreen>
     with SingleTickerProviderStateMixin {
-  late int _selectedTabIndex;
+  late final CourseDetailBloc _courseDetailBloc;
   late AnimationController _headerAnimationController;
   final ScrollController _scrollController = ScrollController();
   bool _isHeaderCollapsed = false;
@@ -132,7 +136,25 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   @override
   void initState() {
     super.initState();
-    _selectedTabIndex = widget.initialTab;
+
+    final coursesBloc = context.read<CoursesBloc>();
+    _courseDetailBloc = CourseDetailBloc(
+      courseService: coursesBloc.courseService,
+      materialService: coursesBloc.materialService,
+    );
+
+    final courseId = _resolvedCourseId;
+    if (courseId != null) {
+      _courseDetailBloc.add(
+        LoadCourseDetail(
+          courseId: courseId,
+          initialTabIndex: widget.initialTab,
+        ),
+      );
+    } else {
+      _courseDetailBloc.add(SwitchTab(tabIndex: widget.initialTab));
+    }
+
     _headerAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
@@ -153,6 +175,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   void dispose() {
     _headerAnimationController.dispose();
     _scrollController.dispose();
+    _courseDetailBloc.close();
     super.dispose();
   }
 
@@ -167,191 +190,202 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
 
         return Scaffold(
           backgroundColor: bgColor,
-          body: Stack(
-            children: [
-              CustomScrollView(
-                controller: _scrollController,
-                slivers: [
-                  // Hero header with gradient
-                  SliverToBoxAdapter(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: isDark
-                              ? [
-                                  const Color(0xFF1E293B),
-                                  const Color(0xFF0F172A),
-                                ]
-                              : _gradientColors,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: SafeArea(
-                        bottom: false,
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            children: [
-                              CourseDetailsHeader(
-                                title: _title,
-                                isDark: isDark,
-                                onBackPressed: () => Navigator.pop(context),
-                              ),
-                              const SizedBox(height: 20),
-                              // Stats cards row — T015
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _buildStatCard(
-                                      icon: Icons.credit_card_outlined,
-                                      value: '$_credits',
-                                      label: 'Credits',
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: _buildStatCard(
-                                      icon: Icons.layers_outlined,
-                                      value: _level,
-                                      label: 'Level',
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: _buildStatCard(
-                                      icon: Icons.check_circle_outline,
-                                      value: _statusLabel,
-                                      label: 'Status',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                  // Content card
-                  SliverToBoxAdapter(
-                    child: Transform.translate(
-                      offset: const Offset(0, -20),
+          body: BlocProvider.value(
+            value: _courseDetailBloc,
+            child: Stack(
+              children: [
+                CustomScrollView(
+                  controller: _scrollController,
+                  slivers: [
+                    // Hero header with gradient
+                    SliverToBoxAdapter(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: bgColor,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
+                          gradient: LinearGradient(
+                            colors: isDark
+                                ? [
+                                    const Color(0xFF1E293B),
+                                    const Color(0xFF0F172A),
+                                  ]
+                                : _gradientColors,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Instructor / Department info card
-                              _buildInstructorCard(isDark),
-                              const SizedBox(height: 20),
-                              // Course code & description
-                              if (_courseCode.isNotEmpty) ...[
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 6,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: isDark
-                                        ? Colors.white.withOpacity(0.08)
-                                        : const Color(0xFFF0F4FF),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    _courseCode,
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? const Color(0xFF8EC5FF)
-                                          : const Color(0xFF155DFC),
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                              ],
-                              if (_description != null &&
-                                  _description!.isNotEmpty) ...[
-                                Text(
-                                  _description!,
-                                  style: TextStyle(
-                                    color: isDark
-                                        ? Colors.white70
-                                        : const Color(0xFF4A5565),
-                                    fontSize: 14,
-                                    height: 1.6,
-                                  ),
+                        child: SafeArea(
+                          bottom: false,
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              children: [
+                                CourseDetailsHeader(
+                                  title: _title,
+                                  isDark: isDark,
+                                  onBackPressed: () => Navigator.pop(context),
                                 ),
                                 const SizedBox(height: 20),
-                              ],
-                              // Action buttons
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 2,
-                                    child: _buildActionButton(
-                                      label: 'Continue',
-                                      icon: Icons.play_circle_outline,
-                                      isPrimary: true,
-                                      onTap: () {},
+                                // Stats cards row — T015
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildStatCard(
+                                        icon: Icons.credit_card_outlined,
+                                        value: '$_credits',
+                                        label: 'Credits',
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: _buildActionButton(
-                                      label: 'Chat',
-                                      icon: Icons.chat_bubble_outline,
-                                      isPrimary: false,
-                                      onTap: () {},
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: _buildStatCard(
+                                        icon: Icons.layers_outlined,
+                                        value: _level,
+                                        label: 'Level',
+                                      ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 24),
-                              // Progress section
-                              _buildProgressSection(isDark),
-                              const SizedBox(height: 24),
-                              // T008: Course Structure Viewer
-                              if (widget.enrollment != null)
-                                CourseStructureViewer(
-                                  courseId:
-                                      widget.enrollment!.course?.courseId ??
-                                      widget.enrollment!.courseId,
-                                  isDark: isDark,
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: _buildStatCard(
+                                        icon: Icons.check_circle_outline,
+                                        value: _statusLabel,
+                                        label: 'Status',
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              if (widget.enrollment != null)
-                                const SizedBox(height: 24),
-                              // Tabs — pass legacy CourseModel for tab content compatibility
-                              CourseTabs(
-                                selectedIndex: _selectedTabIndex,
-                                onTabChanged: (index) {
-                                  setState(() {
-                                    _selectedTabIndex = index;
-                                  });
-                                },
-                                isDark: isDark,
-                                course: _buildLegacyCourseForTabs(),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                    // Content card
+                    SliverToBoxAdapter(
+                      child: Transform.translate(
+                        offset: const Offset(0, -20),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: bgColor,
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(30),
+                              topRight: Radius.circular(30),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Instructor / Department info card
+                                _buildInstructorCard(isDark),
+                                const SizedBox(height: 20),
+                                // Course code & description
+                                if (_courseCode.isNotEmpty) ...[
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isDark
+                                          ? Colors.white.withOpacity(0.08)
+                                          : const Color(0xFFF0F4FF),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      _courseCode,
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? const Color(0xFF8EC5FF)
+                                            : const Color(0xFF155DFC),
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                ],
+                                if (_description != null &&
+                                    _description!.isNotEmpty) ...[
+                                  Text(
+                                    _description!,
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? Colors.white70
+                                          : const Color(0xFF4A5565),
+                                      fontSize: 14,
+                                      height: 1.6,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                ],
+                                // Action buttons
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: _buildActionButton(
+                                        label: 'Continue',
+                                        icon: Icons.play_circle_outline,
+                                        isPrimary: true,
+                                        onTap: () {},
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: _buildActionButton(
+                                        label: 'Chat',
+                                        icon: Icons.chat_bubble_outline,
+                                        isPrimary: false,
+                                        onTap: () {},
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 24),
+                                // Progress section
+                                _buildProgressSection(isDark),
+                                const SizedBox(height: 24),
+                                // T008: Course Structure Viewer
+                                if (widget.enrollment != null)
+                                  CourseStructureViewer(
+                                    courseId:
+                                        widget.enrollment!.course?.courseId ??
+                                        widget.enrollment!.courseId,
+                                    isDark: isDark,
+                                  ),
+                                if (widget.enrollment != null)
+                                  const SizedBox(height: 24),
+                                // Tabs — pass legacy CourseModel for tab content compatibility
+                                BlocBuilder<
+                                  CourseDetailBloc,
+                                  CourseDetailState
+                                >(
+                                  builder: (context, detailState) {
+                                    return CourseTabs(
+                                      selectedIndex:
+                                          detailState.selectedTabIndex,
+                                      onTabChanged: (index) {
+                                        context.read<CourseDetailBloc>().add(
+                                          SwitchTab(tabIndex: index),
+                                        );
+                                      },
+                                      isDark: isDark,
+                                      course: _buildLegacyCourseForTabs(),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },

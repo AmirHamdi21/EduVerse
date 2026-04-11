@@ -3,7 +3,11 @@
     "allow": [
       "Bash(powershell *)",
       "Bash(mkdir *)",
-      "Bash(.specify/scripts/powershell/update-agent-context.ps1 *)"
+      "Bash(.specify/scripts/powershell/update-agent-context.ps1 *)",
+      "Bash(.specify/scripts/powershell/create-new-feature.ps1 *)",
+      "Read(D:\\Graduation\\EduVerse/**)",
+      "Bash(flutter *)",
+      "Bash(findstr *)"
     ]
   },
   "$version": 3

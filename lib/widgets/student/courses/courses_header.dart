@@ -15,6 +15,7 @@ class CoursesHeader extends StatelessWidget {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
+        // ignore: unused_local_variable
         final l10n = AppLocalizations.of(context);
 
         return Container(

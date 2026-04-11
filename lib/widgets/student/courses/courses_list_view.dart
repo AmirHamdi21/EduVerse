@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
-import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/core/enrollment_model.dart';
 import 'course_card.dart';
+import 'empty_courses_message.dart';
 
 /// Renders a list of enrolled courses with staggered entry animations.
 ///
@@ -13,10 +13,7 @@ import 'course_card.dart';
 class CoursesListView extends StatefulWidget {
   final List<CourseEnrollmentModel> enrollments;
 
-  const CoursesListView({
-    super.key,
-    required this.enrollments,
-  });
+  const CoursesListView({super.key, required this.enrollments});
 
   @override
   State<CoursesListView> createState() => _CoursesListViewState();
@@ -84,30 +81,9 @@ class _CoursesListViewState extends State<CoursesListView>
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
-        final l10n = AppLocalizations.of(context);
 
         if (widget.enrollments.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.school_outlined,
-                  size: 64,
-                  color: isDark ? Colors.white30 : Colors.grey[300],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  l10n.noData,
-                  style: TextStyle(
-                    color: isDark ? Colors.white54 : Colors.grey[600],
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          );
+          return EmptyCoursesMessage(isDark: isDark);
         }
 
         return ListView.separated(

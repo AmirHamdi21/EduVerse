@@ -19,8 +19,9 @@ class CoreApiClient {
     dio = Dio(
       BaseOptions(
         baseUrl: ApiService.baseUrl,
-        connectTimeout: const Duration(seconds: 15),
-        receiveTimeout: const Duration(seconds: 15),
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+        sendTimeout: const Duration(seconds: 10),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -47,6 +48,24 @@ class CoreApiClient {
             },
           ),
         );
+  }
+
+  /// Standard endpoint timeout profile (10 seconds).
+  Options standardTimeoutOptions({Options? base}) {
+    final options = base ?? Options();
+    return options.copyWith(
+      sendTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 10),
+    );
+  }
+
+  /// Material-related endpoint timeout profile (30 seconds).
+  Options materialTimeoutOptions({Options? base}) {
+    final options = base ?? Options();
+    return options.copyWith(
+      sendTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+    );
   }
 
   // ── Request Interceptor ────────────────────────────────────────────────

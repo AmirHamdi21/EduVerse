@@ -33,7 +33,7 @@ class FilterButton extends StatelessWidget {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
-        final l10n = AppLocalizations.of(context)!;
+        final l10n = AppLocalizations.of(context);
 
         return Expanded(
           child: GestureDetector(

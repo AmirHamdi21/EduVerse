@@ -24,6 +24,7 @@ class _CourseModuleCardState extends State<CourseModuleCard>
   late AnimationController _expandController;
   late Animation<double> _descriptionAnimation;
   late Animation<double> _contentBadgeAnimation;
+  // ignore: unused_field
   late Animation<double> _durationAnimation;
   late Animation<double> _buttonAnimation;
 

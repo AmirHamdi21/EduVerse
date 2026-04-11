@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 class CourseActionButtons extends StatelessWidget {
   final bool isDark;
   final String primaryButtonLabel;
+  final VoidCallback? onContinueLearning;
+  final VoidCallback? onJoinChat;
 
   const CourseActionButtons({
     super.key,
     required this.isDark,
     required this.primaryButtonLabel,
+    this.onContinueLearning,
+    this.onJoinChat,
   });
 
   @override
@@ -17,7 +21,6 @@ class CourseActionButtons extends StatelessWidget {
 
     return Column(
       children: [
-        // Continue Learning Button
         Container(
           width: double.infinity,
           height: 48,
@@ -39,7 +42,7 @@ class CourseActionButtons extends StatelessWidget {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () {},
+              onTap: onContinueLearning,
               borderRadius: BorderRadius.circular(14),
               child: Center(
                 child: Text(
@@ -56,7 +59,6 @@ class CourseActionButtons extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        // Join Course Chat Button
         Container(
           width: double.infinity,
           height: 48,
@@ -71,7 +73,7 @@ class CourseActionButtons extends StatelessWidget {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: () {},
+              onTap: onJoinChat,
               borderRadius: BorderRadius.circular(14),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

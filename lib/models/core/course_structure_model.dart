@@ -34,14 +34,17 @@ class CourseStructureModel extends Equatable {
 
   factory CourseStructureModel.fromJson(Map<String, dynamic> json) {
     return CourseStructureModel(
-      organizationId: json['organizationId']?.toString() ?? '',
+      organizationId: (json['organizationId'] ?? json['id'])?.toString() ?? '',
       courseId: json['courseId']?.toString() ?? '',
       materialId: json['materialId']?.toString(),
       material: json['material'] != null
           ? CourseMaterialModel.fromJson(
-              json['material'] as Map<String, dynamic>)
+              json['material'] as Map<String, dynamic>,
+            )
           : null,
-      organizationType: json['organizationType'] as String? ?? 'lecture',
+      organizationType:
+          (json['organizationType'] ?? json['contentType']) as String? ??
+          'lecture',
       title: json['title'] as String? ?? '',
       weekNumber: json['weekNumber'] is int
           ? json['weekNumber'] as int
@@ -51,10 +54,10 @@ class CourseStructureModel extends Equatable {
           : int.tryParse(json['orderIndex']?.toString() ?? '') ?? 0,
       description: json['description'] as String?,
       createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'] as String)
+          ? DateTime.tryParse(json['createdAt'].toString())
           : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
+          ? DateTime.tryParse(json['updatedAt'].toString())
           : null,
     );
   }
@@ -77,16 +80,16 @@ class CourseStructureModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        organizationId,
-        courseId,
-        materialId,
-        material,
-        organizationType,
-        title,
-        weekNumber,
-        orderIndex,
-        description,
-        createdAt,
-        updatedAt,
-      ];
+    organizationId,
+    courseId,
+    materialId,
+    material,
+    organizationType,
+    title,
+    weekNumber,
+    orderIndex,
+    description,
+    createdAt,
+    updatedAt,
+  ];
 }

@@ -28,22 +28,21 @@ import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/session_expiry_notifier.dart';
 import 'package:edu_verse/services/api/course_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
-import 'package:edu_verse/services/api/assignment_service.dart';
-import 'package:edu_verse/services/api/lab_service.dart';
 import 'package:edu_verse/services/api/material_service.dart';
 import 'package:edu_verse/services/api/communication_service.dart';
-import 'package:edu_verse/services/api/section_service.dart';
-import 'package:edu_verse/services/api/schedule_service.dart';
-import 'package:edu_verse/services/api/semester_service.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated_l10n/app_localizations.dart';
 import 'package:flutter/services.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (Platform.isAndroid || Platform.isIOS) {
+    await FlutterDownloader.initialize(debug: false, ignoreSsl: false);
+  }
   // Hide status bar & navigation bar
   // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
   if (Platform.isAndroid || Platform.isIOS) {
@@ -84,11 +83,6 @@ class _MyAppState extends State<MyApp> {
   late CoursesBloc _coursesBloc;
   late CourseService _courseService;
   late EnrollmentService _enrollmentService;
-  late AssignmentService _assignmentService;
-  late LabService _labService;
-  late SectionService _sectionService;
-  late ScheduleService _scheduleService;
-  late SemesterService _semesterService;
   late MaterialService _materialService;
   late CommunicationService _communicationService;
   StreamSubscription<String>? _sessionExpirySubscription;
@@ -148,11 +142,6 @@ class _MyAppState extends State<MyApp> {
     final coreApiClient = CoreApiClient(storageService: _storageService);
     _courseService = CourseService(coreApiClient: coreApiClient);
     _enrollmentService = EnrollmentService(coreApiClient: coreApiClient);
-    _assignmentService = AssignmentService(coreApiClient: coreApiClient);
-    _labService = LabService(coreApiClient: coreApiClient);
-    _sectionService = SectionService(coreApiClient: coreApiClient);
-    _scheduleService = ScheduleService(coreApiClient: coreApiClient);
-    _semesterService = SemesterService(coreApiClient: coreApiClient);
     _materialService = MaterialService(coreApiClient: coreApiClient);
     _communicationService = CommunicationService(coreApiClient: coreApiClient);
 

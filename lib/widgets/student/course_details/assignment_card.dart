@@ -65,28 +65,7 @@ class _AssignmentCardState extends State<AssignmentCard>
     super.dispose();
   }
 
-  Color _getStatusColor(AssignmentStatus status) {
-    switch (status) {
-      case AssignmentStatus.completed:
-        return const Color(0xFF008236);
-      case AssignmentStatus.inProgress:
-        return const Color(0xFFCA3500);
-      case AssignmentStatus.notStarted:
-        return const Color(0xFF364153);
-    }
-  }
-
-  Color _getStatusBgColor(AssignmentStatus status) {
-    switch (status) {
-      case AssignmentStatus.completed:
-        return const Color(0xFFDCFCE7);
-      case AssignmentStatus.inProgress:
-        return const Color(0xFFFFEDD4);
-      case AssignmentStatus.notStarted:
-        return const Color(0xFFF3F4F6);
-    }
-  }
-
+  // ignore: unused_element
   String _getStatusText(AssignmentStatus status) {
     switch (status) {
       case AssignmentStatus.completed:
@@ -98,6 +77,31 @@ class _AssignmentCardState extends State<AssignmentCard>
     }
   }
 
+  // ignore: unused_element
+  Color _getStatusColor(AssignmentStatus status) {
+    switch (status) {
+      case AssignmentStatus.completed:
+        return const Color(0xFF008236);
+      case AssignmentStatus.inProgress:
+        return const Color(0xFFCA3500);
+      case AssignmentStatus.notStarted:
+        return const Color(0xFF364153);
+    }
+  }
+
+  // ignore: unused_element
+  Color _getStatusBgColor(AssignmentStatus status) {
+    switch (status) {
+      case AssignmentStatus.completed:
+        return const Color(0xFFDCFCE7);
+      case AssignmentStatus.inProgress:
+        return const Color(0xFFFFEDD4);
+      case AssignmentStatus.notStarted:
+        return const Color(0xFFF3F4F6);
+    }
+  }
+
+  // ignore: unused_element
   String _formatDueDate(DateTime date) {
     return DateFormat('MMM dd, yyyy').format(date);
   }
@@ -109,9 +113,6 @@ class _AssignmentCardState extends State<AssignmentCard>
     final secondaryTextColor = widget.isDark
         ? const Color(0xFFB0B0B0)
         : const Color(0xFF4A5565);
-    final statusColor = _getStatusColor(widget.assignment.status);
-    final statusBgColor = _getStatusBgColor(widget.assignment.status);
-
     return ScaleTransition(
       scale: _scaleAnimation,
       child: FadeTransition(

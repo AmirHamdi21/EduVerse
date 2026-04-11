@@ -52,6 +52,8 @@ import 'package:edu_verse/screens/student/search/overall_search_screen.dart';
 import 'package:edu_verse/screens/student/calendar/calendar_screen.dart';
 import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
+import 'package:edu_verse/features/courses/screens/course_list_screen.dart';
+import 'package:edu_verse/features/courses/screens/course_detail_screen.dart';
 // Instructor screens
 import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_screen.dart';
 import 'package:edu_verse/screens/instructor/courses/instructor_courses_screen.dart';
@@ -197,7 +199,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '/courses',
-        builder: (context, state) => const CoursesScreen(),
+        builder: (context, state) => const CourseListScreen(),
       ),
       GoRoute(
         path: '/flashcards',
@@ -245,9 +247,9 @@ class AppRouter {
 
           // Live enrollment from CoursesBloc
           if (extra is CourseEnrollmentModel) {
-            return CourseDetailsScreen(
+            return CourseDetailScreen(
               enrollment: extra,
-              initialTab: initialTab,
+              initialTabIndex: initialTab,
             );
           }
 
@@ -258,9 +260,9 @@ class AppRouter {
             initialTab = extra['initialTab'] as int? ?? 0;
 
             if (enrollment != null) {
-              return CourseDetailsScreen(
+              return CourseDetailScreen(
                 enrollment: enrollment,
-                initialTab: initialTab,
+                initialTabIndex: initialTab,
               );
             }
             if (legacyCourse != null) {

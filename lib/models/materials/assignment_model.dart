@@ -42,7 +42,7 @@ class AssignmentModel extends Equatable {
       title: json['title'] as String? ?? '',
       description: json['description'] as String?,
       dueDate: json['dueDate'] != null
-          ? DateTime.parse(json['dueDate'] as String)
+          ? DateTime.tryParse(json['dueDate'].toString())
           : null,
       maxScore: json['maxScore']?.toString() ?? '0',
       weight: json['weight']?.toString() ?? '0',
@@ -56,8 +56,10 @@ class AssignmentModel extends Equatable {
       course: json['course'] != null
           ? CourseModel.fromJson(json['course'] as Map<String, dynamic>)
           : null,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      createdAt: DateTime.tryParse(json['createdAt'].toString()) ??
+          DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt'].toString()) ??
+          DateTime.now(),
     );
   }
 

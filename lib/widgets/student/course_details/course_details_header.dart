@@ -37,7 +37,6 @@ class CourseDetailsHeader extends StatelessWidget {
         children: [
           Container(
             decoration: BoxDecoration(
-              // color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(

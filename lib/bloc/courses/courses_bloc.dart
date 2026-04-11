@@ -27,6 +27,10 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   final MaterialService _materialService;
   final CommunicationService _communicationService;
 
+  CourseService get courseService => _courseService;
+  EnrollmentService get enrollmentService => _enrollmentService;
+  MaterialService get materialService => _materialService;
+
   // ── Cache keys ─────────────────────────────────────────────────────────────
   static const _cacheKeyEnrollments = 'courses_cache_enrollments';
   static const _cacheKeyAllCourses = 'courses_cache_all';
