@@ -7,7 +7,8 @@
       "Bash(.specify/scripts/powershell/create-new-feature.ps1 *)",
       "Read(D:\\Graduation\\EduVerse/**)",
       "Bash(flutter *)",
-      "Bash(findstr *)"
+      "Bash(findstr *)",
+      "Bash(.\\.specify\\scripts\\powershell\\create-new-feature.ps1 *)"
     ]
   },
   "$version": 3
