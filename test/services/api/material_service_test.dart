@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/api/material_service.dart';
@@ -41,7 +42,13 @@ class _QueueAdapter implements HttpClientAdapter {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('MaterialService.recordView', () {
+    setUp(() {
+      SharedPreferences.setMockInitialValues(<String, Object>{});
+    });
+
     test('posts to /materials/{id}/view with courseId body', () async {
       final client = CoreApiClient.test();
       final adapter = _QueueAdapter(<Map<String, dynamic>>[

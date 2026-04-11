@@ -97,3 +97,46 @@ shared_preferences: ^2.2.2        # Lightweight caching
 - Integration tests for API flows
 - Mock services for testing without live API
 - Test files mirror source: `lib/x/y.dart` → `tests/unit/x/y_test.dart`
+
+## Phase 4 Update: Student Labs Integration (April 11, 2026)
+
+### Completion Summary
+- Student Labs feature flow is implemented end-to-end with live API wiring (no demo/mock lab generation in labs feature files).
+- Full workflow covered: course-scoped lab list, lab detail, instruction rendering, submission sheet, submission history, and attendance badge rendering.
+- Legacy orphan file `lib/widgets/student/labs/lab_details_sheet.dart` is removed and references are cleared.
+
+### New/Updated Labs Files
+- `lib/screens/student/labs_screen.dart`
+- `lib/screens/student/lab_detail_screen.dart`
+- `lib/bloc/labs/labs_cubit.dart`
+- `lib/bloc/labs/labs_state.dart`
+- `lib/bloc/lab_detail/lab_detail_cubit.dart`
+- `lib/bloc/lab_detail/lab_detail_state.dart`
+- `lib/widgets/student/labs/lab_card.dart`
+- `lib/widgets/student/labs/instruction_viewer.dart`
+- `lib/widgets/student/labs/lab_submission_sheet.dart`
+- `lib/widgets/student/labs/submission_history_view.dart`
+- `lib/utils/submission_event_tracker.dart`
+- `lib/models/labs/lab_model.dart`
+- `lib/models/labs/lab_submission_model.dart`
+
+### Dependencies and Libraries
+- Labs instruction rendering uses `flutter_markdown`.
+- File selection/upload workflow uses `file_picker`.
+- Existing `webview_flutter` and `url_launcher` are used for file preview/open/download actions.
+
+### Architecture Notes
+- `LabDetailScreen` now uses dependency injection for `LabService` and `EnrollmentService` passed from the existing labs flow, instead of creating API clients inline.
+- `LabSubmissionModel` intentionally reuses shared `SubmissionStatus` enum for assignment/lab submission state parity.
+
+### Verification Snapshot
+- Full workspace tests currently pass: `181 passed, 0 failed`.
+- Labs integration timing test added: `test/integration/features/labs/student_labs_flow_integration_test.dart` to assert flow thresholds (`<2s` load and `<1s` graded-submission refresh in integration-style test harness).
+- Full workspace analyze still reports broad pre-existing diagnostics (`957 issues`) outside this feature scope.
+
+### April 12, 2026 Addendum (Second Verification)
+- Lab detail AppBar title now uses localization (`AppLocalizations.labDetails`) instead of a hardcoded string.
+- Student labs `LabCard` dead `animation` parameter removed to keep the widget API minimal and maintainable.
+- Scoped analyzer run for modified labs files/tests passes with zero issues.
+- Full workspace tests remain green after fixes: `181 passed, 0 failed`.
+- Visual parity verification report added: `specs/018-student-labs/visual-parity-report.md`.

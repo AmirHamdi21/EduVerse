@@ -1,61 +1,66 @@
 import 'package:equatable/equatable.dart';
+
+import '../../models/core/course_model.dart';
+import '../../models/core/enums/lab_enums.dart' as api;
 import '../../models/labs/lab_model.dart';
 
-enum LabsSortBy { date, name, course, status, type }
+enum LabsSortBy { dueDate, title, course, status }
 
 enum LabsViewMode { list, grid, calendar }
 
+enum LabsDisplayStatus { upcoming, inProgress, completed, missed }
+
+extension LabsDisplayStatusPresentation on LabsDisplayStatus {
+  String get label {
+    switch (this) {
+      case LabsDisplayStatus.upcoming:
+        return 'Upcoming';
+      case LabsDisplayStatus.inProgress:
+        return 'In Progress';
+      case LabsDisplayStatus.completed:
+        return 'Completed';
+      case LabsDisplayStatus.missed:
+        return 'Missed';
+    }
+  }
+}
+
 class LabsFilter extends Equatable {
-  final LabStatus? status;
-  final LabType? type;
-  final String? courseName;
+  final LabsDisplayStatus? status;
   final DateTime? dateFrom;
   final DateTime? dateTo;
 
-  const LabsFilter({
-    this.status,
-    this.type,
-    this.courseName,
-    this.dateFrom,
-    this.dateTo,
-  });
+  const LabsFilter({this.status, this.dateFrom, this.dateTo});
 
   LabsFilter copyWith({
-    LabStatus? status,
-    LabType? type,
-    String? courseName,
+    LabsDisplayStatus? status,
     DateTime? dateFrom,
     DateTime? dateTo,
     bool clearStatus = false,
-    bool clearType = false,
-    bool clearCourse = false,
     bool clearDateFrom = false,
     bool clearDateTo = false,
   }) {
     return LabsFilter(
       status: clearStatus ? null : (status ?? this.status),
-      type: clearType ? null : (type ?? this.type),
-      courseName: clearCourse ? null : (courseName ?? this.courseName),
       dateFrom: clearDateFrom ? null : (dateFrom ?? this.dateFrom),
       dateTo: clearDateTo ? null : (dateTo ?? this.dateTo),
     );
   }
 
   bool get hasActiveFilters =>
-      status != null ||
-      type != null ||
-      courseName != null ||
-      dateFrom != null ||
-      dateTo != null;
+      status != null || dateFrom != null || dateTo != null;
 
   LabsFilter clear() => const LabsFilter();
 
   @override
-  List<Object?> get props => [status, type, courseName, dateFrom, dateTo];
+  List<Object?> get props => [status, dateFrom, dateTo];
 }
 
 class LabsState extends Equatable {
   final List<LabModel> labs;
+  final List<CourseModel> enrolledCourses;
+  final int? selectedCourseId;
+  final CourseModel? selectedCourse;
   final bool isLoading;
   final String? error;
   final String searchQuery;
@@ -67,11 +72,14 @@ class LabsState extends Equatable {
 
   const LabsState({
     this.labs = const [],
+    this.enrolledCourses = const [],
+    this.selectedCourseId,
+    this.selectedCourse,
     this.isLoading = false,
     this.error,
     this.searchQuery = '',
     this.filter = const LabsFilter(),
-    this.sortBy = LabsSortBy.date,
+    this.sortBy = LabsSortBy.dueDate,
     this.sortAscending = true,
     this.viewMode = LabsViewMode.list,
     this.selectedTabIndex = 0,
@@ -79,6 +87,9 @@ class LabsState extends Equatable {
 
   LabsState copyWith({
     List<LabModel>? labs,
+    List<CourseModel>? enrolledCourses,
+    int? selectedCourseId,
+    CourseModel? selectedCourse,
     bool? isLoading,
     String? error,
     String? searchQuery,
@@ -88,9 +99,18 @@ class LabsState extends Equatable {
     LabsViewMode? viewMode,
     int? selectedTabIndex,
     bool clearError = false,
+    bool clearSelectedCourseId = false,
+    bool clearSelectedCourse = false,
   }) {
     return LabsState(
       labs: labs ?? this.labs,
+      enrolledCourses: enrolledCourses ?? this.enrolledCourses,
+      selectedCourseId: clearSelectedCourseId
+          ? null
+          : (selectedCourseId ?? this.selectedCourseId),
+      selectedCourse: clearSelectedCourse
+          ? null
+          : (selectedCourse ?? this.selectedCourse),
       isLoading: isLoading ?? this.isLoading,
       error: clearError ? null : (error ?? this.error),
       searchQuery: searchQuery ?? this.searchQuery,
@@ -103,40 +123,39 @@ class LabsState extends Equatable {
   }
 
   List<LabModel> get filteredLabs {
-    var result = List<LabModel>.from(labs);
+    var result = List<LabModel>.from(_courseScopedLabs);
 
     // Apply search
     if (searchQuery.isNotEmpty) {
       final query = searchQuery.toLowerCase();
       result = result.where((lab) {
         return lab.title.toLowerCase().contains(query) ||
-            lab.courseName.toLowerCase().contains(query) ||
-            lab.courseCode.toLowerCase().contains(query) ||
-            lab.instructorName.toLowerCase().contains(query) ||
+            (lab.course?.name.toLowerCase().contains(query) ?? false) ||
+            (lab.course?.code.toLowerCase().contains(query) ?? false) ||
             (lab.description?.toLowerCase().contains(query) ?? false);
       }).toList();
     }
 
     // Apply filters
     if (filter.status != null) {
-      result = result.where((lab) => lab.status == filter.status).toList();
-    }
-    if (filter.type != null) {
-      result = result.where((lab) => lab.type == filter.type).toList();
-    }
-    if (filter.courseName != null) {
       result = result
-          .where((lab) => lab.courseName == filter.courseName)
+          .where((lab) => _displayStatusForLab(lab) == filter.status)
           .toList();
     }
     if (filter.dateFrom != null) {
       result = result
-          .where((lab) => lab.scheduledDate.isAfter(filter.dateFrom!))
+          .where(
+            (lab) =>
+                lab.dueDate != null && lab.dueDate!.isAfter(filter.dateFrom!),
+          )
           .toList();
     }
     if (filter.dateTo != null) {
       result = result
-          .where((lab) => lab.scheduledDate.isBefore(filter.dateTo!))
+          .where(
+            (lab) =>
+                lab.dueDate != null && lab.dueDate!.isBefore(filter.dateTo!),
+          )
           .toList();
     }
 
@@ -144,21 +163,32 @@ class LabsState extends Equatable {
     switch (selectedTabIndex) {
       case 1: // Upcoming
         result = result
-            .where((lab) => lab.status == LabStatus.upcoming)
+            .where(
+              (lab) => _displayStatusForLab(lab) == LabsDisplayStatus.upcoming,
+            )
             .toList();
         break;
       case 2: // In Progress
         result = result
-            .where((lab) => lab.status == LabStatus.inProgress)
+            .where(
+              (lab) =>
+                  _displayStatusForLab(lab) == LabsDisplayStatus.inProgress,
+            )
             .toList();
         break;
       case 3: // Completed
         result = result
-            .where((lab) => lab.status == LabStatus.completed)
+            .where(
+              (lab) => _displayStatusForLab(lab) == LabsDisplayStatus.completed,
+            )
             .toList();
         break;
       case 4: // Missed
-        result = result.where((lab) => lab.status == LabStatus.missed).toList();
+        result = result
+            .where(
+              (lab) => _displayStatusForLab(lab) == LabsDisplayStatus.missed,
+            )
+            .toList();
         break;
     }
 
@@ -166,20 +196,20 @@ class LabsState extends Equatable {
     result.sort((a, b) {
       int comparison;
       switch (sortBy) {
-        case LabsSortBy.date:
-          comparison = a.scheduledDate.compareTo(b.scheduledDate);
+        case LabsSortBy.dueDate:
+          comparison = (a.dueDate ?? DateTime.fromMillisecondsSinceEpoch(0))
+              .compareTo(b.dueDate ?? DateTime.fromMillisecondsSinceEpoch(0));
           break;
-        case LabsSortBy.name:
+        case LabsSortBy.title:
           comparison = a.title.compareTo(b.title);
           break;
         case LabsSortBy.course:
-          comparison = a.courseName.compareTo(b.courseName);
+          comparison = (a.course?.name ?? '').compareTo(b.course?.name ?? '');
           break;
         case LabsSortBy.status:
-          comparison = a.status.index.compareTo(b.status.index);
-          break;
-        case LabsSortBy.type:
-          comparison = a.type.index.compareTo(b.type.index);
+          comparison = _displayStatusForLab(
+            a,
+          ).index.compareTo(_displayStatusForLab(b).index);
           break;
       }
       return sortAscending ? comparison : -comparison;
@@ -189,22 +219,67 @@ class LabsState extends Equatable {
   }
 
   // Stats getters
-  int get totalLabs => labs.length;
-  int get upcomingCount =>
-      labs.where((l) => l.status == LabStatus.upcoming).length;
-  int get inProgressCount =>
-      labs.where((l) => l.status == LabStatus.inProgress).length;
-  int get completedCount =>
-      labs.where((l) => l.status == LabStatus.completed).length;
-  int get missedCount => labs.where((l) => l.status == LabStatus.missed).length;
-  int get todayCount => labs.where((l) => l.isToday).length;
+  int get totalLabs => _courseScopedLabs.length;
+  int get upcomingCount => _courseScopedLabs
+      .where((l) => _displayStatusForLab(l) == LabsDisplayStatus.upcoming)
+      .length;
+  int get inProgressCount => _courseScopedLabs
+      .where((l) => _displayStatusForLab(l) == LabsDisplayStatus.inProgress)
+      .length;
+  int get completedCount => _courseScopedLabs
+      .where((l) => _displayStatusForLab(l) == LabsDisplayStatus.completed)
+      .length;
+  int get missedCount => _courseScopedLabs
+      .where((l) => _displayStatusForLab(l) == LabsDisplayStatus.missed)
+      .length;
+  int get todayCount {
+    final now = DateTime.now();
+    return _courseScopedLabs.where((lab) {
+      final dueDate = lab.dueDate;
+      return dueDate != null &&
+          dueDate.year == now.year &&
+          dueDate.month == now.month &&
+          dueDate.day == now.day;
+    }).length;
+  }
+
+  List<LabModel> get _courseScopedLabs {
+    if (selectedCourseId == null) {
+      return labs;
+    }
+    return labs.where((lab) => lab.courseId == selectedCourseId).toList();
+  }
+
+  LabsDisplayStatus _displayStatusForLab(LabModel lab) {
+    switch (lab.status) {
+      case api.LabStatus.closed:
+        return LabsDisplayStatus.completed;
+      case api.LabStatus.archived:
+        return LabsDisplayStatus.missed;
+      case api.LabStatus.published:
+        if (!lab.isPastDue) {
+          return LabsDisplayStatus.upcoming;
+        }
+        final daysUntilDue = lab.daysUntilDue;
+        if (daysUntilDue != null && daysUntilDue <= -2) {
+          return LabsDisplayStatus.missed;
+        }
+        return LabsDisplayStatus.inProgress;
+      case api.LabStatus.draft:
+      case api.LabStatus.unknown:
+        return LabsDisplayStatus.upcoming;
+    }
+  }
 
   List<String> get availableCourses =>
-      labs.map((l) => l.courseName).toSet().toList()..sort();
+      enrolledCourses.map((course) => course.name).toSet().toList()..sort();
 
   @override
   List<Object?> get props => [
     labs,
+    enrolledCourses,
+    selectedCourseId,
+    selectedCourse,
     isLoading,
     error,
     searchQuery,

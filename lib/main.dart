@@ -30,6 +30,7 @@ import 'package:edu_verse/services/session_expiry_notifier.dart';
 import 'package:edu_verse/services/api/course_service.dart';
 import 'package:edu_verse/services/api/assignment_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
+import 'package:edu_verse/services/api/lab_service.dart';
 import 'package:edu_verse/services/api/material_service.dart';
 import 'package:edu_verse/services/api/communication_service.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
@@ -86,6 +87,7 @@ class _MyAppState extends State<MyApp> {
   late CourseService _courseService;
   late AssignmentService _assignmentService;
   late EnrollmentService _enrollmentService;
+  late LabService _labService;
   late MaterialService _materialService;
   late CommunicationService _communicationService;
   StreamSubscription<String>? _sessionExpirySubscription;
@@ -104,7 +106,6 @@ class _MyAppState extends State<MyApp> {
     _languageCubit = LanguageCubit();
     _notificationCubit = NotificationCubit()..loadNotifications();
     _tasksCubit = TasksCubit()..loadTasks();
-    _labsCubit = LabsCubit()..loadLabs();
     _gradesCubit = GradesCubit()..loadGrades();
     _attendanceCubit = AttendanceCubit()..loadAttendance();
     _summarizerCubit = SummarizerCubit();
@@ -145,8 +146,14 @@ class _MyAppState extends State<MyApp> {
     _courseService = CourseService(coreApiClient: coreApiClient);
     _assignmentService = AssignmentService(coreApiClient: coreApiClient);
     _enrollmentService = EnrollmentService(coreApiClient: coreApiClient);
+    _labService = LabService(coreApiClient: coreApiClient);
     _materialService = MaterialService(coreApiClient: coreApiClient);
     _communicationService = CommunicationService(coreApiClient: coreApiClient);
+
+    _labsCubit = LabsCubit(
+      enrollmentService: _enrollmentService,
+      labService: _labService,
+    )..loadEnrolledCourses();
 
     _assignmentBloc = AssignmentBloc(assignmentService: _assignmentService)
       ..add(const FetchAssignments());

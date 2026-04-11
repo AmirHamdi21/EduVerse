@@ -40,6 +40,7 @@ class LabSubmissionModel extends Equatable {
   factory LabSubmissionModel.fromJson(Map<String, dynamic> json) {
     final rawUser = json['user'];
     final rawDriveFile = json['driveFile'];
+    final rawStatus = json['submissionStatus'] ?? json['status'];
 
     return LabSubmissionModel(
       id: _parseInt(json['id']),
@@ -48,9 +49,9 @@ class LabSubmissionModel extends Equatable {
       submissionText: json['submissionText']?.toString(),
       fileId: _parseNullableInt(json['fileId']),
       submissionStatus: SubmissionStatus.fromString(
-        json['submissionStatus']?.toString() ?? 'unknown',
+        rawStatus?.toString() ?? 'unknown',
       ),
-      isLate: json['isLate'] == true,
+      isLate: _parseLateFlag(json['isLate']),
       submittedAt: _parseDateTime(json['submittedAt']) ?? DateTime.now(),
       score: _parseNullableDouble(json['score']),
       feedback: json['feedback']?.toString(),
@@ -82,6 +83,24 @@ class LabSubmissionModel extends Equatable {
     };
   }
 
+  bool get isGraded => submissionStatus == SubmissionStatus.graded;
+
+  String? scoreDisplay(double maxScore) {
+    if (score == null) {
+      return null;
+    }
+    return '${score!.toStringAsFixed(1)} / ${maxScore.toStringAsFixed(0)}';
+  }
+
+  String get formattedSubmittedAt {
+    final date = submittedAt;
+    final hour = date.hour > 12 ? date.hour - 12 : date.hour;
+    final suffix = date.hour >= 12 ? 'PM' : 'AM';
+
+    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} '
+        '${hour == 0 ? 12 : hour}:${date.minute.toString().padLeft(2, '0')} $suffix';
+  }
+
   static int _parseInt(dynamic value) {
     if (value is int) {
       return value;
@@ -104,6 +123,23 @@ class LabSubmissionModel extends Equatable {
       return null;
     }
     return double.tryParse(value.toString());
+  }
+
+  static bool _parseLateFlag(dynamic value) {
+    if (value is bool) {
+      return value;
+    }
+
+    if (value is num) {
+      return value == 1;
+    }
+
+    final parsed = num.tryParse(value?.toString() ?? '');
+    if (parsed != null) {
+      return parsed == 1;
+    }
+
+    return false;
   }
 
   static DateTime? _parseDateTime(dynamic value) {

@@ -322,20 +322,20 @@ class SearchCubit extends Cubit<SearchState> {
           .where(
             (l) =>
                 l.title.toLowerCase().contains(query) ||
-                l.courseName.toLowerCase().contains(query) ||
+                (l.course?.name.toLowerCase().contains(query) ?? false) ||
                 (l.description?.toLowerCase().contains(query) ?? false),
           )
           .map(
             (l) => SearchResultItem(
               id: 'lab_${l.id}',
               title: l.title,
-              subtitle: l.courseName,
+              subtitle: l.course?.name ?? 'Course ${l.courseId}',
               description: l.description,
               type: SearchResultType.lab,
               icon: Icons.science_rounded,
               iconColor: const Color(0xFF06B6D4),
               route: '/labs',
-              date: l.scheduledDate,
+              date: l.dueDate,
               status: l.status.name,
             ),
           )

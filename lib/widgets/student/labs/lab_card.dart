@@ -1,41 +1,25 @@
 import 'package:flutter/material.dart';
+
 import '../../../../models/labs/lab_model.dart';
+import '../../../../models/core/enums/lab_enums.dart' as api;
 import '../../../../common/utils/responsive.dart';
 
 class LabCard extends StatelessWidget {
   final LabModel lab;
   final bool isDark;
   final VoidCallback onTap;
-  final VoidCallback? onBookmark;
-  final Animation<double>? animation;
 
   const LabCard({
     super.key,
     required this.lab,
     required this.isDark,
     required this.onTap,
-    this.onBookmark,
-    this.animation,
   });
 
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
-    final cardContent = _buildCardContent(context, responsive);
-
-    if (animation != null) {
-      return SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 0.3),
-          end: Offset.zero,
-        ).animate(CurvedAnimation(parent: animation!, curve: Curves.easeOutCubic)),
-        child: FadeTransition(
-          opacity: animation!,
-          child: cardContent,
-        ),
-      );
-    }
-    return cardContent;
+    return _buildCardContent(context, responsive);
   }
 
   Widget _buildCardContent(BuildContext context, ResponsiveUtil responsive) {
@@ -48,12 +32,13 @@ class LabCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(responsive.radius16),
         border: Border.all(
-          color: lab.status.color.withValues(alpha: 0.3),
+          color: _statusColor(lab.status).withValues(alpha: 0.3),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.black : lab.status.color).withValues(alpha: 0.1),
+            color: (isDark ? Colors.black : _statusColor(lab.status))
+                .withValues(alpha: 0.1),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -91,31 +76,30 @@ class LabCard extends StatelessWidget {
   Widget _buildHeader(BuildContext context, ResponsiveUtil responsive) {
     return Row(
       children: [
-        // Lab type badge
         Container(
           padding: EdgeInsets.symmetric(
             horizontal: responsive.p10,
             vertical: responsive.p4,
           ),
           decoration: BoxDecoration(
-            color: lab.type.color.withValues(alpha: 0.15),
+            color: const Color(0xFF6366F1).withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(responsive.radius8),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                lab.type.icon,
+                Icons.science_rounded,
                 size: responsive.fontSize12,
-                color: lab.type.color,
+                color: const Color(0xFF6366F1),
               ),
               SizedBox(width: responsive.p4),
               Text(
-                lab.type.label,
+                lab.labNumber == null ? 'Lab' : 'Lab ${lab.labNumber}',
                 style: TextStyle(
                   fontSize: responsive.fontSize12,
                   fontWeight: FontWeight.w600,
-                  color: lab.type.color,
+                  color: const Color(0xFF6366F1),
                 ),
               ),
             ],
@@ -129,42 +113,29 @@ class LabCard extends StatelessWidget {
             vertical: responsive.p4,
           ),
           decoration: BoxDecoration(
-            color: lab.status.color.withValues(alpha: 0.15),
+            color: _statusColor(lab.status).withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(responsive.radius8),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                lab.status.icon,
+                _statusIcon(lab.status),
                 size: responsive.fontSize12,
-                color: lab.status.color,
+                color: _statusColor(lab.status),
               ),
               SizedBox(width: responsive.p4),
               Text(
-                lab.status.label,
+                _statusLabel(lab.status),
                 style: TextStyle(
                   fontSize: responsive.fontSize12,
                   fontWeight: FontWeight.w600,
-                  color: lab.status.color,
+                  color: _statusColor(lab.status),
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(width: responsive.p8),
-        // Bookmark button
-        if (onBookmark != null)
-          GestureDetector(
-            onTap: onBookmark,
-            child: Icon(
-              lab.isBookmarked ? Icons.bookmark_rounded : Icons.bookmark_border_rounded,
-              color: lab.isBookmarked
-                  ? const Color(0xFFF59E0B)
-                  : (isDark ? Colors.grey.shade400 : Colors.grey.shade600),
-              size: responsive.fontSize20,
-            ),
-          ),
       ],
     );
   }
@@ -200,34 +171,23 @@ class LabCard extends StatelessWidget {
       children: [
         _buildInfoChip(
           Icons.school_rounded,
-          lab.courseCode,
+          lab.course?.code ?? 'N/A',
           const Color(0xFF3B82F6),
           responsive,
         ),
         SizedBox(width: responsive.p8),
         _buildInfoChip(
-          Icons.access_time_rounded,
-          lab.formattedDuration,
+          Icons.grade_rounded,
+          '${lab.maxScore.toStringAsFixed(0)} pts',
           const Color(0xFF8B5CF6),
           responsive,
         ),
-        if (lab.location != null) ...[
-          SizedBox(width: responsive.p8),
-          Expanded(
-            child: _buildInfoChip(
-              Icons.location_on_rounded,
-              lab.location!,
-              const Color(0xFF10B981),
-              responsive,
-              expanded: true,
-            ),
-          ),
-        ] else if (lab.virtualLink != null) ...[
+        if (lab.instructionFiles.isNotEmpty) ...[
           SizedBox(width: responsive.p8),
           _buildInfoChip(
-            Icons.videocam_rounded,
-            'Online',
-            const Color(0xFFEC4899),
+            Icons.attach_file_rounded,
+            '${lab.instructionFiles.length}',
+            const Color(0xFF10B981),
             responsive,
           ),
         ],
@@ -294,7 +254,7 @@ class LabCard extends StatelessWidget {
         ),
         SizedBox(width: responsive.p6),
         Text(
-          _formatDate(lab.scheduledDate),
+          lab.formattedDueDate,
           style: TextStyle(
             fontSize: responsive.fontSize12,
             color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
@@ -302,59 +262,52 @@ class LabCard extends StatelessWidget {
           ),
         ),
         const Spacer(),
-        // Grade if completed
-        if (lab.status == LabStatus.completed && lab.grade != null)
+        if (lab.status == api.LabStatus.published)
           Container(
             padding: EdgeInsets.symmetric(
               horizontal: responsive.p10,
               vertical: responsive.p4,
             ),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  const Color(0xFF10B981),
-                  const Color(0xFF059669),
-                ],
-              ),
+              color: _dueColor(lab).withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(responsive.radius8),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
-                  Icons.grade_rounded,
+                  Icons.schedule_rounded,
                   size: responsive.fontSize12,
-                  color: Colors.white,
+                  color: _dueColor(lab),
                 ),
                 SizedBox(width: responsive.p4),
                 Text(
-                  '${lab.grade!.toStringAsFixed(0)}/${lab.maxGrade!.toStringAsFixed(0)}',
+                  _dueText(lab),
                   style: TextStyle(
                     fontSize: responsive.fontSize12,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: _dueColor(lab),
                   ),
                 ),
               ],
             ),
           )
-        // Days indicator for upcoming
-        else if (lab.status == LabStatus.upcoming)
+        else if (lab.status == api.LabStatus.archived)
           Container(
             padding: EdgeInsets.symmetric(
               horizontal: responsive.p10,
               vertical: responsive.p4,
             ),
             decoration: BoxDecoration(
-              color: _getDaysColor(lab.daysUntil).withValues(alpha: 0.15),
+              color: const Color(0xFF64748B).withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(responsive.radius8),
             ),
             child: Text(
-              lab.isToday ? 'Today' : _getDaysText(lab.daysUntil),
+              'Archived',
               style: TextStyle(
                 fontSize: responsive.fontSize12,
                 fontWeight: FontWeight.bold,
-                color: _getDaysColor(lab.daysUntil),
+                color: const Color(0xFF64748B),
               ),
             ),
           ),
@@ -362,25 +315,79 @@ class LabCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    final hour = date.hour > 12 ? date.hour - 12 : date.hour;
-    final period = date.hour >= 12 ? 'PM' : 'AM';
-    return '${months[date.month - 1]} ${date.day}, ${hour == 0 ? 12 : hour}:${date.minute.toString().padLeft(2, '0')} $period';
+  String _statusLabel(api.LabStatus status) {
+    switch (status) {
+      case api.LabStatus.published:
+        return 'Active';
+      case api.LabStatus.closed:
+        return 'Closed';
+      case api.LabStatus.archived:
+        return 'Archived';
+      case api.LabStatus.draft:
+        return 'Draft';
+      case api.LabStatus.unknown:
+        return 'Unknown';
+    }
   }
 
-  Color _getDaysColor(int days) {
-    if (days <= 0) return const Color(0xFFEF4444);
-    if (days <= 2) return const Color(0xFFF59E0B);
+  IconData _statusIcon(api.LabStatus status) {
+    switch (status) {
+      case api.LabStatus.published:
+        return Icons.play_circle_rounded;
+      case api.LabStatus.closed:
+        return Icons.check_circle_rounded;
+      case api.LabStatus.archived:
+        return Icons.archive_rounded;
+      case api.LabStatus.draft:
+        return Icons.edit_note_rounded;
+      case api.LabStatus.unknown:
+        return Icons.help_outline_rounded;
+    }
+  }
+
+  Color _statusColor(api.LabStatus status) {
+    switch (status) {
+      case api.LabStatus.published:
+        return const Color(0xFF10B981);
+      case api.LabStatus.closed:
+        return const Color(0xFF64748B);
+      case api.LabStatus.archived:
+        return const Color(0xFF475569);
+      case api.LabStatus.draft:
+        return const Color(0xFFF59E0B);
+      case api.LabStatus.unknown:
+        return const Color(0xFF94A3B8);
+    }
+  }
+
+  Color _dueColor(LabModel lab) {
+    final days = lab.daysUntilDue;
+    if (days == null) {
+      return const Color(0xFF64748B);
+    }
+    if (days < 0) {
+      return const Color(0xFFEF4444);
+    }
+    if (days <= 2) {
+      return const Color(0xFFF59E0B);
+    }
     return const Color(0xFF10B981);
   }
 
-  String _getDaysText(int days) {
-    if (days <= 0) return 'Due Now';
-    if (days == 1) return 'Tomorrow';
+  String _dueText(LabModel lab) {
+    final days = lab.daysUntilDue;
+    if (days == null) {
+      return 'No deadline';
+    }
+    if (days < 0) {
+      return 'Late';
+    }
+    if (days == 0) {
+      return 'Due today';
+    }
+    if (days == 1) {
+      return 'Due tomorrow';
+    }
     return 'In $days days';
   }
 }

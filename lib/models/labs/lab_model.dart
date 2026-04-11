@@ -1,318 +1,187 @@
-import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
 
 import '../core/drive_file_model.dart';
 import '../core/enums/lab_enums.dart' as api;
+import '../core/lab_instruction_model.dart';
 import '../core/shared_models.dart';
 
-enum LabStatus { upcoming, inProgress, completed, missed }
-
-enum LabType { virtual, physical, hybrid }
-
-extension LabStatusExtension on LabStatus {
-  String get label {
-    switch (this) {
-      case LabStatus.upcoming:
-        return 'Upcoming';
-      case LabStatus.inProgress:
-        return 'In Progress';
-      case LabStatus.completed:
-        return 'Completed';
-      case LabStatus.missed:
-        return 'Missed';
-    }
-  }
-
-  Color get color {
-    switch (this) {
-      case LabStatus.upcoming:
-        return const Color(0xFF3B82F6);
-      case LabStatus.inProgress:
-        return const Color(0xFFF59E0B);
-      case LabStatus.completed:
-        return const Color(0xFF10B981);
-      case LabStatus.missed:
-        return const Color(0xFFEF4444);
-    }
-  }
-
-  IconData get icon {
-    switch (this) {
-      case LabStatus.upcoming:
-        return Icons.schedule_rounded;
-      case LabStatus.inProgress:
-        return Icons.play_circle_rounded;
-      case LabStatus.completed:
-        return Icons.check_circle_rounded;
-      case LabStatus.missed:
-        return Icons.cancel_rounded;
-    }
-  }
-}
-
-extension LabTypeExtension on LabType {
-  String get label {
-    switch (this) {
-      case LabType.virtual:
-        return 'Virtual';
-      case LabType.physical:
-        return 'Physical';
-      case LabType.hybrid:
-        return 'Hybrid';
-    }
-  }
-
-  Color get color {
-    switch (this) {
-      case LabType.virtual:
-        return const Color(0xFF8B5CF6);
-      case LabType.physical:
-        return const Color(0xFF10B981);
-      case LabType.hybrid:
-        return const Color(0xFF3B82F6);
-    }
-  }
-
-  IconData get icon {
-    switch (this) {
-      case LabType.virtual:
-        return Icons.computer_rounded;
-      case LabType.physical:
-        return Icons.science_rounded;
-      case LabType.hybrid:
-        return Icons.sync_alt_rounded;
-    }
-  }
-}
-
-class LabModel {
-  // Legacy UI-facing fields
+class LabModel extends Equatable {
   final String id;
+  final int? labId;
+  final int courseId;
   final String title;
   final String? description;
-  final String courseName;
-  final String courseCode;
-  final String instructorName;
-  final LabType type;
-  final LabStatus status;
-  final DateTime scheduledDate;
-  final Duration duration;
-  final String? location;
-  final String? virtualLink;
-  final List<String>? materials;
-  final List<String>? objectives;
-  final double? grade;
-  final double? maxGrade;
-  final String? reportUrl;
-  final bool isBookmarked;
-  final DateTime createdAt;
-
-  // Backend contract fields
-  final int labId;
-  final int courseId;
   final int? labNumber;
   final DateTime? dueDate;
   final DateTime? availableFrom;
+  final double maxScore;
   final double weight;
-  final api.LabStatus apiStatus;
-  final int createdBy;
+  final api.LabStatus status;
+  final int? createdBy;
+  final DateTime? createdAt;
   final DateTime? updatedAt;
   final CourseInfo? course;
-  final List<DriveFileModel>? instructionFiles;
+  final List<LabInstructionModel> instructions;
+  final List<DriveFileModel> instructionFiles;
 
   const LabModel({
     required this.id,
+    this.labId,
+    required this.courseId,
     required this.title,
     this.description,
-    required this.courseName,
-    required this.courseCode,
-    required this.instructorName,
-    required this.type,
-    required this.status,
-    required this.scheduledDate,
-    required this.duration,
-    this.location,
-    this.virtualLink,
-    this.materials,
-    this.objectives,
-    this.grade,
-    this.maxGrade,
-    this.reportUrl,
-    this.isBookmarked = false,
-    required this.createdAt,
-    this.labId = 0,
-    this.courseId = 0,
     this.labNumber,
     this.dueDate,
     this.availableFrom,
+    required this.maxScore,
     this.weight = 0,
-    this.apiStatus = api.LabStatus.unknown,
-    this.createdBy = 0,
+    this.status = api.LabStatus.unknown,
+    this.createdBy,
+    this.createdAt,
     this.updatedAt,
     this.course,
-    this.instructionFiles,
+    this.instructions = const <LabInstructionModel>[],
+    this.instructionFiles = const <DriveFileModel>[],
   });
 
   factory LabModel.fromJson(Map<String, dynamic> json) {
-    final parsedId = _parseInt(json['id']);
-    final parsedStatus = api.LabStatus.fromString(_parseString(json['status']));
-    final parsedInstructionFiles = _parseDriveFiles(json['instructionFiles']);
-    final parsedDueDate = _parseDateTime(json['dueDate']);
-    final parsedAvailableFrom = _parseDateTime(json['availableFrom']);
+    final parsedInstructions = _parseInstructions(json['instructions']);
+    final parsedInstructionFiles =
+        _parseDriveFiles(json['instructionFiles']) ?? const <DriveFileModel>[];
 
     return LabModel(
-      id: parsedId.toString(),
+      id: _parseString(json['id'] ?? json['labId']),
+      labId: _parseNullableInt(json['labId'] ?? json['id']),
+      courseId: _parseInt(
+        json['courseId'] ??
+            ((json['course'] as Map<String, dynamic>?)?['id']) ??
+            0,
+      ),
       title: _parseString(json['title']),
-      description: json['description']?.toString(),
-      courseName: _parseString(
-        (json['course'] as Map<String, dynamic>?)?['name'],
-      ),
-      courseCode: _parseString(
-        (json['course'] as Map<String, dynamic>?)?['code'],
-      ),
-      instructorName: '',
-      type: _mapLegacyType(json),
-      status: _mapLegacyStatus(parsedStatus),
-      scheduledDate: parsedAvailableFrom ?? parsedDueDate ?? DateTime.now(),
-      duration: const Duration(hours: 2),
-      location: json['location']?.toString(),
-      virtualLink: json['virtualLink']?.toString(),
-      materials: parsedInstructionFiles?.map((file) => file.fileName).toList(),
-      objectives: null,
-      grade: _parseNullableDouble(json['score']),
-      maxGrade: _parseNullableDouble(json['maxScore']),
-      reportUrl: null,
-      isBookmarked: false,
-      createdAt: _parseDateTime(json['createdAt']) ?? DateTime.now(),
-      labId: parsedId,
-      courseId: _parseInt(json['courseId']),
+      description: _parseNullableString(json['description']),
       labNumber: _parseNullableInt(json['labNumber']),
-      dueDate: parsedDueDate,
-      availableFrom: parsedAvailableFrom,
+      dueDate: _parseDateTime(json['dueDate']),
+      availableFrom: _parseDateTime(json['availableFrom']),
+      maxScore: _parseDouble(json['maxScore']),
       weight: _parseDouble(json['weight']),
-      apiStatus: parsedStatus,
-      createdBy: _parseInt(json['createdBy']),
+      status: api.LabStatus.fromString(_parseString(json['status'])),
+      createdBy: _parseNullableInt(json['createdBy']),
+      createdAt: _parseDateTime(json['createdAt']),
       updatedAt: _parseDateTime(json['updatedAt']),
       course: json['course'] is Map<String, dynamic>
           ? CourseInfo.fromJson(json['course'] as Map<String, dynamic>)
           : null,
+      instructions: parsedInstructions,
       instructionFiles: parsedInstructionFiles,
     );
   }
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
-      'id': labId,
+      'id': id,
+      'labId': labId,
       'courseId': courseId,
       'title': title,
       'description': description,
       'labNumber': labNumber,
       'dueDate': dueDate?.toIso8601String(),
       'availableFrom': availableFrom?.toIso8601String(),
-      'maxScore': maxGrade,
+      'maxScore': maxScore,
       'weight': weight,
-      'status': apiStatus.toJson(),
+      'status': status.toJson(),
       'createdBy': createdBy,
-      'createdAt': createdAt.toIso8601String(),
+      'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'course': course?.toJson(),
-      'instructionFiles': instructionFiles?.map((e) => e.toJson()).toList(),
-      // Compatibility keys
-      'courseName': courseName,
-      'courseCode': courseCode,
-      'scheduledDate': scheduledDate.toIso8601String(),
-      'statusLegacy': status.name,
+      'instructions': instructions.map((item) => item.toJson()).toList(),
+      'instructionFiles': instructionFiles
+          .map((item) => item.toJson())
+          .toList(),
     };
   }
 
   LabModel copyWith({
     String? id,
-    String? title,
-    String? description,
-    String? courseName,
-    String? courseCode,
-    String? instructorName,
-    LabType? type,
-    LabStatus? status,
-    DateTime? scheduledDate,
-    Duration? duration,
-    String? location,
-    String? virtualLink,
-    List<String>? materials,
-    List<String>? objectives,
-    double? grade,
-    double? maxGrade,
-    String? reportUrl,
-    bool? isBookmarked,
-    DateTime? createdAt,
     int? labId,
     int? courseId,
+    String? title,
+    String? description,
     int? labNumber,
     DateTime? dueDate,
     DateTime? availableFrom,
+    double? maxScore,
     double? weight,
-    api.LabStatus? apiStatus,
+    api.LabStatus? status,
     int? createdBy,
+    DateTime? createdAt,
     DateTime? updatedAt,
     CourseInfo? course,
+    List<LabInstructionModel>? instructions,
     List<DriveFileModel>? instructionFiles,
+    bool clearDescription = false,
+    bool clearDueDate = false,
+    bool clearAvailableFrom = false,
+    bool clearLabNumber = false,
   }) {
     return LabModel(
       id: id ?? this.id,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      courseName: courseName ?? this.courseName,
-      courseCode: courseCode ?? this.courseCode,
-      instructorName: instructorName ?? this.instructorName,
-      type: type ?? this.type,
-      status: status ?? this.status,
-      scheduledDate: scheduledDate ?? this.scheduledDate,
-      duration: duration ?? this.duration,
-      location: location ?? this.location,
-      virtualLink: virtualLink ?? this.virtualLink,
-      materials: materials ?? this.materials,
-      objectives: objectives ?? this.objectives,
-      grade: grade ?? this.grade,
-      maxGrade: maxGrade ?? this.maxGrade,
-      reportUrl: reportUrl ?? this.reportUrl,
-      isBookmarked: isBookmarked ?? this.isBookmarked,
-      createdAt: createdAt ?? this.createdAt,
       labId: labId ?? this.labId,
       courseId: courseId ?? this.courseId,
-      labNumber: labNumber ?? this.labNumber,
-      dueDate: dueDate ?? this.dueDate,
-      availableFrom: availableFrom ?? this.availableFrom,
+      title: title ?? this.title,
+      description: clearDescription ? null : (description ?? this.description),
+      labNumber: clearLabNumber ? null : (labNumber ?? this.labNumber),
+      dueDate: clearDueDate ? null : (dueDate ?? this.dueDate),
+      availableFrom: clearAvailableFrom
+          ? null
+          : (availableFrom ?? this.availableFrom),
+      maxScore: maxScore ?? this.maxScore,
       weight: weight ?? this.weight,
-      apiStatus: apiStatus ?? this.apiStatus,
+      status: status ?? this.status,
       createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       course: course ?? this.course,
+      instructions: instructions ?? this.instructions,
       instructionFiles: instructionFiles ?? this.instructionFiles,
     );
   }
 
-  bool get isToday {
-    final now = DateTime.now();
-    return scheduledDate.year == now.year &&
-        scheduledDate.month == now.month &&
-        scheduledDate.day == now.day;
-  }
+  bool get isPastDue => dueDate != null && dueDate!.isBefore(DateTime.now());
 
-  bool get isPast => scheduledDate.isBefore(DateTime.now());
+  bool get isAcceptingSubmissions => status == api.LabStatus.published;
 
-  int get daysUntil => scheduledDate.difference(DateTime.now()).inDays;
-
-  double? get gradePercentage {
-    if (grade == null || maxGrade == null || maxGrade == 0) return null;
-    return (grade! / maxGrade!) * 100;
-  }
-
-  String get formattedDuration {
-    final hours = duration.inHours;
-    final minutes = duration.inMinutes % 60;
-    if (hours > 0) {
-      return minutes > 0 ? '${hours}h ${minutes}m' : '${hours}h';
+  String get formattedDueDate {
+    if (dueDate == null) {
+      return 'No due date';
     }
-    return '${minutes}m';
+
+    final value = dueDate!;
+    final months = <String>[
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    final hour = value.hour > 12 ? value.hour - 12 : value.hour;
+    final suffix = value.hour >= 12 ? 'PM' : 'AM';
+
+    return '${months[value.month - 1]} ${value.day}, ${value.year} • '
+        '${hour == 0 ? 12 : hour}:${value.minute.toString().padLeft(2, '0')} $suffix';
+  }
+
+  int? get daysUntilDue {
+    if (dueDate == null) {
+      return null;
+    }
+    return dueDate!.difference(DateTime.now()).inDays;
   }
 
   static int _parseInt(dynamic value) {
@@ -336,13 +205,6 @@ class LabModel {
     return double.tryParse(value?.toString() ?? '') ?? 0;
   }
 
-  static double? _parseNullableDouble(dynamic value) {
-    if (value == null) {
-      return null;
-    }
-    return double.tryParse(value.toString());
-  }
-
   static DateTime? _parseDateTime(dynamic value) {
     if (value == null) {
       return null;
@@ -352,6 +214,14 @@ class LabModel {
 
   static String _parseString(dynamic value) {
     return value?.toString() ?? '';
+  }
+
+  static String? _parseNullableString(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    final parsed = value.toString().trim();
+    return parsed.isEmpty ? null : parsed;
   }
 
   static List<DriveFileModel>? _parseDriveFiles(dynamic value) {
@@ -365,26 +235,35 @@ class LabModel {
         .toList();
   }
 
-  static LabStatus _mapLegacyStatus(api.LabStatus status) {
-    switch (status) {
-      case api.LabStatus.draft:
-        return LabStatus.upcoming;
-      case api.LabStatus.published:
-        return LabStatus.inProgress;
-      case api.LabStatus.closed:
-        return LabStatus.completed;
-      case api.LabStatus.archived:
-        return LabStatus.missed;
-      case api.LabStatus.unknown:
-        return LabStatus.upcoming;
+  static List<LabInstructionModel> _parseInstructions(dynamic value) {
+    if (value is! List) {
+      return const <LabInstructionModel>[];
     }
+
+    return value
+        .whereType<Map<String, dynamic>>()
+        .map(LabInstructionModel.fromJson)
+        .toList();
   }
 
-  static LabType _mapLegacyType(Map<String, dynamic> json) {
-    final link = json['virtualLink']?.toString();
-    if (link != null && link.isNotEmpty) {
-      return LabType.virtual;
-    }
-    return LabType.physical;
-  }
+  @override
+  List<Object?> get props => <Object?>[
+    id,
+    labId,
+    courseId,
+    title,
+    description,
+    labNumber,
+    dueDate,
+    availableFrom,
+    maxScore,
+    weight,
+    status,
+    createdBy,
+    createdAt,
+    updatedAt,
+    course,
+    instructions,
+    instructionFiles,
+  ];
 }

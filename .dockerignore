@@ -1,0 +1,34 @@
+# VCS and metadata
+.git/
+.gitignore
+
+# Build and tool outputs
+build/
+.dart_tool/
+.pub/
+.pub-cache/
+coverage/
+
+# Platform build artifacts
+android/.gradle/
+android/app/build/
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/ephemeral/
+macos/Flutter/ephemeral/
+linux/flutter/ephemeral/
+windows/flutter/ephemeral/
+
+# Environment and local config
+.env*
+.vscode/
+.idea/
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Docker files themselves
+Dockerfile*
+.dockerignore

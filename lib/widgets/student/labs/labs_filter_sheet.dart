@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import '../../../../bloc/labs/labs_state.dart';
 import '../../../../common/utils/responsive.dart';
 import '../../../../generated_l10n/app_localizations.dart';
-import '../../../../models/labs/lab_model.dart';
 
 class LabsFilterBottomSheet extends StatefulWidget {
   final LabsFilter currentFilter;
-  final List<String> availableCourses;
   final bool isDark;
   final Function(LabsFilter) onApply;
   final VoidCallback onClear;
@@ -14,7 +12,6 @@ class LabsFilterBottomSheet extends StatefulWidget {
   const LabsFilterBottomSheet({
     super.key,
     required this.currentFilter,
-    required this.availableCourses,
     required this.isDark,
     required this.onApply,
     required this.onClear,
@@ -54,7 +51,9 @@ class _LabsFilterBottomSheetState extends State<LabsFilterBottomSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: widget.isDark ? Colors.grey.shade700 : Colors.grey.shade300,
+              color: widget.isDark
+                  ? Colors.grey.shade700
+                  : Colors.grey.shade300,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -68,7 +67,9 @@ class _LabsFilterBottomSheetState extends State<LabsFilterBottomSheet> {
                   style: TextStyle(
                     fontSize: responsive.fontSize18,
                     fontWeight: FontWeight.bold,
-                    color: widget.isDark ? Colors.white : const Color(0xFF1E293B),
+                    color: widget.isDark
+                        ? Colors.white
+                        : const Color(0xFF1E293B),
                   ),
                 ),
                 const Spacer(),
@@ -98,11 +99,11 @@ class _LabsFilterBottomSheetState extends State<LabsFilterBottomSheet> {
                   // Status filter
                   _buildSectionTitle('Status', responsive),
                   SizedBox(height: responsive.p8),
-                  _buildChipGroup<LabStatus>(
-                    values: LabStatus.values,
+                  _buildChipGroup<LabsDisplayStatus>(
+                    values: LabsDisplayStatus.values,
                     selected: _filter.status,
                     labelBuilder: (s) => s.label,
-                    colorBuilder: (s) => s.color,
+                    colorBuilder: _statusColor,
                     onSelected: (s) {
                       setState(() {
                         _filter = _filter.copyWith(
@@ -113,35 +114,6 @@ class _LabsFilterBottomSheetState extends State<LabsFilterBottomSheet> {
                     },
                     responsive: responsive,
                   ),
-                  SizedBox(height: responsive.p16),
-
-                  // Type filter
-                  _buildSectionTitle('Lab Type', responsive),
-                  SizedBox(height: responsive.p8),
-                  _buildChipGroup<LabType>(
-                    values: LabType.values,
-                    selected: _filter.type,
-                    labelBuilder: (t) => t.label,
-                    colorBuilder: (t) => t.color,
-                    onSelected: (t) {
-                      setState(() {
-                        _filter = _filter.copyWith(
-                          type: t,
-                          clearType: t == null,
-                        );
-                      });
-                    },
-                    responsive: responsive,
-                  ),
-                  SizedBox(height: responsive.p16),
-
-                  // Course filter
-                  if (widget.availableCourses.isNotEmpty) ...[
-                    _buildSectionTitle('Course', responsive),
-                    SizedBox(height: responsive.p8),
-                    _buildCourseDropdown(responsive),
-                    SizedBox(height: responsive.p16),
-                  ],
                 ],
               ),
             ),
@@ -177,6 +149,19 @@ class _LabsFilterBottomSheetState extends State<LabsFilterBottomSheet> {
         ],
       ),
     );
+  }
+
+  Color _statusColor(LabsDisplayStatus status) {
+    switch (status) {
+      case LabsDisplayStatus.upcoming:
+        return const Color(0xFF3B82F6);
+      case LabsDisplayStatus.inProgress:
+        return const Color(0xFFF59E0B);
+      case LabsDisplayStatus.completed:
+        return const Color(0xFF10B981);
+      case LabsDisplayStatus.missed:
+        return const Color(0xFFEF4444);
+    }
   }
 
   Widget _buildSectionTitle(String title, ResponsiveUtil responsive) {
@@ -233,61 +218,6 @@ class _LabsFilterBottomSheetState extends State<LabsFilterBottomSheet> {
           ),
         );
       }).toList(),
-    );
-  }
-
-  Widget _buildCourseDropdown(ResponsiveUtil responsive) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: responsive.p12),
-      decoration: BoxDecoration(
-        color: widget.isDark ? Colors.grey.shade800 : Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(responsive.radius12),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String?>(
-          value: _filter.courseName,
-          hint: Text(
-            'All Courses',
-            style: TextStyle(
-              color: widget.isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-            ),
-          ),
-          isExpanded: true,
-          dropdownColor: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: widget.isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-          ),
-          items: [
-            DropdownMenuItem<String?>(
-              value: null,
-              child: Text(
-                'All Courses',
-                style: TextStyle(
-                  color: widget.isDark ? Colors.white : const Color(0xFF1E293B),
-                ),
-              ),
-            ),
-            ...widget.availableCourses.map((course) => DropdownMenuItem(
-              value: course,
-              child: Text(
-                course,
-                style: TextStyle(
-                  color: widget.isDark ? Colors.white : const Color(0xFF1E293B),
-                ),
-              ),
-            )),
-          ],
-          onChanged: (value) {
-            setState(() {
-              _filter = _filter.copyWith(
-                courseName: value,
-                clearCourse: value == null,
-              );
-            });
-          },
-        ),
-      ),
     );
   }
 }

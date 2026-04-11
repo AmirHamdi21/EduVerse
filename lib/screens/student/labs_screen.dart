@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../bloc/labs/labs_cubit.dart';
 import '../../bloc/labs/labs_state.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../common/utils/responsive.dart';
 import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
+import '../../models/core/course_model.dart';
 import '../../models/labs/lab_model.dart';
-import '../../common/utils/responsive.dart';
 import '../../widgets/student/labs/lab_card.dart';
 import '../../widgets/student/labs/labs_filter_sheet.dart';
-import '../../widgets/student/labs/lab_details_sheet.dart';
+import 'lab_detail_screen.dart';
 
 class LabsScreen extends StatefulWidget {
   const LabsScreen({super.key});
@@ -20,8 +22,8 @@ class LabsScreen extends StatefulWidget {
   State<LabsScreen> createState() => _LabsScreenState();
 }
 
-class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
-  late TabController _tabController;
+class _LabsScreenState extends State<LabsScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _headerAnimationController;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
@@ -30,25 +32,25 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
     _headerAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
     )..forward();
 
-    _tabController.addListener(_onTabChanged);
-  }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
 
-  void _onTabChanged() {
-    if (_tabController.indexIsChanging) return;
-    if (mounted) {
-      context.read<LabsCubit>().setSelectedTab(_tabController.index);
-    }
+      final cubit = context.read<LabsCubit>();
+      if (cubit.state.enrolledCourses.isEmpty && !cubit.state.isLoading) {
+        cubit.loadEnrolledCourses();
+      }
+    });
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     _headerAnimationController.dispose();
     _searchController.dispose();
     _scrollController.dispose();
@@ -56,7 +58,10 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
   }
 
   void _showErrorSnackBar(BuildContext context, String message) {
-    if (!mounted) return;
+    if (!mounted) {
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -68,11 +73,6 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
         ),
         backgroundColor: Colors.red.shade600,
         behavior: SnackBarBehavior.floating,
-        action: SnackBarAction(
-          label: 'OK',
-          textColor: Colors.white,
-          onPressed: () {},
-        ),
       ),
     );
   }
@@ -81,64 +81,81 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final responsive = context.responsive;
 
-    return BlocProvider(
-      create: (_) => LabsCubit()..loadLabs(),
-      child: BlocBuilder<ThemeBloc, ThemeState>(
-        builder: (context, themeState) {
-          final isDark = themeState.isDark;
-          final l10n = AppLocalizations.of(context);
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState.isDark;
+        final l10n = AppLocalizations.of(context);
 
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: isDark
-                ? SystemUiOverlayStyle.light
-                : SystemUiOverlayStyle.dark,
-            child: Scaffold(
-              backgroundColor: isDark
-                  ? AppTheme.darkSurfaceColor
-                  : const Color(0xFFF8FAFC),
-              body: SafeArea(
-                child: Column(
-                  children: [
-                    _buildHeader(context, isDark, l10n, responsive),
-                    _buildTabBar(context, isDark, l10n, responsive),
-                    Expanded(
-                      child: BlocConsumer<LabsCubit, LabsState>(
-                        listener: (context, state) {
-                          if (state.error != null) {
-                            _showErrorSnackBar(context, state.error!);
-                            context.read<LabsCubit>().clearError();
-                          }
-                        },
-                        builder: (context, state) {
-                          if (state.isLoading && state.labs.isEmpty) {
-                            return _buildLoadingState(isDark);
-                          }
-                          if (state.error != null && state.labs.isEmpty) {
-                            return _buildErrorState(
-                              context,
-                              state.error!,
-                              isDark,
-                              l10n,
-                              responsive,
-                            );
-                          }
-                          return _buildLabsList(
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: isDark
+              ? SystemUiOverlayStyle.light
+              : SystemUiOverlayStyle.dark,
+          child: Scaffold(
+            backgroundColor: isDark
+                ? AppTheme.darkSurfaceColor
+                : const Color(0xFFF8FAFC),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  _buildHeader(context, isDark, l10n, responsive),
+                  BlocBuilder<LabsCubit, LabsState>(
+                    builder: (context, state) {
+                      return _buildCourseSelector(
+                        context,
+                        state,
+                        isDark,
+                        responsive,
+                      );
+                    },
+                  ),
+                  Expanded(
+                    child: BlocConsumer<LabsCubit, LabsState>(
+                      listener: (context, state) {
+                        if (state.error != null) {
+                          _showErrorSnackBar(context, state.error!);
+                          context.read<LabsCubit>().clearError();
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state.isLoading &&
+                            state.labs.isEmpty &&
+                            state.enrolledCourses.isEmpty) {
+                          return _buildLoadingState(isDark);
+                        }
+
+                        if (state.error != null &&
+                            state.labs.isEmpty &&
+                            state.enrolledCourses.isNotEmpty) {
+                          return _buildErrorState(
                             context,
                             state,
+                            state.error!,
                             isDark,
                             l10n,
                             responsive,
                           );
-                        },
-                      ),
+                        }
+
+                        if (state.enrolledCourses.isEmpty && !state.isLoading) {
+                          return _buildNoCoursesState(isDark, responsive);
+                        }
+
+                        return _buildLabsList(
+                          context,
+                          state,
+                          isDark,
+                          l10n,
+                          responsive,
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -168,7 +185,6 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
           children: [
             Row(
               children: [
-                // Back button
                 _buildCircularButton(
                   icon: Icons.arrow_back_ios_rounded,
                   onTap: () => Navigator.pop(context),
@@ -176,7 +192,6 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
                   responsive: responsive,
                 ),
                 SizedBox(width: responsive.p12),
-                // Title
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,8 +208,11 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
                       ),
                       BlocBuilder<LabsCubit, LabsState>(
                         builder: (context, state) {
+                          final subtitle = state.selectedCourse == null
+                              ? '${state.todayCount} ${l10n.labsToday}'
+                              : state.selectedCourse!.name;
                           return Text(
-                            '${state.todayCount} ${l10n.labsToday}',
+                            subtitle,
                             style: TextStyle(
                               fontSize: responsive.fontSize13,
                               color: isDark
@@ -207,7 +225,6 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
                     ],
                   ),
                 ),
-                // Search button
                 _buildCircularButton(
                   icon: _isSearching
                       ? Icons.close_rounded
@@ -223,7 +240,6 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
                   responsive: responsive,
                 ),
                 SizedBox(width: responsive.p8),
-                // Filter button
                 BlocBuilder<LabsCubit, LabsState>(
                   builder: (context, state) {
                     return _buildCircularButton(
@@ -237,7 +253,6 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
                 ),
               ],
             ),
-            // Search bar
             if (_isSearching) ...[
               SizedBox(height: responsive.p12),
               Container(
@@ -279,7 +294,6 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
                 ),
               ),
             ],
-            // Quick stats
             SizedBox(height: responsive.p16),
             BlocBuilder<LabsCubit, LabsState>(
               builder: (context, state) {
@@ -288,6 +302,87 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildCourseSelector(
+    BuildContext context,
+    LabsState state,
+    bool isDark,
+    ResponsiveUtil responsive,
+  ) {
+    if (state.enrolledCourses.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final selectedCourseId =
+        state.selectedCourseId ?? state.enrolledCourses.first.id;
+
+    return Container(
+      margin: EdgeInsets.fromLTRB(
+        responsive.p16,
+        responsive.p4,
+        responsive.p16,
+        responsive.p8,
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: responsive.p12,
+        vertical: responsive.p4,
+      ),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.grey.shade800.withValues(alpha: 0.3)
+            : Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(responsive.radius12),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.school_rounded,
+            color: const Color(0xFF3B82F6),
+            size: responsive.fontSize18,
+          ),
+          SizedBox(width: responsive.p8),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: selectedCourseId,
+                isExpanded: true,
+                dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                icon: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                ),
+                style: TextStyle(
+                  fontSize: responsive.fontSize13,
+                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  fontWeight: FontWeight.w600,
+                ),
+                items: state.enrolledCourses
+                    .map(
+                      (course) => DropdownMenuItem<int>(
+                        value: course.id,
+                        child: Text('${course.code} • ${course.name}'),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value == null || value == state.selectedCourseId) {
+                    return;
+                  }
+                  context.read<LabsCubit>().selectCourse(value);
+                },
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () => context.read<LabsCubit>().refreshLabs(),
+            splashRadius: responsive.p20,
+            icon: const Icon(Icons.refresh_rounded),
+            color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+          ),
+        ],
       ),
     );
   }
@@ -438,56 +533,6 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildTabBar(
-    BuildContext context,
-    bool isDark,
-    AppLocalizations l10n,
-    ResponsiveUtil responsive,
-  ) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: responsive.p16),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.grey.shade800.withValues(alpha: 0.3)
-            : Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(responsive.radius12),
-      ),
-      child: TabBar(
-        controller: _tabController,
-        indicator: BoxDecoration(
-          color: const Color(0xFF3B82F6),
-          borderRadius: BorderRadius.circular(responsive.radius10),
-        ),
-        indicatorSize: TabBarIndicatorSize.tab,
-        dividerColor: Colors.transparent,
-        labelColor: Colors.white,
-        unselectedLabelColor: isDark
-            ? Colors.grey.shade400
-            : Colors.grey.shade600,
-        labelStyle: TextStyle(
-          fontSize: responsive.fontSize12,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: TextStyle(
-          fontSize: responsive.fontSize12,
-          fontWeight: FontWeight.normal,
-        ),
-        padding: EdgeInsets.all(responsive.p4),
-        tabs: [
-          Tab(text: l10n.all),
-          Tab(text: l10n.upcoming),
-          Tab(text: l10n.inProgress),
-          Tab(text: l10n.completed),
-          Tab(text: l10n.missed),
-        ],
-        onTap: (value) {
-          context.read<LabsCubit>().setSelectedTab(value);
-          context.read<LabsCubit>().loadLabs();
-        },
-      ),
-    );
-  }
-
   Widget _buildLoadingState(bool isDark) {
     return Center(
       child: CircularProgressIndicator(
@@ -500,6 +545,7 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
 
   Widget _buildErrorState(
     BuildContext context,
+    LabsState state,
     String message,
     bool isDark,
     AppLocalizations l10n,
@@ -536,7 +582,13 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
             ),
             SizedBox(height: responsive.p24),
             ElevatedButton.icon(
-              onPressed: () => context.read<LabsCubit>().loadLabs(),
+              onPressed: () {
+                if (state.enrolledCourses.isEmpty) {
+                  context.read<LabsCubit>().loadEnrolledCourses();
+                } else {
+                  context.read<LabsCubit>().refreshLabs();
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,
@@ -550,6 +602,50 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
               ),
               icon: const Icon(Icons.refresh_rounded),
               label: Text(l10n.tryAgain),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoCoursesState(bool isDark, ResponsiveUtil responsive) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(responsive.p24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: responsive.p80,
+              height: responsive.p80,
+              decoration: BoxDecoration(
+                color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.school_outlined,
+                size: responsive.fontSize40,
+                color: const Color(0xFF3B82F6),
+              ),
+            ),
+            SizedBox(height: responsive.p20),
+            Text(
+              'No enrolled courses found',
+              style: TextStyle(
+                fontSize: responsive.fontSize18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : const Color(0xFF1E293B),
+              ),
+            ),
+            SizedBox(height: responsive.p8),
+            Text(
+              'Enroll in a course to view available labs.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: responsive.fontSize14,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
             ),
           ],
         ),
@@ -571,7 +667,7 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
     }
 
     return RefreshIndicator(
-      onRefresh: () => context.read<LabsCubit>().loadLabs(),
+      onRefresh: () => context.read<LabsCubit>().refreshLabs(),
       color: const Color(0xFF3B82F6),
       child: ListView.builder(
         controller: _scrollController,
@@ -592,9 +688,7 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
             child: LabCard(
               lab: lab,
               isDark: isDark,
-              onTap: () => _showLabDetails(context, lab, isDark),
-              onBookmark: () =>
-                  context.read<LabsCubit>().toggleBookmark(lab.id),
+              onTap: () => _openLabDetails(context, lab, state.enrolledCourses),
             ),
           );
         },
@@ -628,7 +722,7 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
             ),
             SizedBox(height: responsive.p20),
             Text(
-              l10n.noLabsFound,
+              'No labs available',
               style: TextStyle(
                 fontSize: responsive.fontSize18,
                 fontWeight: FontWeight.bold,
@@ -659,37 +753,30 @@ class _LabsScreenState extends State<LabsScreen> with TickerProviderStateMixin {
       backgroundColor: Colors.transparent,
       builder: (sheetContext) => LabsFilterBottomSheet(
         currentFilter: state.filter,
-        availableCourses: state.availableCourses,
         isDark: isDark,
-        onApply: (filter) => cubit.setFilter(filter),
-        onClear: () => cubit.clearFilters(),
+        onApply: cubit.setFilter,
+        onClear: cubit.clearFilters,
       ),
     );
   }
 
-  void _showLabDetails(BuildContext context, LabModel lab, bool isDark) {
-    final cubit = context.read<LabsCubit>();
+  Future<void> _openLabDetails(
+    BuildContext context,
+    LabModel lab,
+    List<CourseModel> enrolledCourses,
+  ) async {
+    final labsCubit = context.read<LabsCubit>();
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) => LabDetailsSheet(
-        lab: lab,
-        isDark: isDark,
-        onStatusChange: (status) => cubit.updateLabStatus(lab.id, status),
-        onSubmitReport: (url) => cubit.submitLabReport(lab.id, url),
-        onJoinVirtual: () {
-          // Handle join virtual lab
-          Navigator.pop(sheetContext);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Opening virtual lab session...'),
-              backgroundColor: const Color(0xFF10B981),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        },
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => LabDetailScreen(
+          labId: lab.id,
+          labService: labsCubit.labService,
+          enrollmentService: labsCubit.enrollmentService,
+          lab: lab,
+          enrolledCourses: enrolledCourses,
+        ),
       ),
     );
   }

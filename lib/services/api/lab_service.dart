@@ -143,6 +143,7 @@ class LabService {
     dynamic labId,
     File file, {
     String? submissionText,
+    ProgressCallback? onSendProgress,
   }) {
     return RetryHelper.execute<LabSubmissionModel>(() async {
       final formData = FormData.fromMap(<String, dynamic>{
@@ -156,16 +157,34 @@ class LabService {
       final response = await _client.dio.post(
         '/labs/$labId/submissions/upload',
         data: formData,
+        onSendProgress: onSendProgress,
       );
       return LabSubmissionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to upload lab submission file');
   }
 
-  Future<ServiceResult<LabSubmissionModel>> getMySubmission(dynamic labId) {
-    return RetryHelper.execute<LabSubmissionModel>(() async {
-      final response = await _client.dio.get('/labs/$labId/my-submission');
-      return LabSubmissionModel.fromJson(_extractMap(response.data));
-    }, fallbackMessage: 'Failed to load your lab submission');
+  Future<ServiceResult<List<LabSubmissionModel>>> getMySubmission(
+    dynamic labId,
+  ) {
+    return RetryHelper.execute<List<LabSubmissionModel>>(() async {
+      final response = await _client.dio.get('/labs/$labId/submissions/my');
+
+      final listPayload = _extractList(response.data)
+          .whereType<Map<String, dynamic>>()
+          .map(LabSubmissionModel.fromJson)
+          .toList();
+
+      if (listPayload.isNotEmpty) {
+        return listPayload;
+      }
+
+      final mapPayload = _extractMap(response.data);
+      if (mapPayload.isEmpty) {
+        return const <LabSubmissionModel>[];
+      }
+
+      return <LabSubmissionModel>[LabSubmissionModel.fromJson(mapPayload)];
+    }, fallbackMessage: 'Failed to load your lab submissions');
   }
 
   Future<ServiceResult<Map<String, dynamic>>> gradeSubmission(
