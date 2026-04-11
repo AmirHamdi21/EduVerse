@@ -950,8 +950,58 @@ Full lab management for instructors: create, edit, delete, manage instructions, 
 | **LabEdit Modal** | Same fields, pre-populated | `PUT /labs/{id}` |
 | **InstructionManager** | Add text instructions, upload instruction files | `POST /labs/{id}/instructions`, `POST /labs/{id}/instructions/upload` |
 | **SubmissionList** | View all submissions per lab | `GET /labs/{id}/submissions` |
-| **GradingModal** | Score + feedback + status change | `PATCH /labs/{id}/submissions/{subId}/grade` |
+| **GradingModal** | Score + feedback + status change with automatic gradebook integration | `PATCH /labs/{id}/submissions/{subId}/grade` |
 | **Attendance** | Mark attendance per student (present/absent/excused/late) | `GET /labs/{id}/attendance`, `POST /labs/{id}/attendance` |
+
+#### Lab Grading Endpoint Details
+
+> **[!FROM BACKEND DOCS]** Updated grading endpoint with status field and central gradebook integration:
+
+**Request Body:**
+```json
+{
+  "score": 85.5,                          // number — Required if status='graded'
+  "feedback": "Good work on the report",  // string — Optional feedback text
+  "status": "graded"                      // string — Required: 'submitted' | 'graded' | 'returned' | 'resubmit'
+}
+```
+
+**Response `200 OK`:**
+```json
+{
+  "id": "submission-uuid",
+  "labId": "lab-uuid",
+  "userId": 123,
+  "score": "85.50",
+  "feedback": "Good work on the report",
+  "submissionStatus": "graded",
+  "gradedBy": 5,
+  "gradedAt": "2026-04-12T10:00:00Z",
+  "isLate": false,
+  "submittedAt": "2026-04-10T15:30:00Z",
+  "user": {
+    "userId": 123,
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john@example.com"
+  },
+  "grader": {
+    "userId": 5,
+    "firstName": "Dr.",
+    "lastName": "Smith",
+    "email": "smith@example.com"
+  }
+}
+```
+
+**Side Effect — Automatic Gradebook Integration:**
+> When `status = 'graded'` AND `score` is provided, the backend automatically creates or updates a grade record in the central `grades` table via `GradesService`:
+- `gradeType = 'lab'`
+- `courseId` from the lab's course
+- `isPublished = true` (immediately visible to students)
+- Grade is linked to the student's user ID
+
+**Important:** Unlike assignment grading (which ALWAYS creates a grade record), lab grading only creates a grade record when explicitly marking as `graded` with a score.
 
 #### Create Form Fields (from Website)
 
@@ -1058,8 +1108,164 @@ Integrate the TA dashboard's full workflow: view assigned courses, **create/edit
 |---|---|---|
 | **CoursesPage** | 9 sub-tabs: Overview, Sections & Labs, Lectures, Materials, Assignments, Grading, Attendance, Students, Announcements | Overview uses live API. **Most sub-tabs use mock data** currently. |
 | **AssignmentGradingPage** | Split-panel: submissions list (left) + grading form (right) | **Full CRUD + grading** |
-| **LabsPage** | Table with labs, actions (Eye, Edit, Delete) | **Full CRUD + grading** (but delete disabled per website) |
+| **LabsPage** | Table-based layout with search, filters, skeleton loading, `useApi` hook, GradingModal integration | **View + grade submissions only** (create disabled, no edit/delete per website UI) |
+| **GradingModal** | Focus management, keyboard nav, ARIA attributes, submission filtering, state management | **Grade pending submissions only** (status=`submitted`) |
 | **CoursesPage sub-tabs** | Overview, Sections & Labs, Lectures, Materials, Assignments, Grading, Attendance, Students, Announcements | Read-only for most. TA creates nothing except grades, assignments, labs. |
+
+#### TA LabsPage — Table View Architecture
+
+> **[!FROM FRONTEND DOCS]** Source: `src/pages/ta-dashboard/components/LabsPage.tsx` (380 lines)
+
+**Route:** `/tadashboard/labs` (sidebar item: "Labs", icon: `Beaker`)
+
+**Component Tree:**
+```
+TADashboard
+ └─ LabsPage
+     ├─ Header ("Lab Management")
+     ├─ Search & Filters       (text search + All/Active/Completed buttons)
+     ├─ Labs Table             (Lab name, Course, Due Date, Submissions, Status)
+     └─ GradingModal           (opened when "View Submissions" is clicked)
+```
+
+**Data Fetching Pattern (useApi hook):**
+```dart
+// Website uses: useApi(() => LabService.getAll(), [], !mockLabs)
+// Flutter equivalent: Live API fetch with optional mock override
+// If mock labs provided → uses mock data (no API call)
+// If no mock labs → fetches via LabService.getAll()
+// On error → toast notification: 'Failed to load labs'
+// refetch function available for refreshing after grading actions
+```
+
+**Header Section:**
+| Element | Description |
+|---|---|
+| **Title** | "Lab Management" |
+| **Subtitle** | "View and grade lab sessions" |
+| **Create Button** | "Create New Lab" — **disabled for TAs** (with tooltip reason) |
+
+**Filters Section:**
+| Filter | Type | Options |
+|---|---|---|
+| **Search** | Text input | Filters by lab title OR course name (case-insensitive) |
+| **Status Toggle** | Button group | All / Active / Completed |
+
+**Filtering Logic:**
+```dart
+final filteredLabs = displayLabs.where((lab) {
+  final matchesFilter = filter == 'all' || lab.status == filter;
+  final matchesSearch =
+    lab.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+    (lab.course?.name ?? '').toLowerCase().contains(searchQuery.toLowerCase());
+  return matchesFilter && matchesSearch;
+}).toList();
+```
+
+**Data Table Columns:**
+| Column | Content | Mobile Visibility |
+|---|---|---|
+| **Lab** | Beaker icon + title + lab number | ✅ Visible |
+| **Course** | `lab.course?.name` or "N/A" | ✅ Visible |
+| **Due Date** | Calendar icon + formatted date | ❌ Hidden on mobile |
+| **Submissions** | "View" link with FileText icon | ❌ Hidden on mobile |
+| **Status** | Colored badge: Published=green, Draft=blue, Closed=gray | ✅ Visible |
+| **Actions** | `Eye` icon button → opens `GradingModal` | ✅ Visible |
+
+**Loading State:** Animated skeleton placeholder
+- Header skeleton (title + subtitle)
+- Table skeleton (3 rows with `h-12` height)
+
+**Empty State:** "No labs found" with Beaker icon (12x12px)
+
+**Role-Aware Behavior:**
+- Checks `user.roles.includes('teaching_assistant')` on mount via `useAuth()`
+- Sets `isTA` flag for permission checks
+- TAs can **only view and grade** — no create/edit/delete permissions
+- View button disabled if `disableViewDetailsReason` is provided
+
+#### TA GradingModal — Component Architecture
+
+> **[!FROM FRONTEND DOCS]** Source: `src/pages/ta-dashboard/components/GradingModal.tsx` (313 lines)
+
+**Modal Props Interface:**
+| Prop | Type | Required | Description |
+|---|---|---|---|
+| `isOpen` | `boolean` | ✅ **Yes** | Controls modal visibility |
+| `labTitle` | `string` | ✅ **Yes** | Displayed in modal header |
+| `submissions` | `LabSubmission[]` | ✅ **Yes** | All submissions for the lab |
+| `onGrade` | `(submissionId, score, feedback) => Future<void>` | ✅ **Yes** | Async grade callback |
+| `onClose` | `() => void` | ✅ **Yes** | Close callback |
+
+**Accessibility & UX Features:**
+| Feature | Implementation |
+|---|---|
+| **Focus Management** | Uses `useRef` to store previous active element, focuses modal on open, restores focus on close via `useEffect` |
+| **Keyboard Navigation** | Escape key closes modal; Tab key trapped within modal (focus trap cycling through focusable elements) |
+| **ARIA Attributes** | `role="dialog"`, `aria-modal="true"`, `aria-labelledby="grading-modal-title"`, `aria-label="Close dialog"` on close button |
+
+**State Management:**
+| State | Type | Purpose |
+|---|---|---|
+| `selectedSubmissionId` | `string | null` | Currently selected submission for grading |
+| `gradeScore` | `string` | Score input value (0-100, step 0.5) |
+| `gradeFeedback` | `string` | Feedback text input |
+| `saving` | `boolean` | Loading state for save button |
+
+**Submission Filtering:**
+- Displays all submissions in dropdown selector
+- **Only `submitted` status submissions can be graded** (not already graded/returned)
+- Empty state shows: "All submissions have been graded" when no pending submissions
+
+**Score Input:**
+- Number input with min=0, max=100, step=0.5
+- Placeholder: "Enter score (0-100)"
+
+**Submission Details Panel:**
+- Shows student name, submitted date, submission text (if present)
+- Scrollable container for long submissions
+
+**Pending Count:** Footer displays count of pending submissions remaining
+
+**TA Grading Flow:**
+```
+1. Click Eye icon → calls LabService.getSubmissions(lab.id)
+2. Sets selectedLabForGrading and gradingSubmissions state
+3. Opens GradingModal with:
+   - labTitle: selectedLabForGrading.title
+   - submissions: gradingSubmissions array
+   - onGrade: handleGradeSubmission callback
+4. TA selects a submission from the dropdown
+5. Enters score (0-100, step 0.5) and feedback text
+6. Clicks "Save Grade" button
+7. handleGradeSubmission calls:
+   LabService.gradeSubmission(labId, submissionId, score, feedback)
+8. On success → toast.success('Submission graded successfully')
+9. Refetches submissions: LabService.getSubmissions(labId)
+10. Updates gradingSubmissions state
+11. Calls refetch() to refresh labs list
+12. On error → toast.error('Failed to grade submission')
+```
+
+**Error Handling:**
+```dart
+try {
+  final submissions = await LabService.getSubmissions(lab.id);
+  setSelectedLabForGrading(lab);
+  setGradingSubmissions(submissions);
+  setGradingModalOpen(true);
+} catch (err) {
+  toast.error('Failed to load submissions');
+}
+```
+
+**API Calls:**
+| Action | Endpoint | Method |
+|---|---|---|
+| Load all labs | `GET /labs` | `LabService.getAll()` via `useApi` hook |
+| Load submissions | `GET /labs/{id}/submissions` | `LabService.getSubmissions(id)` |
+| Grade submission | `PATCH /labs/{labId}/submissions/{subId}/grade` | `LabService.gradeSubmission(...)` |
+| Refetch labs | `GET /labs` | `refetch()` from `useApi` hook |
 
 #### TA Course Detail — 9 Sub-Tabs (from Frontend)
 
@@ -1083,22 +1289,46 @@ Integrate the TA dashboard's full workflow: view assigned courses, **create/edit
 
 - **Teaching Courses**: Use `GET /enrollments/teaching` to load assigned courses
 - **Section Students**: Use `GET /sections/:sectionId/students` for student lists
+- **LabsPage Data Fetching**: Use `useApi` hook pattern (or Flutter equivalent) with mock override support, error toast notifications, and refetch capability
+- **Labs Filtering**: Client-side search (title + course name) and status filtering (All/Active/Completed)
+- **Loading States**: Skeleton loaders for header and table rows during API fetch
 - **Assignment/Lab CRUD**: Reuse same components as instructor but with role-aware UI
+- **GradingModal Architecture**: 
+  - Focus management (store/restore focus on open/close)
+  - Keyboard navigation (Escape to close, Tab trap within modal)
+  - ARIA attributes for accessibility (`role="dialog"`, `aria-modal="true"`)
+  - Submission filtering (only grade `submitted` status, not already graded)
+  - State: `selectedSubmissionId`, `gradeScore` (string), `gradeFeedback`, `saving`
+  - Score input: 0-100, step 0.5
+  - Empty state: "All submissions have been graded" when no pending
 - **Grading Panels**: Reuse instructor grading panels (score input 0-maxScore, step 0.5, feedback textarea)
+- **Grading Flow**: After grade → refetch submissions → update state → refetch labs list
 - **Role Verification**: Check `user.roles.contains('teaching_assistant')` on mount
 - **Lab Delete Restriction**: Even though backend allows, UI should disable delete button for TAs (match website behavior)
-- **Responsive**: All tables convert to card lists on mobile/tablet
+- **Responsive**: All tables convert to card lists on mobile/tablet; hide Due Date and Submissions columns on mobile
 
 ### Dependencies
 - Phase 1 (services), Phase 6 (reuse grading panel), Phase 7 (reuse grading modal)
 
 ### Acceptance Criteria
 - [ ] TA sees assigned courses from API
+- [ ] Labs list uses table-based layout with search and status filters (All/Active/Completed)
+- [ ] Labs table shows skeleton loading states during API fetch
+- [ ] Labs filtered by status and search (title + course name) client-side
+- [ ] Empty state shown when no labs match filters
 - [ ] Assignment grading panel works (score + feedback)
-- [ ] Lab grading modal works
-- [ ] No CRUD buttons visible for assignments
-- [ ] No Delete button visible for labs
+- [ ] GradingModal opens with submission list and proper focus management
+- [ ] GradingModal supports keyboard navigation (Escape to close, Tab trap)
+- [ ] GradingModal has ARIA attributes for accessibility
+- [ ] Only `submitted` status submissions can be graded in modal
+- [ ] Score input validates 0-100 range with 0.5 step increments
+- [ ] Empty state shown in GradingModal when all submissions already graded
+- [ ] After grading, submissions list refetches and labs list refreshes
+- [ ] GradingModal shows pending submissions count in footer
+- [ ] No CRUD buttons visible for assignments (if UI-restricted per website)
+- [ ] No Delete button visible for labs (UI restriction despite backend allowing)
 - [ ] Course detail sub-tabs show live data (especially Materials, Attendance)
+- [ ] All error states show user-friendly toast notifications
 
 ---
 
@@ -1236,15 +1466,17 @@ if (!enrollment) {
 | **Enrollment Check** | ✅ Required | ❌ Missing (should be added) |
 | **Get My Submission** | Returns single latest submission | Returns **array** of all submissions |
 | **Submission Types** | `file`, `text`, `link`, `multiple` | `text`, `file` only |
-| **Grade Integration** | Creates central grade record | Creates central grade record (only if status=`graded`) |
+| **Grade Integration** | Always creates central grade record | Creates central grade record **ONLY** if status=`graded` AND score provided |
+| **Grading Request** | `{ score, feedback }` | `{ score, feedback, status }` (status field required) |
+| **Grader Info** | Stored in `gradedBy` field | Stored in `gradedBy` field + `grader` relation returned |
 
 ### 4. Grade Integration
 
-Both assignments and labs automatically create records in the central `grades` table when graded:
+Both assignments and labs automatically create records in the central `grades` table when graded, but with different behavior:
 
 **Assignment Grading** (`PATCH /assignments/:aId/submissions/:sId/grade`):
 ```dart
-// Always creates grade record
+// ALWAYS creates grade record on every grade action
 await gradesService.createGrade({
   userId: submission.userId,
   courseId: assignment.courseId,
@@ -1255,11 +1487,14 @@ await gradesService.createGrade({
   feedback: dto.feedback,
   isPublished: true,  // Immediately visible
 }, graderId);
+
+// Response includes gradeId:
+// { submissionId, score, maxScore, gradeId }
 ```
 
 **Lab Grading** (`PATCH /labs/:id/submissions/:subId/grade`):
 ```dart
-// Only creates grade if status is 'graded' and score provided
+// CONDITIONAL: Only creates grade if status is 'graded' AND score provided
 if (dto.score !== undefined && dto.status === 'graded') {
   await gradesService.createGrade({
     userId: submission.userId,
@@ -1272,7 +1507,21 @@ if (dto.score !== undefined && dto.status === 'graded') {
     isPublished: true,
   }, graderId);
 }
+
+// Response includes grader relation:
+// { submission, user, grader: { userId, firstName, lastName, email } }
 ```
+
+**Key Differences:**
+| Aspect | Assignment Grading | Lab Grading |
+|---|---|---|
+| **Grade Record Creation** | Always created | Only when `status='graded'` + score provided |
+| **Request Fields** | `{ score, feedback }` | `{ score, feedback, status }` |
+| **Response** | Includes `gradeId` | Includes `grader` relation |
+| **Status Flexibility** | Implicit via grading action | Explicit via `status` field (can mark as `returned` or `resubmit` without grading) |
+| **Central Gradebook** | `gradeType = 'assignment'` | `gradeType = 'lab'` |
+
+**Flutter Implementation Note:** When building the GradingModal, ensure the status dropdown includes all 4 options (`submitted`, `graded`, `returned`, `resubmit`), but only enable score input when status is `graded`. This allows TAs/instructors to return submissions for revision without assigning a score.
 
 ### 5. Google Drive File Organization
 

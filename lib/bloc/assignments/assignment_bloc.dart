@@ -45,6 +45,8 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
     emit(
       state.copyWith(
         selectedAssignment: event.assignment,
+        clearSubmission: true,
+        clearSubmitError: true,
         isLoading: true,
         clearError: true,
       ),
@@ -85,6 +87,7 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
       state.copyWith(
         selectedAssignment: selectedAssignment,
         mySubmission: submission,
+        clearSubmission: submission == null,
         isLoading: false,
         clearError: true,
       ),

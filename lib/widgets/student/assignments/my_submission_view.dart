@@ -175,61 +175,131 @@ class MySubmissionView extends StatelessWidget {
 
   Widget _buildSubmissionContent(BuildContext context) {
     final responsive = context.responsive;
+    final sections = <Widget>[];
+    final note = (submission.submissionText ?? '').trim();
+    final link = (submission.submissionLink ?? '').trim();
+    final file = submission.driveFile;
 
-    if ((submission.submissionText ?? '').trim().isNotEmpty) {
-      return Text(
-        submission.submissionText!,
-        style: TextStyle(
-          fontSize: responsive.fontSize13,
-          color: isDark ? Colors.grey.shade200 : Colors.grey.shade800,
-          height: 1.4,
-        ),
-      );
-    }
-
-    if ((submission.submissionLink ?? '').trim().isNotEmpty) {
-      return InkWell(
-        onTap: () => _openExternal(submission.submissionLink!),
-        child: Text(
-          submission.submissionLink!,
-          style: TextStyle(
-            fontSize: responsive.fontSize13,
-            color: const Color(0xFF3B82F6),
-            decoration: TextDecoration.underline,
-          ),
-        ),
-      );
-    }
-
-    if (submission.driveFile != null) {
-      final file = submission.driveFile!;
-      return Row(
-        children: [
-          const Icon(Icons.attach_file_rounded, color: Color(0xFF3B82F6)),
-          Expanded(
-            child: Text(
-              file.fileName,
+    if (note.isNotEmpty) {
+      sections.add(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Note',
+              style: TextStyle(
+                fontSize: responsive.fontSize12,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+            SizedBox(height: responsive.p4),
+            Text(
+              note,
               style: TextStyle(
                 fontSize: responsive.fontSize13,
                 color: isDark ? Colors.grey.shade200 : Colors.grey.shade800,
+                height: 1.4,
               ),
-              overflow: TextOverflow.ellipsis,
             ),
-          ),
-          TextButton(
-            onPressed: () => _openExternal(file.webViewLink),
-            child: const Text('Open'),
-          ),
-        ],
+          ],
+        ),
       );
     }
 
-    return Text(
-      'Submission saved',
-      style: TextStyle(
-        fontSize: responsive.fontSize13,
-        color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
-      ),
+    if (file != null) {
+      if (sections.isNotEmpty) {
+        sections.add(SizedBox(height: responsive.p12));
+      }
+
+      sections.add(
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(responsive.p12),
+          decoration: BoxDecoration(
+            color: const Color(0xFF3B82F6).withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(responsive.radius12),
+            border: Border.all(
+              color: const Color(0xFF3B82F6).withValues(alpha: 0.25),
+            ),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.attach_file_rounded, color: Color(0xFF3B82F6)),
+              SizedBox(width: responsive.p8),
+              Expanded(
+                child: Text(
+                  file.fileName,
+                  style: TextStyle(
+                    fontSize: responsive.fontSize13,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+
+      sections.add(SizedBox(height: responsive.p6));
+      sections.add(
+        Wrap(
+          spacing: responsive.p8,
+          runSpacing: responsive.p4,
+          children: [
+            TextButton.icon(
+              onPressed: () => _openExternal(file.webViewLink),
+              icon: const Icon(Icons.open_in_new_rounded, size: 16),
+              label: const Text('Open in Drive'),
+            ),
+            if (file.downloadUrl.isNotEmpty)
+              TextButton.icon(
+                onPressed: () => _openExternal(file.downloadUrl),
+                icon: const Icon(Icons.download_rounded, size: 16),
+                label: const Text('Download'),
+              ),
+          ],
+        ),
+      );
+    }
+
+    if (link.isNotEmpty && file == null) {
+      if (sections.isNotEmpty) {
+        sections.add(SizedBox(height: responsive.p8));
+      }
+
+      sections.add(
+        InkWell(
+          onTap: () => _openExternal(link),
+          child: Text(
+            link,
+            style: TextStyle(
+              fontSize: responsive.fontSize13,
+              color: const Color(0xFF3B82F6),
+              decoration: TextDecoration.underline,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      );
+    }
+
+    if (sections.isEmpty) {
+      return Text(
+        'Submission saved',
+        style: TextStyle(
+          fontSize: responsive.fontSize13,
+          color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: sections,
     );
   }
 

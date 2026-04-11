@@ -212,5 +212,60 @@ void main() {
 
       await bloc.close();
     });
+
+    test(
+      'selecting assignment without submission clears stale mySubmission',
+      () async {
+        final now = DateTime.now();
+        final service = _FakeAssignmentService(
+          assignments: <AssignmentModel>[
+            _assignment(
+              id: 1,
+              title: 'Assignment A',
+              dueDate: now.add(const Duration(days: 2)),
+            ),
+            _assignment(
+              id: 2,
+              title: 'Assignment B',
+              dueDate: now.add(const Duration(days: 3)),
+            ),
+          ],
+          submissions: <int, AssignmentSubmissionModel>{
+            1: _submission(assignmentId: 1),
+          },
+        );
+
+        final bloc = AssignmentBloc(assignmentService: service);
+
+        bloc.add(const FetchAssignments());
+        await _flush();
+        await _flush();
+
+        bloc.add(SelectAssignment(assignment: bloc.state.assignments.first));
+        await _flush();
+        await _flush();
+        expect(bloc.state.mySubmission, isNotNull);
+        expect(bloc.state.mySubmission!.assignmentId, 1);
+
+        bloc.add(SelectAssignment(assignment: bloc.state.assignments[1]));
+        await _flush();
+        await _flush();
+
+        expect(bloc.state.selectedAssignment, isNotNull);
+        expect(bloc.state.selectedAssignment!.assignmentId, 2);
+        expect(bloc.state.mySubmission, isNull);
+
+        bloc.add(SelectAssignment(assignment: bloc.state.assignments.first));
+        await _flush();
+        await _flush();
+
+        expect(bloc.state.selectedAssignment, isNotNull);
+        expect(bloc.state.selectedAssignment!.assignmentId, 1);
+        expect(bloc.state.mySubmission, isNotNull);
+        expect(bloc.state.mySubmission!.assignmentId, 1);
+
+        await bloc.close();
+      },
+    );
   });
 }
