@@ -32,4 +32,5 @@
 ## Notes
 
 - All items passed on first validation. No spec updates needed.
+- Clarification session completed on 2026-04-11 with 5 questions answered.
 - Specification is ready for `/speckit.plan`.

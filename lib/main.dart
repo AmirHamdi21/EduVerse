@@ -2,7 +2,8 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:edu_verse/bloc/admin_notifications/admin_notification_cubit.dart';
-import 'package:edu_verse/bloc/assignments/assignments_cubit.dart';
+import 'package:edu_verse/bloc/assignments/assignment_bloc.dart';
+import 'package:edu_verse/bloc/assignments/assignment_event.dart';
 import 'package:edu_verse/bloc/attendance/attendance_cubit.dart';
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
 import 'package:edu_verse/bloc/auth/auth_event.dart';
@@ -27,6 +28,7 @@ import 'package:edu_verse/services/storage_service.dart';
 import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/session_expiry_notifier.dart';
 import 'package:edu_verse/services/api/course_service.dart';
+import 'package:edu_verse/services/api/assignment_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/api/material_service.dart';
 import 'package:edu_verse/services/api/communication_service.dart';
@@ -69,7 +71,7 @@ class _MyAppState extends State<MyApp> {
   late NotificationCubit _notificationCubit;
   late TasksCubit _tasksCubit;
   late LabsCubit _labsCubit;
-  late AssignmentsCubit _assignmentsCubit;
+  late AssignmentBloc _assignmentBloc;
   late GradesCubit _gradesCubit;
   late AttendanceCubit _attendanceCubit;
   late SummarizerCubit _summarizerCubit;
@@ -82,6 +84,7 @@ class _MyAppState extends State<MyApp> {
   late AdminNotificationCubit _adminNotificationCubit;
   late CoursesBloc _coursesBloc;
   late CourseService _courseService;
+  late AssignmentService _assignmentService;
   late EnrollmentService _enrollmentService;
   late MaterialService _materialService;
   late CommunicationService _communicationService;
@@ -102,7 +105,6 @@ class _MyAppState extends State<MyApp> {
     _notificationCubit = NotificationCubit()..loadNotifications();
     _tasksCubit = TasksCubit()..loadTasks();
     _labsCubit = LabsCubit()..loadLabs();
-    _assignmentsCubit = AssignmentsCubit()..loadAssignments();
     _gradesCubit = GradesCubit()..loadGrades();
     _attendanceCubit = AttendanceCubit()..loadAttendance();
     _summarizerCubit = SummarizerCubit();
@@ -141,9 +143,13 @@ class _MyAppState extends State<MyApp> {
     // ── Course API layer (Phase 1) ─────────────────────────
     final coreApiClient = CoreApiClient(storageService: _storageService);
     _courseService = CourseService(coreApiClient: coreApiClient);
+    _assignmentService = AssignmentService(coreApiClient: coreApiClient);
     _enrollmentService = EnrollmentService(coreApiClient: coreApiClient);
     _materialService = MaterialService(coreApiClient: coreApiClient);
     _communicationService = CommunicationService(coreApiClient: coreApiClient);
+
+    _assignmentBloc = AssignmentBloc(assignmentService: _assignmentService)
+      ..add(const FetchAssignments());
 
     _coursesBloc = CoursesBloc(
       courseService: _courseService,
@@ -173,7 +179,7 @@ class _MyAppState extends State<MyApp> {
     _notificationCubit.close();
     _tasksCubit.close();
     _labsCubit.close();
-    _assignmentsCubit.close();
+    _assignmentBloc.close();
     _gradesCubit.close();
     _attendanceCubit.close();
     _summarizerCubit.close();
@@ -199,7 +205,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _notificationCubit),
         BlocProvider.value(value: _tasksCubit),
         BlocProvider.value(value: _labsCubit),
-        BlocProvider.value(value: _assignmentsCubit),
+        BlocProvider.value(value: _assignmentBloc),
         BlocProvider.value(value: _gradesCubit),
         BlocProvider.value(value: _attendanceCubit),
         BlocProvider.value(value: _summarizerCubit),

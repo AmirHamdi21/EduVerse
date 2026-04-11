@@ -133,6 +133,7 @@ class AssignmentService {
     File file, {
     String? submissionText,
     String? submissionLink,
+    ProgressCallback? onSendProgress,
   }) {
     return RetryHelper.execute<AssignmentSubmissionModel>(() async {
       final formData = FormData.fromMap(<String, dynamic>{
@@ -147,6 +148,7 @@ class AssignmentService {
       final response = await _client.dio.post(
         '/assignments/$assignmentId/submissions/upload',
         data: formData,
+        onSendProgress: onSendProgress,
       );
       return AssignmentSubmissionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to upload assignment submission file');

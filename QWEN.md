@@ -1,4 +1,4 @@
-# Qwen Code Context: EduVerse Flutter App
+﻿# Qwen Code Context: EduVerse Flutter App
 
 **Project**: EduVerse - Flutter Mobile App
 **Date**: April 10, 2026

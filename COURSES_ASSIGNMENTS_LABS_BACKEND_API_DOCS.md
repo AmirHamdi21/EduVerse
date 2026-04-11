@@ -1590,6 +1590,14 @@ GET /api/labs/:id
       "orderIndex": 1,                  // number — Sort order
       "createdAt": "2026-04-01T08:00:00Z"
     }
+  ],
+  "instructionFiles": [                 // array — Drive files linked to instructions
+    {
+      "driveFileId": 123,               // number — Drive file ID
+      "fileName": "Lab1_Instructions_v1.pdf",
+      "webViewLink": "https://drive.google.com/file/d/abc123/view",
+      "webContentLink": "https://drive.google.com/uc?id=abc123&export=download"
+    }
   ]
 }
 ```
@@ -1638,6 +1646,8 @@ POST /api/labs
 #### Response `201 Created`
 
 Returns the created lab object.
+
+> **Note**: The `createdBy` field is automatically set from the authenticated user's JWT token.
 
 ---
 
@@ -1849,8 +1859,10 @@ POST /api/labs/:id/submit
 ```
 
 #### Business Rules
+- **UPSERT Behavior**: If a submission already exists for this student+lab combination, it will be **updated** instead of creating a duplicate
 - Auto-detects late submission based on `lab.dueDate`
 - Sets `isLate = true` if current time > dueDate
+- Sets `status = 'submitted'` on both create and update
 
 ---
 
@@ -1923,7 +1935,7 @@ GET /api/labs/:id/submissions/my
 
 #### Response `200 OK`
 
-Returns an **array** of the student's submissions for this lab (may have multiple), sorted by `submittedAt` DESC. Includes `user` and `file` relations.
+Returns an **array** of the student's submissions for this lab (may have multiple), sorted by `submittedAt` DESC. Includes `user` and `driveFile` relations.
 
 ```json
 [
@@ -1941,12 +1953,12 @@ Returns an **array** of the student's submissions for this lab (may have multipl
     "gradedBy": 5,
     "gradedAt": "2026-04-12T10:00:00Z",
     "user": { /* student info */ },
-    "file": { /* file info or null */ }
+    "driveFile": { /* drive file info or null */ }
   }
 ]
 ```
 
-> **Note**: Unlike assignments (which returns the latest single submission), labs returns **all** submissions as an array.
+> **Note**: Unlike assignments (which returns the latest single submission), labs returns **all** submissions as an array. The `driveFile` field contains Google Drive file information when the submission was uploaded via Google Drive.
 
 ---
 
@@ -1986,7 +1998,7 @@ PATCH /api/labs/:id/submissions/:subId/grade
 
 #### Response `200 OK`
 
-Returns the updated submission object with `user`, `file`, and `grader` relations:
+Returns the updated submission object with `user`, `driveFile`, and `grader` relations:
 
 ```json
 {
@@ -2003,7 +2015,7 @@ Returns the updated submission object with `user`, `file`, and `grader` relation
   "gradedBy": 5,
   "gradedAt": "2026-04-12T10:00:00Z",
   "user": { /* student info */ },
-  "file": { /* file info or null */ },
+  "driveFile": { /* drive file info or null */ },
   "grader": {
     "user_id": 5,
     "first_name": "Prof. Smith",
@@ -2013,7 +2025,7 @@ Returns the updated submission object with `user`, `file`, and `grader` relation
 }
 ```
 
-> **Side effect**: When `status = 'graded'` and `score` is provided, automatically creates a grade record in the central `grades` table with `gradeType = 'lab'`, `isPublished = true`.
+> **Side effect**: When `status = 'graded'` and `score` is provided, automatically creates or updates a grade record in the central grades system via `GradesService` with `gradeType = 'lab'`, the lab's `courseId`, and `isPublished = true`. The grade is immediately visible to students.
 
 ---
 
@@ -2225,6 +2237,7 @@ POST /api/labs/:id/submissions/upload
     "labId": 1,
     "userId": 57,
     "submissionText": "My implementation uses iterative approach",
+    "fileId": 126,
     "submittedAt": "2026-04-10T14:30:00Z",
     "isLate": false,
     "status": "submitted",
@@ -2245,8 +2258,10 @@ POST /api/labs/:id/submissions/upload
 ```
 
 #### Business Rules
-- If a submission already exists for this student+lab, the existing record is **updated** (not duplicated)
+- **UPSERT Behavior**: If a submission already exists for this student+lab, the existing record is **updated** (not duplicated). The `fileId` field is set to the created `driveFile.driveFileId`.
 - Auto-detects `isLate` based on `lab.dueDate`
+- **DriveFile Entity Linking**: The uploaded file is linked to the submission via the `drive_files` table's `entity_type` (set to `LAB_SUBMISSION`) and `entity_id` (set to the submission ID). This ensures proper file retrieval when fetching submissions.
+- Creates a student-specific folder in Google Drive under the lab's submission folder if it doesn't exist
 
 ---
 

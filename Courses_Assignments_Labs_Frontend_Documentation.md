@@ -835,9 +835,39 @@ TADashboard
 1. Click `Eye` → calls `LabService.getSubmissions(lab.id)`
 2. Opens `GradingModal` with:
    - Lab title
-   - List of submissions
-   - Grade input: `score` (number) + `feedback` (text)
+   - List of all submissions (including graded and pending)
+   - Per submission: Student name, submitted date, status badge
+   - Filters pending submissions (`submissionStatus === 'submitted'`) for grading
+   - Grade inputs: `score` (number 0-100, step 0.5) + `feedback` (textarea)
+   - Save button with loading state
 3. Submit grade → calls `LabService.gradeSubmission(labId, submissionId, score, feedback)`
+4. On success → refetches submissions to show updated data
+
+**GradingModal Component Details:**
+
+**File:** `src/pages/ta-dashboard/components/GradingModal.tsx` (313 lines)
+
+| Feature | Description |
+|---|---|
+| **Focus Management** | Uses `useRef` to store previous active element, focuses modal on open, restores focus on close via `useEffect` |
+| **Keyboard Navigation** | Escape key closes modal; Tab key is trapped within modal (focus trap cycling through focusable elements) |
+| **ARIA Attributes** | `role="dialog"`, `aria-modal="true"`, `aria-labelledby="grading-modal-title"`, `aria-label="Close dialog"` on close button |
+| **Submission Filtering** | Displays all submissions in selector; only `submitted` status submissions can be graded |
+| **State Management** | Tracks `selectedSubmissionId`, `gradeScore` (string), `gradeFeedback` (string), `saving` (boolean) |
+| **Score Input** | Number input with min=0, max=100, step=0.5, placeholder "Enter score (0-100)" |
+| **Empty State** | Shows "All submissions have been graded" when no pending submissions |
+| **Submission Details Panel** | Shows student name, submitted date, submission text (if present) in scrollable container |
+| **Pending Count** | Footer displays count of pending submissions |
+
+**GradingModal Props:**
+
+| Prop | Type | Required | Description |
+|---|---|---|---|
+| `isOpen` | `boolean` | ✅ **Yes** | Controls modal visibility |
+| `labTitle` | `string` | ✅ **Yes** | Displayed in modal header |
+| `submissions` | `LabSubmission[]` | ✅ **Yes** | All submissions for the lab |
+| `onGrade` | `(submissionId: string, score: number, feedback: string) => Promise<void>` | ✅ **Yes** | Async grade submission callback |
+| `onClose` | `() => void` | ✅ **Yes** | Close modal callback |
 
 **API Calls:**
 
@@ -2338,13 +2368,43 @@ Two tabs with icons:
 
 ### 13.10 TA LabsPage — Table View
 
-> Source: `src/pages/ta-dashboard/components/LabsPage.tsx`
+> Source: `src/pages/ta-dashboard/components/LabsPage.tsx` (380 lines)
 
 **Route:** `/tadashboard/labs` (sidebar item: "Labs", icon: `Beaker`)
 
 **Layout:** Table-based layout within TA dashboard (`space-y-6`)
 
-#### 13.10.1 Header
+#### 13.10.1 Component Props
+
+| Prop | Type | Required | Purpose |
+|---|---|---|---|
+| `labs` | `Lab[]` | ❌ No | Mock labs (if provided, overrides API fetch) |
+| `onViewLab` | `(labId: string) => void` | ❌ No | Callback when viewing a lab |
+| `disableCreateReason` | `string` | ❌ No | Tooltip text for disabled Create button |
+| `disableViewDetailsReason` | `string` | ❌ No | Tooltip text for disabled View button |
+
+#### 13.10.2 Data Fetching
+
+Uses the **`useApi` custom hook** to fetch labs from the backend:
+
+```typescript
+const {
+  data: fetchedLabs = [],
+  loading,
+  error,
+  refetch,
+} = useApi(() => LabService.getAll(), [], !mockLabs);
+
+const displayLabs = mockLabs || fetchedLabs;
+```
+
+**Behavior:**
+- If `mockLabs` prop is provided → uses mock data (no API call)
+- If `mockLabs` is not provided → fetches labs via `LabService.getAll()`
+- On error → displays toast notification: `t('errorLoadingLabs') || 'Failed to load labs'`
+- `refetch` function is available for refreshing data after grading
+
+#### 13.10.3 Header
 
 | Element | Description |
 |---|---|
@@ -2352,43 +2412,127 @@ Two tabs with icons:
 | **Subtitle** | "View and grade lab sessions" |
 | **Create Button** | "Create New Lab" — **disabled for TAs** (with `disableCreateReason` tooltip) |
 
-#### 13.10.2 Filters Section
+#### 13.10.4 Filters Section
 
 | Filter | Type | Options |
 |---|---|---|
-| **Search** | Text input | Filters by lab name |
+| **Search** | Text input | Filters by lab title OR course name (case-insensitive) |
 | **Status Toggle** | Button group | All / Active / Completed |
 
-#### 13.10.3 Data Table Columns
+**Filtering Logic:**
+```typescript
+const filteredLabs = displayLabs.filter((lab) => {
+  const matchesFilter = filter === 'all' || lab.status === filter;
+  const matchesSearch =
+    lab.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    lab.course?.name?.toLowerCase().includes(searchQuery.toLowerCase());
+  return matchesFilter && matchesSearch;
+});
+```
+
+#### 13.10.5 Data Table Columns
 
 | Column | Content | Mobile Visibility |
 |---|---|---|
 | **Lab** | Beaker icon + title + lab number | ✅ Visible |
-| **Course** | Course name | ✅ Visible |
-| **Due Date** | Calendar icon + formatted date | ❌ Hidden on mobile |
-| **Submissions** | "View" link | ❌ Hidden on mobile |
-| **Status** | Colored badge (Published/Draft/Closed) | ✅ Visible |
+| **Course** | `lab.course?.name` or "N/A" | ✅ Visible |
+| **Due Date** | Calendar icon + formatted date (hidden on mobile) | ❌ Hidden on mobile |
+| **Submissions** | "View" link with FileText icon (hidden on mobile) | ❌ Hidden on mobile |
+| **Status** | Colored badge: Published=green, Draft=blue, Closed=gray | ✅ Visible |
 | **Actions** | `Eye` icon button → opens `GradingModal` | ✅ Visible |
 
-#### 13.10.4 TA Grading Flow
+#### 13.10.6 TA Grading Flow
 
 ```
-1. Click Eye icon → opens GradingModal
-2. Modal shows: Lab title, list of all submissions
-3. Per submission: Student name, submitted date, status
-4. Grade inputs: score (number 0-maxScore, step 0.5) + feedback (textarea)
-5. Submit → calls LabService.gradeSubmission(labId, submissionId, score, feedback)
-6. Refetches submissions to show updated grades
+1. Click Eye icon → calls LabService.getSubmissions(lab.id)
+2. Sets selectedLabForGrading and gradingSubmissions state
+3. Opens GradingModal with:
+   - labTitle: selectedLabForGrading.title
+   - submissions: gradingSubmissions array
+   - onGrade: handleGradeSubmission callback
+4. TA selects a submission from the dropdown
+5. Enters score (0-100, step 0.5) and feedback text
+6. Clicks "Save Grade" button
+7. handleGradeSubmission calls:
+   LabService.gradeSubmission(labId, submissionId, score, feedback)
+8. On success → toast.success('Submission graded successfully')
+9. Refetches submissions: LabService.getSubmissions(labId)
+10. Updates gradingSubmissions state
+11. Calls refetch() to refresh labs list
+12. On error → toast.error('Failed to grade submission')
 ```
+
+**Error Handling:**
+```typescript
+const handleViewSubmissions = async (lab: Lab) => {
+  try {
+    const submissions = await LabService.getSubmissions(lab.id);
+    setSelectedLabForGrading(lab);
+    setGradingSubmissions(submissions);
+    setGradingModalOpen(true);
+  } catch (err) {
+    toast.error(t('errorLoadingSubmissions') || 'Failed to load submissions');
+  }
+};
+```
+
+**State Management:**
+
+| State | Type | Purpose |
+|---|---|---|
+| `filter` | `'all' | 'active' | 'completed'` | Status filter |
+| `searchQuery` | `string` | Search text |
+| `selectedLabForGrading` | `Lab | null` | Currently selected lab for grading |
+| `gradingSubmissions` | `LabSubmission[]` | Submissions for selected lab |
+| `gradingModalOpen` | `boolean` | Grading modal visibility |
+
+#### 13.10.7 Loading & Empty States
+
+**Loading State:** Animated skeleton placeholder
+- Header skeleton (title + subtitle)
+- Table skeleton (3 rows with `h-12` height)
+
+```tsx
+if (loading) {
+  return (
+    <div className="space-y-6">
+      {/* Header skeleton */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex-1">
+          <div className="h-8 w-40 rounded animate-pulse" />
+          <div className="h-4 w-60 rounded animate-pulse mt-2" />
+        </div>
+      </div>
+      {/* Table skeleton */}
+      <div className="border rounded-lg p-4">
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-12 rounded animate-pulse" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+**Empty State:** "No labs found" with Beaker icon (12x12px)
 
 **Role-Aware Behavior:**
-- Checks `user.roles.includes('teaching_assistant')` on mount
-- If not TA → shows "Access Denied" screen
+- Checks `user.roles.includes('teaching_assistant')` on mount via `useAuth()`
+- Sets `isTA` flag for permission checks
 - TAs can **only view and grade** — no create/edit/delete permissions
+- View button disabled if `disableViewDetailsReason` is provided
 
-**Empty State:** "No labs found" with Beaker icon
+**API Calls:**
 
-**Loading State:** Animated skeleton placeholder rows
+| Action | Endpoint | Method |
+|---|---|---|
+| Load all labs | `GET /labs` | `LabService.getAll()` via `useApi` hook |
+| Load submissions | `GET /labs/{id}/submissions` | `LabService.getSubmissions(id)` |
+| Grade submission | `PATCH /labs/{labId}/submissions/{subId}/grade` | `LabService.gradeSubmission(...)` |
+| Refetch labs | `GET /labs` | `refetch()` from `useApi` hook |
+
 
 ### 13.11 SharedLabsPage Component
 

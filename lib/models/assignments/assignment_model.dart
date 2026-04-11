@@ -325,7 +325,9 @@ class AssignmentModel {
       instructionsText: parsedInstructions,
       weight: _parseDouble(json['weight']),
       availableFrom: _parseDateTime(json['availableFrom']),
-      lateSubmissionAllowed: _parseInt(json['lateSubmissionAllowed']) == 1,
+      lateSubmissionAllowed: _parseBoolFromIntLike(
+        json['lateSubmissionAllowed'],
+      ),
       latePenaltyPercent: _parseDouble(json['latePenaltyPercent']),
       submissionType: parsedSubmissionType,
       maxFileSizeMb: _parseInt(json['maxFileSizeMb']),
@@ -471,6 +473,17 @@ class AssignmentModel {
   double? get grade => submission?.grade;
   double? get gradePercentage => submission?.gradePercentage;
   String? get feedback => submission?.feedback;
+  bool get hasSubmission => submission != null;
+
+  String get submissionFilterStatus {
+    if (hasSubmission) {
+      return 'submitted';
+    }
+    if (dueDate.isBefore(DateTime.now())) {
+      return 'overdue';
+    }
+    return 'pending';
+  }
 
   static int _parseInt(dynamic value) {
     if (value is int) {
@@ -492,6 +505,13 @@ class AssignmentModel {
 
   static String _parseString(dynamic value) {
     return value?.toString() ?? '';
+  }
+
+  static bool _parseBoolFromIntLike(dynamic value) {
+    if (value is bool) {
+      return value;
+    }
+    return _parseInt(value) == 1;
   }
 
   static List<String>? _parseAllowedFileTypes(dynamic value) {

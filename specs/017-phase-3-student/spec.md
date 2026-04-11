@@ -7,6 +7,18 @@
 
 ---
 
+## Clarifications
+
+### Session 2026-04-11
+
+- **Q**: Should the assignments list include or exclude assignments with status `draft`, `closed`, and `archived`? → **A**: Show `published` and `closed` assignments (closed ones visible for reference); hide `draft` (instructor work-in-progress) and `archived` (historical clutter).
+- **Q**: When a student taps an assignment from the list, how should the detail view appear? → **A**: Push a new full-screen route (standard navigation with back button). The detail screen must follow the same UI patterns (colors, structure, component styles) as the remaining app screens, maintaining ≥85% visual similarity.
+- **Q**: What does each filter status (Submitted, Pending, Overdue) mean? → **A**: Based on the student's submission state relative to the due date: Submitted = student has a submission, Pending = no submission and due date has not yet passed, Overdue = no submission and due date has passed.
+- **Q**: Where should the submission form appear when the student wants to submit? → **A**: Modal bottom sheet (slides up over the detail screen, dismissible by swiping down).
+- **Q**: For file-type submissions, what file sources should the student be able to pick from? → **A**: Both local device storage (standard file picker) and Google Drive picker (student can choose from either source).
+
+---
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 — Browse and Filter Assignments (Priority: P1)
@@ -37,7 +49,7 @@ As a student, I want to view the full details of a specific assignment including
 
 **Acceptance Scenarios**:
 
-1. **Given** the student taps an assignment from the list, **When** the assignment detail screen opens, **Then** the title, due date, maximum score, submission type, status badge, and course name are displayed.
+1. **Given** the student taps an assignment from the list, **When** they tap, **Then** a new full-screen detail route is pushed (with back button) following the same UI patterns as the remaining app screens, displaying the title, due date, maximum score, submission type, status badge, and course name.
 2. **Given** the assignment has formatted instructions, **When** the student views the detail screen, **Then** the instructions render with proper markdown formatting (headings, lists, bold text, etc.).
 3. **Given** the assignment has attached instruction files (cloud document attachments), **When** the student views the detail screen, **Then** each file is displayed with an inline preview (via embedded web view), an "Open in Drive" link, and a download option.
 4. **Given** the assignment has no instruction files, **When** the student views the detail screen, **Then** no file section is shown (the UI space is preserved but hidden gracefully).
@@ -54,10 +66,10 @@ As a student, I want to submit my assignment work using the submission method sp
 
 **Acceptance Scenarios**:
 
-1. **Given** the assignment submission type is "text", **When** the student enters text in the submission form and taps submit, **Then** the text is submitted to the backend and a success confirmation is shown.
-2. **Given** the assignment submission type is "link", **When** the student enters a valid URL in the submission form and taps submit, **Then** the link is submitted and a success confirmation is shown.
-3. **Given** the assignment submission type is "file", **When** the student selects a file within the allowed size and type constraints and taps submit, **Then** the file is uploaded to cloud storage through the backend and the submission is recorded with a success confirmation.
-4. **Given** the assignment submission type is "any" or "multiple", **When** the student chooses any submission method (text, link, or file), **Then** the submission is accepted regardless of the method chosen.
+1. **Given** the assignment submission type is "text", **When** the student opens the submission form (modal bottom sheet), enters text, and taps submit, **Then** the text is submitted to the backend and a success confirmation is shown.
+2. **Given** the assignment submission type is "link", **When** the student opens the submission form (modal bottom sheet), enters a valid URL, and taps submit, **Then** the link is submitted and a success confirmation is shown.
+3. **Given** the assignment submission type is "file", **When** the student opens the submission form (modal bottom sheet), selects a file from their local device or Google Drive within the allowed size and type constraints, and taps submit, **Then** the file is uploaded to cloud storage through the backend and the submission is recorded with a success confirmation.
+4. **Given** the assignment submission type is "any" or "multiple", **When** the student opens the submission form (modal bottom sheet) and chooses any submission method (text, link, or file), **Then** the submission is accepted regardless of the method chosen.
 5. **Given** the assignment is past its due date and late submissions are not allowed, **When** the student attempts to submit, **Then** a clear error message explains that the deadline has passed and late submissions are not accepted.
 6. **Given** the assignment is past its due date and late submissions are allowed with a penalty, **When** the student submits, **Then** the submission is accepted with a warning that a late penalty will be applied.
 
@@ -88,7 +100,7 @@ As a student, I want to view my previous submission for an assignment, including
 - **File upload exceeds maximum file size**: The student receives an error message indicating the file is too large, with the maximum allowed size displayed.
 - **File type not in allowed list**: The student receives an error message listing the allowed file types for this assignment.
 - **Network failure during submission**: The student receives an error message and their submission data is preserved in the form so they can retry without re-entering everything.
-- **Assignment status is "archived"**: The assignment is visible but marked as archived; submission is not possible.
+- **Assignment status is "closed"**: The assignment is visible for reference but the submission form is disabled or hidden, with a clear message that the assignment is no longer accepting submissions.
 - **Instruction file fails to load preview**: A fallback "Open in Drive" link is shown when the inline preview fails to load.
 - **Backend returns unexpected submission type enum**: The app handles unknown submission types gracefully by showing all available submission methods.
 
@@ -98,21 +110,21 @@ As a student, I want to view my previous submission for an assignment, including
 
 ### Functional Requirements
 
-- **FR-001**: System MUST fetch the student's assignments from the backend, filtered by the student's enrolled course IDs.
+- **FR-001**: System MUST fetch the student's assignments from the backend, filtered by the student's enrolled course IDs, and display only assignments with status `published` or `closed` (assignments with status `draft` or `archived` are hidden).
 - **FR-002**: System MUST display summary statistics showing Total assignments, Submitted count, Pending count, and Overdue count based on the fetched assignments list.
 - **FR-003**: System MUST provide a search input that filters assignments by title and description text (client-side filtering).
-- **FR-004**: System MUST provide status filter buttons with options: All, Submitted, Pending, Overdue — filtering assignments based on their submission status for the current student.
+- **FR-004**: System MUST provide status filter buttons with options: All, Submitted, Pending, Overdue — filtering based on the student's submission state relative to the assignment due date: Submitted = student has a submission, Pending = no submission and due date not yet passed, Overdue = no submission and due date has passed.
 - **FR-005**: System MUST fetch individual assignment details when the student selects an assignment from the list.
 - **FR-006**: System MUST render assignment instructions with markdown formatting support (headings, lists, bold, italic, code blocks, links).
 - **FR-007**: System MUST display assignment instruction files (cloud document attachments) with inline preview capability, plus "Open in Drive" and download links.
 - **FR-008**: System MUST fetch the student's existing submission for an assignment when viewing assignment details.
-- **FR-009**: System MUST render the submission form based on the assignment's configured submission type:
+- **FR-009**: System MUST present the submission form as a modal bottom sheet (sliding up over the detail screen, dismissible), and render the appropriate input based on the assignment's configured submission type:
   - Text-only → text input area
   - Link-only → URL input with validation
   - File-only → file picker with size and type validation
   - Any/Multiple → all three options available for student to choose
 - **FR-010**: System MUST submit text and link submissions as structured data to the backend.
-- **FR-011**: System MUST submit file submissions through the backend's file upload mechanism, which stores files in cloud storage.
+- **FR-011**: System MUST submit file submissions through the backend's file upload mechanism, allowing the student to pick files from either their local device storage or Google Drive.
 - **FR-012**: System MUST validate file size against the assignment's maximum file size setting before upload.
 - **FR-013**: System MUST validate file extension against the assignment's allowed file types list before upload (when specified).
 - **FR-014**: System MUST prevent submission when the assignment deadline has passed AND late submissions are not allowed, displaying an appropriate error message.
@@ -129,8 +141,8 @@ As a student, I want to view my previous submission for an assignment, including
 
 ### Key Entities *(include if feature involves data)*
 
-- **Assignment**: Represents a task assigned to students within a course. Key attributes: title, description, instructions (markdown-formatted), due date, maximum score, weight in grading, submission type (text/file/link/any), late submission policy (allowed/not allowed, penalty percentage), status (draft/published/closed/archived), and associated instruction files (cloud storage attachments).
-- **Assignment Submission**: Represents a student's work submitted for an assignment. Key attributes: submission content (text, link, or file reference), submission date, status (submitted/graded/returned/resubmit), score (when graded), instructor feedback, late status, attempt number (for resubmissions).
+- **Assignment**: Represents a task assigned to students within a course. Key attributes: title, description, instructions (markdown-formatted), due date, maximum score, weight in grading, submission type (text/file/link/any), late submission policy (allowed/not allowed, penalty percentage), status (draft/published/closed/archived — only `published` and `closed` are visible to students), and associated instruction files (cloud storage attachments).
+- **Assignment Submission**: Represents a student's work submitted for an assignment. Key attributes: submission content (text, link, or file reference), submission date, status (submitted/graded/returned/resubmit), score (when graded), instructor feedback, late status, attempt number (for resubmissions). The "Pending" and "Overdue" filter states are derived from this entity: Pending = no submission exists and due date not yet passed; Overdue = no submission exists and due date has passed.
 - **Instruction File**: A cloud storage file attached to an assignment as part of the instructions. Key attributes: file ID, file name, web view link, preview URL, download URL.
 
 ---
@@ -160,6 +172,7 @@ As a student, I want to view my previous submission for an assignment, including
 - Students have stable internet connectivity sufficient for loading assignment data and uploading files (minimum mobile data connection assumed).
 - File uploads are handled through the backend's cloud storage integration — the mobile app does not directly interact with cloud storage APIs.
 - The packages for web view embedding and markdown rendering (added in earlier phases) are available for rendering document previews and formatted instructions.
+- File submission picking supports both local device storage (platform file picker) and Google Drive (via web view-based Drive picker) as file sources.
 - No real-time or push notification features are in scope for this phase — assignment status updates require manual screen refresh.
 - The assignment list is fetched for all enrolled courses; course-level filtering within the assignments screen is out of scope unless explicitly included in the existing UI.
 - Markdown rendering for instructions uses standard styling that matches the existing app theme.

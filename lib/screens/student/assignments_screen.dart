@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../bloc/assignments/assignments_cubit.dart';
-import '../../bloc/assignments/assignments_state.dart';
+
+import '../../bloc/assignments/assignment_bloc.dart';
+import '../../bloc/assignments/assignment_event.dart';
+import '../../bloc/assignments/assignment_state.dart';
 import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
+import '../../common/utils/responsive.dart';
 import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/assignments/assignment_model.dart';
-import '../../common/utils/responsive.dart';
 import '../../widgets/student/assignments/assignment_card.dart';
 import '../../widgets/student/assignments/assignments_filter_sheet.dart';
-import '../../widgets/student/assignments/assignment_details_sheet.dart';
+import 'assignment_detail_screen.dart';
 
 class AssignmentsScreen extends StatefulWidget {
   const AssignmentsScreen({super.key});
@@ -31,20 +33,20 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _headerAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
     )..forward();
 
     _tabController.addListener(_onTabChanged);
-  }
 
-  void _onTabChanged() {
-    if (_tabController.indexIsChanging) return;
-    if (mounted) {
-      context.read<AssignmentsCubit>().setSelectedTab(_tabController.index);
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      context.read<AssignmentBloc>().add(const FetchAssignments());
+    });
   }
 
   @override
@@ -56,8 +58,45 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
     super.dispose();
   }
 
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) {
+      return;
+    }
+
+    context.read<AssignmentBloc>().add(
+      SetAssignmentFilterStatus(
+        filterStatus: _filterForIndex(_tabController.index),
+      ),
+    );
+  }
+
+  AssignmentFilterStatus _filterForIndex(int index) {
+    switch (index) {
+      case 1:
+        return AssignmentFilterStatus.submitted;
+      case 2:
+        return AssignmentFilterStatus.pending;
+      case 3:
+        return AssignmentFilterStatus.overdue;
+      default:
+        return AssignmentFilterStatus.all;
+    }
+  }
+
+  int _indexForFilter(AssignmentFilterStatus status) {
+    switch (status) {
+      case AssignmentFilterStatus.submitted:
+        return 1;
+      case AssignmentFilterStatus.pending:
+        return 2;
+      case AssignmentFilterStatus.overdue:
+        return 3;
+      case AssignmentFilterStatus.all:
+        return 0;
+    }
+  }
+
   void _showErrorSnackBar(BuildContext context, String message) {
-    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -69,29 +108,6 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
         ),
         backgroundColor: Colors.red.shade600,
         behavior: SnackBarBehavior.floating,
-        action: SnackBarAction(
-          label: 'OK',
-          textColor: Colors.white,
-          onPressed: () {},
-        ),
-      ),
-    );
-  }
-
-  void _showSuccessSnackBar(BuildContext context, String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.check_circle_outline, color: Colors.white),
-            const SizedBox(width: 8),
-            Expanded(child: Text(message)),
-          ],
-        ),
-        backgroundColor: Colors.green.shade600,
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -100,65 +116,70 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
   Widget build(BuildContext context) {
     final responsive = context.responsive;
 
-    return BlocProvider(
-      create: (_) => AssignmentsCubit()..loadAssignments(),
-      child: BlocBuilder<ThemeBloc, ThemeState>(
-        builder: (context, themeState) {
-          final isDark = themeState.isDark;
-          final l10n = AppLocalizations.of(context);
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState.isDark;
+        final l10n = AppLocalizations.of(context);
 
-          return AnnotatedRegion<SystemUiOverlayStyle>(
-            value: isDark
-                ? SystemUiOverlayStyle.light
-                : SystemUiOverlayStyle.dark,
-            child: Scaffold(
-              backgroundColor: isDark
-                  ? AppTheme.darkSurfaceColor
-                  : const Color(0xFFF8FAFC),
-              body: SafeArea(
-                child: Column(
-                  children: [
-                    _buildHeader(context, isDark, l10n, responsive),
-                    _buildTabBar(context, isDark, l10n, responsive),
-                    Expanded(
-                      child: BlocConsumer<AssignmentsCubit, AssignmentsState>(
-                        listener: (context, state) {
-                          if (state.error != null) {
-                            _showErrorSnackBar(context, state.error!);
-                            context.read<AssignmentsCubit>().clearError();
-                          }
-                        },
-                        builder: (context, state) {
-                          if (state.isLoading && state.assignments.isEmpty) {
-                            return _buildLoadingState(isDark);
-                          }
-                          if (state.error != null &&
-                              state.assignments.isEmpty) {
-                            return _buildErrorState(
-                              context,
-                              state.error!,
-                              isDark,
-                              l10n,
-                              responsive,
-                            );
-                          }
-                          return _buildAssignmentsList(
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: isDark
+              ? SystemUiOverlayStyle.light
+              : SystemUiOverlayStyle.dark,
+          child: Scaffold(
+            backgroundColor: isDark
+                ? AppTheme.darkSurfaceColor
+                : const Color(0xFFF8FAFC),
+            body: SafeArea(
+              child: Column(
+                children: [
+                  _buildHeader(context, isDark, l10n, responsive),
+                  _buildTabBar(context, isDark, l10n, responsive),
+                  Expanded(
+                    child: BlocConsumer<AssignmentBloc, AssignmentState>(
+                      listener: (context, state) {
+                        final selectedIndex = _indexForFilter(
+                          state.filterStatus,
+                        );
+                        if (_tabController.index != selectedIndex) {
+                          _tabController.animateTo(selectedIndex);
+                        }
+
+                        if (state.error != null) {
+                          _showErrorSnackBar(context, state.error!);
+                          context.read<AssignmentBloc>().add(
+                            const ClearError(),
+                          );
+                        }
+                      },
+                      builder: (context, state) {
+                        if (state.isLoading && state.assignments.isEmpty) {
+                          return _buildLoadingState(isDark);
+                        }
+                        if (state.error != null && state.assignments.isEmpty) {
+                          return _buildErrorState(
                             context,
-                            state,
+                            state.error!,
                             isDark,
                             l10n,
                             responsive,
                           );
-                        },
-                      ),
+                        }
+                        return _buildAssignmentsList(
+                          context,
+                          state,
+                          isDark,
+                          l10n,
+                          responsive,
+                        );
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -188,7 +209,6 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
           children: [
             Row(
               children: [
-                // Back button
                 _buildCircularButton(
                   icon: Icons.arrow_back_ios_rounded,
                   onTap: () => Navigator.pop(context),
@@ -196,7 +216,6 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                   responsive: responsive,
                 ),
                 SizedBox(width: responsive.p12),
-                // Title
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -211,18 +230,12 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                               : const Color(0xFF1E293B),
                         ),
                       ),
-                      BlocBuilder<AssignmentsCubit, AssignmentsState>(
+                      BlocBuilder<AssignmentBloc, AssignmentState>(
                         builder: (context, state) {
-                          final dueToday = state.dueTodayCount;
                           final overdue = state.overdueCount;
-                          String subtitle = '';
-                          if (overdue > 0) {
-                            subtitle = '$overdue ${l10n.overdue}';
-                          } else if (dueToday > 0) {
-                            subtitle = '$dueToday ${l10n.dueToday}';
-                          } else {
-                            subtitle = '${state.pendingCount} ${l10n.pending}';
-                          }
+                          final subtitle = overdue > 0
+                              ? '$overdue ${l10n.overdue}'
+                              : '${state.pendingCount} ${l10n.pending}';
                           return Text(
                             subtitle,
                             style: TextStyle(
@@ -242,37 +255,39 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                     ],
                   ),
                 ),
-                // Search button
                 _buildCircularButton(
                   icon: _isSearching
                       ? Icons.close_rounded
                       : Icons.search_rounded,
-                  onTap: () => setState(() {
-                    _isSearching = !_isSearching;
-                    if (!_isSearching) {
-                      _searchController.clear();
-                      context.read<AssignmentsCubit>().setSearchQuery('');
-                    }
-                  }),
+                  onTap: () {
+                    setState(() {
+                      _isSearching = !_isSearching;
+                      if (!_isSearching) {
+                        _searchController.clear();
+                        context.read<AssignmentBloc>().add(
+                          const SetAssignmentSearchQuery(query: ''),
+                        );
+                      }
+                    });
+                  },
                   isDark: isDark,
                   responsive: responsive,
                 ),
                 SizedBox(width: responsive.p8),
-                // Filter button
-                BlocBuilder<AssignmentsCubit, AssignmentsState>(
+                BlocBuilder<AssignmentBloc, AssignmentState>(
                   builder: (context, state) {
                     return _buildCircularButton(
                       icon: Icons.tune_rounded,
                       onTap: () => _showFilterSheet(context, state, isDark),
                       isDark: isDark,
                       responsive: responsive,
-                      hasIndicator: state.filter.hasActiveFilters,
+                      hasIndicator:
+                          state.filterStatus != AssignmentFilterStatus.all,
                     );
                   },
                 ),
               ],
             ),
-            // Search bar
             if (_isSearching) ...[
               SizedBox(height: responsive.p12),
               Container(
@@ -286,7 +301,9 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                   controller: _searchController,
                   autofocus: true,
                   onChanged: (value) {
-                    context.read<AssignmentsCubit>().setSearchQuery(value);
+                    context.read<AssignmentBloc>().add(
+                      SetAssignmentSearchQuery(query: value),
+                    );
                   },
                   style: TextStyle(
                     color: isDark ? Colors.white : const Color(0xFF1E293B),
@@ -314,9 +331,8 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                 ),
               ),
             ],
-            // Quick stats
             SizedBox(height: responsive.p16),
-            BlocBuilder<AssignmentsCubit, AssignmentsState>(
+            BlocBuilder<AssignmentBloc, AssignmentState>(
               builder: (context, state) {
                 return _buildQuickStats(state, isDark, responsive);
               },
@@ -337,8 +353,8 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
     return Stack(
       children: [
         Container(
-          width: responsive.p44,
-          height: responsive.p44,
+          width: responsive.p48,
+          height: responsive.p48,
           decoration: BoxDecoration(
             color: isDark
                 ? Colors.grey.shade800.withValues(alpha: 0.5)
@@ -380,7 +396,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
   }
 
   Widget _buildQuickStats(
-    AssignmentsState state,
+    AssignmentState state,
     bool isDark,
     ResponsiveUtil responsive,
   ) {
@@ -389,10 +405,10 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
       child: Row(
         children: [
           _buildStatCard(
-            icon: Icons.hourglass_empty_rounded,
-            label: 'Pending',
-            value: state.pendingCount.toString(),
-            color: const Color(0xFFF59E0B),
+            icon: Icons.assignment_rounded,
+            label: 'Total',
+            value: state.totalCount.toString(),
+            color: const Color(0xFF6366F1),
             isDark: isDark,
             responsive: responsive,
           ),
@@ -407,25 +423,16 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
           ),
           SizedBox(width: responsive.p8),
           _buildStatCard(
-            icon: Icons.grading_rounded,
-            label: 'Graded',
-            value: state.gradedCount.toString(),
-            color: const Color(0xFF10B981),
+            icon: Icons.hourglass_empty_rounded,
+            label: 'Pending',
+            value: state.pendingCount.toString(),
+            color: const Color(0xFFF59E0B),
             isDark: isDark,
             responsive: responsive,
           ),
           SizedBox(width: responsive.p8),
           _buildStatCard(
-            icon: Icons.stars_rounded,
-            label: 'Avg Grade',
-            value: '${state.averageGrade.toStringAsFixed(0)}%',
-            color: const Color(0xFF8B5CF6),
-            isDark: isDark,
-            responsive: responsive,
-          ),
-          SizedBox(width: responsive.p8),
-          _buildStatCard(
-            icon: Icons.not_interested_rounded,
+            icon: Icons.warning_amber_rounded,
             label: 'Overdue',
             value: state.overdueCount.toString(),
             color: const Color(0xFFEF4444),
@@ -446,7 +453,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
     required ResponsiveUtil responsive,
   }) {
     return Container(
-      width: responsive.p80,
+      width: responsive.p96,
       padding: EdgeInsets.all(responsive.p12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -521,14 +528,10 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
         padding: EdgeInsets.all(responsive.p4),
         tabs: [
           Tab(text: l10n.all),
-          Tab(text: l10n.pending),
           Tab(text: l10n.submitted),
-          Tab(text: l10n.graded),
+          Tab(text: l10n.pending),
           Tab(text: l10n.overdue),
         ],
-        onTap: (index) {
-          context.read<AssignmentsCubit>().setSelectedTab(index);
-        },
       ),
     );
   }
@@ -582,7 +585,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
             SizedBox(height: responsive.p24),
             ElevatedButton.icon(
               onPressed: () =>
-                  context.read<AssignmentsCubit>().loadAssignments(),
+                  context.read<AssignmentBloc>().add(const FetchAssignments()),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,
@@ -605,7 +608,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
 
   Widget _buildAssignmentsList(
     BuildContext context,
-    AssignmentsState state,
+    AssignmentState state,
     bool isDark,
     AppLocalizations l10n,
     ResponsiveUtil responsive,
@@ -617,7 +620,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
     }
 
     return RefreshIndicator(
-      onRefresh: () => context.read<AssignmentsCubit>().loadAssignments(),
+      onRefresh: () => _refreshAssignments(context),
       color: const Color(0xFF3B82F6),
       child: ListView.builder(
         controller: _scrollController,
@@ -638,10 +641,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
             child: AssignmentCard(
               assignment: assignment,
               isDark: isDark,
-              onTap: () => _showAssignmentDetails(context, assignment, isDark),
-              onBookmark: () => context.read<AssignmentsCubit>().toggleBookmark(
-                assignment.id,
-              ),
+              onTap: () => _openAssignmentDetails(context, assignment),
             ),
           );
         },
@@ -684,7 +684,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
             ),
             SizedBox(height: responsive.p8),
             Text(
-              l10n.noAssignmentsDescription,
+              'No assignments are available yet. Enroll in a course to get started.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: responsive.fontSize14,
@@ -697,131 +697,48 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
     );
   }
 
+  Future<void> _refreshAssignments(BuildContext context) async {
+    final bloc = context.read<AssignmentBloc>();
+    bloc.add(const RefreshAssignments());
+    await bloc.stream.firstWhere((state) => !state.isLoading);
+  }
+
   void _showFilterSheet(
     BuildContext context,
-    AssignmentsState state,
+    AssignmentState state,
     bool isDark,
   ) {
-    final cubit = context.read<AssignmentsCubit>();
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (sheetContext) => AssignmentsFilterBottomSheet(
-        currentFilter: state.filter,
-        availableCourses: state.availableCourses,
+      builder: (_) => AssignmentsFilterBottomSheet(
+        currentFilter: state.filterStatus,
         isDark: isDark,
-        onApply: (filter) => cubit.setFilter(filter),
-        onClear: () => cubit.clearFilters(),
-      ),
-    );
-  }
-
-  void _showAssignmentDetails(
-    BuildContext context,
-    AssignmentModel assignment,
-    bool isDark,
-  ) {
-    final cubit = context.read<AssignmentsCubit>();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) => AssignmentDetailsSheet(
-        assignment: assignment,
-        isDark: isDark,
-        onSubmit: () {
-          Navigator.pop(sheetContext);
-          _showSubmitDialog(context, assignment, cubit);
+        onApply: (filter) {
+          context.read<AssignmentBloc>().add(
+            SetAssignmentFilterStatus(filterStatus: filter),
+          );
         },
-        onDownloadAttachments: () {
-          Navigator.pop(sheetContext);
-          _showSuccessSnackBar(context, 'Downloading attachments...');
+        onClear: () {
+          context.read<AssignmentBloc>().add(
+            const SetAssignmentFilterStatus(
+              filterStatus: AssignmentFilterStatus.all,
+            ),
+          );
         },
       ),
     );
   }
 
-  void _showSubmitDialog(
+  Future<void> _openAssignmentDetails(
     BuildContext context,
     AssignmentModel assignment,
-    AssignmentsCubit cubit,
-  ) {
-    final responsive = context.responsive;
-    final isDark = context.read<ThemeBloc>().state.isDark;
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(responsive.radius16),
-        ),
-        title: Text(
-          'Submit Assignment',
-          style: TextStyle(
-            color: isDark ? Colors.white : const Color(0xFF1E293B),
-          ),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Assignment submission feature will be available soon.',
-              style: TextStyle(
-                color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
-              ),
-            ),
-            SizedBox(height: responsive.p16),
-            Text(
-              'You will be able to:',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white : const Color(0xFF1E293B),
-              ),
-            ),
-            SizedBox(height: responsive.p8),
-            _buildFeatureItem('Upload files', responsive, isDark),
-            _buildFeatureItem('Add comments', responsive, isDark),
-            _buildFeatureItem('Track submission status', responsive, isDark),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFeatureItem(
-    String text,
-    ResponsiveUtil responsive,
-    bool isDark,
-  ) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: responsive.p4),
-      child: Row(
-        children: [
-          Icon(
-            Icons.check_circle_outline_rounded,
-            size: responsive.fontSize16,
-            color: const Color(0xFF10B981),
-          ),
-          SizedBox(width: responsive.p8),
-          Text(
-            text,
-            style: TextStyle(
-              fontSize: responsive.fontSize13,
-              color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
-            ),
-          ),
-        ],
+  ) async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AssignmentDetailScreen(assignment: assignment),
       ),
     );
   }

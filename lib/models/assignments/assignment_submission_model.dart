@@ -55,7 +55,7 @@ class AssignmentSubmissionModel extends Equatable {
       submissionStatus: SubmissionStatus.fromString(
         json['submissionStatus']?.toString() ?? 'unknown',
       ),
-      isLate: _parseInt(json['isLate']) == 1,
+      isLate: _parseBoolFromIntLike(json['isLate']),
       attemptNumber: _parseInt(json['attemptNumber']),
       submittedAt: _parseDateTime(json['submittedAt']) ?? DateTime.now(),
       score: _parseNullableDouble(json['score']),
@@ -119,6 +119,13 @@ class AssignmentSubmissionModel extends Equatable {
       return null;
     }
     return DateTime.tryParse(value.toString());
+  }
+
+  static bool _parseBoolFromIntLike(dynamic value) {
+    if (value is bool) {
+      return value;
+    }
+    return _parseInt(value) == 1;
   }
 
   @override

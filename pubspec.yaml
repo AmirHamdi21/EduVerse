@@ -66,6 +66,7 @@ dependencies:
   path_provider: ^2.1.5
   youtube_player_flutter: ^9.1.1
   webview_flutter: ^4.10.0
+  flutter_markdown: ^0.7.7+1
   flutter_downloader: ^1.11.8
   audioplayers: ^6.1.0
   permission_handler: ^11.4.0

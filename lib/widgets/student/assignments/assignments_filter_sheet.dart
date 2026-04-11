@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-import '../../../../bloc/assignments/assignments_state.dart';
+
+import '../../../../bloc/assignments/assignment_state.dart';
 import '../../../../common/utils/responsive.dart';
 import '../../../../generated_l10n/app_localizations.dart';
-import '../../../../models/assignments/assignment_model.dart';
 
 class AssignmentsFilterBottomSheet extends StatefulWidget {
-  final AssignmentsFilter currentFilter;
-  final List<String> availableCourses;
+  final AssignmentFilterStatus currentFilter;
   final bool isDark;
-  final Function(AssignmentsFilter) onApply;
+  final ValueChanged<AssignmentFilterStatus> onApply;
   final VoidCallback onClear;
 
   const AssignmentsFilterBottomSheet({
     super.key,
     required this.currentFilter,
-    required this.availableCourses,
     required this.isDark,
     required this.onApply,
     required this.onClear,
@@ -27,7 +25,7 @@ class AssignmentsFilterBottomSheet extends StatefulWidget {
 
 class _AssignmentsFilterBottomSheetState
     extends State<AssignmentsFilterBottomSheet> {
-  late AssignmentsFilter _filter;
+  late AssignmentFilterStatus _filter;
 
   @override
   void initState() {
@@ -50,17 +48,17 @@ class _AssignmentsFilterBottomSheetState
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle
           Container(
             margin: EdgeInsets.only(top: responsive.p12),
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: widget.isDark ? Colors.grey.shade700 : Colors.grey.shade300,
+              color: widget.isDark
+                  ? Colors.grey.shade700
+                  : Colors.grey.shade300,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          // Header
           Padding(
             padding: EdgeInsets.all(responsive.p16),
             child: Row(
@@ -70,12 +68,17 @@ class _AssignmentsFilterBottomSheetState
                   style: TextStyle(
                     fontSize: responsive.fontSize18,
                     fontWeight: FontWeight.bold,
-                    color: widget.isDark ? Colors.white : const Color(0xFF1E293B),
+                    color: widget.isDark
+                        ? Colors.white
+                        : const Color(0xFF1E293B),
                   ),
                 ),
                 const Spacer(),
                 TextButton(
                   onPressed: () {
+                    setState(() {
+                      _filter = AssignmentFilterStatus.all;
+                    });
                     widget.onClear();
                     Navigator.pop(context);
                   },
@@ -90,85 +93,31 @@ class _AssignmentsFilterBottomSheetState
               ],
             ),
           ),
-          // Filter options
           Flexible(
             child: SingleChildScrollView(
               padding: EdgeInsets.symmetric(horizontal: responsive.p16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Status filter
                   _buildSectionTitle('Status', responsive),
                   SizedBox(height: responsive.p8),
-                  _buildChipGroup<AssignmentStatus>(
-                    values: AssignmentStatus.values,
-                    selected: _filter.status,
-                    labelBuilder: (s) => s.label,
-                    colorBuilder: (s) => s.color,
-                    onSelected: (s) {
+                  _buildChipGroup<AssignmentFilterStatus>(
+                    values: AssignmentFilterStatus.values,
+                    selected: _filter,
+                    labelBuilder: _statusLabel,
+                    colorBuilder: _statusColor,
+                    onSelected: (status) {
                       setState(() {
-                        _filter = _filter.copyWith(
-                          status: s,
-                          clearStatus: s == null,
-                        );
+                        _filter = status ?? AssignmentFilterStatus.all;
                       });
                     },
                     responsive: responsive,
                   ),
                   SizedBox(height: responsive.p16),
-
-                  // Type filter
-                  _buildSectionTitle('Assignment Type', responsive),
-                  SizedBox(height: responsive.p8),
-                  _buildChipGroup<AssignmentType>(
-                    values: AssignmentType.values,
-                    selected: _filter.type,
-                    labelBuilder: (t) => t.label,
-                    colorBuilder: (t) => t.color,
-                    onSelected: (t) {
-                      setState(() {
-                        _filter = _filter.copyWith(
-                          type: t,
-                          clearType: t == null,
-                        );
-                      });
-                    },
-                    responsive: responsive,
-                  ),
-                  SizedBox(height: responsive.p16),
-
-                  // Priority filter
-                  _buildSectionTitle('Priority', responsive),
-                  SizedBox(height: responsive.p8),
-                  _buildChipGroup<AssignmentPriority>(
-                    values: AssignmentPriority.values,
-                    selected: _filter.priority,
-                    labelBuilder: (p) => p.label,
-                    colorBuilder: (p) => p.color,
-                    onSelected: (p) {
-                      setState(() {
-                        _filter = _filter.copyWith(
-                          priority: p,
-                          clearPriority: p == null,
-                        );
-                      });
-                    },
-                    responsive: responsive,
-                  ),
-                  SizedBox(height: responsive.p16),
-
-                  // Course filter
-                  if (widget.availableCourses.isNotEmpty) ...[
-                    _buildSectionTitle('Course', responsive),
-                    SizedBox(height: responsive.p8),
-                    _buildCourseDropdown(responsive),
-                    SizedBox(height: responsive.p16),
-                  ],
                 ],
               ),
             ),
           ),
-          // Apply button
           Padding(
             padding: EdgeInsets.all(responsive.p16),
             child: SizedBox(
@@ -258,58 +207,29 @@ class _AssignmentsFilterBottomSheetState
     );
   }
 
-  Widget _buildCourseDropdown(ResponsiveUtil responsive) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: responsive.p12),
-      decoration: BoxDecoration(
-        color: widget.isDark ? Colors.grey.shade800 : Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(responsive.radius12),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String?>(
-          value: _filter.courseName,
-          hint: Text(
-            'All Courses',
-            style: TextStyle(
-              color: widget.isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-            ),
-          ),
-          isExpanded: true,
-          dropdownColor: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: widget.isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-          ),
-          items: [
-            DropdownMenuItem<String?>(
-              value: null,
-              child: Text(
-                'All Courses',
-                style: TextStyle(
-                  color: widget.isDark ? Colors.white : const Color(0xFF1E293B),
-                ),
-              ),
-            ),
-            ...widget.availableCourses.map((course) => DropdownMenuItem(
-              value: course,
-              child: Text(
-                course,
-                style: TextStyle(
-                  color: widget.isDark ? Colors.white : const Color(0xFF1E293B),
-                ),
-              ),
-            )),
-          ],
-          onChanged: (value) {
-            setState(() {
-              _filter = _filter.copyWith(
-                courseName: value,
-                clearCourse: value == null,
-              );
-            });
-          },
-        ),
-      ),
-    );
+  String _statusLabel(AssignmentFilterStatus status) {
+    switch (status) {
+      case AssignmentFilterStatus.all:
+        return 'All';
+      case AssignmentFilterStatus.submitted:
+        return 'Submitted';
+      case AssignmentFilterStatus.pending:
+        return 'Pending';
+      case AssignmentFilterStatus.overdue:
+        return 'Overdue';
+    }
+  }
+
+  Color _statusColor(AssignmentFilterStatus status) {
+    switch (status) {
+      case AssignmentFilterStatus.all:
+        return const Color(0xFF6366F1);
+      case AssignmentFilterStatus.submitted:
+        return const Color(0xFF3B82F6);
+      case AssignmentFilterStatus.pending:
+        return const Color(0xFFF59E0B);
+      case AssignmentFilterStatus.overdue:
+        return const Color(0xFFEF4444);
+    }
   }
 }

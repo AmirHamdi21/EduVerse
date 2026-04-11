@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../../models/assignments/assignment_model.dart';
+
 import '../../../../common/utils/responsive.dart';
+import '../../../../models/assignments/assignment_model.dart';
+import '../../../../models/core/enums/assignment_enums.dart' as api;
 
 class AssignmentCard extends StatelessWidget {
   final AssignmentModel assignment;
@@ -52,7 +54,7 @@ class AssignmentCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(context, responsive),
+                _buildHeader(responsive),
                 SizedBox(height: responsive.p12),
                 _buildTitle(responsive),
                 if (assignment.description != null) ...[
@@ -62,7 +64,7 @@ class AssignmentCard extends StatelessWidget {
                 SizedBox(height: responsive.p12),
                 _buildInfoRow(responsive),
                 SizedBox(height: responsive.p12),
-                _buildFooter(context, responsive),
+                _buildFooter(responsive),
               ],
             ),
           ),
@@ -72,103 +74,52 @@ class AssignmentCard extends StatelessWidget {
   }
 
   Color _getBorderColor() {
-    if (assignment.isOverdue || assignment.status == AssignmentStatus.overdue) {
-      return const Color(0xFFEF4444);
+    switch (assignment.submissionFilterStatus) {
+      case 'submitted':
+        return const Color(0xFF3B82F6);
+      case 'overdue':
+        return const Color(0xFFEF4444);
+      default:
+        return const Color(0xFFF59E0B);
     }
-    return assignment.status.color;
   }
 
-  Widget _buildHeader(BuildContext context, ResponsiveUtil responsive) {
+  Widget _buildHeader(ResponsiveUtil responsive) {
+    final submissionTypeColor = _submissionTypeColor();
+    final submissionStatusColor = _submissionStatusColor();
+    final apiStatusColor = _apiStatusColor();
+
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Type badge
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: responsive.p4,
-            vertical: responsive.p4,
-          ),
-          decoration: BoxDecoration(
-            color: assignment.type.color.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(responsive.radius8),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
+        Expanded(
+          child: Wrap(
+            spacing: responsive.p8,
+            runSpacing: responsive.p6,
             children: [
-              Icon(
-                assignment.type.icon,
-                size: responsive.fontSize10,
-                color: assignment.type.color,
+              _buildHeaderChip(
+                responsive: responsive,
+                icon: _submissionTypeIcon(),
+                text: _submissionTypeLabel(),
+                color: submissionTypeColor,
+                iconSize: responsive.fontSize10,
+                textSize: responsive.fontSize10,
               ),
-              SizedBox(width: responsive.p4),
-              Text(
-                assignment.type.label,
-                style: TextStyle(
-                  fontSize: responsive.fontSize10,
-                  fontWeight: FontWeight.w600,
-                  color: assignment.type.color,
-                ),
+              _buildHeaderChip(
+                responsive: responsive,
+                icon: Icons.task_alt_rounded,
+                text: _apiStatusLabel(),
+                color: apiStatusColor,
+                iconSize: responsive.fontSize10,
+                textSize: responsive.fontSize10,
               ),
-            ],
-          ),
-        ),
-        SizedBox(width: responsive.p8),
-        // Priority badge
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: responsive.p8,
-            vertical: responsive.p4,
-          ),
-          decoration: BoxDecoration(
-            color: assignment.priority.color.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(responsive.radius6),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                assignment.priority.icon,
-                size: responsive.fontSize10,
-                color: assignment.priority.color,
-              ),
-              SizedBox(width: responsive.p2),
-              Text(
-                assignment.priority.label,
-                style: TextStyle(
-                  fontSize: responsive.fontSize10,
-                  fontWeight: FontWeight.w600,
-                  color: assignment.priority.color,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const Spacer(),
-        // Status badge
-        Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: responsive.p10,
-            vertical: responsive.p4,
-          ),
-          decoration: BoxDecoration(
-            color: assignment.status.color.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(responsive.radius8),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                assignment.status.icon,
-                size: responsive.fontSize12,
-                color: assignment.status.color,
-              ),
-              SizedBox(width: responsive.p4),
-              Text(
-                assignment.status.label,
-                style: TextStyle(
-                  fontSize: responsive.fontSize12,
-                  fontWeight: FontWeight.w600,
-                  color: assignment.status.color,
-                ),
+              _buildHeaderChip(
+                responsive: responsive,
+                icon: _submissionStatusIcon(),
+                text: _submissionStatusLabel(),
+                color: submissionStatusColor,
+                iconSize: responsive.fontSize12,
+                textSize: responsive.fontSize12,
               ),
             ],
           ),
@@ -189,6 +140,41 @@ class AssignmentCard extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+
+  Widget _buildHeaderChip({
+    required ResponsiveUtil responsive,
+    required IconData icon,
+    required String text,
+    required Color color,
+    required double iconSize,
+    required double textSize,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: responsive.p8,
+        vertical: responsive.p4,
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(responsive.radius8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: iconSize, color: color),
+          SizedBox(width: responsive.p4),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: textSize,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -234,12 +220,12 @@ class AssignmentCard extends StatelessWidget {
           const Color(0xFF8B5CF6),
           responsive,
         ),
-        if (assignment.attachments != null &&
-            assignment.attachments!.isNotEmpty) ...[
+        if (assignment.instructionFiles != null &&
+            assignment.instructionFiles!.isNotEmpty) ...[
           SizedBox(width: responsive.p8),
           _buildInfoChip(
             Icons.attach_file_rounded,
-            '${assignment.attachments!.length}',
+            '${assignment.instructionFiles!.length}',
             const Color(0xFF6366F1),
             responsive,
           ),
@@ -281,10 +267,9 @@ class AssignmentCard extends StatelessWidget {
     );
   }
 
-  Widget _buildFooter(BuildContext context, ResponsiveUtil responsive) {
+  Widget _buildFooter(ResponsiveUtil responsive) {
     return Row(
       children: [
-        // Due date
         Icon(
           Icons.calendar_today_rounded,
           size: responsive.fontSize14,
@@ -301,9 +286,7 @@ class AssignmentCard extends StatelessWidget {
             ),
           ),
         ),
-        // Grade if graded
-        if (assignment.status == AssignmentStatus.graded &&
-            assignment.grade != null)
+        if (assignment.hasSubmission && assignment.grade != null)
           Container(
             padding: EdgeInsets.symmetric(
               horizontal: responsive.p10,
@@ -333,36 +316,23 @@ class AssignmentCard extends StatelessWidget {
               ],
             ),
           )
-        // Progress indicator for submitted
-        else if (assignment.status == AssignmentStatus.submitted ||
-            assignment.status == AssignmentStatus.late)
+        else if (assignment.hasSubmission)
           Container(
             padding: EdgeInsets.symmetric(
               horizontal: responsive.p10,
               vertical: responsive.p4,
             ),
             decoration: BoxDecoration(
-              color: assignment.status.color.withValues(alpha: 0.15),
+              color: _submissionStatusColor().withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(responsive.radius8),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // SizedBox(
-                //   width: responsive.fontSize14,
-                //   height: responsive.fontSize14,
-                //   child: CircularProgressIndicator(
-                //     strokeWidth: 2,
-                //     valueColor: AlwaysStoppedAnimation<Color>(
-                //       assignment.status.color,
-                //     ),
-                //   ),
-                // ),
-                // SizedBox(width: responsive.p6),
                 Icon(
                   Icons.alarm_outlined,
                   size: responsive.fontSize12,
-                  color: assignment.status.color,
+                  color: _submissionStatusColor(),
                 ),
                 SizedBox(width: responsive.p4),
                 Text(
@@ -370,7 +340,7 @@ class AssignmentCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: responsive.fontSize11,
                     fontWeight: FontWeight.w600,
-                    color: assignment.status.color,
+                    color: _submissionStatusColor(),
                   ),
                 ),
               ],
@@ -381,20 +351,17 @@ class AssignmentCard extends StatelessWidget {
   }
 
   Color _getDueDateColor() {
-    if (assignment.isOverdue || assignment.status == AssignmentStatus.overdue) {
+    if (assignment.submissionFilterStatus == 'overdue') {
       return const Color(0xFFEF4444);
     }
-    if (assignment.isDueToday) {
-      return const Color(0xFFF59E0B);
-    }
-    if (assignment.isDueTomorrow) {
+    if (assignment.isDueToday || assignment.isDueTomorrow) {
       return const Color(0xFFF59E0B);
     }
     return isDark ? Colors.grey.shade400 : Colors.grey.shade600;
   }
 
   String _getDueDateText() {
-    if (assignment.isOverdue || assignment.status == AssignmentStatus.overdue) {
+    if (assignment.submissionFilterStatus == 'overdue') {
       final daysOverdue = -assignment.daysUntilDue;
       if (daysOverdue == 0) {
         final hoursOverdue = -assignment.hoursUntilDue;
@@ -404,7 +371,9 @@ class AssignmentCard extends StatelessWidget {
     }
     if (assignment.isDueToday) {
       final hoursLeft = assignment.hoursUntilDue;
-      if (hoursLeft <= 0) return 'Due now!';
+      if (hoursLeft <= 0) {
+        return 'Due now!';
+      }
       return 'Due in ${hoursLeft}h';
     }
     if (assignment.isDueTomorrow) {
@@ -416,16 +385,16 @@ class AssignmentCard extends StatelessWidget {
   List<Color> _getGradeColors() {
     final percentage = assignment.gradePercentage ?? 0;
     if (percentage >= 80) {
-      return [const Color(0xFF10B981), const Color(0xFF059669)];
+      return <Color>[const Color(0xFF10B981), const Color(0xFF059669)];
     }
     if (percentage >= 60) {
-      return [const Color(0xFFF59E0B), const Color(0xFFD97706)];
+      return <Color>[const Color(0xFFF59E0B), const Color(0xFFD97706)];
     }
-    return [const Color(0xFFEF4444), const Color(0xFFDC2626)];
+    return <Color>[const Color(0xFFEF4444), const Color(0xFFDC2626)];
   }
 
   String _formatDate(DateTime date) {
-    final months = [
+    final months = <String>[
       'Jan',
       'Feb',
       'Mar',
@@ -440,5 +409,113 @@ class AssignmentCard extends StatelessWidget {
       'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}';
+  }
+
+  String _submissionTypeLabel() {
+    switch (assignment.submissionType) {
+      case api.SubmissionType.file:
+        return 'File';
+      case api.SubmissionType.text:
+        return 'Text';
+      case api.SubmissionType.link:
+        return 'Link';
+      case api.SubmissionType.multiple:
+        return 'Any';
+      case api.SubmissionType.unknown:
+        return 'Mixed';
+    }
+  }
+
+  IconData _submissionTypeIcon() {
+    switch (assignment.submissionType) {
+      case api.SubmissionType.file:
+        return Icons.upload_file_rounded;
+      case api.SubmissionType.text:
+        return Icons.notes_rounded;
+      case api.SubmissionType.link:
+        return Icons.link_rounded;
+      case api.SubmissionType.multiple:
+        return Icons.widgets_rounded;
+      case api.SubmissionType.unknown:
+        return Icons.assignment_rounded;
+    }
+  }
+
+  Color _submissionTypeColor() {
+    switch (assignment.submissionType) {
+      case api.SubmissionType.file:
+        return const Color(0xFF3B82F6);
+      case api.SubmissionType.text:
+        return const Color(0xFFF59E0B);
+      case api.SubmissionType.link:
+        return const Color(0xFF8B5CF6);
+      case api.SubmissionType.multiple:
+        return const Color(0xFF10B981);
+      case api.SubmissionType.unknown:
+        return const Color(0xFF6B7280);
+    }
+  }
+
+  String _apiStatusLabel() {
+    switch (assignment.apiStatus) {
+      case api.AssignmentStatus.draft:
+        return 'Draft';
+      case api.AssignmentStatus.published:
+        return 'Published';
+      case api.AssignmentStatus.closed:
+        return 'Closed';
+      case api.AssignmentStatus.archived:
+        return 'Archived';
+      case api.AssignmentStatus.unknown:
+        return 'Unknown';
+    }
+  }
+
+  Color _apiStatusColor() {
+    switch (assignment.apiStatus) {
+      case api.AssignmentStatus.draft:
+        return const Color(0xFF6B7280);
+      case api.AssignmentStatus.published:
+        return const Color(0xFF10B981);
+      case api.AssignmentStatus.closed:
+        return const Color(0xFFF59E0B);
+      case api.AssignmentStatus.archived:
+        return const Color(0xFF6B7280);
+      case api.AssignmentStatus.unknown:
+        return const Color(0xFF6B7280);
+    }
+  }
+
+  String _submissionStatusLabel() {
+    switch (assignment.submissionFilterStatus) {
+      case 'submitted':
+        return 'Submitted';
+      case 'overdue':
+        return 'Overdue';
+      default:
+        return 'Pending';
+    }
+  }
+
+  Color _submissionStatusColor() {
+    switch (assignment.submissionFilterStatus) {
+      case 'submitted':
+        return const Color(0xFF3B82F6);
+      case 'overdue':
+        return const Color(0xFFEF4444);
+      default:
+        return const Color(0xFFF59E0B);
+    }
+  }
+
+  IconData _submissionStatusIcon() {
+    switch (assignment.submissionFilterStatus) {
+      case 'submitted':
+        return Icons.cloud_done_rounded;
+      case 'overdue':
+        return Icons.warning_amber_rounded;
+      default:
+        return Icons.hourglass_empty_rounded;
+    }
   }
 }
