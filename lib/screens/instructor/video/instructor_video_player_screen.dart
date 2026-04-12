@@ -26,6 +26,7 @@ class InstructorVideoPlayerScreen extends StatefulWidget {
 class _InstructorVideoPlayerScreenState
     extends State<InstructorVideoPlayerScreen> {
   late final YoutubePlayerController _controller;
+  bool _isEnded = false;
 
   @override
   void initState() {
@@ -36,12 +37,32 @@ class _InstructorVideoPlayerScreenState
         autoPlay: true,
         enableCaption: true,
         controlsVisibleAtStart: true,
+        hideControls: false,
       ),
     );
+    _controller.addListener(_onPlayerStateChanged);
+  }
+
+  void _onPlayerStateChanged() {
+    final state = _controller.value.playerState;
+    final ended = state == PlayerState.ended;
+    if (ended != _isEnded) {
+      if (mounted) {
+        setState(() {
+          _isEnded = ended;
+        });
+      }
+    }
+  }
+
+  void _replay() {
+    _controller.seekTo(Duration.zero);
+    _controller.play();
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_onPlayerStateChanged);
     _controller.dispose();
     super.dispose();
   }
@@ -63,6 +84,13 @@ class _InstructorVideoPlayerScreenState
               bufferedColor: CMColors.primaryLighter,
               backgroundColor: Colors.black26,
             ),
+            onEnded: (meta) {
+              if (mounted) {
+                setState(() {
+                  _isEnded = true;
+                });
+              }
+            },
           ),
           builder: (context, player) {
             return Scaffold(
@@ -104,23 +132,69 @@ class _InstructorVideoPlayerScreenState
               body: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
                 children: [
-                  Container(
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      color: CMColors.cardColor(isDark),
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: CMColors.borderColor(isDark)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(
-                            alpha: isDark ? 0.24 : 0.08,
+                  Stack(
+                    children: [
+                      Container(
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          color: CMColors.cardColor(isDark),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(
+                            color: CMColors.borderColor(isDark),
                           ),
-                          blurRadius: 14,
-                          offset: const Offset(0, 6),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(
+                                alpha: isDark ? 0.24 : 0.08,
+                              ),
+                              blurRadius: 14,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: AspectRatio(aspectRatio: 16 / 9, child: player),
+                        child: AspectRatio(aspectRatio: 16 / 9, child: player),
+                      ),
+                      if (_isEnded)
+                        Positioned.fill(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.black54,
+                              borderRadius: BorderRadius.circular(18),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: _replay,
+                                      borderRadius: BorderRadius.circular(32),
+                                      child: Container(
+                                        padding: const EdgeInsets.all(18),
+                                        child: const Icon(
+                                          Icons.replay_rounded,
+                                          color: Colors.white,
+                                          size: 48,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  const Text(
+                                    'Tap to replay',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 14),
                   Container(
