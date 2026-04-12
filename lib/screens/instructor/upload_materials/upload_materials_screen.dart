@@ -19,12 +19,15 @@ import '../../../models/core/course_structure_model.dart';
 import '../../../models/instructor/upload_materials_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/materials/course_material_model.dart' as materials_api;
+import '../../../services/storage_service.dart';
 import '../../../utils/file_validator.dart';
 import '../../../widgets/instructor/upload_materials/upload_materials_barrel.dart';
 
 /// Upload Materials Screen for instructors
 class UploadMaterialsScreen extends StatefulWidget {
-  const UploadMaterialsScreen({super.key});
+  final StorageService? storageService;
+
+  const UploadMaterialsScreen({super.key, this.storageService});
 
   @override
   State<UploadMaterialsScreen> createState() => _UploadMaterialsScreenState();
@@ -39,12 +42,18 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
   final TextEditingController _materialNameController = TextEditingController();
   final TextEditingController _materialDescController = TextEditingController();
   final TextEditingController _linkController = TextEditingController();
+  late final StorageService _storageService;
+
+  bool _hasUploadAccess = true;
 
   // Selection state
   String? _selectedCourseId;
   String? _selectedModuleId;
   CourseMaterialType? _filterType;
   String _searchQuery = '';
+  String _bundleName = '';
+  UploadProgressState? _lastVideoProgress;
+  UploadProgressState? _lastBundleProgress;
 
   // Upload state
   final List<UploadQueueItem> _uploadQueue = [];
@@ -63,8 +72,100 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
   @override
   void initState() {
     super.initState();
+    _storageService = widget.storageService ?? StorageService();
     _tabController = TabController(length: 2, vsync: this);
+    _resolveRoleAccess();
     context.read<InstructorCoursesBloc>().add(const LoadTeachingCourses());
+  }
+
+  Future<void> _resolveRoleAccess() async {
+    try {
+      final user = await _storageService.getUserData();
+      final roleNames =
+          user?.roles
+              .map((role) => role.roleName.toLowerCase().trim())
+              .toSet() ??
+          <String>{};
+
+      if (roleNames.isEmpty) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _hasUploadAccess = true;
+        });
+        return;
+      }
+
+      final hasUploadAccess = roleNames.any(
+        (role) =>
+            role == 'instructor' ||
+            role == 'ta' ||
+            role == 'teaching_assistant' ||
+            role == 'admin' ||
+            role == 'it_admin' ||
+            role == 'it admin',
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _hasUploadAccess = hasUploadAccess;
+      });
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _hasUploadAccess = true;
+      });
+    }
+  }
+
+  Widget _buildAccessDeniedState(bool isDark, AppLocalizations l10n) {
+    return Scaffold(
+      backgroundColor: UploadMaterialsColors.backgroundColor(isDark),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.lock_outline_rounded,
+                size: 44,
+                color: UploadMaterialsColors.error,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Access Denied',
+                style: TextStyle(
+                  color: UploadMaterialsColors.textPrimaryColor(isDark),
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'You do not have permission to access upload materials.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: UploadMaterialsColors.textSecondaryColor(isDark),
+                ),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton(
+                onPressed: () => context.pop(),
+                child: Text(l10n.back),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -97,6 +198,20 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
       return null;
     }
     return parsed;
+  }
+
+  String? get _selectedWeekLabel {
+    if (_selectedModuleId == null) {
+      return null;
+    }
+
+    for (final module in _availableModules) {
+      if (module.id == _selectedModuleId) {
+        return module.name;
+      }
+    }
+
+    return null;
   }
 
   List<CourseMaterial> get _filteredMaterials {
@@ -325,9 +440,12 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
     }
 
     final uploadId = _uuid.v4();
-    final bundleTitle = _resolveBundleTitle(result.files);
+    final bundleTitle = _bundleName.trim().isNotEmpty
+        ? _bundleName.trim()
+        : _resolveBundleTitle(result.files);
 
     setState(() {
+      _bundleName = bundleTitle;
       _uploadQueue.insert(
         0,
         UploadQueueItem(
@@ -661,6 +779,10 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
+        if (!_hasUploadAccess) {
+          return _buildAccessDeniedState(isDark, l10n);
+        }
+
         return MultiBlocListener(
           listeners: [
             BlocListener<InstructorCoursesBloc, InstructorCoursesState>(
@@ -866,26 +988,32 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
               size: 18,
             ),
           ),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                l10n.uploadMaterial,
-                style: TextStyle(
-                  color: UploadMaterialsColors.textPrimaryColor(isDark),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.uploadMaterial,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: UploadMaterialsColors.textPrimaryColor(isDark),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              Text(
-                l10n.uploadMaterialSubtitle,
-                style: TextStyle(
-                  color: UploadMaterialsColors.textSecondaryColor(isDark),
-                  fontSize: 8,
+                Text(
+                  l10n.uploadMaterialSubtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: UploadMaterialsColors.textSecondaryColor(isDark),
+                    fontSize: 8,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -1009,6 +1137,32 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 16),
+          VideoUploadSection(
+            progress: _lastVideoProgress,
+            isDark: isDark,
+            onSelectVideo: () => _pickAndUploadFiles(materialType: 'video'),
+            onRetry: () => _pickAndUploadFiles(materialType: 'video'),
+            selectedWeekLabel: _selectedWeekLabel,
+          ),
+          const SizedBox(height: 12),
+          BundleUploadSection(
+            isDark: isDark,
+            bundleName: _bundleName,
+            onBundleNameChanged: (value) {
+              setState(() {
+                _bundleName = value;
+              });
+            },
+            progress: _lastBundleProgress,
+            onSelectBundleFiles: () {
+              _handleFolderUpload();
+            },
+            onRetry: () {
+              _handleFolderUpload();
+            },
+            selectedWeekLabel: _selectedWeekLabel,
           ),
           const SizedBox(height: 24),
 
@@ -1201,8 +1355,6 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
       case materials_api.MaterialType.other:
         return CourseMaterialType.document;
     }
-
-    return CourseMaterialType.document;
   }
 
   List<CourseModule> _mapWeekModules(List<CourseStructureModel> items) {
@@ -1254,6 +1406,19 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
   }
 
   void _upsertQueueFromProgress(UploadProgressState progress) {
+    final existingIndex = _uploadQueue.indexWhere(
+      (item) => item.id == progress.uploadId,
+    );
+    final existingType = existingIndex >= 0
+        ? _uploadQueue[existingIndex].type
+        : _mapQueueTypeByFileName(progress.fileName);
+
+    if (existingType == CourseMaterialType.video) {
+      _lastVideoProgress = progress;
+    } else if (existingType == CourseMaterialType.archive) {
+      _lastBundleProgress = progress;
+    }
+
     final queueType = _mapQueueTypeByFileName(progress.fileName);
     final queueItem = progress.toQueueItem(queueType);
 

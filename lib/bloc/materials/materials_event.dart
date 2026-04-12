@@ -61,16 +61,30 @@ class UploadMaterial extends MaterialsEvent {
 class UpdateMaterial extends MaterialsEvent {
   final int courseId;
   final String materialId;
+  final List<String> materialIds;
   final Map<String, dynamic> payload;
 
   const UpdateMaterial({
     required this.courseId,
     required this.materialId,
+    this.materialIds = const <String>[],
     required this.payload,
   });
 
+  List<String> get targetMaterialIds {
+    if (materialIds.isNotEmpty) {
+      return materialIds;
+    }
+    return <String>[materialId];
+  }
+
   @override
-  List<Object?> get props => <Object?>[courseId, materialId, payload];
+  List<Object?> get props => <Object?>[
+    courseId,
+    materialId,
+    materialIds,
+    payload,
+  ];
 }
 
 class DeleteMaterial extends MaterialsEvent {

@@ -4,3 +4,5 @@ export 'upload_drop_zone.dart';
 export 'upload_queue_card.dart';
 export 'material_item_card.dart';
 export 'upload_selectors.dart';
+export 'video_upload_section.dart';
+export 'bundle_upload_section.dart';

@@ -8,12 +8,16 @@ class StudentsTab extends StatefulWidget {
   final List<SectionStudentModel> students;
   final bool isDark;
   final AppLocalizations l10n;
+  final String? emptyStateTitleOverride;
+  final String? emptyStateSubtitleOverride;
 
   const StudentsTab({
     super.key,
     required this.students,
     required this.isDark,
     required this.l10n,
+    this.emptyStateTitleOverride,
+    this.emptyStateSubtitleOverride,
   });
 
   @override
@@ -52,6 +56,7 @@ class _StudentsTabState extends State<StudentsTab> {
           child: _filtered.isEmpty
               ? _buildEmptyState()
               : ListView.builder(
+                  physics: const ClampingScrollPhysics(),
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
                   itemCount: _filtered.length,
                   itemBuilder: (context, index) {
@@ -152,6 +157,10 @@ class _StudentsTabState extends State<StudentsTab> {
   }
 
   Widget _buildEmptyState() {
+    final title = widget.students.isEmpty
+        ? (widget.emptyStateTitleOverride ?? 'No students enrolled yet')
+        : 'No students found';
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -163,16 +172,26 @@ class _StudentsTabState extends State<StudentsTab> {
           ),
           const SizedBox(height: 12),
           Text(
-            widget.students.isEmpty
-                ? 'No students enrolled yet'
-                : 'No students found',
+            title,
             style: TextStyle(
               color: CMColors.text(widget.isDark),
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
           ),
-          if (widget.students.isEmpty) ...[
+          if (widget.students.isEmpty &&
+              widget.emptyStateSubtitleOverride != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              widget.emptyStateSubtitleOverride!,
+              style: TextStyle(
+                color: CMColors.textSub(widget.isDark),
+                fontSize: 12,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ] else if (widget.students.isEmpty &&
+              widget.emptyStateTitleOverride == null) ...[
             const SizedBox(height: 8),
             Text(
               'Students will appear here when enrollments are available.',

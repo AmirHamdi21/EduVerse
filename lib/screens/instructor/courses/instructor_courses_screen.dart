@@ -13,10 +13,13 @@ import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/instructor/instructor_course_model.dart';
 import '../../../models/instructor/extended_course_model.dart';
+import '../../../services/storage_service.dart';
 import '../../../widgets/instructor/courses/courses_barrel.dart';
 
 class InstructorCoursesScreen extends StatefulWidget {
-  const InstructorCoursesScreen({super.key});
+  final StorageService? storageService;
+
+  const InstructorCoursesScreen({super.key, this.storageService});
 
   @override
   State<InstructorCoursesScreen> createState() =>
@@ -36,6 +39,10 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
   final Set<String> _selectedCourses = {};
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  late final StorageService _storageService;
+
+  bool _hasScreenAccess = true;
+  bool _canDeleteCourses = true;
 
   // Animation controllers
   late AnimationController _statsAnimController;
@@ -45,21 +52,30 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
   // Categories for filtering
   final List<String> _categories = [
     'all',
-    'Programming',
-    'Data Science',
-    'Web Development',
-    'Mobile',
-    'AI/ML',
-    'Database',
+    'FRESHMAN',
+    'SOPHOMORE',
+    'JUNIOR',
+    'SENIOR',
+    'GRADUATE',
   ];
 
-  // Stats — computed from live BLoC state
+  static const Map<String, String> _levelLabels = <String, String>{
+    'all': 'All Levels',
+    'FRESHMAN': 'Freshman',
+    'SOPHOMORE': 'Sophomore',
+    'JUNIOR': 'Junior',
+    'SENIOR': 'Senior',
+    'GRADUATE': 'Graduate',
+  };
+
+  // Stats - computed from live BLoC state
   int _totalStudents = 0;
   List<ExtendedCourse> _courses = [];
 
   @override
   void initState() {
     super.initState();
+    _storageService = widget.storageService ?? StorageService();
     _statsAnimController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
@@ -72,8 +88,122 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
       parent: _statsAnimController,
       curve: Curves.easeOutCubic,
     );
-    // Dispatch BLoC event to fetch instructor courses from API
+    _resolveRoleAccess();
     context.read<InstructorCoursesBloc>().add(const LoadTeachingCourses());
+  }
+
+  Future<void> _resolveRoleAccess() async {
+    try {
+      final user = await _storageService.getUserData();
+      final roleNames =
+          user?.roles
+              .map((role) => role.roleName.toLowerCase().trim())
+              .toSet() ??
+          <String>{};
+
+      if (roleNames.isEmpty) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _hasScreenAccess = true;
+          _canDeleteCourses = true;
+        });
+        return;
+      }
+
+      final hasInstructorAccess = roleNames.any(
+        (role) =>
+            role == 'instructor' ||
+            role == 'ta' ||
+            role == 'teaching_assistant' ||
+            role == 'admin' ||
+            role == 'it_admin' ||
+            role == 'it admin',
+      );
+
+      final canDelete = roleNames.any(
+        (role) =>
+            role == 'instructor' ||
+            role == 'admin' ||
+            role == 'it_admin' ||
+            role == 'it admin',
+      );
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _hasScreenAccess = hasInstructorAccess;
+        _canDeleteCourses = canDelete;
+      });
+    } catch (_) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _hasScreenAccess = true;
+        _canDeleteCourses = true;
+      });
+    }
+  }
+
+  void _showDeletePermissionDenied() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Access denied: TAs cannot delete courses.'),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  Widget _buildAccessDeniedState(bool isDark, AppLocalizations l10n) {
+    return Scaffold(
+      backgroundColor: isDark
+          ? InstructorColors.darkBackground
+          : InstructorColors.primaryBackground,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.lock_outline_rounded,
+                size: 44,
+                color: InstructorColors.error,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'Access Denied',
+                style: TextStyle(
+                  color: isDark ? Colors.white : InstructorColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'You do not have permission to access instructor courses.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: isDark
+                      ? Colors.white70
+                      : InstructorColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 16),
+              OutlinedButton(
+                onPressed: () => context.pop(),
+                child: Text(l10n.back),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -127,7 +257,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         completionRate: fillRatio.clamp(0.0, 1.0),
         engagementScore: 0,
         status: 'published',
-        category: 'General',
+        category: _normalizeCourseLevel(tc.course.level),
         createdAt: tc.semester.startDate ?? DateTime.now(),
         enrollmentTrend: [
           fillRatio,
@@ -140,6 +270,18 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         ],
       );
     }).toList();
+  }
+
+  String _normalizeCourseLevel(String? value) {
+    final normalized = (value ?? '').trim().toUpperCase();
+    if (normalized.isEmpty || normalized == 'UNKNOWN') {
+      return 'UNKNOWN';
+    }
+    return normalized;
+  }
+
+  String _levelLabel(String level) {
+    return _levelLabels[level] ?? level;
   }
 
   List<ExtendedCourse> get _filteredCourses {
@@ -202,6 +344,10 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
+
+        if (!_hasScreenAccess) {
+          return _buildAccessDeniedState(isDark, l10n);
+        }
 
         return BlocConsumer<InstructorCoursesBloc, InstructorCoursesState>(
           listener: (context, coursesState) {
@@ -270,68 +416,82 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
 
   /// Error state with retry button (T009)
   Widget _buildErrorState(bool isDark, AppLocalizations l10n, String message) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: InstructorColors.error.withOpacity(0.1),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.wifi_off_rounded,
-                size: 48,
-                color: InstructorColors.error,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          padding: const EdgeInsets.all(16),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: InstructorColors.error.withValues(alpha: 0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.wifi_off_rounded,
+                      size: 40,
+                      color: InstructorColors.error,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Unable to load courses',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isDark
+                          ? Colors.white
+                          : InstructorColors.textPrimary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    message.isEmpty
+                        ? 'Please check your connection and try again.'
+                        : message,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: isDark
+                          ? Colors.white70
+                          : InstructorColors.textSecondary,
+                      fontSize: 13,
+                      height: 1.35,
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      context.read<InstructorCoursesBloc>().add(
+                        const LoadTeachingCourses(),
+                      );
+                    },
+                    icon: const Icon(Icons.refresh_rounded, size: 18),
+                    label: Text(l10n.retry),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: InstructorColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              'Unable to load courses',
-              style: TextStyle(
-                color: isDark ? Colors.white : InstructorColors.textPrimary,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              message.isNotEmpty
-                  ? message
-                  : 'Please check your connection and try again.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: isDark ? Colors.white60 : InstructorColors.textSecondary,
-                fontSize: 14,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: () {
-                context.read<InstructorCoursesBloc>().add(
-                  const LoadTeachingCourses(),
-                );
-              },
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Retry'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: InstructorColors.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 32,
-                  vertical: 14,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -360,20 +520,20 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    const Color(0xFF0D3D9F).withOpacity(0.15),
-                    const Color(0xFF155CFB).withOpacity(0.1),
+                    const Color(0xFF0D3D9F).withValues(alpha: 0.15),
+                    const Color(0xFF155CFB).withValues(alpha: 0.1),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFF155CFB).withOpacity(0.2),
+                  color: const Color(0xFF155CFB).withValues(alpha: 0.2),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF155CFB).withOpacity(0.1),
+                    color: const Color(0xFF155CFB).withValues(alpha: 0.1),
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -394,8 +554,8 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF0D3D9F).withOpacity(0.2),
-                  const Color(0xFF155CFB).withOpacity(0.15),
+                  const Color(0xFF0D3D9F).withValues(alpha: 0.2),
+                  const Color(0xFF155CFB).withValues(alpha: 0.15),
                 ],
               ),
               borderRadius: BorderRadius.circular(8),
@@ -429,20 +589,20 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                const Color(0xFF0D3D9F).withOpacity(0.12),
-                const Color(0xFF155CFB).withOpacity(0.08),
+                const Color(0xFF0D3D9F).withValues(alpha: 0.12),
+                const Color(0xFF155CFB).withValues(alpha: 0.08),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: const Color(0xFF155CFB).withOpacity(0.2),
+              color: const Color(0xFF155CFB).withValues(alpha: 0.2),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF155CFB).withOpacity(0.08),
+                color: const Color(0xFF155CFB).withValues(alpha: 0.08),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -455,18 +615,21 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                 Icons.grid_view_rounded,
                 CourseViewType.grid,
                 isDark,
+                'view-toggle-grid',
               ),
               const SizedBox(width: 2),
               _buildEnhancedViewToggle(
                 Icons.view_list_rounded,
                 CourseViewType.list,
                 isDark,
+                'view-toggle-list',
               ),
               const SizedBox(width: 2),
               _buildEnhancedViewToggle(
                 Icons.view_headline_rounded,
                 CourseViewType.compact,
                 isDark,
+                'view-toggle-compact',
               ),
             ],
           ),
@@ -495,8 +658,8 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                       )
                     : LinearGradient(
                         colors: [
-                          const Color(0xFF0D3D9F).withOpacity(0.15),
-                          const Color(0xFF155CFB).withOpacity(0.1),
+                          const Color(0xFF0D3D9F).withValues(alpha: 0.15),
+                          const Color(0xFF155CFB).withValues(alpha: 0.1),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -504,15 +667,15 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: _isSelectionMode
-                      ? const Color(0xFF155CFB).withOpacity(0.5)
-                      : const Color(0xFF155CFB).withOpacity(0.2),
+                      ? const Color(0xFF155CFB).withValues(alpha: 0.5)
+                      : const Color(0xFF155CFB).withValues(alpha: 0.2),
                   width: 1,
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: _isSelectionMode
-                        ? const Color(0xFF155CFB).withOpacity(0.3)
-                        : const Color(0xFF155CFB).withOpacity(0.08),
+                        ? const Color(0xFF155CFB).withValues(alpha: 0.3)
+                        : const Color(0xFF155CFB).withValues(alpha: 0.08),
                     blurRadius: _isSelectionMode ? 10 : 6,
                     offset: const Offset(0, 2),
                   ),
@@ -562,8 +725,8 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        const Color(0xFF155CFB).withOpacity(0.08),
-                        const Color(0xFF155CFB).withOpacity(0.0),
+                        const Color(0xFF155CFB).withValues(alpha: 0.08),
+                        const Color(0xFF155CFB).withValues(alpha: 0.0),
                       ],
                     ),
                   ),
@@ -579,8 +742,8 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        const Color(0xFF7C4DFF).withOpacity(0.06),
-                        const Color(0xFF7C4DFF).withOpacity(0.0),
+                        const Color(0xFF7C4DFF).withValues(alpha: 0.06),
+                        const Color(0xFF7C4DFF).withValues(alpha: 0.0),
                       ],
                     ),
                   ),
@@ -606,71 +769,52 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
     IconData icon,
     CourseViewType type,
     bool isDark,
+    String keyName,
   ) {
     final isSelected = _viewType == type;
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.lightImpact();
-        setState(() => _viewType = type);
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.all(7),
-        decoration: BoxDecoration(
-          gradient: isSelected
-              ? LinearGradient(
-                  colors: [const Color(0xFF0D3D9F), const Color(0xFF155CFB)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              : null,
-          color: isSelected ? null : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: const Color(0xFF155CFB).withOpacity(0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
-        ),
-        child: Icon(
-          icon,
-          size: 15,
-          color: isSelected
-              ? Colors.white
-              : (isDark
-                    ? Colors.white.withOpacity(0.5)
-                    : const Color(0xFF0D3D9F).withOpacity(0.5)),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildViewToggleButton(
-    IconData icon,
-    CourseViewType type,
-    bool isDark,
-  ) {
-    final isSelected = _viewType == type;
-    return GestureDetector(
-      onTap: () => setState(() => _viewType = type),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: isSelected ? InstructorColors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          icon,
-          size: 18,
-          color: isSelected
-              ? Colors.white
-              : (isDark ? Colors.white60 : InstructorColors.textSecondary),
+    return SizedBox(
+      key: ValueKey<String>(keyName),
+      width: 48,
+      height: 48,
+      child: GestureDetector(
+        onTap: () => setState(() => _viewType = type),
+        child: Center(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              gradient: isSelected
+                  ? LinearGradient(
+                      colors: [
+                        const Color(0xFF0D3D9F),
+                        const Color(0xFF155CFB),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    )
+                  : null,
+              color: isSelected ? null : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: const Color(0xFF155CFB).withValues(alpha: 0.3),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Icon(
+              icon,
+              size: 15,
+              color: isSelected
+                  ? Colors.white
+                  : (isDark
+                        ? Colors.white.withValues(alpha: 0.5)
+                        : const Color(0xFF0D3D9F).withValues(alpha: 0.5)),
+            ),
+          ),
         ),
       ),
     );
@@ -825,18 +969,18 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: const Color(0xFF155CFB).withOpacity(0.15),
+          color: const Color(0xFF155CFB).withValues(alpha: 0.15),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF155CFB).withOpacity(0.08),
+            color: const Color(0xFF155CFB).withValues(alpha: 0.08),
             blurRadius: 20,
             offset: const Offset(0, 8),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.03),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.03),
             blurRadius: 16,
             offset: const Offset(0, 4),
           ),
@@ -859,7 +1003,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF155CFB).withOpacity(0.3),
+                      color: const Color(0xFF155CFB).withValues(alpha: 0.3),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -890,7 +1034,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                       'Your teaching performance at a glance',
                       style: TextStyle(
                         color: isDark
-                            ? Colors.white.withOpacity(0.6)
+                            ? Colors.white.withValues(alpha: 0.6)
                             : const Color(0xFF6B7280),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -906,10 +1050,10 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF10B981).withOpacity(0.1),
+                  color: const Color(0xFF10B981).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: const Color(0xFF10B981).withOpacity(0.3),
+                    color: const Color(0xFF10B981).withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -937,47 +1081,32 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
           ),
           const SizedBox(height: 20),
           // Stats Grid
-          SizedBox(
-            height: _responsive.p264,
-            child: Column(
-              children: [
-                Expanded(
-                  child: _buildEnhancedStatCard(
-                    isDark: isDark,
-                    icon: Icons.school_rounded,
-                    iconColors: [
-                      const Color(0xFF0D3D9F),
-                      const Color(0xFF155CFB),
-                    ],
-                    label: l10n.totalCourses,
-                    value:
-                        '${(_courses.length * _statsAnimation.value).round()}',
-                    subValue: '${_courses.length}',
-                    trend: '+2 this month',
-                    trendPositive: true,
-                    accentColor: const Color(0xFF155CFB),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Expanded(
-                  child: _buildEnhancedStatCard(
-                    isDark: isDark,
-                    icon: Icons.people_rounded,
-                    iconColors: [
-                      const Color(0xFF7C4DFF),
-                      const Color(0xFF9C27B0),
-                    ],
-                    label: l10n.totalStudentsLabel,
-                    value:
-                        '${(_totalStudents * _statsAnimation.value).round()}',
-                    subValue: _formatNumber(_totalStudents),
-                    trend: '+48 this week',
-                    trendPositive: true,
-                    accentColor: const Color(0xFF7C4DFF),
-                  ),
-                ),
-              ],
-            ),
+          Column(
+            children: [
+              _buildEnhancedStatCard(
+                isDark: isDark,
+                icon: Icons.school_rounded,
+                iconColors: [const Color(0xFF0D3D9F), const Color(0xFF155CFB)],
+                label: l10n.totalCourses,
+                value: '${(_courses.length * _statsAnimation.value).round()}',
+                subValue: '${_courses.length}',
+                trend: '+2 this month',
+                trendPositive: true,
+                accentColor: const Color(0xFF155CFB),
+              ),
+              const SizedBox(height: 12),
+              _buildEnhancedStatCard(
+                isDark: isDark,
+                icon: Icons.people_rounded,
+                iconColors: [const Color(0xFF7C4DFF), const Color(0xFF9C27B0)],
+                label: l10n.totalStudentsLabel,
+                value: '${(_totalStudents * _statsAnimation.value).round()}',
+                subValue: _formatNumber(_totalStudents),
+                trend: '+48 this week',
+                trendPositive: true,
+                accentColor: const Color(0xFF7C4DFF),
+              ),
+            ],
           ),
         ],
       ),
@@ -998,136 +1127,155 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1F2937).withOpacity(0.5) : Colors.white,
+        color: isDark
+            ? const Color(0xFF1F2937).withValues(alpha: 0.5)
+            : Colors.white,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: accentColor.withOpacity(0.12), width: 1.5),
+        border: Border.all(
+          color: accentColor.withValues(alpha: 0.12),
+          width: 1.5,
+        ),
         boxShadow: [
           BoxShadow(
-            color: accentColor.withOpacity(0.08),
+            color: accentColor.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Icon with gradient background
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: iconColors,
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: iconColors[0].withOpacity(0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Icon(icon, color: Colors.white, size: 20),
-          ),
-          const SizedBox(width: 16),
-          // Value with animated counter
-          Column(
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ShaderMask(
-                shaderCallback: (bounds) => LinearGradient(
-                  colors: iconColors,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ).createShader(bounds),
-                child: Text(
-                  value,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.5,
-                    height: 1.0,
+              // Icon with gradient background
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: iconColors,
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: iconColors[0].withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
+                child: Icon(icon, color: Colors.white, size: 20),
               ),
-              const SizedBox(height: 6),
-              // Label
-              Text(
-                label,
-                style: TextStyle(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.7)
-                      : const Color(0xFF6B7280),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.3,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ShaderMask(
+                      shaderCallback: (bounds) => LinearGradient(
+                        colors: iconColors,
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ).createShader(bounds),
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          value,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: -0.5,
+                            height: 1.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.7)
+                            : const Color(0xFF6B7280),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          // const SizedBox(height: 12),
-          Spacer(),
-          // Trend indicator with enhanced design
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-            decoration: BoxDecoration(
-              color:
-                  (trendPositive
-                          ? const Color(0xFF10B981)
-                          : const Color(0xFFEF4444))
-                      .withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
+          const SizedBox(height: 10),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+              decoration: BoxDecoration(
                 color:
                     (trendPositive
                             ? const Color(0xFF10B981)
                             : const Color(0xFFEF4444))
-                        .withOpacity(0.2),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(3),
-                  decoration: BoxDecoration(
-                    color:
-                        (trendPositive
-                                ? const Color(0xFF10B981)
-                                : const Color(0xFFEF4444))
-                            .withOpacity(0.2),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    trendPositive
-                        ? Icons.arrow_upward_rounded
-                        : Icons.arrow_downward_rounded,
-                    size: 10,
-                    color: trendPositive
-                        ? const Color(0xFF10B981)
-                        : const Color(0xFFEF4444),
-                  ),
+                        .withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color:
+                      (trendPositive
+                              ? const Color(0xFF10B981)
+                              : const Color(0xFFEF4444))
+                          .withValues(alpha: 0.2),
+                  width: 1,
                 ),
-                const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    trend,
-                    style: TextStyle(
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color:
+                          (trendPositive
+                                  ? const Color(0xFF10B981)
+                                  : const Color(0xFFEF4444))
+                              .withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      trendPositive
+                          ? Icons.arrow_upward_rounded
+                          : Icons.arrow_downward_rounded,
+                      size: 10,
                       color: trendPositive
                           ? const Color(0xFF10B981)
                           : const Color(0xFFEF4444),
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.2,
                     ),
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 6),
+                  Flexible(
+                    child: Text(
+                      trend,
+                      style: TextStyle(
+                        color: trendPositive
+                            ? const Color(0xFF10B981)
+                            : const Color(0xFFEF4444),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.2,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -1209,8 +1357,9 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
           const SizedBox(height: 12),
           // Filter chips row
           SizedBox(
-            height: 38,
+            height: 48,
             child: ListView(
+              physics: const ClampingScrollPhysics(),
               scrollDirection: Axis.horizontal,
               children: [
                 // Status filter
@@ -1252,13 +1401,13 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                   isDark: isDark,
                   icon: Icons.category_rounded,
                   label: _selectedCategory == 'all'
-                      ? l10n.category
-                      : _selectedCategory,
+                      ? _levelLabel('all')
+                      : _levelLabel(_selectedCategory),
                   items: _categories
                       .map(
                         (c) => PopupMenuItem(
                           value: c,
-                          child: Text(c == 'all' ? l10n.all : c),
+                          child: Text(_levelLabel(c)),
                         ),
                       )
                       .toList(),
@@ -1302,6 +1451,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       color: isDark ? InstructorColors.darkCard : Colors.white,
       child: Container(
+        constraints: const BoxConstraints(minHeight: 48),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: isDark ? InstructorColors.darkCard : Colors.white,
@@ -1355,6 +1505,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       color: isDark ? InstructorColors.darkCard : Colors.white,
       child: Container(
+        constraints: const BoxConstraints(minHeight: 48),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: isDark ? InstructorColors.darkCard : Colors.white,
@@ -1472,7 +1623,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                 color: Colors.white,
                 size: 20,
               ),
-              onPressed: _selectedCourses.isEmpty
+              onPressed: _selectedCourses.isEmpty || !_canDeleteCourses
                   ? null
                   : () => _handleBulkAction('delete'),
               tooltip: l10n.delete,
@@ -1484,6 +1635,11 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
   }
 
   void _handleBulkAction(String action) {
+    if (action == 'delete' && !_canDeleteCourses) {
+      _showDeletePermissionDenied();
+      return;
+    }
+
     HapticFeedback.mediumImpact();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -1522,6 +1678,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
     AppLocalizations l10n,
   ) {
     return GridView.builder(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -1554,6 +1711,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
     AppLocalizations l10n,
   ) {
     return ListView.builder(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.all(16),
       itemCount: courses.length,
       itemBuilder: (context, index) {
@@ -1580,6 +1738,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
     AppLocalizations l10n,
   ) {
     return ListView.builder(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.all(16),
       itemCount: courses.length,
       itemBuilder: (context, index) {
@@ -1677,6 +1836,10 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         );
         break;
       case 'delete':
+        if (!_canDeleteCourses) {
+          _showDeletePermissionDenied();
+          return;
+        }
         _showDeleteConfirmation(course);
         break;
     }
@@ -1716,6 +1879,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1877,6 +2041,11 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
   }
 
   void _showDeleteConfirmation(ExtendedCourse course) {
+    if (!_canDeleteCourses) {
+      _showDeletePermissionDenied();
+      return;
+    }
+
     final isDark = context.read<ThemeBloc>().state.isDark;
     final l10n = AppLocalizations.of(context);
 
@@ -1954,6 +2123,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
 
   Widget _buildSkeletonLoader(bool isDark) {
     return GridView.builder(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -1975,30 +2145,44 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         _selectedStatus != 'all' ||
         _selectedCategory != 'all';
 
-    return Center(
-      child: EmptyCoursesMessage(
-        isDark: isDark,
-        title: isFiltered ? 'No Courses Found' : 'No courses assigned yet',
-        subtitle: isFiltered
-            ? l10n.tryAdjustingFilters
-            : 'You do not have any assigned courses yet.',
-        buttonLabel: isFiltered ? 'Clear Filters' : l10n.createCourse,
-        buttonIcon: isFiltered ? Icons.refresh_rounded : Icons.add_rounded,
-        outlinedButton: isFiltered,
-        onPressed: () {
-          if (!isFiltered) {
-            _showCreateCourseDialog();
-            return;
-          }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: EmptyCoursesMessage(
+                isDark: isDark,
+                title: isFiltered
+                    ? 'No Courses Found'
+                    : 'No courses assigned yet',
+                subtitle: isFiltered
+                    ? l10n.tryAdjustingFilters
+                    : 'You do not have any assigned courses yet.',
+                buttonLabel: isFiltered ? 'Clear Filters' : l10n.createCourse,
+                buttonIcon: isFiltered
+                    ? Icons.refresh_rounded
+                    : Icons.add_rounded,
+                outlinedButton: isFiltered,
+                onPressed: () {
+                  if (!isFiltered) {
+                    _showCreateCourseDialog();
+                    return;
+                  }
 
-          setState(() {
-            _searchQuery = '';
-            _searchController.clear();
-            _selectedStatus = 'all';
-            _selectedCategory = 'all';
-          });
-        },
-      ),
+                  setState(() {
+                    _searchQuery = '';
+                    _searchController.clear();
+                    _selectedStatus = 'all';
+                    _selectedCategory = 'all';
+                  });
+                },
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -2039,6 +2223,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,

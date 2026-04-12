@@ -104,5 +104,47 @@ void main() {
       expect(bundles.first.primaryVideo?.materialId, '2');
       expect(bundles.first.materials.first.materialId, '2');
     });
+
+    test('groups materials with different whitespace as same bundle', () {
+      final bundles =
+          BundleDetector.groupMaterialsIntoBundles(<CourseMaterialModel>[
+            _material(
+              id: '11',
+              title: 'Intro  - Video',
+              type: 'video',
+              weekNumber: 1,
+            ),
+            _material(
+              id: '12',
+              title: 'Intro-Slides',
+              type: 'document',
+              weekNumber: 1,
+            ),
+          ]);
+
+      expect(bundles.length, 1);
+      expect(bundles.first.baseTitle, 'Intro');
+    });
+
+    test('groups materials case-insensitively', () {
+      final bundles =
+          BundleDetector.groupMaterialsIntoBundles(<CourseMaterialModel>[
+            _material(
+              id: '21',
+              title: 'Week 1 - Video',
+              type: 'video',
+              weekNumber: 1,
+            ),
+            _material(
+              id: '22',
+              title: 'WEEK 1 - Slides',
+              type: 'document',
+              weekNumber: 1,
+            ),
+          ]);
+
+      expect(bundles.length, 1);
+      expect(bundles.first.weekNumber, 1);
+    });
   });
 }

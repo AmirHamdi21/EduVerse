@@ -10,6 +10,7 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/common/service_error.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/models/assignments/assignment_model.dart';
+import 'package:edu_verse/models/auth_models.dart';
 import 'package:edu_verse/models/core/paginated_response.dart';
 import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 import 'package:edu_verse/models/labs/lab_model.dart';
@@ -22,6 +23,10 @@ import 'package:edu_verse/services/storage_service.dart';
 import 'package:edu_verse/widgets/instructor/courses/course_skeleton_card.dart';
 
 class _FakeStorageService extends StorageService {
+  _FakeStorageService({this.user});
+
+  final UserDto? user;
+
   @override
   Future<bool> getDarkMode() async => false;
 
@@ -33,6 +38,9 @@ class _FakeStorageService extends StorageService {
 
   @override
   Future<void> setFontSize(int sizeIndex) async {}
+
+  @override
+  Future<UserDto?> getUserData() async => user;
 }
 
 class _FakeEnrollmentService extends EnrollmentService {
@@ -119,11 +127,14 @@ TeachingCourseModel _teachingCourse() {
 
 Widget _buildScreen({
   required Future<ServiceResult<List<TeachingCourseModel>>> Function() loader,
+  StorageService? storageService,
 }) {
+  final resolvedStorageService = storageService ?? _FakeStorageService();
+
   return MultiBlocProvider(
     providers: <BlocProvider<dynamic>>[
       BlocProvider<ThemeBloc>(
-        create: (_) => ThemeBloc(storageService: _FakeStorageService()),
+        create: (_) => ThemeBloc(storageService: resolvedStorageService),
       ),
       BlocProvider<InstructorCoursesBloc>(
         create: (_) => InstructorCoursesBloc(
@@ -141,14 +152,28 @@ Widget _buildScreen({
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const <Locale>[Locale('en'), Locale('ar')],
-      home: const InstructorCoursesScreen(),
+      home: InstructorCoursesScreen(storageService: resolvedStorageService),
     ),
   );
 }
 
+UserDto _userWithRole(String roleName) {
+  return UserDto(
+    userId: 1,
+    email: 'role@example.com',
+    firstName: 'Role',
+    lastName: 'User',
+    roles: <RoleModel>[RoleModel(roleId: 1, roleName: roleName)],
+  );
+}
+
 void _setLargeViewport(WidgetTester tester) {
+  _setViewport(tester, const Size(1400, 2600));
+}
+
+void _setViewport(WidgetTester tester, Size size) {
   tester.view.devicePixelRatio = 1.0;
-  tester.view.physicalSize = const Size(1400, 2600);
+  tester.view.physicalSize = size;
   addTearDown(() {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
@@ -235,5 +260,77 @@ void main() {
     expect(find.text('Unable to load courses'), findsOneWidget);
     expect(find.text('network down'), findsOneWidget);
     expect(find.text('Retry'), findsOneWidget);
+  });
+
+  testWidgets('blocks student role from instructor courses screen', (
+    WidgetTester tester,
+  ) async {
+    _setLargeViewport(tester);
+
+    await tester.pumpWidget(
+      _buildScreen(
+        loader: () async => ServiceResult<List<TeachingCourseModel>>.success(
+          <TeachingCourseModel>[_teachingCourse()],
+        ),
+        storageService: _FakeStorageService(user: _userWithRole('student')),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+
+    expect(find.text('Access Denied'), findsOneWidget);
+  });
+
+  testWidgets('renders correctly across 375, 768, and 1024+ widths', (
+    WidgetTester tester,
+  ) async {
+    const sizes = <Size>[Size(375, 812), Size(768, 1024), Size(1280, 800)];
+
+    for (final size in sizes) {
+      _setViewport(tester, size);
+
+      await tester.pumpWidget(
+        _buildScreen(
+          loader: () async => ServiceResult<List<TeachingCourseModel>>.success(
+            <TeachingCourseModel>[_teachingCourse()],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Advanced Topics'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets('maintains minimum 48x48 touch targets for top controls', (
+    WidgetTester tester,
+  ) async {
+    _setViewport(tester, const Size(375, 812));
+
+    await tester.pumpWidget(
+      _buildScreen(
+        loader: () async => ServiceResult<List<TeachingCourseModel>>.success(
+          <TeachingCourseModel>[_teachingCourse()],
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final toggleKeys = <String>[
+      'view-toggle-grid',
+      'view-toggle-list',
+      'view-toggle-compact',
+    ];
+
+    for (final key in toggleKeys) {
+      final size = tester.getSize(find.byKey(ValueKey<String>(key)));
+      expect(size.width >= 48, isTrue);
+      expect(size.height >= 48, isTrue);
+    }
+
+    final fabSize = tester.getSize(find.byType(FloatingActionButton));
+    expect(fabSize.width >= 48, isTrue);
+    expect(fabSize.height >= 48, isTrue);
   });
 }

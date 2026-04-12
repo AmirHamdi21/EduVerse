@@ -237,35 +237,38 @@ class CourseListCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              Row(
-                children: [
-                  _buildActionButton(Icons.edit_rounded, 'Edit', 'edit'),
-                  const SizedBox(width: 8),
-                  _buildActionButton(
-                    Icons.analytics_rounded,
-                    'Analytics',
-                    'analytics',
-                  ),
-                  const SizedBox(width: 8),
-                  _buildActionButton(
-                    Icons.copy_rounded,
-                    'Duplicate',
-                    'duplicate',
-                  ),
-                  const SizedBox(width: 8),
-                  _buildActionButton(Icons.share_rounded, 'Share', 'share'),
-                  const Spacer(),
-                  IconButton(
-                    icon: Icon(
-                      Icons.delete_outline_rounded,
-                      color: InstructorColors.error.withValues(alpha: 0.7),
-                      size: 20,
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildActionButton(Icons.edit_rounded, 'Edit', 'edit'),
+                    const SizedBox(width: 8),
+                    _buildActionButton(
+                      Icons.analytics_rounded,
+                      'Analytics',
+                      'analytics',
                     ),
-                    onPressed: () => onQuickAction('delete'),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                ],
+                    const SizedBox(width: 8),
+                    _buildActionButton(
+                      Icons.copy_rounded,
+                      'Duplicate',
+                      'duplicate',
+                    ),
+                    const SizedBox(width: 8),
+                    _buildActionButton(Icons.share_rounded, 'Share', 'share'),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: Icon(
+                        Icons.delete_outline_rounded,
+                        color: InstructorColors.error.withValues(alpha: 0.7),
+                        size: 20,
+                      ),
+                      onPressed: () => onQuickAction('delete'),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
               ),
             ],
             if (course.hasMilestone) ...[

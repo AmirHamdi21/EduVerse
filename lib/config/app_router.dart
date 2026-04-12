@@ -59,6 +59,7 @@ import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_scre
 import 'package:edu_verse/screens/instructor/courses/instructor_courses_screen.dart';
 import 'package:edu_verse/screens/instructor/grading_center/grading_center_screen.dart';
 import 'package:edu_verse/screens/instructor/course_management/course_management_screen.dart';
+import 'package:edu_verse/screens/instructor/video/instructor_video_player_screen.dart';
 import 'package:edu_verse/screens/instructor/announcements/announcement_manager_screen.dart';
 import 'package:edu_verse/screens/instructor/attendance/attendance_manager_screen.dart';
 import 'package:edu_verse/screens/instructor/create_assignment/create_assignment_screen.dart';
@@ -518,6 +519,23 @@ class AppRouter {
           final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
           final course = state.extra as InstructorCourseModel?;
           return CourseManagementScreen(course: course, courseId: courseId);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/courses/:courseId/video/:videoId',
+        builder: (context, state) {
+          final videoId = state.pathParameters['videoId'] ?? '';
+          final course = state.extra as InstructorCourseModel?;
+          final videoTitle =
+              state.uri.queryParameters['title']?.trim().isNotEmpty == true
+              ? state.uri.queryParameters['title']!.trim()
+              : 'Course Video';
+
+          return InstructorVideoPlayerScreen(
+            videoId: videoId,
+            courseName: course?.name ?? 'Course Video',
+            videoTitle: videoTitle,
+          );
         },
       ),
       GoRoute(

@@ -63,4 +63,25 @@ void main() {
 
     expect(find.text('No students enrolled yet'), findsOneWidget);
   });
+
+  testWidgets('does not expose loading or retry controls in static tab', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _buildStudentsTab(const <SectionStudentModel>[
+        SectionStudentModel(
+          userId: 2,
+          firstName: 'Lina',
+          lastName: 'Hassan',
+          email: 'lina@example.com',
+          enrollmentStatus: 'enrolled',
+        ),
+      ]),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.text('Failed to load course structure'), findsNothing);
+    expect(find.text('Retry'), findsNothing);
+  });
 }

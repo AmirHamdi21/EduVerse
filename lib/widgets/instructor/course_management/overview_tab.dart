@@ -33,6 +33,7 @@ class OverviewTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
+      physics: const ClampingScrollPhysics(),
       padding: const EdgeInsets.all(16),
       children: [
         _buildDescriptionCard(),

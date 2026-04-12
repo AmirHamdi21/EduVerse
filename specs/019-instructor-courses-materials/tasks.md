@@ -89,16 +89,16 @@
 
 ### Tests for User Story 1
 
-- [ ] T031 [P] [US1] Service integration test: `getTeachingCourses()` in `test/services/api/enrollment_service_phase5_test.dart` — verify correct response parsing with nested course/section/semester objects
-- [ ] T032 [P] [US1] Widget test: `InstructorCoursesScreen` in `test/widgets/instructor/instructor_courses_screen_test.dart` — test loading state, loaded state with courses, empty state, error state with retry
+- [x] T031 [P] [US1] Service integration test: `getTeachingCourses()` in `test/services/api/enrollment_service_phase5_test.dart` — verify correct response parsing with nested course/section/semester objects
+- [x] T032 [P] [US1] Widget test: `InstructorCoursesScreen` in `test/widgets/instructor/instructor_courses_screen_test.dart` — test loading state, loaded state with courses, empty state, error state with retry
 
 ### Implementation for User Story 1
 
-- [ ] T033 [P] [US1] Create `CourseListCard` widget in `lib/widgets/instructor/courses/course_list_card.dart` — displays teaching course data from `TeachingCourseModel` with course code, name, semester, enrolled count, capacity; preserve existing card layout/colors/spacing
-- [ ] T034 [P] [US1] Create `CourseGridCard` widget in `lib/widgets/instructor/courses/course_grid_card.dart` — grid variant for tablet/desktop; preserve existing visual design
-- [ ] T035 [P] [US1] Create `CourseCompactCard` widget in `lib/widgets/instructor/courses/course_compact_card.dart` — compact variant for mobile; preserve existing visual design
+- [x] T033 [P] [US1] Create `CourseListCard` widget in `lib/widgets/instructor/courses/course_list_card.dart` — displays teaching course data from `TeachingCourseModel` with course code, name, semester, enrolled count, capacity; preserve existing card layout/colors/spacing
+- [x] T034 [P] [US1] Create `CourseGridCard` widget in `lib/widgets/instructor/courses/course_grid_card.dart` — grid variant for tablet/desktop; preserve existing visual design
+- [x] T035 [P] [US1] Create `CourseCompactCard` widget in `lib/widgets/instructor/courses/course_compact_card.dart` — compact variant for mobile; preserve existing visual design
 - [x] T036 [US1] Update `InstructorCoursesScreen` in `lib/screens/instructor/courses/instructor_courses_screen.dart` — remove mock data, wire `InstructorCoursesBloc` via `BlocBuilder`, dispatch `LoadTeachingCourses` on init; show loading/empty/error states; preserve ≥85% visual similarity
-- [ ] T037 [US1] Add empty state widget in `lib/widgets/instructor/courses/empty_courses_message.dart` — illustration + "No courses assigned yet" message
+- [x] T037 [US1] Add empty state widget in `lib/widgets/instructor/courses/empty_courses_message.dart` — illustration + "No courses assigned yet" message
 - [x] T038 [US1] Add route `/instructor/courses/:courseId` → `CourseManagementScreen` in `lib/config/app_router.dart` with `courseId` (int) path param; wire course card tap navigation via `GoRouter.pushNamed`
 - [x] T039 [US1] Verify existing instructor navigation routes in `lib/config/app_router.dart` are not broken by new route additions
 
@@ -121,13 +121,13 @@
 
 ### Implementation for User Story 2
 
-- [ ] T044 [P] [US2] Create `VideoUploadSection` widget in `lib/widgets/instructor/upload_materials/video_upload_section.dart` — video file picker, real-time progress bar via `UploadProgressState` (throttled to 500ms updates), step-by-step labels, error handling with retry; include `weekNumber` from selector in FormData
-- [ ] T045 [P] [US2] Create `BundleUploadSection` widget in `lib/widgets/instructor/upload_materials/bundle_upload_section.dart` — multi-file picker (video + documents), sequential upload with step labels, manual grouping option (instructor selects files, enters bundle name in text field, confirms — materials tagged with bundle name during upload); include `weekNumber` in FormData for all uploads
-- [ ] T046 [P] [US2] Update `UploadSelectors` widget in `lib/widgets/instructor/upload_materials/upload_selectors.dart` — populate course selector dropdown from `InstructorCoursesBloc` teaching courses, add week number selector, material type picker
-- [ ] T047 [P] [US2] Update `UploadQueueCard` widget in `lib/widgets/instructor/upload_materials/upload_queue_card.dart` — show queued uploads with progress, status badges, error indicators
+- [x] T044 [P] [US2] Create `VideoUploadSection` widget in `lib/widgets/instructor/upload_materials/video_upload_section.dart` — video file picker, real-time progress bar via `UploadProgressState` (throttled to 500ms updates), step-by-step labels, error handling with retry; include `weekNumber` from selector in FormData
+- [x] T045 [P] [US2] Create `BundleUploadSection` widget in `lib/widgets/instructor/upload_materials/bundle_upload_section.dart` — multi-file picker (video + documents), sequential upload with step labels, manual grouping option (instructor selects files, enters bundle name in text field, confirms — materials tagged with bundle name during upload); include `weekNumber` in FormData for all uploads
+- [x] T046 [P] [US2] Update `UploadSelectors` widget in `lib/widgets/instructor/upload_materials/upload_selectors.dart` — populate course selector dropdown from `InstructorCoursesBloc` teaching courses, add week number selector, material type picker
+- [x] T047 [P] [US2] Update `UploadQueueCard` widget in `lib/widgets/instructor/upload_materials/upload_queue_card.dart` — show queued uploads with progress, status badges, error indicators
 - [x] T048 [US2] Update `UploadMaterialsScreen` in `lib/screens/instructor/upload_materials/upload_materials_screen.dart` — remove mock data/static upload confirmations, wire `MaterialsBloc` via `BlocConsumer`, dispatch upload events, handle `UploadProgress` states; integrate `FileValidator` before upload; include `weekNumber` in all upload FormData/JSON bodies; preserve ≥85% visual similarity
 - [x] T049 [US2] Implement bundle upload flow in `MaterialsBloc` — sequential upload: video first, then documents; emit `UploadProgress` state for each step; if any document upload fails, keep successfully uploaded documents, emit error for failed items with retry option; on full completion, emit refresh event for materials library
-- [ ] T050 [US2] Implement YouTube OAuth error handling in `MaterialsBloc` — catch 401 from video upload, emit error with message "YouTube not authorized. Contact admin."
+- [x] T050 [US2] Implement YouTube OAuth error handling in `MaterialsBloc` — catch 401 from video upload, emit error with message "YouTube not authorized. Contact admin."
 - [x] T051 [US2] After upload success, dispatch `LoadMaterials` event to refresh library from API (do NOT optimistically append per Constitution Principle X); apply same refresh-after-operation pattern for edit/delete operations in US3
 
 **Checkpoint**: All 4 upload types functional, progress tracking works, file validation enforced, materials appear in library after upload
@@ -148,13 +148,13 @@
 
 ### Implementation for User Story 3
 
-- [ ] T055 [P] [US3] Update `MaterialsTab` widget in `lib/widgets/instructor/course_management/materials_tab.dart` — remove static material list, wire `MaterialsBloc` via `BlocBuilder`; `MaterialsBloc` calls `BundleDetector.groupMaterialsIntoBundles()` in its `LoadMaterials` handler and emits already-grouped `List<MaterialBundleModel>`; display materials grouped by week number; show YouTube thumbnails via `img.youtube.com/vi/{videoId}/mqdefault.jpg`; show type badges; preserve ≥85% visual similarity
-- [ ] T056 [P] [US3] Update `MaterialItemCard` widget in `lib/widgets/instructor/upload_materials/material_item_card.dart` — add visibility toggle button (eye icon), edit title button, delete button; show "unpublished" indicator (e.g., faded opacity + badge) for hidden materials to satisfy FR-018 (instructors see both published/unpublished with clear visual distinction)
-- [ ] T057 [P] [US3] Create bundle card widget in `lib/widgets/instructor/course_management/bundle_card.dart` — displays video thumbnail + companion document list; bulk toggle visibility, edit all titles, delete entire bundle
-- [ ] T058 [US3] Implement visibility toggle in `MaterialsBloc` — dispatch `ToggleMaterialVisibility` event, call `MaterialService.toggleVisibility()`, then dispatch `LoadMaterials` to refresh from API (no optimistic append per Constitution Principle X); emit updated `MaterialsLoaded` state
-- [ ] T059 [US3] Implement edit title in `MaterialsBloc` — dispatch `UpdateMaterial` event with title change; for bundle-level edits, fire parallel `UpdateMaterial` calls per material; track partial failures; dispatch `LoadMaterials` to refresh from API after completion
-- [ ] T060 [US3] Implement delete in `MaterialsBloc` — dispatch `DeleteMaterial` event with confirmation; for bundle-level deletes, fire parallel `DeleteMaterial` calls per material; track successes vs failures; emit partial-failure state with retry option for failed items; dispatch `LoadMaterials` to refresh from API after completion
-- [ ] T061 [US3] Add partial-failure UI in `MaterialsTab` — snackbar/bottom sheet showing "X of Y materials deleted — Z failed, retry?" with retry button for failed items only
+- [x] T055 [P] [US3] Update `MaterialsTab` widget in `lib/widgets/instructor/course_management/materials_tab.dart` — remove static material list, wire `MaterialsBloc` via `BlocBuilder`; `MaterialsBloc` calls `BundleDetector.groupMaterialsIntoBundles()` in its `LoadMaterials` handler and emits already-grouped `List<MaterialBundleModel>`; display materials grouped by week number; show YouTube thumbnails via `img.youtube.com/vi/{videoId}/mqdefault.jpg`; show type badges; preserve ≥85% visual similarity
+- [x] T056 [P] [US3] Update `MaterialItemCard` widget in `lib/widgets/instructor/upload_materials/material_item_card.dart` — add visibility toggle button (eye icon), edit title button, delete button; show "unpublished" indicator (e.g., faded opacity + badge) for hidden materials to satisfy FR-018 (instructors see both published/unpublished with clear visual distinction)
+- [x] T057 [P] [US3] Create bundle card widget in `lib/widgets/instructor/course_management/bundle_card.dart` — displays video thumbnail + companion document list; bulk toggle visibility, edit all titles, delete entire bundle
+- [x] T058 [US3] Implement visibility toggle in `MaterialsBloc` — dispatch `ToggleMaterialVisibility` event, call `MaterialService.toggleVisibility()`, then dispatch `LoadMaterials` to refresh from API (no optimistic append per Constitution Principle X); emit updated `MaterialsLoaded` state
+- [x] T059 [US3] Implement edit title in `MaterialsBloc` — dispatch `UpdateMaterial` event with title change; for bundle-level edits, fire parallel `UpdateMaterial` calls per material; track partial failures; dispatch `LoadMaterials` to refresh from API after completion
+- [x] T060 [US3] Implement delete in `MaterialsBloc` — dispatch `DeleteMaterial` event with confirmation; for bundle-level deletes, fire parallel `DeleteMaterial` calls per material; track successes vs failures; emit partial-failure state with retry option for failed items; dispatch `LoadMaterials` to refresh from API after completion
+- [x] T061 [US3] Add partial-failure UI in `MaterialsTab` — snackbar/bottom sheet showing "X of Y materials deleted — Z failed, retry?" with retry button for failed items only
 
 **Checkpoint**: Materials library fully functional with week grouping, bundle detection, visibility toggle, edit, delete, and partial-failure handling
 
@@ -170,17 +170,17 @@
 
 - [x] T062 [P] [US4] Service integration test: `CourseService` structure CRUD in `test/services/api/course_service_phase5_test.dart` — test create, update, delete, reorder endpoints
 - [x] T063 [P] [US4] BLoC test: `CourseStructureBloc` in `test/bloc/course_structure/course_structure_bloc_test.dart` — test all CRUD events, reorder event, error handling
-- [ ] T064 [P] [US4] Widget test: Course structure editor in `test/widgets/instructor/course_management/course_structure_editor_test.dart` — test create dialog, edit inline, reorder controls, delete confirmation with warning
+- [x] T064 [P] [US4] Widget test: Course structure editor in `test/widgets/instructor/course_management/course_structure_editor_test.dart` — test create dialog, edit inline, reorder controls, delete confirmation with warning
 
 ### Implementation for User Story 4
 
-- [ ] T065 [P] [US4] Create `CourseStructureEditor` widget in `lib/widgets/instructor/course_management/course_structure_editor.dart` — list of structure items with title, week number badge; add button, edit button, reorder controls (up/down arrows or drag), delete button; warning dialog if item has associated materials
-- [ ] T066 [P] [US4] Create `StructureItemCard` widget in `lib/widgets/instructor/course_management/structure_item_card.dart` — displays structure item title, week number, material count; edit/delete action buttons
-- [ ] T067 [US4] Wire `CourseStructureBloc` to `CourseStructureEditor` via `BlocBuilder` — dispatch `LoadStructure` on init, display `StructureLoaded` state
-- [ ] T068 [US4] Implement create structure item flow — dialog with title + week number inputs; dispatch `CreateStructureItem` event; on success, dispatch `LoadStructure` to refresh
-- [ ] T069 [US4] Implement edit structure item — inline edit or dialog; dispatch `UpdateStructureItem` event; on success, refresh
-- [ ] T070 [US4] Implement reorder structure items — up/down arrow buttons dispatch `ReorderStructureItems` event with new itemIds order; on success, refresh
-- [ ] T071 [US4] Implement delete structure item — confirmation dialog with warning "Materials in this week will become ungrouped (not deleted)"; dispatch `DeleteStructureItem` event; on success, refresh
+- [x] T065 [P] [US4] Create `CourseStructureEditor` widget in `lib/widgets/instructor/course_management/course_structure_editor.dart` — list of structure items with title, week number badge; add button, edit button, reorder controls (up/down arrows or drag), delete button; warning dialog if item has associated materials
+- [x] T066 [P] [US4] Create `StructureItemCard` widget in `lib/widgets/instructor/course_management/structure_item_card.dart` — displays structure item title, week number, material count; edit/delete action buttons
+- [x] T067 [US4] Wire `CourseStructureBloc` to `CourseStructureEditor` via `BlocBuilder` — dispatch `LoadStructure` on init, display `StructureLoaded` state
+- [x] T068 [US4] Implement create structure item flow — dialog with title + week number inputs; dispatch `CreateStructureItem` event; on success, dispatch `LoadStructure` to refresh
+- [x] T069 [US4] Implement edit structure item — inline edit or dialog; dispatch `UpdateStructureItem` event; on success, refresh
+- [x] T070 [US4] Implement reorder structure items — up/down arrow buttons dispatch `ReorderStructureItems` event with new itemIds order; on success, refresh
+- [x] T071 [US4] Implement delete structure item — confirmation dialog with warning "Materials in this week will become ungrouped (not deleted)"; dispatch `DeleteStructureItem` event; on success, refresh
 
 **Checkpoint**: Course structure CRUD fully functional, materials can be associated with weeks, deletion warns appropriately
 
@@ -201,11 +201,11 @@
 
 - [x] T074 [US5] Update `CourseManagementScreen` in `lib/screens/instructor/course_management/course_management_screen.dart` — ensure 5 sub-tabs (Overview, Lectures, Assignments, Grading, Students); wire live data to each tab; preserve TabBar layout/colors/structure; preserve ≥85% visual similarity
 - [x] T075 [P] [US5] Update `OverviewTab` widget in `lib/widgets/instructor/course_management/overview_tab.dart` — remove mock stats, wire live data using `EngagementMetricsModel` and `DeadlineCardModel` from `instructor_course_model.dart`: student count from section enrollment, average grade percentage, engagement metrics (material views/downloads + assignment submission rate capped at first 20 assignments for performance, fetched in parallel), section schedules (FR-013: day, time, room, building, schedule type), upcoming deadlines from `InstructorCoursesBloc.LoadDeadlines`; preserve card layout/colors
-- [ ] T076 [P] [US5] Verify `MaterialsTab` renders correctly as Lectures sub-tab in `CourseManagementScreen` — confirm week grouping and bundle detection display properly when accessed via Lectures tab navigation (manual QA step)
+- [x] T076 [P] [US5] Verify `MaterialsTab` renders correctly as Lectures sub-tab in `CourseManagementScreen` — confirm week grouping and bundle detection display properly when accessed via Lectures tab navigation (manual QA step)
 - [x] T077 [P] [US5] Create `AssignmentsTab` placeholder in `lib/widgets/instructor/course_management/assignments_tab.dart` — display "Assignments management coming soon" placeholder state; preserve tab layout structure
 - [x] T078 [P] [US5] Create `GradingTab` placeholder in `lib/widgets/instructor/course_management/grading_tab.dart` — display "Grading coming soon" placeholder state; preserve tab layout structure
 - [x] T079 [US5] Wire deadlines fetch in `InstructorCoursesBloc` — `LoadDeadlines(courseId)` event calls read-only `GET /assignments?courseId={id}` and `GET /labs?courseId={id}`, filters for upcoming due dates, emits `DeadlineCardModel` list via `DeadlinesLoaded` state for Overview tab consumption
-- [ ] T080 [US5] Wire engagement metrics computation in `OverviewTab` — (1) sum viewCount/downloadCount across all materials from `MaterialsBloc`; (2) compute assignment submission rate: fetch enrolled student count from section data, fetch up to 20 assignments via `GET /assignments?courseId={id}` (cap for performance), count unique students with submissions from `GET /assignments/{id}/submissions` per assignment (fetch in parallel), calculate (unique submitters / total enrolled) × 100; use `EngagementMetricsModel` from `instructor_course_model.dart`
+- [x] T080 [US5] Wire engagement metrics computation in `OverviewTab` — (1) sum viewCount/downloadCount across all materials from `MaterialsBloc`; (2) compute assignment submission rate: fetch enrolled student count from section data, fetch up to 20 assignments via `GET /assignments?courseId={id}` (cap for performance), count unique students with submissions from `GET /assignments/{id}/submissions` per assignment (fetch in parallel), calculate (unique submitters / total enrolled) × 100; use `EngagementMetricsModel` from `instructor_course_model.dart`
 
 **Checkpoint**: Course detail screen fully functional with live data in Overview/Lectures/Students tabs, placeholders for Assignments/Grading
 
@@ -237,37 +237,37 @@
 
 ### Responsive Design Verification
 
-- [ ] T085 [P] Verify all Phase 5 screens responsive at 375px (mobile portrait), 768px (tablet portrait), 1024px+ (desktop)
-- [ ] T086 [P] Verify all interactive elements maintain minimum 48x48px touch targets
-- [ ] T087 [P] Verify no horizontal scrolling on mobile viewports
+- [x] T085 [P] Verify all Phase 5 screens responsive at 375px (mobile portrait), 768px (tablet portrait), 1024px+ (desktop)
+- [x] T086 [P] Verify all interactive elements maintain minimum 48x48px touch targets
+- [x] T087 [P] Verify no horizontal scrolling on mobile viewports
 
 ### UI Parity Verification
 
-- [ ] T088 Visual parity audit: Compare before/after screenshots for `InstructorCoursesScreen`, `UploadMaterialsScreen`, `CourseManagementScreen` — verify ≥85% visual similarity
-- [ ] T089 Verify no color, spacing, or typography changes in modified screens
-- [ ] T090 Verify widget tree nesting order preserved (no unnecessary reorganizations)
+- [x] T088 Visual parity audit: Compare before/after screenshots for `InstructorCoursesScreen`, `UploadMaterialsScreen`, `CourseManagementScreen` — verify ≥85% visual similarity
+- [x] T089 Verify no color, spacing, or typography changes in modified screens
+- [x] T090 Verify widget tree nesting order preserved (no unnecessary reorganizations)
 
 ### Mock Data Elimination Audit
 
-- [ ] T091 Grep all files listed in plan.md "Source Code" section under MODIFIED labels for residual mock patterns: `_generateSample`, `_mockData`, `mockCourses`, `_loadMockData`, `Future.delayed` fake responses, hardcoded `List<Course>` literals
-- [ ] T092 Grep all files listed in plan.md "Source Code" section under MODIFIED labels for `setState(() =>` patterns that bypass BLoC
-- [ ] T093 Grep all files listed in plan.md "Source Code" section under MODIFIED labels for `TODO: Replace with API` comments — must be resolved
+- [x] T091 Grep all files listed in plan.md "Source Code" section under MODIFIED labels for residual mock patterns: `_generateSample`, `_mockData`, `mockCourses`, `_loadMockData`, `Future.delayed` fake responses, hardcoded `List<Course>` literals
+- [x] T092 Grep all files listed in plan.md "Source Code" section under MODIFIED labels for `setState(() =>` patterns that bypass BLoC
+- [x] T093 Grep all files listed in plan.md "Source Code" section under MODIFIED labels for `TODO: Replace with API` comments — must be resolved
 
 ### Orphan File Cleanup (Pre-Phase 5 Legacy Files)
 
-- [ ] T094 Audit pre-Phase 5 instructor files for orphans: (a) grep `lib/` for files in `lib/widgets/instructor/` and `lib/screens/instructor/` not imported by any active screen or `app_router.dart`; (b) grep for mock patterns: `_generateSample`, `_mockData`, `mockCourses`, `_loadMockData`; (c) cross-reference with website frontend docs — files with no website equivalent are orphans
-- [ ] T095 Delete orphan widget files with no website equivalent (per Constitution Principle IV + VII); candidate orphans to review: files under `lib/widgets/instructor/create_assignment/` (Phase 6 scope), `lib/widgets/instructor/grading/` (Phase 6 scope) — confirm no Phase 5 imports before deletion
-- [ ] T096 Delete orphan model files no longer referenced after Phase 5 model updates; candidate orphans: check `lib/models/instructor/` for models not used by `InstructorCoursesBloc`, `MaterialsBloc`, or `CourseStructureBloc`
-- [ ] T097 Run `flutter analyze` after orphan deletion — verify no broken imports
-- [ ] T098 Run `flutter test` after orphan deletion — verify all tests pass
+- [x] T094 Audit pre-Phase 5 instructor files for orphans: (a) grep `lib/` for files in `lib/widgets/instructor/` and `lib/screens/instructor/` not imported by any active screen or `app_router.dart`; (b) grep for mock patterns: `_generateSample`, `_mockData`, `mockCourses`, `_loadMockData`; (c) cross-reference with website frontend docs — files with no website equivalent are orphans
+- [x] T095 Delete orphan widget files with no website equivalent (per Constitution Principle IV + VII); candidate orphans to review: files under `lib/widgets/instructor/create_assignment/` (Phase 6 scope), `lib/widgets/instructor/grading/` (Phase 6 scope) — confirm no Phase 5 imports before deletion
+- [x] T096 Delete orphan model files no longer referenced after Phase 5 model updates; candidate orphans: check `lib/models/instructor/` for models not used by `InstructorCoursesBloc`, `MaterialsBloc`, or `CourseStructureBloc`
+- [x] T097 Run `flutter analyze` after orphan deletion — verify no broken imports
+- [x] T098 Run `flutter test` after orphan deletion — verify all tests pass
 
 ### Final Validation
 
 - [x] T099 Run full `flutter analyze` — verify no new errors introduced
 - [x] T100 Run full `flutter test` — verify all Phase 5 tests pass
-- [ ] T101 Run quickstart.md verification checklist from `specs/019-instructor-courses-materials/quickstart.md`
-- [ ] T102 Verify role-based access control (Constitution IX): add role check in `InstructorCoursesScreen` and `UploadMaterialsScreen` — confirm screens are inaccessible to student role (redirect or show "Access Denied"); confirm TA role can upload materials but cannot delete courses or course structure
-- [ ] T103 Fix spec.md SC-002: update "progress bar that updates at least every 2 seconds" → "progress bar that updates at least every 500ms" to align with plan.md implementation
+- [x] T101 Run quickstart.md verification checklist from `specs/019-instructor-courses-materials/quickstart.md`
+- [x] T102 Verify role-based access control (Constitution IX): add role check in `InstructorCoursesScreen` and `UploadMaterialsScreen` — confirm screens are inaccessible to student role (redirect or show "Access Denied"); confirm TA role can upload materials but cannot delete courses or course structure
+- [x] T103 Fix spec.md SC-002: update "progress bar that updates at least every 2 seconds" → "progress bar that updates at least every 500ms" to align with plan.md implementation
 
 ---
 

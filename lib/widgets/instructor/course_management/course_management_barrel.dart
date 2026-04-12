@@ -7,3 +7,6 @@ export 'assignments_tab.dart';
 export 'grading_tab.dart';
 export 'materials_tab.dart';
 export 'students_tab.dart';
+export 'bundle_card.dart';
+export 'course_structure_editor.dart';
+export 'structure_item_card.dart';

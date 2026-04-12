@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../models/instructor/upload_materials_model.dart';
@@ -56,6 +57,16 @@ class MaterialsBloc extends Bloc<MaterialsEvent, MaterialsState> {
       }
 
       add(LoadMaterials(event.courseId));
+    } on _YouTubeUnauthorizedException {
+      emit(const MaterialsError('YouTube not authorized. Contact admin.'));
+    } on DioException catch (error) {
+      if (_isUnauthorized(error) &&
+          (event.materialType == 'video' || event.isBundle)) {
+        emit(const MaterialsError('YouTube not authorized. Contact admin.'));
+        return;
+      }
+
+      emit(MaterialsError(error.toString().replaceAll('Exception: ', '')));
     } catch (error) {
       emit(MaterialsError(error.toString().replaceAll('Exception: ', '')));
     }
@@ -97,35 +108,42 @@ class MaterialsBloc extends Bloc<MaterialsEvent, MaterialsState> {
     if (event.materialType == 'video' && event.filePath != null) {
       var lastProgressEmit = DateTime.fromMillisecondsSinceEpoch(0);
 
-      await _materialService.uploadVideo(
-        event.courseId,
-        file: File(event.filePath!),
-        title: event.title,
-        weekNumber: event.weekNumber,
-        isPublished: event.isPublished,
-        onSendProgress: (sent, total) {
-          final now = DateTime.now();
-          if (now.difference(lastProgressEmit).inMilliseconds < 500) {
-            return;
-          }
-          lastProgressEmit = now;
+      try {
+        await _materialService.uploadVideo(
+          event.courseId,
+          file: File(event.filePath!),
+          title: event.title,
+          weekNumber: event.weekNumber,
+          isPublished: event.isPublished,
+          onSendProgress: (sent, total) {
+            final now = DateTime.now();
+            if (now.difference(lastProgressEmit).inMilliseconds < 500) {
+              return;
+            }
+            lastProgressEmit = now;
 
-          emit(
-            UploadProgress(
-              UploadProgressState(
-                uploadId: event.uploadId,
-                fileName: event.title,
-                fileSize: total,
-                bytesSent: sent,
-                totalBytes: total,
-                status: UploadProgressStatus.uploading,
-                stepLabel: 'Uploading video',
-                startedAt: now,
+            emit(
+              UploadProgress(
+                UploadProgressState(
+                  uploadId: event.uploadId,
+                  fileName: event.title,
+                  fileSize: total,
+                  bytesSent: sent,
+                  totalBytes: total,
+                  status: UploadProgressStatus.uploading,
+                  stepLabel: 'Uploading video',
+                  startedAt: now,
+                ),
               ),
-            ),
-          );
-        },
-      );
+            );
+          },
+        );
+      } on DioException catch (error) {
+        if (_isUnauthorized(error)) {
+          throw const _YouTubeUnauthorizedException();
+        }
+        rethrow;
+      }
 
       emit(
         UploadProgress(
@@ -206,6 +224,11 @@ class MaterialsBloc extends Bloc<MaterialsEvent, MaterialsState> {
             ),
           ),
         );
+      } on DioException catch (error) {
+        if (_isUnauthorized(error)) {
+          throw const _YouTubeUnauthorizedException();
+        }
+        failed.add(event.bundleVideoPath!);
       } catch (_) {
         failed.add(event.bundleVideoPath!);
       }
@@ -273,37 +296,73 @@ class MaterialsBloc extends Bloc<MaterialsEvent, MaterialsState> {
     UpdateMaterial event,
     Emitter<MaterialsState> emit,
   ) async {
-    try {
-      await _materialService.updateMaterialDetails(
-        event.courseId,
-        event.materialId,
-        event.payload,
-      );
-      add(LoadMaterials(event.courseId));
-    } catch (error) {
-      emit(MaterialsError(error.toString().replaceAll('Exception: ', '')));
+    final targetIds = event.targetMaterialIds
+        .where((id) => id.isNotEmpty)
+        .toList(growable: false);
+
+    if (targetIds.isEmpty) {
+      return;
     }
+
+    final failed = await Future.wait<String?>(
+      targetIds.map((materialId) async {
+        try {
+          await _materialService.updateMaterialDetails(
+            event.courseId,
+            materialId,
+            event.payload,
+          );
+          return null;
+        } catch (_) {
+          return materialId;
+        }
+      }),
+    );
+
+    final failedIds = failed.whereType<String>().toList(growable: false);
+    if (failedIds.isNotEmpty) {
+      final successCount = targetIds.length - failedIds.length;
+      emit(
+        MaterialsError(
+          '$successCount of ${targetIds.length} materials updated - ${failedIds.length} failed, retry?',
+          failedMaterialIds: failedIds,
+        ),
+      );
+    }
+
+    add(LoadMaterials(event.courseId));
   }
 
   Future<void> _onDeleteMaterial(
     DeleteMaterial event,
     Emitter<MaterialsState> emit,
   ) async {
-    final failed = <String>[];
+    final targetIds = event.materialIds
+        .where((id) => id.isNotEmpty)
+        .toList(growable: false);
 
-    for (final materialId in event.materialIds) {
-      try {
-        await _materialService.deleteMaterial(event.courseId, materialId);
-      } catch (_) {
-        failed.add(materialId);
-      }
+    if (targetIds.isEmpty) {
+      return;
     }
 
-    if (failed.isNotEmpty) {
+    final failed = await Future.wait<String?>(
+      targetIds.map((materialId) async {
+        try {
+          await _materialService.deleteMaterial(event.courseId, materialId);
+          return null;
+        } catch (_) {
+          return materialId;
+        }
+      }),
+    );
+
+    final failedIds = failed.whereType<String>().toList(growable: false);
+    if (failedIds.isNotEmpty) {
+      final successCount = targetIds.length - failedIds.length;
       emit(
         MaterialsError(
-          '${event.materialIds.length - failed.length} of ${event.materialIds.length} materials deleted',
-          failedMaterialIds: failed,
+          '$successCount of ${targetIds.length} materials deleted - ${failedIds.length} failed, retry?',
+          failedMaterialIds: failedIds,
         ),
       );
     }
@@ -326,4 +385,12 @@ class MaterialsBloc extends Bloc<MaterialsEvent, MaterialsState> {
       emit(MaterialsError(error.toString().replaceAll('Exception: ', '')));
     }
   }
+
+  bool _isUnauthorized(DioException error) {
+    return error.response?.statusCode == 401;
+  }
+}
+
+class _YouTubeUnauthorizedException implements Exception {
+  const _YouTubeUnauthorizedException();
 }

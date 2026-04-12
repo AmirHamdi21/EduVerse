@@ -19,8 +19,11 @@ class _FakeMaterialService extends MaterialService {
   int? lastWeekNumber;
   String? lastUploadType;
   final List<String> deletedIds = <String>[];
+  final List<String> updatedIds = <String>[];
   final Set<String> failDeleteIds = <String>{};
+  final Set<String> failUpdateIds = <String>{};
   final Set<String> failUploadPaths = <String>{};
+  final Set<String> unauthorizedVideoPaths = <String>{};
 
   @override
   Future<List<CourseMaterialModel>> getMaterials(
@@ -69,6 +72,23 @@ class _FakeMaterialService extends MaterialService {
     bool isPublished = true,
     ProgressCallback? onSendProgress,
   }) async {
+    if (unauthorizedVideoPaths.contains(file.path)) {
+      final request = RequestOptions(
+        path: '/courses/$courseId/materials/video',
+      );
+      throw DioException(
+        requestOptions: request,
+        response: Response<dynamic>(
+          requestOptions: request,
+          statusCode: 401,
+          data: <String, dynamic>{
+            'error': 'YouTube not authorized. Please contact admin.',
+          },
+        ),
+        type: DioExceptionType.badResponse,
+      );
+    }
+
     if (failUploadPaths.contains(file.path)) {
       throw Exception('video upload failed');
     }
@@ -119,8 +139,14 @@ class _FakeMaterialService extends MaterialService {
     dynamic materialId,
     Map<String, dynamic> body,
   ) async {
+    final id = materialId.toString();
+    updatedIds.add(id);
+    if (failUpdateIds.contains(id)) {
+      throw Exception('update failed');
+    }
+
     return CourseMaterialModel(
-      materialId: materialId.toString(),
+      materialId: id,
       courseId: courseId.toString(),
       materialType: body['type']?.toString() ?? 'document',
       title: body['title']?.toString() ?? 'Updated',
@@ -283,6 +309,7 @@ void main() {
 
         final errorState = emitted.whereType<MaterialsError>().first;
         expect(errorState.failedMaterialIds, <String>['2']);
+        expect(errorState.message, contains('retry?'));
         expect(bloc.state, isA<MaterialsLoaded>());
 
         await sub.cancel();
@@ -315,6 +342,84 @@ void main() {
       final errorState = emitted.whereType<MaterialsError>().first;
       expect(errorState.message, contains('failed'));
       expect(bloc.state, isA<MaterialsLoaded>());
+
+      await sub.cancel();
+      await bloc.close();
+    });
+
+    test(
+      'bundle-level update tracks partial failures then refreshes',
+      () async {
+        final service = _FakeMaterialService(
+          materials: <CourseMaterialModel>[
+            _material(
+              id: '11',
+              title: 'Week 3 - Video',
+              type: 'video',
+              week: 3,
+            ),
+            _material(
+              id: '12',
+              title: 'Week 3 - Slides',
+              type: 'document',
+              week: 3,
+            ),
+          ],
+        );
+        service.failUpdateIds.add('12');
+        final bloc = MaterialsBloc(materialService: service);
+        final emitted = <MaterialsState>[];
+        final sub = bloc.stream.listen(emitted.add);
+
+        bloc.add(
+          const UpdateMaterial(
+            courseId: 1,
+            materialId: '11',
+            materialIds: <String>['11', '12'],
+            payload: <String, dynamic>{'title': 'Week 3 Bundle'},
+          ),
+        );
+
+        await _flush();
+        await _flush();
+        await _flush();
+
+        final errorState = emitted.whereType<MaterialsError>().first;
+        expect(errorState.failedMaterialIds, const <String>['12']);
+        expect(errorState.message, contains('materials updated'));
+        expect(service.updatedIds, containsAll(const <String>['11', '12']));
+        expect(bloc.state, isA<MaterialsLoaded>());
+
+        await sub.cancel();
+        await bloc.close();
+      },
+    );
+
+    test('video upload emits YouTube authorization message on 401', () async {
+      final service = _FakeMaterialService(materials: <CourseMaterialModel>[]);
+      service.unauthorizedVideoPaths.add('C:/tmp/yt.mp4');
+      final bloc = MaterialsBloc(materialService: service);
+      final emitted = <MaterialsState>[];
+      final sub = bloc.stream.listen(emitted.add);
+
+      bloc.add(
+        const UploadMaterial(
+          courseId: 1,
+          uploadId: 'yt-1',
+          title: 'Week 7 Video',
+          materialType: 'video',
+          filePath: 'C:/tmp/yt.mp4',
+          weekNumber: 7,
+        ),
+      );
+
+      await _flush();
+      await _flush();
+      await _flush();
+
+      final errorState = emitted.whereType<MaterialsError>().last;
+      expect(errorState.message, 'YouTube not authorized. Contact admin.');
+      expect(bloc.state, isA<MaterialsError>());
 
       await sub.cancel();
       await bloc.close();

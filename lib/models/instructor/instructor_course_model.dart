@@ -121,6 +121,7 @@ class MaterialModel {
   final String type;
   final String fileSize;
   final String fileUrl;
+  final bool isPublished;
   final DateTime? uploadedAt;
 
   const MaterialModel({
@@ -129,6 +130,7 @@ class MaterialModel {
     required this.type,
     this.fileSize = '',
     this.fileUrl = '',
+    this.isPublished = true,
     this.uploadedAt,
   });
 }
