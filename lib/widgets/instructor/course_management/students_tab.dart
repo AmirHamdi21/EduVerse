@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../models/instructor/instructor_course_model.dart';
 import 'course_management_colors.dart';
 
 /// Redesigned students tab with modern list and search
 class StudentsTab extends StatefulWidget {
-  final int totalStudents;
+  final List<SectionStudentModel> students;
   final bool isDark;
   final AppLocalizations l10n;
 
   const StudentsTab({
     super.key,
-    required this.totalStudents,
+    required this.students,
     required this.isDark,
     required this.l10n,
   });
@@ -22,22 +23,15 @@ class StudentsTab extends StatefulWidget {
 class _StudentsTabState extends State<StudentsTab> {
   String _search = '';
 
-  List<_StudentData> get _students => List.generate(
-        widget.totalStudents,
-        (i) => _StudentData(
-          name: 'Student ${i + 1}',
-          email: 'student${i + 1}@university.edu',
-          initials: 'S${i + 1}',
-          color: _avatarColors[i % _avatarColors.length],
-        ),
-      );
+  List<SectionStudentModel> get _students => widget.students;
 
-  List<_StudentData> get _filtered => _search.isEmpty
+  List<SectionStudentModel> get _filtered => _search.isEmpty
       ? _students
-      : _students
-          .where(
-              (s) => s.name.toLowerCase().contains(_search.toLowerCase()))
-          .toList();
+      : _students.where((s) {
+          final query = _search.toLowerCase();
+          return s.fullName.toLowerCase().contains(query) ||
+              s.email.toLowerCase().contains(query);
+        }).toList();
 
   static const List<Color> _avatarColors = [
     CMColors.primary,
@@ -65,6 +59,7 @@ class _StudentsTabState extends State<StudentsTab> {
                       student: _filtered[index],
                       isDark: widget.isDark,
                       l10n: widget.l10n,
+                      index: index,
                     );
                   },
                 ),
@@ -86,8 +81,9 @@ class _StudentsTabState extends State<StudentsTab> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black
-                  .withValues(alpha: widget.isDark ? 0.15 : 0.03),
+              color: Colors.black.withValues(
+                alpha: widget.isDark ? 0.15 : 0.03,
+              ),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -95,10 +91,7 @@ class _StudentsTabState extends State<StudentsTab> {
         ),
         child: TextField(
           onChanged: (v) => setState(() => _search = v),
-          style: TextStyle(
-            color: CMColors.text(widget.isDark),
-            fontSize: 14,
-          ),
+          style: TextStyle(color: CMColors.text(widget.isDark), fontSize: 14),
           decoration: InputDecoration(
             hintText: '${widget.l10n.searchStudents}...',
             hintStyle: TextStyle(color: CMColors.textMutedColor(widget.isDark)),
@@ -109,15 +102,19 @@ class _StudentsTabState extends State<StudentsTab> {
             ),
             suffixIcon: _search.isNotEmpty
                 ? IconButton(
-                    icon: Icon(Icons.close_rounded,
-                        color: CMColors.textMutedColor(widget.isDark),
-                        size: 18),
+                    icon: Icon(
+                      Icons.close_rounded,
+                      color: CMColors.textMutedColor(widget.isDark),
+                      size: 18,
+                    ),
                     onPressed: () => setState(() => _search = ''),
                   )
                 : null,
             border: InputBorder.none,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
           ),
         ),
       ),
@@ -166,13 +163,26 @@ class _StudentsTabState extends State<StudentsTab> {
           ),
           const SizedBox(height: 12),
           Text(
-            'No students found',
+            widget.students.isEmpty
+                ? 'No students enrolled yet'
+                : 'No students found',
             style: TextStyle(
               color: CMColors.text(widget.isDark),
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
           ),
+          if (widget.students.isEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              'Students will appear here when enrollments are available.',
+              style: TextStyle(
+                color: CMColors.textSub(widget.isDark),
+                fontSize: 12,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ],
       ),
     );
@@ -180,15 +190,35 @@ class _StudentsTabState extends State<StudentsTab> {
 }
 
 class _StudentCard extends StatelessWidget {
-  final _StudentData student;
+  final SectionStudentModel student;
   final bool isDark;
   final AppLocalizations l10n;
+  final int index;
 
   const _StudentCard({
     required this.student,
     required this.isDark,
     required this.l10n,
+    required this.index,
   });
+
+  static const List<Color> _avatarColors = [
+    CMColors.primary,
+    CMColors.accent,
+    CMColors.orange,
+    CMColors.teal,
+    CMColors.pink,
+    CMColors.success,
+  ];
+
+  Color get _avatarColor => _avatarColors[index % _avatarColors.length];
+
+  String get _initials {
+    final first = student.firstName.isNotEmpty ? student.firstName[0] : '';
+    final last = student.lastName.isNotEmpty ? student.lastName[0] : '';
+    final value = (first + last).trim();
+    return value.isEmpty ? 'S' : value.toUpperCase();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -197,10 +227,7 @@ class _StudentCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: CMColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: CMColors.borderColor(isDark),
-          width: 1,
-        ),
+        border: Border.all(color: CMColors.borderColor(isDark), width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.1 : 0.02),
@@ -225,8 +252,8 @@ class _StudentCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        student.color,
-                        student.color.withValues(alpha: 0.7),
+                        _avatarColor,
+                        _avatarColor.withValues(alpha: 0.7),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
@@ -234,7 +261,7 @@ class _StudentCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
-                        color: student.color.withValues(alpha: 0.3),
+                        color: _avatarColor.withValues(alpha: 0.3),
                         blurRadius: 8,
                         offset: const Offset(0, 3),
                       ),
@@ -242,7 +269,7 @@ class _StudentCard extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      student.name[0],
+                      _initials,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -258,7 +285,7 @@ class _StudentCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        student.name,
+                        student.fullName,
                         style: TextStyle(
                           color: CMColors.text(isDark),
                           fontSize: 14,
@@ -272,6 +299,47 @@ class _StudentCard extends StatelessWidget {
                           color: CMColors.textSub(isDark),
                           fontSize: 12,
                         ),
+                      ),
+                      const SizedBox(height: 3),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 4,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: CMColors.surfaceColor(isDark),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              student.enrollmentStatus,
+                              style: TextStyle(
+                                color: CMColors.textSub(isDark),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          if (student.grade != null)
+                            Text(
+                              'Grade: ${student.grade!.toStringAsFixed(1)}',
+                              style: TextStyle(
+                                color: CMColors.textSub(isDark),
+                                fontSize: 10,
+                              ),
+                            ),
+                          if (student.attendanceRate != null)
+                            Text(
+                              'Attendance: ${student.attendanceRate!.toStringAsFixed(1)}%',
+                              style: TextStyle(
+                                color: CMColors.textSub(isDark),
+                                fontSize: 10,
+                              ),
+                            ),
+                        ],
                       ),
                     ],
                   ),
@@ -315,8 +383,7 @@ class _StudentCard extends StatelessWidget {
     );
   }
 
-  PopupMenuItem _buildMenuItem(
-      IconData icon, String label, Color color) {
+  PopupMenuItem _buildMenuItem(IconData icon, String label, Color color) {
     return PopupMenuItem(
       child: Row(
         children: [
@@ -341,18 +408,4 @@ class _StudentCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _StudentData {
-  final String name;
-  final String email;
-  final String initials;
-  final Color color;
-
-  _StudentData({
-    required this.name,
-    required this.email,
-    required this.initials,
-    required this.color,
-  });
 }

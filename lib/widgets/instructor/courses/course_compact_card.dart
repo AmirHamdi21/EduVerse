@@ -37,8 +37,8 @@ class CourseCompactCard extends StatelessWidget {
             color: isSelected
                 ? InstructorColors.primary
                 : (isDark
-                    ? InstructorColors.darkBorder
-                    : InstructorColors.border),
+                      ? InstructorColors.darkBorder
+                      : InstructorColors.border),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -62,8 +62,11 @@ class CourseCompactCard extends StatelessWidget {
                   ),
                 ),
                 child: isSelected
-                    ? const Icon(Icons.check_rounded,
-                        color: Colors.white, size: 14)
+                    ? const Icon(
+                        Icons.check_rounded,
+                        color: Colors.white,
+                        size: 14,
+                      )
                     : null,
               ),
             Container(
@@ -82,8 +85,9 @@ class CourseCompactCard extends StatelessWidget {
                   Text(
                     course.course.name,
                     style: TextStyle(
-                      color:
-                          isDark ? Colors.white : InstructorColors.textPrimary,
+                      color: isDark
+                          ? Colors.white
+                          : InstructorColors.textPrimary,
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -92,7 +96,7 @@ class CourseCompactCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '${course.course.code} • ${course.course.totalStudents} students',
+                    '${course.course.code} • ${course.course.semester}',
                     style: TextStyle(
                       color: isDark
                           ? InstructorColors.darkTextSecondary
@@ -107,8 +111,10 @@ class CourseCompactCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: _getStatusColor().withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -124,7 +130,7 @@ class CourseCompactCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${(course.completionRate * 100).toInt()}%',
+                  _formatEnrollmentSummary(),
                   style: TextStyle(
                     color: isDark ? Colors.white60 : InstructorColors.textMuted,
                     fontSize: 11,
@@ -154,5 +160,12 @@ class CourseCompactCard extends StatelessWidget {
       default:
         return InstructorColors.primary;
     }
+  }
+
+  String _formatEnrollmentSummary() {
+    if (course.course.capacity <= 0) {
+      return '${course.course.totalStudents} enrolled';
+    }
+    return '${course.course.totalStudents}/${course.course.capacity}';
   }
 }

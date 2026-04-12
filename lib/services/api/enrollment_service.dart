@@ -3,6 +3,7 @@ import '../../common/retry_helper.dart';
 import '../../common/service_error.dart';
 import '../../models/core/enrollment_model.dart';
 import '../../models/instructor/teaching_course_model.dart';
+import '../../models/instructor/instructor_course_model.dart';
 import '../../models/ta/ta_assignment_model.dart';
 
 /// Service for Enrollment API endpoints.
@@ -98,12 +99,38 @@ class EnrollmentService {
     dynamic sectionId,
   ) {
     return RetryHelper.execute<List<CourseEnrollmentModel>>(() async {
-      final response = await _client.dio.get(
-        '/enrollments/sections/$sectionId/students',
-      );
+      final response = await _client.dio.get('/sections/$sectionId/students');
+
+      final students = _extractList(response.data)
+          .whereType<Map<String, dynamic>>()
+          .map(SectionStudentModel.fromJson)
+          .toList();
+
+      return students
+          .map(
+            (student) => CourseEnrollmentModel.fromJson(<String, dynamic>{
+              'id': student.userId,
+              'userId': student.userId,
+              'sectionId': sectionId,
+              'status': student.enrollmentStatus,
+              'grade': student.grade?.toString(),
+              'finalScore': student.grade,
+              'enrollmentDate': DateTime.now().toIso8601String(),
+            }),
+          )
+          .toList();
+    }, fallbackMessage: 'Failed to load section students');
+  }
+
+  /// GET /api/sections/{sectionId}/students
+  Future<ServiceResult<List<SectionStudentModel>>> getSectionStudentsLite(
+    dynamic sectionId,
+  ) {
+    return RetryHelper.execute<List<SectionStudentModel>>(() async {
+      final response = await _client.dio.get('/sections/$sectionId/students');
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
-          .map(CourseEnrollmentModel.fromJson)
+          .map(SectionStudentModel.fromJson)
           .toList();
     }, fallbackMessage: 'Failed to load section students');
   }

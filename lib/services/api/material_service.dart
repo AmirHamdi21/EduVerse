@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core_api_client.dart';
@@ -39,6 +41,90 @@ class MaterialService {
         .toList();
 
     return _applyViewedCache(materials);
+  }
+
+  /// POST /api/courses/{courseId}/materials/document
+  Future<CourseMaterialModel> uploadDocument(
+    dynamic courseId, {
+    required File file,
+    required String title,
+    int? weekNumber,
+    bool isPublished = true,
+    ProgressCallback? onSendProgress,
+  }) async {
+    final formData = FormData.fromMap(<String, dynamic>{
+      'document': await MultipartFile.fromFile(
+        file.path,
+        filename: _fileName(file),
+      ),
+      'title': title,
+      if (weekNumber != null) 'weekNumber': weekNumber,
+      'isPublished': isPublished,
+    });
+
+    final response = await _client.dio.post(
+      '/courses/$courseId/materials/document',
+      data: formData,
+      onSendProgress: onSendProgress,
+      options: _client.materialTimeoutOptions(),
+    );
+
+    return CourseMaterialModel.fromJson(_extractMap(response.data));
+  }
+
+  /// POST /api/courses/{courseId}/materials/video
+  Future<CourseMaterialModel> uploadVideo(
+    dynamic courseId, {
+    required File file,
+    required String title,
+    int? weekNumber,
+    bool isPublished = true,
+    ProgressCallback? onSendProgress,
+  }) async {
+    final formData = FormData.fromMap(<String, dynamic>{
+      'video': await MultipartFile.fromFile(
+        file.path,
+        filename: _fileName(file),
+      ),
+      'title': title,
+      if (weekNumber != null) 'weekNumber': weekNumber,
+      'isPublished': isPublished,
+    });
+
+    final response = await _client.dio.post(
+      '/courses/$courseId/materials/video',
+      data: formData,
+      onSendProgress: onSendProgress,
+      options: _client.materialTimeoutOptions(),
+    );
+
+    return CourseMaterialModel.fromJson(_extractMap(response.data));
+  }
+
+  /// POST /api/courses/{courseId}/materials
+  Future<CourseMaterialModel> uploadTextLink(
+    dynamic courseId, {
+    required String title,
+    required String url,
+    required String type,
+    int? weekNumber,
+    bool isPublished = true,
+  }) async {
+    final body = <String, dynamic>{
+      'title': title,
+      'type': type,
+      'url': url,
+      if (weekNumber != null) 'weekNumber': weekNumber,
+      'isPublished': isPublished,
+    };
+
+    final response = await _client.dio.post(
+      '/courses/$courseId/materials',
+      data: body,
+      options: _client.materialTimeoutOptions(),
+    );
+
+    return CourseMaterialModel.fromJson(_extractMap(response.data));
   }
 
   /// POST /api/courses/{courseId}/materials
@@ -106,12 +192,29 @@ class MaterialService {
     return CourseMaterialModel.fromJson(data);
   }
 
+  /// PUT /api/courses/{courseId}/materials/{materialId}
+  /// Alias retained for newer call sites.
+  Future<CourseMaterialModel> updateMaterialDetails(
+    dynamic courseId,
+    dynamic materialId,
+    Map<String, dynamic> body,
+  ) {
+    return updateMaterial(courseId, materialId, body);
+  }
+
   /// PATCH /api/courses/{courseId}/materials/{mId}/visibility
-  Future<void> toggleVisibility(dynamic courseId, dynamic materialId) async {
-    await _client.dio.patch(
+  Future<CourseMaterialModel> toggleVisibility(
+    dynamic courseId,
+    dynamic materialId, {
+    required bool isPublished,
+  }) async {
+    final response = await _client.dio.patch(
       '/courses/$courseId/materials/$materialId/visibility',
+      data: <String, dynamic>{'isPublished': isPublished},
       options: _client.materialTimeoutOptions(),
     );
+
+    return CourseMaterialModel.fromJson(_extractMap(response.data));
   }
 
   /// POST /api/courses/{courseId}/materials/{mId}/view
@@ -163,6 +266,24 @@ class MaterialService {
   /// DELETE /api/courses/{courseId}/materials/{mId}
   Future<void> deleteMaterial(dynamic courseId, dynamic materialId) async {
     await _client.dio.delete('/courses/$courseId/materials/$materialId');
+  }
+
+  String _fileName(File file) {
+    if (file.uri.pathSegments.isNotEmpty) {
+      return file.uri.pathSegments.last;
+    }
+    return 'upload.bin';
+  }
+
+  Map<String, dynamic> _extractMap(dynamic payload) {
+    if (payload is Map<String, dynamic>) {
+      final data = payload['data'];
+      if (data is Map<String, dynamic>) {
+        return data;
+      }
+      return payload;
+    }
+    return <String, dynamic>{};
   }
 
   Future<List<CourseMaterialModel>> _applyViewedCache(

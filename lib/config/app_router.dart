@@ -513,6 +513,14 @@ class AppRouter {
         builder: (context, state) => const InstructorCoursesScreen(),
       ),
       GoRoute(
+        path: '/instructor/courses/:courseId',
+        builder: (context, state) {
+          final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
+          final course = state.extra as InstructorCourseModel?;
+          return CourseManagementScreen(course: course, courseId: courseId);
+        },
+      ),
+      GoRoute(
         path: '/instructor/grading',
         builder: (context, state) => const GradingCenterScreen(),
       ),
@@ -520,7 +528,10 @@ class AppRouter {
         path: '/instructor/course-management',
         builder: (context, state) {
           final course = state.extra as InstructorCourseModel?;
-          return CourseManagementScreen(course: course);
+          return CourseManagementScreen(
+            course: course,
+            courseId: int.tryParse(course?.id ?? ''),
+          );
         },
       ),
       GoRoute(

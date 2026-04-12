@@ -13,6 +13,8 @@ import 'package:edu_verse/bloc/ai_notes/ai_notes_cubit.dart';
 import 'package:edu_verse/bloc/profile/profile_cubit.dart';
 import 'package:edu_verse/bloc/grades/grades_cubit.dart';
 import 'package:edu_verse/bloc/labs/labs_cubit.dart';
+import 'package:edu_verse/bloc/materials/materials_bloc.dart';
+import 'package:edu_verse/bloc/course_structure/course_structure_bloc.dart';
 import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/bloc/notifications/notification_cubit.dart';
 import 'package:edu_verse/bloc/smart_study/smart_study_cubit.dart';
@@ -21,6 +23,7 @@ import 'package:edu_verse/bloc/tasks/tasks_cubit.dart';
 import 'package:edu_verse/bloc/search/search_cubit.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
+import 'package:edu_verse/bloc/instructor/instructor_courses_bloc.dart';
 import 'package:edu_verse/config/app_router.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:edu_verse/services/api_service.dart';
@@ -84,6 +87,9 @@ class _MyAppState extends State<MyApp> {
   late SearchCubit _searchCubit;
   late AdminNotificationCubit _adminNotificationCubit;
   late CoursesBloc _coursesBloc;
+  late InstructorCoursesBloc _instructorCoursesBloc;
+  late MaterialsBloc _materialsBloc;
+  late CourseStructureBloc _courseStructureBloc;
   late CourseService _courseService;
   late AssignmentService _assignmentService;
   late EnrollmentService _enrollmentService;
@@ -165,6 +171,15 @@ class _MyAppState extends State<MyApp> {
       communicationService: _communicationService,
     );
 
+    _instructorCoursesBloc = InstructorCoursesBloc(
+      enrollmentService: _enrollmentService,
+      assignmentService: _assignmentService,
+      labService: _labService,
+      materialService: _materialService,
+    );
+    _materialsBloc = MaterialsBloc(materialService: _materialService);
+    _courseStructureBloc = CourseStructureBloc(courseService: _courseService);
+
     // Initialize theme and language from storage
     _initializeTheme();
     _initializeLanguage();
@@ -198,6 +213,9 @@ class _MyAppState extends State<MyApp> {
     _searchCubit.close();
     _adminNotificationCubit.close();
     _coursesBloc.close();
+    _instructorCoursesBloc.close();
+    _materialsBloc.close();
+    _courseStructureBloc.close();
     _sessionExpirySubscription?.cancel();
     super.dispose();
   }
@@ -224,6 +242,9 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _searchCubit),
         BlocProvider.value(value: _adminNotificationCubit),
         BlocProvider.value(value: _coursesBloc),
+        BlocProvider.value(value: _instructorCoursesBloc),
+        BlocProvider.value(value: _materialsBloc),
+        BlocProvider.value(value: _courseStructureBloc),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {

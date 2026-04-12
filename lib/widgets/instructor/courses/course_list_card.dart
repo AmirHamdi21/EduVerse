@@ -40,8 +40,8 @@ class CourseListCard extends StatelessWidget {
             color: isSelected
                 ? InstructorColors.primary
                 : (isDark
-                    ? InstructorColors.darkBorder
-                    : InstructorColors.border),
+                      ? InstructorColors.darkBorder
+                      : InstructorColors.border),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
@@ -72,14 +72,17 @@ class CourseListCard extends StatelessWidget {
                         color: isSelected
                             ? InstructorColors.primary
                             : (isDark
-                                ? Colors.white24
-                                : InstructorColors.border),
+                                  ? Colors.white24
+                                  : InstructorColors.border),
                         width: 2,
                       ),
                     ),
                     child: isSelected
-                        ? const Icon(Icons.check_rounded,
-                            color: Colors.white, size: 16)
+                        ? const Icon(
+                            Icons.check_rounded,
+                            color: Colors.white,
+                            size: 16,
+                          )
                         : null,
                   ),
                 Container(
@@ -98,7 +101,9 @@ class CourseListCard extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      course.course.code.substring(0, 2).toUpperCase(),
+                      course.course.code.length >= 2
+                          ? course.course.code.substring(0, 2).toUpperCase()
+                          : course.course.code.toUpperCase(),
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -130,7 +135,9 @@ class CourseListCard extends StatelessWidget {
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 4),
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: _getStatusColor().withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(8),
@@ -148,7 +155,7 @@ class CourseListCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${course.course.code} • ${course.category}',
+                        '${course.course.code} • ${course.course.semester}',
                         style: TextStyle(
                           color: isDark
                               ? InstructorColors.darkTextSecondary
@@ -159,11 +166,15 @@ class CourseListCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          _buildMiniStat(Icons.people_rounded,
-                              '${course.course.totalStudents} students'),
+                          _buildMiniStat(
+                            Icons.people_rounded,
+                            _formatEnrollmentSummary(),
+                          ),
                           const SizedBox(width: 16),
-                          _buildMiniStat(Icons.trending_up_rounded,
-                              '${course.engagementScore}% engagement'),
+                          _buildMiniStat(
+                            Icons.trending_up_rounded,
+                            '${course.engagementScore}% engagement',
+                          ),
                         ],
                       ),
                     ],
@@ -214,16 +225,15 @@ class CourseListCard extends StatelessWidget {
                                 ? Colors.white.withValues(alpha: 0.1)
                                 : InstructorColors.border,
                             valueColor: AlwaysStoppedAnimation(
-                                Color(course.course.colorValue)),
+                              Color(course.course.colorValue),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildMiniTrendChart(),
-                  ),
+                  Expanded(child: _buildMiniTrendChart()),
                 ],
               ),
               const SizedBox(height: 16),
@@ -232,10 +242,16 @@ class CourseListCard extends StatelessWidget {
                   _buildActionButton(Icons.edit_rounded, 'Edit', 'edit'),
                   const SizedBox(width: 8),
                   _buildActionButton(
-                      Icons.analytics_rounded, 'Analytics', 'analytics'),
+                    Icons.analytics_rounded,
+                    'Analytics',
+                    'analytics',
+                  ),
                   const SizedBox(width: 8),
                   _buildActionButton(
-                      Icons.copy_rounded, 'Duplicate', 'duplicate'),
+                    Icons.copy_rounded,
+                    'Duplicate',
+                    'duplicate',
+                  ),
                   const SizedBox(width: 8),
                   _buildActionButton(Icons.share_rounded, 'Share', 'share'),
                   const Spacer(),
@@ -255,8 +271,10 @@ class CourseListCard extends StatelessWidget {
             if (course.hasMilestone) ...[
               const SizedBox(height: 12),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -268,8 +286,11 @@ class CourseListCard extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.emoji_events_rounded,
-                        color: InstructorColors.warning, size: 18),
+                    const Icon(
+                      Icons.emoji_events_rounded,
+                      color: InstructorColors.warning,
+                      size: 18,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       course.milestoneText ?? '',
@@ -289,6 +310,13 @@ class CourseListCard extends StatelessWidget {
     );
   }
 
+  String _formatEnrollmentSummary() {
+    if (course.course.capacity <= 0) {
+      return '${course.course.totalStudents} enrolled';
+    }
+    return '${course.course.totalStudents}/${course.course.capacity} enrolled';
+  }
+
   Color _getStatusColor() {
     switch (course.status) {
       case 'published':
@@ -305,11 +333,13 @@ class CourseListCard extends StatelessWidget {
   Widget _buildMiniStat(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon,
-            size: 14,
-            color: isDark
-                ? InstructorColors.darkTextSecondary
-                : InstructorColors.textSecondary),
+        Icon(
+          icon,
+          size: 14,
+          color: isDark
+              ? InstructorColors.darkTextSecondary
+              : InstructorColors.textSecondary,
+        ),
         const SizedBox(width: 4),
         Text(
           text,
@@ -362,8 +392,7 @@ class CourseListCard extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                color:
-                    isDark ? Colors.white70 : InstructorColors.textSecondary,
+                color: isDark ? Colors.white70 : InstructorColors.textSecondary,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
               ),

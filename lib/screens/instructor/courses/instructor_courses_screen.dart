@@ -6,9 +6,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
-import '../../../bloc/courses/courses_bloc.dart';
-import '../../../bloc/courses/courses_event.dart';
-import '../../../bloc/courses/courses_state.dart';
+import '../../../bloc/instructor/instructor_courses_bloc.dart';
+import '../../../bloc/instructor/instructor_courses_event.dart';
+import '../../../bloc/instructor/instructor_courses_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/instructor/instructor_course_model.dart';
@@ -73,7 +73,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
       curve: Curves.easeOutCubic,
     );
     // Dispatch BLoC event to fetch instructor courses from API
-    context.read<CoursesBloc>().add(const InstructorCoursesFetched());
+    context.read<InstructorCoursesBloc>().add(const LoadTeachingCourses());
   }
 
   @override
@@ -88,12 +88,17 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
   /// Maps backend [TeachingCourseModel] list into UI-compatible
   /// [ExtendedCourse] wrappers, populating visual fields with
   /// sensible defaults derived from backend data.
-  List<ExtendedCourse> _mapToExtendedCourses(
-      List<TeachingCourseModel> models) {
+  List<ExtendedCourse> _mapToExtendedCourses(List<TeachingCourseModel> models) {
     // Deterministic color palette for visual variety
     const colorPalette = [
-      0xFF0D47A1, 0xFF7C4DFF, 0xFF00BFA5, 0xFFFF6D00,
-      0xFFE91E63, 0xFF536DFE, 0xFFFFAB00, 0xFF00C853,
+      0xFF0D47A1,
+      0xFF7C4DFF,
+      0xFF00BFA5,
+      0xFFFF6D00,
+      0xFFE91E63,
+      0xFF536DFE,
+      0xFFFFAB00,
+      0xFF00C853,
     ];
 
     return models.asMap().entries.map((entry) {
@@ -111,6 +116,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
           name: tc.course.courseName,
           description: tc.course.description ?? '',
           totalStudents: tc.section.currentEnrollment,
+          capacity: tc.section.maxCapacity,
           colorValue: colorValue,
           isActive: true,
           semester: tc.semester.name,
@@ -123,7 +129,15 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         status: 'published',
         category: 'General',
         createdAt: tc.semester.startDate ?? DateTime.now(),
-        enrollmentTrend: [fillRatio, fillRatio, fillRatio, fillRatio, fillRatio, fillRatio, fillRatio],
+        enrollmentTrend: [
+          fillRatio,
+          fillRatio,
+          fillRatio,
+          fillRatio,
+          fillRatio,
+          fillRatio,
+          fillRatio,
+        ],
       );
     }).toList();
   }
@@ -189,12 +203,15 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
-        return BlocConsumer<CoursesBloc, CoursesState>(
+        return BlocConsumer<InstructorCoursesBloc, InstructorCoursesState>(
           listener: (context, coursesState) {
             if (coursesState is InstructorCoursesLoaded) {
               setState(() {
-                _courses = _mapToExtendedCourses(coursesState.teachingCourses);
-                _totalStudents = coursesState.totalStudents;
+                _courses = _mapToExtendedCourses(coursesState.courses);
+                _totalStudents = coursesState.courses.fold<int>(
+                  0,
+                  (sum, item) => sum + item.enrolledCount,
+                );
               });
               _statsAnimController.reset();
               _cardAnimController.reset();
@@ -203,11 +220,9 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
             }
           },
           builder: (context, coursesState) {
-            final isLoading = coursesState is CoursesLoading;
-            final isError = coursesState is CoursesError;
-            final errorMessage = isError
-                ? coursesState.message
-                : '';
+            final isLoading = coursesState is InstructorCoursesLoading;
+            final isError = coursesState is InstructorCoursesError;
+            final errorMessage = isError ? coursesState.message : '';
 
             return Scaffold(
               backgroundColor: isDark
@@ -254,8 +269,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
   }
 
   /// Error state with retry button (T009)
-  Widget _buildErrorState(
-      bool isDark, AppLocalizations l10n, String message) {
+  Widget _buildErrorState(bool isDark, AppLocalizations l10n, String message) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -278,29 +292,28 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
             Text(
               'Unable to load courses',
               style: TextStyle(
-                color:
-                    isDark ? Colors.white : InstructorColors.textPrimary,
+                color: isDark ? Colors.white : InstructorColors.textPrimary,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              message.isNotEmpty ? message : 'Please check your connection and try again.',
+              message.isNotEmpty
+                  ? message
+                  : 'Please check your connection and try again.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: isDark
-                    ? Colors.white60
-                    : InstructorColors.textSecondary,
+                color: isDark ? Colors.white60 : InstructorColors.textSecondary,
                 fontSize: 14,
               ),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () {
-                context
-                    .read<CoursesBloc>()
-                    .add(const InstructorCoursesFetched());
+                context.read<InstructorCoursesBloc>().add(
+                  const LoadTeachingCourses(),
+                );
               },
               icon: const Icon(Icons.refresh_rounded),
               label: const Text('Retry'),
@@ -308,7 +321,9 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                 backgroundColor: InstructorColors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 32, vertical: 14),
+                  horizontal: 32,
+                  vertical: 14,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -1489,7 +1504,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
 
     return RefreshIndicator(
       onRefresh: () async {
-        context.read<CoursesBloc>().add(const InstructorCoursesFetched());
+        context.read<InstructorCoursesBloc>().add(const LoadTeachingCourses());
       },
       color: InstructorColors.primary,
       backgroundColor: isDark ? InstructorColors.darkCard : Colors.white,
@@ -1608,7 +1623,8 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
       });
       HapticFeedback.selectionClick();
     } else {
-      context.push('/instructor/course-management', extra: course.course);
+      final courseId = int.tryParse(course.course.id) ?? 0;
+      context.push('/instructor/courses/$courseId', extra: course.course);
     }
   }
 
@@ -1954,99 +1970,34 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
   }
 
   Widget _buildEmptyState(bool isDark, AppLocalizations l10n) {
+    final isFiltered =
+        _searchQuery.isNotEmpty ||
+        _selectedStatus != 'all' ||
+        _selectedCategory != 'all';
+
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(32),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    InstructorColors.primary.withValues(alpha: 0.1),
-                    InstructorColors.accentPurple.withValues(alpha: 0.1),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.school_rounded,
-                size: 64,
-                color: InstructorColors.primary,
-              ),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'No Courses Found',
-              style: TextStyle(
-                color: isDark ? Colors.white : InstructorColors.textPrimary,
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              _searchQuery.isNotEmpty ||
-                      _selectedStatus != 'all' ||
-                      _selectedCategory != 'all'
-                  ? l10n.tryAdjustingFilters
-                  : 'Create your first course and start teaching!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: isDark ? Colors.white60 : InstructorColors.textSecondary,
-                fontSize: 15,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 32),
-            if (_searchQuery.isEmpty &&
-                _selectedStatus == 'all' &&
-                _selectedCategory == 'all')
-              ElevatedButton.icon(
-                onPressed: () => _showCreateCourseDialog(),
-                icon: const Icon(Icons.add_rounded),
-                label: Text(l10n.createCourse),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: InstructorColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  elevation: 0,
-                ),
-              )
-            else
-              OutlinedButton.icon(
-                onPressed: () => setState(() {
-                  _searchQuery = '';
-                  _searchController.clear();
-                  _selectedStatus = 'all';
-                  _selectedCategory = 'all';
-                }),
-                icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Clear Filters'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: InstructorColors.primary,
-                  side: const BorderSide(color: InstructorColors.primary),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 14,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-              ),
-          ],
-        ),
+      child: EmptyCoursesMessage(
+        isDark: isDark,
+        title: isFiltered ? 'No Courses Found' : 'No courses assigned yet',
+        subtitle: isFiltered
+            ? l10n.tryAdjustingFilters
+            : 'You do not have any assigned courses yet.',
+        buttonLabel: isFiltered ? 'Clear Filters' : l10n.createCourse,
+        buttonIcon: isFiltered ? Icons.refresh_rounded : Icons.add_rounded,
+        outlinedButton: isFiltered,
+        onPressed: () {
+          if (!isFiltered) {
+            _showCreateCourseDialog();
+            return;
+          }
+
+          setState(() {
+            _searchQuery = '';
+            _searchController.clear();
+            _selectedStatus = 'all';
+            _selectedCategory = 'all';
+          });
+        },
       ),
     );
   }
@@ -2164,7 +2115,9 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                         backgroundColor: InstructorColors.success,
                       ),
                     );
-                    context.read<CoursesBloc>().add(const InstructorCoursesFetched());
+                    context.read<InstructorCoursesBloc>().add(
+                      const LoadTeachingCourses(),
+                    );
                   },
                   icon: const Icon(Icons.rocket_launch_rounded),
                   label: Text(l10n.createCourse),

@@ -24,9 +24,7 @@ class CourseSelector extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? UploadMaterialsColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: UploadMaterialsColors.borderColor(isDark),
-        ),
+        border: Border.all(color: UploadMaterialsColors.borderColor(isDark)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -53,7 +51,9 @@ class CourseSelector extends StatelessWidget {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: UploadMaterialsColors.primary.withValues(alpha: 0.1),
+                      color: UploadMaterialsColors.primary.withValues(
+                        alpha: 0.1,
+                      ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -71,7 +71,9 @@ class CourseSelector extends StatelessWidget {
                         Text(
                           course.name,
                           style: TextStyle(
-                            color: UploadMaterialsColors.textPrimaryColor(isDark),
+                            color: UploadMaterialsColors.textPrimaryColor(
+                              isDark,
+                            ),
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                           ),
@@ -79,7 +81,9 @@ class CourseSelector extends StatelessWidget {
                         Text(
                           course.code,
                           style: TextStyle(
-                            color: UploadMaterialsColors.textSecondaryColor(isDark),
+                            color: UploadMaterialsColors.textSecondaryColor(
+                              isDark,
+                            ),
                             fontSize: 12,
                           ),
                         ),
@@ -97,7 +101,7 @@ class CourseSelector extends StatelessWidget {
   }
 }
 
-/// Module selector dropdown
+/// Week selector dropdown
 class ModuleSelector extends StatelessWidget {
   final List<CourseModule> modules;
   final String? selectedModuleId;
@@ -123,15 +127,13 @@ class ModuleSelector extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? UploadMaterialsColors.darkCard : Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: UploadMaterialsColors.borderColor(isDark),
-          ),
+          border: Border.all(color: UploadMaterialsColors.borderColor(isDark)),
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
             value: selectedModuleId,
             hint: Text(
-              enabled ? 'Select Module (Optional)' : 'Select a course first',
+              enabled ? 'Select Week (Optional)' : 'Select a course first',
               style: TextStyle(
                 color: UploadMaterialsColors.textSecondaryColor(isDark),
               ),
@@ -141,14 +143,16 @@ class ModuleSelector extends StatelessWidget {
               Icons.keyboard_arrow_down_rounded,
               color: UploadMaterialsColors.textSecondaryColor(isDark),
             ),
-            dropdownColor: isDark ? UploadMaterialsColors.darkCard : Colors.white,
+            dropdownColor: isDark
+                ? UploadMaterialsColors.darkCard
+                : Colors.white,
             borderRadius: BorderRadius.circular(12),
             onChanged: enabled ? onModuleChanged : null,
             items: [
               DropdownMenuItem<String>(
                 value: null,
                 child: Text(
-                  'No Module (Course Level)',
+                  'No Week (Course Level)',
                   style: TextStyle(
                     color: UploadMaterialsColors.textSecondaryColor(isDark),
                     fontSize: 14,
@@ -170,7 +174,9 @@ class ModuleSelector extends StatelessWidget {
                         child: Text(
                           module.name,
                           style: TextStyle(
-                            color: UploadMaterialsColors.textPrimaryColor(isDark),
+                            color: UploadMaterialsColors.textPrimaryColor(
+                              isDark,
+                            ),
                             fontSize: 14,
                           ),
                         ),
@@ -188,7 +194,9 @@ class ModuleSelector extends StatelessWidget {
                           child: Text(
                             '${module.materialCount}',
                             style: TextStyle(
-                              color: UploadMaterialsColors.textTertiaryColor(isDark),
+                              color: UploadMaterialsColors.textTertiaryColor(
+                                isDark,
+                              ),
                               fontSize: 12,
                             ),
                           ),
@@ -267,8 +275,8 @@ class MaterialTypeFilter extends StatelessWidget {
             color: isSelected
                 ? (color ?? UploadMaterialsColors.primary)
                 : (isDark
-                    ? UploadMaterialsColors.darkSurface
-                    : UploadMaterialsColors.surface),
+                      ? UploadMaterialsColors.darkSurface
+                      : UploadMaterialsColors.surface),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
               color: isSelected

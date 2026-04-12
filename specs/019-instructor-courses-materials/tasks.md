@@ -21,11 +21,11 @@
 
 **Purpose**: Project initialization — verify existing dependencies and services from Phase 1 are in place
 
-- [ ] T001 Verify `pubspec.yaml` has required dependencies: flutter_bloc, dio, youtube_player_flutter, webview_flutter, file_picker, path_provider, shared_preferences
-- [ ] T002 [P] Verify existing `CoreApiClient` in `lib/services/api/core_api_client.dart` supports Dio FormData uploads with `onSendProgress`
-- [ ] T003 [P] Verify existing `MaterialService` in `lib/services/api/material_service.dart` and `CourseService` in `lib/services/api/course_service.dart` compile and extend `CoreApiClient`
-- [ ] T004 [P] Verify existing `EnrollmentService` in `lib/services/api/enrollment_service.dart` has `getTeachingCourses()` method
-- [ ] T005 Run `flutter analyze` and `flutter test` to confirm baseline workspace health
+- [x] T001 Verify `pubspec.yaml` has required dependencies: flutter_bloc, dio, youtube_player_flutter, webview_flutter, file_picker, path_provider, shared_preferences
+- [x] T002 [P] Verify existing `CoreApiClient` in `lib/services/api/core_api_client.dart` supports Dio FormData uploads with `onSendProgress`
+- [x] T003 [P] Verify existing `MaterialService` in `lib/services/api/material_service.dart` and `CourseService` in `lib/services/api/course_service.dart` compile and extend `CoreApiClient`
+- [x] T004 [P] Verify existing `EnrollmentService` in `lib/services/api/enrollment_service.dart` has `getTeachingCourses()` method
+- [x] T005 Run `flutter analyze` and `flutter test` to confirm baseline workspace health
 
 **Checkpoint**: Existing services compile, tests pass, dependencies available
 
@@ -39,43 +39,43 @@
 
 ### Models & Entities
 
-- [ ] T006 [P] Update `TeachingCourseModel` in `lib/models/instructor/instructor_course_model.dart` with fields: sectionId, userId, courseId, role, nested course/section/semester objects, enrolledCount, capacity, averageGrade, attendanceRate; add robust `fromJson` factory with `double.tryParse` for decimals
-- [ ] T007 [P] Update `CourseMaterialModel` in `lib/models/materials/course_material_model.dart` with all backend fields: id, courseId, title, type (MaterialType enum), weekNumber, url, externalUrl, driveFileId, isPublished (parse as num==1), viewCount, downloadCount, createdAt, updatedAt
-- [ ] T008 [P] Update `MaterialBundleModel` in `lib/models/materials/material_bundle_model.dart` with fields: baseTitle, weekNumber, videoMaterial, companionMaterials, allMaterials computed; prepare for bundle detection algorithm
-- [ ] T009 [P] Update `CourseStructureItemModel` in `lib/models/core/course_structure_model.dart` with fields: id, courseId, title, weekNumber, sortOrder, description, createdAt
-- [ ] T010 [P] Create `UploadProgressState` model in `lib/models/instructor/upload_materials_model.dart` with fields: uploadId, fileName, fileSize, bytesSent, totalBytes, status (UploadStatus enum), stepLabel, errorMessage, startedAt, completedAt; add progressPercent computed property
-- [ ] T011 [P] Create `DeadlineCardModel` in `lib/models/instructor/instructor_course_model.dart` (co-locate with teaching course) with fields: id, title, type (DeadlineType enum), dueDate, status (DeadlineStatus enum), courseId
-- [ ] T012 [P] Create `EngagementMetricsModel` in `lib/models/instructor/instructor_course_model.dart` with fields: totalMaterialViews, totalMaterialDownloads, assignmentSubmissionRate, totalSubmissions, totalEnrolledStudents
+- [x] T006 [P] Update `TeachingCourseModel` in `lib/models/instructor/instructor_course_model.dart` with fields: sectionId, userId, courseId, role, nested course/section/semester objects, enrolledCount, capacity, averageGrade, attendanceRate; add robust `fromJson` factory with `double.tryParse` for decimals
+- [x] T007 [P] Update `CourseMaterialModel` in `lib/models/materials/course_material_model.dart` with all backend fields: id, courseId, title, type (MaterialType enum), weekNumber, url, externalUrl, driveFileId, isPublished (parse as num==1), viewCount, downloadCount, createdAt, updatedAt
+- [x] T008 [P] Update `MaterialBundleModel` in `lib/models/materials/material_bundle_model.dart` with fields: baseTitle, weekNumber, videoMaterial, companionMaterials, allMaterials computed; prepare for bundle detection algorithm
+- [x] T009 [P] Update `CourseStructureItemModel` in `lib/models/core/course_structure_model.dart` with fields: id, courseId, title, weekNumber, sortOrder, description, createdAt
+- [x] T010 [P] Create `UploadProgressState` model in `lib/models/instructor/upload_materials_model.dart` with fields: uploadId, fileName, fileSize, bytesSent, totalBytes, status (UploadStatus enum), stepLabel, errorMessage, startedAt, completedAt; add progressPercent computed property
+- [x] T011 [P] Create `DeadlineCardModel` in `lib/models/instructor/instructor_course_model.dart` (co-locate with teaching course) with fields: id, title, type (DeadlineType enum), dueDate, status (DeadlineStatus enum), courseId
+- [x] T012 [P] Create `EngagementMetricsModel` in `lib/models/instructor/instructor_course_model.dart` with fields: totalMaterialViews, totalMaterialDownloads, assignmentSubmissionRate, totalSubmissions, totalEnrolledStudents
 
 ### Service Extensions
 
-- [ ] T013 Extend `MaterialService` in `lib/services/api/material_service.dart` with: `uploadDocument()` (FormData, field `document`), `uploadVideo()` (FormData, field `video`, `onSendProgress`), `uploadTextLink()` (JSON), `updateMaterial()` (PUT), `deleteMaterial()` (DELETE), `toggleVisibility()` (PATCH)
-- [ ] T014 Extend `CourseService` in `lib/services/api/course_service.dart` with: `getStructure()`, `createStructureItem()`, `updateStructureItem()` (PUT), `deleteStructureItem()`, `reorderStructureItems()` (PATCH)
-- [ ] T015 Implement or verify `EnrollmentService.getSectionStudents(sectionId)` returns list with name, email, enrollmentStatus, grade, attendanceRate fields
+- [x] T013 Extend `MaterialService` in `lib/services/api/material_service.dart` with: `uploadDocument()` (FormData, field `document`), `uploadVideo()` (FormData, field `video`, `onSendProgress`), `uploadTextLink()` (JSON), `updateMaterial()` (PUT), `deleteMaterial()` (DELETE), `toggleVisibility()` (PATCH)
+- [x] T014 Extend `CourseService` in `lib/services/api/course_service.dart` with: `getStructure()`, `createStructureItem()`, `updateStructureItem()` (PUT), `deleteStructureItem()`, `reorderStructureItems()` (PATCH)
+- [x] T015 Implement or verify `EnrollmentService.getSectionStudents(sectionId)` returns list with name, email, enrollmentStatus, grade, attendanceRate fields
 
 ### Utilities
 
-- [ ] T016 [P] Create `BundleDetector` in `lib/utils/bundle_detector.dart` — pure function `groupMaterialsIntoBundles(List<CourseMaterialModel>)` that strips suffixes (" - Video", " - Slides", " - Notes", " - {filename}") and groups by matching base title + weekNumber; returns `List<MaterialBundleModel>`; normalize base titles by trimming whitespace, collapsing runs, and case-insensitive comparison
-- [ ] T017 [P] Create `FileValidator` in `lib/utils/file_validator.dart` — client-side validation: documents max 50MB (pdf, docx, pptx, xlsx), images max 10MB (jpg, png, gif, webp), videos no client limit; validate MIME types and extensions
+- [x] T016 [P] Create `BundleDetector` in `lib/utils/bundle_detector.dart` — pure function `groupMaterialsIntoBundles(List<CourseMaterialModel>)` that strips suffixes (" - Video", " - Slides", " - Notes", " - {filename}") and groups by matching base title + weekNumber; returns `List<MaterialBundleModel>`; normalize base titles by trimming whitespace, collapsing runs, and case-insensitive comparison
+- [x] T017 [P] Create `FileValidator` in `lib/utils/file_validator.dart` — client-side validation: documents max 50MB (pdf, docx, pptx, xlsx), images max 10MB (jpg, png, gif, webp), videos no client limit; validate MIME types and extensions
 
 ### BLoC Scaffolding
 
-- [ ] T018 [P] Create `InstructorCoursesBloc` class in `lib/bloc/instructor/instructor_courses_bloc.dart` with injected `EnrollmentService`; implement `init`/`close` lifecycle
-- [ ] T019 [P] Create `InstructorCoursesEvent` classes in `lib/bloc/instructor/instructor_courses_event.dart`: `LoadTeachingCourses`, `SelectCourse(courseId)`, `LoadDeadlines(courseId)`
-- [ ] T020 [P] Create `InstructorCoursesState` classes in `lib/bloc/instructor/instructor_courses_state.dart`: `InstructorCoursesLoading`, `InstructorCoursesLoaded(List<TeachingCourseModel>)`, `InstructorCoursesError(String)`, `DeadlinesLoaded(List<DeadlineCardModel>)`
-- [ ] T021 [P] Create `MaterialsBloc` in `lib/bloc/materials/materials_bloc.dart` with events: `LoadMaterials`, `UploadMaterial`, `UpdateMaterial`, `DeleteMaterial`, `ToggleMaterialVisibility`; states: `MaterialsLoading`, `MaterialsLoaded`, `MaterialsError`, `UploadProgress`; inject `MaterialService`
-- [ ] T022 [P] Create `CourseStructureBloc` in `lib/bloc/course_structure/course_structure_bloc.dart` with events: `LoadStructure`, `CreateStructureItem`, `UpdateStructureItem`, `DeleteStructureItem`, `ReorderStructureItems`; states: `StructureLoading`, `StructureLoaded`, `StructureError`; inject `CourseService`
+- [x] T018 [P] Create `InstructorCoursesBloc` class in `lib/bloc/instructor/instructor_courses_bloc.dart` with injected `EnrollmentService`; implement `init`/`close` lifecycle
+- [x] T019 [P] Create `InstructorCoursesEvent` classes in `lib/bloc/instructor/instructor_courses_event.dart`: `LoadTeachingCourses`, `SelectCourse(courseId)`, `LoadDeadlines(courseId)`
+- [x] T020 [P] Create `InstructorCoursesState` classes in `lib/bloc/instructor/instructor_courses_state.dart`: `InstructorCoursesLoading`, `InstructorCoursesLoaded(List<TeachingCourseModel>)`, `InstructorCoursesError(String)`, `DeadlinesLoaded(List<DeadlineCardModel>)`
+- [x] T021 [P] Create `MaterialsBloc` in `lib/bloc/materials/materials_bloc.dart` with events: `LoadMaterials`, `UploadMaterial`, `UpdateMaterial`, `DeleteMaterial`, `ToggleMaterialVisibility`; states: `MaterialsLoading`, `MaterialsLoaded`, `MaterialsError`, `UploadProgress`; inject `MaterialService`
+- [x] T022 [P] Create `CourseStructureBloc` in `lib/bloc/course_structure/course_structure_bloc.dart` with events: `LoadStructure`, `CreateStructureItem`, `UpdateStructureItem`, `DeleteStructureItem`, `ReorderStructureItems`; states: `StructureLoading`, `StructureLoaded`, `StructureError`; inject `CourseService`
 
 ### Tests for Foundational Layer
 
-- [ ] T023 [P] Model unit tests: `TeachingCourseModel` parsing in `test/models/instructor_course_model_test.dart` — test `isPublished` as 0/1, decimal fields as strings, nested objects
-- [ ] T024 [P] Model unit tests: `CourseMaterialModel` parsing in `test/models/course_material_model_phase5_test.dart` — test all enum parsing, URL fields, null handling
-- [ ] T025 [P] Model unit tests: `MaterialBundleModel` in `test/models/material_bundle_model_phase5_test.dart` — test bundle grouping logic
-- [ ] T026 [P] Utility tests: `BundleDetector` in `test/utils/bundle_detector_test.dart` — test suffix stripping, same-week grouping, edge cases (no match, single item, all same base)
-- [ ] T027 [P] Utility tests: `FileValidator` in `test/utils/file_validator_test.dart` — test size limits, allowed types, rejected types
-- [ ] T028 [P] BLoC unit tests: `InstructorCoursesBloc` in `test/bloc/instructor/instructor_courses_bloc_test.dart` — test loading success, empty list, API error
-- [ ] T029 [P] BLoC unit tests: `MaterialsBloc` in `test/bloc/materials/materials_bloc_test.dart` — test upload success, upload failure, CRUD operations
-- [ ] T030 [P] BLoC unit tests: `CourseStructureBloc` in `test/bloc/course_structure/course_structure_bloc_test.dart` — test CRUD operations, reorder
+- [x] T023 [P] Model unit tests: `TeachingCourseModel` parsing in `test/models/instructor_course_model_test.dart` — test `isPublished` as 0/1, decimal fields as strings, nested objects
+- [x] T024 [P] Model unit tests: `CourseMaterialModel` parsing in `test/models/course_material_model_phase5_test.dart` — test all enum parsing, URL fields, null handling
+- [x] T025 [P] Model unit tests: `MaterialBundleModel` in `test/models/material_bundle_model_phase5_test.dart` — test bundle grouping logic
+- [x] T026 [P] Utility tests: `BundleDetector` in `test/utils/bundle_detector_test.dart` — test suffix stripping, same-week grouping, edge cases (no match, single item, all same base)
+- [x] T027 [P] Utility tests: `FileValidator` in `test/utils/file_validator_test.dart` — test size limits, allowed types, rejected types
+- [x] T028 [P] BLoC unit tests: `InstructorCoursesBloc` in `test/bloc/instructor/instructor_courses_bloc_test.dart` — test loading success, empty list, API error
+- [x] T029 [P] BLoC unit tests: `MaterialsBloc` in `test/bloc/materials/materials_bloc_test.dart` — test upload success, upload failure, CRUD operations
+- [x] T030 [P] BLoC unit tests: `CourseStructureBloc` in `test/bloc/course_structure/course_structure_bloc_test.dart` — test CRUD operations, reorder
 
 **Checkpoint**: Foundation ready — all models parse correctly, services have all methods, BLoCs scaffolded, tests pass
 
@@ -97,10 +97,10 @@
 - [ ] T033 [P] [US1] Create `CourseListCard` widget in `lib/widgets/instructor/courses/course_list_card.dart` — displays teaching course data from `TeachingCourseModel` with course code, name, semester, enrolled count, capacity; preserve existing card layout/colors/spacing
 - [ ] T034 [P] [US1] Create `CourseGridCard` widget in `lib/widgets/instructor/courses/course_grid_card.dart` — grid variant for tablet/desktop; preserve existing visual design
 - [ ] T035 [P] [US1] Create `CourseCompactCard` widget in `lib/widgets/instructor/courses/course_compact_card.dart` — compact variant for mobile; preserve existing visual design
-- [ ] T036 [US1] Update `InstructorCoursesScreen` in `lib/screens/instructor/courses/instructor_courses_screen.dart` — remove mock data, wire `InstructorCoursesBloc` via `BlocBuilder`, dispatch `LoadTeachingCourses` on init; show loading/empty/error states; preserve ≥85% visual similarity
+- [x] T036 [US1] Update `InstructorCoursesScreen` in `lib/screens/instructor/courses/instructor_courses_screen.dart` — remove mock data, wire `InstructorCoursesBloc` via `BlocBuilder`, dispatch `LoadTeachingCourses` on init; show loading/empty/error states; preserve ≥85% visual similarity
 - [ ] T037 [US1] Add empty state widget in `lib/widgets/instructor/courses/empty_courses_message.dart` — illustration + "No courses assigned yet" message
-- [ ] T038 [US1] Add route `/instructor/courses/:courseId` → `CourseManagementScreen` in `lib/config/app_router.dart` with `courseId` (int) path param; wire course card tap navigation via `GoRouter.pushNamed`
-- [ ] T039 [US1] Verify existing instructor navigation routes in `lib/config/app_router.dart` are not broken by new route additions
+- [x] T038 [US1] Add route `/instructor/courses/:courseId` → `CourseManagementScreen` in `lib/config/app_router.dart` with `courseId` (int) path param; wire course card tap navigation via `GoRouter.pushNamed`
+- [x] T039 [US1] Verify existing instructor navigation routes in `lib/config/app_router.dart` are not broken by new route additions
 
 **Checkpoint**: Teaching courses list fully functional from live API, independently testable
 
@@ -114,10 +114,10 @@
 
 ### Tests for User Story 2
 
-- [ ] T040 [P] [US2] Service integration test: `uploadDocument()` in `test/services/api/material_service_phase5_test.dart` — verify FormData with `document` field, response parsing
-- [ ] T041 [P] [US2] Service integration test: `uploadVideo()` in `test/services/api/material_service_phase5_test.dart` — verify FormData with `video` field, `onSendProgress` callback fires
-- [ ] T042 [P] [US2] Service integration test: `uploadTextLink()` in `test/services/api/material_service_phase5_test.dart` — verify JSON body, response parsing
-- [ ] T043 [P] [US2] Widget test: `UploadMaterialsScreen` in `test/widgets/instructor/upload_materials_screen_test.dart` — test all 4 upload flows, progress UI, error states, file validation rejection
+- [x] T040 [P] [US2] Service integration test: `uploadDocument()` in `test/services/api/material_service_phase5_test.dart` — verify FormData with `document` field, response parsing
+- [x] T041 [P] [US2] Service integration test: `uploadVideo()` in `test/services/api/material_service_phase5_test.dart` — verify FormData with `video` field, `onSendProgress` callback fires
+- [x] T042 [P] [US2] Service integration test: `uploadTextLink()` in `test/services/api/material_service_phase5_test.dart` — verify JSON body, response parsing
+- [x] T043 [P] [US2] Widget test: `UploadMaterialsScreen` in `test/widgets/instructor/upload_materials_screen_test.dart` — test all 4 upload flows, progress UI, error states, file validation rejection
 
 ### Implementation for User Story 2
 
@@ -125,10 +125,10 @@
 - [ ] T045 [P] [US2] Create `BundleUploadSection` widget in `lib/widgets/instructor/upload_materials/bundle_upload_section.dart` — multi-file picker (video + documents), sequential upload with step labels, manual grouping option (instructor selects files, enters bundle name in text field, confirms — materials tagged with bundle name during upload); include `weekNumber` in FormData for all uploads
 - [ ] T046 [P] [US2] Update `UploadSelectors` widget in `lib/widgets/instructor/upload_materials/upload_selectors.dart` — populate course selector dropdown from `InstructorCoursesBloc` teaching courses, add week number selector, material type picker
 - [ ] T047 [P] [US2] Update `UploadQueueCard` widget in `lib/widgets/instructor/upload_materials/upload_queue_card.dart` — show queued uploads with progress, status badges, error indicators
-- [ ] T048 [US2] Update `UploadMaterialsScreen` in `lib/screens/instructor/upload_materials/upload_materials_screen.dart` — remove mock data/static upload confirmations, wire `MaterialsBloc` via `BlocConsumer`, dispatch upload events, handle `UploadProgress` states; integrate `FileValidator` before upload; include `weekNumber` in all upload FormData/JSON bodies; preserve ≥85% visual similarity
-- [ ] T049 [US2] Implement bundle upload flow in `MaterialsBloc` — sequential upload: video first, then documents; emit `UploadProgress` state for each step; if any document upload fails, keep successfully uploaded documents, emit error for failed items with retry option; on full completion, emit refresh event for materials library
+- [x] T048 [US2] Update `UploadMaterialsScreen` in `lib/screens/instructor/upload_materials/upload_materials_screen.dart` — remove mock data/static upload confirmations, wire `MaterialsBloc` via `BlocConsumer`, dispatch upload events, handle `UploadProgress` states; integrate `FileValidator` before upload; include `weekNumber` in all upload FormData/JSON bodies; preserve ≥85% visual similarity
+- [x] T049 [US2] Implement bundle upload flow in `MaterialsBloc` — sequential upload: video first, then documents; emit `UploadProgress` state for each step; if any document upload fails, keep successfully uploaded documents, emit error for failed items with retry option; on full completion, emit refresh event for materials library
 - [ ] T050 [US2] Implement YouTube OAuth error handling in `MaterialsBloc` — catch 401 from video upload, emit error with message "YouTube not authorized. Contact admin."
-- [ ] T051 [US2] After upload success, dispatch `LoadMaterials` event to refresh library from API (do NOT optimistically append per Constitution Principle X); apply same refresh-after-operation pattern for edit/delete operations in US3
+- [x] T051 [US2] After upload success, dispatch `LoadMaterials` event to refresh library from API (do NOT optimistically append per Constitution Principle X); apply same refresh-after-operation pattern for edit/delete operations in US3
 
 **Checkpoint**: All 4 upload types functional, progress tracking works, file validation enforced, materials appear in library after upload
 
@@ -142,9 +142,9 @@
 
 ### Tests for User Story 3
 
-- [ ] T052 [P] [US3] BLoC test: `MaterialsBloc` toggle visibility in `test/bloc/materials/materials_bloc_test.dart` — test successful toggle, API error; assert operation completes within 1 second (SC-005)
-- [ ] T053 [P] [US3] BLoC test: `MaterialsBloc` delete bundle in `test/bloc/materials/materials_bloc_test.dart` — test parallel delete calls, partial failure (some succeed, some fail)
-- [ ] T054 [P] [US3] Widget test: `MaterialsTab` in `test/widgets/instructor/course_management/materials_tab_test.dart` — test week grouping, bundle display, toggle visibility UI, edit dialog, delete confirmation
+- [x] T052 [P] [US3] BLoC test: `MaterialsBloc` toggle visibility in `test/bloc/materials/materials_bloc_test.dart` — test successful toggle, API error; assert operation completes within 1 second (SC-005)
+- [x] T053 [P] [US3] BLoC test: `MaterialsBloc` delete bundle in `test/bloc/materials/materials_bloc_test.dart` — test parallel delete calls, partial failure (some succeed, some fail)
+- [x] T054 [P] [US3] Widget test: `MaterialsTab` in `test/widgets/instructor/course_management/materials_tab_test.dart` — test week grouping, bundle display, toggle visibility UI, edit dialog, delete confirmation
 
 ### Implementation for User Story 3
 
@@ -168,8 +168,8 @@
 
 ### Tests for User Story 4
 
-- [ ] T062 [P] [US4] Service integration test: `CourseService` structure CRUD in `test/services/api/course_service_phase5_test.dart` — test create, update, delete, reorder endpoints
-- [ ] T063 [P] [US4] BLoC test: `CourseStructureBloc` in `test/bloc/course_structure/course_structure_bloc_test.dart` — test all CRUD events, reorder event, error handling
+- [x] T062 [P] [US4] Service integration test: `CourseService` structure CRUD in `test/services/api/course_service_phase5_test.dart` — test create, update, delete, reorder endpoints
+- [x] T063 [P] [US4] BLoC test: `CourseStructureBloc` in `test/bloc/course_structure/course_structure_bloc_test.dart` — test all CRUD events, reorder event, error handling
 - [ ] T064 [P] [US4] Widget test: Course structure editor in `test/widgets/instructor/course_management/course_structure_editor_test.dart` — test create dialog, edit inline, reorder controls, delete confirmation with warning
 
 ### Implementation for User Story 4
@@ -194,17 +194,17 @@
 
 ### Tests for User Story 5
 
-- [ ] T072 [P] [US5] Service integration test: Deadlines fetch via `InstructorCoursesBloc.LoadDeadlines` in `test/bloc/instructor/instructor_courses_bloc_test.dart` — verify `GET /assignments?courseId={id}` and `GET /labs?courseId={id}` read-only response parsing, `DeadlineCardModel` emission
-- [ ] T073 [P] [US5] Widget test: `CourseManagementScreen` in `test/widgets/instructor/course_management_screen_test.dart` — test 5 sub-tabs present, Overview loads live data using `EngagementMetricsModel` and `DeadlineCardModel` from `instructor_course_model.dart`, placeholders for Assignments/Grading
+- [x] T072 [P] [US5] Service integration test: Deadlines fetch via `InstructorCoursesBloc.LoadDeadlines` in `test/bloc/instructor/instructor_courses_bloc_test.dart` — verify `GET /assignments?courseId={id}` and `GET /labs?courseId={id}` read-only response parsing, `DeadlineCardModel` emission
+- [x] T073 [P] [US5] Widget test: `CourseManagementScreen` in `test/widgets/instructor/course_management_screen_test.dart` — test 5 sub-tabs present, Overview loads live data using `EngagementMetricsModel` and `DeadlineCardModel` from `instructor_course_model.dart`, placeholders for Assignments/Grading
 
 ### Implementation for User Story 5
 
-- [ ] T074 [US5] Update `CourseManagementScreen` in `lib/screens/instructor/course_management/course_management_screen.dart` — ensure 5 sub-tabs (Overview, Lectures, Assignments, Grading, Students); wire live data to each tab; preserve TabBar layout/colors/structure; preserve ≥85% visual similarity
-- [ ] T075 [P] [US5] Update `OverviewTab` widget in `lib/widgets/instructor/course_management/overview_tab.dart` — remove mock stats, wire live data using `EngagementMetricsModel` and `DeadlineCardModel` from `instructor_course_model.dart`: student count from section enrollment, average grade percentage, engagement metrics (material views/downloads + assignment submission rate capped at first 20 assignments for performance, fetched in parallel), section schedules (FR-013: day, time, room, building, schedule type), upcoming deadlines from `InstructorCoursesBloc.LoadDeadlines`; preserve card layout/colors
+- [x] T074 [US5] Update `CourseManagementScreen` in `lib/screens/instructor/course_management/course_management_screen.dart` — ensure 5 sub-tabs (Overview, Lectures, Assignments, Grading, Students); wire live data to each tab; preserve TabBar layout/colors/structure; preserve ≥85% visual similarity
+- [x] T075 [P] [US5] Update `OverviewTab` widget in `lib/widgets/instructor/course_management/overview_tab.dart` — remove mock stats, wire live data using `EngagementMetricsModel` and `DeadlineCardModel` from `instructor_course_model.dart`: student count from section enrollment, average grade percentage, engagement metrics (material views/downloads + assignment submission rate capped at first 20 assignments for performance, fetched in parallel), section schedules (FR-013: day, time, room, building, schedule type), upcoming deadlines from `InstructorCoursesBloc.LoadDeadlines`; preserve card layout/colors
 - [ ] T076 [P] [US5] Verify `MaterialsTab` renders correctly as Lectures sub-tab in `CourseManagementScreen` — confirm week grouping and bundle detection display properly when accessed via Lectures tab navigation (manual QA step)
-- [ ] T077 [P] [US5] Create `AssignmentsTab` placeholder in `lib/widgets/instructor/course_management/assignments_tab.dart` — display "Assignments management coming soon" placeholder state; preserve tab layout structure
-- [ ] T078 [P] [US5] Create `GradingTab` placeholder in `lib/widgets/instructor/course_management/grading_tab.dart` — display "Grading coming soon" placeholder state; preserve tab layout structure
-- [ ] T079 [US5] Wire deadlines fetch in `InstructorCoursesBloc` — `LoadDeadlines(courseId)` event calls read-only `GET /assignments?courseId={id}` and `GET /labs?courseId={id}`, filters for upcoming due dates, emits `DeadlineCardModel` list via `DeadlinesLoaded` state for Overview tab consumption
+- [x] T077 [P] [US5] Create `AssignmentsTab` placeholder in `lib/widgets/instructor/course_management/assignments_tab.dart` — display "Assignments management coming soon" placeholder state; preserve tab layout structure
+- [x] T078 [P] [US5] Create `GradingTab` placeholder in `lib/widgets/instructor/course_management/grading_tab.dart` — display "Grading coming soon" placeholder state; preserve tab layout structure
+- [x] T079 [US5] Wire deadlines fetch in `InstructorCoursesBloc` — `LoadDeadlines(courseId)` event calls read-only `GET /assignments?courseId={id}` and `GET /labs?courseId={id}`, filters for upcoming due dates, emits `DeadlineCardModel` list via `DeadlinesLoaded` state for Overview tab consumption
 - [ ] T080 [US5] Wire engagement metrics computation in `OverviewTab` — (1) sum viewCount/downloadCount across all materials from `MaterialsBloc`; (2) compute assignment submission rate: fetch enrolled student count from section data, fetch up to 20 assignments via `GET /assignments?courseId={id}` (cap for performance), count unique students with submissions from `GET /assignments/{id}/submissions` per assignment (fetch in parallel), calculate (unique submitters / total enrolled) × 100; use `EngagementMetricsModel` from `instructor_course_model.dart`
 
 **Checkpoint**: Course detail screen fully functional with live data in Overview/Lectures/Students tabs, placeholders for Assignments/Grading
@@ -219,13 +219,13 @@
 
 ### Tests for User Story 6
 
-- [ ] T081 [P] [US6] Service integration test: `getSectionStudents()` in `test/services/api/enrollment_service_phase5_test.dart` — verify response parsing with name, email, grade, attendanceRate
-- [ ] T082 [P] [US6] Widget test: `StudentsTab` in `test/widgets/instructor/course_management/students_tab_test.dart` — test loaded state with students, empty state, error state
+- [x] T081 [P] [US6] Service integration test: `getSectionStudents()` in `test/services/api/enrollment_service_phase5_test.dart` — verify response parsing with name, email, grade, attendanceRate
+- [x] T082 [P] [US6] Widget test: `StudentsTab` in `test/widgets/instructor/course_management/students_tab_test.dart` — test loaded state with students, empty state, error state
 
 ### Implementation for User Story 6
 
-- [ ] T083 [P] [US6] Update `StudentsTab` widget in `lib/widgets/instructor/course_management/students_tab.dart` — remove mock student roster, wire `EnrollmentService.getSectionStudents(sectionId)` via BLoC; display student name, email, enrollment status badge, grade, attendance rate; preserve existing card/table layout; preserve ≥85% visual similarity
-- [ ] T084 [US6] Add empty state for Students tab — "No students enrolled yet" message when API returns empty list
+- [x] T083 [P] [US6] Update `StudentsTab` widget in `lib/widgets/instructor/course_management/students_tab.dart` — remove mock student roster, wire `EnrollmentService.getSectionStudents(sectionId)` via BLoC; display student name, email, enrollment status badge, grade, attendance rate; preserve existing card/table layout; preserve ≥85% visual similarity
+- [x] T084 [US6] Add empty state for Students tab — "No students enrolled yet" message when API returns empty list
 
 **Checkpoint**: Students tab fully functional with live API data, empty state works
 
@@ -263,8 +263,8 @@
 
 ### Final Validation
 
-- [ ] T099 Run full `flutter analyze` — verify no new errors introduced
-- [ ] T100 Run full `flutter test` — verify all Phase 5 tests pass
+- [x] T099 Run full `flutter analyze` — verify no new errors introduced
+- [x] T100 Run full `flutter test` — verify all Phase 5 tests pass
 - [ ] T101 Run quickstart.md verification checklist from `specs/019-instructor-courses-materials/quickstart.md`
 - [ ] T102 Verify role-based access control (Constitution IX): add role check in `InstructorCoursesScreen` and `UploadMaterialsScreen` — confirm screens are inaccessible to student role (redirect or show "Access Denied"); confirm TA role can upload materials but cannot delete courses or course structure
 - [ ] T103 Fix spec.md SC-002: update "progress bar that updates at least every 2 seconds" → "progress bar that updates at least every 500ms" to align with plan.md implementation

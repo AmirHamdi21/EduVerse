@@ -6,3 +6,4 @@ export 'course_list_card.dart';
 export 'course_compact_card.dart';
 export 'course_preview_modal.dart';
 export 'course_skeleton_card.dart';
+export 'empty_courses_message.dart';

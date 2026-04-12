@@ -111,13 +111,7 @@ extension MaterialTypeExtension on CourseMaterialType {
 }
 
 /// Upload status enum
-enum UploadStatus {
-  pending,
-  uploading,
-  processing,
-  completed,
-  failed,
-}
+enum UploadStatus { pending, uploading, processing, completed, failed }
 
 /// Course material model
 class CourseMaterial {
@@ -194,8 +188,10 @@ class CourseMaterial {
   String get formattedSize {
     if (fileSize == null) return '';
     if (fileSize! < 1024) return '$fileSize B';
-    if (fileSize! < 1024 * 1024) return '${(fileSize! / 1024).toStringAsFixed(1)} KB';
-    if (fileSize! < 1024 * 1024 * 1024) return '${(fileSize! / (1024 * 1024)).toStringAsFixed(1)} MB';
+    if (fileSize! < 1024 * 1024)
+      return '${(fileSize! / 1024).toStringAsFixed(1)} KB';
+    if (fileSize! < 1024 * 1024 * 1024)
+      return '${(fileSize! / (1024 * 1024)).toStringAsFixed(1)} MB';
     return '${(fileSize! / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
   }
 }
@@ -242,9 +238,75 @@ class UploadQueueItem {
 
   String get formattedSize {
     if (fileSize < 1024) return '$fileSize B';
-    if (fileSize < 1024 * 1024) return '${(fileSize / 1024).toStringAsFixed(1)} KB';
-    if (fileSize < 1024 * 1024 * 1024) return '${(fileSize / (1024 * 1024)).toStringAsFixed(1)} MB';
+    if (fileSize < 1024 * 1024)
+      return '${(fileSize / 1024).toStringAsFixed(1)} KB';
+    if (fileSize < 1024 * 1024 * 1024)
+      return '${(fileSize / (1024 * 1024)).toStringAsFixed(1)} MB';
     return '${(fileSize / (1024 * 1024 * 1024)).toStringAsFixed(1)} GB';
+  }
+}
+
+enum UploadProgressStatus { queued, uploading, completed, failed }
+
+class UploadProgressState {
+  final String uploadId;
+  final String fileName;
+  final int fileSize;
+  final int bytesSent;
+  final int totalBytes;
+  final UploadProgressStatus status;
+  final String stepLabel;
+  final String? errorMessage;
+  final DateTime startedAt;
+  final DateTime? completedAt;
+
+  const UploadProgressState({
+    required this.uploadId,
+    required this.fileName,
+    required this.fileSize,
+    required this.bytesSent,
+    required this.totalBytes,
+    required this.status,
+    required this.stepLabel,
+    this.errorMessage,
+    required this.startedAt,
+    this.completedAt,
+  });
+
+  double get progressPercent {
+    if (totalBytes <= 0) {
+      return 0;
+    }
+    final ratio = bytesSent / totalBytes;
+    return (ratio * 100).clamp(0, 100).toDouble();
+  }
+
+  UploadQueueItem toQueueItem(CourseMaterialType type) {
+    UploadStatus queueStatus;
+    switch (status) {
+      case UploadProgressStatus.queued:
+        queueStatus = UploadStatus.pending;
+        break;
+      case UploadProgressStatus.uploading:
+        queueStatus = UploadStatus.uploading;
+        break;
+      case UploadProgressStatus.completed:
+        queueStatus = UploadStatus.completed;
+        break;
+      case UploadProgressStatus.failed:
+        queueStatus = UploadStatus.failed;
+        break;
+    }
+
+    return UploadQueueItem(
+      id: uploadId,
+      fileName: fileName,
+      fileSize: fileSize,
+      type: type,
+      status: queueStatus,
+      progress: totalBytes > 0 ? (bytesSent / totalBytes).clamp(0, 1) : 0,
+      errorMessage: errorMessage,
+    );
   }
 }
 

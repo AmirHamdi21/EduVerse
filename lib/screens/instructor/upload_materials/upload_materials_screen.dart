@@ -1,10 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
+import '../../../bloc/instructor/instructor_courses_bloc.dart';
+import '../../../bloc/instructor/instructor_courses_event.dart';
+import '../../../bloc/instructor/instructor_courses_state.dart';
+import '../../../bloc/course_structure/course_structure_bloc.dart';
+import '../../../bloc/course_structure/course_structure_event.dart';
+import '../../../bloc/course_structure/course_structure_state.dart';
+import '../../../bloc/materials/materials_bloc.dart';
+import '../../../bloc/materials/materials_event.dart';
+import '../../../bloc/materials/materials_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../models/core/course_structure_model.dart';
 import '../../../models/instructor/upload_materials_model.dart';
+import '../../../models/instructor/teaching_course_model.dart';
+import '../../../models/materials/course_material_model.dart' as materials_api;
+import '../../../utils/file_validator.dart';
 import '../../../widgets/instructor/upload_materials/upload_materials_barrel.dart';
 
 /// Upload Materials Screen for instructors
@@ -17,6 +32,8 @@ class UploadMaterialsScreen extends StatefulWidget {
 
 class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
     with SingleTickerProviderStateMixin {
+  static const Uuid _uuid = Uuid();
+
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
   final TextEditingController _materialNameController = TextEditingController();
@@ -32,112 +49,22 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
   // Upload state
   final List<UploadQueueItem> _uploadQueue = [];
   final List<CourseMaterial> _uploadedMaterials = [];
-  bool _isUploading = false;
 
-  // Mock data
-  final List<CourseOption> _courses = [
-    CourseOption(
-      id: 'cs101',
-      name: 'Introduction to Computer Science',
-      code: 'CS 101',
-      modules: [
-        const CourseModule(
-          id: 'm1',
-          name: 'Module 1: Basics',
-          materialCount: 5,
-        ),
-        const CourseModule(
-          id: 'm2',
-          name: 'Module 2: Programming',
-          materialCount: 3,
-        ),
-        const CourseModule(
-          id: 'm3',
-          name: 'Module 3: Data Structures',
-          materialCount: 0,
-        ),
-      ],
-    ),
-    const CourseOption(
-      id: 'cs201',
-      name: 'Data Structures & Algorithms',
-      code: 'CS 201',
-      modules: [
-        CourseModule(id: 'm1', name: 'Arrays & Lists', materialCount: 4),
-        CourseModule(id: 'm2', name: 'Trees & Graphs', materialCount: 2),
-      ],
-    ),
-    const CourseOption(
-      id: 'cs301',
-      name: 'Database Systems',
-      code: 'CS 301',
-      modules: [
-        CourseModule(id: 'm1', name: 'SQL Basics', materialCount: 6),
-        CourseModule(id: 'm2', name: 'Normalization', materialCount: 1),
-      ],
-    ),
-  ];
+  final List<CourseOption> _courses = <CourseOption>[];
+  final Map<String, List<CourseModule>> _weekModulesByCourse =
+      <String, List<CourseModule>>{};
+
+  static final List<CourseModule> _defaultWeekModules =
+      List<CourseModule>.generate(
+        16,
+        (index) => CourseModule(id: '${index + 1}', name: 'Week ${index + 1}'),
+      );
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _loadMockMaterials();
-  }
-
-  void _loadMockMaterials() {
-    _uploadedMaterials.addAll([
-      CourseMaterial(
-        id: '1',
-        name: 'Course Syllabus',
-        description: 'Complete course syllabus for CS 101',
-        type: CourseMaterialType.document,
-        fileSize: 256000,
-        courseId: 'cs101',
-        uploadedAt: DateTime.now().subtract(const Duration(days: 7)),
-        status: UploadStatus.completed,
-        isVisible: true,
-        downloadCount: 45,
-        tags: ['syllabus', 'important'],
-      ),
-      CourseMaterial(
-        id: '2',
-        name: 'Lecture 1 - Introduction',
-        type: CourseMaterialType.video,
-        fileSize: 125000000,
-        courseId: 'cs101',
-        moduleId: 'm1',
-        uploadedAt: DateTime.now().subtract(const Duration(days: 5)),
-        status: UploadStatus.completed,
-        isVisible: true,
-        downloadCount: 32,
-        tags: ['lecture', 'video'],
-      ),
-      CourseMaterial(
-        id: '3',
-        name: 'Week 1 Slides',
-        type: CourseMaterialType.presentation,
-        fileSize: 4500000,
-        courseId: 'cs101',
-        moduleId: 'm1',
-        uploadedAt: DateTime.now().subtract(const Duration(days: 3)),
-        status: UploadStatus.completed,
-        isVisible: true,
-        downloadCount: 28,
-      ),
-      CourseMaterial(
-        id: '4',
-        name: 'Programming Exercise Dataset',
-        type: CourseMaterialType.spreadsheet,
-        fileSize: 890000,
-        courseId: 'cs101',
-        moduleId: 'm2',
-        uploadedAt: DateTime.now().subtract(const Duration(days: 1)),
-        status: UploadStatus.completed,
-        isVisible: false,
-        downloadCount: 0,
-      ),
-    ]);
+    context.read<InstructorCoursesBloc>().add(const LoadTeachingCourses());
   }
 
   @override
@@ -151,12 +78,25 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
   }
 
   List<CourseModule> get _availableModules {
-    if (_selectedCourseId == null) return [];
-    final course = _courses.firstWhere(
-      (c) => c.id == _selectedCourseId,
-      orElse: () => const CourseOption(id: '', name: '', code: ''),
-    );
-    return course.modules;
+    final selectedCourseId = _selectedCourseId;
+    if (selectedCourseId == null) {
+      return const <CourseModule>[];
+    }
+
+    final modules = _weekModulesByCourse[selectedCourseId];
+    if (modules == null || modules.isEmpty) {
+      return _defaultWeekModules;
+    }
+
+    return modules;
+  }
+
+  int? get _selectedWeekNumber {
+    final parsed = int.tryParse(_selectedModuleId ?? '');
+    if (parsed == null || parsed <= 0) {
+      return null;
+    }
+    return parsed;
   }
 
   List<CourseMaterial> get _filteredMaterials {
@@ -199,109 +139,226 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
 
   void _handleFileUpload(bool isDark) {
     Navigator.pop(context);
-    // Simulate file picker
-    _simulateFileSelection();
+    _pickAndUploadFiles(materialType: 'document');
   }
 
-  void _simulateFileSelection() {
-    // Add mock files to upload queue
-    final mockFiles = [
-      UploadQueueItem(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        fileName: 'Lecture_Notes_Week2.pdf',
-        fileSize: 2500000,
-        type: CourseMaterialType.document,
-        status: UploadStatus.pending,
-      ),
-      UploadQueueItem(
-        id: (DateTime.now().millisecondsSinceEpoch + 1).toString(),
-        fileName: 'Assignment_Template.docx',
-        fileSize: 156000,
-        type: CourseMaterialType.document,
-        status: UploadStatus.pending,
-      ),
-    ];
-
-    setState(() {
-      _uploadQueue.addAll(mockFiles);
-      _tabController.animateTo(0); // Switch to upload tab
-    });
-
-    _startUploading();
-  }
-
-  void _startUploading() {
-    if (_isUploading) return;
-    _isUploading = true;
-    _processUploadQueue();
-  }
-
-  void _processUploadQueue() async {
-    for (int i = 0; i < _uploadQueue.length; i++) {
-      if (_uploadQueue[i].status != UploadStatus.pending) continue;
-
-      // Start uploading
-      setState(() {
-        _uploadQueue[i] = _uploadQueue[i].copyWith(
-          status: UploadStatus.uploading,
-          progress: 0.0,
-        );
-      });
-
-      // Simulate upload progress
-      for (double progress = 0.0; progress <= 1.0; progress += 0.1) {
-        await Future.delayed(const Duration(milliseconds: 200));
-        if (!mounted) return;
-        setState(() {
-          _uploadQueue[i] = _uploadQueue[i].copyWith(progress: progress);
-        });
-      }
-
-      // Processing
-      setState(() {
-        _uploadQueue[i] = _uploadQueue[i].copyWith(
-          status: UploadStatus.processing,
-          progress: 1.0,
-        );
-      });
-
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (!mounted) return;
-
-      // Completed
-      setState(() {
-        _uploadQueue[i] = _uploadQueue[i].copyWith(
-          status: UploadStatus.completed,
-        );
-
-        // Add to uploaded materials
-        _uploadedMaterials.insert(
-          0,
-          CourseMaterial(
-            id: _uploadQueue[i].id,
-            name: _uploadQueue[i].fileName.split('.').first,
-            type: _uploadQueue[i].type,
-            fileSize: _uploadQueue[i].fileSize,
-            courseId: _selectedCourseId ?? 'cs101',
-            moduleId: _selectedModuleId,
-            uploadedAt: DateTime.now(),
-            status: UploadStatus.completed,
-            isVisible: true,
-            downloadCount: 0,
-          ),
-        );
-      });
+  Future<void> _pickAndUploadFiles({required String materialType}) async {
+    if (_selectedCourseId == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Select a course first.')));
+      return;
     }
 
-    _isUploading = false;
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: materialType == 'video' ? FileType.video : FileType.custom,
+      allowedExtensions: materialType == 'video'
+          ? null
+          : <String>[
+              'pdf',
+              'docx',
+              'pptx',
+              'xlsx',
+              'jpg',
+              'jpeg',
+              'png',
+              'gif',
+              'webp',
+            ],
+      withData: false,
+    );
+
+    if (result == null || result.files.isEmpty || !mounted) {
+      return;
+    }
+
+    final courseId = int.tryParse(_selectedCourseId ?? '') ?? 0;
+    if (courseId <= 0) {
+      return;
+    }
+
+    for (final file in result.files) {
+      if (file.path == null) {
+        continue;
+      }
+
+      final validation = _validatePickedFile(file, materialType);
+      if (!validation.isValid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(validation.errorMessage ?? 'Invalid file.')),
+        );
+        continue;
+      }
+
+      final uploadType = materialType == 'video' ? 'video' : 'document';
+      final queueType = materialType == 'video'
+          ? CourseMaterialType.video
+          : CourseMaterialType.document;
+      final uploadId = _uuid.v4();
+
+      setState(() {
+        _uploadQueue.insert(
+          0,
+          UploadQueueItem(
+            id: uploadId,
+            fileName: file.name,
+            fileSize: file.size,
+            type: queueType,
+            status: UploadStatus.pending,
+          ),
+        );
+        _tabController.animateTo(0);
+      });
+
+      context.read<MaterialsBloc>().add(
+        UploadMaterial(
+          courseId: courseId,
+          uploadId: uploadId,
+          title: file.name.split('.').first,
+          materialType: uploadType,
+          filePath: file.path,
+          weekNumber: _selectedWeekNumber,
+          isPublished: true,
+        ),
+      );
+    }
   }
 
-  void _handleFolderUpload() {
+  FileValidationResult _validatePickedFile(PlatformFile file, String type) {
+    if (type == 'video') {
+      return FileValidator.validate(
+        fileName: file.name,
+        fileSizeBytes: file.size,
+        kind: FileValidationKind.video,
+      );
+    }
+
+    final lower = file.name.toLowerCase();
+    final isImage =
+        lower.endsWith('.jpg') ||
+        lower.endsWith('.jpeg') ||
+        lower.endsWith('.png') ||
+        lower.endsWith('.gif') ||
+        lower.endsWith('.webp');
+
+    return FileValidator.validate(
+      fileName: file.name,
+      fileSizeBytes: file.size,
+      kind: isImage ? FileValidationKind.image : FileValidationKind.document,
+    );
+  }
+
+  Future<void> _handleFolderUpload() async {
     Navigator.pop(context);
+
+    if (_selectedCourseId == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Select a course first.')));
+      return;
+    }
+
+    final result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.custom,
+      allowedExtensions: const <String>[
+        'pdf',
+        'docx',
+        'pptx',
+        'xlsx',
+        'jpg',
+        'jpeg',
+        'png',
+        'gif',
+        'webp',
+        'mp4',
+        'mov',
+        'avi',
+        'mkv',
+      ],
+      withData: false,
+    );
+
+    if (result == null || result.files.isEmpty || !mounted) {
+      return;
+    }
+
+    final courseId = int.tryParse(_selectedCourseId ?? '') ?? 0;
+    if (courseId <= 0) {
+      return;
+    }
+
+    String? bundleVideoPath;
+    final bundleDocuments = <String>[];
+
+    for (final file in result.files) {
+      final path = file.path;
+      if (path == null) {
+        continue;
+      }
+
+      final isVideo = _isVideoFile(file.name);
+      final validation = _validatePickedFile(
+        file,
+        isVideo ? 'video' : 'document',
+      );
+      if (!validation.isValid) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(validation.errorMessage ?? 'Invalid file.')),
+        );
+        continue;
+      }
+
+      if (isVideo && bundleVideoPath == null) {
+        bundleVideoPath = path;
+      } else {
+        bundleDocuments.add(path);
+      }
+    }
+
+    if (bundleVideoPath == null && bundleDocuments.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No valid files selected for bundle.')),
+      );
+      return;
+    }
+
+    final uploadId = _uuid.v4();
+    final bundleTitle = _resolveBundleTitle(result.files);
+
+    setState(() {
+      _uploadQueue.insert(
+        0,
+        UploadQueueItem(
+          id: uploadId,
+          fileName: bundleTitle,
+          fileSize: result.files.fold<int>(0, (sum, file) => sum + file.size),
+          type: CourseMaterialType.archive,
+          status: UploadStatus.pending,
+        ),
+      );
+      _tabController.animateTo(0);
+    });
+
+    context.read<MaterialsBloc>().add(
+      UploadMaterial(
+        courseId: courseId,
+        uploadId: uploadId,
+        title: bundleTitle,
+        materialType: 'bundle',
+        weekNumber: _selectedWeekNumber,
+        isPublished: true,
+        bundleVideoPath: bundleVideoPath,
+        bundleDocumentPaths: bundleDocuments,
+      ),
+    );
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Folder upload coming soon'),
+        content: const Text('Bundle upload started'),
         behavior: SnackBarBehavior.floating,
+        backgroundColor: UploadMaterialsColors.success,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
@@ -315,28 +372,42 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
         isDark: isDark,
         controller: _linkController,
         onAdd: (url, title) {
+          final courseId = int.tryParse(_selectedCourseId ?? '') ?? 0;
+          if (courseId <= 0) {
+            return;
+          }
+
+          final uploadId = _uuid.v4();
           setState(() {
-            _uploadedMaterials.insert(
+            _uploadQueue.insert(
               0,
-              CourseMaterial(
-                id: DateTime.now().millisecondsSinceEpoch.toString(),
-                name: title,
+              UploadQueueItem(
+                id: uploadId,
+                fileName: title,
+                fileSize: 0,
                 type: CourseMaterialType.link,
-                fileUrl: url,
-                courseId: _selectedCourseId ?? 'cs101',
-                moduleId: _selectedModuleId,
-                uploadedAt: DateTime.now(),
-                status: UploadStatus.completed,
-                isVisible: true,
-                downloadCount: 0,
+                status: UploadStatus.pending,
               ),
             );
           });
+
+          context.read<MaterialsBloc>().add(
+            UploadMaterial(
+              courseId: courseId,
+              uploadId: uploadId,
+              title: title,
+              materialType: 'link',
+              linkUrl: url,
+              weekNumber: _selectedWeekNumber,
+              isPublished: true,
+            ),
+          );
+
           Navigator.pop(context);
           _linkController.clear();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Link added successfully'),
+              content: const Text('Link upload started'),
               behavior: SnackBarBehavior.floating,
               backgroundColor: UploadMaterialsColors.success,
               shape: RoundedRectangleBorder(
@@ -363,7 +434,9 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
         errorMessage: null,
       );
     });
-    _startUploading();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Retry by selecting the file again.')),
+    );
   }
 
   void _removeFromQueue(int index) {
@@ -415,13 +488,19 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
               ),
               TextButton(
                 onPressed: () {
+                  final courseId = int.tryParse(_selectedCourseId ?? '') ?? 0;
                   Navigator.pop(context);
-                  setState(() {
-                    _uploadedMaterials.remove(material);
-                  });
+                  if (courseId > 0) {
+                    context.read<MaterialsBloc>().add(
+                      DeleteMaterial(
+                        courseId: courseId,
+                        materialIds: <String>[material.id],
+                      ),
+                    );
+                  }
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: const Text('Material deleted'),
+                      content: const Text('Delete request sent'),
                       behavior: SnackBarBehavior.floating,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -445,13 +524,15 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
   }
 
   void _toggleVisibility(CourseMaterial material) {
-    final index = _uploadedMaterials.indexOf(material);
-    if (index != -1) {
-      setState(() {
-        _uploadedMaterials[index] = material.copyWith(
-          isVisible: !material.isVisible,
-        );
-      });
+    final courseId = int.tryParse(_selectedCourseId ?? '') ?? 0;
+    if (courseId > 0) {
+      context.read<MaterialsBloc>().add(
+        ToggleMaterialVisibility(
+          courseId: courseId,
+          materialId: material.id,
+          isPublished: !material.isVisible,
+        ),
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -532,23 +613,26 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
           ),
           ElevatedButton(
             onPressed: () {
-              final index = _uploadedMaterials.indexOf(material);
-              if (index != -1) {
-                setState(() {
-                  _uploadedMaterials[index] = material.copyWith(
-                    name: _materialNameController.text,
-                    description: _materialDescController.text.isEmpty
-                        ? null
-                        : _materialDescController.text,
-                  );
-                });
+              final courseId = int.tryParse(_selectedCourseId ?? '') ?? 0;
+              if (courseId > 0 && _materialNameController.text.isNotEmpty) {
+                context.read<MaterialsBloc>().add(
+                  UpdateMaterial(
+                    courseId: courseId,
+                    materialId: material.id,
+                    payload: <String, dynamic>{
+                      'title': _materialNameController.text,
+                      if (_materialDescController.text.isNotEmpty)
+                        'description': _materialDescController.text,
+                    },
+                  ),
+                );
               }
               Navigator.pop(context);
               _materialNameController.clear();
               _materialDescController.clear();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('Material updated'),
+                  content: const Text('Material update request sent'),
                   behavior: SnackBarBehavior.floating,
                   backgroundColor: UploadMaterialsColors.success,
                   shape: RoundedRectangleBorder(
@@ -577,107 +661,176 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
-        return Scaffold(
-          backgroundColor: UploadMaterialsColors.backgroundColor(isDark),
-          appBar: _buildAppBar(isDark, l10n),
-          body: Column(
-            children: [
-              // Tab bar
-              Container(
-                color: isDark ? UploadMaterialsColors.darkCard : Colors.white,
-                child: TabBar(
-                  controller: _tabController,
-                  labelColor: UploadMaterialsColors.primary,
-                  unselectedLabelColor:
-                      UploadMaterialsColors.textSecondaryColor(isDark),
-                  indicatorColor: UploadMaterialsColors.primary,
-                  indicatorWeight: 3,
-                  tabs: [
-                    Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.cloud_upload_outlined, size: 20),
-                          const SizedBox(width: 8),
-                          Text(l10n.upload),
-                          if (_uploadQueue.isNotEmpty)
-                            Container(
-                              margin: const EdgeInsets.only(left: 8),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: UploadMaterialsColors.primary,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                '${_uploadQueue.length}',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
+        return MultiBlocListener(
+          listeners: [
+            BlocListener<InstructorCoursesBloc, InstructorCoursesState>(
+              listener: (context, state) {
+                if (state is InstructorCoursesLoaded) {
+                  final mapped = _mapTeachingCourses(state.courses);
+                  setState(() {
+                    _courses
+                      ..clear()
+                      ..addAll(mapped);
+
+                    if (_selectedCourseId == null && _courses.isNotEmpty) {
+                      _selectedCourseId = _courses.first.id;
+                    }
+                  });
+
+                  final selected = int.tryParse(_selectedCourseId ?? '');
+                  if (selected != null && selected > 0) {
+                    context.read<MaterialsBloc>().add(LoadMaterials(selected));
+                    context.read<CourseStructureBloc>().add(
+                      LoadStructure(selected),
+                    );
+                  }
+                }
+              },
+            ),
+            BlocListener<MaterialsBloc, MaterialsState>(
+              listener: (context, state) {
+                if (state is MaterialsLoaded) {
+                  setState(() {
+                    _uploadedMaterials
+                      ..clear()
+                      ..addAll(state.materials.map(_mapFromMaterialApi));
+                  });
+                }
+
+                if (state is UploadProgress) {
+                  _upsertQueueFromProgress(state.progress);
+                }
+
+                if (state is MaterialsError && mounted) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(state.message)));
+                }
+              },
+            ),
+            BlocListener<CourseStructureBloc, CourseStructureState>(
+              listener: (context, state) {
+                if (state is StructureLoaded) {
+                  final key = state.courseId.toString();
+                  final mapped = _mapWeekModules(state.items);
+
+                  setState(() {
+                    _weekModulesByCourse[key] = mapped;
+
+                    if (_selectedCourseId == key &&
+                        _selectedModuleId != null &&
+                        !mapped.any(
+                          (module) => module.id == _selectedModuleId,
+                        )) {
+                      _selectedModuleId = null;
+                    }
+                  });
+                }
+              },
+            ),
+          ],
+          child: Scaffold(
+            backgroundColor: UploadMaterialsColors.backgroundColor(isDark),
+            appBar: _buildAppBar(isDark, l10n),
+            body: Column(
+              children: [
+                // Tab bar
+                Container(
+                  color: isDark ? UploadMaterialsColors.darkCard : Colors.white,
+                  child: TabBar(
+                    controller: _tabController,
+                    labelColor: UploadMaterialsColors.primary,
+                    unselectedLabelColor:
+                        UploadMaterialsColors.textSecondaryColor(isDark),
+                    indicatorColor: UploadMaterialsColors.primary,
+                    indicatorWeight: 3,
+                    tabs: [
+                      Tab(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.cloud_upload_outlined, size: 20),
+                            const SizedBox(width: 8),
+                            Text(l10n.upload),
+                            if (_uploadQueue.isNotEmpty)
+                              Container(
+                                margin: const EdgeInsets.only(left: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: UploadMaterialsColors.primary,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  '${_uploadQueue.length}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Tab(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.folder_outlined, size: 20),
-                          const SizedBox(width: 8),
-                          Text(l10n.materials),
-                          if (_uploadedMaterials.isNotEmpty)
-                            Container(
-                              margin: const EdgeInsets.only(left: 8),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: 2,
-                              ),
-                              decoration: BoxDecoration(
-                                color: UploadMaterialsColors.surfaceColor(
-                                  isDark,
+                      Tab(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.folder_outlined, size: 20),
+                            const SizedBox(width: 8),
+                            Text(l10n.materials),
+                            if (_uploadedMaterials.isNotEmpty)
+                              Container(
+                                margin: const EdgeInsets.only(left: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
                                 ),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                '${_uploadedMaterials.length}',
-                                style: TextStyle(
-                                  color:
-                                      UploadMaterialsColors.textSecondaryColor(
-                                        isDark,
-                                      ),
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
+                                decoration: BoxDecoration(
+                                  color: UploadMaterialsColors.surfaceColor(
+                                    isDark,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  '${_uploadedMaterials.length}',
+                                  style: TextStyle(
+                                    color:
+                                        UploadMaterialsColors.textSecondaryColor(
+                                          isDark,
+                                        ),
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              // Content
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    _buildUploadTab(isDark, l10n),
-                    _buildMaterialsTab(isDark, l10n),
-                  ],
+                // Content
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildUploadTab(isDark, l10n),
+                      _buildMaterialsTab(isDark, l10n),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _showUploadOptions(isDark),
-            backgroundColor: UploadMaterialsColors.uploadGreen,
-            icon: const Icon(Icons.add_rounded),
-            label: Text(l10n.upload),
+              ],
+            ),
+            floatingActionButton: FloatingActionButton.extended(
+              onPressed: () => _showUploadOptions(isDark),
+              backgroundColor: UploadMaterialsColors.uploadGreen,
+              icon: const Icon(Icons.add_rounded),
+              label: Text(l10n.upload),
+            ),
           ),
         );
       },
@@ -786,6 +939,17 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
                 _selectedCourseId = id;
                 _selectedModuleId = null;
               });
+
+              final selected = int.tryParse(id ?? '');
+              if (selected != null && selected > 0) {
+                context.read<InstructorCoursesBloc>().add(
+                  SelectCourse(selected),
+                );
+                context.read<MaterialsBloc>().add(LoadMaterials(selected));
+                context.read<CourseStructureBloc>().add(
+                  LoadStructure(selected),
+                );
+              }
             },
             isDark: isDark,
           ),
@@ -820,7 +984,7 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
                   icon: Icons.description_rounded,
                   label: l10n.documents,
                   color: UploadMaterialsColors.document,
-                  onTap: () => _simulateFileSelection(),
+                  onTap: () => _pickAndUploadFiles(materialType: 'document'),
                   isDark: isDark,
                 ),
               ),
@@ -830,7 +994,7 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
                   icon: Icons.video_library_rounded,
                   label: l10n.videos,
                   color: UploadMaterialsColors.video,
-                  onTap: () => _simulateFileSelection(),
+                  onTap: () => _pickAndUploadFiles(materialType: 'video'),
                   isDark: isDark,
                 ),
               ),
@@ -986,6 +1150,141 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
         ),
       ],
     );
+  }
+
+  List<CourseOption> _mapTeachingCourses(List<TeachingCourseModel> courses) {
+    return courses
+        .map(
+          (course) => CourseOption(
+            id: course.courseId.toString(),
+            name: course.course.courseName,
+            code: course.course.courseCode,
+            modules: const <CourseModule>[],
+          ),
+        )
+        .toList();
+  }
+
+  CourseMaterial _mapFromMaterialApi(
+    materials_api.CourseMaterialModel material,
+  ) {
+    return CourseMaterial(
+      id: material.materialId,
+      name: material.title,
+      description: material.description,
+      type: _mapMaterialType(material.type),
+      fileUrl: material.url ?? material.externalUrl,
+      fileName: material.title,
+      fileSize: material.file?.fileSize,
+      courseId: material.courseId,
+      moduleId: material.weekNumber?.toString(),
+      uploadedAt: material.createdAt,
+      status: UploadStatus.completed,
+      isVisible: material.isPublished,
+      downloadCount: material.downloadCount ?? 0,
+      tags: material.weekNumber != null
+          ? <String>['Week ${material.weekNumber}']
+          : null,
+    );
+  }
+
+  CourseMaterialType _mapMaterialType(materials_api.MaterialType type) {
+    switch (type) {
+      case materials_api.MaterialType.video:
+        return CourseMaterialType.video;
+      case materials_api.MaterialType.link:
+        return CourseMaterialType.link;
+      case materials_api.MaterialType.document:
+      case materials_api.MaterialType.reading:
+      case materials_api.MaterialType.slide:
+      case materials_api.MaterialType.lecture:
+      case materials_api.MaterialType.other:
+        return CourseMaterialType.document;
+    }
+
+    return CourseMaterialType.document;
+  }
+
+  List<CourseModule> _mapWeekModules(List<CourseStructureModel> items) {
+    if (items.isEmpty) {
+      return _defaultWeekModules;
+    }
+
+    final weekTitles = <int, String>{};
+    for (final item in items) {
+      if (item.weekNumber <= 0) {
+        continue;
+      }
+      weekTitles.putIfAbsent(item.weekNumber, () => item.title);
+    }
+
+    if (weekTitles.isEmpty) {
+      return _defaultWeekModules;
+    }
+
+    final sortedWeeks = weekTitles.keys.toList()..sort();
+    return sortedWeeks
+        .map((week) {
+          final title = weekTitles[week]?.trim() ?? '';
+          final label = title.isEmpty ? 'Week $week' : 'Week $week - $title';
+          return CourseModule(id: week.toString(), name: label);
+        })
+        .toList(growable: false);
+  }
+
+  bool _isVideoFile(String fileName) {
+    final lower = fileName.toLowerCase();
+    return lower.endsWith('.mp4') ||
+        lower.endsWith('.mov') ||
+        lower.endsWith('.avi') ||
+        lower.endsWith('.mkv');
+  }
+
+  String _resolveBundleTitle(List<PlatformFile> files) {
+    final preferred = files.firstWhere(
+      (file) => _isVideoFile(file.name),
+      orElse: () => files.first,
+    );
+
+    final dot = preferred.name.lastIndexOf('.');
+    if (dot <= 0) {
+      return preferred.name;
+    }
+    return preferred.name.substring(0, dot);
+  }
+
+  void _upsertQueueFromProgress(UploadProgressState progress) {
+    final queueType = _mapQueueTypeByFileName(progress.fileName);
+    final queueItem = progress.toQueueItem(queueType);
+
+    setState(() {
+      final index = _uploadQueue.indexWhere(
+        (item) => item.id == progress.uploadId,
+      );
+      if (index >= 0) {
+        _uploadQueue[index] = queueItem.copyWith(
+          type: _uploadQueue[index].type,
+        );
+      } else {
+        _uploadQueue.insert(0, queueItem);
+      }
+    });
+  }
+
+  CourseMaterialType _mapQueueTypeByFileName(String fileName) {
+    final lower = fileName.toLowerCase();
+    if (lower.endsWith('.mp4') ||
+        lower.endsWith('.mov') ||
+        lower.endsWith('.avi') ||
+        lower.endsWith('.mkv')) {
+      return CourseMaterialType.video;
+    }
+
+    if (lower.startsWith('http://') || lower.startsWith('https://')) {
+      return CourseMaterialType.link;
+    }
+
+    return CourseMaterialType.document;
   }
 
   void _showMoreOptions(bool isDark) {

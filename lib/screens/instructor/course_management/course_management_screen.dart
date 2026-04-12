@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../bloc/instructor/instructor_courses_bloc.dart';
+import '../../../bloc/instructor/instructor_courses_event.dart';
+import '../../../bloc/instructor/instructor_courses_state.dart';
+import '../../../bloc/materials/materials_bloc.dart';
+import '../../../bloc/materials/materials_event.dart';
+import '../../../bloc/materials/materials_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/instructor/instructor_course_model.dart';
+import '../../../models/instructor/teaching_course_model.dart';
+import '../../../models/materials/course_material_model.dart';
 import '../../../widgets/instructor/course_management/course_management_barrel.dart';
 
 class CourseManagementScreen extends StatefulWidget {
   final InstructorCourseModel? course;
+  final int? courseId;
 
-  const CourseManagementScreen({super.key, this.course});
+  const CourseManagementScreen({super.key, this.course, this.courseId});
 
   @override
   State<CourseManagementScreen> createState() => _CourseManagementScreenState();
@@ -19,12 +28,42 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late InstructorCourseModel _course;
+  int? _resolvedCourseId;
+  int? _requestedStudentsSectionId;
+  int? _requestedMetricsCourseId;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
-    _course = widget.course ?? _demoCourse();
+    _tabController = TabController(length: 5, vsync: this);
+    _course =
+        widget.course ??
+        InstructorCourseModel(
+          id: (widget.courseId ?? 0).toString(),
+          code: 'COURSE',
+          name: 'Course',
+          totalStudents: 0,
+          colorValue: 0xFF155CFB,
+        );
+    _resolvedCourseId = widget.courseId ?? int.tryParse(_course.id);
+
+    if (_resolvedCourseId != null && _resolvedCourseId! > 0) {
+      context.read<InstructorCoursesBloc>().add(
+        SelectCourse(_resolvedCourseId!),
+      );
+      context.read<MaterialsBloc>().add(LoadMaterials(_resolvedCourseId!));
+      context.read<InstructorCoursesBloc>().add(
+        LoadDeadlines(_resolvedCourseId!),
+      );
+    }
+
+    final current = context.read<InstructorCoursesBloc>().state;
+    if (current is InstructorCoursesLoaded) {
+      _requestCourseDetailLoads(current);
+      return;
+    }
+
+    context.read<InstructorCoursesBloc>().add(const LoadTeachingCourses());
   }
 
   @override
@@ -39,45 +78,84 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
+        final instructorState = context.watch<InstructorCoursesBloc>().state;
+        final materialsState = context.watch<MaterialsBloc>().state;
+
+        final teachingCourse = _resolveTeachingCourse(instructorState);
+        final deadlines = _resolveDeadlines(instructorState);
+        final students = _resolveStudents(instructorState);
+        final engagementMetrics = _resolveEngagementMetrics(instructorState);
+        final materials = _resolveMaterials(materialsState);
+        final displayCourse = _buildDisplayCourse(
+          teachingCourse,
+          materials,
+          deadlines,
+          students,
+        );
+
+        if (instructorState is InstructorCoursesLoaded) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (!mounted) {
+              return;
+            }
+            _requestCourseDetailLoads(instructorState);
+          });
+        }
 
         return Scaffold(
           backgroundColor: CMColors.bg(isDark),
           body: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               CourseManagementAppBar(
-                courseName: _course.name,
-                courseCode: _course.code,
+                courseName: displayCourse.name,
+                courseCode: displayCourse.code,
                 isDark: isDark,
                 onSettings: () => _showCourseSettings(context, isDark),
               ),
               SliverToBoxAdapter(
                 child: CourseManagementHeader(
-                  course: _course,
+                  course: displayCourse,
                   isDark: isDark,
                   l10n: l10n,
                   tabController: _tabController,
+                  studentsCount: students.isNotEmpty
+                      ? students.length
+                      : (teachingCourse?.enrolledCount ??
+                            displayCourse.totalStudents),
+                  assignmentsCount: deadlines
+                      .where((item) => item.type == DeadlineType.assignment)
+                      .length,
+                  materialsCount: materials.length,
                 ),
               ),
             ],
             body: TabBarView(
               controller: _tabController,
               children: [
-                OverviewTab(course: _course, isDark: isDark, l10n: l10n),
-                AssignmentsTab(
-                  assignments: _course.assignments,
+                OverviewTab(
+                  course: displayCourse,
                   isDark: isDark,
                   l10n: l10n,
+                  courseId: _resolvedCourseId,
+                  deadlines: deadlines,
+                  studentsCount: students.isNotEmpty
+                      ? students.length
+                      : (teachingCourse?.enrolledCount ??
+                            displayCourse.totalStudents),
+                  averageGrade: teachingCourse?.averageGrade,
+                  engagementMetrics: engagementMetrics,
+                  schedules: teachingCourse?.section.schedules ?? const [],
                 ),
                 MaterialsTab(
-                  materials: _course.materials,
+                  materials: materials.isNotEmpty
+                      ? materials.map(_mapCourseMaterialToLegacy).toList()
+                      : displayCourse.materials,
                   isDark: isDark,
                   l10n: l10n,
                 ),
-                StudentsTab(
-                  totalStudents: _course.totalStudents,
-                  isDark: isDark,
-                  l10n: l10n,
-                ),
+                AssignmentsTab(isDark: isDark, l10n: l10n),
+                GradingTab(isDark: isDark, l10n: l10n),
+                StudentsTab(students: students, isDark: isDark, l10n: l10n),
               ],
             ),
           ),
@@ -85,6 +163,125 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
         );
       },
     );
+  }
+
+  TeachingCourseModel? _resolveTeachingCourse(InstructorCoursesState state) {
+    final courseId = _resolvedCourseId;
+    if (courseId == null ||
+        courseId <= 0 ||
+        state is! InstructorCoursesLoaded) {
+      return null;
+    }
+
+    for (final course in state.courses) {
+      if (course.courseId == courseId) {
+        return course;
+      }
+    }
+
+    return null;
+  }
+
+  List<DeadlineCardModel> _resolveDeadlines(InstructorCoursesState state) {
+    if (state is InstructorCoursesLoaded) {
+      return state.deadlines;
+    }
+    if (state is DeadlinesLoaded) {
+      return state.deadlines;
+    }
+    return const <DeadlineCardModel>[];
+  }
+
+  List<SectionStudentModel> _resolveStudents(InstructorCoursesState state) {
+    if (state is InstructorCoursesLoaded) {
+      return state.sectionStudents;
+    }
+    return const <SectionStudentModel>[];
+  }
+
+  EngagementMetricsModel? _resolveEngagementMetrics(
+    InstructorCoursesState state,
+  ) {
+    if (state is InstructorCoursesLoaded) {
+      return state.engagementMetrics;
+    }
+    return null;
+  }
+
+  List<CourseMaterialModel> _resolveMaterials(MaterialsState state) {
+    if (state is MaterialsLoaded && state.courseId == _resolvedCourseId) {
+      return state.materials;
+    }
+    return const <CourseMaterialModel>[];
+  }
+
+  InstructorCourseModel _buildDisplayCourse(
+    TeachingCourseModel? teachingCourse,
+    List<CourseMaterialModel> materials,
+    List<DeadlineCardModel> deadlines,
+    List<SectionStudentModel> students,
+  ) {
+    if (teachingCourse == null) {
+      return _course;
+    }
+
+    return _course.copyWith(
+      id: teachingCourse.courseId.toString(),
+      code: teachingCourse.course.courseCode,
+      name: teachingCourse.course.courseName,
+      description: teachingCourse.course.description ?? '',
+      totalStudents: students.isNotEmpty
+          ? students.length
+          : (teachingCourse.enrolledCount > 0
+                ? teachingCourse.enrolledCount
+                : teachingCourse.section.currentEnrollment),
+      semester: teachingCourse.semester.name,
+      materials: materials.map(_mapCourseMaterialToLegacy).toList(),
+      assignments: List<AssignmentModel>.generate(
+        deadlines.where((item) => item.type == DeadlineType.assignment).length,
+        (index) => AssignmentModel(
+          id: 'assignment-$index',
+          title: 'Assignment',
+          dueDate: DateTime.now(),
+          totalPoints: 100,
+          submissionsCount: 0,
+          gradedCount: 0,
+        ),
+      ),
+    );
+  }
+
+  void _requestCourseDetailLoads(InstructorCoursesLoaded state) {
+    final courseId = _resolvedCourseId;
+    if (courseId == null || courseId <= 0) {
+      return;
+    }
+
+    final teachingCourse = _resolveTeachingCourse(state);
+    if (teachingCourse == null) {
+      return;
+    }
+
+    if (_requestedStudentsSectionId != teachingCourse.sectionId) {
+      _requestedStudentsSectionId = teachingCourse.sectionId;
+      context.read<InstructorCoursesBloc>().add(
+        LoadSectionStudents(teachingCourse.sectionId),
+      );
+    }
+
+    if (_requestedMetricsCourseId != courseId) {
+      _requestedMetricsCourseId = courseId;
+      final enrolledCount = teachingCourse.enrolledCount > 0
+          ? teachingCourse.enrolledCount
+          : teachingCourse.section.currentEnrollment;
+
+      context.read<InstructorCoursesBloc>().add(
+        LoadEngagementMetrics(
+          courseId: courseId,
+          totalEnrolledStudents: enrolledCount,
+        ),
+      );
+    }
   }
 
   Widget _buildFAB(bool isDark, AppLocalizations l10n) {
@@ -276,47 +473,27 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     );
   }
 
-  InstructorCourseModel _demoCourse() {
-    return InstructorCourseModel(
-      id: 'demo',
-      name: 'Operating Systems',
-      code: 'CS101',
-      description: 'Introduction to Operating Systems concepts',
-      totalStudents: 45,
-      newItems: 3,
-      activeQuizzes: 2,
-      colorValue: 0xFF155CFB,
-      isActive: true,
-      semester: 'Fall 2025',
-      assignments: [
-        AssignmentModel(
-          id: '1',
-          title: 'Process Scheduling',
-          dueDate: DateTime.now().add(const Duration(days: 3)),
-          submissionsCount: 28,
-          gradedCount: 15,
-        ),
-        AssignmentModel(
-          id: '2',
-          title: 'Memory Management',
-          dueDate: DateTime.now().add(const Duration(days: 7)),
-          submissionsCount: 15,
-          gradedCount: 0,
-        ),
-      ],
-      materials: [
-        MaterialModel(id: '1', title: 'Week 1 - Introduction', type: 'pdf'),
-        MaterialModel(id: '2', title: 'Week 2 - Processes', type: 'pdf'),
-        MaterialModel(id: '3', title: 'Lab Session Recording', type: 'video'),
-      ],
-      announcements: [
-        AnnouncementModel(
-          id: '1',
-          title: 'Midterm Schedule',
-          content: 'Midterm exam will be held on Week 8',
-          postedAt: DateTime.now().subtract(const Duration(days: 2)),
-        ),
-      ],
+  MaterialModel _mapCourseMaterialToLegacy(CourseMaterialModel material) {
+    return MaterialModel(
+      id: material.materialId,
+      title: material.title,
+      type: material.materialType,
+      fileSize: _formatBytes(material.file?.fileSize),
+      fileUrl: material.url ?? material.externalUrl ?? '',
+      uploadedAt: material.createdAt,
     );
+  }
+
+  String _formatBytes(int? bytes) {
+    if (bytes == null || bytes <= 0) {
+      return '';
+    }
+    if (bytes < 1024) {
+      return '$bytes B';
+    }
+    if (bytes < 1024 * 1024) {
+      return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    }
+    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 }

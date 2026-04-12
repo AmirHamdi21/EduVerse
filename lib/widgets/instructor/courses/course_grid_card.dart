@@ -38,8 +38,8 @@ class CourseGridCard extends StatelessWidget {
             color: isSelected
                 ? InstructorColors.primary
                 : (isDark
-                    ? InstructorColors.darkBorder
-                    : InstructorColors.border),
+                      ? InstructorColors.darkBorder
+                      : InstructorColors.border),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: [
@@ -65,8 +65,9 @@ class CourseGridCard extends StatelessWidget {
                     Text(
                       course.course.name,
                       style: TextStyle(
-                        color:
-                            isDark ? Colors.white : InstructorColors.textPrimary,
+                        color: isDark
+                            ? Colors.white
+                            : InstructorColors.textPrimary,
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         height: 1.3,
@@ -79,10 +80,13 @@ class CourseGridCard extends StatelessWidget {
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
-                            color: Color(course.course.colorValue)
-                                .withValues(alpha: 0.1),
+                            color: Color(
+                              course.course.colorValue,
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -94,16 +98,35 @@ class CourseGridCard extends StatelessWidget {
                             ),
                           ),
                         ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            course.course.semester,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: isDark
+                                  ? InstructorColors.darkTextSecondary
+                                  : InstructorColors.textSecondary,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     const Spacer(),
                     Row(
                       children: [
                         _buildMiniStat(
-                            Icons.people_rounded, '${course.course.totalStudents}'),
+                          Icons.people_rounded,
+                          _formatEnrollmentSummary(),
+                        ),
                         const SizedBox(width: 12),
                         _buildMiniStat(
-                            Icons.trending_up_rounded, '${course.engagementScore}%'),
+                          Icons.trending_up_rounded,
+                          '${course.engagementScore}%',
+                        ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -138,7 +161,9 @@ class CourseGridCard extends StatelessWidget {
         children: [
           Positioned.fill(
             child: CustomPaint(
-              painter: PatternPainter(color: Colors.white.withValues(alpha: 0.1)),
+              painter: PatternPainter(
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
             ),
           ),
           Positioned(
@@ -199,13 +224,24 @@ class CourseGridCard extends StatelessWidget {
                   ),
                 ),
                 child: isSelected
-                    ? const Icon(Icons.check_rounded, color: Colors.white, size: 16)
+                    ? const Icon(
+                        Icons.check_rounded,
+                        color: Colors.white,
+                        size: 16,
+                      )
                     : null,
               ),
             ),
         ],
       ),
     );
+  }
+
+  String _formatEnrollmentSummary() {
+    if (course.course.capacity <= 0) {
+      return '${course.course.totalStudents}';
+    }
+    return '${course.course.totalStudents}/${course.course.capacity}';
   }
 
   Color _getStatusColor() {
@@ -276,10 +312,10 @@ class CourseGridCard extends StatelessWidget {
           child: LinearProgressIndicator(
             value: course.completionRate,
             minHeight: 6,
-            backgroundColor:
-                isDark ? Colors.white.withValues(alpha: 0.1) : InstructorColors.border,
-            valueColor:
-                AlwaysStoppedAnimation(Color(course.course.colorValue)),
+            backgroundColor: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : InstructorColors.border,
+            valueColor: AlwaysStoppedAnimation(Color(course.course.colorValue)),
           ),
         ),
       ],

@@ -9,6 +9,9 @@ class CourseManagementHeader extends StatelessWidget {
   final bool isDark;
   final AppLocalizations l10n;
   final TabController tabController;
+  final int? studentsCount;
+  final int? assignmentsCount;
+  final int? materialsCount;
 
   const CourseManagementHeader({
     super.key,
@@ -16,6 +19,9 @@ class CourseManagementHeader extends StatelessWidget {
     required this.isDark,
     required this.l10n,
     required this.tabController,
+    this.studentsCount,
+    this.assignmentsCount,
+    this.materialsCount,
   });
 
   @override
@@ -84,7 +90,10 @@ class CourseManagementHeader extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                course.code.substring(0, 2).toUpperCase(),
+                (course.code.length >= 2
+                        ? course.code.substring(0, 2)
+                        : course.code.padRight(2, 'C'))
+                    .toUpperCase(),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
@@ -175,12 +184,16 @@ class CourseManagementHeader extends StatelessWidget {
   }
 
   Widget _buildQuickStats() {
+    final resolvedStudents = studentsCount ?? course.totalStudents;
+    final resolvedAssignments = assignmentsCount ?? course.assignments.length;
+    final resolvedMaterials = materialsCount ?? course.materials.length;
+
     return Row(
       children: [
         Expanded(
           child: _StatChip(
             icon: Icons.people_rounded,
-            value: course.totalStudents.toString(),
+            value: resolvedStudents.toString(),
             label: l10n.students,
             gradient: CMColors.primaryGradient,
             isDark: isDark,
@@ -190,7 +203,7 @@ class CourseManagementHeader extends StatelessWidget {
         Expanded(
           child: _StatChip(
             icon: Icons.assignment_rounded,
-            value: course.assignments.length.toString(),
+            value: resolvedAssignments.toString(),
             label: l10n.courseAssignments,
             gradient: CMColors.warmGradient,
             isDark: isDark,
@@ -200,7 +213,7 @@ class CourseManagementHeader extends StatelessWidget {
         Expanded(
           child: _StatChip(
             icon: Icons.folder_rounded,
-            value: course.materials.length.toString(),
+            value: resolvedMaterials.toString(),
             label: l10n.courseMaterials,
             gradient: CMColors.successGradient,
             isDark: isDark,
@@ -243,8 +256,9 @@ class CourseManagementHeader extends StatelessWidget {
         padding: const EdgeInsets.all(4),
         tabs: [
           _buildTab(Icons.dashboard_rounded, 'Overview', true),
-          _buildTab(Icons.assignment_rounded, 'Tasks', false),
-          _buildTab(Icons.folder_rounded, 'Files', false),
+          _buildTab(Icons.folder_rounded, 'Lectures', false),
+          _buildTab(Icons.assignment_rounded, 'Assignments', false),
+          _buildTab(Icons.grading_rounded, 'Grading', false),
           _buildTab(Icons.people_rounded, 'Students', false),
         ],
       ),

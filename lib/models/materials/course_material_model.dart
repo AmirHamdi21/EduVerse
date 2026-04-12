@@ -1,5 +1,19 @@
 import 'package:equatable/equatable.dart';
 
+enum MaterialType { lecture, slide, video, reading, link, document, other }
+
+extension MaterialTypeParsing on MaterialType {
+  static MaterialType fromRaw(dynamic value) {
+    final normalized = value?.toString().toLowerCase().trim() ?? '';
+    for (final item in MaterialType.values) {
+      if (item.name == normalized) {
+        return item;
+      }
+    }
+    return MaterialType.other;
+  }
+}
+
 /// Represents a course material (document, video, lecture, slide, or link).
 ///
 /// Maps to the backend `/api/courses/{courseId}/materials` endpoints.
@@ -13,6 +27,7 @@ class CourseMaterialModel extends Equatable {
   materialType; // 'document' | 'video' | 'lecture' | 'slide' | 'link'
   final String title;
   final String? description;
+  final String? url;
   final String? externalUrl;
   final String? _youtubeVideoId;
   final int? orderIndex;
@@ -35,6 +50,7 @@ class CourseMaterialModel extends Equatable {
     required this.materialType,
     required this.title,
     this.description,
+    this.url,
     this.externalUrl,
     String? youtubeVideoId,
     this.orderIndex,
@@ -102,14 +118,22 @@ class CourseMaterialModel extends Equatable {
     return 'https://drive.google.com/file/d/$driveId/preview';
   }
 
+  int get id => int.tryParse(materialId) ?? 0;
+
+  int get numericCourseId => int.tryParse(courseId) ?? 0;
+
+  MaterialType get type => MaterialTypeParsing.fromRaw(materialType);
+
   factory CourseMaterialModel.fromJson(Map<String, dynamic> json) {
     // isPublished can come as int (0/1) or bool from the backend
     final rawPublished = json['isPublished'];
     final bool published;
     if (rawPublished is bool) {
       published = rawPublished;
-    } else if (rawPublished is int) {
+    } else if (rawPublished is num) {
       published = rawPublished == 1;
+    } else if (rawPublished is String) {
+      published = rawPublished == '1' || rawPublished.toLowerCase() == 'true';
     } else {
       published = false;
     }
@@ -131,6 +155,7 @@ class CourseMaterialModel extends Equatable {
           (json['materialType'] ?? json['type']) as String? ?? 'document',
       title: json['title'] as String? ?? '',
       description: json['description'] as String?,
+      url: json['url']?.toString() ?? json['fileUrl']?.toString(),
       externalUrl: json['externalUrl'] as String?,
       youtubeVideoId: json['youtubeVideoId'] as String?,
       orderIndex: json['orderIndex'] is int
@@ -180,6 +205,7 @@ class CourseMaterialModel extends Equatable {
     int? viewCount,
     int? downloadCount,
     bool? hasBeenViewed,
+    bool? isPublished,
   }) {
     return CourseMaterialModel(
       materialId: materialId,
@@ -190,6 +216,7 @@ class CourseMaterialModel extends Equatable {
       materialType: materialType,
       title: title,
       description: description,
+      url: url,
       externalUrl: externalUrl,
       youtubeVideoId: _youtubeVideoId,
       orderIndex: orderIndex,
@@ -197,7 +224,7 @@ class CourseMaterialModel extends Equatable {
       viewCount: viewCount ?? this.viewCount,
       downloadCount: downloadCount ?? this.downloadCount,
       uploadedBy: uploadedBy,
-      isPublished: isPublished,
+      isPublished: isPublished ?? this.isPublished,
       hasBeenViewed: hasBeenViewed ?? this.hasBeenViewed,
       publishedAt: publishedAt,
       createdAt: createdAt,
@@ -213,8 +240,10 @@ class CourseMaterialModel extends Equatable {
       'driveFileId': driveFileId,
       'file': file?.toJson(),
       'materialType': materialType,
+      'type': materialType,
       'title': title,
       'description': description,
+      'url': url,
       'externalUrl': externalUrl,
       'youtubeVideoId': _youtubeVideoId,
       'orderIndex': orderIndex,
@@ -227,6 +256,7 @@ class CourseMaterialModel extends Equatable {
       'publishedAt': publishedAt?.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
+      'id': materialId,
     };
   }
 
@@ -240,6 +270,7 @@ class CourseMaterialModel extends Equatable {
     materialType,
     title,
     description,
+    url,
     externalUrl,
     _youtubeVideoId,
     orderIndex,

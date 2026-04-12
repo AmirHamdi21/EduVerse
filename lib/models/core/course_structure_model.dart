@@ -49,9 +49,16 @@ class CourseStructureModel extends Equatable {
       weekNumber: json['weekNumber'] is int
           ? json['weekNumber'] as int
           : int.tryParse(json['weekNumber']?.toString() ?? '') ?? 0,
-      orderIndex: json['orderIndex'] is int
+      orderIndex: json['sortOrder'] is int
+          ? json['sortOrder'] as int
+          : json['orderIndex'] is int
           ? json['orderIndex'] as int
-          : int.tryParse(json['orderIndex']?.toString() ?? '') ?? 0,
+          : int.tryParse(
+                  json['sortOrder']?.toString() ??
+                      json['orderIndex']?.toString() ??
+                      '',
+                ) ??
+                0,
       description: json['description'] as String?,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'].toString())
@@ -65,6 +72,7 @@ class CourseStructureModel extends Equatable {
   Map<String, dynamic> toJson() {
     return {
       'organizationId': organizationId,
+      'id': organizationId,
       'courseId': courseId,
       'materialId': materialId,
       'material': material?.toJson(),
@@ -72,11 +80,16 @@ class CourseStructureModel extends Equatable {
       'title': title,
       'weekNumber': weekNumber,
       'orderIndex': orderIndex,
+      'sortOrder': orderIndex,
       'description': description,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
     };
   }
+
+  int get id => int.tryParse(organizationId) ?? 0;
+
+  int get sortOrder => orderIndex;
 
   @override
   List<Object?> get props => [

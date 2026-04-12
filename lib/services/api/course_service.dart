@@ -94,6 +94,14 @@ class CourseService {
     return structure;
   }
 
+  /// Alias for Phase 5 task naming consistency.
+  Future<List<CourseStructureModel>> getStructure(
+    dynamic courseId, {
+    bool forceRefresh = false,
+  }) {
+    return getCourseStructure(courseId, forceRefresh: forceRefresh);
+  }
+
   /// GET /api/courses/{courseId}/structure/{id}
   Future<CourseStructureModel> getCourseStructureItem(
     dynamic courseId,
@@ -144,7 +152,21 @@ class CourseService {
     dynamic courseId,
     List<Map<String, dynamic>> body,
   ) async {
-    await _client.dio.patch('/courses/$courseId/structure/reorder', data: body);
+    await _client.dio.patch(
+      '/courses/$courseId/structure/reorder',
+      data: <String, dynamic>{'itemIds': body.map((e) => e['id']).toList()},
+    );
+  }
+
+  /// PATCH /api/courses/{courseId}/structure/reorder
+  Future<void> reorderStructureItems(
+    dynamic courseId,
+    List<int> itemIds,
+  ) async {
+    await _client.dio.patch(
+      '/courses/$courseId/structure/reorder',
+      data: <String, dynamic>{'itemIds': itemIds},
+    );
   }
 
   /// DELETE /api/courses/{courseId}/structure/{id}
