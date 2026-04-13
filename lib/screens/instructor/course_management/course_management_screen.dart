@@ -546,6 +546,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       CreateStructureItem(
         courseId: courseId,
         title: title,
+        organizationType: 'lecture',
         weekNumber: weekNumber,
         description: description,
       ),

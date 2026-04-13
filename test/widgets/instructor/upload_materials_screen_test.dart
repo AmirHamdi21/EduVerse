@@ -195,7 +195,7 @@ Widget _buildScreen({
     courseService: _FakeCourseService(
       items: <CourseStructureModel>[
         const CourseStructureModel(
-          organizationId: '1',
+          organizationId: 1,
           courseId: '56',
           organizationType: 'lecture',
           title: 'Week 1 Intro',

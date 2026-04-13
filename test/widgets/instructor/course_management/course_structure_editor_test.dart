@@ -37,7 +37,7 @@ void main() {
       _buildEditor(
         items: const <CourseStructureModel>[
           CourseStructureModel(
-            organizationId: '1',
+            organizationId: 1,
             courseId: '56',
             organizationType: 'lecture',
             title: 'Week 1: Intro',
@@ -108,7 +108,7 @@ void main() {
       _buildEditor(
         items: const <CourseStructureModel>[
           CourseStructureModel(
-            organizationId: '101',
+            organizationId: 101,
             courseId: '56',
             organizationType: 'lecture',
             title: 'Week 1: Intro',
@@ -116,7 +116,7 @@ void main() {
             orderIndex: 1,
           ),
           CourseStructureModel(
-            organizationId: '102',
+            organizationId: 102,
             courseId: '56',
             organizationType: 'lecture',
             title: 'Week 2: Trees',
@@ -153,7 +153,7 @@ void main() {
       _buildEditor(
         items: const <CourseStructureModel>[
           CourseStructureModel(
-            organizationId: '101',
+            organizationId: 101,
             courseId: '56',
             organizationType: 'lecture',
             title: 'Week 1: Intro',
@@ -193,6 +193,6 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(deleted?.organizationId, '101');
+    expect(deleted?.organizationId, 101);
   });
 }

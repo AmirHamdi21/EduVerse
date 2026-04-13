@@ -64,7 +64,7 @@ void main() {
         courseService: _FakeCourseService(
           structure: <CourseStructureModel>[
             CourseStructureModel(
-              organizationId: 's1',
+              organizationId: 1,
               courseId: '1',
               materialId: 'm1',
               organizationType: 'video',
@@ -73,7 +73,7 @@ void main() {
               orderIndex: 0,
             ),
             CourseStructureModel(
-              organizationId: 's2',
+              organizationId: 2,
               courseId: '1',
               materialId: 'm2',
               organizationType: 'document',

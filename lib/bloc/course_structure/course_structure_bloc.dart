@@ -40,6 +40,7 @@ class CourseStructureBloc
       await _courseService
           .createStructureItem(event.courseId, <String, dynamic>{
             'title': event.title,
+            'organizationType': event.organizationType,
             'weekNumber': event.weekNumber,
             if (event.description != null && event.description!.isNotEmpty)
               'description': event.description,

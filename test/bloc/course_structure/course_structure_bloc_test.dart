@@ -58,7 +58,7 @@ class _FakeCourseService extends CourseService {
   }
 }
 
-CourseStructureModel _item({required String id, required int week}) {
+CourseStructureModel _item({required int id, required int week}) {
   return CourseStructureModel(
     organizationId: id,
     courseId: '1',
@@ -77,7 +77,7 @@ void main() {
   group('CourseStructureBloc', () {
     test('loads structure items', () async {
       final service = _FakeCourseService(
-        items: <CourseStructureModel>[_item(id: '1', week: 1)],
+        items: <CourseStructureModel>[_item(id: 1, week: 1)],
       );
       final bloc = CourseStructureBloc(courseService: service);
 
@@ -95,7 +95,7 @@ void main() {
 
     test('create item sends payload and refreshes list', () async {
       final service = _FakeCourseService(
-        items: <CourseStructureModel>[_item(id: '1', week: 1)],
+        items: <CourseStructureModel>[_item(id: 1, week: 1)],
       );
       final bloc = CourseStructureBloc(courseService: service);
 
@@ -103,6 +103,7 @@ void main() {
         const CreateStructureItem(
           courseId: 1,
           title: 'Week 2',
+          organizationType: 'lecture',
           weekNumber: 2,
           description: 'Stacks',
         ),
@@ -113,6 +114,7 @@ void main() {
 
       expect(service.lastCreatePayload, isNotNull);
       expect(service.lastCreatePayload!['title'], 'Week 2');
+      expect(service.lastCreatePayload!['organizationType'], 'lecture');
       expect(service.lastCreatePayload!['weekNumber'], 2);
       expect(bloc.state, isA<StructureLoaded>());
 
@@ -122,8 +124,8 @@ void main() {
     test('update, delete, and reorder operations trigger refresh', () async {
       final service = _FakeCourseService(
         items: <CourseStructureModel>[
-          _item(id: '1', week: 1),
-          _item(id: '2', week: 2),
+          _item(id: 1, week: 1),
+          _item(id: 2, week: 2),
         ],
       );
       final bloc = CourseStructureBloc(courseService: service);
@@ -131,14 +133,14 @@ void main() {
       bloc.add(
         const UpdateStructureItem(
           courseId: 1,
-          itemId: '1',
+          itemId: 1,
           payload: <String, dynamic>{'title': 'Updated'},
         ),
       );
       await _flush();
       await _flush();
 
-      bloc.add(const DeleteStructureItem(courseId: 1, itemId: '2'));
+      bloc.add(const DeleteStructureItem(courseId: 1, itemId: 2));
       await _flush();
       await _flush();
 

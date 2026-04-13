@@ -8,7 +8,7 @@ void main() {
     test('StructureLoaded supports value equality', () {
       const items = <CourseStructureModel>[
         CourseStructureModel(
-          organizationId: '11',
+          organizationId: 11,
           courseId: '56',
           organizationType: 'lecture',
           title: 'Week 1',

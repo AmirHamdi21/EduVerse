@@ -183,7 +183,7 @@ class _FakeCourseService extends CourseService {
   }) async {
     return const <CourseStructureModel>[
       CourseStructureModel(
-        organizationId: '1',
+        organizationId: 1,
         courseId: '56',
         organizationType: 'lecture',
         title: 'Week 1 Intro',
@@ -191,7 +191,7 @@ class _FakeCourseService extends CourseService {
         orderIndex: 1,
       ),
       CourseStructureModel(
-        organizationId: '2',
+        organizationId: 2,
         courseId: '56',
         organizationType: 'lecture',
         title: 'Week 2 Trees',

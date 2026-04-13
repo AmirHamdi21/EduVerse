@@ -14,7 +14,7 @@ void main() {
         'sortOrder': 7,
       });
 
-      expect(model.organizationId, '71');
+      expect(model.organizationId, 71);
       expect(model.orderIndex, 7);
       expect(model.sortOrder, 7);
       expect(model.id, 71);
@@ -22,7 +22,7 @@ void main() {
 
     test('toJson writes both orderIndex and sortOrder', () {
       const model = CourseStructureModel(
-        organizationId: '88',
+        organizationId: 88,
         courseId: '56',
         organizationType: 'lab',
         title: 'Week 8 Lab',
@@ -32,10 +32,10 @@ void main() {
 
       final json = model.toJson();
 
-      expect(json['organizationId'], '88');
+      expect(json['organizationId'], 88);
       expect(json['orderIndex'], 3);
       expect(json['sortOrder'], 3);
-      expect(json['id'], '88');
+      expect(json['id'], 88);
     });
 
     test('fromJson handles contentType fallback', () {

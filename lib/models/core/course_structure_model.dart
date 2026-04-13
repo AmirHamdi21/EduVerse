@@ -6,7 +6,7 @@ import '../materials/course_material_model.dart';
 ///
 /// Maps to the backend `/api/courses/{courseId}/structure` endpoints.
 class CourseStructureModel extends Equatable {
-  final String organizationId;
+  final int organizationId;
   final String courseId;
   final String? materialId;
   final CourseMaterialModel? material;
@@ -33,8 +33,10 @@ class CourseStructureModel extends Equatable {
   });
 
   factory CourseStructureModel.fromJson(Map<String, dynamic> json) {
+    final rawId = json['organizationId'] ?? json['id'];
+
     return CourseStructureModel(
-      organizationId: (json['organizationId'] ?? json['id'])?.toString() ?? '',
+      organizationId: _parseOrganizationId(rawId),
       courseId: json['courseId']?.toString() ?? '',
       materialId: json['materialId']?.toString(),
       material: json['material'] != null
@@ -87,7 +89,17 @@ class CourseStructureModel extends Equatable {
     };
   }
 
-  int get id => int.tryParse(organizationId) ?? 0;
+  static int _parseOrganizationId(dynamic value) {
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    return int.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  int get id => organizationId;
 
   int get sortOrder => orderIndex;
 

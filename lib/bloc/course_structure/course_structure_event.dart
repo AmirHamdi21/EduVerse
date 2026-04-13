@@ -19,12 +19,14 @@ class LoadStructure extends CourseStructureEvent {
 class CreateStructureItem extends CourseStructureEvent {
   final int courseId;
   final String title;
+  final String organizationType;
   final int weekNumber;
   final String? description;
 
   const CreateStructureItem({
     required this.courseId,
     required this.title,
+    required this.organizationType,
     required this.weekNumber,
     this.description,
   });
@@ -33,6 +35,7 @@ class CreateStructureItem extends CourseStructureEvent {
   List<Object?> get props => <Object?>[
     courseId,
     title,
+    organizationType,
     weekNumber,
     description,
   ];
@@ -40,7 +43,7 @@ class CreateStructureItem extends CourseStructureEvent {
 
 class UpdateStructureItem extends CourseStructureEvent {
   final int courseId;
-  final String itemId;
+  final int itemId;
   final Map<String, dynamic> payload;
 
   const UpdateStructureItem({
@@ -55,7 +58,7 @@ class UpdateStructureItem extends CourseStructureEvent {
 
 class DeleteStructureItem extends CourseStructureEvent {
   final int courseId;
-  final String itemId;
+  final int itemId;
 
   const DeleteStructureItem({required this.courseId, required this.itemId});
 

@@ -187,7 +187,7 @@ void main() {
   group('CourseStructureModel', () {
     test('fromJson parses without nested material', () {
       final json = {
-        'organizationId': 'org-1',
+        'organizationId': 1,
         'courseId': '1',
         'organizationType': 'lecture',
         'title': 'Week 1: Introduction',
@@ -200,7 +200,7 @@ void main() {
 
       final model = CourseStructureModel.fromJson(json);
 
-      expect(model.organizationId, 'org-1');
+      expect(model.organizationId, 1);
       expect(model.organizationType, 'lecture');
       expect(model.weekNumber, 1);
       expect(model.material, isNull);
@@ -208,7 +208,7 @@ void main() {
 
     test('fromJson parses with nested material', () {
       final json = {
-        'organizationId': 'org-2',
+        'organizationId': 2,
         'courseId': '1',
         'materialId': 'mat-1',
         'material': {

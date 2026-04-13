@@ -71,7 +71,7 @@ class _CourseTabContentState extends State<CourseTabContent> {
     }
 
     return CourseMaterialModel(
-      materialId: item.materialId ?? item.organizationId,
+      materialId: item.materialId ?? item.organizationId.toString(),
       courseId: item.courseId,
       materialType: item.organizationType,
       title: item.title,

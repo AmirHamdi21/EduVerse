@@ -229,7 +229,9 @@ class CourseService {
     final rawMaterial = item['material'];
 
     return CourseStructureModel(
-      organizationId: (item['id'] ?? '').toString(),
+      organizationId: item['id'] is int
+          ? item['id'] as int
+          : int.tryParse(item['id']?.toString() ?? '') ?? 0,
       courseId: courseId,
       materialId: item['materialId']?.toString(),
       material: rawMaterial is Map<String, dynamic>

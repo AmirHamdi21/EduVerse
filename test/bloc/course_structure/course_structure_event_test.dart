@@ -13,11 +13,15 @@ void main() {
       const event = CreateStructureItem(
         courseId: 56,
         title: 'Week 2',
+        organizationType: 'lecture',
         weekNumber: 2,
         description: 'Sorting',
       );
 
-      expect(event.props, equals(const <Object?>[56, 'Week 2', 2, 'Sorting']));
+      expect(
+        event.props,
+        equals(const <Object?>[56, 'Week 2', 'lecture', 2, 'Sorting']),
+      );
     });
 
     test('ReorderStructureItems supports value equality', () {

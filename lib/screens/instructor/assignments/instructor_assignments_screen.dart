@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -344,18 +343,32 @@ class _InstructorAssignmentsViewState
     int assignmentId,
     String title,
   ) {
-    AwesomeDialog(
+    showDialog<void>(
       context: context,
-      dialogType: DialogType.warning,
-      title: 'Delete Assignment',
-      desc: 'Delete "$title"? This action cannot be undone.',
-      btnCancelOnPress: () {},
-      btnOkColor: Colors.red,
-      btnOkText: 'Delete',
-      btnOkOnPress: () {
-        cubit.deleteAssignment(assignmentId);
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Delete Assignment?'),
+          content: Text(
+            'Are you sure you want to delete "$title"? '
+            'This action cannot be undone.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                cubit.deleteAssignment(assignmentId);
+              },
+              style: FilledButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
       },
-    ).show();
+    );
   }
 
   static int _assignmentIdOf(AssignmentModel assignment) {
