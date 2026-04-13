@@ -58,11 +58,14 @@ import 'package:edu_verse/features/courses/screens/course_detail_screen.dart';
 import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_screen.dart';
 import 'package:edu_verse/screens/instructor/courses/instructor_courses_screen.dart';
 import 'package:edu_verse/screens/instructor/grading_center/grading_center_screen.dart';
+import 'package:edu_verse/screens/instructor/assignments/instructor_assignments_screen.dart';
+import 'package:edu_verse/screens/instructor/assignments/assignment_submissions_screen.dart';
+import 'package:edu_verse/screens/instructor/assignments/submission_grading_screen.dart';
 import 'package:edu_verse/screens/instructor/course_management/course_management_screen.dart';
 import 'package:edu_verse/screens/instructor/video/instructor_video_player_screen.dart';
 import 'package:edu_verse/screens/instructor/announcements/announcement_manager_screen.dart';
 import 'package:edu_verse/screens/instructor/attendance/attendance_manager_screen.dart';
-import 'package:edu_verse/screens/instructor/create_assignment/create_assignment_screen.dart';
+import 'package:edu_verse/screens/instructor/create_assignment_screen.dart';
 import 'package:edu_verse/screens/instructor/reports/reports_analytics_screen.dart';
 import 'package:edu_verse/screens/instructor/ai_teaching/ai_teaching_screen.dart';
 import 'package:edu_verse/screens/instructor/upload_materials/upload_materials_screen.dart';
@@ -72,6 +75,8 @@ import 'package:edu_verse/screens/instructor/notifications/instructor_notificati
 import 'package:edu_verse/screens/instructor/profile/instructor_profile_screen.dart';
 import 'package:edu_verse/screens/instructor/profile/instructor_edit_profile_screen.dart';
 import 'package:edu_verse/screens/instructor/settings/instructor_settings_screen.dart';
+import 'package:edu_verse/models/assignments/assignment_model.dart'
+    as assignment_models;
 import 'package:edu_verse/models/instructor/instructor_course_model.dart';
 // TA, Admin, IT Admin screens (placeholders for development)
 import 'package:edu_verse/screens/ta/ta_dashboard_screen.dart';
@@ -543,6 +548,145 @@ class AppRouter {
         builder: (context, state) => const GradingCenterScreen(),
       ),
       GoRoute(
+        path: '/instructor/assignments',
+        builder: (context, state) => const InstructorAssignmentsScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/assignments/create',
+        builder: (context, state) {
+          assignment_models.AssignmentModel? assignment;
+          int? assignmentId;
+
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            final rawAssignment = extra['assignment'];
+            if (rawAssignment is assignment_models.AssignmentModel) {
+              assignment = rawAssignment;
+            }
+            final rawId = extra['assignmentId'];
+            if (rawId is int) {
+              assignmentId = rawId;
+            } else if (rawId is String) {
+              assignmentId = int.tryParse(rawId);
+            }
+          }
+
+          return CreateAssignmentScreen(
+            assignment: assignment,
+            assignmentId: assignmentId,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/instructor/assignments/:assignmentId/submissions',
+        builder: (context, state) {
+          final assignmentId = int.tryParse(
+            state.pathParameters['assignmentId'] ?? '',
+          );
+          if (assignmentId == null || assignmentId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid assignment submissions route')),
+            );
+          }
+
+          String? assignmentTitle;
+          double? maxScore;
+          DateTime? assignmentDueDate;
+          double latePenaltyPercent = 0;
+          bool isArchived = false;
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            assignmentTitle = extra['assignmentTitle'] as String?;
+            final rawMaxScore = extra['maxScore'];
+            if (rawMaxScore is num) {
+              maxScore = rawMaxScore.toDouble();
+            }
+            final rawDueDate = extra['assignmentDueDate'];
+            if (rawDueDate is DateTime) {
+              assignmentDueDate = rawDueDate;
+            } else if (rawDueDate is String) {
+              assignmentDueDate = DateTime.tryParse(rawDueDate);
+            }
+            final rawPenalty = extra['latePenaltyPercent'];
+            if (rawPenalty is num) {
+              latePenaltyPercent = rawPenalty.toDouble();
+            }
+            final rawArchived = extra['isArchived'];
+            if (rawArchived is bool) {
+              isArchived = rawArchived;
+            }
+          }
+
+          return AssignmentSubmissionsScreen(
+            assignmentId: assignmentId,
+            assignmentTitle: assignmentTitle,
+            maxScore: maxScore,
+            assignmentDueDate: assignmentDueDate,
+            latePenaltyPercent: latePenaltyPercent,
+            isArchived: isArchived,
+          );
+        },
+      ),
+      GoRoute(
+        path:
+            '/instructor/assignments/:assignmentId/submissions/:submissionId/grading',
+        builder: (context, state) {
+          final assignmentId = int.tryParse(
+            state.pathParameters['assignmentId'] ?? '',
+          );
+          final submissionId = int.tryParse(
+            state.pathParameters['submissionId'] ?? '',
+          );
+
+          if (assignmentId == null ||
+              assignmentId <= 0 ||
+              submissionId == null ||
+              submissionId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid grading route')),
+            );
+          }
+
+          String? assignmentTitle;
+          double? maxScore;
+          DateTime? assignmentDueDate;
+          double latePenaltyPercent = 0;
+          bool isArchived = false;
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            assignmentTitle = extra['assignmentTitle'] as String?;
+            final rawMaxScore = extra['maxScore'];
+            if (rawMaxScore is num) {
+              maxScore = rawMaxScore.toDouble();
+            }
+            final rawDueDate = extra['assignmentDueDate'];
+            if (rawDueDate is DateTime) {
+              assignmentDueDate = rawDueDate;
+            } else if (rawDueDate is String) {
+              assignmentDueDate = DateTime.tryParse(rawDueDate);
+            }
+            final rawPenalty = extra['latePenaltyPercent'];
+            if (rawPenalty is num) {
+              latePenaltyPercent = rawPenalty.toDouble();
+            }
+            final rawArchived = extra['isArchived'];
+            if (rawArchived is bool) {
+              isArchived = rawArchived;
+            }
+          }
+
+          return SubmissionGradingScreen(
+            assignmentId: assignmentId,
+            submissionId: submissionId,
+            assignmentTitle: assignmentTitle,
+            maxScore: maxScore,
+            assignmentDueDate: assignmentDueDate,
+            latePenaltyPercent: latePenaltyPercent,
+            isArchived: isArchived,
+          );
+        },
+      ),
+      GoRoute(
         path: '/instructor/course-management',
         builder: (context, state) {
           final course = state.extra as InstructorCourseModel?;
@@ -562,7 +706,29 @@ class AppRouter {
       ),
       GoRoute(
         path: '/instructor/create-assignment',
-        builder: (context, state) => const CreateAssignmentScreen(),
+        builder: (context, state) {
+          assignment_models.AssignmentModel? assignment;
+          int? assignmentId;
+
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            final rawAssignment = extra['assignment'];
+            if (rawAssignment is assignment_models.AssignmentModel) {
+              assignment = rawAssignment;
+            }
+            final rawId = extra['assignmentId'];
+            if (rawId is int) {
+              assignmentId = rawId;
+            } else if (rawId is String) {
+              assignmentId = int.tryParse(rawId);
+            }
+          }
+
+          return CreateAssignmentScreen(
+            assignment: assignment,
+            assignmentId: assignmentId,
+          );
+        },
       ),
       GoRoute(
         path: '/instructor/reports',

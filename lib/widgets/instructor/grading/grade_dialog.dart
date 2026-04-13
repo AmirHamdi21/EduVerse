@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
 import '../../../generated_l10n/app_localizations.dart';
-import '../../../models/instructor/submission_model.dart';
+import '../../../models/assignments/assignment_submission_model.dart';
+import '../../../utils/late_penalty_calculator.dart';
 import 'grading_theme_colors.dart';
 
 /// Grade submission dialog with modern design
 class GradeDialog extends StatefulWidget {
-  final Submission submission;
+  final AssignmentSubmissionModel submission;
+  final String studentName;
+  final String assignmentTitle;
+  final String courseName;
+  final int maxGrade;
+  final DateTime? dueDate;
+  final double latePenaltyPercent;
   final bool isDark;
-  final Function(int grade, String? feedback) onSubmit;
+  final Function(double grade, String? feedback) onSubmit;
 
   const GradeDialog({
     super.key,
     required this.submission,
+    required this.studentName,
+    required this.assignmentTitle,
+    required this.courseName,
+    required this.maxGrade,
+    this.dueDate,
+    this.latePenaltyPercent = 0,
     required this.isDark,
     required this.onSubmit,
   });
@@ -19,9 +32,15 @@ class GradeDialog extends StatefulWidget {
   /// Show the grade dialog as a modal bottom sheet
   static Future<void> show({
     required BuildContext context,
-    required Submission submission,
+    required AssignmentSubmissionModel submission,
+    required String studentName,
+    required String assignmentTitle,
+    required String courseName,
+    required int maxGrade,
+    DateTime? dueDate,
+    double latePenaltyPercent = 0,
     required bool isDark,
-    required Function(int grade, String? feedback) onSubmit,
+    required Function(double grade, String? feedback) onSubmit,
   }) {
     return showModalBottomSheet(
       context: context,
@@ -29,6 +48,12 @@ class GradeDialog extends StatefulWidget {
       backgroundColor: Colors.transparent,
       builder: (ctx) => GradeDialog(
         submission: submission,
+        studentName: studentName,
+        assignmentTitle: assignmentTitle,
+        courseName: courseName,
+        maxGrade: maxGrade,
+        dueDate: dueDate,
+        latePenaltyPercent: latePenaltyPercent,
         isDark: isDark,
         onSubmit: onSubmit,
       ),
@@ -45,7 +70,7 @@ class _GradeDialogState extends State<GradeDialog>
   late TextEditingController _feedbackController;
   late AnimationController _animController;
   late Animation<double> _scaleAnimation;
-  
+
   bool _isSubmitting = false;
   String? _errorText;
 
@@ -53,12 +78,14 @@ class _GradeDialogState extends State<GradeDialog>
   void initState() {
     super.initState();
     _gradeController = TextEditingController(
-      text: widget.submission.grade?.toString() ?? '',
+      text: widget.submission.score == null
+          ? ''
+          : _formatScore(widget.submission.score!),
     );
     _feedbackController = TextEditingController(
       text: widget.submission.feedback ?? '',
     );
-    
+
     _animController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -78,50 +105,97 @@ class _GradeDialogState extends State<GradeDialog>
     super.dispose();
   }
 
-  void _validateAndSubmit() {
+  Future<void> _validateAndSubmit() async {
     final gradeText = _gradeController.text.trim();
-    final grade = int.tryParse(gradeText);
-    
+    final grade = double.tryParse(gradeText);
+
     if (gradeText.isEmpty) {
-      setState(() => _errorText = 'Please enter a grade');
+      setState(() {
+        _errorText = 'Please enter a grade';
+      });
       return;
     }
-    
+
     if (grade == null) {
-      setState(() => _errorText = 'Please enter a valid number');
+      setState(() {
+        _errorText = 'Please enter a valid number';
+      });
       return;
     }
-    
-    if (grade < 0 || grade > widget.submission.maxGrade) {
-      setState(() => _errorText = 'Grade must be between 0 and ${widget.submission.maxGrade}');
+
+    if (grade < 0 || grade > widget.maxGrade) {
+      setState(
+        () => _errorText = 'Grade must be between 0 and ${widget.maxGrade}',
+      );
       return;
     }
-    
+
     setState(() {
       _isSubmitting = true;
       _errorText = null;
     });
-    
-    // Simulate submission delay for animation
-    Future.delayed(const Duration(milliseconds: 300), () {
-      widget.onSubmit(grade, _feedbackController.text.trim().isEmpty 
-          ? null 
-          : _feedbackController.text.trim());
-      Navigator.pop(context);
-    });
+
+    // Keep the loading animation visible briefly before closing.
+    await Future<void>.delayed(const Duration(milliseconds: 300));
+    if (!mounted) {
+      return;
+    }
+
+    widget.onSubmit(
+      grade,
+      _feedbackController.text.trim().isEmpty
+          ? null
+          : _feedbackController.text.trim(),
+    );
+
+    if (!mounted) {
+      return;
+    }
+    Navigator.pop(context);
   }
 
   void _setQuickGrade(int percentage) {
-    final grade = (widget.submission.maxGrade * percentage / 100).round();
-    _gradeController.text = grade.toString();
-    setState(() => _errorText = null);
+    final grade = widget.maxGrade * percentage / 100;
+    _gradeController.text = _formatScore(grade.toDouble());
+    setState(() {
+      _errorText = null;
+    });
+  }
+
+  int _daysLate() {
+    if (!widget.submission.isLate || widget.dueDate == null) {
+      return 0;
+    }
+
+    final diff = widget.submission.submittedAt.difference(widget.dueDate!);
+    if (diff.isNegative) {
+      return 0;
+    }
+
+    return diff.inDays == 0 ? 1 : diff.inDays;
+  }
+
+  String _formatScore(double value) {
+    final whole = value == value.roundToDouble();
+    return whole ? value.round().toString() : value.toStringAsFixed(1);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
-    
+    final parsedGrade = double.tryParse(_gradeController.text.trim());
+    final daysLate = _daysLate();
+    final hasLatePenalty =
+        parsedGrade != null && daysLate > 0 && widget.latePenaltyPercent > 0;
+    final finalScore = hasLatePenalty
+        ? calculateFinalScore(
+            originalScore: parsedGrade,
+            latePenaltyPercent: widget.latePenaltyPercent,
+            daysLate: daysLate,
+          )
+        : parsedGrade;
+
     return ScaleTransition(
       scale: _scaleAnimation,
       child: Container(
@@ -193,7 +267,7 @@ class _GradeDialogState extends State<GradeDialog>
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                widget.submission.studentName,
+                                widget.studentName,
                                 style: TextStyle(
                                   color: Colors.white.withValues(alpha: 0.9),
                                   fontSize: 14,
@@ -222,7 +296,7 @@ class _GradeDialogState extends State<GradeDialog>
                   ],
                 ),
               ),
-              
+
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -250,18 +324,22 @@ class _GradeDialogState extends State<GradeDialog>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  widget.submission.assignmentTitle,
+                                  widget.assignmentTitle,
                                   style: TextStyle(
-                                    color: GradingColors.textPrimaryColor(widget.isDark),
+                                    color: GradingColors.textPrimaryColor(
+                                      widget.isDark,
+                                    ),
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
                                 const SizedBox(height: 2),
                                 Text(
-                                  widget.submission.courseName,
+                                  widget.courseName,
                                   style: TextStyle(
-                                    color: GradingColors.textSecondaryColor(widget.isDark),
+                                    color: GradingColors.textSecondaryColor(
+                                      widget.isDark,
+                                    ),
                                     fontSize: 12,
                                   ),
                                 ),
@@ -271,9 +349,9 @@ class _GradeDialogState extends State<GradeDialog>
                         ],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Grade input section
                     Text(
                       l10n.grade,
@@ -295,8 +373,12 @@ class _GradeDialogState extends State<GradeDialog>
                               boxShadow: [
                                 BoxShadow(
                                   color: _errorText != null
-                                      ? GradingColors.late.withValues(alpha: 0.1)
-                                      : GradingColors.primary.withValues(alpha: 0.08),
+                                      ? GradingColors.late.withValues(
+                                          alpha: 0.1,
+                                        )
+                                      : GradingColors.primary.withValues(
+                                          alpha: 0.08,
+                                        ),
                                   blurRadius: 10,
                                   offset: const Offset(0, 2),
                                 ),
@@ -307,20 +389,28 @@ class _GradeDialogState extends State<GradeDialog>
                               keyboardType: TextInputType.number,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: GradingColors.textPrimaryColor(widget.isDark),
+                                color: GradingColors.textPrimaryColor(
+                                  widget.isDark,
+                                ),
                                 fontSize: 32,
                                 fontWeight: FontWeight.bold,
                               ),
-                              onChanged: (_) => setState(() => _errorText = null),
+                              onChanged: (_) => setState(() {
+                                _errorText = null;
+                              }),
                               decoration: InputDecoration(
                                 filled: true,
-                                fillColor: GradingColors.cardColor(widget.isDark),
+                                fillColor: GradingColors.cardColor(
+                                  widget.isDark,
+                                ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(14),
                                   borderSide: BorderSide(
                                     color: _errorText != null
                                         ? GradingColors.late
-                                        : GradingColors.borderColor(widget.isDark),
+                                        : GradingColors.borderColor(
+                                            widget.isDark,
+                                          ),
                                     width: 2,
                                   ),
                                 ),
@@ -329,7 +419,9 @@ class _GradeDialogState extends State<GradeDialog>
                                   borderSide: BorderSide(
                                     color: _errorText != null
                                         ? GradingColors.late
-                                        : GradingColors.borderColor(widget.isDark),
+                                        : GradingColors.borderColor(
+                                            widget.isDark,
+                                          ),
                                     width: 1.5,
                                   ),
                                 ),
@@ -354,9 +446,11 @@ class _GradeDialogState extends State<GradeDialog>
                         Padding(
                           padding: const EdgeInsets.only(top: 18),
                           child: Text(
-                            '/ ${widget.submission.maxGrade}',
+                            '/ ${widget.maxGrade}',
                             style: TextStyle(
-                              color: GradingColors.textSecondaryColor(widget.isDark),
+                              color: GradingColors.textSecondaryColor(
+                                widget.isDark,
+                              ),
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
                             ),
@@ -364,7 +458,7 @@ class _GradeDialogState extends State<GradeDialog>
                         ),
                       ],
                     ),
-                    
+
                     if (_errorText != null) ...[
                       const SizedBox(height: 8),
                       Text(
@@ -376,9 +470,9 @@ class _GradeDialogState extends State<GradeDialog>
                         ),
                       ),
                     ],
-                    
+
                     const SizedBox(height: 16),
-                    
+
                     // Quick grade buttons
                     Text(
                       'Quick Grade',
@@ -393,10 +487,9 @@ class _GradeDialogState extends State<GradeDialog>
                       spacing: 8,
                       runSpacing: 8,
                       children: [100, 90, 80, 70, 60, 50].map((percentage) {
-                        final isSelected = _gradeController.text ==
-                            (widget.submission.maxGrade * percentage / 100)
-                                .round()
-                                .toString();
+                        final isSelected =
+                            _gradeController.text ==
+                            _formatScore(widget.maxGrade * percentage / 100);
                         return _QuickGradeButton(
                           percentage: percentage,
                           isSelected: isSelected,
@@ -405,9 +498,57 @@ class _GradeDialogState extends State<GradeDialog>
                         );
                       }).toList(),
                     ),
-                    
+
+                    if (hasLatePenalty && finalScore != null) ...[
+                      const SizedBox(height: 16),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: GradingColors.pendingLight.withValues(
+                            alpha: 0.25,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: GradingColors.pending.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Original Score: ${_formatScore(parsedGrade)}',
+                              style: TextStyle(
+                                color: GradingColors.textPrimaryColor(
+                                  widget.isDark,
+                                ),
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Late Penalty: ${_formatScore(widget.latePenaltyPercent)}% x $daysLate day(s)',
+                              style: TextStyle(
+                                color: GradingColors.textSecondaryColor(
+                                  widget.isDark,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Final Score: ${_formatScore(finalScore)}',
+                              style: TextStyle(
+                                color: GradingColors.pending,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
                     const SizedBox(height: 24),
-                    
+
                     // Feedback input
                     Text(
                       l10n.feedback,
@@ -423,7 +564,9 @@ class _GradeDialogState extends State<GradeDialog>
                         borderRadius: BorderRadius.circular(14),
                         boxShadow: [
                           BoxShadow(
-                            color: GradingColors.primary.withValues(alpha: 0.05),
+                            color: GradingColors.primary.withValues(
+                              alpha: 0.05,
+                            ),
                             blurRadius: 10,
                             offset: const Offset(0, 2),
                           ),
@@ -439,7 +582,9 @@ class _GradeDialogState extends State<GradeDialog>
                         decoration: InputDecoration(
                           hintText: l10n.enterFeedback,
                           hintStyle: TextStyle(
-                            color: GradingColors.textTertiaryColor(widget.isDark),
+                            color: GradingColors.textTertiaryColor(
+                              widget.isDark,
+                            ),
                           ),
                           filled: true,
                           fillColor: GradingColors.cardColor(widget.isDark),
@@ -467,9 +612,9 @@ class _GradeDialogState extends State<GradeDialog>
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 24),
-                    
+
                     // Submit button
                     SizedBox(
                       width: double.infinity,
@@ -484,15 +629,21 @@ class _GradeDialogState extends State<GradeDialog>
                               gradient: _isSubmitting
                                   ? LinearGradient(
                                       colors: [
-                                        GradingColors.primary.withValues(alpha: 0.6),
-                                        GradingColors.primaryLight.withValues(alpha: 0.6),
+                                        GradingColors.primary.withValues(
+                                          alpha: 0.6,
+                                        ),
+                                        GradingColors.primaryLight.withValues(
+                                          alpha: 0.6,
+                                        ),
                                       ],
                                     )
                                   : GradingColors.primaryGradient,
                               borderRadius: BorderRadius.circular(14),
                               boxShadow: [
                                 BoxShadow(
-                                  color: GradingColors.primary.withValues(alpha: 0.3),
+                                  color: GradingColors.primary.withValues(
+                                    alpha: 0.3,
+                                  ),
                                   blurRadius: 12,
                                   offset: const Offset(0, 4),
                                 ),
@@ -520,7 +671,9 @@ class _GradeDialogState extends State<GradeDialog>
                                   ),
                                 const SizedBox(width: 10),
                                 Text(
-                                  _isSubmitting ? 'Submitting...' : l10n.submitGrade,
+                                  _isSubmitting
+                                      ? 'Submitting...'
+                                      : l10n.submitGrade,
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -533,7 +686,7 @@ class _GradeDialogState extends State<GradeDialog>
                         ),
                       ),
                     ),
-                    
+
                     const SizedBox(height: 16),
                   ],
                 ),
@@ -562,7 +715,7 @@ class _QuickGradeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final gradeColor = GradingColors.getGradeColor(percentage.toDouble());
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(

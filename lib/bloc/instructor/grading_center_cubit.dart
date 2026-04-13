@@ -1,39 +1,51 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../models/assignments/assignment_submission_model.dart';
+import '../../models/core/enums/assignment_enums.dart' as api;
 import '../../models/instructor/grading_model.dart';
-import '../../models/instructor/instructor_course_model.dart';
+import '../../services/api/assignment_service.dart';
 import 'grading_center_state.dart';
 
 class GradingCenterCubit extends Cubit<GradingCenterState> {
-  GradingCenterCubit() : super(const GradingCenterState()) {
-    loadGradingData();
-  }
+  final AssignmentService _assignmentService;
+  int? _activeAssignmentId;
 
-  Future<void> loadGradingData() async {
+  GradingCenterCubit({required AssignmentService assignmentService})
+    : _assignmentService = assignmentService,
+      super(const GradingCenterState());
+
+  Future<void> loadGradingData({required int assignmentId}) async {
+    _activeAssignmentId = assignmentId;
     emit(state.copyWith(isLoading: true, clearError: true));
 
-    try {
-      await Future.delayed(const Duration(milliseconds: 500));
+    final result = await _assignmentService.getSubmissions(assignmentId);
+    if (!result.isSuccess || result.data == null) {
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: result.error?.message ?? 'Failed to load grading data',
+        ),
+      );
+      return;
+    }
 
-      final courses = _generateDemoCourses();
-      final submissions = _generateDemoSubmissions();
-      final statistics = _calculateStatistics(submissions);
+    final submissions = result.data!;
+    final statistics = _calculateStatistics(submissions);
 
-      emit(state.copyWith(
-        courses: courses,
+    emit(
+      state.copyWith(
         submissions: submissions,
         statistics: statistics,
         isLoading: false,
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Failed to load grading data: $e',
-      ));
-    }
+        clearError: true,
+      ),
+    );
   }
 
   Future<void> refreshGradingData() async {
-    await loadGradingData();
+    if (_activeAssignmentId == null) {
+      return;
+    }
+    await loadGradingData(assignmentId: _activeAssignmentId!);
   }
 
   void setSelectedTab(int index) {
@@ -49,181 +61,105 @@ class GradingCenterCubit extends Cubit<GradingCenterState> {
   }
 
   void setSelectedCourse(String? courseId) {
-    emit(state.copyWith(selectedCourseId: courseId, clearCourse: courseId == null));
+    emit(
+      state.copyWith(selectedCourseId: courseId, clearCourse: courseId == null),
+    );
   }
 
-  Future<void> gradeSubmission(String submissionId, int grade, String feedback) async {
-    final submissions = state.submissions.map((s) {
-      if (s.id == submissionId) {
-        return StudentSubmission(
-          id: s.id,
-          studentId: s.studentId,
-          studentName: s.studentName,
-          studentEmail: s.studentEmail,
-          studentAvatar: s.studentAvatar,
-          courseId: s.courseId,
-          courseName: s.courseName,
-          assignmentId: s.assignmentId,
-          assignmentTitle: s.assignmentTitle,
-          submittedAt: s.submittedAt,
-          status: 'graded',
-          grade: grade,
-          maxGrade: s.maxGrade,
-          feedback: feedback,
-          attachments: s.attachments,
-        );
+  Future<void> gradeSubmission(
+    int submissionId,
+    double grade,
+    String feedback,
+  ) async {
+    final assignmentId = _activeAssignmentId;
+    if (assignmentId == null) {
+      emit(state.copyWith(errorMessage: 'No assignment selected for grading'));
+      return;
+    }
+
+    emit(state.copyWith(isGrading: true, clearError: true));
+
+    final result = await _assignmentService.gradeSubmission(
+      assignmentId,
+      submissionId,
+      grade,
+      feedback: feedback,
+    );
+
+    if (!result.isSuccess) {
+      emit(
+        state.copyWith(
+          isGrading: false,
+          errorMessage: result.error?.message ?? 'Failed to grade submission',
+        ),
+      );
+      return;
+    }
+
+    final updated = state.submissions.map((s) {
+      if (s.id != submissionId) {
+        return s;
       }
-      return s;
+
+      return AssignmentSubmissionModel(
+        id: s.id,
+        assignmentId: s.assignmentId,
+        userId: s.userId,
+        submissionText: s.submissionText,
+        submissionLink: s.submissionLink,
+        fileId: s.fileId,
+        submissionStatus: api.SubmissionStatus.graded,
+        isLate: s.isLate,
+        attemptNumber: s.attemptNumber,
+        submittedAt: s.submittedAt,
+        score: grade,
+        feedback: feedback,
+        gradedBy: s.gradedBy,
+        gradedAt: DateTime.now(),
+        user: s.user,
+        driveFile: s.driveFile,
+      );
     }).toList();
 
-    emit(state.copyWith(
-      submissions: submissions,
-      statistics: _calculateStatistics(submissions),
-    ));
+    emit(
+      state.copyWith(
+        submissions: updated,
+        statistics: _calculateStatistics(updated),
+        isGrading: false,
+        clearError: true,
+      ),
+    );
   }
 
   void clearError() {
     emit(state.copyWith(clearError: true));
   }
 
-  List<InstructorCourseModel> _generateDemoCourses() {
-    return [
-      InstructorCourseModel(
-        id: '1',
-        code: 'CS101',
-        name: 'Operating Systems',
-        totalStudents: 45,
-        colorValue: 0xFF6366F1,
-      ),
-      InstructorCourseModel(
-        id: '2',
-        code: 'CS202',
-        name: 'Data Structures & Algorithms',
-        totalStudents: 38,
-        colorValue: 0xFF10B981,
-      ),
-      InstructorCourseModel(
-        id: '3',
-        code: 'CS305',
-        name: 'Database Management Systems',
-        totalStudents: 52,
-        colorValue: 0xFFF59E0B,
-      ),
-    ];
-  }
-
-  List<StudentSubmission> _generateDemoSubmissions() {
-    final students = [
-      {'id': 's1', 'name': 'Ahmed Mohamed', 'email': 'ahmed@university.edu'},
-      {'id': 's2', 'name': 'Sara Ahmed', 'email': 'sara@university.edu'},
-      {'id': 's3', 'name': 'Omar Hassan', 'email': 'omar@university.edu'},
-      {'id': 's4', 'name': 'Fatima Ali', 'email': 'fatima@university.edu'},
-      {'id': 's5', 'name': 'Youssef Khaled', 'email': 'youssef@university.edu'},
-      {'id': 's6', 'name': 'Nour Ibrahim', 'email': 'nour@university.edu'},
-    ];
-
-    return [
-      StudentSubmission(
-        id: 'sub1',
-        studentId: students[0]['id']!,
-        studentName: students[0]['name']!,
-        studentEmail: students[0]['email']!,
-        studentAvatar: '',
-        courseId: '1',
-        courseName: 'CS101 - Operating Systems',
-        assignmentId: 'a1',
-        assignmentTitle: 'Process Scheduling',
-        submittedAt: DateTime.now().subtract(const Duration(hours: 2)),
-        status: 'pending',
-        maxGrade: 100,
-      ),
-      StudentSubmission(
-        id: 'sub2',
-        studentId: students[1]['id']!,
-        studentName: students[1]['name']!,
-        studentEmail: students[1]['email']!,
-        studentAvatar: '',
-        courseId: '2',
-        courseName: 'CS202 - Data Structures',
-        assignmentId: 'a2',
-        assignmentTitle: 'Binary Trees',
-        submittedAt: DateTime.now().subtract(const Duration(hours: 5)),
-        status: 'pending',
-        maxGrade: 100,
-      ),
-      StudentSubmission(
-        id: 'sub3',
-        studentId: students[2]['id']!,
-        studentName: students[2]['name']!,
-        studentEmail: students[2]['email']!,
-        studentAvatar: '',
-        courseId: '3',
-        courseName: 'CS305 - Database Systems',
-        assignmentId: 'a3',
-        assignmentTitle: 'SQL Queries',
-        submittedAt: DateTime.now().subtract(const Duration(days: 1)),
-        status: 'graded',
-        grade: 85,
-        maxGrade: 100,
-      ),
-      StudentSubmission(
-        id: 'sub4',
-        studentId: students[3]['id']!,
-        studentName: students[3]['name']!,
-        studentEmail: students[3]['email']!,
-        studentAvatar: '',
-        courseId: '1',
-        courseName: 'CS101 - Operating Systems',
-        assignmentId: 'a1',
-        assignmentTitle: 'Memory Management',
-        submittedAt: DateTime.now().subtract(const Duration(days: 2)),
-        status: 'late',
-        maxGrade: 100,
-        lateDays: 1,
-      ),
-      StudentSubmission(
-        id: 'sub5',
-        studentId: students[4]['id']!,
-        studentName: students[4]['name']!,
-        studentEmail: students[4]['email']!,
-        studentAvatar: '',
-        courseId: '2',
-        courseName: 'CS202 - Data Structures',
-        assignmentId: 'a2',
-        assignmentTitle: 'Hash Tables',
-        submittedAt: DateTime.now().subtract(const Duration(days: 1)),
-        status: 'graded',
-        grade: 92,
-        maxGrade: 100,
-      ),
-      StudentSubmission(
-        id: 'sub6',
-        studentId: students[5]['id']!,
-        studentName: students[5]['name']!,
-        studentEmail: students[5]['email']!,
-        studentAvatar: '',
-        courseId: '3',
-        courseName: 'CS305 - Database Systems',
-        assignmentId: 'a3',
-        assignmentTitle: 'ER Diagrams',
-        submittedAt: DateTime.now().subtract(const Duration(days: 3)),
-        status: 'late',
-        maxGrade: 100,
-        lateDays: 2,
-      ),
-    ];
-  }
-
-  GradingStatistics _calculateStatistics(List<StudentSubmission> submissions) {
+  GradingStatistics _calculateStatistics(
+    List<AssignmentSubmissionModel> submissions,
+  ) {
     final total = submissions.length;
-    final pending = submissions.where((s) => s.status == 'pending').length;
-    final graded = submissions.where((s) => s.status == 'graded').length;
-    final late = submissions.where((s) => s.status == 'late').length;
+    final pending = submissions
+        .where(
+          (s) =>
+              s.submissionStatus == api.SubmissionStatus.submitted ||
+              s.submissionStatus == api.SubmissionStatus.resubmit,
+        )
+        .length;
+    final graded = submissions
+        .where((s) => s.submissionStatus == api.SubmissionStatus.graded)
+        .length;
+    final late = submissions.where((s) => s.isLate).length;
 
-    final gradedSubmissions = submissions.where((s) => s.status == 'graded' && s.grade != null);
+    final gradedSubmissions = submissions.where(
+      (s) =>
+          s.submissionStatus == api.SubmissionStatus.graded && s.score != null,
+    );
     double avgGrade = 0;
     if (gradedSubmissions.isNotEmpty) {
-      avgGrade = gradedSubmissions.map((s) => s.grade!).reduce((a, b) => a + b) / gradedSubmissions.length;
+      avgGrade =
+          gradedSubmissions.map((s) => s.score!).reduce((a, b) => a + b) /
+          gradedSubmissions.length;
     }
 
     return GradingStatistics(

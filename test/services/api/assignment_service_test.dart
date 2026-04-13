@@ -282,5 +282,61 @@ void main() {
       expect(result.data!.assignmentId, 21);
       expect(result.data!.submissionStatus, api.SubmissionStatus.graded);
     });
+
+    test(
+      'uploadInstructionFile preserves top-level fileId in nested payload',
+      () async {
+        final client = CoreApiClient.test();
+        final adapter = _QueueAdapter(<Map<String, dynamic>>[
+          <String, dynamic>{
+            'statusCode': 201,
+            'data': <String, dynamic>{
+              'data': <String, dynamic>{
+                'assignmentId': 9,
+                'fileId': 321,
+                'driveFile': <String, dynamic>{
+                  'driveFileId': 123,
+                  'driveId': 'drive-123',
+                  'fileName': 'instructions.pdf',
+                  'webViewLink':
+                      'https://drive.google.com/file/d/drive-123/view',
+                  'webContentLink':
+                      'https://drive.google.com/uc?id=drive-123&export=download',
+                },
+              },
+            },
+          },
+        ]);
+        client.dio.httpClientAdapter = adapter;
+
+        final tempDir = await Directory.systemTemp.createTemp(
+          'instruction_upload_test',
+        );
+        final file = File('${tempDir.path}${Platform.pathSeparator}guide.txt');
+        await file.writeAsString('guide');
+
+        try {
+          final service = AssignmentService(coreApiClient: client);
+          final result = await service.uploadInstructionFile(9, file);
+
+          expect(result.isSuccess, isTrue);
+          expect(
+            adapter.requests.first.path,
+            '/assignments/9/instructions/upload',
+          );
+          expect(adapter.requests.first.method, 'POST');
+          expect(result.data!.fileId, 321);
+          expect(result.data!.driveFileId, 123);
+        } finally {
+          try {
+            if (await tempDir.exists()) {
+              await tempDir.delete(recursive: true);
+            }
+          } on FileSystemException {
+            // Best-effort cleanup on Windows.
+          }
+        }
+      },
+    );
   });
 }

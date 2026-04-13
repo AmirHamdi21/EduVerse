@@ -1,113 +1,4 @@
-import 'package:flutter/material.dart';
-
-/// Model for student submission
-class StudentSubmission {
-  final String id;
-  final String studentId;
-  final String studentName;
-  final String studentEmail;
-  final String studentAvatar;
-  final String assignmentId;
-  final String assignmentTitle;
-  final String assignmentType;
-  final String courseId;
-  final String courseName;
-  final DateTime submittedAt;
-  final DateTime? gradedAt;
-  final int? grade;
-  final int maxGrade;
-  final String? feedback;
-  final String status;
-  final List<String> attachments;
-  final String? textContent;
-  final int lateDays;
-
-  const StudentSubmission({
-    required this.id,
-    required this.studentId,
-    required this.studentName,
-    required this.studentEmail,
-    this.studentAvatar = '',
-    required this.assignmentId,
-    required this.assignmentTitle,
-    this.assignmentType = 'assignment',
-    required this.courseId,
-    required this.courseName,
-    required this.submittedAt,
-    this.gradedAt,
-    this.grade,
-    this.maxGrade = 100,
-    this.feedback,
-    this.status = 'pending',
-    this.attachments = const [],
-    this.textContent,
-    this.lateDays = 0,
-  });
-
-  String get letterGrade {
-    if (grade == null) return '-';
-    final percentage = (grade! / maxGrade) * 100;
-    if (percentage >= 90) return 'A';
-    if (percentage >= 80) return 'B';
-    if (percentage >= 70) return 'C';
-    if (percentage >= 60) return 'D';
-    return 'F';
-  }
-
-  Color get gradeColor {
-    if (grade == null) return const Color(0xFF64748B);
-    final percentage = (grade! / maxGrade) * 100;
-    if (percentage >= 90) return const Color(0xFF10B981);
-    if (percentage >= 80) return const Color(0xFF3B82F6);
-    if (percentage >= 70) return const Color(0xFFF59E0B);
-    if (percentage >= 60) return const Color(0xFFF97316);
-    return const Color(0xFFEF4444);
-  }
-
-  StudentSubmission copyWith({
-    String? id,
-    String? studentId,
-    String? studentName,
-    String? studentEmail,
-    String? studentAvatar,
-    String? assignmentId,
-    String? assignmentTitle,
-    String? assignmentType,
-    String? courseId,
-    String? courseName,
-    DateTime? submittedAt,
-    DateTime? gradedAt,
-    int? grade,
-    int? maxGrade,
-    String? feedback,
-    String? status,
-    List<String>? attachments,
-    String? textContent,
-    int? lateDays,
-  }) {
-    return StudentSubmission(
-      id: id ?? this.id,
-      studentId: studentId ?? this.studentId,
-      studentName: studentName ?? this.studentName,
-      studentEmail: studentEmail ?? this.studentEmail,
-      studentAvatar: studentAvatar ?? this.studentAvatar,
-      assignmentId: assignmentId ?? this.assignmentId,
-      assignmentTitle: assignmentTitle ?? this.assignmentTitle,
-      assignmentType: assignmentType ?? this.assignmentType,
-      courseId: courseId ?? this.courseId,
-      courseName: courseName ?? this.courseName,
-      submittedAt: submittedAt ?? this.submittedAt,
-      gradedAt: gradedAt ?? this.gradedAt,
-      grade: grade ?? this.grade,
-      maxGrade: maxGrade ?? this.maxGrade,
-      feedback: feedback ?? this.feedback,
-      status: status ?? this.status,
-      attachments: attachments ?? this.attachments,
-      textContent: textContent ?? this.textContent,
-      lateDays: lateDays ?? this.lateDays,
-    );
-  }
-}
+import '../core/enums/assignment_enums.dart' as api;
 
 /// Model for grading statistics
 class GradingStatistics {
@@ -133,9 +24,9 @@ class GradingStatistics {
 
 /// Assignment filter model
 class GradingFilter {
-  final String? courseId;
-  final String? assignmentId;
-  final String? status;
+  final int? courseId;
+  final int? assignmentId;
+  final api.SubmissionStatus? status;
   final String searchQuery;
   final GradingSortBy sortBy;
   final bool sortAscending;
@@ -150,9 +41,9 @@ class GradingFilter {
   });
 
   GradingFilter copyWith({
-    String? courseId,
-    String? assignmentId,
-    String? status,
+    int? courseId,
+    int? assignmentId,
+    api.SubmissionStatus? status,
     String? searchQuery,
     GradingSortBy? sortBy,
     bool? sortAscending,
@@ -162,7 +53,9 @@ class GradingFilter {
   }) {
     return GradingFilter(
       courseId: clearCourse ? null : (courseId ?? this.courseId),
-      assignmentId: clearAssignment ? null : (assignmentId ?? this.assignmentId),
+      assignmentId: clearAssignment
+          ? null
+          : (assignmentId ?? this.assignmentId),
       status: clearStatus ? null : (status ?? this.status),
       searchQuery: searchQuery ?? this.searchQuery,
       sortBy: sortBy ?? this.sortBy,

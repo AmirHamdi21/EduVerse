@@ -1,81 +1,26 @@
 import 'package:flutter/material.dart';
 
 import '../../../generated_l10n/app_localizations.dart';
-import 'course_management_colors.dart';
+import '../../../screens/instructor/assignments/instructor_assignments_screen.dart';
 
 class AssignmentsTab extends StatelessWidget {
   final bool isDark;
   final AppLocalizations l10n;
+  final int? courseId;
 
-  const AssignmentsTab({super.key, required this.isDark, required this.l10n});
-
-  @override
-  Widget build(BuildContext context) {
-    return _ComingSoonCard(
-      isDark: isDark,
-      icon: Icons.assignment_rounded,
-      title: 'Assignments management coming soon',
-      subtitle: 'This tab will be enabled in the next phase.',
-    );
-  }
-}
-
-class _ComingSoonCard extends StatelessWidget {
-  final bool isDark;
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  const _ComingSoonCard({
+  const AssignmentsTab({
+    super.key,
     required this.isDark,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
+    required this.l10n,
+    required this.courseId,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: CMColors.cardColor(isDark),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: CMColors.borderColor(isDark)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  gradient: CMColors.warmGradient,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(icon, color: Colors.white, size: 22),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: CMColors.text(isDark),
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: CMColors.textSub(isDark), fontSize: 12),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return InstructorAssignmentsScreen(
+      initialCourseId: courseId,
+      lockCourseSelection: courseId != null,
+      embedded: true,
     );
   }
 }

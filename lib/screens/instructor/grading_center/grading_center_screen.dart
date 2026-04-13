@@ -2,14 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
-import '../../../models/instructor/submission_model.dart';
+import '../../../models/assignments/assignment_submission_model.dart';
+import '../../../models/core/enums/assignment_enums.dart' as api;
+import '../../../services/api/assignment_service.dart';
+import '../../../services/api/core_api_client.dart';
+import '../../../services/api/enrollment_service.dart';
+import '../../../services/storage_service.dart';
 import '../../../widgets/instructor/grading/grading_barrel.dart';
 
 class GradingCenterScreen extends StatefulWidget {
-  const GradingCenterScreen({super.key});
+  const GradingCenterScreen({super.key, this.courseId, this.embedded = false});
+
+  final int? courseId;
+  final bool embedded;
 
   @override
   State<GradingCenterScreen> createState() => _GradingCenterScreenState();
@@ -25,18 +34,18 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
   String _searchQuery = '';
   String _selectedCourse = 'All';
   bool _isLoading = true;
-  List<Submission> _submissions = [];
+  List<_SubmissionEntry> _submissions = [];
+  List<String> _courses = <String>['All'];
 
-  final List<String> _courses = [
-    'All',
-    'CS101 - OS',
-    'CS202 - Data Structures',
-    'CS305 - Database',
-  ];
+  late final AssignmentService _assignmentService;
+  late final EnrollmentService _enrollmentService;
 
   @override
   void initState() {
     super.initState();
+    final coreApiClient = CoreApiClient(storageService: StorageService());
+    _assignmentService = AssignmentService(coreApiClient: coreApiClient);
+    _enrollmentService = EnrollmentService(coreApiClient: coreApiClient);
     _tabController = TabController(length: 4, vsync: this);
     _statsAnimController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -64,15 +73,101 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
   Future<void> _loadSubmissions() async {
     if (!mounted) return;
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+    });
     _statsAnimController.reset();
     _listAnimController.reset();
 
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
+      final teachingCoursesResult = await _enrollmentService
+          .getTeachingCourses();
+      if (!teachingCoursesResult.isSuccess ||
+          teachingCoursesResult.data == null) {
+        throw Exception(
+          teachingCoursesResult.error?.message ??
+              'Failed to load teaching courses',
+        );
+      }
+
+      final loadedCourses = widget.courseId == null
+          ? <String>['All']
+          : <String>[];
+      final loadedSubmissions = <_SubmissionEntry>[];
+
+      for (final teachingCourse in teachingCoursesResult.data!) {
+        if (widget.courseId != null &&
+            teachingCourse.courseId != widget.courseId) {
+          continue;
+        }
+
+        final courseLabel = _buildCourseLabel(
+          teachingCourse.course.code,
+          teachingCourse.course.name,
+        );
+        if (!loadedCourses.contains(courseLabel)) {
+          loadedCourses.add(courseLabel);
+        }
+
+        final assignmentsResult = await _assignmentService.getAll(
+          courseId: teachingCourse.courseId,
+          page: 1,
+          limit: 20,
+          sortBy: 'dueDate',
+          sortOrder: 'DESC',
+        );
+
+        if (!assignmentsResult.isSuccess || assignmentsResult.data == null) {
+          continue;
+        }
+
+        for (final assignment in assignmentsResult.data!.data) {
+          final submissionsResult = await _assignmentService.getSubmissions(
+            assignment.assignmentId,
+          );
+
+          if (!submissionsResult.isSuccess || submissionsResult.data == null) {
+            continue;
+          }
+
+          for (final apiSubmission in submissionsResult.data!) {
+            final studentFirstName = apiSubmission.user?.firstName ?? '';
+            final studentLastName = apiSubmission.user?.lastName ?? '';
+            final studentName =
+                '$studentFirstName $studentLastName'.trim().isEmpty
+                ? 'Student #${apiSubmission.userId}'
+                : '$studentFirstName $studentLastName'.trim();
+
+            loadedSubmissions.add(
+              _SubmissionEntry(
+                submission: apiSubmission,
+                studentName: studentName,
+                assignmentTitle: assignment.title,
+                courseName: courseLabel,
+                maxGrade: assignment.maxGrade > 0
+                    ? assignment.maxGrade.round()
+                    : 100,
+                dueDate: assignment.dueDate,
+                latePenaltyPercent: assignment.latePenaltyPercent,
+              ),
+            );
+          }
+        }
+      }
+
+      loadedSubmissions.sort(
+        (a, b) => b.submission.submittedAt.compareTo(a.submission.submittedAt),
+      );
+
       if (mounted) {
         setState(() {
-          _submissions = _getDemoSubmissions();
+          _courses = loadedCourses;
+          if (widget.courseId != null && _courses.isNotEmpty) {
+            _selectedCourse = _courses.first;
+          } else if (!_courses.contains(_selectedCourse)) {
+            _selectedCourse = 'All';
+          }
+          _submissions = loadedSubmissions;
           _isLoading = false;
         });
         _statsAnimController.forward();
@@ -80,7 +175,9 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
       }
     } catch (e) {
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(() {
+          _isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Failed to load submissions'),
@@ -100,125 +197,115 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
     }
   }
 
-  List<Submission> _getDemoSubmissions() {
-    return [
-      Submission(
-        id: '1',
-        studentName: 'Ahmed Mohamed',
-        studentEmail: 'ahmed@uni.edu',
-        assignmentTitle: 'Process Scheduling',
-        courseName: 'CS101 - OS',
-        submittedAt: DateTime.now().subtract(const Duration(hours: 2)),
-        status: SubmissionStatus.pending,
-        grade: null,
-        maxGrade: 100,
-      ),
-      Submission(
-        id: '2',
-        studentName: 'Sara Ahmed',
-        studentEmail: 'sara@uni.edu',
-        assignmentTitle: 'Binary Trees',
-        courseName: 'CS202 - Data Structures',
-        submittedAt: DateTime.now().subtract(const Duration(hours: 5)),
-        status: SubmissionStatus.pending,
-        grade: null,
-        maxGrade: 100,
-      ),
-      Submission(
-        id: '3',
-        studentName: 'Omar Hassan',
-        studentEmail: 'omar@uni.edu',
-        assignmentTitle: 'SQL Queries',
-        courseName: 'CS305 - Database',
-        submittedAt: DateTime.now().subtract(const Duration(days: 1)),
-        status: SubmissionStatus.graded,
-        grade: 85,
-        maxGrade: 100,
-      ),
-      Submission(
-        id: '4',
-        studentName: 'Fatima Ali',
-        studentEmail: 'fatima@uni.edu',
-        assignmentTitle: 'Memory Management',
-        courseName: 'CS101 - OS',
-        submittedAt: DateTime.now().subtract(const Duration(days: 2)),
-        status: SubmissionStatus.late,
-        grade: null,
-        maxGrade: 100,
-        lateDays: 1,
-      ),
-      Submission(
-        id: '5',
-        studentName: 'Youssef Khaled',
-        studentEmail: 'youssef@uni.edu',
-        assignmentTitle: 'Hash Tables',
-        courseName: 'CS202 - Data Structures',
-        submittedAt: DateTime.now().subtract(const Duration(days: 1)),
-        status: SubmissionStatus.graded,
-        grade: 92,
-        maxGrade: 100,
-      ),
-      Submission(
-        id: '6',
-        studentName: 'Nour Ibrahim',
-        studentEmail: 'nour@uni.edu',
-        assignmentTitle: 'ER Diagrams',
-        courseName: 'CS305 - Database',
-        submittedAt: DateTime.now().subtract(const Duration(days: 3)),
-        status: SubmissionStatus.late,
-        grade: null,
-        maxGrade: 100,
-        lateDays: 2,
-      ),
-      Submission(
-        id: '7',
-        studentName: 'Mohamed Salah',
-        studentEmail: 'msalah@uni.edu',
-        assignmentTitle: 'Deadlock Prevention',
-        courseName: 'CS101 - OS',
-        submittedAt: DateTime.now().subtract(const Duration(hours: 8)),
-        status: SubmissionStatus.pending,
-        grade: null,
-        maxGrade: 100,
-      ),
-    ];
+  String _buildCourseLabel(String code, String name) {
+    final cleanCode = code.trim();
+    final cleanName = name.trim();
+    if (cleanCode.isEmpty) {
+      return cleanName;
+    }
+    return '$cleanCode - $cleanName';
   }
 
-  List<Submission> _getFilteredSubmissions(String filter) {
+  bool _isGradedStatus(api.SubmissionStatus status) {
+    return status == api.SubmissionStatus.graded ||
+        status == api.SubmissionStatus.returned;
+  }
+
+  AssignmentSubmissionModel _copySubmissionWithGrade(
+    AssignmentSubmissionModel submission,
+    double grade,
+    String? feedback,
+  ) {
+    return AssignmentSubmissionModel(
+      id: submission.id,
+      assignmentId: submission.assignmentId,
+      userId: submission.userId,
+      submissionText: submission.submissionText,
+      submissionLink: submission.submissionLink,
+      fileId: submission.fileId,
+      submissionStatus: api.SubmissionStatus.graded,
+      isLate: submission.isLate,
+      attemptNumber: submission.attemptNumber,
+      submittedAt: submission.submittedAt,
+      score: grade,
+      feedback: feedback,
+      gradedBy: submission.gradedBy,
+      gradedAt: DateTime.now(),
+      user: submission.user,
+      driveFile: submission.driveFile,
+    );
+  }
+
+  List<_SubmissionEntry> _getFilteredSubmissions(String filter) {
     return _submissions.where((s) {
       final matchesSearch =
           s.studentName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           s.assignmentTitle.toLowerCase().contains(_searchQuery.toLowerCase());
       final matchesCourse =
           _selectedCourse == 'All' || s.courseName == _selectedCourse;
+      final isGraded = _isGradedStatus(s.submission.submissionStatus);
       final matchesFilter =
           filter == 'all' ||
-          (filter == 'pending' && s.status == SubmissionStatus.pending) ||
-          (filter == 'graded' && s.status == SubmissionStatus.graded) ||
-          (filter == 'late' && s.status == SubmissionStatus.late);
+          (filter == 'pending' && !isGraded) ||
+          (filter == 'graded' && isGraded) ||
+          (filter == 'late' && s.submission.isLate);
       return matchesSearch && matchesCourse && matchesFilter;
     }).toList();
   }
 
-  int get _pendingCount =>
-      _submissions.where((s) => s.status == SubmissionStatus.pending).length;
-  int get _gradedCount =>
-      _submissions.where((s) => s.status == SubmissionStatus.graded).length;
-  int get _lateCount =>
-      _submissions.where((s) => s.status == SubmissionStatus.late).length;
+  int get _pendingCount => _submissions
+      .where((s) => !_isGradedStatus(s.submission.submissionStatus))
+      .length;
+  int get _gradedCount => _submissions
+      .where((s) => _isGradedStatus(s.submission.submissionStatus))
+      .length;
+  int get _lateCount => _submissions.where((s) => s.submission.isLate).length;
 
-  void _handleGradeSubmission(
-    Submission submission,
-    int grade,
+  Future<void> _handleGradeSubmission(
+    _SubmissionEntry submissionEntry,
+    double grade,
     String? feedback,
-  ) {
+  ) async {
+    final assignmentId = submissionEntry.submission.assignmentId;
+    final submissionId = submissionEntry.submission.id;
+
+    final gradeResult = await _assignmentService.gradeSubmission(
+      assignmentId,
+      submissionId,
+      grade,
+      feedback: feedback,
+    );
+
+    if (!gradeResult.isSuccess) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            gradeResult.error?.message ?? 'Failed to save grade. Please retry.',
+          ),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          backgroundColor: GradingColors.late,
+        ),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
     setState(() {
-      final index = _submissions.indexWhere((s) => s.id == submission.id);
+      final index = _submissions.indexWhere(
+        (s) => s.submission.id == submissionEntry.submission.id,
+      );
       if (index != -1) {
-        _submissions[index] = submission.copyWith(
-          grade: grade,
-          feedback: feedback,
-          status: SubmissionStatus.graded,
+        _submissions[index] = _submissions[index].copyWith(
+          submission: _copySubmissionWithGrade(
+            _submissions[index].submission,
+            grade,
+            feedback,
+          ),
         );
       }
     });
@@ -253,12 +340,40 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
+        final tabContent = Column(
+          children: [
+            _buildSearchFilterBar(isDark, l10n),
+            _buildTabBar(isDark, l10n),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildSubmissionsList(isDark, l10n, 'all'),
+                  _buildSubmissionsList(isDark, l10n, 'pending'),
+                  _buildSubmissionsList(isDark, l10n, 'graded'),
+                  _buildSubmissionsList(isDark, l10n, 'late'),
+                ],
+              ),
+            ),
+          ],
+        );
+
+        if (widget.embedded) {
+          return Container(
+            color: GradingColors.background(isDark),
+            child: Column(
+              children: [
+                _buildHeaderSection(isDark, l10n),
+                Expanded(child: tabContent),
+              ],
+            ),
+          );
+        }
 
         return Scaffold(
           backgroundColor: GradingColors.background(isDark),
@@ -270,26 +385,7 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
                 SliverToBoxAdapter(child: _buildHeaderSection(isDark, l10n)),
               ];
             },
-            body: Column(
-              children: [
-                // Search and filter bar stays pinned
-                _buildSearchFilterBar(isDark, l10n),
-                // Tab bar
-                _buildTabBar(isDark, l10n),
-                // Submissions list
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildSubmissionsList(isDark, l10n, 'all'),
-                      _buildSubmissionsList(isDark, l10n, 'pending'),
-                      _buildSubmissionsList(isDark, l10n, 'graded'),
-                      _buildSubmissionsList(isDark, l10n, 'late'),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            body: tabContent,
           ),
         );
       },
@@ -824,7 +920,9 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
                 ],
               ),
               child: TextField(
-                onChanged: (v) => setState(() => _searchQuery = v),
+                onChanged: (v) => setState(() {
+                  _searchQuery = v;
+                }),
                 style: TextStyle(
                   color: GradingColors.textPrimaryColor(isDark),
                   fontSize: 14,
@@ -846,7 +944,9 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
                             color: GradingColors.textTertiaryColor(isDark),
                             size: 18,
                           ),
-                          onPressed: () => setState(() => _searchQuery = ''),
+                          onPressed: () => setState(() {
+                            _searchQuery = '';
+                          }),
                         )
                       : null,
                   filled: true,
@@ -916,7 +1016,11 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
                     child: Text(c.length > 15 ? '${c.substring(0, 15)}...' : c),
                   );
                 }).toList(),
-                onChanged: (v) => setState(() => _selectedCourse = v ?? 'All'),
+                onChanged: widget.courseId != null
+                    ? null
+                    : (v) => setState(() {
+                        _selectedCourse = v ?? 'All';
+                      }),
               ),
             ),
           ),
@@ -1007,6 +1111,7 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
   ) {
     if (_isLoading) {
       return ListView.builder(
+        physics: widget.embedded ? const ClampingScrollPhysics() : null,
         padding: const EdgeInsets.all(16),
         itemCount: 4,
         itemBuilder: (context, index) {
@@ -1026,10 +1131,11 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
       color: GradingColors.primary,
       backgroundColor: GradingColors.cardColor(isDark),
       child: ListView.builder(
+        physics: widget.embedded ? const ClampingScrollPhysics() : null,
         padding: const EdgeInsets.all(16),
         itemCount: submissions.length,
         itemBuilder: (context, index) {
-          final submission = submissions[index];
+          final submissionEntry = submissions[index];
           final itemAnimation = Tween<double>(begin: 0, end: 1).animate(
             CurvedAnimation(
               parent: _listAnimController,
@@ -1042,24 +1148,527 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
           );
 
           return SubmissionCard(
-            submission: submission,
+            submission: submissionEntry.submission,
+            studentName: submissionEntry.studentName,
+            assignmentTitle: submissionEntry.assignmentTitle,
+            courseName: submissionEntry.courseName,
+            maxGrade: submissionEntry.maxGrade,
+            dueDate: submissionEntry.dueDate,
             isDark: isDark,
             animation: itemAnimation,
             onGrade: () => GradeDialog.show(
               context: context,
-              submission: submission,
+              submission: submissionEntry.submission,
+              studentName: submissionEntry.studentName,
+              assignmentTitle: submissionEntry.assignmentTitle,
+              courseName: submissionEntry.courseName,
+              maxGrade: submissionEntry.maxGrade,
+              dueDate: submissionEntry.dueDate,
+              latePenaltyPercent: submissionEntry.latePenaltyPercent,
               isDark: isDark,
               onSubmit: (grade, feedback) =>
-                  _handleGradeSubmission(submission, grade, feedback),
+                  _handleGradeSubmission(submissionEntry, grade, feedback),
             ),
-            onViewDetails: () {
-              // TODO: Navigate to submission details
-              HapticFeedback.lightImpact();
-            },
+            onViewDetails: () =>
+                _showSubmissionDetails(context, submissionEntry, isDark),
           );
         },
       ),
     );
+  }
+
+  void _showSubmissionDetails(
+    BuildContext context,
+    _SubmissionEntry submissionEntry,
+    bool isDark,
+  ) {
+    final submission = submissionEntry.submission;
+    final studentEmail = submission.user?.email.trim() ?? '';
+    final lateDays = _calculateLateDays(submissionEntry);
+    final submissionText = submission.submissionText?.trim() ?? '';
+    final submissionLink = submission.submissionLink?.trim() ?? '';
+    final feedback = submission.feedback?.trim() ?? '';
+    final driveFile = submission.driveFile;
+    final fileName = driveFile?.fileName.trim().isNotEmpty == true
+        ? driveFile!.fileName
+        : (submission.fileId != null
+              ? 'Attached file #${submission.fileId}'
+              : '');
+
+    HapticFeedback.lightImpact();
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return DraggableScrollableSheet(
+          initialChildSize: 0.68,
+          minChildSize: 0.35,
+          maxChildSize: 0.92,
+          expand: false,
+          builder: (_, scrollController) {
+            return Container(
+              decoration: BoxDecoration(
+                color: GradingColors.cardColor(isDark),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 12, bottom: 8),
+                    width: 42,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: GradingColors.borderColor(isDark),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 12, 12),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundColor: GradingColors.primary.withValues(
+                            alpha: 0.14,
+                          ),
+                          child: Text(
+                            submissionEntry.studentName.isNotEmpty
+                                ? submissionEntry.studentName[0].toUpperCase()
+                                : '?',
+                            style: const TextStyle(
+                              color: GradingColors.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                submissionEntry.studentName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: GradingColors.textPrimaryColor(isDark),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                submissionEntry.assignmentTitle,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: GradingColors.textSecondaryColor(
+                                    isDark,
+                                  ),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.of(sheetContext).pop(),
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: GradingColors.textSecondaryColor(isDark),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(height: 1, color: GradingColors.borderColor(isDark)),
+                  Expanded(
+                    child: ListView(
+                      controller: scrollController,
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                      children: [
+                        _buildDetailsTile(
+                          icon: Icons.person_outline_rounded,
+                          label: 'Student',
+                          value: studentEmail.isNotEmpty
+                              ? '${submissionEntry.studentName} ($studentEmail)'
+                              : submissionEntry.studentName,
+                          isDark: isDark,
+                        ),
+                        _buildDetailsTile(
+                          icon: Icons.class_rounded,
+                          label: 'Course',
+                          value: submissionEntry.courseName,
+                          isDark: isDark,
+                        ),
+                        _buildDetailsTile(
+                          icon: Icons.assignment_outlined,
+                          label: 'Status',
+                          value: _formatSubmissionStatus(
+                            submission.submissionStatus,
+                          ),
+                          isDark: isDark,
+                        ),
+                        _buildDetailsTile(
+                          icon: Icons.calendar_today_rounded,
+                          label: 'Submitted',
+                          value: _formatDateTime(submission.submittedAt),
+                          isDark: isDark,
+                        ),
+                        _buildDetailsTile(
+                          icon: Icons.repeat_rounded,
+                          label: 'Attempt',
+                          value: 'Attempt ${submission.attemptNumber}',
+                          isDark: isDark,
+                        ),
+                        if (submission.isLate)
+                          _buildDetailsTile(
+                            icon: Icons.warning_amber_rounded,
+                            label: 'Late Submission',
+                            value: '$lateDays day(s) late',
+                            valueColor: GradingColors.late,
+                            isDark: isDark,
+                          ),
+                        if (submission.score != null)
+                          _buildDetailsTile(
+                            icon: Icons.grade_rounded,
+                            label: 'Current Grade',
+                            value:
+                                '${_formatScore(submission.score!)} / ${submissionEntry.maxGrade}',
+                            isDark: isDark,
+                          ),
+                        if (feedback.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          _buildLongTextBlock(
+                            icon: Icons.feedback_outlined,
+                            label: 'Feedback',
+                            value: feedback,
+                            isDark: isDark,
+                          ),
+                        ],
+                        if (submissionText.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          _buildLongTextBlock(
+                            icon: Icons.notes_rounded,
+                            label: 'Text Submission',
+                            value: submissionText,
+                            isDark: isDark,
+                          ),
+                        ],
+                        if (submissionLink.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          _buildDetailsTile(
+                            icon: Icons.link_rounded,
+                            label: 'Link Submission',
+                            value: submissionLink,
+                            isDark: isDark,
+                            isLink: true,
+                            onTap: () => _openExternalUrl(submissionLink),
+                          ),
+                        ],
+                        if (fileName.isNotEmpty) ...[
+                          const SizedBox(height: 12),
+                          _buildFileSection(
+                            fileName: fileName,
+                            openUrl: driveFile?.webViewLink ?? '',
+                            downloadUrl: driveFile?.downloadUrl ?? '',
+                            isDark: isDark,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailsTile({
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool isDark,
+    Color? valueColor,
+    bool isLink = false,
+    VoidCallback? onTap,
+  }) {
+    final valueTextStyle = TextStyle(
+      color: valueColor ?? GradingColors.textPrimaryColor(isDark),
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 1.35,
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: GradingColors.textTertiaryColor(isDark)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: GradingColors.textTertiaryColor(isDark),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                if (isLink)
+                  InkWell(
+                    onTap: onTap,
+                    borderRadius: BorderRadius.circular(8),
+                    child: Text(
+                      value,
+                      style: valueTextStyle.copyWith(
+                        color: GradingColors.primary,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  )
+                else
+                  Text(value, style: valueTextStyle),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLongTextBlock({
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool isDark,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: GradingColors.surfaceColor(
+          isDark,
+        ).withValues(alpha: isDark ? 0.35 : 1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: GradingColors.borderColor(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: GradingColors.textTertiaryColor(isDark),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: GradingColors.textTertiaryColor(isDark),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          SelectableText(
+            value,
+            style: TextStyle(
+              color: GradingColors.textPrimaryColor(isDark),
+              fontSize: 14,
+              height: 1.45,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFileSection({
+    required String fileName,
+    required String openUrl,
+    required String downloadUrl,
+    required bool isDark,
+  }) {
+    final hasOpenUrl = openUrl.trim().isNotEmpty;
+    final hasDownloadUrl = downloadUrl.trim().isNotEmpty;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: GradingColors.surfaceColor(
+          isDark,
+        ).withValues(alpha: isDark ? 0.35 : 1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: GradingColors.borderColor(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.attach_file_rounded,
+                size: 18,
+                color: GradingColors.textTertiaryColor(isDark),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'File Submission',
+                style: TextStyle(
+                  color: GradingColors.textTertiaryColor(isDark),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            fileName,
+            style: TextStyle(
+              color: GradingColors.textPrimaryColor(isDark),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Size: unavailable',
+            style: TextStyle(
+              color: GradingColors.textSecondaryColor(isDark),
+              fontSize: 12,
+            ),
+          ),
+          if (hasOpenUrl || hasDownloadUrl) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                if (hasOpenUrl)
+                  OutlinedButton.icon(
+                    onPressed: () => _openExternalUrl(openUrl),
+                    icon: const Icon(Icons.visibility_outlined, size: 18),
+                    label: const Text('Preview'),
+                  ),
+                if (hasDownloadUrl)
+                  OutlinedButton.icon(
+                    onPressed: () => _openExternalUrl(downloadUrl),
+                    icon: const Icon(Icons.download_rounded, size: 18),
+                    label: const Text('Download'),
+                  ),
+              ],
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openExternalUrl(String rawUrl) async {
+    final normalizedUrl = rawUrl.trim();
+    if (normalizedUrl.isEmpty) {
+      _showInlineMessage('No link available for this submission.');
+      return;
+    }
+
+    final uri = Uri.tryParse(normalizedUrl);
+    if (uri == null) {
+      _showInlineMessage('Invalid URL format.');
+      return;
+    }
+
+    final canOpen = await canLaunchUrl(uri);
+    if (!canOpen) {
+      _showInlineMessage('No app available to open this link.');
+      return;
+    }
+
+    try {
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched) {
+        _showInlineMessage('No app available to open this link.');
+      }
+    } catch (_) {
+      _showInlineMessage('Failed to open link.');
+    }
+  }
+
+  void _showInlineMessage(String message) {
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+    );
+  }
+
+  int _calculateLateDays(_SubmissionEntry submissionEntry) {
+    if (!submissionEntry.submission.isLate) {
+      return 0;
+    }
+
+    final lateDuration = submissionEntry.submission.submittedAt.difference(
+      submissionEntry.dueDate,
+    );
+
+    if (lateDuration.isNegative) {
+      return 1;
+    }
+
+    final lateDays = (lateDuration.inHours / 24).ceil();
+    return lateDays <= 0 ? 1 : lateDays;
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    final day = dateTime.day.toString().padLeft(2, '0');
+    final month = dateTime.month.toString().padLeft(2, '0');
+    final year = dateTime.year;
+    final hour = dateTime.hour.toString().padLeft(2, '0');
+    final minute = dateTime.minute.toString().padLeft(2, '0');
+    return '$day/$month/$year $hour:$minute';
+  }
+
+  String _formatScore(double score) {
+    if (score == score.roundToDouble()) {
+      return score.toInt().toString();
+    }
+    return score.toStringAsFixed(1);
+  }
+
+  String _formatSubmissionStatus(api.SubmissionStatus status) {
+    switch (status) {
+      case api.SubmissionStatus.submitted:
+        return 'Submitted';
+      case api.SubmissionStatus.graded:
+        return 'Graded';
+      case api.SubmissionStatus.returned:
+        return 'Returned';
+      case api.SubmissionStatus.resubmit:
+        return 'Resubmitted';
+      case api.SubmissionStatus.unknown:
+        return 'Unknown';
+    }
   }
 
   Widget _buildEmptyState(bool isDark, AppLocalizations l10n, String filter) {
@@ -1089,55 +1698,102 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
         color = GradingColors.primary;
     }
 
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    color.withValues(alpha: 0.15),
-                    color.withValues(alpha: 0.05),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final minHeight = constraints.hasBoundedHeight
+            ? constraints.maxHeight
+            : 0.0;
+
+        return SingleChildScrollView(
+          physics: widget.embedded ? const ClampingScrollPhysics() : null,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: minHeight),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            color.withValues(alpha: 0.15),
+                            color.withValues(alpha: 0.05),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: color.withValues(alpha: 0.2),
+                          width: 2,
+                        ),
+                      ),
+                      child: Icon(icon, size: 48, color: color),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      message,
+                      style: TextStyle(
+                        color: GradingColors.textSecondaryColor(isDark),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      filter == 'all'
+                          ? 'All caught up! Check back later.'
+                          : 'No submissions in this category',
+                      style: TextStyle(
+                        color: GradingColors.textTertiaryColor(isDark),
+                        fontSize: 13,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: color.withValues(alpha: 0.2),
-                  width: 2,
                 ),
               ),
-              child: Icon(icon, size: 48, color: color),
             ),
-            const SizedBox(height: 24),
-            Text(
-              message,
-              style: TextStyle(
-                color: GradingColors.textSecondaryColor(isDark),
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              filter == 'all'
-                  ? 'All caught up! Check back later.'
-                  : 'No submissions in this category',
-              style: TextStyle(
-                color: GradingColors.textTertiaryColor(isDark),
-                fontSize: 13,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SubmissionEntry {
+  const _SubmissionEntry({
+    required this.submission,
+    required this.studentName,
+    required this.assignmentTitle,
+    required this.courseName,
+    required this.maxGrade,
+    required this.dueDate,
+    required this.latePenaltyPercent,
+  });
+
+  final AssignmentSubmissionModel submission;
+  final String studentName;
+  final String assignmentTitle;
+  final String courseName;
+  final int maxGrade;
+  final DateTime dueDate;
+  final double latePenaltyPercent;
+
+  _SubmissionEntry copyWith({AssignmentSubmissionModel? submission}) {
+    return _SubmissionEntry(
+      submission: submission ?? this.submission,
+      studentName: studentName,
+      assignmentTitle: assignmentTitle,
+      courseName: courseName,
+      maxGrade: maxGrade,
+      dueDate: dueDate,
+      latePenaltyPercent: latePenaltyPercent,
     );
   }
 }

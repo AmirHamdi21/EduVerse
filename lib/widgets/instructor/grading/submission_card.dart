@@ -1,11 +1,19 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import '../../../generated_l10n/app_localizations.dart';
-import '../../../models/instructor/submission_model.dart';
+import '../../../models/assignments/assignment_submission_model.dart';
+import '../../../models/core/enums/assignment_enums.dart' as api;
 import 'grading_theme_colors.dart';
 
 /// Premium submission card widget with gradient effects
 class SubmissionCard extends StatelessWidget {
-  final Submission submission;
+  final AssignmentSubmissionModel submission;
+  final String studentName;
+  final String assignmentTitle;
+  final String courseName;
+  final int maxGrade;
+  final DateTime dueDate;
   final bool isDark;
   final VoidCallback onGrade;
   final VoidCallback? onViewDetails;
@@ -14,6 +22,11 @@ class SubmissionCard extends StatelessWidget {
   const SubmissionCard({
     super.key,
     required this.submission,
+    required this.studentName,
+    required this.assignmentTitle,
+    required this.courseName,
+    required this.maxGrade,
+    required this.dueDate,
     required this.isDark,
     required this.onGrade,
     this.onViewDetails,
@@ -23,21 +36,13 @@ class SubmissionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final statusColor = GradingColors.getStatusColor(submission.status.name);
-    final statusLightColor = GradingColors.getStatusLightColor(
-      submission.status.name,
-    );
-    final statusGradient = GradingColors.getStatusGradient(
-      submission.status.name,
-    );
-
-    final statusLabel = submission.status == SubmissionStatus.pending
-        ? l10n.pending
-        : submission.status == SubmissionStatus.graded
-        ? l10n.graded
-        : l10n.late;
-
+    final statusKey = _statusKey();
+    final statusColor = GradingColors.getStatusColor(statusKey);
+    final statusGradient = GradingColors.getStatusGradient(statusKey);
+    final statusLabel = _statusLabel(statusKey, l10n);
     final timeAgo = _getTimeAgo(submission.submittedAt, l10n);
+    final isGraded = _isGraded();
+    final lateDays = _lateDays();
 
     Widget card = Container(
       clipBehavior: Clip.antiAlias,
@@ -96,7 +101,9 @@ class SubmissionCard extends StatelessWidget {
                         radius: 24,
                         backgroundColor: GradingColors.cardColor(isDark),
                         child: Text(
-                          submission.studentName[0].toUpperCase(),
+                          studentName.isEmpty
+                              ? '?'
+                              : studentName[0].toUpperCase(),
                           style: TextStyle(
                             color: GradingColors.primary,
                             fontWeight: FontWeight.bold,
@@ -112,7 +119,7 @@ class SubmissionCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            submission.studentName,
+                            studentName,
                             style: TextStyle(
                               color: GradingColors.textPrimaryColor(isDark),
                               fontSize: 16,
@@ -122,7 +129,7 @@ class SubmissionCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 3),
                           Text(
-                            submission.assignmentTitle,
+                            assignmentTitle,
                             style: TextStyle(
                               color: GradingColors.textSecondaryColor(isDark),
                               fontSize: 13,
@@ -204,7 +211,7 @@ class SubmissionCard extends StatelessWidget {
                     children: [
                       _buildInfoChip(
                         icon: Icons.class_rounded,
-                        text: submission.courseName,
+                        text: courseName,
                         isDark: isDark,
                       ),
                       const Spacer(),
@@ -217,16 +224,14 @@ class SubmissionCard extends StatelessWidget {
                   ),
                 ),
                 // Grade display for graded submissions
-                if (submission.status == SubmissionStatus.graded &&
-                    submission.grade != null) ...[
+                if (isGraded && submission.score != null) ...[
                   const SizedBox(height: 14),
                   _buildGradeDisplay(l10n),
                 ],
                 // Late warning
-                if (submission.lateDays != null &&
-                    submission.lateDays! > 0) ...[
+                if (lateDays != null && lateDays > 0) ...[
                   const SizedBox(height: 12),
-                  _buildLateWarning(l10n),
+                  _buildLateWarning(l10n, lateDays),
                 ],
                 const SizedBox(height: 16),
                 // Action buttons
@@ -243,12 +248,10 @@ class SubmissionCard extends StatelessWidget {
                     const SizedBox(width: 12),
                     Expanded(
                       child: _buildGradientButton(
-                        icon: submission.status == SubmissionStatus.graded
+                        icon: isGraded
                             ? Icons.edit_rounded
                             : Icons.grading_rounded,
-                        label: submission.status == SubmissionStatus.graded
-                            ? l10n.editGrade
-                            : l10n.grade,
+                        label: isGraded ? l10n.editGrade : l10n.grade,
                         onPressed: onGrade,
                         gradient: GradingColors.primaryGradient,
                       ),
@@ -301,7 +304,13 @@ class SubmissionCard extends StatelessWidget {
   }
 
   Widget _buildGradeDisplay(AppLocalizations l10n) {
-    final gradeColor = GradingColors.getGradeColor(submission.gradePercentage);
+    final gradePercentage = _gradePercentage();
+    final gradeColor = GradingColors.getGradeColor(gradePercentage);
+    final score = submission.score;
+
+    if (score == null) {
+      return const SizedBox.shrink();
+    }
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -337,7 +346,7 @@ class SubmissionCard extends StatelessWidget {
               ],
             ),
             child: Text(
-              submission.gradeLetter,
+              _gradeLetter(gradePercentage),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -351,7 +360,7 @@ class SubmissionCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${submission.grade}/${submission.maxGrade}',
+                  '${_formatScore(score)}/$maxGrade',
                   style: TextStyle(
                     color: gradeColor,
                     fontSize: 20,
@@ -361,7 +370,7 @@ class SubmissionCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 // Animated progress bar
                 TweenAnimationBuilder<double>(
-                  tween: Tween(begin: 0, end: submission.gradePercentage / 100),
+                  tween: Tween(begin: 0, end: gradePercentage / 100),
                   duration: const Duration(milliseconds: 800),
                   curve: Curves.easeOutCubic,
                   builder: (context, value, child) {
@@ -400,7 +409,7 @@ class SubmissionCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
-              '${submission.gradePercentage.toStringAsFixed(0)}%',
+              '${gradePercentage.toStringAsFixed(0)}%',
               style: TextStyle(
                 color: gradeColor,
                 fontSize: 12,
@@ -413,7 +422,7 @@ class SubmissionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLateWarning(AppLocalizations l10n) {
+  Widget _buildLateWarning(AppLocalizations l10n, int lateDays) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -448,7 +457,7 @@ class SubmissionCard extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            '${submission.lateDays} ${submission.lateDays == 1 ? l10n.day : l10n.days} ${l10n.late.toLowerCase()}',
+            '$lateDays ${lateDays == 1 ? l10n.day : l10n.days} ${l10n.late.toLowerCase()}',
             style: const TextStyle(
               color: GradingColors.late,
               fontSize: 12,
@@ -555,5 +564,56 @@ class SubmissionCard extends StatelessWidget {
     } else {
       return '${diff.inMinutes}m ago';
     }
+  }
+
+  bool _isGraded() {
+    return submission.submissionStatus == api.SubmissionStatus.graded ||
+        submission.submissionStatus == api.SubmissionStatus.returned;
+  }
+
+  String _statusKey() {
+    if (submission.isLate) {
+      return 'late';
+    }
+    return _isGraded() ? 'graded' : 'pending';
+  }
+
+  String _statusLabel(String statusKey, AppLocalizations l10n) {
+    switch (statusKey) {
+      case 'graded':
+        return l10n.graded;
+      case 'late':
+        return l10n.late;
+      default:
+        return l10n.pending;
+    }
+  }
+
+  int? _lateDays() {
+    if (!submission.isLate) {
+      return null;
+    }
+    return math.max(1, submission.submittedAt.difference(dueDate).inDays);
+  }
+
+  double _gradePercentage() {
+    if (maxGrade <= 0 || submission.score == null) {
+      return 0;
+    }
+    final raw = (submission.score! / maxGrade) * 100;
+    return raw.clamp(0, 100).toDouble();
+  }
+
+  String _gradeLetter(double percentage) {
+    if (percentage >= 90) return 'A';
+    if (percentage >= 80) return 'B';
+    if (percentage >= 70) return 'C';
+    if (percentage >= 60) return 'D';
+    return 'F';
+  }
+
+  String _formatScore(double score) {
+    final isWhole = score == score.roundToDouble();
+    return isWhole ? score.round().toString() : score.toStringAsFixed(1);
   }
 }

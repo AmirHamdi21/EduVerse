@@ -148,3 +148,49 @@ shared_preferences: ^2.2.2        # Lightweight caching
 - Re-ran labs integration test explicitly with `flutter test test/integration/features/labs/student_labs_flow_integration_test.dart`: `1 passed, 0 failed`.
 - Re-ran mock/orphan audits for labs with PowerShell pattern search (fallback because `rg` is unavailable in shell): no matches for residual mock/demo lab patterns in modified labs files and no orphan mock lab artifacts in `lib/`.
 - Phase 4 student labs task checklist remains complete (T001-T045 marked done), and this addendum records third-pass verification evidence.
+
+## Phase 6 Update: Instructor Assignments CRUD & Grading (April 12, 2026)
+
+### Completion Summary
+- Instructor assignments flow is implemented end-to-end with live API wiring through `AssignmentService` and `EnrollmentService`.
+- New instructor flow covers: assignments list, create/edit assignment form, submissions list, and full-screen submission grading.
+- Existing grading UI (`GradeDialog`, `SubmissionCard`, grading center list wiring) is migrated to `AssignmentSubmissionModel` and decimal scoring.
+- Legacy instructor assignment draft model and obsolete create-assignment section files are removed as part of orphan cleanup.
+
+### New/Updated Instructor Files
+- `lib/bloc/instructor/instructor_assignments_cubit.dart`
+- `lib/bloc/instructor/instructor_assignments_state.dart`
+- `lib/screens/instructor/assignments/instructor_assignments_screen.dart`
+- `lib/screens/instructor/assignments/assignment_submissions_screen.dart`
+- `lib/screens/instructor/assignments/submission_grading_screen.dart`
+- `lib/screens/instructor/create_assignment_screen.dart`
+- `lib/widgets/instructor/assignments/assignment_barrel.dart`
+- `lib/widgets/instructor/assignments/assignment_card.dart`
+- `lib/widgets/instructor/assignments/assignment_create_form.dart`
+- `lib/widgets/instructor/assignments/assignment_status_badge.dart`
+- `lib/widgets/instructor/assignments/grading_panel.dart`
+- `lib/widgets/instructor/assignments/instruction_file_uploader.dart`
+- `lib/widgets/instructor/assignments/submission_content_viewer.dart`
+- `lib/widgets/instructor/assignments/submission_list_item.dart`
+- `lib/utils/late_penalty_calculator.dart`
+
+### Refactors and Cleanup
+- Updated: `lib/config/app_router.dart` with assignments/submissions/grading routes and create/edit assignment extras parsing.
+- Updated: `lib/bloc/instructor/grading_center_cubit.dart` and `lib/bloc/instructor/grading_center_state.dart` for live submissions and backend enums.
+- Updated: `lib/models/instructor/grading_model.dart` and `lib/models/instructor/submission_model.dart` to align with assignment backend models.
+- Updated: `lib/widgets/instructor/grading/grade_dialog.dart` and `lib/widgets/instructor/grading/submission_card.dart` for backend submission model + late-penalty/decimal score support.
+- Deleted legacy files:
+	- `lib/models/instructor/assignment_model.dart`
+	- `lib/screens/instructor/create_assignment/create_assignment_screen.dart`
+	- `lib/widgets/instructor/create_assignment/assignment_type_selector.dart`
+	- `lib/widgets/instructor/create_assignment/attachments_section.dart`
+	- `lib/widgets/instructor/create_assignment/basic_details_section.dart`
+	- `lib/widgets/instructor/create_assignment/deadline_settings_section.dart`
+	- `lib/widgets/instructor/create_assignment/questions_section.dart`
+	- `lib/widgets/instructor/create_assignment/lab_details_section.dart`
+	- `lib/widgets/instructor/create_assignment/project_details_section.dart`
+
+### Validation Snapshot
+- Mock/orphan audit (Phase 6 pattern set, scoped to required grading files + modified Dart files): no matches.
+- Full `flutter analyze`: `930 issues found` (no new blocking analyzer errors introduced for this phase; workspace still has broad pre-existing diagnostics).
+- Full `flutter test`: all tests passed (`+300`, `All tests passed!`).

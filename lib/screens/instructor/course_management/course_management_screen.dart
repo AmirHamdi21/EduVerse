@@ -360,8 +360,16 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                     isDark: isDark,
                     l10n: l10n,
                   ),
-                  AssignmentsTab(isDark: isDark, l10n: l10n),
-                  GradingTab(isDark: isDark, l10n: l10n),
+                  AssignmentsTab(
+                    isDark: isDark,
+                    l10n: l10n,
+                    courseId: _resolvedCourseId,
+                  ),
+                  GradingTab(
+                    isDark: isDark,
+                    l10n: l10n,
+                    courseId: _resolvedCourseId,
+                  ),
                   StudentsTab(
                     students: students,
                     isDark: isDark,

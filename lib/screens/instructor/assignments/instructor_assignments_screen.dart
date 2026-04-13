@@ -1,0 +1,415 @@
+import 'dart:async';
+
+import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../bloc/instructor/instructor_assignments_cubit.dart';
+import '../../../bloc/instructor/instructor_assignments_state.dart';
+import '../../../models/assignments/assignment_model.dart';
+import '../../../models/core/enums/assignment_enums.dart' as api;
+import '../../../services/api/assignment_service.dart';
+import '../../../services/api/core_api_client.dart';
+import '../../../services/api/enrollment_service.dart';
+import '../../../services/storage_service.dart';
+import '../../../widgets/instructor/assignments/assignment_barrel.dart';
+
+class InstructorAssignmentsScreen extends StatelessWidget {
+  const InstructorAssignmentsScreen({
+    super.key,
+    this.assignmentService,
+    this.enrollmentService,
+    this.canManageAssignments = true,
+    this.initialCourseId,
+    this.lockCourseSelection = false,
+    this.embedded = false,
+  });
+
+  final AssignmentService? assignmentService;
+  final EnrollmentService? enrollmentService;
+  final bool canManageAssignments;
+  final int? initialCourseId;
+  final bool lockCourseSelection;
+  final bool embedded;
+
+  @override
+  Widget build(BuildContext context) {
+    final coreApiClient = CoreApiClient(storageService: StorageService());
+    final resolvedAssignmentService =
+        assignmentService ?? AssignmentService(coreApiClient: coreApiClient);
+    final resolvedEnrollmentService =
+        enrollmentService ?? EnrollmentService(coreApiClient: coreApiClient);
+
+    return BlocProvider<InstructorAssignmentsCubit>(
+      create: (_) => InstructorAssignmentsCubit(
+        assignmentService: resolvedAssignmentService,
+        enrollmentService: resolvedEnrollmentService,
+      )..loadTeachingCourses(preferredCourseId: initialCourseId),
+      child: _InstructorAssignmentsView(
+        canManage: canManageAssignments,
+        lockCourseSelection: lockCourseSelection,
+        embedded: embedded,
+      ),
+    );
+  }
+}
+
+class _InstructorAssignmentsView extends StatefulWidget {
+  const _InstructorAssignmentsView({
+    required this.canManage,
+    required this.lockCourseSelection,
+    required this.embedded,
+  });
+
+  final bool canManage;
+  final bool lockCourseSelection;
+  final bool embedded;
+
+  @override
+  State<_InstructorAssignmentsView> createState() =>
+      _InstructorAssignmentsViewState();
+}
+
+class _InstructorAssignmentsViewState
+    extends State<_InstructorAssignmentsView> {
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocConsumer<InstructorAssignmentsCubit, InstructorAssignmentsState>(
+      listener: (context, state) {
+        if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.errorMessage!),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        }
+      },
+      builder: (context, state) {
+        final cubit = context.read<InstructorAssignmentsCubit>();
+        final assignments = state.assignmentItems;
+        final availableCourseIds = state.teachingCourses
+            .map((course) => course.courseId)
+            .toSet();
+        final selectedCourseId =
+            availableCourseIds.contains(state.selectedCourseId)
+            ? state.selectedCourseId
+            : null;
+
+        final content = Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: DropdownButtonFormField<int>(
+                value: selectedCourseId,
+                decoration: const InputDecoration(
+                  labelText: 'Teaching course',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+                items: state.teachingCourses.map((course) {
+                  final label = '${course.course.code} - ${course.course.name}'
+                      .trim();
+                  return DropdownMenuItem<int>(
+                    value: course.courseId,
+                    child: Text(label),
+                  );
+                }).toList(),
+                onChanged: widget.lockCourseSelection
+                    ? null
+                    : (value) => cubit.selectCourse(value),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (value) {
+                  _debounce?.cancel();
+                  _debounce = Timer(const Duration(milliseconds: 300), () {
+                    if (!mounted) {
+                      return;
+                    }
+                    context.read<InstructorAssignmentsCubit>().setSearchQuery(
+                      value,
+                    );
+                  });
+                },
+                decoration: const InputDecoration(
+                  hintText: 'Search assignments',
+                  prefixIcon: Icon(Icons.search_rounded),
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Row(
+                children: <Widget>[
+                  _StatusFilterChip(
+                    label: 'All',
+                    selected: state.statusFilter == null,
+                    onTap: () => cubit.setStatusFilter(null),
+                  ),
+                  _StatusFilterChip(
+                    label: 'Draft',
+                    selected: state.statusFilter == api.AssignmentStatus.draft,
+                    onTap: () =>
+                        cubit.setStatusFilter(api.AssignmentStatus.draft),
+                  ),
+                  _StatusFilterChip(
+                    label: 'Published',
+                    selected:
+                        state.statusFilter == api.AssignmentStatus.published,
+                    onTap: () =>
+                        cubit.setStatusFilter(api.AssignmentStatus.published),
+                  ),
+                  _StatusFilterChip(
+                    label: 'Closed',
+                    selected: state.statusFilter == api.AssignmentStatus.closed,
+                    onTap: () =>
+                        cubit.setStatusFilter(api.AssignmentStatus.closed),
+                  ),
+                  _StatusFilterChip(
+                    label: 'Archived',
+                    selected:
+                        state.statusFilter == api.AssignmentStatus.archived,
+                    onTap: () =>
+                        cubit.setStatusFilter(api.AssignmentStatus.archived),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(child: _buildList(cubit, state, assignments)),
+          ],
+        );
+
+        if (widget.embedded) {
+          return content;
+        }
+
+        return Scaffold(
+          appBar: AppBar(title: const Text('Assignments')),
+          floatingActionButton: widget.canManage
+              ? FloatingActionButton.extended(
+                  onPressed: () async {
+                    final result = await context.push(
+                      '/instructor/assignments/create',
+                    );
+                    if (!mounted) {
+                      return;
+                    }
+                    if (result == true) {
+                      await cubit.loadAssignments(
+                        page: 1,
+                        limit: 20,
+                        refresh: true,
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.add_rounded),
+                  label: const Text('Create Assignment'),
+                )
+              : null,
+          body: content,
+        );
+      },
+    );
+  }
+
+  Widget _buildList(
+    InstructorAssignmentsCubit cubit,
+    InstructorAssignmentsState state,
+    List<AssignmentModel> assignments,
+  ) {
+    if (state.isLoading && state.assignments == null) {
+      return ListView.builder(
+        physics: widget.embedded ? const ClampingScrollPhysics() : null,
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        itemCount: 4,
+        itemBuilder: (_, __) => Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          height: 116,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+    }
+
+    if (assignments.isEmpty) {
+      return const _EmptyAssignmentsState();
+    }
+
+    return RefreshIndicator(
+      onRefresh: () => cubit.loadAssignments(page: 1, refresh: true),
+      child: CustomScrollView(
+        physics: widget.embedded ? const ClampingScrollPhysics() : null,
+        slivers: <Widget>[
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            sliver: SliverList.builder(
+              itemCount: assignments.length,
+              itemBuilder: (context, index) {
+                final assignment = assignments[index];
+                final assignmentId = _assignmentIdOf(assignment);
+                return AssignmentCard(
+                  assignment: assignment,
+                  canManage: widget.canManage,
+                  onViewSubmissions: () => context.push(
+                    '/instructor/assignments/$assignmentId/submissions',
+                    extra: <String, dynamic>{
+                      'assignmentTitle': assignment.title,
+                      'maxScore': assignment.maxGrade,
+                      'assignmentDueDate': assignment.dueDate,
+                      'latePenaltyPercent': assignment.latePenaltyPercent,
+                      'isArchived':
+                          assignment.apiStatus == api.AssignmentStatus.archived,
+                    },
+                  ),
+                  onEdit: widget.canManage
+                      ? () async {
+                          final result = await context.push(
+                            '/instructor/assignments/create',
+                            extra: <String, dynamic>{
+                              'assignmentId': assignmentId,
+                              'assignment': assignment,
+                            },
+                          );
+                          if (!mounted) {
+                            return;
+                          }
+                          if (result == true) {
+                            await cubit.loadAssignments(
+                              page: 1,
+                              limit: 20,
+                              refresh: true,
+                            );
+                          }
+                        }
+                      : null,
+                  onDelete: widget.canManage
+                      ? () => _confirmDelete(
+                          context,
+                          cubit,
+                          assignmentId,
+                          assignment.title,
+                        )
+                      : null,
+                  onStatusChange: widget.canManage
+                      ? (status) => cubit.updateStatus(assignmentId, status)
+                      : null,
+                );
+              },
+            ),
+          ),
+          if (state.hasMorePages)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: OutlinedButton(
+                  onPressed: state.isLoading ? null : cubit.loadMore,
+                  child: state.isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Text('Load More'),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  static void _confirmDelete(
+    BuildContext context,
+    InstructorAssignmentsCubit cubit,
+    int assignmentId,
+    String title,
+  ) {
+    AwesomeDialog(
+      context: context,
+      dialogType: DialogType.warning,
+      title: 'Delete Assignment',
+      desc: 'Delete "$title"? This action cannot be undone.',
+      btnCancelOnPress: () {},
+      btnOkColor: Colors.red,
+      btnOkText: 'Delete',
+      btnOkOnPress: () {
+        cubit.deleteAssignment(assignmentId);
+      },
+    ).show();
+  }
+
+  static int _assignmentIdOf(AssignmentModel assignment) {
+    if (assignment.assignmentId > 0) {
+      return assignment.assignmentId;
+    }
+    return int.tryParse(assignment.id) ?? 0;
+  }
+}
+
+class _StatusFilterChip extends StatelessWidget {
+  const _StatusFilterChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: selected,
+        onSelected: (_) => onTap(),
+      ),
+    );
+  }
+}
+
+class _EmptyAssignmentsState extends StatelessWidget {
+  const _EmptyAssignmentsState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const <Widget>[
+            Icon(Icons.assignment_outlined, size: 52),
+            SizedBox(height: 10),
+            Text(
+              'No assignments found for this course.',
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

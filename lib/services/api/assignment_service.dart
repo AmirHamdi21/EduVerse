@@ -188,6 +188,7 @@ class AssignmentService {
     File file, {
     String? title,
     int? orderIndex,
+    ProgressCallback? onSendProgress,
   }) {
     return RetryHelper.execute<DriveFileModel>(() async {
       final formData = FormData.fromMap(<String, dynamic>{
@@ -202,9 +203,30 @@ class AssignmentService {
       final response = await _client.dio.post(
         '/assignments/$assignmentId/instructions/upload',
         data: formData,
+        onSendProgress: onSendProgress,
       );
-      return DriveFileModel.fromJson(_extractMap(response.data));
+      final payload = _extractMap(response.data);
+      final driveFileData = payload['driveFile'];
+      if (driveFileData is Map<String, dynamic>) {
+        // Keep top-level IDs (e.g. fileId/id) when backend wraps drive file details.
+        return DriveFileModel.fromJson(<String, dynamic>{
+          ...payload,
+          ...driveFileData,
+        });
+      }
+      return DriveFileModel.fromJson(payload);
     }, fallbackMessage: 'Failed to upload assignment instruction file');
+  }
+
+  Future<ServiceResult<void>> deleteInstructionFile(
+    int assignmentId,
+    int instructionFileId,
+  ) {
+    return RetryHelper.executeVoid(() async {
+      await _client.dio.delete(
+        '/assignments/$assignmentId/instructions/$instructionFileId',
+      );
+    }, fallbackMessage: 'Failed to delete instruction file');
   }
 
   static String _fileName(File file) {

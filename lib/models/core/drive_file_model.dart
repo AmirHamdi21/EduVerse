@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 class DriveFileModel extends Equatable {
+  final int fileId;
   final int driveFileId;
   final String driveId;
   final String fileName;
@@ -9,6 +10,7 @@ class DriveFileModel extends Equatable {
   final String iframeUrl;
 
   const DriveFileModel({
+    this.fileId = 0,
     required this.driveFileId,
     required this.driveId,
     required this.fileName,
@@ -19,9 +21,18 @@ class DriveFileModel extends Equatable {
 
   factory DriveFileModel.fromJson(Map<String, dynamic> json) {
     final resolvedDriveId = _parseString(json['driveId']);
+    final resolvedFileId = _parseInt(
+      json['fileId'] ??
+          json['instructionFileId'] ??
+          json['instruction_file_id'] ??
+          json['id'],
+    );
 
     return DriveFileModel(
-      driveFileId: _parseInt(json['driveFileId'] ?? json['id']),
+      fileId: resolvedFileId,
+      driveFileId: _parseInt(
+        json['driveFileId'] ?? json['drive_file_id'] ?? json['id'],
+      ),
       driveId: resolvedDriveId,
       fileName: _parseString(json['fileName'] ?? json['name']),
       webViewLink: _parseString(json['webViewLink']),
@@ -32,6 +43,7 @@ class DriveFileModel extends Equatable {
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
+      'fileId': fileId,
       'driveFileId': driveFileId,
       'driveId': driveId,
       'fileName': fileName,
@@ -54,6 +66,7 @@ class DriveFileModel extends Equatable {
 
   @override
   List<Object?> get props => <Object?>[
+    fileId,
     driveFileId,
     driveId,
     fileName,
