@@ -1136,16 +1136,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
               isDark,
               onTap: () {
                 Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.assignmentCreated),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    backgroundColor: CMColors.primary,
-                  ),
-                );
+                context.push('/instructor/assignments/create');
               },
             ),
             _buildSheetItem(
@@ -1156,16 +1147,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
               isDark,
               onTap: () {
                 Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.materialUploaded),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    backgroundColor: CMColors.success,
-                  ),
-                );
+                context.push('/instructor/upload-materials');
               },
             ),
             _buildSheetItem(
@@ -1174,7 +1156,10 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
               l10n.postAnnouncement,
               CMColors.warning,
               isDark,
-              onTap: () => Navigator.pop(ctx),
+              onTap: () {
+                Navigator.pop(ctx);
+                context.push('/instructor/announcements');
+              },
             ),
           ],
         ),

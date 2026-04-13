@@ -18,6 +18,13 @@ class MaterialPreviewScreen extends StatelessWidget {
     final previewUrl = _buildPreviewUrl(sourceUrl);
     final downloadUrl = _buildDownloadUrl(sourceUrl);
 
+    debugPrint(
+      '[MaterialPreview] type="${material.type}" '
+      'fileUrl="${material.fileUrl}" '
+      'previewUrl="$previewUrl" '
+      'downloadUrl="$downloadUrl"',
+    );
+
     return Scaffold(
       backgroundColor: CMColors.bg(isDark),
       appBar: AppBar(
@@ -328,14 +335,17 @@ class _PreviewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageTypes = <String>{'jpg', 'jpeg', 'png', 'gif', 'webp'};
+    final imageTypes = <String>{'jpg', 'jpeg', 'png', 'gif', 'webp', 'image'};
     final documentTypes = <String>{
       'pdf',
       'ppt',
       'pptx',
       'doc',
       'docx',
+      'lecture',
+      'reading',
       'slide',
+      'document',
     };
 
     if (previewUrl.isEmpty) {
@@ -365,7 +375,11 @@ class _PreviewBody extends StatelessWidget {
       );
     }
 
-    return _PreviewFallback(downloadUrl: downloadUrl, isDark: isDark);
+    return _DocumentPreview(
+      previewUrl: previewUrl,
+      downloadUrl: downloadUrl,
+      isDark: isDark,
+    );
   }
 }
 
