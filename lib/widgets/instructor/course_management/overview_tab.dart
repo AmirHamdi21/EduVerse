@@ -16,6 +16,9 @@ class OverviewTab extends StatelessWidget {
   final double? averageGrade;
   final EngagementMetricsModel? engagementMetrics;
   final List<ScheduleModel> schedules;
+  final VoidCallback? onCreateAssignment;
+  final VoidCallback? onUploadMaterial;
+  final VoidCallback? onPostAnnouncement;
 
   const OverviewTab({
     super.key,
@@ -28,6 +31,9 @@ class OverviewTab extends StatelessWidget {
     this.averageGrade,
     this.engagementMetrics,
     this.schedules = const <ScheduleModel>[],
+    this.onCreateAssignment,
+    this.onUploadMaterial,
+    this.onPostAnnouncement,
   });
 
   @override
@@ -394,7 +400,9 @@ class OverviewTab extends StatelessWidget {
             label: l10n.createAssignment,
             gradient: CMColors.warmGradient,
             isDark: isDark,
-            onTap: () => _showSnack(context, l10n.assignmentCreated),
+            onTap:
+                onCreateAssignment ??
+                () => _showSnack(context, 'Create Assignment'),
           ),
         ),
         const SizedBox(width: 10),
@@ -404,7 +412,9 @@ class OverviewTab extends StatelessWidget {
             label: l10n.uploadMaterial,
             gradient: CMColors.successGradient,
             isDark: isDark,
-            onTap: () => _showSnack(context, l10n.materialUploaded),
+            onTap:
+                onUploadMaterial ??
+                () => _showSnack(context, 'Upload Material'),
           ),
         ),
         const SizedBox(width: 10),
@@ -414,7 +424,9 @@ class OverviewTab extends StatelessWidget {
             label: l10n.postAnnouncement,
             gradient: CMColors.accentGradient,
             isDark: isDark,
-            onTap: () {},
+            onTap:
+                onPostAnnouncement ??
+                () => _showSnack(context, 'Post Announcement'),
           ),
         ),
       ],

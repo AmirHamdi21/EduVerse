@@ -333,6 +333,12 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                     averageGrade: teachingCourse?.averageGrade,
                     engagementMetrics: engagementMetrics,
                     schedules: teachingCourse?.section.schedules ?? const [],
+                    onCreateAssignment: () =>
+                        context.push('/instructor/assignments/create'),
+                    onUploadMaterial: () =>
+                        context.push('/instructor/upload-materials'),
+                    onPostAnnouncement: () =>
+                        context.push('/instructor/announcements'),
                   ),
                   MaterialsTab(
                     materials: materials.isNotEmpty
