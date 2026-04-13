@@ -1,11 +1,13 @@
 import 'package:equatable/equatable.dart';
 
 import 'enums/lab_enums.dart';
+import 'shared_models.dart';
 
 class LabAttendanceModel extends Equatable {
   final int id;
   final int labId;
   final int userId;
+  final UserInfo? user;
   final LabAttendanceStatus attendanceStatus;
   final DateTime? checkInTime;
   final String? notes;
@@ -16,6 +18,7 @@ class LabAttendanceModel extends Equatable {
     required this.id,
     required this.labId,
     required this.userId,
+    this.user,
     required this.attendanceStatus,
     this.checkInTime,
     this.notes,
@@ -28,6 +31,9 @@ class LabAttendanceModel extends Equatable {
       id: _parseInt(json['id']),
       labId: _parseInt(json['labId']),
       userId: _parseInt(json['userId']),
+      user: json['user'] is Map<String, dynamic>
+          ? UserInfo.fromJson(json['user'] as Map<String, dynamic>)
+          : null,
       attendanceStatus: LabAttendanceStatus.fromString(
         json['attendanceStatus']?.toString() ?? 'unknown',
       ),
@@ -47,6 +53,7 @@ class LabAttendanceModel extends Equatable {
       'id': id,
       'labId': labId,
       'userId': userId,
+      'user': user?.toJson(),
       'attendanceStatus': attendanceStatus.toJson(),
       'checkInTime': checkInTime?.toIso8601String(),
       'notes': notes,
@@ -77,6 +84,7 @@ class LabAttendanceModel extends Equatable {
     id,
     labId,
     userId,
+    user,
     attendanceStatus,
     checkInTime,
     notes,

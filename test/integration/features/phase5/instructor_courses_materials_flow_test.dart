@@ -85,7 +85,13 @@ class _FakeLabService extends LabService {
   _FakeLabService() : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<ServiceResult<List<LabModel>>> getAll({int? courseId}) async {
+  Future<ServiceResult<List<LabModel>>> getAll({
+    int? courseId,
+    String? status,
+    String? search,
+    int page = 1,
+    int limit = 50,
+  }) async {
     return ServiceResult<List<LabModel>>.success(const <LabModel>[]);
   }
 }
@@ -93,7 +99,6 @@ class _FakeLabService extends LabService {
 class _FakeMaterialService extends MaterialService {
   _FakeMaterialService({
     List<CourseMaterialModel>? materials,
-    this.failOnGetMaterials = false,
     this.failOnToggleVisibility = false,
   }) : _materials = List<CourseMaterialModel>.from(
          materials ?? _defaultMaterials(),
@@ -101,7 +106,6 @@ class _FakeMaterialService extends MaterialService {
        super(coreApiClient: CoreApiClient.test());
 
   final List<CourseMaterialModel> _materials;
-  final bool failOnGetMaterials;
   final bool failOnToggleVisibility;
 
   static List<CourseMaterialModel> _defaultMaterials() {
@@ -143,10 +147,6 @@ class _FakeMaterialService extends MaterialService {
     int? weekNumber,
     String? search,
   }) async {
-    if (failOnGetMaterials) {
-      throw Exception('materials unavailable');
-    }
-
     return List<CourseMaterialModel>.from(_materials);
   }
 

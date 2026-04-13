@@ -122,12 +122,12 @@ class EnrollmentService {
     }, fallbackMessage: 'Failed to load section students');
   }
 
-  /// GET /api/sections/{sectionId}/students
+  /// GET /api/enrollments/sections/{sectionId}/students
   Future<ServiceResult<List<SectionStudentModel>>> getSectionStudentsLite(
     dynamic sectionId,
   ) {
     return RetryHelper.execute<List<SectionStudentModel>>(() async {
-      final response = await _client.dio.get('/sections/$sectionId/students');
+      final response = await _client.dio.get('/enrollments/sections/$sectionId/students');
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
           .map(SectionStudentModel.fromJson)

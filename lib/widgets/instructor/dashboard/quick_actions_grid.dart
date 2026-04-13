@@ -102,6 +102,19 @@ class InstructorQuickAccessGrid extends StatelessWidget {
               ),
               _buildQuickAccessItem(
                 context,
+                title: 'Labs',
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF10B981), Color(0xFF059669)],
+                ),
+                icon: Icons.science_outlined,
+                onTap: () {
+                  context.push('/instructor/labs');
+                },
+              ),
+              _buildQuickAccessItem(
+                context,
                 title: l10n.analytics,
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,

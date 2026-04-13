@@ -85,7 +85,13 @@ class _FakeLabService extends LabService {
   _FakeLabService() : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<ServiceResult<List<LabModel>>> getAll({int? courseId}) async {
+  Future<ServiceResult<List<LabModel>>> getAll({
+    int? courseId,
+    String? status,
+    String? search,
+    int page = 1,
+    int limit = 50,
+  }) async {
     return ServiceResult<List<LabModel>>.success(const <LabModel>[]);
   }
 }

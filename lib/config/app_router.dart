@@ -61,6 +61,8 @@ import 'package:edu_verse/screens/instructor/grading_center/grading_center_scree
 import 'package:edu_verse/screens/instructor/assignments/instructor_assignments_screen.dart';
 import 'package:edu_verse/screens/instructor/assignments/assignment_submissions_screen.dart';
 import 'package:edu_verse/screens/instructor/assignments/submission_grading_screen.dart';
+import 'package:edu_verse/screens/instructor/labs/instructor_labs_screen.dart';
+import 'package:edu_verse/screens/instructor/labs/lab_detail_screen.dart';
 import 'package:edu_verse/screens/instructor/course_management/course_management_screen.dart';
 import 'package:edu_verse/screens/instructor/video/instructor_video_player_screen.dart';
 import 'package:edu_verse/screens/instructor/announcements/announcement_manager_screen.dart';
@@ -550,6 +552,32 @@ class AppRouter {
       GoRoute(
         path: '/instructor/assignments',
         builder: (context, state) => const InstructorAssignmentsScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/labs',
+        builder: (context, state) => const InstructorLabsScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/labs/:labId',
+        builder: (context, state) {
+          final labId = state.pathParameters['labId'] ?? '';
+          if (labId.trim().isEmpty) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid lab detail route')),
+            );
+          }
+
+          final tabParam = (state.uri.queryParameters['tab'] ?? '')
+              .trim()
+              .toLowerCase();
+          final initialTab = switch (tabParam) {
+            'submissions' => 1,
+            'attendance' => 2,
+            _ => 0,
+          };
+
+          return LabDetailScreen(labId: labId, initialTab: initialTab);
+        },
       ),
       GoRoute(
         path: '/instructor/assignments/create',

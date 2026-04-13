@@ -19,6 +19,7 @@ class LabSubmissionModel extends Equatable {
   final DateTime? gradedAt;
   final UserInfo? user;
   final DriveFileModel? driveFile;
+  final double? latePenaltyPercent;
 
   const LabSubmissionModel({
     required this.id,
@@ -35,6 +36,7 @@ class LabSubmissionModel extends Equatable {
     this.gradedAt,
     this.user,
     this.driveFile,
+    this.latePenaltyPercent,
   });
 
   factory LabSubmissionModel.fromJson(Map<String, dynamic> json) {
@@ -61,6 +63,7 @@ class LabSubmissionModel extends Equatable {
       driveFile: rawDriveFile is Map<String, dynamic>
           ? DriveFileModel.fromJson(rawDriveFile)
           : null,
+      latePenaltyPercent: _parseNullableDouble(json['latePenaltyPercent']),
     );
   }
 
@@ -80,7 +83,57 @@ class LabSubmissionModel extends Equatable {
       'gradedAt': gradedAt?.toIso8601String(),
       'user': user?.toJson(),
       'driveFile': driveFile?.toJson(),
+      'latePenaltyPercent': latePenaltyPercent,
     };
+  }
+
+  LabSubmissionModel copyWith({
+    int? id,
+    int? labId,
+    int? userId,
+    String? submissionText,
+    int? fileId,
+    SubmissionStatus? submissionStatus,
+    bool? isLate,
+    DateTime? submittedAt,
+    double? score,
+    String? feedback,
+    int? gradedBy,
+    DateTime? gradedAt,
+    UserInfo? user,
+    DriveFileModel? driveFile,
+    double? latePenaltyPercent,
+    bool clearSubmissionText = false,
+    bool clearFileId = false,
+    bool clearScore = false,
+    bool clearFeedback = false,
+    bool clearGradedBy = false,
+    bool clearGradedAt = false,
+    bool clearUser = false,
+    bool clearDriveFile = false,
+    bool clearLatePenaltyPercent = false,
+  }) {
+    return LabSubmissionModel(
+      id: id ?? this.id,
+      labId: labId ?? this.labId,
+      userId: userId ?? this.userId,
+      submissionText: clearSubmissionText
+          ? null
+          : (submissionText ?? this.submissionText),
+      fileId: clearFileId ? null : (fileId ?? this.fileId),
+      submissionStatus: submissionStatus ?? this.submissionStatus,
+      isLate: isLate ?? this.isLate,
+      submittedAt: submittedAt ?? this.submittedAt,
+      score: clearScore ? null : (score ?? this.score),
+      feedback: clearFeedback ? null : (feedback ?? this.feedback),
+      gradedBy: clearGradedBy ? null : (gradedBy ?? this.gradedBy),
+      gradedAt: clearGradedAt ? null : (gradedAt ?? this.gradedAt),
+      user: clearUser ? null : (user ?? this.user),
+      driveFile: clearDriveFile ? null : (driveFile ?? this.driveFile),
+      latePenaltyPercent: clearLatePenaltyPercent
+          ? null
+          : (latePenaltyPercent ?? this.latePenaltyPercent),
+    );
   }
 
   bool get isGraded => submissionStatus == SubmissionStatus.graded;
@@ -165,5 +218,6 @@ class LabSubmissionModel extends Equatable {
     gradedAt,
     user,
     driveFile,
+    latePenaltyPercent,
   ];
 }

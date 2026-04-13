@@ -194,3 +194,43 @@ shared_preferences: ^2.2.2        # Lightweight caching
 - Mock/orphan audit (Phase 6 pattern set, scoped to required grading files + modified Dart files): no matches.
 - Full `flutter analyze`: `930 issues found` (no new blocking analyzer errors introduced for this phase; workspace still has broad pre-existing diagnostics).
 - Full `flutter test`: all tests passed (`+300`, `All tests passed!`).
+
+## Phase 7 Update: Instructor Labs CRUD & Grading (April 13, 2026)
+
+### Completion Summary
+- Instructor labs flow is implemented with live API integration and role-gated instructor actions.
+- Coverage includes: labs list/search/filter/pagination, create/edit/delete lab form, lab detail tabs, instruction management (text + file upload + reorder), submissions grading UI with late penalty support, and attendance marking.
+- Runtime stability updates were applied after initial scaffold generation (provider initialization, async context guards, analyzer cleanup).
+
+### New/Updated Files
+- `lib/bloc/instructor/instructor_labs_cubit.dart`
+- `lib/bloc/instructor/instructor_labs_state.dart`
+- `lib/bloc/instructor/lab_detail_cubit.dart`
+- `lib/bloc/instructor/lab_detail_state.dart`
+- `lib/screens/instructor/labs/instructor_labs_screen.dart`
+- `lib/screens/instructor/labs/lab_detail_screen.dart`
+- `lib/widgets/instructor/labs/lab_barrel.dart`
+- `lib/widgets/instructor/labs/lab_card.dart`
+- `lib/widgets/instructor/labs/lab_create_form.dart`
+- `lib/widgets/instructor/labs/lab_status_badge.dart`
+- `lib/widgets/instructor/labs/instruction_file_uploader.dart`
+- `lib/widgets/instructor/labs/instruction_manager.dart`
+- `lib/widgets/instructor/labs/submissions_list.dart`
+- `lib/widgets/instructor/labs/grading_panel.dart`
+- `lib/widgets/instructor/labs/attendance_sheet.dart`
+- `lib/services/api/lab_service.dart`
+- `lib/models/labs/lab_model.dart`
+- `lib/models/labs/lab_submission_model.dart`
+- `lib/models/core/lab_attendance_model.dart`
+- `lib/utils/late_penalty_calculator.dart`
+- `lib/config/app_router.dart`
+
+### Added Tests
+- `test/unit/bloc/instructor/instructor_labs_cubit_test.dart`
+- `test/unit/bloc/instructor/lab_detail_cubit_test.dart`
+
+### Validation Snapshot
+- Scoped analyzer run for Phase 7 files: `No issues found`.
+- New Phase 7 unit tests: `8 passed, 0 failed`.
+- Mock/orphan audits for instructor-labs module: no residual mock-data patterns or extra legacy instructor-labs files detected in feature scope.
+- Remaining manual checks tracked in `specs/021-instructor-labs/tasks.md`: T036-T040.

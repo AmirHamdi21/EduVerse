@@ -308,6 +308,13 @@ class _InstructorDrawerState extends State<InstructorDrawer>
         category: 'main',
       ),
       _MenuItem(
+        icon: Icons.science_outlined,
+        activeIcon: Icons.science,
+        title: 'Labs',
+        route: '/instructor/labs',
+        category: 'main',
+      ),
+      _MenuItem(
         icon: Icons.campaign_outlined,
         activeIcon: Icons.campaign,
         title: l10n.announcementsManager,

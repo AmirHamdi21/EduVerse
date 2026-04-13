@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 
 import '../core/drive_file_model.dart';
@@ -18,6 +20,8 @@ class LabModel extends Equatable {
   final double weight;
   final api.LabStatus status;
   final int? createdBy;
+  final String? allowedFileTypes;
+  final double? maxFileSizeMb;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final CourseInfo? course;
@@ -37,6 +41,8 @@ class LabModel extends Equatable {
     this.weight = 0,
     this.status = api.LabStatus.unknown,
     this.createdBy,
+    this.allowedFileTypes,
+    this.maxFileSizeMb,
     this.createdAt,
     this.updatedAt,
     this.course,
@@ -66,6 +72,8 @@ class LabModel extends Equatable {
       weight: _parseDouble(json['weight']),
       status: api.LabStatus.fromString(_parseString(json['status'])),
       createdBy: _parseNullableInt(json['createdBy']),
+      allowedFileTypes: _parseAllowedFileTypes(json['allowedFileTypes']),
+      maxFileSizeMb: _parseNullableDouble(json['maxFileSizeMb']),
       createdAt: _parseDateTime(json['createdAt']),
       updatedAt: _parseDateTime(json['updatedAt']),
       course: json['course'] is Map<String, dynamic>
@@ -90,6 +98,8 @@ class LabModel extends Equatable {
       'weight': weight,
       'status': status.toJson(),
       'createdBy': createdBy,
+      'allowedFileTypes': allowedFileTypes,
+      'maxFileSizeMb': maxFileSizeMb,
       'createdAt': createdAt?.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'course': course?.toJson(),
@@ -113,6 +123,8 @@ class LabModel extends Equatable {
     double? weight,
     api.LabStatus? status,
     int? createdBy,
+    String? allowedFileTypes,
+    double? maxFileSizeMb,
     DateTime? createdAt,
     DateTime? updatedAt,
     CourseInfo? course,
@@ -122,6 +134,8 @@ class LabModel extends Equatable {
     bool clearDueDate = false,
     bool clearAvailableFrom = false,
     bool clearLabNumber = false,
+    bool clearAllowedFileTypes = false,
+    bool clearMaxFileSizeMb = false,
   }) {
     return LabModel(
       id: id ?? this.id,
@@ -138,6 +152,12 @@ class LabModel extends Equatable {
       weight: weight ?? this.weight,
       status: status ?? this.status,
       createdBy: createdBy ?? this.createdBy,
+      allowedFileTypes: clearAllowedFileTypes
+          ? null
+          : (allowedFileTypes ?? this.allowedFileTypes),
+      maxFileSizeMb: clearMaxFileSizeMb
+          ? null
+          : (maxFileSizeMb ?? this.maxFileSizeMb),
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       course: course ?? this.course,
@@ -205,6 +225,13 @@ class LabModel extends Equatable {
     return double.tryParse(value?.toString() ?? '') ?? 0;
   }
 
+  static double? _parseNullableDouble(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    return double.tryParse(value.toString());
+  }
+
   static DateTime? _parseDateTime(dynamic value) {
     if (value == null) {
       return null;
@@ -222,6 +249,46 @@ class LabModel extends Equatable {
     }
     final parsed = value.toString().trim();
     return parsed.isEmpty ? null : parsed;
+  }
+
+  static String? _parseAllowedFileTypes(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+
+    if (value is List) {
+      final items = value
+          .map((item) => item.toString().trim().toLowerCase())
+          .where((item) => item.isNotEmpty)
+          .toList(growable: false);
+      return items.isEmpty ? null : items.join(',');
+    }
+
+    final raw = value.toString().trim();
+    if (raw.isEmpty) {
+      return null;
+    }
+
+    try {
+      final decoded = jsonDecode(raw);
+      if (decoded is List) {
+        final items = decoded
+            .map((item) => item.toString().trim().toLowerCase())
+            .where((item) => item.isNotEmpty)
+            .toList(growable: false);
+        return items.isEmpty ? null : items.join(',');
+      }
+    } catch (_) {
+      // Fallback to plain comma-separated parsing when value is not JSON.
+    }
+
+    final splitValues = raw
+        .split(',')
+        .map((item) => item.trim().toLowerCase())
+        .where((item) => item.isNotEmpty)
+        .toList(growable: false);
+
+    return splitValues.isEmpty ? null : splitValues.join(',');
   }
 
   static List<DriveFileModel>? _parseDriveFiles(dynamic value) {
@@ -260,6 +327,8 @@ class LabModel extends Equatable {
     weight,
     status,
     createdBy,
+    allowedFileTypes,
+    maxFileSizeMb,
     createdAt,
     updatedAt,
     course,
