@@ -133,6 +133,9 @@ class OverviewTab extends StatelessWidget {
           totalSubmissions: 0,
           totalEnrolledStudents: studentsCount,
         );
+    final resolvedStudentsCount = studentsCount > 0
+        ? studentsCount
+        : metrics.totalEnrolledStudents;
 
     final gradeText = averageGrade == null
         ? '--'
@@ -160,7 +163,7 @@ class OverviewTab extends StatelessWidget {
                 child: _buildMetricTile(
                   icon: Icons.people_rounded,
                   title: 'Students',
-                  value: studentsCount.toString(),
+                  value: resolvedStudentsCount.toString(),
                   color: CMColors.primary,
                 ),
               ),

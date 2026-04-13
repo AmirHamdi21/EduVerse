@@ -19,6 +19,7 @@ import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/materials/course_material_model.dart';
 import '../../../models/materials/material_bundle_model.dart';
 import '../../../services/storage_service.dart';
+import '../materials/material_preview_screen.dart';
 import '../../../widgets/instructor/course_management/course_management_barrel.dart';
 
 class CourseManagementScreen extends StatefulWidget {
@@ -120,6 +121,11 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     context.read<InstructorCoursesBloc>().add(
       LoadDeadlines(_resolvedCourseId!),
     );
+
+    final current = context.read<InstructorCoursesBloc>().state;
+    if (current is InstructorCoursesLoaded) {
+      _requestCourseDetailLoads(current);
+    }
   }
 
   Future<void> _resolveRoleAccess() async {
@@ -266,6 +272,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
         final structureErrorMessage = _resolveStructureError(structureState);
         final materialCountsByWeek = _buildMaterialCountsByWeek(materials);
         final studentsCount = _resolveStudentsCount(teachingCourse, students);
+        final overviewStudentsCount = (teachingCourse?.enrolledCount ?? 0) > 0
+            ? teachingCourse!.enrolledCount
+            : studentsCount;
         final hasValidSection = _hasValidSection(teachingCourse);
         final displayCourse = _buildDisplayCourse(
           teachingCourse,
@@ -320,7 +329,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                     l10n: l10n,
                     courseId: _resolvedCourseId,
                     deadlines: deadlines,
-                    studentsCount: studentsCount,
+                    studentsCount: overviewStudentsCount,
                     averageGrade: teachingCourse?.averageGrade,
                     engagementMetrics: engagementMetrics,
                     schedules: teachingCourse?.section.schedules ?? const [],
@@ -502,11 +511,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       return _course.totalStudents;
     }
 
-    final fallback = teachingCourse.enrolledCount > 0
+    return teachingCourse.enrolledCount > 0
         ? teachingCourse.enrolledCount
         : teachingCourse.section.currentEnrollment;
-    final adjusted = fallback - 1;
-    return adjusted > 0 ? adjusted : 0;
   }
 
   void _reloadStructure() {
@@ -662,6 +669,12 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
 
   void _handleViewMaterial(MaterialModel material) {
     if (material.type.toLowerCase() != 'video') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MaterialPreviewScreen(material: material),
+        ),
+      );
       return;
     }
 

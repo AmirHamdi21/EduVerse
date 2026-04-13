@@ -443,9 +443,7 @@ class _MaterialCard extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             borderRadius: BorderRadius.circular(18),
-            onTap: material.type.toLowerCase() == 'video'
-                ? () => onViewMaterial?.call(material)
-                : null,
+            onTap: () => onViewMaterial?.call(material),
             child: Padding(
               padding: const EdgeInsets.all(14),
               child: Row(

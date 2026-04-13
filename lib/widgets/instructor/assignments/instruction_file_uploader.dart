@@ -146,18 +146,13 @@ class InstructionFileUploaderState extends State<InstructionFileUploader> {
       );
     });
 
-    final fallbackFileId = uploadedFile.fileId > 0 ? uploadedFile.fileId : null;
-    final fallbackDriveFileId = uploadedFile.driveFileId > 0
-        ? uploadedFile.driveFileId
-        : null;
-    final fileId =
-        _items[index].fileDatabaseId ?? fallbackFileId ?? fallbackDriveFileId;
-    if (fileId == null || fileId <= 0) {
+    final driveId = uploadedFile.driveId.trim();
+    if (driveId.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'Cannot delete: file ID is unknown. Try refreshing the assignment.',
+              'Cannot delete: file drive ID is unknown. Try refreshing the assignment.',
             ),
           ),
         );
@@ -168,16 +163,9 @@ class InstructionFileUploaderState extends State<InstructionFileUploader> {
       return;
     }
 
-    print(
-      '[InstructionFileUploader] Deleting file ID: $fileId '
-      '(fileId was: ${uploadedFile.fileId}, '
-      'driveFileId was: ${uploadedFile.driveFileId}, '
-      'fileDatabaseId was: ${_items[index].fileDatabaseId})',
-    );
-
     final result = await widget.assignmentService.deleteInstructionFile(
       widget.assignmentId,
-      fileId,
+      driveId,
     );
 
     if (!mounted || index >= _items.length) {
@@ -747,6 +735,9 @@ class _PreviewFallback extends StatelessWidget {
     }
 
     final canOpen = await canLaunchUrl(uri);
+    if (!context.mounted) {
+      return;
+    }
     if (!canOpen) {
       _showUrlError(context, 'No app available to open this link.');
       return;

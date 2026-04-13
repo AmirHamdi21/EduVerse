@@ -220,11 +220,11 @@ class AssignmentService {
 
   Future<ServiceResult<void>> deleteInstructionFile(
     int assignmentId,
-    int instructionFileId,
+    String driveId,
   ) {
     return RetryHelper.executeVoid(() async {
       await _client.dio.delete(
-        '/assignments/$assignmentId/instructions/$instructionFileId',
+        '/assignments/$assignmentId/instructions/$driveId',
       );
     }, fallbackMessage: 'Failed to delete instruction file');
   }

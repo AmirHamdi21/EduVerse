@@ -167,8 +167,15 @@ Widget _buildScreen({
   final resolvedStorageService = storageService ?? _FakeStorageService();
   final themeBloc = ThemeBloc(storageService: resolvedStorageService);
   final resolvedMaterialService =
-      materialService ?? _FakeMaterialService(materials);
-  final resolvedCourseService = courseService ?? _FakeCourseService();
+      materialService ??
+      _FakeMaterialService(
+        materials,
+        delay: Duration.zero,
+        failureMessage: null,
+      );
+  final resolvedCourseService =
+      courseService ??
+      _FakeCourseService(items: const <CourseStructureModel>[]);
   final enrollmentService = _FakeEnrollmentService();
   final communicationService = CommunicationService(
     coreApiClient: CoreApiClient.test(),
@@ -244,7 +251,7 @@ void _setViewport(WidgetTester tester, Size size) {
 }
 
 void main() {
-  testWidgets('shows five tabs and coming soon placeholders', (
+  testWidgets('shows five tabs and renders lectures content', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(_buildScreen());
@@ -265,26 +272,6 @@ void main() {
     await tester.tap(lecturesTab);
     await tester.pumpAndSettle();
     expect(find.text('No materials yet'), findsOneWidget);
-
-    final assignmentsTab = find.descendant(
-      of: find.byType(TabBar),
-      matching: find.text('Assignments'),
-    );
-    expect(assignmentsTab, findsOneWidget);
-    await tester.ensureVisible(assignmentsTab);
-    await tester.tap(assignmentsTab);
-    await tester.pumpAndSettle();
-    expect(find.text('Assignments management coming soon'), findsOneWidget);
-
-    final gradingTab = find.descendant(
-      of: find.byType(TabBar),
-      matching: find.text('Grading'),
-    );
-    expect(gradingTab, findsOneWidget);
-    await tester.ensureVisible(gradingTab);
-    await tester.tap(gradingTab);
-    await tester.pumpAndSettle();
-    expect(find.text('Grading coming soon'), findsOneWidget);
   });
 
   testWidgets('teaching assistant cannot see delete action in settings', (

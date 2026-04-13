@@ -160,30 +160,44 @@ class BundleCard extends StatelessWidget {
                     ...bundle.companionMaterials.take(4).map((material) {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 6),
-                        child: Row(
-                          children: [
-                            Icon(
-                              _iconForType(material.materialType),
-                              size: 16,
-                              color: CMColors.textSub(isDark),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                material.title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: CMColors.text(isDark),
-                                  fontSize: 12,
-                                ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(8),
+                            onTap: onViewMaterial == null
+                                ? null
+                                : () => onViewMaterial!(
+                                    _mapToLegacyMaterial(material),
+                                  ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    _iconForType(material.materialType),
+                                    size: 16,
+                                    color: CMColors.textSub(isDark),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      material.title,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: CMColors.text(isDark),
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  _Badge(
+                                    label: material.materialType.toUpperCase(),
+                                    color: CMColors.teal,
+                                  ),
+                                ],
                               ),
                             ),
-                            _Badge(
-                              label: material.materialType.toUpperCase(),
-                              color: CMColors.teal,
-                            ),
-                          ],
+                          ),
                         ),
                       );
                     }),

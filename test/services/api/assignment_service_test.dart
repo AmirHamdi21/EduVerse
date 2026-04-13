@@ -283,6 +283,25 @@ void main() {
       expect(result.data!.submissionStatus, api.SubmissionStatus.graded);
     });
 
+    test('deleteInstructionFile sends driveId in endpoint path', () async {
+      final client = CoreApiClient.test();
+      final adapter = _QueueAdapter(<Map<String, dynamic>>[
+        <String, dynamic>{'statusCode': 200, 'data': <String, dynamic>{}},
+      ]);
+      client.dio.httpClientAdapter = adapter;
+
+      final service = AssignmentService(coreApiClient: client);
+      const driveId = '1IOjnr6y7JRO7hcoMXkpoRIw8txm7WZlV';
+      final result = await service.deleteInstructionFile(88, driveId);
+
+      expect(result.isSuccess, isTrue);
+      expect(
+        adapter.requests.first.path,
+        '/assignments/88/instructions/$driveId',
+      );
+      expect(adapter.requests.first.method, 'DELETE');
+    });
+
     test(
       'uploadInstructionFile preserves top-level fileId in nested payload',
       () async {
