@@ -8,7 +8,10 @@
       "Read(D:\\Graduation\\EduVerse/**)",
       "Bash(flutter *)",
       "Bash(findstr *)",
-      "Bash(.\\.specify\\scripts\\powershell\\create-new-feature.ps1 *)"
+      "Bash(.\\.specify\\scripts\\powershell\\create-new-feature.ps1 *)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\labs\\controllers/**)"
     ]
   },
   "$version": 3

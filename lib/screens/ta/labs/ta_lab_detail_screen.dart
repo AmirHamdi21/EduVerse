@@ -19,6 +19,8 @@ import '../../../widgets/instructor/labs/attendance_sheet.dart';
 import '../../../models/core/lab_attendance_model.dart';
 import '../../../models/core/enums/lab_enums.dart' as lab_enums;
 import '../../../services/api/lab_service.dart';
+import '../../../services/api/core_api_client.dart';
+import '../../../services/storage_service.dart';
 import '../../../bloc/instructor/lab_detail_cubit.dart';
 import '../../../bloc/instructor/lab_detail_state.dart';
 import '../../../widgets/instructor/labs/instruction_manager.dart';
@@ -28,8 +30,9 @@ import '../../../widgets/instructor/labs/instruction_manager.dart';
 /// Includes read-only Submissions tab (US4 AC3) and Attendance tab.
 class TALabDetailScreen extends StatefulWidget {
   final String labId;
+  final LabService? labService;
 
-  const TALabDetailScreen({super.key, required this.labId});
+  const TALabDetailScreen({super.key, required this.labId, this.labService});
 
   @override
   State<TALabDetailScreen> createState() => _TALabDetailScreenState();
@@ -39,16 +42,27 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   late LabDetailCubit _instructionCubit;
+  late LabService _labService;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    
+    // T030: Resolve LabService — try provider tree, fallback to local instance
+    try {
+      _labService = context.read<LabService>();
+    } catch (_) {
+      final coreApiClient = CoreApiClient(storageService: StorageService());
+      _labService = LabService(coreApiClient: coreApiClient);
+    }
+    
     // T030: Fetch via cubit — loads lab info + submissions + attendance
     context.read<TALabsCubit>().fetchLabDetail(widget.labId);
+    
     // T045: Local LabDetailCubit for InstructionManager reuse
     _instructionCubit = LabDetailCubit(
-      labService: context.read<LabService>(),
+      labService: _labService,
     );
     _instructionCubit.loadLabDetail(widget.labId);
   }
@@ -732,8 +746,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
       canManage: true,
       onMarkAttendance: (int userId, lab_enums.LabAttendanceStatus status) async {
         // T042: Mark attendance via LabService then refresh cubit
-        final labService = context.read<LabService>();
-        await labService.markAttendance(
+        await _labService.markAttendance(
           widget.labId,
           <String, dynamic>{
             'userId': userId,
@@ -950,7 +963,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
               onSubmit: (data) async {
                 Navigator.of(ctx).pop();
                 try {
-                  await context.read<LabService>().update(lab.id, data);
+                  await _labService.update(lab.id, data);
                   context.read<TALabsCubit>().fetchLabDetail(widget.labId);
                 } catch (e) {
                   if (mounted) {

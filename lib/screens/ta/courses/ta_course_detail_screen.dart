@@ -11,6 +11,8 @@ import '../../../models/assignments/assignment_model.dart';
 import '../../../models/assignments/assignment_form_data.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../services/api/assignment_service.dart';
+import '../../../services/api/core_api_client.dart';
+import '../../../services/storage_service.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/courses/ta_courses_barrel.dart';
@@ -690,7 +692,15 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     final courses = status is TASubTabLoaded<List<TeachingCourseModel>>
         ? status.data
         : <TeachingCourseModel>[tc];
-    final assignmentService = context.read<AssignmentService>();
+    
+    // T017: Resolve AssignmentService — try provider tree, fallback to local instance
+    AssignmentService assignmentService;
+    try {
+      assignmentService = context.read<AssignmentService>();
+    } catch (_) {
+      final coreApiClient = CoreApiClient(storageService: StorageService());
+      assignmentService = AssignmentService(coreApiClient: coreApiClient);
+    }
 
     AssignmentFormData? initialData;
     if (existing != null) {
