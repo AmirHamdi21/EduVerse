@@ -1,5 +1,39 @@
 <!--
-SYNC IMPACT REPORT
+SYNC IMPACT REPORT v6.0.2 (2026-04-14):
+- Version Change: 6.0.1 → 6.0.2 (PATCH — Added missing Delete Assignments and Delete Labs rows to Role-Based UI Enforcement Matrix)
+- Modified Sections:
+  - Role-Based UI Enforcement Matrix — Added "Delete Assignments" row (Instructor ✅, TA ✅) and "Delete Labs" row (Instructor ✅, TA ✅ with data-loss confirmation per Principle IX)
+- Rationale: Matrix was incomplete — Create/Edit rows existed but Delete rows were missing, causing a documentation gap with Principle IX text and spec FR-005/T019/T033.
+- Templates Requiring Updates: None (spec/plan/tasks already implement deletion correctly)
+- Follow-up TODOs: None
+
+SYNC IMPACT REPORT v6.0.1 (2026-04-14):
+- Version Change: 6.0.0 → 6.0.1 (PATCH — Replace hardcoded machine-specific backend paths with `<BACKEND_PATH>` placeholder)
+- Modified Sections:
+  - Chat Integration Constraints — Backend Path: hardcoded path → `<BACKEND_PATH>`
+  - Courses, Assignments & Labs Integration Constraints — Backend Path: hardcoded path → `<BACKEND_PATH>`
+- Rationale: Absolute local file system paths must not appear in a version-controlled constitution shared across machines. Replaced with `<BACKEND_PATH>` placeholder; developers must substitute their own local checkout path.
+- Templates Requiring Updates:
+  - ✅ spec.md (022-ta-courses-assignments-labs) — Clarifications Q2 and Assumptions now use `<BACKEND_PATH>`
+- Follow-up TODOs: Add a `DEVELOPMENT_SETUP.md` documenting machine-specific path values for each dev environment.
+
+SYNC IMPACT REPORT v6.0.0 (2026-04-14):
+- Version Change: 5.0.0 → 6.0.0 (MAJOR — TA role scope redefined in Principle IX Role Matrix)
+- Modified Principles:
+  - IX. Role-Based Access Control Enforcement — TA role updated: now permits full assignment
+    CRUD (create/edit/delete) and lab create/edit for their assigned sections; removes the
+    incorrect "grade-only" restriction that conflicted with the designed feature scope
+- Modified Sections:
+  - Role-Based UI Enforcement Matrix — Create/Edit Assignments (TA): ❌ → ✅
+  - Role-Based UI Enforcement Matrix — Create/Edit Labs (TA): ❌ → ✅
+  - "Courses, Assignments & Labs Integration Constraints" — TA scope updated
+- Templates Requiring Updates:
+  - ✅ plan.md (022-ta-courses-assignments-labs) — Constitution Check updated for v6.0.0 TA scope
+  - ✅ spec.md (022-ta-courses-assignments-labs) — FR-003–005, FR-011–012 now align with v6.0.0
+  - ✅ data-model.md (022-ta-courses-assignments-labs) — TA Compatibility notes corrected
+- Follow-up TODOs: None
+
+SYNC IMPACT REPORT v5.0.0 (2026-04-11):
 - Version Change: 4.0.0 → 5.0.0 (MAJOR — new principle: UI Consistency & Visual Preservation)
 - Modified Principles:
   - I. BLoC State Management First — unchanged
@@ -202,8 +236,11 @@ guards.
   delete assignments, labs, or courses.
 - Instructors: Full CRUD on assignments and labs for their courses. Can
   grade. Can upload materials. CANNOT delete courses.
-- TAs: Grade-only for assignments and labs. CANNOT create, edit, or
-  delete assignments. CANNOT delete labs. Eye (view) button only.
+- TAs: Full assignment CRUD (create, edit, delete) and lab create/edit
+  for their assigned sections. Can grade assignments and labs, mark
+  attendance, and upload TA lab materials. CANNOT delete labs that have
+  existing student submissions without an explicit data-loss confirmation.
+  CANNOT manage course-level settings.
 - Admin (Dept Head): Course lifecycle CRUD, section/schedule management,
   staff assignment. NO assignment or lab management.
 - IT Admin: NO courses/assignments/labs features at all.
@@ -306,8 +343,8 @@ parity.
 For strict alignment, the implementation MUST reference the following local
 environment paths to ensure complete parity with the web version and
 established backend routes:
-- **Backend Path:** `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend`
-- **Frontend Website Path:** `C:\Users\Friends\Desktop\Graduation\Frontend\Eduverse-Frontend`
+- **Backend Path:** `<BACKEND_PATH>` (replace with the absolute path to your local EduVerse backend checkout — e.g. `D:\Graduation\backend\last_backend\EduVerse_Backend` on a typical dev machine; see `DEVELOPMENT_SETUP.md` for per-machine values)
+- **Frontend Website Path:** `D:\Graduation\frontend tarek\Eduverse-Frontend`
 - **Backend API Docs:** `Flutter_Chat_API_Docs_BACKEND.md` (in project root)
 - **Website Feature Docs:** `CHAT_FEATURE_DOCUMENTATION_FRONTEND_WEBSITE.md` (in project root)
 - **Integration Plan:** `CHAT_FEATURE_DOCUMENTATION_SPECKIT_PLAN.md` (in project root)
@@ -321,7 +358,7 @@ behaviors defined in the React Web frontend and the backend API
 documentation to ensure exact feature parity.
 
 For strict alignment, the implementation MUST reference the following:
-- **Backend Path:** `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend`
+- **Backend Path:** `<BACKEND_PATH>` (replace with the absolute path to your local EduVerse backend checkout; see `DEVELOPMENT_SETUP.md` for per-machine values)
 - **Frontend Website Path:** `C:\Users\Friends\Desktop\Graduation\Frontend\Eduverse-Frontend`
 - **Backend API Docs:** `COURSES_ASSIGNMENTS_LABS_BACKEND_API_DOCS.md` (in project root)
 - **Website Feature Docs:** `Courses_Assignments_Labs_Frontend_Documentation.md` (in project root)
@@ -331,7 +368,7 @@ For strict alignment, the implementation MUST reference the following:
 **Scope:** Five roles interact with this feature:
 - **Student** — View courses, submit assignments/labs, view grades, watch lectures
 - **Instructor** — CRUD assignments/labs, grade, upload materials, manage course structure
-- **TA** — Grade assignments/labs (read-only, no CRUD), view courses/materials
+- **TA** — Full CRUD on assignments; create and edit labs; grade assignments/labs; mark attendance; upload lab materials; view courses/materials (all section-scoped)
 - **Admin (Dept Head)** — CRUD courses, manage sections/schedules, assign staff
 - **IT Admin** — No courses/assignments/labs features (system admin only)
 
@@ -361,11 +398,13 @@ shows an action button for a role not in this matrix is a parity violation.
 | **Create/Edit Courses** | ❌ | ❌ | ❌ | ✅ | ❌ |
 | **Delete Courses** | ❌ | ❌ | ❌ | ✅ | ❌ |
 | **View Assignments** | ✅ | ✅ | ✅ | ❌ | ❌ |
-| **Create/Edit Assignments** | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **Create/Edit Assignments** | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **Delete Assignments** | ❌ | ✅ | ✅ | ❌ | ❌ |
 | **Submit Assignments** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **Grade Assignments** | ❌ | ✅ | ✅ | ❌ | ❌ |
 | **View Labs** | ✅ | ✅ | ✅ | ❌ | ❌ |
-| **Create/Edit Labs** | ❌ | ✅ | ❌ | ❌ | ❌ |
+| **Create/Edit Labs** | ❌ | ✅ | ✅ | ❌ | ❌ |
+| **Delete Labs** | ❌ | ✅ | ✅ *(confirmation required if submissions exist — see Principle IX)* | ❌ | ❌ |
 | **Submit Labs** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **Grade Labs** | ❌ | ✅ | ✅ | ❌ | ❌ |
 | **Mark Attendance** | ❌ | ✅ | ✅ | ❌ | ❌ |
@@ -446,4 +485,4 @@ to the next phase.
 - MINOR version bump for new principle or section addition.
 - PATCH version bump for clarification or typo fixes.
 
-**Version**: 5.0.0 | **Ratified**: 2026-04-05 | **Last Amended**: 2026-04-11
+**Version**: 6.0.2 | **Ratified**: 2026-04-05 | **Last Amended**: 2026-04-14

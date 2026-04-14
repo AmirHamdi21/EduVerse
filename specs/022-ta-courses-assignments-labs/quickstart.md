@@ -51,17 +51,24 @@ flutter run
 
 ## Running Tests
 
+> **Note**: Test directories `test/unit/bloc/ta/`, `test/unit/models/assignments/`,
+> `test/unit/models/labs/`, and `test/widget/ta/` will be **created as part of this phase's
+> implementation** (T027, T038 add model unit tests; no pre-existing TA test files). Running
+> `flutter test test/unit/bloc/ta/` before those files are created will exit silently with
+> zero tests (not a failure). Always run `flutter test` (all tests) to confirm no regressions.
+
 ```bash
-# Unit tests for TA Cubits
+# Unit tests for TA Cubits (created during Phase 2)
 flutter test test/unit/bloc/ta/
 
-# Widget tests for TA screens
+# Model unit tests for isLate parsing (created by T027 and T038)
+flutter test test/unit/models/assignments/
+flutter test test/unit/models/labs/
+
+# Widget tests for TA screens (created during Phase 3)
 flutter test test/widget/ta/
 
-# Integration tests for TA flows
-flutter test test/integration/features/ta/
-
-# All tests
+# All tests — use this to confirm no regressions after each phase
 flutter test
 ```
 

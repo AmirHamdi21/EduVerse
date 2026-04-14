@@ -4,9 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
-import '../../../bloc/courses/courses_bloc.dart';
-import '../../../bloc/courses/courses_event.dart';
-import '../../../bloc/courses/courses_state.dart';
+import '../../../bloc/ta/ta_courses_cubit.dart';
+import '../../../bloc/ta/ta_courses_state.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
@@ -26,8 +25,8 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
   @override
   void initState() {
     super.initState();
-    // T005/T006: Dispatch TA-specific BLoC event instead of loading mock data
-    context.read<CoursesBloc>().add(const TACoursesFetched());
+    // T006: Dispatch TA-specific cubit fetch
+    context.read<TACoursesCubit>().fetchTACourses();
   }
 
   @override
@@ -46,23 +45,23 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
           ),
           body: SafeArea(
             // T006: Wrap with BlocBuilder for CoursesBloc state management
-            child: BlocBuilder<CoursesBloc, CoursesState>(
-              builder: (context, coursesState) {
+            child: BlocBuilder<TACoursesCubit, TACoursesState>(
+              builder: (context, taState) {
                 return RefreshIndicator(
                   onRefresh: () async {
-                    context.read<CoursesBloc>().add(const TACoursesFetched());
+                    context.read<TACoursesCubit>().fetchTACourses();
                   },
                   color: TAColors.primary,
                   child: CustomScrollView(
                     slivers: [
                       _buildAppBar(isDark, l10n),
                       SliverToBoxAdapter(
-                        child: _buildSummaryStats(isDark, l10n, coursesState),
+                        child: _buildSummaryStats(isDark, l10n, taState),
                       ),
                       SliverToBoxAdapter(
-                        child: _buildFilterChips(isDark, l10n, coursesState),
+                        child: _buildFilterChips(isDark, l10n, taState),
                       ),
-                      _buildContent(isDark, l10n, coursesState),
+                      _buildContent(isDark, l10n, taState),
                     ],
                   ),
                 );
@@ -74,28 +73,22 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
     );
   }
 
-  /// Extract the list of teaching courses from the current BLoC state.
-  List<TeachingCourseModel> _getCoursesFromState(CoursesState state) {
-    if (state is TACoursesLoaded) {
-      return state.teachingCourses;
-    }
-    if (state is CoursesLoading && state.cachedData.isNotEmpty) {
-      return state.cachedData
-          .whereType<TeachingCourseModel>()
-          .toList();
+  /// Extract the list of teaching courses from the current cubit state.
+  List<TeachingCourseModel> _getCoursesFromState(TACoursesState state) {
+    final status = state.coursesStatus;
+    if (status is TASubTabLoaded<List<TeachingCourseModel>>) {
+      return status.data;
     }
     return [];
   }
 
-  List<TeachingCourseModel> _getFilteredCourses(CoursesState state) {
+  List<TeachingCourseModel> _getFilteredCourses(TACoursesState state) {
     final courses = _getCoursesFromState(state);
     if (_selectedFilter == 'all') return courses;
-    // For 'pending' filter, keep all courses (pending grading is not available
-    // from this endpoint; the filter will be expanded in future phases).
     return courses;
   }
 
-  int _getTotalStudents(CoursesState state) {
+  int _getTotalStudents(TACoursesState state) {
     return _getCoursesFromState(state).fold<int>(
       0,
       (sum, tc) => sum + tc.section.currentEnrollment,
@@ -141,7 +134,7 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
   Widget _buildSummaryStats(
     bool isDark,
     AppLocalizations l10n,
-    CoursesState state,
+    TACoursesState state,
   ) {
     final courses = _getCoursesFromState(state);
     final totalStudents = _getTotalStudents(state);
@@ -240,7 +233,7 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
   Widget _buildFilterChips(
     bool isDark,
     AppLocalizations l10n,
-    CoursesState state,
+    TACoursesState state,
   ) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -328,14 +321,15 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
     );
   }
 
-  // T006: Loading skeleton per Constitution Principle IV
   Widget _buildContent(
     bool isDark,
     AppLocalizations l10n,
-    CoursesState state,
+    TACoursesState state,
   ) {
+    final status = state.coursesStatus;
+
     // Loading state — show skeleton loaders
-    if (state is CoursesLoading) {
+    if (status is TASubTabLoading<List<TeachingCourseModel>>) {
       return SliverPadding(
         padding: const EdgeInsets.all(16),
         sliver: SliverList(
@@ -348,7 +342,7 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
     }
 
     // Error state — show retry
-    if (state is CoursesError) {
+    if (status is TASubTabError<List<TeachingCourseModel>>) {
       return SliverFillRemaining(
         child: Center(
           child: Column(
@@ -377,7 +371,7 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
               ),
               const SizedBox(height: 8),
               Text(
-                state.message,
+                status.message,
                 style: TextStyle(
                   color: TAColors.textSecondaryColor(isDark),
                   fontSize: 14,
@@ -387,7 +381,7 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
               const SizedBox(height: 24),
               ElevatedButton.icon(
                 onPressed: () {
-                  context.read<CoursesBloc>().add(const TACoursesFetched());
+                  context.read<TACoursesCubit>().fetchTACourses();
                 },
                 icon: const Icon(Icons.refresh_rounded),
                 label: const Text('Retry'),

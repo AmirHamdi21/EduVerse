@@ -33,7 +33,7 @@ This phase primarily **reuses existing domain models** from Phase 1 (foundation)
 | `instructions` | `List<LabInstructionModel>` | Lab instructions |
 | `instructionFiles` | `List<DriveFileModel>` | Attached Google Drive files |
 
-**TA Compatibility**: ✅ Fully compatible. TA can create/edit labs using this model with the same form fields as Instructor.
+**TA Compatibility**: ✅ Fully compatible. Per constitution v6.0.0, TA can create/edit labs for their assigned sections using this model with the same form fields as Instructor. When a TA deletes a lab, the frontend must first check whether submissions exist (via `LabModel.submissionsCount` or from the loaded `LabSubmissionModel[]` list) and show an enhanced data-loss warning dialog if submissions are present.
 
 ---
 

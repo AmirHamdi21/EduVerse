@@ -48,11 +48,12 @@ Role: `teaching_assistant` (or `instructor`, `admin` for shared endpoints).
 
 ---
 
-### GET /sections/{sectionId}/students
+### GET /enrollments/sections/{sectionId}/students
 
 **Purpose**: Load students enrolled in a section (used in Students sub-tab).
 **Roles**: `instructor`, `teaching_assistant`, `admin`
 **Response**: `Student[]`
+**Note**: Accessed via `EnrollmentService.getSectionStudents(sectionId)` — URL path is under `/enrollments/sections/`, not `/sections/`.
 
 ---
 
@@ -244,13 +245,14 @@ Role: `teaching_assistant` (or `instructor`, `admin` for shared endpoints).
 
 ---
 
-### POST /labs/{id}/ta-materials/upload
+### POST /labs/{id}/ta-materials/upload ⚠️ CONDITIONAL
 
 **Purpose**: Upload TA-only materials.
 **Roles**: `instructor`, `teaching_assistant`, `admin`
 **Content-Type**: `multipart/form-data`
 **Form Fields**: `file`, `title`
 **Response**: `DriveFileModel` (201 Created)
+**⚠️ Note**: This endpoint is **NOT documented** in `COURSES_ASSIGNMENTS_LABS_BACKEND_API_DOCS.md` (confirmed absent by API docs audit). Presence MUST be verified by inspecting backend source at `<BACKEND_PATH>` before implementation (per T047). The contract above is a **tentative specification** — if the endpoint is not found after backend inspection, T047 renders a structured empty state instead.
 
 ---
 

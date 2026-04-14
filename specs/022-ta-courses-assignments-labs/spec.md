@@ -2,16 +2,18 @@
 
 **Feature Branch**: `022-ta-courses-assignments-labs`
 **Created**: 2026-04-14
-**Status**: Draft
+**Status**: Ready for Implementation
 **Input**: User description: "Phase 8: TA — Courses, Assignments & Labs Integration. Read integration plan, frontend docs, and backend API docs. The UI of changed screens must remain the same (same colors, same structure) — only static/mockup data is to be deleted with its space preserved in the UI. Overall UI after this phase must be at least 85% of the past UI. Follow the remaining UI patterns of the app screens."
 
 ## Clarifications
 
 ### Session 2026-04-14
 
-- Q: Should TA screens reuse existing Instructor/Student screens or be built as separate dedicated TA screens? → A: Hybrid approach — reuse Instructor CRUD screens for assignment/lab management; build new TA-specific course list and course detail screens with modern, colorful UI matching existing TA screen design patterns.
-- Q: Should all 9 course detail sub-tabs use live API data or a mix of live API and managed/mock state? → A: All 9 sub-tabs attempt live API fetches first; show structured empty states when data or endpoints are unavailable. For endpoints not found in documentation files, inspect the backend project at `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend`.
+- Q: Should TA screens reuse existing Instructor/Student screens or be built as separate dedicated TA screens? → A: Hybrid approach — reuse Instructor CRUD screens for assignment/lab management; build new TA-specific course list and course detail screens with modern, colorful UI matching existing TA screen design patterns. *(This TA CRUD scope is aligned with constitution v6.0.0 Role Matrix, which was amended from v5.0.0 to permit TA assignment/lab CRUD for assigned sections.)*
+- Q: Should all 9 course detail sub-tabs use live API data or a mix of live API and managed/mock state? → A: All 9 sub-tabs attempt live API fetches first; show structured empty states when data or endpoints are unavailable. For endpoints not found in documentation files, inspect the backend project at `<BACKEND_PATH>` (a machine-specific path — see the "Courses, Assignments & Labs Integration Constraints" section of the project constitution for the dev machine absolute path; replace with a local environment variable before sharing this document).
 - Q: Is TA permission scope course-wide or section-specific? → A: Section-scoped — TA only sees students, submissions, labs, and data for the specific sections they are assigned to within a course.
+- Q: How should the course-level Attendance sub-tab (tab 7) aggregate per-lab attendance data — is there a single course-level attendance summary endpoint? → A: No single course-level attendance endpoint exists in the backend API (confirmed by API docs audit). `TACoursesCubit.fetchAttendanceSummary(courseId)` must: (1) call `LabService.getAll({courseId})` to get all lab IDs, (2) call `GET /labs/{labId}/attendance` sequentially for each lab, (3) aggregate results client-side into a `List<TALabAttendanceSummary>` (per-lab: present/absent/excused/late counts). The Attendance sub-tab renders a per-lab attendance card list.
+- Q: Which services does `TACoursesCubit` require as constructor dependencies? → A: All 6 services must be injected: `EnrollmentService` (course list + section students), `SectionService` (sections listing for sub-tab 2), `LabService` (sections & labs sub-tab + attendance aggregation), `CourseService` (lectures/structure sub-tab), `MaterialService` (materials sub-tab), and `AssignmentService` (assignments + grading sub-tabs). All 6 are existing services from Phases 6 and 7 — no new dependencies needed.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -73,7 +75,7 @@ A TA navigates to the Labs screen (section-scoped), sees all labs for their assi
 
 **Acceptance Scenarios**:
 
-1. **Given** a TA is on the Labs screen, **When** they tap "Create Lab", **Then** they see a form with course selection, title, description, dates, max score, weight, and status
+1. **Given** a TA is on the Labs screen, **When** they tap "Create Lab", **Then** they see a form with course selection, title, description, available from date, due date, max score, weight, and status
 2. **Given** a TA sees a lab, **When** they tap "Edit", **Then** the form is pre-populated and they can save changes
 3. **Given** a TA sees a lab, **When** they tap "View Submissions", **Then** they see all student submissions for that lab
 
@@ -117,13 +119,13 @@ A TA adds text instructions and uploads files to a lab. They can also upload TA-
 
 **Why this priority**: Supporting materials and instructions are needed for labs but are a secondary workflow compared to grading and CRUD.
 
-**Independent Test**: A TA can add a text instruction to a lab, upload an instruction file, and upload a TA material file. Each upload is verifiable via API.
+**Independent Test**: A TA can add a text instruction to a lab (verifiable via API) and upload an instruction file (verifiable via API). TA material upload (AC3) is **conditional** on the `POST /labs/{id}/ta-materials/upload` backend endpoint being confirmed (per T047) — if the endpoint is absent after backend inspection, this independent test criterion is satisfied by verifying the "TA Materials upload is not yet supported" structured empty state renders correctly.
 
 **Acceptance Scenarios**:
 
 1. **Given** a TA is editing a lab, **When** they add a text instruction, **Then** it appears in the lab's instructions list
 2. **Given** a TA uploads an instruction file, **When** the upload completes, **Then** the file is linked to the lab and visible to students
-3. **Given** a TA uploads a TA material file, **When** the upload completes, **Then** the file is visible only to instructors and TAs
+3. **Given** a TA uploads a TA material file, **When** the upload completes (conditional: if `POST /labs/{id}/ta-materials/upload` endpoint exists in backend), **Then** the file is visible only to instructors and TAs — **if the endpoint is absent** after backend inspection (per T047), this criterion is **deferred** and the expected observed output is the "TA Materials upload is not yet supported" structured empty state
 
 ---
 
@@ -134,14 +136,14 @@ A TA adds text instructions and uploads files to a lab. They can also upload TA-
 - What happens when a TA tries to delete a lab that has existing student submissions? The backend should allow deletion but the frontend should warn about data loss.
 - How does the system handle late lab submissions when the lab's due date has passed? The backend auto-marks `isLate` based on the submission timestamp.
 - What happens when a TA tries to upload a file that exceeds the size limit? The frontend should validate file size before upload and show an error message.
-- How does the system handle a TA whose assignment to a course was revoked mid-session? The TA should lose access to that course's data on next refresh.
+- How does the system handle a TA whose assignment to a course was revoked mid-session? Access revocation is **not detected in real-time** — it is detected on the next network-triggered cubit method call (e.g., when the TA activates a sub-tab or navigates back into the course). At that point the backend returns `403 Forbidden`, which `TACoursesCubit` emits as a 403 error state; the UI displays "Access revoked. You are no longer assigned to this course." and navigates back to the TA courses list. This is implemented in T058.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
 - **FR-001**: System MUST display TA's assigned courses fetched from the backend via the teaching courses endpoint, with no mock or static data
-- **FR-002**: System MUST provide 9 sub-tabs on the TA course detail screen: Overview, Sections & Labs, Lectures, Materials, Assignments, Grading, Attendance, Students, Announcements
+- **FR-002**: System MUST provide 9 sub-tabs on the TA course detail screen in this exact display order: (1) Overview, (2) Sections & Labs, (3) Lectures, (4) Materials, (5) Assignments, (6) Grading, (7) Attendance, (8) Students, (9) Announcements
 - **FR-003**: System MUST allow TAs to create assignments with all required fields: title, description, instructions (markdown-supported), due date, max score, weight, submission type (text/file/link/any), max file size, allowed file types, late penalty percentage, and status
 - **FR-004**: System MUST allow TAs to edit existing assignments, pre-populating all fields with current values
 - **FR-005**: System MUST allow TAs to delete assignments with a confirmation dialog before deletion
@@ -150,7 +152,7 @@ A TA adds text instructions and uploads files to a lab. They can also upload TA-
 - **FR-008**: System MUST allow TAs to grade assignment submissions by entering a score (0 to maxScore, step 0.5) and optional feedback text
 - **FR-009**: System MUST save grades to the backend and update the submission status to "graded"
 - **FR-010**: System MUST display TA's assigned labs fetched from the backend with no mock or static data
-- **FR-011**: System MUST allow TAs to create labs with fields: course ID, title, description, available from date, due date, max score, weight, and status
+- **FR-011**: System MUST allow TAs to create labs with fields: course ID, title, description, available from date (optional), due date, max score, weight, and status. Note: `labNumber` is auto-assigned by the backend and does not require TA input.
 - **FR-012**: System MUST allow TAs to edit existing labs, pre-populating all fields with current values
 - **FR-013**: System MUST allow TAs to view lab submissions with student details, submission date, status, and score
 - **FR-014**: System MUST allow TAs to grade lab submissions with a score (0 to maxScore, step 0.5), optional feedback, and a status field (submitted, graded, returned, resubmit)
@@ -195,10 +197,10 @@ A TA adds text instructions and uploads files to a lab. They can also upload TA-
 - TAs have stable internet connectivity when accessing the app (required for live API calls)
 - The existing authentication system (JWT-based) is reused — no new auth mechanism is introduced
 - The existing `CoreApiClient` (Dio-based) is reused for all HTTP requests
-- The existing `AssignmentService` and `LabService` from Phase 1 provide the necessary backend endpoints
+- The existing `AssignmentService` and `LabService` implemented in Phases 6 (Instructor Assignments CRUD & Grading) and 7 (Instructor Labs CRUD & Grading) provide the necessary backend endpoints for this phase
 - The TA's role and section assignments are correctly set in the backend — the app does not need to verify or modify roles
 - Google Drive integration (file upload, preview) is already configured in the backend and requires no additional setup on the mobile side
-- All 9 TA course detail sub-tabs attempt live API data fetches; when endpoints or data are unavailable, structured empty states are shown instead of mock data. Undiscovered endpoints should be identified by inspecting the backend project at `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend`
+- All 9 TA course detail sub-tabs attempt live API data fetches; when endpoints or data are unavailable, structured empty states are shown instead of mock data. Undiscovered endpoints should be identified by inspecting the backend project at `<BACKEND_PATH>` (see dev machine path in the Clarifications section)
 - TA assignment/lab CRUD reuses existing Instructor screen components (same forms, same validation, same UI). TA course list and course detail screens are new, built with modern, colorful UI matching existing TA screen design patterns
 - Existing BLoC/Cubit architecture patterns from previous phases are reused for state management
 - No new dependencies beyond those already in the project (youtube_player_flutter, webview_flutter, flutter_downloader, path_provider, shared_preferences, flutter_markdown, file_picker) are required for this phase
