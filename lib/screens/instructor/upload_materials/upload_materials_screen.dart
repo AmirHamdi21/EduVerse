@@ -1082,12 +1082,11 @@ class _UploadMaterialsScreenState extends State<UploadMaterialsScreen>
             isDark: isDark,
           ),
           const SizedBox(height: 12),
-          ModuleSelector(
-            modules: _availableModules,
-            selectedModuleId: _selectedModuleId,
-            onModuleChanged: (id) {
+          WeekNumberSelector(
+            weekNumber: _selectedWeekNumber,
+            onWeekChanged: (week) {
               setState(() {
-                _selectedModuleId = id;
+                _selectedModuleId = week?.toString();
               });
             },
             isDark: isDark,

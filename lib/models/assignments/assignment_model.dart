@@ -8,7 +8,7 @@ import '../core/shared_models.dart';
 
 enum AssignmentStatus { pending, submitted, graded, late, overdue }
 
-enum AssignmentType { document, code, presentation, quiz, project, other }
+enum AssignmentType { document, code, presentation, quiz, project, lab, other }
 
 enum AssignmentPriority { low, medium, high, urgent }
 
@@ -72,6 +72,8 @@ extension AssignmentTypeExtension on AssignmentType {
         return 'Quiz';
       case AssignmentType.project:
         return 'Project';
+      case AssignmentType.lab:
+        return 'Lab';
       case AssignmentType.other:
         return 'Other';
     }
@@ -89,6 +91,8 @@ extension AssignmentTypeExtension on AssignmentType {
         return const Color(0xFFEC4899);
       case AssignmentType.project:
         return const Color(0xFF10B981);
+      case AssignmentType.lab:
+        return const Color(0xFF059669);
       case AssignmentType.other:
         return const Color(0xFF6B7280);
     }
@@ -106,6 +110,8 @@ extension AssignmentTypeExtension on AssignmentType {
         return Icons.quiz_rounded;
       case AssignmentType.project:
         return Icons.folder_special_rounded;
+      case AssignmentType.lab:
+        return Icons.science_rounded;
       case AssignmentType.other:
         return Icons.insert_drive_file_rounded;
     }

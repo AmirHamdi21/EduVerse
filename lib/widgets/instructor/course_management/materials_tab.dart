@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import '../../../generated_l10n/app_localizations.dart';
-import '../../../models/core/course_structure_model.dart';
 import '../../../models/instructor/instructor_course_model.dart';
 import '../../../models/materials/material_bundle_model.dart';
 import 'bundle_card.dart';
 import 'course_management_colors.dart';
-import 'course_structure_editor.dart';
 
-/// Redesigned materials tab with modern file cards
+/// Read-only materials tab — displays materials grouped by week.
+/// Week management is handled by Admin only.
 class MaterialsTab extends StatelessWidget {
   final List<MaterialModel> materials;
   final List<MaterialBundleModel> bundles;
-  final List<CourseStructureModel> structureItems;
   final Map<int, int> materialCountsByWeek;
   final String? partialFailureMessage;
   final List<String> failedMaterialIds;
@@ -23,13 +21,6 @@ class MaterialsTab extends StatelessWidget {
   final ValueChanged<MaterialBundleModel>? onToggleBundleVisibility;
   final ValueChanged<MaterialBundleModel>? onEditBundle;
   final ValueChanged<MaterialBundleModel>? onDeleteBundle;
-  final bool structureLoading;
-  final String? structureErrorMessage;
-  final VoidCallback? onReloadStructure;
-  final CreateStructureItemCallback? onCreateStructureItem;
-  final UpdateStructureItemCallback? onUpdateStructureItem;
-  final DeleteStructureItemCallback? onDeleteStructureItem;
-  final ReorderStructureItemsCallback? onReorderStructureItems;
   final bool isDark;
   final AppLocalizations l10n;
 
@@ -37,7 +28,6 @@ class MaterialsTab extends StatelessWidget {
     super.key,
     required this.materials,
     this.bundles = const <MaterialBundleModel>[],
-    this.structureItems = const <CourseStructureModel>[],
     this.materialCountsByWeek = const <int, int>{},
     this.partialFailureMessage,
     this.failedMaterialIds = const <String>[],
@@ -49,33 +39,16 @@ class MaterialsTab extends StatelessWidget {
     this.onToggleBundleVisibility,
     this.onEditBundle,
     this.onDeleteBundle,
-    this.structureLoading = false,
-    this.structureErrorMessage,
-    this.onReloadStructure,
-    this.onCreateStructureItem,
-    this.onUpdateStructureItem,
-    this.onDeleteStructureItem,
-    this.onReorderStructureItems,
     required this.isDark,
     required this.l10n,
   });
 
   @override
   Widget build(BuildContext context) {
-    final hasStructurePanel =
-        structureLoading ||
-        structureErrorMessage != null ||
-        structureItems.isNotEmpty ||
-        onCreateStructureItem != null;
     final sections = _buildSections();
 
     return Column(
       children: [
-        if (hasStructurePanel)
-          SizedBox(
-            height: structureItems.isEmpty ? 250 : 330,
-            child: _buildStructurePanel(),
-          ),
         if (partialFailureMessage != null && failedMaterialIds.isNotEmpty)
           _buildPartialFailureBanner(),
         Expanded(
@@ -138,78 +111,6 @@ class MaterialsTab extends StatelessWidget {
               ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildStructurePanel() {
-    if (structureLoading) {
-      return Center(
-        child: CircularProgressIndicator(
-          valueColor: AlwaysStoppedAnimation<Color>(CMColors.primary),
-        ),
-      );
-    }
-
-    if (structureErrorMessage != null) {
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: CMColors.cardColor(isDark),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: CMColors.borderColor(isDark)),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error_outline_rounded,
-                color: CMColors.error,
-                size: 28,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Failed to load course structure',
-                style: TextStyle(
-                  color: CMColors.text(isDark),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                structureErrorMessage!,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: CMColors.textSub(isDark), fontSize: 12),
-              ),
-              if (onReloadStructure != null) ...[
-                const SizedBox(height: 10),
-                FilledButton.icon(
-                  onPressed: onReloadStructure,
-                  icon: const Icon(Icons.refresh_rounded, size: 16),
-                  label: const Text('Retry'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: CMColors.primary,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
-      );
-    }
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 4),
-      child: CourseStructureEditor(
-        items: structureItems,
-        materialCountsByWeek: materialCountsByWeek,
-        isDark: isDark,
-        onCreate: onCreateStructureItem,
-        onUpdate: onUpdateStructureItem,
-        onDelete: onDeleteStructureItem,
-        onReorder: onReorderStructureItems,
       ),
     );
   }

@@ -31,6 +31,7 @@ class InstructorCoursesBloc
     on<SelectCourse>(_onSelectCourse);
     on<LoadDeadlines>(_onLoadDeadlines);
     on<LoadSectionStudents>(_onLoadSectionStudents);
+    on<LoadCourseStudents>(_onLoadCourseStudents);
     on<LoadEngagementMetrics>(_onLoadEngagementMetrics);
   }
 
@@ -184,6 +185,42 @@ class InstructorCoursesBloc
         current.courses,
         selectedCourseId: current.selectedCourseId,
         selectedSectionId: event.sectionId,
+        deadlines: current.deadlines,
+        sectionStudents: result.data!,
+        engagementMetrics: current.engagementMetrics,
+      ),
+    );
+  }
+
+  Future<void> _onLoadCourseStudents(
+    LoadCourseStudents event,
+    Emitter<InstructorCoursesState> emit,
+  ) async {
+    final current = state;
+    if (current is! InstructorCoursesLoaded) {
+      return;
+    }
+
+    final result = await _enrollmentService.getCourseStudents(event.courseId);
+    if (!result.isSuccess || result.data == null) {
+      emit(
+        InstructorCoursesLoaded(
+          current.courses,
+          selectedCourseId: current.selectedCourseId,
+          selectedSectionId: current.selectedSectionId,
+          deadlines: current.deadlines,
+          sectionStudents: current.sectionStudents,
+          engagementMetrics: current.engagementMetrics,
+        ),
+      );
+      return;
+    }
+
+    emit(
+      InstructorCoursesLoaded(
+        current.courses,
+        selectedCourseId: current.selectedCourseId,
+        selectedSectionId: current.selectedSectionId,
         deadlines: current.deadlines,
         sectionStudents: result.data!,
         engagementMetrics: current.engagementMetrics,

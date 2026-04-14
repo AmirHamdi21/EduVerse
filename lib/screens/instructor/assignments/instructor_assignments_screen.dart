@@ -74,6 +74,7 @@ class _InstructorAssignmentsViewState
     extends State<_InstructorAssignmentsView> {
   final TextEditingController _searchController = TextEditingController();
   Timer? _debounce;
+  AssignmentType? _typeFilter;
 
   @override
   void dispose() {
@@ -155,7 +156,7 @@ class _InstructorAssignmentsViewState
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
               child: Row(
                 children: <Widget>[
                   _StatusFilterChip(
@@ -188,6 +189,38 @@ class _InstructorAssignmentsViewState
                         state.statusFilter == api.AssignmentStatus.archived,
                     onTap: () =>
                         cubit.setStatusFilter(api.AssignmentStatus.archived),
+                  ),
+                ],
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Row(
+                children: <Widget>[
+                  _TypeFilterChip(
+                    label: 'All',
+                    selected: _typeFilter == null,
+                    onTap: () => setState(() => _typeFilter = null),
+                  ),
+                  _TypeFilterChip(
+                    label: 'Assignments',
+                    selected: _typeFilter == AssignmentType.document,
+                    onTap: () => setState(
+                      () => _typeFilter = AssignmentType.document,
+                    ),
+                  ),
+                  _TypeFilterChip(
+                    label: 'Labs',
+                    selected: _typeFilter == AssignmentType.lab,
+                    onTap: () => setState(() => _typeFilter = AssignmentType.lab),
+                  ),
+                  _TypeFilterChip(
+                    label: 'Projects',
+                    selected: _typeFilter == AssignmentType.project,
+                    onTap: () => setState(
+                      () => _typeFilter = AssignmentType.project,
+                    ),
                   ),
                 ],
               ),
@@ -250,8 +283,72 @@ class _InstructorAssignmentsViewState
       );
     }
 
-    if (assignments.isEmpty) {
+    // Apply type filter
+    final typedAssignments = _typeFilter == null
+        ? assignments
+        : assignments.where((a) => a.type == _typeFilter).toList();
+
+    if (typedAssignments.isEmpty) {
       return const _EmptyAssignmentsState();
+    }
+
+    // If a specific type is selected, show flat list
+    if (_typeFilter != null) {
+      return RefreshIndicator(
+        onRefresh: () => cubit.loadAssignments(page: 1, refresh: true),
+        child: CustomScrollView(
+          physics: widget.embedded ? const ClampingScrollPhysics() : null,
+          slivers: <Widget>[
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              sliver: SliverList.builder(
+                itemCount: typedAssignments.length,
+                itemBuilder: (context, index) {
+                  final assignment = typedAssignments[index];
+                  return _buildAssignmentCard(cubit, assignment);
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // "All" type: group by type with section headers
+    final byType = <AssignmentType, List<AssignmentModel>>{};
+    for (final a in typedAssignments) {
+      byType.putIfAbsent(a.type, () => []).add(a);
+    }
+
+    // Order: document (Assignment) first, then lab, then project, then others
+    final typeOrder = [
+      AssignmentType.document,
+      AssignmentType.lab,
+      AssignmentType.project,
+      AssignmentType.code,
+      AssignmentType.presentation,
+      AssignmentType.quiz,
+      AssignmentType.other,
+    ];
+
+    final sections = <_TypeSection>[];
+    for (final type in typeOrder) {
+      final items = byType[type];
+      if (items != null && items.isNotEmpty) {
+        sections.add(_TypeSection(type: type, items: items));
+      }
+    }
+
+    // Any remaining types not in typeOrder
+    for (final entry in byType.entries) {
+      if (!typeOrder.contains(entry.key)) {
+        sections.add(_TypeSection(type: entry.key, items: entry.value));
+      }
+    }
+
+    int totalSliverItems = 0;
+    for (final section in sections) {
+      totalSliverItems += 1 + section.items.length; // header + items
     }
 
     return RefreshIndicator(
@@ -262,78 +359,106 @@ class _InstructorAssignmentsViewState
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             sliver: SliverList.builder(
-              itemCount: assignments.length,
+              itemCount: totalSliverItems,
               itemBuilder: (context, index) {
-                final assignment = assignments[index];
-                final assignmentId = _assignmentIdOf(assignment);
-                return AssignmentCard(
-                  assignment: assignment,
-                  canManage: widget.canManage,
-                  onViewSubmissions: () => context.push(
-                    '/instructor/assignments/$assignmentId/submissions',
-                    extra: <String, dynamic>{
-                      'assignmentTitle': assignment.title,
-                      'maxScore': assignment.maxGrade,
-                      'assignmentDueDate': assignment.dueDate,
-                      'latePenaltyPercent': assignment.latePenaltyPercent,
-                      'isArchived':
-                          assignment.apiStatus == api.AssignmentStatus.archived,
-                    },
-                  ),
-                  onEdit: widget.canManage
-                      ? () async {
-                          final result = await context.push(
-                            '/instructor/assignments/create',
-                            extra: <String, dynamic>{
-                              'assignmentId': assignmentId,
-                              'assignment': assignment,
-                            },
-                          );
-                          if (!mounted) {
-                            return;
-                          }
-                          if (result == true) {
-                            await cubit.loadAssignments(
-                              page: 1,
-                              limit: 20,
-                              refresh: true,
-                            );
-                          }
-                        }
-                      : null,
-                  onDelete: widget.canManage
-                      ? () => _confirmDelete(
-                          context,
-                          cubit,
-                          assignmentId,
-                          assignment.title,
-                        )
-                      : null,
-                  onStatusChange: widget.canManage
-                      ? (status) => cubit.updateStatus(assignmentId, status)
-                      : null,
-                );
+                int offset = 0;
+                for (final section in sections) {
+                  if (index == offset) {
+                    // Section header
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            section.type.icon,
+                            size: 18,
+                            color: section.type.color,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            section.type.label,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: section.type.color,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Container(
+                              height: 1,
+                              color: Colors.grey.shade300,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  offset += 1;
+                  if (index < offset + section.items.length) {
+                    final itemIndex = index - offset;
+                    return _buildAssignmentCard(
+                      cubit,
+                      section.items[itemIndex],
+                    );
+                  }
+                  offset += section.items.length;
+                }
+                return const SizedBox.shrink();
               },
             ),
           ),
-          if (state.hasMorePages)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: OutlinedButton(
-                  onPressed: state.isLoading ? null : cubit.loadMore,
-                  child: state.isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Text('Load More'),
-                ),
-              ),
-            ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAssignmentCard(
+    InstructorAssignmentsCubit cubit,
+    AssignmentModel assignment,
+  ) {
+    final assignmentId = _assignmentIdOf(assignment);
+    return AssignmentCard(
+      assignment: assignment,
+      canManage: widget.canManage,
+      onViewSubmissions: () => context.push(
+        '/instructor/assignments/$assignmentId/submissions',
+        extra: <String, dynamic>{
+          'assignmentTitle': assignment.title,
+          'maxScore': assignment.maxGrade,
+          'assignmentDueDate': assignment.dueDate,
+          'latePenaltyPercent': assignment.latePenaltyPercent,
+          'isArchived':
+              assignment.apiStatus == api.AssignmentStatus.archived,
+        },
+      ),
+      onEdit: widget.canManage
+          ? () async {
+              final result = await context.push(
+                '/instructor/assignments/create',
+                extra: <String, dynamic>{
+                  'assignmentId': assignmentId,
+                  'assignment': assignment,
+                },
+              );
+              if (!mounted) {
+                return;
+              }
+              if (result == true) {
+                await cubit.loadAssignments(
+                  page: 1,
+                  limit: 20,
+                  refresh: true,
+                );
+              }
+            }
+          : null,
+      onDelete: widget.canManage
+          ? () => _confirmDelete(context, cubit, assignmentId, assignment.title)
+          : null,
+      onStatusChange: widget.canManage
+          ? (status) => cubit.updateStatus(assignmentId, status)
+          : null,
     );
   }
 
@@ -401,6 +526,36 @@ class _StatusFilterChip extends StatelessWidget {
       ),
     );
   }
+}
+
+class _TypeFilterChip extends StatelessWidget {
+  const _TypeFilterChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: selected,
+        onSelected: (_) => onTap(),
+      ),
+    );
+  }
+}
+
+class _TypeSection {
+  final AssignmentType type;
+  final List<AssignmentModel> items;
+  const _TypeSection({required this.type, required this.items});
 }
 
 class _EmptyAssignmentsState extends StatelessWidget {

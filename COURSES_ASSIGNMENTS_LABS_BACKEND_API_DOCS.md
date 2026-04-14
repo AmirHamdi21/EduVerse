@@ -1625,6 +1625,8 @@ POST /api/labs
 | `availableFrom` | `string` | ❌ | `null` | ISO 8601 | Available from date |
 | `maxScore` | `number` | ❌ | `100` | — | Maximum score |
 | `weight` | `number` | ❌ | `0` | — | Weight in final grade |
+| `allowedFileTypes` | `string` | ❌ | `null` | Comma-separated extensions (e.g., `"pdf,docx,zip"`) | Allowed file types for student submissions |
+| `maxFileSizeMb` | `number` | ❌ | `null` | Must be > 0 | Max file size in MB for student submissions |
 | `status` | `string` | ❌ | `draft` | `LabStatus` enum | Initial status |
 
 #### Example Request
@@ -1805,6 +1807,68 @@ POST /api/labs/:id/instructions
 #### Response `201 Created`
 
 Returns the created instruction object.
+
+---
+
+### 7.8.1 Update Lab Instruction
+
+```
+PATCH /api/labs/:id/instructions/:instructionId
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`, `it_admin`
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `id` | `integer` | ✅ | Lab ID |
+| `instructionId` | `integer` | ✅ | Instruction ID |
+
+#### Request Body (all fields optional)
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `instructionText` | `string` | ❌ | Updated instruction content (markdown) |
+| `orderIndex` | `integer` | ❌ | Updated sort order |
+| `fileId` | `integer` | ❌ | Updated file attachment FK |
+
+#### Example Request
+
+```json
+{
+  "orderIndex": 0
+}
+```
+
+#### Response `200 OK`
+
+Returns the updated instruction object.
+
+> **Note**: `instructionId` is a `BIGINT UNSIGNED` in the database. The backend converts the URL parameter to `Number()` before comparison to handle TypeORM's string return for BIGINT values.
+
+---
+
+### 7.8.2 Delete Lab Instruction
+
+```
+DELETE /api/labs/:id/instructions/:instructionId
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`, `it_admin`
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `id` | `integer` | ✅ | Lab ID |
+| `instructionId` | `integer` | ✅ | Instruction ID |
+
+#### Response `200 OK`
+
+Empty body. Returns `200` on success, `404` if instruction not found.
 
 ---
 
@@ -2329,6 +2393,8 @@ POST /api/labs/:id/submissions/upload
 | `PATCH /api/labs/:id/status` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `GET /api/labs/:id/instructions` | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `POST /api/labs/:id/instructions` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `PATCH /api/labs/:id/instructions/:instructionId` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| `DELETE /api/labs/:id/instructions/:instructionId` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `POST /api/labs/:id/submit` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | `GET /api/labs/:id/submissions` | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | `GET /api/labs/:id/submissions/my` | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
@@ -2357,6 +2423,7 @@ POST /api/labs/:id/submissions/upload
 | `POST /api/enrollments/sections/:sectionId/tas` | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | `DELETE /api/enrollments/sections/:sectionId/tas/:id` | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
 | `GET /api/enrollments/sections/:sectionId/tas` | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| `GET /api/enrollments/course/:courseId/enrolled-students` | ❌ | ✅ | ✅ | ✅ | ❌ | ❌ |
 
 > **Note**: `department_head` role currently has **NO access** to courses/assignments/labs features. This role only has access to schedule templates and campus events.
 
@@ -2705,6 +2772,60 @@ GET /api/sections/:sectionId/students
 #### Response `200 OK`
 
 Returns array of enrollment objects (same shape as 9.1), sorted by `enrollmentDate ASC`.
+
+---
+
+### 9.6.1 Get All Enrolled Students for a Course
+
+```
+GET /api/enrollments/course/:courseId/enrolled-students
+```
+
+**Auth Required**: ✅ Yes
+**Roles**: `instructor`, `teaching_assistant`, `admin`
+
+> Returns all actively enrolled students across **all sections** of a given course. Useful for displaying the "Students" tab in course management without needing a specific section ID.
+
+#### Path Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `courseId` | `integer` | ✅ | Course ID |
+
+#### Access Control
+- **Admins**: Can access any course's enrolled students
+- **Instructors/TAs**: Must be assigned to at least one section of the course
+
+#### Response `200 OK`
+
+```json
+[
+  {
+    "userId": 101,
+    "firstName": "Ahmed",
+    "lastName": "Ali",
+    "email": "ahmed@example.com",
+    "enrollmentStatus": "enrolled",
+    "grade": null,
+    "attendanceRate": null
+  },
+  {
+    "userId": 102,
+    "firstName": "Sara",
+    "lastName": "Hassan",
+    "email": "sara@example.com",
+    "enrollmentStatus": "enrolled",
+    "grade": "B+",
+    "attendanceRate": 0.92
+  }
+]
+```
+
+#### How It Works
+1. Queries all `CourseSection` records for the given `courseId`
+2. Collects all `sectionId`s
+3. Queries `CourseEnrollment` where `sectionId IN (sectionIds)` and `status = ENROLLED`, with `user` relation loaded
+4. Returns array of student objects with `userId`, `firstName`, `lastName`, `email`, `enrollmentStatus`, `grade`, `attendanceRate`
 
 ---
 

@@ -135,6 +135,19 @@ class EnrollmentService {
     }, fallbackMessage: 'Failed to load section students');
   }
 
+  /// GET /api/enrollments/course/{courseId}/enrolled-students
+  Future<ServiceResult<List<SectionStudentModel>>> getCourseStudents(
+    dynamic courseId,
+  ) {
+    return RetryHelper.execute<List<SectionStudentModel>>(() async {
+      final response = await _client.dio.get('/enrollments/course/$courseId/enrolled-students');
+      return _extractList(response.data)
+          .whereType<Map<String, dynamic>>()
+          .map(SectionStudentModel.fromJson)
+          .toList();
+    }, fallbackMessage: 'Failed to load course students');
+  }
+
   /// GET /api/enrollments/section/{sectionId}/waitlist
   Future<ServiceResult<List<CourseEnrollmentModel>>> getSectionWaitlist(
     dynamic sectionId,

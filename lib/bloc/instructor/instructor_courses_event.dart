@@ -38,6 +38,15 @@ class LoadSectionStudents extends InstructorCoursesEvent {
   List<Object?> get props => <Object?>[sectionId];
 }
 
+class LoadCourseStudents extends InstructorCoursesEvent {
+  final int courseId;
+
+  const LoadCourseStudents(this.courseId);
+
+  @override
+  List<Object?> get props => <Object?>[courseId];
+}
+
 class LoadEngagementMetrics extends InstructorCoursesEvent {
   final int courseId;
   final int totalEnrolledStudents;

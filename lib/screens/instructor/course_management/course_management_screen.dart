@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../bloc/course_structure/course_structure_bloc.dart';
 import '../../../bloc/course_structure/course_structure_event.dart';
-import '../../../bloc/course_structure/course_structure_state.dart';
 import '../../../bloc/instructor/instructor_courses_bloc.dart';
 import '../../../bloc/instructor/instructor_courses_event.dart';
 import '../../../bloc/instructor/instructor_courses_state.dart';
@@ -13,7 +12,6 @@ import '../../../bloc/materials/materials_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
-import '../../../models/core/course_structure_model.dart';
 import '../../../models/instructor/instructor_course_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/materials/course_material_model.dart';
@@ -45,14 +43,13 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
   late TabController _tabController;
   late InstructorCourseModel _course;
   int? _resolvedCourseId;
-  int? _requestedStudentsSectionId;
+  int? _requestedStudentsCourseId;
   int? _requestedMetricsCourseId;
   String? _materialsFailureMessage;
   List<String> _failedMaterialIds = const <String>[];
   bool _retryingFailedMaterials = false;
   bool _hasCourseAccess = true;
   bool _canDeleteCourse = true;
-  bool _canManageCourseStructure = true;
 
   @override
   void initState() {
@@ -108,7 +105,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     }
 
     _resolvedCourseId = incomingCourseId;
-    _requestedStudentsSectionId = null;
+    _requestedStudentsCourseId = null;
     _requestedMetricsCourseId = null;
 
     if (_resolvedCourseId == null || _resolvedCourseId! <= 0) {
@@ -144,7 +141,6 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
         setState(() {
           _hasCourseAccess = true;
           _canDeleteCourse = true;
-          _canManageCourseStructure = true;
         });
         return;
       }
@@ -174,7 +170,6 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       setState(() {
         _hasCourseAccess = hasInstructorAccess;
         _canDeleteCourse = canDeleteCourse;
-        _canManageCourseStructure = canDeleteCourse;
       });
     } catch (_) {
       if (!mounted) {
@@ -183,20 +178,8 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       setState(() {
         _hasCourseAccess = true;
         _canDeleteCourse = true;
-        _canManageCourseStructure = true;
       });
     }
-  }
-
-  void _showDeletePermissionDenied() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Access denied: TAs cannot delete courses or course structure.',
-        ),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   Widget _buildAccessDeniedState(bool isDark, AppLocalizations l10n) {
@@ -259,7 +242,6 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
 
         final instructorState = context.watch<InstructorCoursesBloc>().state;
         final materialsState = context.watch<MaterialsBloc>().state;
-        final structureState = context.watch<CourseStructureBloc>().state;
 
         final teachingCourse = _resolveTeachingCourse(instructorState);
         final deadlines = _resolveDeadlines(instructorState);
@@ -267,9 +249,6 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
         final engagementMetrics = _resolveEngagementMetrics(instructorState);
         final materials = _resolveMaterials(materialsState);
         final bundles = _resolveBundles(materialsState);
-        final structureItems = _resolveStructureItems(structureState);
-        final structureLoading = _isStructureLoading(structureState);
-        final structureErrorMessage = _resolveStructureError(structureState);
         final materialCountsByWeek = _buildMaterialCountsByWeek(materials);
         final studentsCount = _resolveStudentsCount(teachingCourse, students);
         final overviewStudentsCount = (teachingCourse?.enrolledCount ?? 0) > 0
@@ -345,7 +324,6 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                         ? materials.map(_mapCourseMaterialToLegacy).toList()
                         : displayCourse.materials,
                     bundles: bundles,
-                    structureItems: structureItems,
                     materialCountsByWeek: materialCountsByWeek,
                     partialFailureMessage: _materialsFailureMessage,
                     failedMaterialIds: _failedMaterialIds,
@@ -357,21 +335,6 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                     onEditBundle: _editBundle,
                     onDeleteBundle: _deleteBundle,
                     onViewMaterial: _handleViewMaterial,
-                    structureLoading: structureLoading,
-                    structureErrorMessage: structureErrorMessage,
-                    onReloadStructure: _reloadStructure,
-                    onCreateStructureItem: _canManageCourseStructure
-                        ? _createStructureItem
-                        : null,
-                    onUpdateStructureItem: _canManageCourseStructure
-                        ? _updateStructureItem
-                        : null,
-                    onDeleteStructureItem: _canManageCourseStructure
-                        ? _deleteStructureItem
-                        : null,
-                    onReorderStructureItems: _canManageCourseStructure
-                        ? _reorderStructureItems
-                        : null,
                     isDark: isDark,
                     l10n: l10n,
                   ),
@@ -463,28 +426,6 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     return const <MaterialBundleModel>[];
   }
 
-  List<CourseStructureModel> _resolveStructureItems(
-    CourseStructureState state,
-  ) {
-    if (state is StructureLoaded && state.courseId == _resolvedCourseId) {
-      return state.items;
-    }
-
-    return const <CourseStructureModel>[];
-  }
-
-  bool _isStructureLoading(CourseStructureState state) {
-    return state is StructureLoading;
-  }
-
-  String? _resolveStructureError(CourseStructureState state) {
-    if (state is StructureError) {
-      return state.message;
-    }
-
-    return null;
-  }
-
   Map<int, int> _buildMaterialCountsByWeek(
     List<CourseMaterialModel> materials,
   ) {
@@ -520,98 +461,6 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     return teachingCourse.enrolledCount > 0
         ? teachingCourse.enrolledCount
         : teachingCourse.section.currentEnrollment;
-  }
-
-  void _reloadStructure() {
-    final courseId = _resolvedCourseId;
-    if (courseId == null || courseId <= 0) {
-      return;
-    }
-
-    context.read<CourseStructureBloc>().add(LoadStructure(courseId));
-  }
-
-  void _createStructureItem(String title, int weekNumber, String? description) {
-    if (!_canManageCourseStructure) {
-      _showDeletePermissionDenied();
-      return;
-    }
-
-    final courseId = _resolvedCourseId;
-    if (courseId == null || courseId <= 0) {
-      return;
-    }
-
-    context.read<CourseStructureBloc>().add(
-      CreateStructureItem(
-        courseId: courseId,
-        title: title,
-        organizationType: 'lecture',
-        weekNumber: weekNumber,
-        description: description,
-      ),
-    );
-  }
-
-  void _updateStructureItem(
-    CourseStructureModel item,
-    String title,
-    int weekNumber,
-    String? description,
-  ) {
-    if (!_canManageCourseStructure) {
-      _showDeletePermissionDenied();
-      return;
-    }
-
-    final courseId = _resolvedCourseId;
-    if (courseId == null || courseId <= 0) {
-      return;
-    }
-
-    context.read<CourseStructureBloc>().add(
-      UpdateStructureItem(
-        courseId: courseId,
-        itemId: item.organizationId,
-        payload: <String, dynamic>{
-          'title': title,
-          'weekNumber': weekNumber,
-          'description': description,
-        },
-      ),
-    );
-  }
-
-  void _deleteStructureItem(CourseStructureModel item) {
-    if (!_canManageCourseStructure) {
-      _showDeletePermissionDenied();
-      return;
-    }
-
-    final courseId = _resolvedCourseId;
-    if (courseId == null || courseId <= 0) {
-      return;
-    }
-
-    context.read<CourseStructureBloc>().add(
-      DeleteStructureItem(courseId: courseId, itemId: item.organizationId),
-    );
-  }
-
-  void _reorderStructureItems(List<int> itemIds) {
-    if (!_canManageCourseStructure) {
-      _showDeletePermissionDenied();
-      return;
-    }
-
-    final courseId = _resolvedCourseId;
-    if (courseId == null || courseId <= 0 || itemIds.isEmpty) {
-      return;
-    }
-
-    context.read<CourseStructureBloc>().add(
-      ReorderStructureItems(courseId: courseId, itemIds: itemIds),
-    );
   }
 
   void _onMaterialsStateChanged(BuildContext context, MaterialsState state) {
@@ -999,16 +848,14 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       return;
     }
 
-    final sectionId = teachingCourse.sectionId;
-    if (sectionId > 0) {
-      if (_requestedStudentsSectionId != sectionId) {
-        _requestedStudentsSectionId = sectionId;
-        context.read<InstructorCoursesBloc>().add(
-          LoadSectionStudents(sectionId),
-        );
-      }
-    } else {
-      _requestedStudentsSectionId = null;
+    // Always use course-level enrolled students endpoint.
+    // This matches the website pattern which fetches enriched enrollment data
+    // with firstName, lastName, email for all students across all sections.
+    if (_requestedStudentsCourseId != courseId) {
+      _requestedStudentsCourseId = courseId;
+      context.read<InstructorCoursesBloc>().add(
+        LoadCourseStudents(courseId),
+      );
     }
 
     if (_requestedMetricsCourseId != courseId) {

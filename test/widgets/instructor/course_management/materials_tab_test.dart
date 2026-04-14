@@ -25,9 +25,6 @@ Widget _buildTab(
         return Scaffold(
           body: MaterialsTab(
             materials: materials,
-            structureLoading: structureLoading,
-            structureErrorMessage: structureErrorMessage,
-            onReloadStructure: onReloadStructure,
             isDark: false,
             l10n: AppLocalizations.of(context),
           ),
