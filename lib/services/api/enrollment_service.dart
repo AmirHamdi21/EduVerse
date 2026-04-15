@@ -15,7 +15,7 @@ class EnrollmentService {
   EnrollmentService({required CoreApiClient coreApiClient})
     : _client = coreApiClient;
 
-  /// GET /api/enrollments/my-enrollments
+  /// GET /api/enrollments/my-courses
   Future<ServiceResult<List<CourseEnrollmentModel>>> getMyEnrollments({
     int? semester,
   }) {
@@ -25,7 +25,7 @@ class EnrollmentService {
           : null;
 
       final response = await _client.dio.get(
-        '/enrollments/my-enrollments',
+        '/enrollments/my-courses',
         queryParameters: queryParams,
       );
 
@@ -99,7 +99,9 @@ class EnrollmentService {
     dynamic sectionId,
   ) {
     return RetryHelper.execute<List<CourseEnrollmentModel>>(() async {
-      final response = await _client.dio.get('/sections/$sectionId/students');
+      final response = await _client.dio.get(
+        '/enrollments/section/$sectionId/students',
+      );
 
       final students = _extractList(response.data)
           .whereType<Map<String, dynamic>>()
@@ -223,7 +225,7 @@ class EnrollmentService {
     }, fallbackMessage: 'Failed to register enrollment');
   }
 
-  /// POST /api/enrollments/register (admin workflow)
+  /// POST /api/enrollments/admin/enroll (admin workflow)
   Future<ServiceResult<CourseEnrollmentModel>> adminRegisterStudent({
     required dynamic sectionId,
     required int userId,
@@ -235,10 +237,18 @@ class EnrollmentService {
         body['force'] = true;
       }
 
-      final response = await _client.dio.post(
-        '/enrollments/register',
-        data: body,
-      );
+      dynamic response;
+      try {
+        response = await _client.dio.post(
+          '/enrollments/admin/enroll',
+          data: body,
+        );
+      } catch (_) {
+        // Backward compatibility for environments that still route admin
+        // enrollment through the legacy register endpoint.
+        response = await _client.dio.post('/enrollments/register', data: body);
+      }
+
       return CourseEnrollmentModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to enroll student');
   }
@@ -282,15 +292,11 @@ class EnrollmentService {
     dynamic sectionId,
     int userId, {
     String? role,
-    String? responsibilities,
   }) {
     return RetryHelper.executeVoid(() async {
       final body = <String, dynamic>{'userId': userId};
       if (role != null && role.trim().isNotEmpty) {
         body['role'] = role.trim();
-      }
-      if (responsibilities != null && responsibilities.trim().isNotEmpty) {
-        body['responsibilities'] = responsibilities.trim();
       }
 
       await _client.dio.post(

@@ -133,7 +133,7 @@ class _AdminCourseManagementScreenState
     CourseListState state,
   ) {
     final aiInsight = state.courses
-        .where((course) => (course.taIds ?? const <int>[]).isEmpty)
+        .where((course) => !_hasTaAssignment(course, state))
         .length;
 
     final selectedCourse = _selectedCourse(state);
@@ -219,8 +219,8 @@ class _AdminCourseManagementScreenState
               unassignedCourses: state.courses
                   .where(
                     (course) =>
-                        course.instructorId == null ||
-                        (course.taIds ?? const <int>[]).isEmpty,
+                        !_hasInstructorAssignment(course, state) ||
+                        !_hasTaAssignment(course, state),
                   )
                   .length,
             ),
@@ -1070,17 +1070,17 @@ class _AdminCourseManagementScreenState
           .where((course) => course.status == 'INACTIVE')
           .length,
       'needs_instructor': state.courses
-          .where((course) => course.instructorId == null)
+          .where((course) => !_hasInstructorAssignment(course, state))
           .length,
       'needs_ta': state.courses
-          .where((course) => (course.taIds ?? const <int>[]).isEmpty)
+          .where((course) => !_hasTaAssignment(course, state))
           .length,
       'ai_flagged': state.courses
           .where(
             (course) =>
                 course.status == 'INACTIVE' ||
-                course.instructorId == null ||
-                (course.taIds ?? const <int>[]).isEmpty,
+                !_hasInstructorAssignment(course, state) ||
+                !_hasTaAssignment(course, state),
           )
           .length,
       'lab_based': state.courses
@@ -1104,17 +1104,13 @@ class _AdminCourseManagementScreenState
     final schedules =
         state.schedulesByCourse[course.id] ?? const <ScheduleModel>[];
     if (schedules.isNotEmpty) {
-      return schedules
-          .where(
-            (schedule) => schedule.scheduleType.name.toLowerCase() == 'lab',
-          )
-          .length;
+      return schedules.where(_isLabSchedule).length;
     }
 
     final sections = course.sections ?? const <SectionModel>[];
     return sections
         .expand((section) => section.schedules ?? const <ScheduleModel>[])
-        .where((schedule) => schedule.scheduleType.name.toLowerCase() == 'lab')
+        .where(_isLabSchedule)
         .length;
   }
 
@@ -1253,6 +1249,26 @@ class _AdminCourseManagementScreenState
 
     return (parts.first.substring(0, 1) + parts[1].substring(0, 1))
         .toUpperCase();
+  }
+
+  bool _hasInstructorAssignment(CourseModel course, CourseListState state) {
+    final staff = state.staffByCourse[course.id];
+    if (staff != null) {
+      return staff.any((assignment) => assignment.role.toLowerCase() != 'ta');
+    }
+    return course.instructorId != null;
+  }
+
+  bool _hasTaAssignment(CourseModel course, CourseListState state) {
+    final staff = state.staffByCourse[course.id];
+    if (staff != null) {
+      return staff.any((assignment) => assignment.role.toLowerCase() == 'ta');
+    }
+    return (course.taIds ?? const <int>[]).isNotEmpty;
+  }
+
+  bool _isLabSchedule(ScheduleModel schedule) {
+    return schedule.scheduleType.toJson().toUpperCase() == 'LAB';
   }
 
   Future<void> _confirmDelete(

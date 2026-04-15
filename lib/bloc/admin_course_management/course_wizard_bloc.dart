@@ -31,7 +31,7 @@ class WizardInstructorAssignment extends Equatable {
     this.responsibilities,
   });
 
-  bool get isTa => role.toLowerCase() == 'ta';
+  bool get isTa => role.trim().toLowerCase() == 'ta';
 
   @override
   List<Object?> get props => <Object?>[userId, role, responsibilities];
@@ -160,24 +160,31 @@ class PreviousWizardStep extends CourseWizardEvent {
 
 class SubmitStep1 extends CourseWizardEvent {
   final Map<String, dynamic> payload;
+  final String? desiredStatus;
 
-  const SubmitStep1(this.payload);
+  const SubmitStep1(this.payload, {this.desiredStatus});
 
   @override
-  List<Object?> get props => <Object?>[payload];
+  List<Object?> get props => <Object?>[payload, desiredStatus];
 }
 
 class SubmitStep2 extends CourseWizardEvent {
   final Map<String, dynamic> sectionPayload;
   final List<Map<String, dynamic>> schedulesPayload;
+  final String? desiredStatus;
 
   const SubmitStep2({
     required this.sectionPayload,
     required this.schedulesPayload,
+    this.desiredStatus,
   });
 
   @override
-  List<Object?> get props => <Object?>[sectionPayload, schedulesPayload];
+  List<Object?> get props => <Object?>[
+    sectionPayload,
+    schedulesPayload,
+    desiredStatus,
+  ];
 }
 
 class SubmitStep3 extends CourseWizardEvent {
@@ -319,12 +326,19 @@ class CourseWizardBloc extends Bloc<CourseWizardEvent, CourseWizardState> {
       ),
     );
 
-    final result = state.isEditMode && state.draftCourseId != null
-        ? await _courseService.updateCourseAdmin(
-            state.draftCourseId!,
-            event.payload,
-          )
-        : await _courseService.createCourseAdmin(event.payload);
+    final isUpdatingExisting = state.isEditMode && state.draftCourseId != null;
+    final requestedStatus = _normalizeCourseStatus(
+      event.desiredStatus ?? event.payload['status']?.toString(),
+    );
+
+    final payload = Map<String, dynamic>.from(event.payload);
+    if (!isUpdatingExisting) {
+      payload.remove('status');
+    }
+
+    final result = isUpdatingExisting
+        ? await _courseService.updateCourseAdmin(state.draftCourseId!, payload)
+        : await _courseService.createCourseAdmin(payload);
 
     if (result.isFailure || result.data == null) {
       final statusCode = result.error?.statusCode;
@@ -343,12 +357,43 @@ class CourseWizardBloc extends Bloc<CourseWizardEvent, CourseWizardState> {
       return;
     }
 
+    var savedCourse = result.data!;
+
+    if (!isUpdatingExisting &&
+        requestedStatus != null &&
+        requestedStatus != CourseStatus.active.value) {
+      final postCreateStatusResult = await _courseService.updateCourseAdmin(
+        savedCourse.id,
+        <String, dynamic>{'status': requestedStatus},
+      );
+
+      if (postCreateStatusResult.isFailure) {
+        emit(
+          state.copyWith(
+            isSubmitting: false,
+            isEditMode: true,
+            status: CourseWizardStatus.failure,
+            draftCourseId: savedCourse.id,
+            editingCourse: savedCourse,
+            errorMessage:
+                postCreateStatusResult.error?.message ??
+                'Course was created but status update failed',
+          ),
+        );
+        return;
+      }
+
+      if (postCreateStatusResult.data != null) {
+        savedCourse = postCreateStatusResult.data!;
+      }
+    }
+
     emit(
       state.copyWith(
         isSubmitting: false,
         status: CourseWizardStatus.stepSaved,
-        draftCourseId: result.data!.id,
-        editingCourse: result.data,
+        draftCourseId: savedCourse.id,
+        editingCourse: savedCourse,
         currentStep: state.currentStep < 1 ? 1 : state.currentStep,
         successMessage: 'Step 1 saved',
       ),
@@ -378,12 +423,18 @@ class CourseWizardBloc extends Bloc<CourseWizardEvent, CourseWizardState> {
       ),
     );
 
+    final isUpdatingExistingSection = state.draftSectionId != null;
+    final requestedStatus = _normalizeSectionStatus(
+      event.desiredStatus ?? event.sectionPayload['status']?.toString(),
+    );
+
     final sectionPayload = Map<String, dynamic>.from(event.sectionPayload);
-    if (state.draftSectionId == null) {
+    if (!isUpdatingExistingSection) {
+      sectionPayload.remove('status');
       sectionPayload.putIfAbsent('courseId', () => state.draftCourseId);
     }
 
-    final sectionResult = state.draftSectionId != null
+    final sectionResult = isUpdatingExistingSection
         ? await _sectionService.update(state.draftSectionId!, sectionPayload)
         : await _sectionService.create(sectionPayload);
 
@@ -397,7 +448,30 @@ class CourseWizardBloc extends Bloc<CourseWizardEvent, CourseWizardState> {
       return;
     }
 
-    final section = sectionResult.data!;
+    var section = sectionResult.data!;
+
+    if (!isUpdatingExistingSection &&
+        requestedStatus != null &&
+        requestedStatus != SectionStatus.open.value) {
+      final postCreateStatusResult = await _sectionService.update(
+        section.id,
+        <String, dynamic>{'status': requestedStatus},
+      );
+
+      if (postCreateStatusResult.isFailure) {
+        await _saveAsInactive(
+          emit,
+          fallbackMessage:
+              postCreateStatusResult.error?.message ??
+              'Step 2 failed while updating section status',
+        );
+        return;
+      }
+
+      if (postCreateStatusResult.data != null) {
+        section = postCreateStatusResult.data!;
+      }
+    }
 
     for (final payload in event.schedulesPayload) {
       final schedulePayload = Map<String, dynamic>.from(payload);
@@ -452,6 +526,11 @@ class CourseWizardBloc extends Bloc<CourseWizardEvent, CourseWizardState> {
     );
 
     final sectionId = state.draftSectionId!;
+    final uniqueAssignments = <String, WizardInstructorAssignment>{
+      for (final assignment in event.assignments)
+        '${assignment.role.trim().toLowerCase()}:${assignment.userId}':
+            assignment,
+    };
 
     if (state.isEditMode) {
       final existingInstructorsResult = await _enrollmentService
@@ -479,8 +558,163 @@ class CourseWizardBloc extends Bloc<CourseWizardEvent, CourseWizardState> {
         return;
       }
 
-      for (final EnrollmentModel instructor
-          in (existingInstructorsResult.data ?? const <EnrollmentModel>[])) {
+      final existingInstructors =
+          existingInstructorsResult.data ?? const <EnrollmentModel>[];
+      final existingTAs = existingTAsResult.data ?? const <TAAssignmentModel>[];
+
+      final existingInstructorByUserId = <int, EnrollmentModel>{
+        for (final item in existingInstructors)
+          if (item.userId > 0) item.userId: item,
+      };
+      final existingTaByUserId = <int, TAAssignmentModel>{
+        for (final item in existingTAs)
+          if (item.userId > 0) item.userId: item,
+      };
+
+      final desiredInstructorAssignments = uniqueAssignments.values
+          .where((item) => !item.isTa && item.userId > 0)
+          .toList();
+      final desiredTaAssignments = uniqueAssignments.values
+          .where((item) => item.isTa && item.userId > 0)
+          .toList();
+
+      final remainingInstructorByUserId = <int, EnrollmentModel>{
+        ...existingInstructorByUserId,
+      };
+      final remainingTaByUserId = <int, TAAssignmentModel>{
+        ...existingTaByUserId,
+      };
+
+      for (final assignment in desiredInstructorAssignments) {
+        final desiredRole = _normalizeInstructorRole(assignment.role);
+        final existing = remainingInstructorByUserId[assignment.userId];
+
+        if (existing == null) {
+          final addResult = await _enrollmentService
+              .assignInstructorWithDetails(
+                sectionId,
+                assignment.userId,
+                role: desiredRole,
+              );
+
+          if (addResult.isFailure && addResult.error?.statusCode != 409) {
+            await _saveAsInactive(
+              emit,
+              fallbackMessage:
+                  addResult.error?.message ??
+                  'Step 3 failed while assigning instructors',
+            );
+            return;
+          }
+          continue;
+        }
+
+        final existingRole = _normalizeInstructorRole(existing.role);
+        if (existingRole == desiredRole) {
+          remainingInstructorByUserId.remove(assignment.userId);
+          continue;
+        }
+
+        final removalResult = await _enrollmentService.removeInstructor(
+          sectionId,
+          existing.id,
+        );
+        if (removalResult.isFailure) {
+          await _saveAsInactive(
+            emit,
+            fallbackMessage:
+                removalResult.error?.message ??
+                'Step 3 failed while updating instructor role',
+          );
+          return;
+        }
+
+        final addResult = await _enrollmentService.assignInstructorWithDetails(
+          sectionId,
+          assignment.userId,
+          role: desiredRole,
+        );
+
+        if (addResult.isFailure && addResult.error?.statusCode != 409) {
+          await _saveAsInactive(
+            emit,
+            fallbackMessage:
+                addResult.error?.message ??
+                'Step 3 failed while updating instructor role',
+          );
+          return;
+        }
+
+        remainingInstructorByUserId.remove(assignment.userId);
+      }
+
+      for (final assignment in desiredTaAssignments) {
+        final desiredResponsibilities = _normalizeResponsibilities(
+          assignment.responsibilities,
+        );
+        final existing = remainingTaByUserId[assignment.userId];
+
+        if (existing == null) {
+          final addResult = await _enrollmentService.assignTAWithDetails(
+            sectionId,
+            assignment.userId,
+            responsibilities: desiredResponsibilities,
+          );
+
+          if (addResult.isFailure && addResult.error?.statusCode != 409) {
+            await _saveAsInactive(
+              emit,
+              fallbackMessage:
+                  addResult.error?.message ??
+                  'Step 3 failed while assigning teaching assistants',
+            );
+            return;
+          }
+          continue;
+        }
+
+        final existingResponsibilities = _normalizeResponsibilities(
+          existing.responsibilities,
+        );
+        if (existingResponsibilities == desiredResponsibilities) {
+          remainingTaByUserId.remove(assignment.userId);
+          continue;
+        }
+
+        final removalResult = await _enrollmentService.removeTA(
+          sectionId,
+          existing.id,
+        );
+        if (removalResult.isFailure) {
+          await _saveAsInactive(
+            emit,
+            fallbackMessage:
+                removalResult.error?.message ??
+                'Step 3 failed while updating teaching assistant details',
+          );
+          return;
+        }
+
+        final addResult = await _enrollmentService.assignTAWithDetails(
+          sectionId,
+          assignment.userId,
+          responsibilities: desiredResponsibilities,
+        );
+
+        if (addResult.isFailure && addResult.error?.statusCode != 409) {
+          await _saveAsInactive(
+            emit,
+            fallbackMessage:
+                addResult.error?.message ??
+                'Step 3 failed while updating teaching assistant details',
+          );
+          return;
+        }
+
+        remainingTaByUserId.remove(assignment.userId);
+      }
+
+      for (final instructor in remainingInstructorByUserId.values) {
         final removalResult = await _enrollmentService.removeInstructor(
           sectionId,
           instructor.id,
@@ -496,8 +730,7 @@ class CourseWizardBloc extends Bloc<CourseWizardEvent, CourseWizardState> {
         }
       }
 
-      for (final TAAssignmentModel ta
-          in (existingTAsResult.data ?? const <TAAssignmentModel>[])) {
+      for (final ta in remainingTaByUserId.values) {
         final removalResult = await _enrollmentService.removeTA(
           sectionId,
           ta.id,
@@ -512,34 +745,31 @@ class CourseWizardBloc extends Bloc<CourseWizardEvent, CourseWizardState> {
           return;
         }
       }
-    }
-
-    final uniqueAssignments = <String, WizardInstructorAssignment>{
-      for (final assignment in event.assignments)
-        '${assignment.role.toLowerCase()}:${assignment.userId}': assignment,
-    };
-
-    for (final assignment in uniqueAssignments.values) {
-      final result = assignment.isTa
-          ? await _enrollmentService.assignTAWithDetails(
-              sectionId,
-              assignment.userId,
-              responsibilities: assignment.responsibilities,
-            )
-          : await _enrollmentService.assignInstructorWithDetails(
-              sectionId,
-              assignment.userId,
-              role: assignment.role,
-              responsibilities: assignment.responsibilities,
-            );
-
-      if (result.isFailure) {
-        await _saveAsInactive(
-          emit,
-          fallbackMessage:
-              result.error?.message ?? 'Step 3 failed while assigning staff',
+    } else {
+      for (final assignment in uniqueAssignments.values) {
+        final desiredResponsibilities = _normalizeResponsibilities(
+          assignment.responsibilities,
         );
-        return;
+        final result = assignment.isTa
+            ? await _enrollmentService.assignTAWithDetails(
+                sectionId,
+                assignment.userId,
+                responsibilities: desiredResponsibilities,
+              )
+            : await _enrollmentService.assignInstructorWithDetails(
+                sectionId,
+                assignment.userId,
+                role: _normalizeInstructorRole(assignment.role),
+              );
+
+        if (result.isFailure) {
+          await _saveAsInactive(
+            emit,
+            fallbackMessage:
+                result.error?.message ?? 'Step 3 failed while assigning staff',
+          );
+          return;
+        }
       }
     }
 
@@ -621,5 +851,42 @@ class CourseWizardBloc extends Bloc<CourseWizardEvent, CourseWizardState> {
     }
 
     return <String, String>{'general': message};
+  }
+
+  String _normalizeInstructorRole(String role) {
+    final normalized = role.trim().toLowerCase();
+    if (normalized.isEmpty) {
+      return 'primary';
+    }
+    return normalized;
+  }
+
+  String? _normalizeResponsibilities(String? value) {
+    if (value == null) {
+      return null;
+    }
+
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      return null;
+    }
+
+    return trimmed;
+  }
+
+  String? _normalizeCourseStatus(String? value) {
+    final normalized = value?.trim().toUpperCase();
+    if (normalized == null || normalized.isEmpty) {
+      return null;
+    }
+    return normalized;
+  }
+
+  String? _normalizeSectionStatus(String? value) {
+    final normalized = value?.trim().toUpperCase();
+    if (normalized == null || normalized.isEmpty) {
+      return null;
+    }
+    return normalized;
   }
 }

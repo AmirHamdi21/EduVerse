@@ -8,10 +8,13 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/courses/course_model.dart';
+import '../../../models/courses/instructor_assignment_model.dart';
 import '../../../models/courses/schedule_model.dart';
 import '../../../models/courses/section_model.dart';
 import '../../../services/api/core_api_client.dart';
+import '../../../services/api/semester_service.dart';
 import '../../../services/storage_service.dart';
+import '../../../models/core/semester_model.dart';
 import '../../../widgets/admin/courses/add_course_bottom_bar.dart';
 import '../../../widgets/admin/courses/add_course_header.dart';
 import '../../../widgets/admin/courses/add_course_progress_indicator.dart';
@@ -38,25 +41,36 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
   final _nameController = TextEditingController();
   final _codeController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _locationController = TextEditingController();
 
   String? _selectedDepartment;
   String? _selectedLevel;
   String? _selectedSemester;
+  int _credits = 3;
 
   bool _hasLabs = false;
   int _labCount = 0;
   int _maxStudents = 30;
   bool _isActive = true;
+  List<CourseScheduleDraft> _schedules = const <CourseScheduleDraft>[
+    CourseScheduleDraft(),
+  ];
 
   String? _syllabusFileName;
   bool _isAnalyzing = false;
   int? _lastPrefilledCourseId;
+  int? _lastRequestedCourseDetailsId;
+  int? _lastHydratedStaffCourseId;
+  bool _hasManualAssignmentEdits = false;
 
   List<InstructorAssignmentDraft> _assignments =
       const <InstructorAssignmentDraft>[InstructorAssignmentDraft()];
 
   late final CoreApiClient _coreApiClient;
+  late final SemesterService _semesterService;
   List<StaffMemberOption> _apiStaffOptions = const <StaffMemberOption>[];
+  List<DepartmentInfo> _availableDepartments = const <DepartmentInfo>[];
+  List<SemesterModel> _availableSemesters = const <SemesterModel>[];
 
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
@@ -66,7 +80,10 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
     super.initState();
 
     _coreApiClient = CoreApiClient(storageService: StorageService());
+    _semesterService = SemesterService(coreApiClient: _coreApiClient);
     _loadAssignableStaffOptions();
+    _loadDepartments();
+    _loadSemesters();
 
     _animationController = AnimationController(
       vsync: this,
@@ -85,6 +102,10 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
         return;
       }
 
+      if (widget.initialCourse != null) {
+        _requestCourseDetails(widget.initialCourse!.id);
+      }
+
       context.read<CourseWizardBloc>().add(
         InitializeWizard(course: widget.initialCourse),
       );
@@ -100,6 +121,7 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
     _nameController.dispose();
     _codeController.dispose();
     _descriptionController.dispose();
+    _locationController.dispose();
     _animationController.dispose();
     _coreApiClient.dio.close(force: true);
     super.dispose();
@@ -153,6 +175,91 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
     setState(() {
       _apiStaffOptions = options;
     });
+  }
+
+  Future<void> _loadDepartments() async {
+    try {
+      final response = await _coreApiClient.dio.get('/departments');
+      final rows = _extractListPayload(response.data);
+
+      final byId = <int, DepartmentInfo>{};
+      for (final row in rows.whereType<Map<String, dynamic>>()) {
+        final department = DepartmentInfo(
+          id: _parseNullableInt(row['id'] ?? row['departmentId']) ?? 0,
+          name: (row['name'] ?? row['departmentName'])?.toString().trim() ?? '',
+          code: (row['code'] ?? row['departmentCode'])?.toString().trim() ?? '',
+        );
+
+        if (department.id <= 0 || department.name.isEmpty) {
+          continue;
+        }
+        byId[department.id] = department;
+      }
+
+      if (!mounted || byId.isEmpty) {
+        return;
+      }
+
+      final departments = byId.values.toList()
+        ..sort((a, b) => a.name.compareTo(b.name));
+
+      setState(() {
+        _availableDepartments = departments;
+      });
+    } catch (_) {
+      // Keep fallback department options if backend lookup fails.
+    }
+  }
+
+  Future<void> _loadSemesters() async {
+    final result = await _semesterService.getAll();
+    if (result.isFailure || result.data == null || !mounted) {
+      return;
+    }
+
+    final semesters =
+        result.data!
+            .where((item) => item.id > 0 && item.name.trim().isNotEmpty)
+            .toList()
+          ..sort((a, b) => a.id.compareTo(b.id));
+
+    if (semesters.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _availableSemesters = semesters;
+    });
+  }
+
+  List<dynamic> _extractListPayload(dynamic payload) {
+    if (payload is List) {
+      return payload;
+    }
+
+    if (payload is! Map<String, dynamic>) {
+      return const <dynamic>[];
+    }
+
+    final data = payload['data'];
+    if (data is List) {
+      return data;
+    }
+
+    if (data is Map<String, dynamic>) {
+      final nested = data['data'];
+      if (nested is List) {
+        return nested;
+      }
+    }
+
+    for (final value in payload.values) {
+      if (value is List) {
+        return value;
+      }
+    }
+
+    return const <dynamic>[];
   }
 
   List<Map<String, dynamic>> _extractAdminUsers(dynamic payload) {
@@ -209,71 +316,76 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeBloc, ThemeState>(
-      builder: (context, themeState) {
-        final isDark = themeState.isDark;
+    return BlocListener<CourseListBloc, CourseListState>(
+      listener: (context, listState) {
+        _maybeHydrateAssignmentsFromCourseList(listState);
+      },
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          final isDark = themeState.isDark;
 
-        return BlocConsumer<CourseWizardBloc, CourseWizardState>(
-          listener: (context, wizardState) {
-            final l10n = AppLocalizations.of(context);
-            _handleWizardState(wizardState, isDark, l10n);
-          },
-          builder: (context, wizardState) {
-            final l10n = AppLocalizations.of(context);
-            final staffOptions = _resolveStaffOptions(
-              context.watch<CourseListBloc>().state,
-            );
+          return BlocConsumer<CourseWizardBloc, CourseWizardState>(
+            listener: (context, wizardState) {
+              final l10n = AppLocalizations.of(context);
+              _handleWizardState(wizardState, isDark, l10n);
+            },
+            builder: (context, wizardState) {
+              final l10n = AppLocalizations.of(context);
+              final staffOptions = _resolveStaffOptions(
+                context.watch<CourseListBloc>().state,
+              );
 
-            return Scaffold(
-              backgroundColor: AdminColors.getBackgroundColor(isDark),
-              body: SafeArea(
-                child: FadeTransition(
-                  opacity: _fadeAnimation,
-                  child: Column(
-                    children: <Widget>[
-                      AddCourseHeader(
-                        isDark: isDark,
-                        isEditing: wizardState.isEditMode,
-                        onReset: _resetLocalForm,
-                      ),
-                      AddCourseProgressIndicator(
-                        isDark: isDark,
-                        currentStep: wizardState.currentStep,
-                        allowDirectNavigation:
-                            wizardState.allowDirectStepNavigation,
-                        onStepTapped: (step) {
-                          context.read<CourseWizardBloc>().add(
-                            GoToWizardStep(step),
-                          );
-                        },
-                      ),
-                      Expanded(
-                        child: _buildBody(
-                          isDark,
-                          l10n,
-                          wizardState,
-                          staffOptions,
+              return Scaffold(
+                backgroundColor: AdminColors.getBackgroundColor(isDark),
+                body: SafeArea(
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: Column(
+                      children: <Widget>[
+                        AddCourseHeader(
+                          isDark: isDark,
+                          isEditing: wizardState.isEditMode,
+                          onReset: _resetLocalForm,
                         ),
-                      ),
-                      AddCourseBottomBar(
-                        isDark: isDark,
-                        currentStep: wizardState.currentStep,
-                        isSubmitting: wizardState.isSubmitting,
-                        onPrevious: () {
-                          context.read<CourseWizardBloc>().add(
-                            const PreviousWizardStep(),
-                          );
-                        },
-                        onNext: () => _handleNext(wizardState),
-                      ),
-                    ],
+                        AddCourseProgressIndicator(
+                          isDark: isDark,
+                          currentStep: wizardState.currentStep,
+                          allowDirectNavigation:
+                              wizardState.allowDirectStepNavigation,
+                          onStepTapped: (step) {
+                            context.read<CourseWizardBloc>().add(
+                              GoToWizardStep(step),
+                            );
+                          },
+                        ),
+                        Expanded(
+                          child: _buildBody(
+                            isDark,
+                            l10n,
+                            wizardState,
+                            staffOptions,
+                          ),
+                        ),
+                        AddCourseBottomBar(
+                          isDark: isDark,
+                          currentStep: wizardState.currentStep,
+                          isSubmitting: wizardState.isSubmitting,
+                          onPrevious: () {
+                            context.read<CourseWizardBloc>().add(
+                              const PreviousWizardStep(),
+                            );
+                          },
+                          onNext: () => _handleNext(wizardState),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-        );
-      },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -385,11 +497,15 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
           selectedDepartment: _selectedDepartment,
           selectedLevel: _selectedLevel,
           selectedSemester: _selectedSemester,
+          selectedCredits: _credits,
+          departmentOptions: _departmentOptions(),
+          semesterOptions: _semesterOptions(l10n),
           onDepartmentChanged: (value) =>
               setState(() => _selectedDepartment = value),
           onLevelChanged: (value) => setState(() => _selectedLevel = value),
           onSemesterChanged: (value) =>
               setState(() => _selectedSemester = value),
+          onCreditsChanged: (value) => setState(() => _credits = value),
           onUploadSyllabus: _uploadSyllabus,
           syllabusFileName: _syllabusFileName,
           backendErrors: wizardState.validationErrors,
@@ -402,10 +518,29 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
           labCount: _labCount,
           maxStudents: _maxStudents,
           isActive: _isActive,
-          onHasLabsChanged: (value) => setState(() => _hasLabs = value),
+          locationController: _locationController,
+          schedules: _schedules,
+          onHasLabsChanged: (value) {
+            setState(() {
+              _hasLabs = value;
+              if (!value) {
+                _schedules = _schedules
+                    .where((item) => !_isLabScheduleDraft(item))
+                    .toList();
+                _labCount = 0;
+              }
+            });
+          },
           onLabCountChanged: (value) => setState(() => _labCount = value),
           onMaxStudentsChanged: (value) => setState(() => _maxStudents = value),
           onIsActiveChanged: (value) => setState(() => _isActive = value),
+          onSchedulesChanged: (value) {
+            setState(() {
+              _schedules = value;
+              _labCount = value.where(_isLabScheduleDraft).length;
+              _hasLabs = _labCount > 0;
+            });
+          },
           onDeleteCourse:
               wizardState.isEditMode && wizardState.draftCourseId != null
               ? () => _confirmDeleteFromWizard(
@@ -423,7 +558,10 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
           assignments: _assignments,
           availableStaff: staffOptions,
           onAssignmentsChanged: (value) {
-            setState(() => _assignments = value);
+            setState(() {
+              _assignments = value;
+              _hasManualAssignmentEdits = true;
+            });
           },
         );
     }
@@ -461,7 +599,10 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
       }
 
       context.read<CourseWizardBloc>().add(
-        SubmitStep1(_buildStep1Payload(wizardState.isEditMode)),
+        SubmitStep1(
+          _buildStep1Payload(wizardState.isEditMode),
+          desiredStatus: _isActive ? 'ACTIVE' : 'INACTIVE',
+        ),
       );
       return;
     }
@@ -472,10 +613,25 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
         return;
       }
 
+      final schedulesPayload = _buildSchedulesPayload();
+      if (schedulesPayload.isEmpty) {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text('Please add at least one valid schedule entry.'),
+              backgroundColor: AdminColors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+        return;
+      }
+
       context.read<CourseWizardBloc>().add(
         SubmitStep2(
           sectionPayload: _buildStep2SectionPayload(wizardState.isEditMode),
-          schedulesPayload: const <Map<String, dynamic>>[],
+          schedulesPayload: schedulesPayload,
+          desiredStatus: _isActive ? 'OPEN' : 'CLOSED',
         ),
       );
       return;
@@ -483,13 +639,16 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
 
     final mappedAssignments = _assignments
         .where((item) => item.userId != null)
-        .map(
-          (item) => WizardInstructorAssignment(
+        .map((item) {
+          final normalizedRole = item.role.trim().toLowerCase();
+          return WizardInstructorAssignment(
             userId: item.userId!,
             role: item.role,
-            responsibilities: item.responsibilities,
-          ),
-        )
+            responsibilities: normalizedRole == 'ta'
+                ? item.responsibilities
+                : null,
+          );
+        })
         .toList();
 
     context.read<CourseWizardBloc>().add(SubmitStep3(mappedAssignments));
@@ -499,10 +658,13 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
     final payload = <String, dynamic>{
       'name': _nameController.text.trim(),
       'description': _descriptionController.text.trim(),
-      'credits': 3,
+      'credits': _credits,
       'level': _toApiLevel(_selectedLevel),
-      'status': _isActive ? 'ACTIVE' : 'INACTIVE',
     };
+
+    if (isEditing) {
+      payload['status'] = _isActive ? 'ACTIVE' : 'INACTIVE';
+    }
 
     if (!isEditing) {
       payload['code'] = _codeController.text.trim().toUpperCase();
@@ -519,49 +681,112 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
   Map<String, dynamic> _buildStep2SectionPayload(bool isEditing) {
     final payload = <String, dynamic>{
       'maxCapacity': _maxStudents,
-      'location': null,
-      'status': _isActive ? 'OPEN' : 'CLOSED',
+      if (_locationController.text.trim().isNotEmpty)
+        'location': _locationController.text.trim(),
     };
+
+    if (isEditing) {
+      payload['status'] = _isActive ? 'OPEN' : 'CLOSED';
+    }
 
     if (!isEditing) {
       payload['semesterId'] = _resolveSemesterId(_selectedSemester);
-      payload['sectionNumber'] = 1;
     }
 
     return payload;
   }
 
-  int _resolveDepartmentId(String? value) {
-    final map = <String, int>{
-      'Computer Science': 1,
-      'Mathematics': 2,
-      'Physics': 3,
-      'Engineering': 4,
-      'English': 5,
-      'Chemistry': 6,
-      'Biology': 7,
-    };
+  List<Map<String, dynamic>> _buildSchedulesPayload() {
+    return _schedules
+        .where(
+          (item) =>
+              item.dayOfWeek.trim().isNotEmpty &&
+              item.startTime.trim().isNotEmpty &&
+              item.endTime.trim().isNotEmpty &&
+              item.scheduleType.trim().isNotEmpty,
+        )
+        .map(
+          (item) => <String, dynamic>{
+            if (item.id != null) 'id': item.id,
+            'dayOfWeek': item.dayOfWeek,
+            'startTime': item.startTime,
+            'endTime': item.endTime,
+            'scheduleType': item.scheduleType,
+          },
+        )
+        .toList();
+  }
 
-    if (value == null) {
+  int _resolveDepartmentId(String? value) {
+    if (_availableDepartments.isEmpty) {
       return 1;
     }
 
-    return map[value] ?? 1;
+    if (value == null || value.trim().isEmpty) {
+      return _availableDepartments.first.id;
+    }
+
+    for (final department in _availableDepartments) {
+      if (department.name == value) {
+        return department.id;
+      }
+    }
+
+    return _availableDepartments.first.id;
   }
 
   int _resolveSemesterId(String? value) {
-    if (value == null) {
+    if (_availableSemesters.isEmpty) {
       return 1;
     }
 
-    final l10n = AppLocalizations.of(context);
-    if (value == l10n.springSemester) {
-      return 2;
+    if (value == null || value.trim().isEmpty) {
+      return _availableSemesters.first.id;
     }
-    if (value == l10n.summerSemester) {
-      return 3;
+
+    for (final semester in _availableSemesters) {
+      if (semester.name == value) {
+        return semester.id;
+      }
     }
-    return 1;
+
+    return _availableSemesters.first.id;
+  }
+
+  List<String> _departmentOptions() {
+    if (_availableDepartments.isNotEmpty) {
+      return _availableDepartments.map((item) => item.name).toList();
+    }
+
+    return const <String>[
+      'Computer Science',
+      'Mathematics',
+      'Physics',
+      'Engineering',
+      'English',
+      'Chemistry',
+      'Biology',
+    ];
+  }
+
+  List<String> _semesterOptions(AppLocalizations l10n) {
+    if (_availableSemesters.isNotEmpty) {
+      return _availableSemesters.map((item) => item.name).toList();
+    }
+
+    return <String>[
+      l10n.fallSemester,
+      l10n.springSemester,
+      l10n.summerSemester,
+    ];
+  }
+
+  bool _isLabScheduleModel(ScheduleModel schedule) {
+    return schedule.scheduleType.toJson().toUpperCase() == 'LAB';
+  }
+
+  bool _isLabScheduleDraft(CourseScheduleDraft draft) {
+    return draft.scheduleType.toUpperCase() == 'LAB';
   }
 
   String _toApiLevel(String? localizedValue) {
@@ -616,6 +841,10 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
     bool isDark,
     AppLocalizations l10n,
   ) {
+    if (wizardState.editingCourse != null) {
+      _requestCourseDetails(wizardState.editingCourse!.id);
+    }
+
     if (wizardState.editingCourse != null &&
         wizardState.editingCourse!.id != _lastPrefilledCourseId) {
       _prefillFromCourse(wizardState.editingCourse!);
@@ -643,15 +872,11 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
     }
 
     if (wizardState.status == CourseWizardStatus.stepSaved) {
-      if (wizardState.currentStep == 1) {
-        context.read<CourseWizardBloc>().add(const GoToWizardStep(1));
-      } else if (wizardState.currentStep == 2) {
-        context.read<CourseWizardBloc>().add(const GoToWizardStep(2));
-      }
       return;
     }
 
     if (wizardState.status == CourseWizardStatus.completed) {
+      context.read<CourseListBloc>().add(const LoadCourses(forceRefresh: true));
       _showSuccessDialog(isDark, l10n, wizardState.isEditMode);
       context.read<CourseWizardBloc>().add(const ClearWizardFeedback());
     }
@@ -661,49 +886,140 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
     _lastPrefilledCourseId = course.id;
 
     final sections = course.sections ?? const <SectionModel>[];
+    final primarySection = sections.isNotEmpty ? sections.first : null;
     final schedules = sections
         .expand((section) => section.schedules ?? const <ScheduleModel>[])
         .toList();
+    final listState = context.read<CourseListBloc>().state;
+    final hasLoadedStaff = listState.staffByCourse.containsKey(course.id);
+    final staffFromState =
+        listState.staffByCourse[course.id] ??
+        const <InstructorAssignmentModel>[];
+
+    final assignmentDrafts = hasLoadedStaff
+        ? _draftAssignmentsFromStaff(staffFromState)
+        : _fallbackAssignmentDrafts(course);
 
     _nameController.text = course.name;
     _codeController.text = course.code;
     _descriptionController.text = course.description ?? '';
+    _locationController.text = primarySection?.location ?? '';
 
     setState(() {
       _selectedDepartment = course.departmentName;
       _selectedLevel = _fromApiLevel(course.level);
-      _selectedSemester = null;
+      _selectedSemester = primarySection?.semester?.name;
+      _credits = course.credits;
       _isActive = course.status != 'INACTIVE';
       _maxStudents = sections.isNotEmpty ? sections.first.maxCapacity : 30;
-      _hasLabs = schedules.any(
-        (schedule) => schedule.scheduleType.name.toLowerCase() == 'lab',
-      );
-      _labCount = schedules
-          .where(
-            (schedule) => schedule.scheduleType.name.toLowerCase() == 'lab',
+      _hasLabs = schedules.any(_isLabScheduleModel);
+      _labCount = schedules.where(_isLabScheduleModel).length;
+      _schedules = schedules
+          .map(
+            (item) => CourseScheduleDraft(
+              id: item.id,
+              dayOfWeek: item.dayOfWeek.toJson(),
+              startTime: item.startTime,
+              endTime: item.endTime,
+              scheduleType: item.scheduleType.toJson(),
+            ),
           )
-          .length;
-
-      _assignments = <InstructorAssignmentDraft>[];
-      if (course.instructorId != null) {
-        _assignments.add(
-          InstructorAssignmentDraft(
-            userId: course.instructorId,
-            role: 'primary',
-          ),
-        );
+          .toList();
+      if (_schedules.isEmpty) {
+        _schedules = const <CourseScheduleDraft>[CourseScheduleDraft()];
       }
 
-      for (final taId in course.taIds ?? const <int>[]) {
-        _assignments.add(InstructorAssignmentDraft(userId: taId, role: 'ta'));
-      }
-
+      _assignments = assignmentDrafts;
       if (_assignments.isEmpty) {
         _assignments = const <InstructorAssignmentDraft>[
           InstructorAssignmentDraft(),
         ];
       }
+
+      _hasManualAssignmentEdits = false;
+      _lastHydratedStaffCourseId = hasLoadedStaff ? course.id : null;
     });
+  }
+
+  void _requestCourseDetails(int courseId) {
+    if (_lastRequestedCourseDetailsId == courseId) {
+      return;
+    }
+
+    _lastRequestedCourseDetailsId = courseId;
+    context.read<CourseListBloc>().add(LoadCourseDetails(courseId));
+  }
+
+  int? _resolveEditingCourseId() {
+    final wizardCourseId = context
+        .read<CourseWizardBloc>()
+        .state
+        .editingCourse
+        ?.id;
+    return wizardCourseId ?? widget.initialCourse?.id;
+  }
+
+  void _maybeHydrateAssignmentsFromCourseList(CourseListState listState) {
+    if (_hasManualAssignmentEdits) {
+      return;
+    }
+
+    final courseId = _resolveEditingCourseId();
+    if (courseId == null) {
+      return;
+    }
+
+    if (!listState.staffByCourse.containsKey(courseId)) {
+      return;
+    }
+
+    if (_lastHydratedStaffCourseId == courseId) {
+      return;
+    }
+
+    final staffAssignments =
+        listState.staffByCourse[courseId] ??
+        const <InstructorAssignmentModel>[];
+    final mappedAssignments = _draftAssignmentsFromStaff(staffAssignments);
+
+    setState(() {
+      _assignments = mappedAssignments.isNotEmpty
+          ? mappedAssignments
+          : const <InstructorAssignmentDraft>[InstructorAssignmentDraft()];
+      _lastHydratedStaffCourseId = courseId;
+    });
+  }
+
+  List<InstructorAssignmentDraft> _draftAssignmentsFromStaff(
+    List<InstructorAssignmentModel> assignments,
+  ) {
+    return assignments
+        .map(
+          (assignment) => InstructorAssignmentDraft(
+            userId: assignment.userId,
+            role: assignment.role,
+            responsibilities: assignment.responsibilities,
+          ),
+        )
+        .toList();
+  }
+
+  List<InstructorAssignmentDraft> _fallbackAssignmentDrafts(
+    CourseModel course,
+  ) {
+    final fallback = <InstructorAssignmentDraft>[];
+
+    if (course.instructorId != null) {
+      fallback.add(
+        InstructorAssignmentDraft(userId: course.instructorId, role: 'primary'),
+      );
+    }
+
+    for (final taId in course.taIds ?? const <int>[]) {
+      fallback.add(InstructorAssignmentDraft(userId: taId, role: 'ta'));
+    }
+
+    return fallback;
   }
 
   String? _fromApiLevel(String? apiLevel) {
@@ -735,18 +1051,24 @@ class _AdminAddCourseScreenState extends State<AdminAddCourseScreen>
       _nameController.clear();
       _codeController.clear();
       _descriptionController.clear();
+      _locationController.clear();
       _selectedDepartment = null;
       _selectedLevel = null;
       _selectedSemester = null;
+      _credits = 3;
       _hasLabs = false;
       _labCount = 0;
       _maxStudents = 30;
       _isActive = true;
+      _schedules = const <CourseScheduleDraft>[CourseScheduleDraft()];
       _syllabusFileName = null;
       _assignments = const <InstructorAssignmentDraft>[
         InstructorAssignmentDraft(),
       ];
       _lastPrefilledCourseId = null;
+      _lastRequestedCourseDetailsId = null;
+      _lastHydratedStaffCourseId = null;
+      _hasManualAssignmentEdits = false;
     });
 
     context.read<CourseWizardBloc>().add(const ResetWizard());

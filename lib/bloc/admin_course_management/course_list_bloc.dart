@@ -223,6 +223,7 @@ class CourseListBloc extends Bloc<CourseListEvent, CourseListState> {
         sortAscending: state.sortAscending,
         selectedDepartment: state.selectedDepartment,
         sectionsByCourse: state.sectionsByCourse,
+        staffByCourse: state.staffByCourse,
       );
 
       int? selectedCourseId = state.selectedCourseId;
@@ -272,6 +273,7 @@ class CourseListBloc extends Bloc<CourseListEvent, CourseListState> {
       sortAscending: sortAscending,
       selectedDepartment: selectedDepartment,
       sectionsByCourse: state.sectionsByCourse,
+      staffByCourse: state.staffByCourse,
     );
 
     int? selectedCourseId = state.selectedCourseId;
@@ -390,6 +392,7 @@ class CourseListBloc extends Bloc<CourseListEvent, CourseListState> {
       sortAscending: state.sortAscending,
       selectedDepartment: state.selectedDepartment,
       sectionsByCourse: nextSections,
+      staffByCourse: nextStaff,
     );
 
     emit(
@@ -430,6 +433,7 @@ class CourseListBloc extends Bloc<CourseListEvent, CourseListState> {
       sortAscending: state.sortAscending,
       selectedDepartment: state.selectedDepartment,
       sectionsByCourse: state.sectionsByCourse,
+      staffByCourse: state.staffByCourse,
     );
 
     int? selectedCourseId = state.selectedCourseId;
@@ -446,6 +450,8 @@ class CourseListBloc extends Bloc<CourseListEvent, CourseListState> {
         selectedCourseId: selectedCourseId,
       ),
     );
+
+    add(const LoadCourses(forceRefresh: true));
   }
 
   List<CourseModel> _applyFilters({
@@ -456,6 +462,7 @@ class CourseListBloc extends Bloc<CourseListEvent, CourseListState> {
     required bool sortAscending,
     required String? selectedDepartment,
     required Map<int, List<SectionModel>> sectionsByCourse,
+    required Map<int, List<InstructorAssignmentModel>> staffByCourse,
   }) {
     final query = searchQuery.trim().toLowerCase();
 
@@ -483,13 +490,13 @@ class CourseListBloc extends Bloc<CourseListEvent, CourseListState> {
         case 'inactive':
           return course.courseStatus == CourseStatus.inactive;
         case 'needs_instructor':
-          return course.instructorId == null;
+          return !_hasInstructor(course, staffByCourse);
         case 'needs_ta':
-          return (course.taIds ?? const <int>[]).isEmpty;
+          return !_hasTeachingAssistant(course, staffByCourse);
         case 'ai_flagged':
           return course.courseStatus == CourseStatus.inactive ||
-              course.instructorId == null ||
-              (course.taIds ?? const <int>[]).isEmpty;
+              !_hasInstructor(course, staffByCourse) ||
+              !_hasTeachingAssistant(course, staffByCourse);
         case 'lab_based':
           final sections = sectionsByCourse[course.id] ?? course.sections;
           if (sections == null || sections.isEmpty) {
@@ -497,9 +504,7 @@ class CourseListBloc extends Bloc<CourseListEvent, CourseListState> {
           }
           return sections.any((section) {
             final schedules = section.schedules ?? const <ScheduleModel>[];
-            return schedules.any(
-              (schedule) => schedule.scheduleType.name.toLowerCase() == 'lab',
-            );
+            return schedules.any(_isLabSchedule);
           });
         case 'all':
         default:
@@ -565,5 +570,31 @@ class CourseListBloc extends Bloc<CourseListEvent, CourseListState> {
   String _toErrorMessage(Object error) {
     final raw = error.toString();
     return raw.replaceAll('Exception: ', '').trim();
+  }
+
+  bool _hasInstructor(
+    CourseModel course,
+    Map<int, List<InstructorAssignmentModel>> staffByCourse,
+  ) {
+    final staff = staffByCourse[course.id];
+    if (staff != null) {
+      return staff.any((assignment) => assignment.role.toLowerCase() != 'ta');
+    }
+    return course.instructorId != null;
+  }
+
+  bool _hasTeachingAssistant(
+    CourseModel course,
+    Map<int, List<InstructorAssignmentModel>> staffByCourse,
+  ) {
+    final staff = staffByCourse[course.id];
+    if (staff != null) {
+      return staff.any((assignment) => assignment.role.toLowerCase() == 'ta');
+    }
+    return (course.taIds ?? const <int>[]).isNotEmpty;
+  }
+
+  bool _isLabSchedule(ScheduleModel schedule) {
+    return schedule.scheduleType.toJson().toUpperCase() == 'LAB';
   }
 }

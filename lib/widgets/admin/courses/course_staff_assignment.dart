@@ -30,11 +30,14 @@ class InstructorAssignmentDraft extends Equatable {
     bool clearUserId = false,
     String? role,
     String? responsibilities,
+    bool clearResponsibilities = false,
   }) {
     return InstructorAssignmentDraft(
       userId: clearUserId ? null : (userId ?? this.userId),
       role: role ?? this.role,
-      responsibilities: responsibilities ?? this.responsibilities,
+      responsibilities: clearResponsibilities
+          ? null
+          : (responsibilities ?? this.responsibilities),
     );
   }
 
@@ -200,6 +203,7 @@ class CourseStaffAssignment extends StatelessWidget {
     required int index,
   }) {
     final l10n = AppLocalizations.of(context);
+    final isTaAssignment = assignment.role.trim().toLowerCase() == 'ta';
     final roleOptions = <_RoleOption>[
       _RoleOption(value: 'primary', label: l10n.rolePrimary),
       _RoleOption(value: 'co_instructor', label: l10n.roleCoInstructor),
@@ -225,6 +229,7 @@ class CourseStaffAssignment extends StatelessWidget {
             children: <Widget>[
               Expanded(
                 child: DropdownButtonFormField<int>(
+                  isExpanded: true,
                   initialValue: assignment.userId,
                   decoration: InputDecoration(
                     isDense: true,
@@ -244,6 +249,8 @@ class CourseStaffAssignment extends StatelessWidget {
                           value: staff.userId,
                           child: Text(
                             staff.fullName,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                             style: TextStyle(
                               color: AdminColors.getTextColor(isDark),
                               fontSize: 13,
@@ -263,6 +270,7 @@ class CourseStaffAssignment extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: DropdownButtonFormField<String>(
+                  isExpanded: true,
                   initialValue:
                       roleOptions.any(
                         (option) => option.value == assignment.role,
@@ -286,6 +294,8 @@ class CourseStaffAssignment extends StatelessWidget {
                           value: roleOption.value,
                           child: Text(
                             roleOption.label,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
                             style: TextStyle(
                               color: AdminColors.getTextColor(isDark),
                               fontSize: 13,
@@ -298,7 +308,13 @@ class CourseStaffAssignment extends StatelessWidget {
                     if (role == null) {
                       return;
                     }
-                    _updateAssignment(index, assignment.copyWith(role: role));
+                    _updateAssignment(
+                      index,
+                      assignment.copyWith(
+                        role: role,
+                        clearResponsibilities: role.toLowerCase() != 'ta',
+                      ),
+                    );
                   },
                 ),
               ),
@@ -315,35 +331,37 @@ class CourseStaffAssignment extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          TextFormField(
-            initialValue: assignment.responsibilities,
-            onChanged: (value) {
-              _updateAssignment(
-                index,
-                assignment.copyWith(responsibilities: value),
-              );
-            },
-            style: TextStyle(
-              color: AdminColors.getTextColor(isDark),
-              fontSize: 13,
-            ),
-            decoration: InputDecoration(
-              hintText: l10n.description,
-              isDense: true,
-              filled: true,
-              fillColor: isDark
-                  ? AdminColors.darkCard.withValues(alpha: 0.65)
-                  : Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+          if (isTaAssignment) ...<Widget>[
+            const SizedBox(height: 8),
+            TextFormField(
+              initialValue: assignment.responsibilities,
+              onChanged: (value) {
+                _updateAssignment(
+                  index,
+                  assignment.copyWith(responsibilities: value),
+                );
+              },
+              style: TextStyle(
+                color: AdminColors.getTextColor(isDark),
+                fontSize: 13,
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 10,
+              decoration: InputDecoration(
+                hintText: l10n.description,
+                isDense: true,
+                filled: true,
+                fillColor: isDark
+                    ? AdminColors.darkCard.withValues(alpha: 0.65)
+                    : Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
               ),
             ),
-          ),
+          ],
         ],
       ),
     );

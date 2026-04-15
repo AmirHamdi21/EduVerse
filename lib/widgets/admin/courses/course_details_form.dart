@@ -14,9 +14,13 @@ class CourseDetailsForm extends StatelessWidget {
   final String? selectedDepartment;
   final String? selectedLevel;
   final String? selectedSemester;
+  final int selectedCredits;
+  final List<String> departmentOptions;
+  final List<String> semesterOptions;
   final ValueChanged<String?> onDepartmentChanged;
   final ValueChanged<String?> onLevelChanged;
   final ValueChanged<String?> onSemesterChanged;
+  final ValueChanged<int> onCreditsChanged;
   final VoidCallback onUploadSyllabus;
   final String? syllabusFileName;
   final Map<String, String> backendErrors;
@@ -32,9 +36,13 @@ class CourseDetailsForm extends StatelessWidget {
     this.selectedDepartment,
     this.selectedLevel,
     this.selectedSemester,
+    this.selectedCredits = 3,
+    this.departmentOptions = const <String>[],
+    this.semesterOptions = const <String>[],
     required this.onDepartmentChanged,
     required this.onLevelChanged,
     required this.onSemesterChanged,
+    required this.onCreditsChanged,
     required this.onUploadSyllabus,
     this.syllabusFileName,
     this.backendErrors = const <String, String>{},
@@ -109,19 +117,30 @@ class CourseDetailsForm extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _buildDropdown(
+              label: '${l10n.credits} *',
+              hint: l10n.credits,
+              value: selectedCredits.toString(),
+              items: const <String>['1', '2', '3', '4', '5', '6'],
+              onChanged: (value) {
+                final parsed = int.tryParse(value ?? '');
+                if (parsed != null) {
+                  onCreditsChanged(parsed);
+                }
+              },
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return l10n.fillRequiredFields;
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildDropdown(
               label: '${l10n.department} *',
               hint: l10n.selectDepartment,
               value: selectedDepartment,
               readOnly: isEditing,
-              items: const <String>[
-                'Computer Science',
-                'Mathematics',
-                'Physics',
-                'Engineering',
-                'English',
-                'Chemistry',
-                'Biology',
-              ],
+              items: departmentOptions,
               onChanged: onDepartmentChanged,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
@@ -155,11 +174,7 @@ class CourseDetailsForm extends StatelessWidget {
               label: '${l10n.semester} *',
               hint: l10n.selectSemester,
               value: selectedSemester,
-              items: <String>[
-                l10n.fallSemester,
-                l10n.springSemester,
-                l10n.summerSemester,
-              ],
+              items: semesterOptions,
               onChanged: onSemesterChanged,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
@@ -257,7 +272,7 @@ class CourseDetailsForm extends StatelessWidget {
   }) {
     final hasValue = value != null && value.trim().isNotEmpty;
     final dropdownItems = hasValue && !items.contains(value)
-        ? <String>[value!, ...items]
+        ? <String>[value, ...items]
         : items;
 
     return Column(
