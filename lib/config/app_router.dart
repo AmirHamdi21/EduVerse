@@ -89,6 +89,7 @@ import 'package:edu_verse/screens/ta/labs/ta_lab_detail_screen.dart';
 import 'package:edu_verse/screens/ta/student_performance/ta_student_performance_screen.dart';
 import 'package:edu_verse/screens/ta/notifications/ta_notifications_screen.dart';
 import 'package:edu_verse/screens/ta/upload_materials/ta_upload_materials_screen.dart';
+import 'package:edu_verse/screens/ta/sections/ta_section_materials_screen.dart';
 import 'package:edu_verse/screens/ta/ai_grading/ta_ai_grading_screen.dart';
 import 'package:edu_verse/screens/ta/grading/ta_grading_center_screen.dart';
 import 'package:edu_verse/screens/ta/student_inbox/ta_student_inbox_screen.dart';
@@ -899,6 +900,22 @@ class AppRouter {
       GoRoute(
         path: '/ta/upload-materials',
         builder: (context, state) => const TAUploadMaterialsScreen(),
+      ),
+      GoRoute(
+        path: '/ta/section-materials',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          // Parse strings to ints safely (go_router may serialize extras)
+          final sectionId = int.tryParse(extra?['sectionId']?.toString() ?? '') ?? 0;
+          final sectionName = extra?['sectionName'] as String? ?? 'Section';
+          final courseId = int.tryParse(extra?['courseId']?.toString() ?? '') ?? 0;
+          
+          return TASectionMaterialsScreen(
+            sectionId: sectionId,
+            sectionName: sectionName,
+            courseId: courseId,
+          );
+        },
       ),
       GoRoute(
         path: '/ta/ai-grading',

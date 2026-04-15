@@ -19,7 +19,9 @@ import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/courses/ta_courses_barrel.dart';
 import '../../../widgets/instructor/assignments/assignment_create_form.dart';
 import '../../../models/materials/course_material_model.dart';
-import '../../../screens/ta/materials/course_material_preview_screen.dart';
+import '../../../models/instructor/instructor_course_model.dart' show MaterialModel, SectionStudentModel;
+import '../../../screens/instructor/materials/material_preview_screen.dart';
+import '../../../screens/instructor/video/instructor_video_player_screen.dart';
 import '../assignments/ta_assignment_submissions_screen.dart';
 
 class TACourseDetailScreen extends StatefulWidget {
@@ -553,6 +555,14 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
                       trailing: section.location ?? 'TBA',
                       icon: Icons.group_rounded,
                       color: TAColors.primary,
+                      onTap: () => context.push(
+                        '/ta/section-materials',
+                        extra: {
+                          'sectionId': section.id.toString(),  // Convert to String for router
+                          'sectionName': 'Section ${section.sectionNumber}',
+                          'courseId': widget.courseId.toString(),
+                        },
+                      ),
                     )),
               ],
               if (data.labs.isNotEmpty) ...[
@@ -628,10 +638,25 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
           );
         }
         
+        // Extract course name from state
+        String courseName = 'Course';
+        if (state.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>) {
+          final courses = (state.coursesStatus as TASubTabLoaded<List<TeachingCourseModel>>).data;
+          final targetCourseId = int.tryParse(widget.courseId);
+          if (targetCourseId != null) {
+            for (final course in courses) {
+              if (course.courseId == targetCourseId) {
+                courseName = course.course.courseName;
+                break;
+              }
+            }
+          }
+        }
+
         // Group materials by week number
         final weekMap = <int, List<CourseMaterialModel>>{};
         final noWeekMaterials = <CourseMaterialModel>[];
-        
+
         for (final material in materials) {
           final week = material.weekNumber;
           if (week != null && week > 0) {
@@ -640,10 +665,10 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
             noWeekMaterials.add(material);
           }
         }
-        
+
         // Sort weeks
         final weeks = weekMap.keys.toList()..sort();
-        
+
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -653,18 +678,18 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
               for (final week in weeks) ...[
                 _buildWeekHeader(isDark, week, weekMap[week]!.length),
                 const SizedBox(height: 8),
-                ...weekMap[week]!.map((material) => 
-                  _buildMaterialCard(isDark, material),
+                ...weekMap[week]!.map((material) =>
+                  _buildMaterialCard(isDark, material, courseName),
                 ),
                 const SizedBox(height: 16),
               ],
-              
+
               // Materials without week
               if (noWeekMaterials.isNotEmpty) ...[
                 _buildWeekHeader(isDark, 0, noWeekMaterials.length),
                 const SizedBox(height: 8),
                 ...noWeekMaterials.map((material) => 
-                  _buildMaterialCard(isDark, material),
+                  _buildMaterialCard(isDark, material, courseName),
                 ),
               ],
             ],
@@ -721,9 +746,9 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     );
   }
 
-  Widget _buildMaterialCard(bool isDark, CourseMaterialModel material) {
+  Widget _buildMaterialCard(bool isDark, CourseMaterialModel material, String courseName) {
     return InkWell(
-      onTap: () => _viewMaterial(material),
+      onTap: () => _viewMaterial(material, courseName),
       borderRadius: BorderRadius.circular(12),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -835,25 +860,95 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     );
   }
 
-  void _viewMaterial(CourseMaterialModel material) {
-    // Navigate to material preview screen
+  void _viewMaterial(CourseMaterialModel material, String courseName) {
+    // For videos, use YouTube player screen like instructor does
+    if (material.materialType.toLowerCase() == 'video') {
+      final videoId = material.youtubeVideoId;
+      if (videoId == null || videoId.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No video ID available'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
+      
+      // Navigate to video player screen (reuse instructor's screen)
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => InstructorVideoPlayerScreen(
+            videoId: videoId,
+            courseName: courseName,  // Use passed course name
+            videoTitle: material.title,
+          ),
+        ),
+      );
+      return;
+    }
+    
+    // For non-videos, use material preview screen
+    final materialModel = _toMaterialModel(material);
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => CourseMaterialPreviewScreen(material: material),
+        builder: (_) => MaterialPreviewScreen(material: materialModel),
       ),
     );
   }
 
+  /// Converts CourseMaterialModel to MaterialModel for preview screen reuse.
+  MaterialModel _toMaterialModel(CourseMaterialModel courseMaterial) {
+    String fileUrl = '';
+    
+    // For videos, use YouTube embed URL if available
+    if (courseMaterial.materialType.toLowerCase() == 'video') {
+      final videoId = courseMaterial.youtubeVideoId;
+      if (videoId != null && videoId.isNotEmpty) {
+        // Construct YouTube embed URL
+        fileUrl = 'https://www.youtube.com/embed/$videoId';
+      } else {
+        // Fallback to external URL or URL
+        fileUrl = courseMaterial.externalUrl ?? courseMaterial.url ?? '';
+      }
+    } else {
+      // For non-videos, use Drive file or URLs
+      final driveFile = courseMaterial.file;
+      if (driveFile != null) {
+        fileUrl = driveFile.webViewLink.toString();
+      } else if (courseMaterial.externalUrl?.isNotEmpty == true) {
+        fileUrl = courseMaterial.externalUrl!;
+      } else if (courseMaterial.url?.isNotEmpty == true) {
+        fileUrl = courseMaterial.url!;
+      }
+    }
+    
+    return MaterialModel(
+      id: courseMaterial.materialId.toString(),
+      title: courseMaterial.title.toString(),
+      type: courseMaterial.materialType.toString(),
+      fileSize: '',  // CourseMaterialModel doesn't have fileSize
+      fileUrl: fileUrl,
+      isPublished: courseMaterial.isPublished,
+      uploadedAt: courseMaterial.createdAt,
+    );
+  }
+
   IconData _getMaterialIcon(String type) {
-    switch (type.toLowerCase()) {
+    final normalizedType = type.toLowerCase().trim();
+    
+    switch (normalizedType) {
       case 'video':
         return Icons.play_circle_outline;
       case 'lecture':
         return Icons.school_outlined;
       case 'slide':
+      case 'ppt':
+      case 'pptx':
         return Icons.slideshow_outlined;
       case 'document':
       case 'pdf':
+      case 'doc':
+      case 'docx':
         return Icons.picture_as_pdf_outlined;
       case 'reading':
         return Icons.menu_book_outlined;
@@ -865,15 +960,21 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
   }
 
   Color _getMaterialColor(String type) {
-    switch (type.toLowerCase()) {
+    final normalizedType = type.toLowerCase().trim();
+    
+    switch (normalizedType) {
       case 'video':
         return Colors.red;
       case 'lecture':
         return Colors.blue;
       case 'slide':
+      case 'ppt':
+      case 'pptx':
         return Colors.orange;
       case 'document':
       case 'pdf':
+      case 'doc':
+      case 'docx':
         return Colors.red;
       case 'reading':
         return Colors.green;

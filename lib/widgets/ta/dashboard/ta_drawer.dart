@@ -368,14 +368,14 @@ class _TADrawerState extends State<TADrawer>
         route: '/ta/analytics',
         category: 'main',
       ),
-      _MenuItem(
-        icon: Icons.forum_outlined,
-        activeIcon: Icons.forum,
-        title: l10n.taDiscussions,
-        route: '/ta/discussions',
-        badge: '5',
-        category: 'main',
-      ),
+      // _MenuItem(
+      //   icon: Icons.forum_outlined,
+      //   activeIcon: Icons.forum,
+      //   title: l10n.taDiscussions,
+      //   route: '/ta/discussions',
+      //   badge: '5',
+      //   category: 'main',
+      // ),
       _MenuItem(
         icon: Icons.access_time_rounded,
         activeIcon: Icons.access_time_filled,
