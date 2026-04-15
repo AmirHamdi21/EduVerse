@@ -1,6 +1,6 @@
 # edu_verse Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-04-09
+Auto-generated from all feature plans. Last updated: 2026-04-15
 
 ## Active Technologies
 - Dart Flutter + socket_io_client, dio (006-chat-core-infra)
@@ -39,7 +39,6 @@ cd src; pytest; ruff check .
 ## Recent Changes
 - 013-discussion-forums: Added Dart 3+ / Flutter 3.24+ + flutter_bloc, equatable, dio, go_router
 - 012-chat-pro-ux: Added Dart 3+ / Flutter 3.24+ + flutter_bloc, equatable, socket_io_client, dio, go_router
-- 011-chat-role-integration: Added Dart 3+ / Flutter 3.24+ + flutter_bloc, equatable, go_router (already in pubspec.yaml)
 
 
 <!-- MANUAL ADDITIONS START -->
