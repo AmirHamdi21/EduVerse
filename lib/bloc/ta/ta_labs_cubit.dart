@@ -21,15 +21,30 @@ class TALabsCubit extends Cubit<TALabsState> {
   ///
   /// When [courseId] is null, fetches ALL labs across all assigned courses
   /// (used by the main TA Labs list screen).
+  ///
+  /// Preserves previously loaded labs during refresh to avoid showing
+  /// a full-screen loading spinner when the user navigates back.
   Future<void> fetchTALabs({int? courseId}) async {
-    emit(const TALabsLoading());
+    final currentState = state;
+
+    // If we have previous data, emit loading-with-cache instead of full loading
+    if (currentState is TALabsLoaded && currentState.labs.isNotEmpty) {
+      emit(TALabsLoadingWithCache(currentState.labs));
+    } else {
+      emit(const TALabsLoading());
+    }
 
     final result = await _labService.getAll(courseId: courseId);
 
     if (!result.isSuccess || result.data == null) {
-      emit(TALabsError(
-        result.error?.message ?? 'Failed to load labs',
-      ));
+      // If loading fails but we have cache, restore cached data
+      if (currentState is TALabsLoaded && currentState.labs.isNotEmpty) {
+        emit(TALabsLoaded(currentState.labs));
+      } else {
+        emit(TALabsError(
+          result.error?.message ?? 'Failed to load labs',
+        ));
+      }
       return;
     }
 

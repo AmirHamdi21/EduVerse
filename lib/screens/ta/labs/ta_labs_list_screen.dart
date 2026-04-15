@@ -15,6 +15,8 @@ import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/dashboard/ta_drawer.dart';
 import '../../../widgets/instructor/labs/lab_create_form.dart';
 import '../../../services/api/lab_service.dart';
+import '../../../services/api/core_api_client.dart';
+import '../../../services/storage_service.dart';
 
 /// T029: TA Labs List Screen — fully refactored from mock data to TALabsCubit.
 /// All mock model classes (TACourseWithLabs, TALabListItem) removed.
@@ -32,8 +34,9 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   @override
   void initState() {
     super.initState();
-    // T029: Fetch labs via cubit
+    // Always fetch - cubit now handles caching properly to prevent infinite loading
     context.read<TALabsCubit>().fetchTALabs();
+    
     // T029: Ensure courses are loaded for Create Lab form dropdown (T031)
     final coursesState = context.read<TACoursesCubit>().state;
     if (coursesState.coursesStatus is TASubTabInitial) {
@@ -187,55 +190,104 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n, TALabsState state) {
-    if (state is TALabsLoading) {
-      return SliverFillRemaining(
-        child: Center(
-          child: CircularProgressIndicator(color: TAColors.primary),
-        ),
-      );
-    }
+    // Wrap in BlocBuilder to get TA's assigned courses for filtering
+    return BlocBuilder<TACoursesCubit, TACoursesState>(
+      builder: (context, coursesState) {
+        // Get TA's assigned course IDs and models
+        List<TeachingCourseModel> assignedCourses = [];
+        if (coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>) {
+          assignedCourses = (coursesState.coursesStatus as TASubTabLoaded<List<TeachingCourseModel>>).data;
+        }
+        final assignedCourseIds = assignedCourses.map((c) => c.courseId).toSet();
+        
+        // Handle full loading (no cache) - only on initial load
+        if (state is TALabsLoading) {
+          return SliverFillRemaining(
+            child: Center(
+              child: CircularProgressIndicator(color: TAColors.primary),
+            ),
+          );
+        }
 
-    if (state is TALabsError) {
-      return SliverFillRemaining(
-        child: _buildErrorState(isDark, state.message),
-      );
-    }
+        if (state is TALabsError) {
+          return SliverFillRemaining(
+            child: _buildErrorState(isDark, state.message),
+          );
+        }
 
-    if (state is TALabsLoaded) {
-      final labs = _applyFilter(state.labs);
-      if (labs.isEmpty) {
+        // Handle loading with cache - show existing labs with refresh indicator
+        if (state is TALabsLoadingWithCache) {
+          final filteredLabs = state.cachedLabs.where((lab) {
+            return assignedCourseIds.isEmpty || assignedCourseIds.contains(lab.courseId);
+          }).toList();
+          
+          return _buildLabsList(
+            isDark, l10n, filteredLabs, assignedCourses, assignedCourseIds,
+            showRefreshIndicator: true,
+          );
+        }
+
+        if (state is TALabsLoaded) {
+          // Filter labs to only show those from TA's assigned courses
+          final filteredLabs = state.labs.where((lab) {
+            return assignedCourseIds.isEmpty || assignedCourseIds.contains(lab.courseId);
+          }).toList();
+          
+          return _buildLabsList(
+            isDark, l10n, filteredLabs, assignedCourses, assignedCourseIds,
+            showRefreshIndicator: false,
+          );
+        }
+
+        // Initial state - show loading if no courses loaded yet
         return SliverFillRemaining(
-          child: _buildEmptyState(isDark, l10n),
-        );
-      }
-
-      // Group labs by courseId
-      final grouped = <int, List<LabModel>>{};
-      for (final lab in labs) {
-        grouped.putIfAbsent(lab.courseId, () => []).add(lab);
-      }
-
-      final courseIds = grouped.keys.toList();
-
-      return SliverPadding(
-        padding: const EdgeInsets.all(16),
-        sliver: SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              final courseId = courseIds[index];
-              final courseLabs = grouped[courseId]!;
-              return _buildCourseLabsCard(courseId, courseLabs, isDark, l10n);
-            },
-            childCount: courseIds.length,
+          child: Center(
+            child: CircularProgressIndicator(color: TAColors.primary),
           ),
-        ),
+        );
+      },
+    );
+  }
+
+  /// Shared labs list builder - works for both loaded and cached states
+  Widget _buildLabsList(
+    bool isDark,
+    AppLocalizations l10n,
+    List<LabModel> labs,
+    List<TeachingCourseModel> assignedCourses,
+    Set<int> assignedCourseIds, {
+    required bool showRefreshIndicator,
+  }) {
+    final filteredLabs = _applyFilter(labs);
+    
+    // Group labs by courseId
+    final grouped = <int, List<LabModel>>{};
+    for (final lab in filteredLabs) {
+      grouped.putIfAbsent(lab.courseId, () => []).add(lab);
+    }
+    
+    // Show all assigned courses, even those without labs
+    final courseIds = assignedCourseIds.isNotEmpty 
+        ? assignedCourseIds.toList()
+        : grouped.keys.toList();
+
+    if (courseIds.isEmpty) {
+      return SliverFillRemaining(
+        child: _buildEmptyState(isDark, l10n),
       );
     }
 
-    // Initial state
-    return SliverFillRemaining(
-      child: Center(
-        child: CircularProgressIndicator(color: TAColors.primary),
+    return SliverPadding(
+      padding: const EdgeInsets.all(16),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final courseId = courseIds[index];
+            final courseLabs = grouped[courseId] ?? [];
+            return _buildCourseLabsCard(courseId, courseLabs, isDark, l10n, assignedCourses);
+          },
+          childCount: courseIds.length,
+        ),
       ),
     );
   }
@@ -326,9 +378,20 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     List<LabModel> labs,
     bool isDark,
     AppLocalizations l10n,
+    List<TeachingCourseModel> assignedCourses,
   ) {
-    final courseName = labs.first.course?.name ?? 'Course #$courseId';
-    final courseCode = labs.first.course?.code ?? '';
+    // Find the course model from assigned courses
+    final courseModel = assignedCourses.firstWhere(
+      (c) => c.courseId == courseId,
+      orElse: () => assignedCourses.isNotEmpty ? assignedCourses.first : throw Exception('Course not found'),
+    );
+    
+    final courseName = labs.isNotEmpty 
+        ? (labs.first.course?.name ?? courseModel.course.courseName)
+        : courseModel.course.courseName;
+    final courseCode = labs.isNotEmpty
+        ? (labs.first.course?.code ?? courseModel.course.courseCode)
+        : courseModel.course.courseCode;
     final color = _courseColor(courseId);
 
     return Container(
@@ -626,7 +689,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         SnackBar(
           content: const Text('Courses are still loading. Please try again.'),
           backgroundColor: TAColors.warning,
-          behavior: SnackBarBehavior.floating,
+          behavior: SnackBarBehavior.fixed,
         ),
       );
       return;
@@ -652,8 +715,19 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
               onSubmit: (data) async {
                 Navigator.of(ctx).pop();
                 try {
-                  await context.read<LabService>().create(data);
-                  context.read<TALabsCubit>().fetchTALabs();
+                  // T031: Resolve LabService — try provider tree, fallback to local instance
+                  LabService labService;
+                  try {
+                    labService = context.read<LabService>();
+                  } catch (_) {
+                    final coreApiClient = CoreApiClient(storageService: StorageService());
+                    labService = LabService(coreApiClient: coreApiClient);
+                  }
+                  
+                  await labService.create(data);
+                  if (mounted) {
+                    context.read<TALabsCubit>().fetchTALabs();
+                  }
                 } catch (e) {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -664,7 +738,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                               : 'Failed to create lab: $e',
                         ),
                         backgroundColor: TAColors.error,
-                        behavior: SnackBarBehavior.floating,
+                        behavior: SnackBarBehavior.fixed,
                       ),
                     );
                   }

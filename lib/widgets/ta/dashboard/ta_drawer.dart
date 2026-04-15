@@ -519,7 +519,7 @@ class _TADrawerState extends State<TADrawer>
           onTap: () {
             Navigator.pop(context);
             if (item.route.isNotEmpty && item.route != widget.currentRoute) {
-              context.go(item.route);
+              context.push(item.route);
             }
           },
           borderRadius: BorderRadius.circular(14),

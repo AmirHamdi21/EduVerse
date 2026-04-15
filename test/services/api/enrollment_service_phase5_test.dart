@@ -89,12 +89,19 @@ void main() {
             'data': <Map<String, dynamic>>[
               <String, dynamic>{
                 'userId': 101,
-                'firstName': 'Mina',
-                'lastName': 'Youssef',
-                'email': 'mina@example.com',
-                'enrollmentStatus': 'enrolled',
-                'grade': '88.5',
-                'attendanceRate': '95.0',
+                'status': 'enrolled',
+                'grade': 88.5,
+                'finalScore': 95.0,
+                'enrollmentDate': '2026-04-01T00:00:00Z',
+                'course': <String, dynamic>{
+                  'id': 1,
+                  'name': 'Computer Science 500',
+                  'code': 'CS500',
+                },
+                'section': <String, dynamic>{
+                  'id': 15,
+                  'sectionNumber': 1,
+                },
               },
             ],
           },
@@ -118,12 +125,12 @@ void main() {
       expect(students.isSuccess, isTrue);
       expect(students.data, isNotNull);
       expect(students.data!.length, 1);
-      expect(students.data!.first.fullName, 'Mina Youssef');
+      expect(students.data!.first.displayName, 'Student #101');
       expect(students.data!.first.grade, 88.5);
-      expect(students.data!.first.attendanceRate, 95.0);
+      expect(students.data!.first.finalScore, 95.0);
 
       expect(adapter.requests[0].path, '/enrollments/teaching');
-      expect(adapter.requests[1].path, '/sections/15/students');
+      expect(adapter.requests[1].path, '/enrollments/section/15/students');
     });
   });
 }

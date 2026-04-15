@@ -30,29 +30,29 @@ Widget _buildStudentsTab(List<SectionStudentModel> students) {
 }
 
 void main() {
-  testWidgets('renders students list with grade and attendance', (
+  testWidgets('renders students list with grade and score', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
       _buildStudentsTab(const <SectionStudentModel>[
         SectionStudentModel(
           userId: 1,
-          firstName: 'Hana',
-          lastName: 'Nour',
-          email: 'hana@example.com',
-          enrollmentStatus: 'enrolled',
+          status: 'enrolled',
           grade: 92.5,
-          attendanceRate: 97.0,
+          finalScore: 97.0,
+          courseCode: 'CS101',
+          sectionId: 6,
         ),
       ]),
     );
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Hana Nour'), findsOneWidget);
-    expect(find.text('hana@example.com'), findsOneWidget);
+    expect(find.text('Student #1'), findsOneWidget);
+    expect(find.text('No email'), findsOneWidget);
     expect(find.textContaining('Grade:'), findsOneWidget);
-    expect(find.textContaining('Attendance:'), findsOneWidget);
+    expect(find.textContaining('Score:'), findsOneWidget);
+    expect(find.text('enrolled'), findsOneWidget);
   });
 
   testWidgets('renders empty state when there are no students', (
@@ -71,10 +71,7 @@ void main() {
       _buildStudentsTab(const <SectionStudentModel>[
         SectionStudentModel(
           userId: 2,
-          firstName: 'Lina',
-          lastName: 'Hassan',
-          email: 'lina@example.com',
-          enrollmentStatus: 'enrolled',
+          status: 'enrolled',
         ),
       ]),
     );

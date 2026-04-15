@@ -24,6 +24,7 @@ import '../../../services/storage_service.dart';
 import '../../../bloc/instructor/lab_detail_cubit.dart';
 import '../../../bloc/instructor/lab_detail_state.dart';
 import '../../../widgets/instructor/labs/instruction_manager.dart';
+import '../../../widgets/shared/submission_detail_viewer.dart';
 
 /// T030: TA Lab Detail Screen — fully refactored from mock data to TALabsCubit.
 /// All mock model classes (TALabDetail, TALabTaskItem, TALabQuestion, etc.) removed.
@@ -669,28 +670,71 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
               ],
             ),
             const SizedBox(height: 8),
-            // T037: Grade button
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () => _openLabGrading(isDark, lab, sub),
-                icon: Icon(
-                  isGraded ? Icons.edit_rounded : Icons.grading_rounded,
-                  size: 16,
+            // T037: View and Grade buttons
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _viewLabSubmission(lab, sub),
+                    icon: const Icon(Icons.visibility_outlined, size: 16),
+                    label: const Text('View'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: TAColors.primary,
+                      side: BorderSide(
+                          color: TAColors.primary.withValues(alpha: 0.3)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
                 ),
-                label: Text(isGraded ? 'Re-grade' : 'Grade'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: TAColors.primary,
-                  side: BorderSide(
-                      color: TAColors.primary.withValues(alpha: 0.3)),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _openLabGrading(isDark, lab, sub),
+                    icon: Icon(
+                      isGraded ? Icons.edit_rounded : Icons.grading_rounded,
+                      size: 16,
+                    ),
+                    label: Text(isGraded ? 'Re-grade' : 'Grade'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: TAColors.primary,
+                      side: BorderSide(
+                          color: TAColors.primary.withValues(alpha: 0.3)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
       ),
+    );
+  }
+
+  // T037: View lab submission details
+  Future<void> _viewLabSubmission(LabModel lab, LabSubmissionModel sub) async {
+    final studentName = sub.user != null
+        ? '${sub.user!.firstName} ${sub.user!.lastName}'.trim()
+        : 'Student #${sub.userId}';
+
+    await SubmissionDetailViewer.showLab(
+      context: context,
+      submission: sub,
+      studentName: studentName.isEmpty ? 'Student #${sub.userId}' : studentName,
+      labTitle: lab.title,
+      maxScore: lab.maxScore,
+      onGrade: (score, feedback) async {
+        // Grade from submission viewer
+        context.read<TALabsCubit>().gradeLabSubmission(
+              lab.id,
+              sub.id,
+              score,
+              feedback,
+              'graded',
+            );
+      },
     );
   }
 
@@ -857,35 +901,6 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                     instructions: instructions,
                     canManage: true,
                     isUpdating: isUpdating,
-                  ),
-                  const SizedBox(height: 24),
-                  // T047: TA Materials placeholder
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: TAColors.info.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: TAColors.info.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.info_outline_rounded,
-                            color: TAColors.info, size: 24),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'TA Materials upload is not yet supported by the backend.',
-                            style: TextStyle(
-                              color: TAColors.info,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),

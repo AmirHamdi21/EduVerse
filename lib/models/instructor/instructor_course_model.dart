@@ -192,34 +192,59 @@ class EngagementMetricsModel {
 
 class SectionStudentModel {
   final int userId;
-  final String firstName;
-  final String lastName;
-  final String email;
-  final String enrollmentStatus;
+  final String? firstName;
+  final String? lastName;
+  final String? email;
+  final String status;
   final double? grade;
-  final double? attendanceRate;
+  final double? finalScore;
+  final DateTime? enrollmentDate;
+  final int? sectionId;
+  final String? courseCode;
+  final String? courseName;
 
   const SectionStudentModel({
     required this.userId,
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-    required this.enrollmentStatus,
+    this.firstName,
+    this.lastName,
+    this.email,
+    required this.status,
     this.grade,
-    this.attendanceRate,
+    this.finalScore,
+    this.enrollmentDate,
+    this.sectionId,
+    this.courseCode,
+    this.courseName,
   });
 
-  String get fullName => '$firstName $lastName'.trim();
+  /// Display name with fallback to "Student #userId" when names unavailable
+  String get displayName {
+    if (firstName != null || lastName != null) {
+      return '$firstName $lastName'.trim();
+    }
+    return 'Student #$userId';
+  }
 
   factory SectionStudentModel.fromJson(Map<String, dynamic> json) {
+    // Extract nested course and section data
+    final courseData = json['course'] as Map<String, dynamic>?;
+    final sectionData = json['section'] as Map<String, dynamic>?;
+
     return SectionStudentModel(
       userId: int.tryParse(json['userId']?.toString() ?? '') ?? 0,
-      firstName: json['firstName']?.toString() ?? '',
-      lastName: json['lastName']?.toString() ?? '',
-      email: json['email']?.toString() ?? '',
-      enrollmentStatus: json['enrollmentStatus']?.toString() ?? 'enrolled',
+      firstName: json['firstName']?.toString(),
+      lastName: json['lastName']?.toString(),
+      email: json['email']?.toString(),
+      status: json['status']?.toString() ?? 'enrolled',
       grade: double.tryParse(json['grade']?.toString() ?? ''),
-      attendanceRate: double.tryParse(json['attendanceRate']?.toString() ?? ''),
+      finalScore: double.tryParse(json['finalScore']?.toString() ?? ''),
+      enrollmentDate: json['enrollmentDate'] != null
+          ? DateTime.tryParse(json['enrollmentDate'].toString())
+          : null,
+      sectionId: int.tryParse(sectionData?['id']?.toString() ?? '')
+          ?? int.tryParse(json['sectionId']?.toString() ?? ''),
+      courseCode: courseData?['code']?.toString(),
+      courseName: courseData?['name']?.toString(),
     );
   }
 }

@@ -112,7 +112,7 @@ class EnrollmentService {
               'id': student.userId,
               'userId': student.userId,
               'sectionId': sectionId,
-              'status': student.enrollmentStatus,
+              'status': student.status,
               'grade': student.grade?.toString(),
               'finalScore': student.grade,
               'enrollmentDate': DateTime.now().toIso8601String(),
@@ -122,17 +122,30 @@ class EnrollmentService {
     }, fallbackMessage: 'Failed to load section students');
   }
 
-  /// GET /api/enrollments/sections/{sectionId}/students
+  /// GET /api/enrollments/section/{sectionId}/students
   Future<ServiceResult<List<SectionStudentModel>>> getSectionStudentsLite(
     dynamic sectionId,
   ) {
     return RetryHelper.execute<List<SectionStudentModel>>(() async {
-      final response = await _client.dio.get('/enrollments/sections/$sectionId/students');
+      final response = await _client.dio.get('/enrollments/section/$sectionId/students');
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
           .map(SectionStudentModel.fromJson)
           .toList();
     }, fallbackMessage: 'Failed to load section students');
+  }
+
+  /// GET /api/enrollments/section/{sectionId}/students/count
+  Future<ServiceResult<int>> getSectionStudentsCount(
+    dynamic sectionId,
+  ) {
+    return RetryHelper.execute<int>(() async {
+      final response = await _client.dio.get(
+        '/enrollments/section/$sectionId/students/count',
+      );
+      final payload = _extractMap(response.data);
+      return payload['count'] as int;
+    }, fallbackMessage: 'Failed to get student count');
   }
 
   /// GET /api/enrollments/course/{courseId}/enrolled-students

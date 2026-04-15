@@ -90,6 +90,7 @@ import 'package:edu_verse/screens/ta/student_performance/ta_student_performance_
 import 'package:edu_verse/screens/ta/notifications/ta_notifications_screen.dart';
 import 'package:edu_verse/screens/ta/upload_materials/ta_upload_materials_screen.dart';
 import 'package:edu_verse/screens/ta/ai_grading/ta_ai_grading_screen.dart';
+import 'package:edu_verse/screens/ta/grading/ta_grading_center_screen.dart';
 import 'package:edu_verse/screens/ta/student_inbox/ta_student_inbox_screen.dart';
 import 'package:edu_verse/screens/ta/lab_resources/ta_lab_resources_screen.dart';
 import 'package:edu_verse/screens/ta/analytics/ta_analytics_screen.dart';
@@ -902,6 +903,15 @@ class AppRouter {
       GoRoute(
         path: '/ta/ai-grading',
         builder: (context, state) => const TAAIGradingScreen(),
+      ),
+      GoRoute(
+        path: '/ta/grading',
+        builder: (context, state) {
+          final courseId = state.uri.queryParameters['courseId'] != null
+              ? int.tryParse(state.uri.queryParameters['courseId']!)
+              : null;
+          return TAGradingCenterScreen(courseId: courseId);
+        },
       ),
       GoRoute(
         path: '/ta/student-inbox',

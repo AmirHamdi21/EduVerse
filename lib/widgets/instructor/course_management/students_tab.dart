@@ -33,8 +33,8 @@ class _StudentsTabState extends State<StudentsTab> {
       ? _students
       : _students.where((s) {
           final query = _search.toLowerCase();
-          return s.fullName.toLowerCase().contains(query) ||
-              s.email.toLowerCase().contains(query);
+          return s.displayName.toLowerCase().contains(query) ||
+              (s.email?.toLowerCase().contains(query) ?? false);
         }).toList();
 
   static const List<Color> _avatarColors = [
@@ -233,8 +233,8 @@ class _StudentCard extends StatelessWidget {
   Color get _avatarColor => _avatarColors[index % _avatarColors.length];
 
   String get _initials {
-    final first = student.firstName.isNotEmpty ? student.firstName[0] : '';
-    final last = student.lastName.isNotEmpty ? student.lastName[0] : '';
+    final first = (student.firstName?.isNotEmpty ?? false) ? student.firstName![0] : '';
+    final last = (student.lastName?.isNotEmpty ?? false) ? student.lastName![0] : '';
     final value = (first + last).trim();
     return value.isEmpty ? 'S' : value.toUpperCase();
   }
@@ -304,7 +304,7 @@ class _StudentCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        student.fullName,
+                        student.displayName,
                         style: TextStyle(
                           color: CMColors.text(isDark),
                           fontSize: 14,
@@ -313,7 +313,7 @@ class _StudentCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        student.email,
+                        student.email ?? 'No email',
                         style: TextStyle(
                           color: CMColors.textSub(isDark),
                           fontSize: 12,
@@ -334,7 +334,7 @@ class _StudentCard extends StatelessWidget {
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              student.enrollmentStatus,
+                              student.status,
                               style: TextStyle(
                                 color: CMColors.textSub(isDark),
                                 fontSize: 10,
@@ -350,9 +350,9 @@ class _StudentCard extends StatelessWidget {
                                 fontSize: 10,
                               ),
                             ),
-                          if (student.attendanceRate != null)
+                          if (student.finalScore != null)
                             Text(
-                              'Attendance: ${student.attendanceRate!.toStringAsFixed(1)}%',
+                              'Score: ${student.finalScore!.toStringAsFixed(1)}',
                               style: TextStyle(
                                 color: CMColors.textSub(isDark),
                                 fontSize: 10,

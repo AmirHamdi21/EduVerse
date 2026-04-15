@@ -201,7 +201,24 @@ class InstructorCoursesBloc
       return;
     }
 
-    final result = await _enrollmentService.getCourseStudents(event.courseId);
+    // Use section-level endpoint (same as TA) since course-level endpoint doesn't exist
+    final sectionId = current.selectedSectionId;
+    if (sectionId == null || sectionId <= 0) {
+      // No valid section selected, return empty
+      emit(
+        InstructorCoursesLoaded(
+          current.courses,
+          selectedCourseId: current.selectedCourseId,
+          selectedSectionId: current.selectedSectionId,
+          deadlines: current.deadlines,
+          sectionStudents: current.sectionStudents,
+          engagementMetrics: current.engagementMetrics,
+        ),
+      );
+      return;
+    }
+
+    final result = await _enrollmentService.getSectionStudentsLite(sectionId);
     if (!result.isSuccess || result.data == null) {
       emit(
         InstructorCoursesLoaded(
@@ -220,7 +237,7 @@ class InstructorCoursesBloc
       InstructorCoursesLoaded(
         current.courses,
         selectedCourseId: current.selectedCourseId,
-        selectedSectionId: current.selectedSectionId,
+        selectedSectionId: sectionId,
         deadlines: current.deadlines,
         sectionStudents: result.data!,
         engagementMetrics: current.engagementMetrics,

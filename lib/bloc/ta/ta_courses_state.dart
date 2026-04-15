@@ -5,6 +5,7 @@ import '../../models/assignments/assignment_submission_model.dart';
 import '../../models/core/section_model.dart';
 import '../../models/instructor/teaching_course_model.dart';
 import '../../models/labs/lab_model.dart';
+import '../../models/materials/course_material_model.dart';
 
 // ──────────────────────────────────────────────────────────────
 // Per-tab sub-state: sealed hierarchy with Equatable
@@ -128,11 +129,12 @@ class TACoursesState extends Equatable {
     this.overviewData = const TASubTabInitial<TACourseOverview>(),
     this.sectionsLabsData = const TASubTabInitial<TACourseSectionsLabs>(),
     this.structureData = const TASubTabInitial<dynamic>(),
-    this.materialsData = const TASubTabInitial<List<dynamic>>(),
+    this.materialsData = const TASubTabInitial<List<CourseMaterialModel>>(),
     this.assignmentsData = const TASubTabInitial<List<AssignmentModel>>(),
     this.pendingGradingData = const TASubTabInitial<List<AssignmentSubmissionModel>>(),
     this.attendanceSummaryData = const TASubTabInitial<List<TALabAttendanceSummary>>(),
     this.studentsData = const TASubTabInitial<List<dynamic>>(),
+    this.sectionStudentCounts = const <int, int>{},
   });
 
   /// Sub-tab 0: TA courses list
@@ -148,7 +150,7 @@ class TACoursesState extends Equatable {
   final TASubTabState<dynamic> structureData;
 
   /// Sub-tab 4: Materials
-  final TASubTabState<List<dynamic>> materialsData;
+  final TASubTabState<List<CourseMaterialModel>> materialsData;
 
   /// Sub-tab 5: Assignments
   final TASubTabState<List<AssignmentModel>> assignmentsData;
@@ -162,16 +164,20 @@ class TACoursesState extends Equatable {
   /// Sub-tab 8: Students
   final TASubTabState<List<dynamic>> studentsData;
 
+  /// Live student counts per section (sectionId -> count) from backend count endpoint
+  final Map<int, int> sectionStudentCounts;
+
   TACoursesState copyWith({
     TASubTabState<List<TeachingCourseModel>>? coursesStatus,
     TASubTabState<TACourseOverview>? overviewData,
     TASubTabState<TACourseSectionsLabs>? sectionsLabsData,
     TASubTabState<dynamic>? structureData,
-    TASubTabState<List<dynamic>>? materialsData,
+    TASubTabState<List<CourseMaterialModel>>? materialsData,
     TASubTabState<List<AssignmentModel>>? assignmentsData,
     TASubTabState<List<AssignmentSubmissionModel>>? pendingGradingData,
     TASubTabState<List<TALabAttendanceSummary>>? attendanceSummaryData,
     TASubTabState<List<dynamic>>? studentsData,
+    Map<int, int>? sectionStudentCounts,
   }) {
     return TACoursesState(
       coursesStatus: coursesStatus ?? this.coursesStatus,
@@ -183,6 +189,7 @@ class TACoursesState extends Equatable {
       pendingGradingData: pendingGradingData ?? this.pendingGradingData,
       attendanceSummaryData: attendanceSummaryData ?? this.attendanceSummaryData,
       studentsData: studentsData ?? this.studentsData,
+      sectionStudentCounts: sectionStudentCounts ?? this.sectionStudentCounts,
     );
   }
 
@@ -197,5 +204,6 @@ class TACoursesState extends Equatable {
     pendingGradingData,
     attendanceSummaryData,
     studentsData,
+    sectionStudentCounts,
   ];
 }

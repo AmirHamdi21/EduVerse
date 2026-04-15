@@ -62,10 +62,7 @@ void main() {
         sectionStudents: const <SectionStudentModel>[
           SectionStudentModel(
             userId: 7,
-            firstName: 'Nada',
-            lastName: 'Ali',
-            email: 'nada@example.com',
-            enrollmentStatus: 'enrolled',
+            status: 'enrolled',
           ),
         ],
       );
@@ -85,10 +82,7 @@ void main() {
         sectionStudents: const <SectionStudentModel>[
           SectionStudentModel(
             userId: 7,
-            firstName: 'Nada',
-            lastName: 'Ali',
-            email: 'nada@example.com',
-            enrollmentStatus: 'enrolled',
+            status: 'enrolled',
           ),
         ],
       );

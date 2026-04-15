@@ -102,21 +102,28 @@ void main() {
   });
 
   group('SectionStudentModel.fromJson', () {
-    test('parses grade and attendance from string values', () {
+    test('parses grade and finalScore from backend response', () {
       final student = SectionStudentModel.fromJson(<String, dynamic>{
-        'userId': '101',
-        'firstName': 'Lina',
-        'lastName': 'Hassan',
-        'email': 'lina@example.com',
-        'enrollmentStatus': 'enrolled',
-        'grade': '88.5',
-        'attendanceRate': '96.2',
+        'userId': 101,
+        'status': 'enrolled',
+        'grade': 88.5,
+        'finalScore': 96.2,
+        'enrollmentDate': '2026-04-01T00:00:00Z',
+        'course': <String, dynamic>{
+          'id': 1,
+          'name': 'Computer Science 101',
+          'code': 'CS101',
+        },
+        'section': <String, dynamic>{
+          'id': 6,
+          'sectionNumber': 1,
+        },
       });
 
       expect(student.userId, 101);
-      expect(student.fullName, 'Lina Hassan');
+      expect(student.displayName, 'Student #101');
       expect(student.grade, 88.5);
-      expect(student.attendanceRate, 96.2);
+      expect(student.finalScore, 96.2);
     });
   });
 }

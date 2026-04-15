@@ -45,10 +45,9 @@ class _FakeEnrollmentService extends EnrollmentService {
       const <SectionStudentModel>[
         SectionStudentModel(
           userId: 5,
-          firstName: 'Lina',
-          lastName: 'Hassan',
-          email: 'lina@example.com',
-          enrollmentStatus: 'enrolled',
+          status: 'enrolled',
+          courseCode: 'CS101',
+          sectionId: 6,
         ),
       ],
     );

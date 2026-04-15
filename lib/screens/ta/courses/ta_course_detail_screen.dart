@@ -10,6 +10,7 @@ import '../../../bloc/ta/ta_courses_state.dart';
 import '../../../models/assignments/assignment_model.dart';
 import '../../../models/assignments/assignment_form_data.dart';
 import '../../../models/instructor/teaching_course_model.dart';
+import '../../../models/instructor/instructor_course_model.dart' show SectionStudentModel;
 import '../../../services/api/assignment_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/storage_service.dart';
@@ -17,6 +18,8 @@ import '../../../generated_l10n/app_localizations.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/courses/ta_courses_barrel.dart';
 import '../../../widgets/instructor/assignments/assignment_create_form.dart';
+import '../../../models/materials/course_material_model.dart';
+import '../../../screens/ta/materials/course_material_preview_screen.dart';
 import '../assignments/ta_assignment_submissions_screen.dart';
 
 class TACourseDetailScreen extends StatefulWidget {
@@ -39,7 +42,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     _tabController = TabController(length: 9, vsync: this);
     _tabController.addListener(_onTabChanged);
 
-    // Ensure TA courses are fetched if not already
+    // Ensure TA courses are fetched if not already (this also fetches student counts)
     final cubit = context.read<TACoursesCubit>();
     final status = cubit.state.coursesStatus;
     if (status is! TASubTabLoaded<List<TeachingCourseModel>>) {
@@ -169,7 +172,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     return NestedScrollView(
       headerSliverBuilder: (context, innerBoxIsScrolled) => [
         _buildAppBar(isDark, l10n, course),
-        SliverToBoxAdapter(child: _buildCourseContent(isDark, l10n, course)),
+        SliverToBoxAdapter(child: _buildCourseContent(isDark, l10n, course, state)),
         SliverPersistentHeader(
           pinned: true,
           delegate: _TabBarDelegate(
@@ -380,6 +383,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     bool isDark,
     AppLocalizations l10n,
     TeachingCourseModel tc,
+    TACoursesState state,
   ) {
     return Padding(
       padding: const EdgeInsets.all(16),
@@ -388,7 +392,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
         children: [
           TACourseStatsCards(
             isDark: isDark,
-            studentsCount: tc.section.currentEnrollment,
+            studentsCount: _getLiveStudentCount(state, tc),
             labsCount: 0,
             assignmentsCount: 0,
             discussionsCount: 0,
@@ -462,6 +466,18 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     );
   }
 
+  // ── Helpers ──────────────────────────────────────────────────
+
+  /// Get live student count from backend count endpoint, fallback to section counter.
+  int _getLiveStudentCount(TACoursesState state, TeachingCourseModel tc) {
+    final count = state.sectionStudentCounts[tc.sectionId];
+    if (count != null) {
+      return count;
+    }
+    // Fallback to section counter while loading
+    return tc.section.currentEnrollment;
+  }
+
   // ── Sub-tab builders ─────────────────────────────────────────
 
   Widget _buildOverviewTab(
@@ -484,7 +500,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
               TAUpcomingTask(
                 id: '1',
                 title: 'Review ${tc.course.courseName} materials',
-                subtitle: '${tc.section.currentEnrollment} students enrolled',
+                subtitle: '${_getLiveStudentCount(state, tc)} students enrolled',
               ),
             ],
             recentActivities: [
@@ -598,37 +614,274 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     AppLocalizations l10n,
     TACoursesState state,
   ) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: _buildSubTabContent<List<dynamic>>(
-        isDark: isDark,
-        subTabState: state.materialsData,
-        emptyMessage: 'No materials available',
-        emptyIcon: Icons.folder_rounded,
-        builder: (materials) {
-          if (materials.isEmpty) {
-            return _buildEmptyTabState(
-              isDark: isDark,
-              message: 'No materials available',
-              icon: Icons.folder_rounded,
-            );
-          }
-          return Column(
-            children: materials.map((mat) {
-              final title = mat is Map ? (mat['title'] ?? 'Material') : 'Material';
-              return _buildInfoCard(
-                isDark: isDark,
-                title: title.toString(),
-                subtitle: '',
-                trailing: '',
-                icon: Icons.insert_drive_file_rounded,
-                color: TAColors.info,
-              );
-            }).toList(),
+    return _buildSubTabContent<List<CourseMaterialModel>>(
+      isDark: isDark,
+      subTabState: state.materialsData,
+      emptyMessage: 'No materials available',
+      emptyIcon: Icons.folder_rounded,
+      builder: (materials) {
+        if (materials.isEmpty) {
+          return _buildEmptyTabState(
+            isDark: isDark,
+            message: 'No materials available',
+            icon: Icons.folder_rounded,
           );
-        },
+        }
+        
+        // Group materials by week number
+        final weekMap = <int, List<CourseMaterialModel>>{};
+        final noWeekMaterials = <CourseMaterialModel>[];
+        
+        for (final material in materials) {
+          final week = material.weekNumber;
+          if (week != null && week > 0) {
+            weekMap.putIfAbsent(week, () => []).add(material);
+          } else {
+            noWeekMaterials.add(material);
+          }
+        }
+        
+        // Sort weeks
+        final weeks = weekMap.keys.toList()..sort();
+        
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Week sections
+              for (final week in weeks) ...[
+                _buildWeekHeader(isDark, week, weekMap[week]!.length),
+                const SizedBox(height: 8),
+                ...weekMap[week]!.map((material) => 
+                  _buildMaterialCard(isDark, material),
+                ),
+                const SizedBox(height: 16),
+              ],
+              
+              // Materials without week
+              if (noWeekMaterials.isNotEmpty) ...[
+                _buildWeekHeader(isDark, 0, noWeekMaterials.length),
+                const SizedBox(height: 8),
+                ...noWeekMaterials.map((material) => 
+                  _buildMaterialCard(isDark, material),
+                ),
+              ],
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildWeekHeader(bool isDark, int weekNumber, int count) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: TAColors.primary.withValues(alpha: isDark ? 0.15 : 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: TAColors.primary.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.calendar_today_rounded,
+            size: 18,
+            color: TAColors.primary,
+          ),
+          const SizedBox(width: 10),
+          Text(
+            weekNumber == 0 ? 'Other Materials' : 'Week $weekNumber',
+            style: TextStyle(
+              color: TAColors.primary,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: TAColors.primary.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '$count ${count == 1 ? 'material' : 'materials'}',
+              style: TextStyle(
+                color: TAColors.primary,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  Widget _buildMaterialCard(bool isDark, CourseMaterialModel material) {
+    return InkWell(
+      onTap: () => _viewMaterial(material),
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: TAColors.cardColor(isDark),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: TAColors.borderColor(isDark),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: _getMaterialColor(material.materialType).withValues(
+                  alpha: isDark ? 0.2 : 0.1,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                _getMaterialIcon(material.materialType),
+                color: _getMaterialColor(material.materialType),
+                size: 28,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    material.title,
+                    style: TextStyle(
+                      color: TAColors.textPrimaryColor(isDark),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (material.description != null && material.description!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        material.description!,
+                        style: TextStyle(
+                          color: TAColors.textSecondaryColor(isDark),
+                          fontSize: 12,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.visibility_outlined,
+                        size: 14,
+                        color: TAColors.textTertiaryColor(isDark),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${material.viewCount ?? 0} views',
+                        style: TextStyle(
+                          color: TAColors.textTertiaryColor(isDark),
+                          fontSize: 11,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Icon(
+                        Icons.download_outlined,
+                        size: 14,
+                        color: TAColors.textTertiaryColor(isDark),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${material.downloadCount ?? 0} downloads',
+                        style: TextStyle(
+                          color: TAColors.textTertiaryColor(isDark),
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(
+              Icons.play_circle_outline,
+              size: 24,
+              color: TAColors.primary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _viewMaterial(CourseMaterialModel material) {
+    // Navigate to material preview screen
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CourseMaterialPreviewScreen(material: material),
+      ),
+    );
+  }
+
+  IconData _getMaterialIcon(String type) {
+    switch (type.toLowerCase()) {
+      case 'video':
+        return Icons.play_circle_outline;
+      case 'lecture':
+        return Icons.school_outlined;
+      case 'slide':
+        return Icons.slideshow_outlined;
+      case 'document':
+      case 'pdf':
+        return Icons.picture_as_pdf_outlined;
+      case 'reading':
+        return Icons.menu_book_outlined;
+      case 'link':
+        return Icons.link_outlined;
+      default:
+        return Icons.insert_drive_file_outlined;
+    }
+  }
+
+  Color _getMaterialColor(String type) {
+    switch (type.toLowerCase()) {
+      case 'video':
+        return Colors.red;
+      case 'lecture':
+        return Colors.blue;
+      case 'slide':
+        return Colors.orange;
+      case 'document':
+      case 'pdf':
+        return Colors.red;
+      case 'reading':
+        return Colors.green;
+      case 'link':
+        return Colors.purple;
+      default:
+        return TAColors.info;
+    }
   }
 
   Widget _buildAssignmentsTab(
@@ -686,13 +939,13 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
   }
 
   // T017: Open assignment creation form
-  void _openAssignmentForm(TeachingCourseModel tc, {AssignmentModel? existing}) {
+  void _openAssignmentForm(TeachingCourseModel tc, {AssignmentModel? existing}) async {
     final cubit = context.read<TACoursesCubit>();
     final status = cubit.state.coursesStatus;
     final courses = status is TASubTabLoaded<List<TeachingCourseModel>>
         ? status.data
         : <TeachingCourseModel>[tc];
-    
+
     // T017: Resolve AssignmentService — try provider tree, fallback to local instance
     AssignmentService assignmentService;
     try {
@@ -702,40 +955,73 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
       assignmentService = AssignmentService(coreApiClient: coreApiClient);
     }
 
-    AssignmentFormData? initialData;
+    // If editing, fetch fresh assignment from API to get instructionFiles (matches instructor pattern)
+    AssignmentModel? assignmentToEdit = existing;
     if (existing != null) {
+      // Show loading dialog
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => Center(
+          child: CircularProgressIndicator(color: TAColors.primary),
+        ),
+      );
+
+      final result = await assignmentService.getById(existing.assignmentId);
+      if (mounted) {
+        Navigator.of(context).pop(); // Dismiss loading
+      }
+
+      if (result.isSuccess && result.data != null) {
+        assignmentToEdit = result.data;
+      }
+    }
+
+    AssignmentFormData? initialData;
+    if (assignmentToEdit != null) {
+      // Fix: Convert UTC dueDate to local time for display (matches instructor pattern)
+      DateTime localDueDate;
+      if (assignmentToEdit.dueDate.isUtc) {
+        localDueDate = assignmentToEdit.dueDate.toLocal();
+      } else {
+        localDueDate = assignmentToEdit.dueDate;
+      }
+
       initialData = AssignmentFormData(
-        title: existing.title,
-        description: existing.description,
-        instructions: existing.instructionsText,
-        dueDate: existing.dueDate,
-        maxScore: existing.maxGrade,
-        weight: existing.weight,
-        submissionType: existing.submissionType,
-        maxFileSizeMb: existing.maxFileSizeMb,
-        allowedFileTypes: existing.allowedFileTypes ?? const [],
-        latePenaltyPercent: existing.latePenaltyPercent,
-        status: existing.apiStatus,
-        courseId: existing.courseId,
+        title: assignmentToEdit.title,
+        description: assignmentToEdit.description,
+        instructions: assignmentToEdit.instructionsText,
+        dueDate: localDueDate,
+        maxScore: assignmentToEdit.maxGrade,
+        weight: assignmentToEdit.weight,
+        submissionType: assignmentToEdit.submissionType,
+        maxFileSizeMb: assignmentToEdit.maxFileSizeMb,
+        allowedFileTypes: assignmentToEdit.allowedFileTypes ?? const [],
+        latePenaltyPercent: assignmentToEdit.latePenaltyPercent,
+        status: assignmentToEdit.apiStatus,
+        courseId: assignmentToEdit.courseId,
+        instructionFiles: assignmentToEdit.instructionFiles ?? const [],
       );
     }
+
+    if (!mounted) return;
 
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (_) => Scaffold(
           appBar: AppBar(
-            title: Text(existing != null ? 'Edit Assignment' : 'Create Assignment'),
+            title: Text(assignmentToEdit != null ? 'Edit Assignment' : 'Create Assignment'),
           ),
           body: AssignmentCreateForm(
             courses: courses,
             assignmentService: assignmentService,
             initialData: initialData,
-            assignmentId: existing?.assignmentId,
+            assignmentId: assignmentToEdit?.assignmentId,
             onSubmit: (formData) async {
               try {
-                if (existing != null) {
+                if (assignmentToEdit != null) {
                   await assignmentService.update(
-                    existing.assignmentId,
+                    assignmentToEdit.assignmentId,
                     formData.toJson(),
                   );
                 } else {
@@ -902,25 +1188,68 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
         emptyIcon: Icons.check_circle_rounded,
         builder: (pending) {
           if (pending.isEmpty) {
-            return _buildEmptyTabState(
-              isDark: isDark,
-              message: 'No pending grading — all caught up!',
-              icon: Icons.check_circle_rounded,
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildEmptyTabState(
+                  isDark: isDark,
+                  message: 'No pending grading — all caught up!',
+                  icon: Icons.check_circle_rounded,
+                ),
+                const SizedBox(height: 24),
+                ElevatedButton.icon(
+                  onPressed: () => context.push('/ta/grading?courseId=${widget.courseId}'),
+                  icon: const Icon(Icons.grading_rounded),
+                  label: const Text('Open Grading Center'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TAColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  ),
+                ),
+              ],
             );
           }
+          
+          // Show submissions with navigation
           return Column(
-            children: pending.map((sub) {
-              return _buildInfoCard(
-                isDark: isDark,
-                title: '${sub.user?.firstName ?? ''} ${sub.user?.lastName ?? ''}'.trim().isEmpty
-                    ? 'Student #${sub.userId}'
-                    : '${sub.user!.firstName} ${sub.user!.lastName}'.trim(),
-                subtitle: 'Assignment #${sub.assignmentId}',
-                trailing: sub.submissionStatus.value,
-                icon: Icons.grading_rounded,
-                color: TAColors.warning,
-              );
-            }).toList(),
+            children: [
+              // Open grading center button at top
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () => context.push('/ta/grading?courseId=${widget.courseId}'),
+                  icon: const Icon(Icons.open_in_new_rounded),
+                  label: const Text('Open Full Grading Center'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: TAColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: BorderSide(color: TAColors.primary.withValues(alpha: 0.3)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              // Submission cards
+              ...pending.map((sub) {
+                return InkWell(
+                  onTap: () => context.push('/ta/grading?courseId=${widget.courseId}'),
+                  borderRadius: BorderRadius.circular(12),
+                  child: _buildInfoCard(
+                    isDark: isDark,
+                    title: '${sub.user?.firstName ?? ''} ${sub.user?.lastName ?? ''}'.trim().isEmpty
+                        ? 'Student #${sub.userId}'
+                        : '${sub.user!.firstName} ${sub.user!.lastName}'.trim(),
+                    subtitle: 'Assignment #${sub.assignmentId}',
+                    trailing: sub.submissionStatus.value,
+                    icon: Icons.grading_rounded,
+                    color: TAColors.warning,
+                  ),
+                );
+              }),
+            ],
           );
         },
       ),
@@ -988,13 +1317,41 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
           }
           return Column(
             children: students.map((s) {
-              final name =
-                  s is Map ? '${s['firstName'] ?? ''} ${s['lastName'] ?? ''}' : 'Student';
+              String displayName;
+              String subtitle;
+              String trailing;
+
+              if (s is SectionStudentModel) {
+                displayName = s.displayName;
+                subtitle = s.courseCode != null
+                    ? '${s.courseCode} - Section ${s.sectionId}'
+                    : 'Enrolled';
+                trailing = s.status.toUpperCase();
+              } else if (s is Map) {
+                // Fallback for raw map data
+                final courseData = s['course'] as Map<String, dynamic>?;
+                final userId = s['userId'] as int? ?? 0;
+                final firstName = s['firstName'] as String?;
+                final lastName = s['lastName'] as String?;
+
+                displayName = (firstName != null || lastName != null)
+                    ? '$firstName $lastName'.trim()
+                    : 'Student #$userId';
+                subtitle = courseData != null
+                    ? '${courseData['code']} - Section ${s['sectionId']}'
+                    : 'Enrolled';
+                trailing = (s['status'] as String? ?? 'enrolled').toUpperCase();
+              } else {
+                displayName = 'Student';
+                subtitle = '';
+                trailing = '';
+              }
+
               return _buildInfoCard(
                 isDark: isDark,
-                title: name.toString().trim(),
-                subtitle: '',
-                trailing: '',
+                title: displayName,
+                subtitle: subtitle,
+                trailing: trailing,
                 icon: Icons.person_rounded,
                 color: TAColors.primary,
               );

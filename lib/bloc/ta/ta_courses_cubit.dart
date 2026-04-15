@@ -4,6 +4,7 @@ import '../../models/assignments/assignment_model.dart';
 import '../../models/assignments/assignment_submission_model.dart';
 import '../../models/core/enums/lab_enums.dart';
 import '../../models/instructor/teaching_course_model.dart';
+import '../../models/materials/course_material_model.dart';
 import '../../services/api/assignment_service.dart';
 import '../../services/api/course_service.dart';
 import '../../services/api/enrollment_service.dart';
@@ -61,6 +62,16 @@ class TACoursesCubit extends Cubit<TACoursesState> {
     emit(state.copyWith(
       coursesStatus: TASubTabLoaded<List<TeachingCourseModel>>(result.data!),
     ));
+
+    // Fetch student counts for all sections in parallel
+    final sectionIds = result.data!
+        .map((tc) => tc.sectionId)
+        .where((id) => id > 0)
+        .toList();
+    
+    if (sectionIds.isNotEmpty) {
+      await fetchAllSectionStudentsCounts(sectionIds);
+    }
   }
 
   // ── Sub-tab 1: Overview ──────────────────────────────────────
@@ -192,17 +203,17 @@ class TACoursesCubit extends Cubit<TACoursesState> {
   /// Loads published course materials.
   Future<void> fetchCourseMaterials(int courseId) async {
     emit(state.copyWith(
-      materialsData: const TASubTabLoading<List<dynamic>>(),
+      materialsData: const TASubTabLoading<List<CourseMaterialModel>>(),
     ));
 
     try {
       final materials = await _materialService.getMaterials(courseId);
       emit(state.copyWith(
-        materialsData: TASubTabLoaded<List<dynamic>>(materials),
+        materialsData: TASubTabLoaded<List<CourseMaterialModel>>(materials),
       ));
     } catch (e) {
       emit(state.copyWith(
-        materialsData: TASubTabError<List<dynamic>>(
+        materialsData: TASubTabError<List<CourseMaterialModel>>(
           'Failed to load materials: $e',
         ),
       ));
@@ -399,6 +410,27 @@ class TACoursesCubit extends Cubit<TACoursesState> {
         ),
       ));
     }
+  }
+
+  /// Fetches student counts for all sections in parallel.
+  Future<void> fetchAllSectionStudentsCounts(List<int> sectionIds) async {
+    if (sectionIds.isEmpty) return;
+
+    // Fetch all counts in parallel
+    final futures = sectionIds.map((sectionId) async {
+      final result = await _enrollmentService.getSectionStudentsCount(sectionId);
+      if (result.isSuccess && result.data != null) {
+        return MapEntry(sectionId, result.data!);
+      }
+      return MapEntry(sectionId, 0);
+    }).toList();
+
+    final entries = await Future.wait<MapEntry<int, int>>(futures);
+    final counts = Map<int, int>.fromEntries(entries);
+
+    emit(state.copyWith(
+      sectionStudentCounts: counts,
+    ));
   }
 
   // ── Assignment Deletion (Principle I) ────────────────────────

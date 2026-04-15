@@ -25,6 +25,17 @@ class TALabsLoading extends TALabsState {
   const TALabsLoading();
 }
 
+/// Loading state that preserves previously loaded labs for better UX.
+/// Shows existing labs with a subtle refresh indicator instead of full-screen loader.
+class TALabsLoadingWithCache extends TALabsState {
+  const TALabsLoadingWithCache(this.cachedLabs);
+
+  final List<LabModel> cachedLabs;
+
+  @override
+  List<Object?> get props => <Object?>[cachedLabs];
+}
+
 class TALabsLoaded extends TALabsState {
   const TALabsLoaded(this.labs);
 

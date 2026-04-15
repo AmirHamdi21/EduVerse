@@ -362,12 +362,11 @@ void main() {
             const <SectionStudentModel>[
               SectionStudentModel(
                 userId: 1,
-                firstName: 'Sara',
-                lastName: 'Ali',
-                email: 'sara@example.com',
-                enrollmentStatus: 'enrolled',
+                status: 'enrolled',
                 grade: 90,
-                attendanceRate: 95,
+                finalScore: 95,
+                courseCode: 'CS101',
+                courseName: 'Computer Science 101',
               ),
             ],
           ),
@@ -403,7 +402,7 @@ void main() {
       final loaded = bloc.state as InstructorCoursesLoaded;
       expect(loaded.selectedSectionId, 12);
       expect(loaded.sectionStudents.length, 1);
-      expect(loaded.sectionStudents.first.fullName, 'Sara Ali');
+      expect(loaded.sectionStudents.first.displayName, 'Student #1');
 
       await bloc.close();
     });
