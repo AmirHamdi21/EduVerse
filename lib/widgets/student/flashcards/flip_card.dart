@@ -167,11 +167,7 @@ class _FlipCardState extends State<FlipCard>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.touch_app,
-                  color: const Color(0xFF2B7FFF),
-                  size: 18,
-                ),
+                Icon(Icons.touch_app, color: const Color(0xFF2B7FFF), size: 18),
                 const SizedBox(width: 8),
                 Text(
                   'Tap to reveal answer',
@@ -205,7 +201,11 @@ class _FlipCardState extends State<FlipCard>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.lightbulb_outline, color: Colors.white, size: 16),
+                const Icon(
+                  Icons.lightbulb_outline,
+                  color: Colors.white,
+                  size: 16,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   'Answer',
@@ -249,11 +249,7 @@ class _FlipCardState extends State<FlipCard>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.touch_app,
-                  color: Colors.white,
-                  size: 18,
-                ),
+                Icon(Icons.touch_app, color: Colors.white, size: 18),
                 const SizedBox(width: 8),
                 Text(
                   'Tap to flip back',

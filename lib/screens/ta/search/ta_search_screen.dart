@@ -23,33 +23,134 @@ class _TASearchScreenState extends State<TASearchScreen>
 
   String _selectedCategory = 'all';
   List<Map<String, dynamic>> _searchResults = [];
-  List<String> _recentSearches = ['Assignment 3', 'John Smith', 'Lab 5', 'CS201'];
+  List<String> _recentSearches = [
+    'Assignment 3',
+    'John Smith',
+    'Lab 5',
+    'CS201',
+  ];
   bool _isSearching = false;
 
   // Mock data for search
   final List<Map<String, dynamic>> _allData = [
     // Students
-    {'id': '1', 'title': 'John Smith', 'subtitle': 'CS201, CS301', 'type': 'student', 'icon': Icons.person_rounded},
-    {'id': '2', 'title': 'Emily Davis', 'subtitle': 'CS201', 'type': 'student', 'icon': Icons.person_rounded},
-    {'id': '3', 'title': 'Michael Brown', 'subtitle': 'CS301, CS401', 'type': 'student', 'icon': Icons.person_rounded},
-    {'id': '4', 'title': 'Sarah Johnson', 'subtitle': 'CS201, CS301', 'type': 'student', 'icon': Icons.person_rounded},
+    {
+      'id': '1',
+      'title': 'John Smith',
+      'subtitle': 'CS201, CS301',
+      'type': 'student',
+      'icon': Icons.person_rounded,
+    },
+    {
+      'id': '2',
+      'title': 'Emily Davis',
+      'subtitle': 'CS201',
+      'type': 'student',
+      'icon': Icons.person_rounded,
+    },
+    {
+      'id': '3',
+      'title': 'Michael Brown',
+      'subtitle': 'CS301, CS401',
+      'type': 'student',
+      'icon': Icons.person_rounded,
+    },
+    {
+      'id': '4',
+      'title': 'Sarah Johnson',
+      'subtitle': 'CS201, CS301',
+      'type': 'student',
+      'icon': Icons.person_rounded,
+    },
     // Courses
-    {'id': '5', 'title': 'CS201 - Data Structures', 'subtitle': '45 students', 'type': 'course', 'icon': Icons.school_rounded},
-    {'id': '6', 'title': 'CS301 - Algorithms', 'subtitle': '32 students', 'type': 'course', 'icon': Icons.school_rounded},
-    {'id': '7', 'title': 'CS401 - Database Systems', 'subtitle': '28 students', 'type': 'course', 'icon': Icons.school_rounded},
+    {
+      'id': '5',
+      'title': 'CS201 - Data Structures',
+      'subtitle': '45 students',
+      'type': 'course',
+      'icon': Icons.school_rounded,
+    },
+    {
+      'id': '6',
+      'title': 'CS301 - Algorithms',
+      'subtitle': '32 students',
+      'type': 'course',
+      'icon': Icons.school_rounded,
+    },
+    {
+      'id': '7',
+      'title': 'CS401 - Database Systems',
+      'subtitle': '28 students',
+      'type': 'course',
+      'icon': Icons.school_rounded,
+    },
     // Labs
-    {'id': '8', 'title': 'Lab 1 - Arrays', 'subtitle': 'CS201 • Due: Feb 15', 'type': 'lab', 'icon': Icons.science_rounded},
-    {'id': '9', 'title': 'Lab 2 - Linked Lists', 'subtitle': 'CS201 • Due: Feb 22', 'type': 'lab', 'icon': Icons.science_rounded},
-    {'id': '10', 'title': 'Lab 3 - Trees', 'subtitle': 'CS301 • Due: Feb 20', 'type': 'lab', 'icon': Icons.science_rounded},
+    {
+      'id': '8',
+      'title': 'Lab 1 - Arrays',
+      'subtitle': 'CS201 • Due: Feb 15',
+      'type': 'lab',
+      'icon': Icons.science_rounded,
+    },
+    {
+      'id': '9',
+      'title': 'Lab 2 - Linked Lists',
+      'subtitle': 'CS201 • Due: Feb 22',
+      'type': 'lab',
+      'icon': Icons.science_rounded,
+    },
+    {
+      'id': '10',
+      'title': 'Lab 3 - Trees',
+      'subtitle': 'CS301 • Due: Feb 20',
+      'type': 'lab',
+      'icon': Icons.science_rounded,
+    },
     // Submissions
-    {'id': '11', 'title': 'Assignment 3 - John Smith', 'subtitle': 'CS201 • Pending review', 'type': 'submission', 'icon': Icons.assignment_rounded},
-    {'id': '12', 'title': 'Lab 2 - Emily Davis', 'subtitle': 'CS201 • Graded: 85%', 'type': 'submission', 'icon': Icons.assignment_rounded},
+    {
+      'id': '11',
+      'title': 'Assignment 3 - John Smith',
+      'subtitle': 'CS201 • Pending review',
+      'type': 'submission',
+      'icon': Icons.assignment_rounded,
+    },
+    {
+      'id': '12',
+      'title': 'Lab 2 - Emily Davis',
+      'subtitle': 'CS201 • Graded: 85%',
+      'type': 'submission',
+      'icon': Icons.assignment_rounded,
+    },
     // Materials
-    {'id': '13', 'title': 'Lecture Notes - Week 5', 'subtitle': 'CS201 • PDF', 'type': 'material', 'icon': Icons.description_rounded},
-    {'id': '14', 'title': 'Lab Guide - Arrays', 'subtitle': 'CS201 • PDF', 'type': 'material', 'icon': Icons.description_rounded},
+    {
+      'id': '13',
+      'title': 'Lecture Notes - Week 5',
+      'subtitle': 'CS201 • PDF',
+      'type': 'material',
+      'icon': Icons.description_rounded,
+    },
+    {
+      'id': '14',
+      'title': 'Lab Guide - Arrays',
+      'subtitle': 'CS201 • PDF',
+      'type': 'material',
+      'icon': Icons.description_rounded,
+    },
     // Discussions
-    {'id': '15', 'title': 'Help with recursion', 'subtitle': 'CS201 • 5 replies', 'type': 'discussion', 'icon': Icons.forum_rounded},
-    {'id': '16', 'title': 'Assignment 2 clarification', 'subtitle': 'CS301 • 3 replies', 'type': 'discussion', 'icon': Icons.forum_rounded},
+    {
+      'id': '15',
+      'title': 'Help with recursion',
+      'subtitle': 'CS201 • 5 replies',
+      'type': 'discussion',
+      'icon': Icons.forum_rounded,
+    },
+    {
+      'id': '16',
+      'title': 'Assignment 2 clarification',
+      'subtitle': 'CS301 • 3 replies',
+      'type': 'discussion',
+      'icon': Icons.forum_rounded,
+    },
   ];
 
   @override
@@ -90,9 +191,15 @@ class _TASearchScreenState extends State<TASearchScreen>
     setState(() {
       _isSearching = true;
       _searchResults = _allData.where((item) {
-        final matchesQuery = item['title'].toString().toLowerCase().contains(query.toLowerCase()) ||
-            item['subtitle'].toString().toLowerCase().contains(query.toLowerCase());
-        final matchesCategory = _selectedCategory == 'all' || item['type'] == _selectedCategory;
+        final matchesQuery =
+            item['title'].toString().toLowerCase().contains(
+              query.toLowerCase(),
+            ) ||
+            item['subtitle'].toString().toLowerCase().contains(
+              query.toLowerCase(),
+            );
+        final matchesCategory =
+            _selectedCategory == 'all' || item['type'] == _selectedCategory;
         return matchesQuery && matchesCategory;
       }).toList();
     });
@@ -117,9 +224,7 @@ class _TASearchScreenState extends State<TASearchScreen>
                   const SizedBox(height: 8),
                   _buildCategoryChips(isDark, l10n),
                   const SizedBox(height: 8),
-                  Expanded(
-                    child: _buildBody(isDark, l10n),
-                  ),
+                  Expanded(child: _buildBody(isDark, l10n)),
                 ],
               ),
             ),
@@ -159,7 +264,9 @@ class _TASearchScreenState extends State<TASearchScreen>
                 onChanged: _performSearch,
                 decoration: InputDecoration(
                   hintText: l10n.taSearchPlaceholder,
-                  hintStyle: TextStyle(color: TAColors.textTertiaryColor(isDark)),
+                  hintStyle: TextStyle(
+                    color: TAColors.textTertiaryColor(isDark),
+                  ),
                   prefixIcon: Icon(
                     Icons.search_rounded,
                     color: TAColors.textSecondaryColor(isDark),
@@ -200,9 +307,17 @@ class _TASearchScreenState extends State<TASearchScreen>
       {'id': 'student', 'label': l10n.students, 'icon': Icons.people_rounded},
       {'id': 'course', 'label': l10n.courses, 'icon': Icons.school_rounded},
       {'id': 'lab', 'label': l10n.taLabs, 'icon': Icons.science_rounded},
-      {'id': 'submission', 'label': l10n.submissions, 'icon': Icons.assignment_rounded},
+      {
+        'id': 'submission',
+        'label': l10n.submissions,
+        'icon': Icons.assignment_rounded,
+      },
       {'id': 'material', 'label': l10n.materials, 'icon': Icons.folder_rounded},
-      {'id': 'discussion', 'label': l10n.discussions, 'icon': Icons.forum_rounded},
+      {
+        'id': 'discussion',
+        'label': l10n.discussions,
+        'icon': Icons.forum_rounded,
+      },
     ];
 
     return SizedBox(
@@ -225,7 +340,9 @@ class _TASearchScreenState extends State<TASearchScreen>
                   Icon(
                     category['icon'] as IconData,
                     size: 16,
-                    color: isSelected ? Colors.white : TAColors.textSecondaryColor(isDark),
+                    color: isSelected
+                        ? Colors.white
+                        : TAColors.textSecondaryColor(isDark),
                   ),
                   const SizedBox(width: 6),
                   Text(category['label'] as String),
@@ -239,12 +356,16 @@ class _TASearchScreenState extends State<TASearchScreen>
               selectedColor: TAColors.primary,
               checkmarkColor: Colors.white,
               labelStyle: TextStyle(
-                color: isSelected ? Colors.white : TAColors.textSecondaryColor(isDark),
+                color: isSelected
+                    ? Colors.white
+                    : TAColors.textSecondaryColor(isDark),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
               backgroundColor: TAColors.cardColor(isDark),
               side: BorderSide(
-                color: isSelected ? TAColors.primary : TAColors.borderColor(isDark),
+                color: isSelected
+                    ? TAColors.primary
+                    : TAColors.borderColor(isDark),
               ),
               showCheckmark: false,
             ),
@@ -350,10 +471,30 @@ class _TASearchScreenState extends State<TASearchScreen>
 
   Widget _buildQuickActions(bool isDark, AppLocalizations l10n) {
     final actions = [
-      {'icon': Icons.grading_rounded, 'label': l10n.pendingGrading, 'route': '/ta/ai-grading', 'color': TAColors.warning},
-      {'icon': Icons.people_rounded, 'label': l10n.taAtRiskStudents, 'route': '/ta/student-performance', 'color': TAColors.error},
-      {'icon': Icons.science_rounded, 'label': l10n.taUpcomingLabs, 'route': '/ta/labs', 'color': TAColors.info},
-      {'icon': Icons.forum_rounded, 'label': l10n.taNewDiscussions, 'route': '/ta/discussions', 'color': TAColors.success},
+      {
+        'icon': Icons.grading_rounded,
+        'label': l10n.pendingGrading,
+        'route': '/ta/ai-grading',
+        'color': TAColors.warning,
+      },
+      {
+        'icon': Icons.people_rounded,
+        'label': l10n.taAtRiskStudents,
+        'route': '/ta/student-performance',
+        'color': TAColors.error,
+      },
+      {
+        'icon': Icons.science_rounded,
+        'label': l10n.taUpcomingLabs,
+        'route': '/ta/labs',
+        'color': TAColors.info,
+      },
+      {
+        'icon': Icons.forum_rounded,
+        'label': l10n.taNewDiscussions,
+        'route': '/ta/discussions',
+        'color': TAColors.success,
+      },
     ];
 
     return GridView.builder(
@@ -420,12 +561,42 @@ class _TASearchScreenState extends State<TASearchScreen>
 
   Widget _buildBrowseCategories(bool isDark, AppLocalizations l10n) {
     final categories = [
-      {'icon': Icons.people_rounded, 'label': l10n.allStudents, 'count': '87', 'type': 'student'},
-      {'icon': Icons.school_rounded, 'label': l10n.allCourses, 'count': '3', 'type': 'course'},
-      {'icon': Icons.science_rounded, 'label': l10n.allLabs, 'count': '12', 'type': 'lab'},
-      {'icon': Icons.assignment_rounded, 'label': l10n.allSubmissions, 'count': '156', 'type': 'submission'},
-      {'icon': Icons.folder_rounded, 'label': l10n.allMaterials, 'count': '24', 'type': 'material'},
-      {'icon': Icons.forum_rounded, 'label': l10n.allDiscussions, 'count': '8', 'type': 'discussion'},
+      {
+        'icon': Icons.people_rounded,
+        'label': l10n.allStudents,
+        'count': '87',
+        'type': 'student',
+      },
+      {
+        'icon': Icons.school_rounded,
+        'label': l10n.allCourses,
+        'count': '3',
+        'type': 'course',
+      },
+      {
+        'icon': Icons.science_rounded,
+        'label': l10n.allLabs,
+        'count': '12',
+        'type': 'lab',
+      },
+      {
+        'icon': Icons.assignment_rounded,
+        'label': l10n.allSubmissions,
+        'count': '156',
+        'type': 'submission',
+      },
+      {
+        'icon': Icons.folder_rounded,
+        'label': l10n.allMaterials,
+        'count': '24',
+        'type': 'material',
+      },
+      {
+        'icon': Icons.forum_rounded,
+        'label': l10n.allDiscussions,
+        'count': '8',
+        'type': 'discussion',
+      },
     ];
 
     return Column(
@@ -453,7 +624,9 @@ class _TASearchScreenState extends State<TASearchScreen>
                 decoration: BoxDecoration(
                   color: TAColors.cardColor(isDark),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: TAColors.borderColor(isDark).withValues(alpha: 0.5)),
+                  border: Border.all(
+                    color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -480,7 +653,10 @@ class _TASearchScreenState extends State<TASearchScreen>
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: TAColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
@@ -625,7 +801,10 @@ class _TASearchScreenState extends State<TASearchScreen>
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),

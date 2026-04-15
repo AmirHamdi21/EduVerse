@@ -50,7 +50,9 @@ class CalendarHeader extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                    color: isDark
+                        ? const Color(0xFFF3F4F6)
+                        : const Color(0xFF101828),
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -58,7 +60,9 @@ class CalendarHeader extends StatelessWidget {
                   l10n.calendarSubtitle,
                   style: TextStyle(
                     fontSize: 13,
-                    color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                    color: isDark
+                        ? const Color(0xFF99A1AF)
+                        : const Color(0xFF6B7280),
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

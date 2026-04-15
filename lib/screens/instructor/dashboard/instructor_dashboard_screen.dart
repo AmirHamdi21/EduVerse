@@ -15,7 +15,8 @@ class InstructorDashboardScreen extends StatefulWidget {
   const InstructorDashboardScreen({super.key});
 
   @override
-  State<InstructorDashboardScreen> createState() => _InstructorDashboardScreenState();
+  State<InstructorDashboardScreen> createState() =>
+      _InstructorDashboardScreenState();
 }
 
 class _InstructorDashboardScreenState extends State<InstructorDashboardScreen> {
@@ -33,11 +34,11 @@ class _InstructorDashboardScreenState extends State<InstructorDashboardScreen> {
   Future<void> _loadData() async {
     // Simulate loading data
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     _courses = _getMockCourses();
     _pendingSubmissions = _getMockSubmissions();
     _upcomingEvents = _getMockEvents();
-    
+
     if (mounted) {
       setState(() => _isLoading = false);
     }
@@ -89,7 +90,8 @@ class _InstructorDashboardScreenState extends State<InstructorDashboardScreen> {
                                 InstructorAITeachingCard(
                                   pendingAssignments: 12,
                                   studentsAtRisk: 2,
-                                  aiSuggestion: 'Send a reminder quiz for CS305 students',
+                                  aiSuggestion:
+                                      'Send a reminder quiz for CS305 students',
                                 ),
                                 const SizedBox(height: 24),
                                 // Quick Access Grid
@@ -99,7 +101,9 @@ class _InstructorDashboardScreenState extends State<InstructorDashboardScreen> {
                                 MyCoursesSection(courses: _courses),
                                 const SizedBox(height: 24),
                                 // Pending Grading Section
-                                PendingGradingSection(submissions: _pendingSubmissions),
+                                PendingGradingSection(
+                                  submissions: _pendingSubmissions,
+                                ),
                                 const SizedBox(height: 24),
                                 // Upcoming Events Section
                                 UpcomingEventsSection(events: _upcomingEvents),

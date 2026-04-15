@@ -30,7 +30,9 @@ class StaffListView extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
         boxShadow: isDark
             ? null
@@ -51,7 +53,11 @@ class StaffListView extends StatelessWidget {
             ...courses.asMap().entries.map((entry) {
               final index = entry.key;
               final course = entry.value;
-              return _buildRow(course, l10n, isLast: index == courses.length - 1);
+              return _buildRow(
+                course,
+                l10n,
+                isLast: index == courses.length - 1,
+              );
             }),
         ],
       ),
@@ -108,7 +114,11 @@ class StaffListView extends StatelessWidget {
     );
   }
 
-  Widget _buildRow(CourseAssignment course, AppLocalizations l10n, {bool isLast = false}) {
+  Widget _buildRow(
+    CourseAssignment course,
+    AppLocalizations l10n, {
+    bool isLast = false,
+  }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -152,15 +162,9 @@ class StaffListView extends StatelessWidget {
             ),
           ),
           // Instructor column
-          Expanded(
-            flex: 3,
-            child: _buildInstructorCell(course, l10n),
-          ),
+          Expanded(flex: 3, child: _buildInstructorCell(course, l10n)),
           // TAs column
-          Expanded(
-            flex: 2,
-            child: _buildTACell(course, l10n),
-          ),
+          Expanded(flex: 2, child: _buildTACell(course, l10n)),
         ],
       ),
     );
@@ -206,7 +210,10 @@ class StaffListView extends StatelessWidget {
                 ),
               ] else ...[
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: AdminColors.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),

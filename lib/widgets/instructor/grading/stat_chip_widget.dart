@@ -30,7 +30,8 @@ class StatChipWidget extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
           decoration: BoxDecoration(
-            gradient: gradient ??
+            gradient:
+                gradient ??
                 LinearGradient(
                   colors: [
                     color.withValues(alpha: isDark ? 0.2 : 0.12),
@@ -141,20 +142,14 @@ class CompactStatChip extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withValues(alpha: 0.25),
-          width: 1,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.25), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             child: Text(
               count.toString(),
               style: const TextStyle(

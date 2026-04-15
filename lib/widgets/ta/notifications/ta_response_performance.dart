@@ -36,11 +36,7 @@ class TAResponsePerformance extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.insights_rounded,
-                color: TAColors.primary,
-                size: 18,
-              ),
+              Icon(Icons.insights_rounded, color: TAColors.primary, size: 18),
               const SizedBox(width: 8),
               Text(
                 l10n.taNotifResponsePerformance,

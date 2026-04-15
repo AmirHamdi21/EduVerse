@@ -33,17 +33,17 @@ class AttendanceRecord extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        courseId,
-        courseName,
-        courseCode,
-        date,
-        status,
-        note,
-        lectureTitle,
-        startTime,
-        endTime,
-      ];
+    id,
+    courseId,
+    courseName,
+    courseCode,
+    date,
+    status,
+    note,
+    lectureTitle,
+    startTime,
+    endTime,
+  ];
 }
 
 class TimeOfDay {
@@ -89,16 +89,16 @@ class CourseAttendance extends Equatable {
 
   @override
   List<Object?> get props => [
-        courseId,
-        courseName,
-        courseCode,
-        totalClasses,
-        presentCount,
-        absentCount,
-        lateCount,
-        excusedCount,
-        gradientColors,
-      ];
+    courseId,
+    courseName,
+    courseCode,
+    totalClasses,
+    presentCount,
+    absentCount,
+    lateCount,
+    excusedCount,
+    gradientColors,
+  ];
 }
 
 class AttendanceStatistics extends Equatable {
@@ -122,14 +122,14 @@ class AttendanceStatistics extends Equatable {
 
   @override
   List<Object?> get props => [
-        totalClasses,
-        presentCount,
-        absentCount,
-        lateCount,
-        excusedCount,
-        overallPercentage,
-        weeklyTrend,
-      ];
+    totalClasses,
+    presentCount,
+    absentCount,
+    lateCount,
+    excusedCount,
+    overallPercentage,
+    weeklyTrend,
+  ];
 }
 
 class WeeklyAttendance extends Equatable {
@@ -195,8 +195,9 @@ class AttendanceState extends Equatable {
       courseAttendances: courseAttendances ?? this.courseAttendances,
       statistics: statistics ?? this.statistics,
       selectedDate: selectedDate ?? this.selectedDate,
-      selectedCourseId:
-          clearSelectedCourse ? null : selectedCourseId ?? this.selectedCourseId,
+      selectedCourseId: clearSelectedCourse
+          ? null
+          : selectedCourseId ?? this.selectedCourseId,
       filterOption: filterOption ?? this.filterOption,
       viewMode: viewMode ?? this.viewMode,
       selectedTabIndex: selectedTabIndex ?? this.selectedTabIndex,
@@ -206,19 +207,19 @@ class AttendanceState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isLoading,
-        errorMessage,
-        allRecords,
-        filteredRecords,
-        courseAttendances,
-        statistics,
-        selectedDate,
-        selectedCourseId,
-        filterOption,
-        viewMode,
-        selectedTabIndex,
-        searchQuery,
-      ];
+    isLoading,
+    errorMessage,
+    allRecords,
+    filteredRecords,
+    courseAttendances,
+    statistics,
+    selectedDate,
+    selectedCourseId,
+    filterOption,
+    viewMode,
+    selectedTabIndex,
+    searchQuery,
+  ];
 }
 
 class _DefaultDate implements DateTime {

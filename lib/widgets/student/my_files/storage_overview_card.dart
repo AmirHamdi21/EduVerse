@@ -31,9 +31,7 @@ class StorageOverviewCard extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: isDark
-                  ? const Color(0xFF334155)
-                  : const Color(0xFFE2E8F0),
+              color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
             ),
             boxShadow: [
               BoxShadow(
@@ -114,8 +112,8 @@ class StorageOverviewCard extends StatelessWidget {
     final color = percentage > 90
         ? const Color(0xFFEF4444)
         : percentage > 70
-            ? const Color(0xFFF59E0B)
-            : const Color(0xFF10B981);
+        ? const Color(0xFFF59E0B)
+        : const Color(0xFF10B981);
 
     return Stack(
       alignment: Alignment.center,
@@ -178,10 +176,7 @@ class StorageOverviewCard extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [
-                      const Color(0xFF3B82F6),
-                      const Color(0xFF06B6D4),
-                    ],
+                    colors: [const Color(0xFF3B82F6), const Color(0xFF06B6D4)],
                   ),
                 ),
               ),
@@ -211,10 +206,9 @@ class StorageOverviewCard extends StatelessWidget {
       FileType.other: l10n.other,
     };
 
-    final distribution = stats.typeDistribution.entries
-        .where((e) => e.value > 0)
-        .toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
+    final distribution =
+        stats.typeDistribution.entries.where((e) => e.value > 0).toList()
+          ..sort((a, b) => b.value.compareTo(a.value));
 
     if (distribution.isEmpty) return const SizedBox.shrink();
 

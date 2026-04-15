@@ -64,14 +64,18 @@ class _AdminSemesterSettingsScreenState
             label: Text(
               l10n.addSemester,
               style: const TextStyle(
-                  color: Colors.white, fontWeight: FontWeight.w600),
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           body: SafeArea(
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -80,8 +84,9 @@ class _AdminSemesterSettingsScreenState
                   SizedBox(height: responsive.p24),
                   _buildSectionTitle(l10n.allSemesters, isDark),
                   SizedBox(height: responsive.p12),
-                  ..._semesters
-                      .map((s) => _buildSemesterCard(s, isDark, l10n, responsive)),
+                  ..._semesters.map(
+                    (s) => _buildSemesterCard(s, isDark, l10n, responsive),
+                  ),
                   SizedBox(height: responsive.p80),
                 ],
               ),
@@ -116,7 +121,10 @@ class _AdminSemesterSettingsScreenState
   }
 
   Widget _buildCurrentSemesterCard(
-      bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     final activeSemester = _semesters.firstWhere((s) => s.isActive);
     return Container(
       padding: EdgeInsets.all(responsive.p20),
@@ -173,8 +181,10 @@ class _AdminSemesterSettingsScreenState
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AdminColors.success,
                   borderRadius: BorderRadius.circular(20),
@@ -265,7 +275,11 @@ class _AdminSemesterSettingsScreenState
   }
 
   Widget _buildSemesterCard(
-      _Semester semester, bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    _Semester semester,
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return Container(
       margin: EdgeInsets.only(bottom: responsive.p12),
       padding: EdgeInsets.all(responsive.p16),
@@ -308,8 +322,10 @@ class _AdminSemesterSettingsScreenState
               ),
               if (semester.isActive)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AdminColors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -335,12 +351,18 @@ class _AdminSemesterSettingsScreenState
                     value: 'edit',
                     child: Row(
                       children: [
-                        Icon(Icons.edit_rounded,
-                            size: 20, color: AdminColors.primary),
+                        Icon(
+                          Icons.edit_rounded,
+                          size: 20,
+                          color: AdminColors.primary,
+                        ),
                         const SizedBox(width: 12),
-                        Text(l10n.edit,
-                            style: TextStyle(
-                                color: AdminColors.getTextColor(isDark))),
+                        Text(
+                          l10n.edit,
+                          style: TextStyle(
+                            color: AdminColors.getTextColor(isDark),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -349,12 +371,18 @@ class _AdminSemesterSettingsScreenState
                       value: 'activate',
                       child: Row(
                         children: [
-                          Icon(Icons.check_circle_outline_rounded,
-                              size: 20, color: AdminColors.success),
+                          Icon(
+                            Icons.check_circle_outline_rounded,
+                            size: 20,
+                            color: AdminColors.success,
+                          ),
                           const SizedBox(width: 12),
-                          Text(l10n.setAsActive,
-                              style: TextStyle(
-                                  color: AdminColors.getTextColor(isDark))),
+                          Text(
+                            l10n.setAsActive,
+                            style: TextStyle(
+                              color: AdminColors.getTextColor(isDark),
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -362,11 +390,16 @@ class _AdminSemesterSettingsScreenState
                     value: 'delete',
                     child: Row(
                       children: [
-                        Icon(Icons.delete_outline_rounded,
-                            size: 20, color: AdminColors.error),
+                        Icon(
+                          Icons.delete_outline_rounded,
+                          size: 20,
+                          color: AdminColors.error,
+                        ),
                         const SizedBox(width: 12),
-                        Text(l10n.delete,
-                            style: const TextStyle(color: Colors.red)),
+                        Text(
+                          l10n.delete,
+                          style: const TextStyle(color: Colors.red),
+                        ),
                       ],
                     ),
                   ),
@@ -378,8 +411,12 @@ class _AdminSemesterSettingsScreenState
           Row(
             children: [
               _buildStatusBadge(
-                semester.enrollmentOpen ? l10n.enrollmentOpen : l10n.enrollmentClosed,
-                semester.enrollmentOpen ? AdminColors.success : AdminColors.warning,
+                semester.enrollmentOpen
+                    ? l10n.enrollmentOpen
+                    : l10n.enrollmentClosed,
+                semester.enrollmentOpen
+                    ? AdminColors.success
+                    : AdminColors.warning,
                 isDark,
               ),
               const SizedBox(width: 8),
@@ -413,7 +450,11 @@ class _AdminSemesterSettingsScreenState
     );
   }
 
-  void _handleMenuAction(String action, _Semester semester, AppLocalizations l10n) {
+  void _handleMenuAction(
+    String action,
+    _Semester semester,
+    AppLocalizations l10n,
+  ) {
     switch (action) {
       case 'edit':
         _showEditSemesterDialog(context, l10n, semester);
@@ -433,7 +474,10 @@ class _AdminSemesterSettingsScreenState
   }
 
   void _showAddSemesterDialog(
-      BuildContext context, AppLocalizations l10n, bool isDark) {
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     final nameController = TextEditingController();
     DateTime? startDate;
     DateTime? endDate;
@@ -443,8 +487,9 @@ class _AdminSemesterSettingsScreenState
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           backgroundColor: AdminColors.getCardColor(isDark),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: Row(
             children: [
               Container(
@@ -453,7 +498,11 @@ class _AdminSemesterSettingsScreenState
                   gradient: AdminColors.primaryGradient,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.add_rounded, color: Colors.white, size: 20),
+                child: const Icon(
+                  Icons.add_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -517,7 +566,9 @@ class _AdminSemesterSettingsScreenState
               onPressed: () => Navigator.pop(context),
               child: Text(
                 l10n.cancel,
-                style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
+                style: TextStyle(
+                  color: AdminColors.getTextSecondaryColor(isDark),
+                ),
               ),
             ),
             ElevatedButton(
@@ -526,14 +577,16 @@ class _AdminSemesterSettingsScreenState
                     startDate != null &&
                     endDate != null) {
                   setState(() {
-                    _semesters.add(_Semester(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      name: nameController.text,
-                      startDate: startDate!,
-                      endDate: endDate!,
-                      isActive: false,
-                      enrollmentOpen: false,
-                    ));
+                    _semesters.add(
+                      _Semester(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        name: nameController.text,
+                        startDate: startDate!,
+                        endDate: endDate!,
+                        isActive: false,
+                        enrollmentOpen: false,
+                      ),
+                    );
                   });
                   Navigator.pop(context);
                   _showSnackBar(l10n.semesterAdded);
@@ -555,7 +608,10 @@ class _AdminSemesterSettingsScreenState
   }
 
   void _showEditSemesterDialog(
-      BuildContext context, AppLocalizations l10n, _Semester semester) {
+    BuildContext context,
+    AppLocalizations l10n,
+    _Semester semester,
+  ) {
     final isDark = context.read<ThemeBloc>().state.isDark;
     final nameController = TextEditingController(text: semester.name);
     DateTime startDate = semester.startDate;
@@ -567,8 +623,9 @@ class _AdminSemesterSettingsScreenState
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           backgroundColor: AdminColors.getCardColor(isDark),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: Row(
             children: [
               Container(
@@ -577,7 +634,11 @@ class _AdminSemesterSettingsScreenState
                   gradient: AdminColors.primaryGradient,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.edit_rounded, color: Colors.white, size: 20),
+                child: const Icon(
+                  Icons.edit_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -642,9 +703,12 @@ class _AdminSemesterSettingsScreenState
                     style: TextStyle(color: AdminColors.getTextColor(isDark)),
                   ),
                   subtitle: Text(
-                    enrollmentOpen ? l10n.enrollmentOpen : l10n.enrollmentClosed,
+                    enrollmentOpen
+                        ? l10n.enrollmentOpen
+                        : l10n.enrollmentClosed,
                     style: TextStyle(
-                        color: AdminColors.getTextSecondaryColor(isDark)),
+                      color: AdminColors.getTextSecondaryColor(isDark),
+                    ),
                   ),
                   activeColor: AdminColors.primary,
                   contentPadding: EdgeInsets.zero,
@@ -657,7 +721,9 @@ class _AdminSemesterSettingsScreenState
               onPressed: () => Navigator.pop(context),
               child: Text(
                 l10n.cancel,
-                style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
+                style: TextStyle(
+                  color: AdminColors.getTextSecondaryColor(isDark),
+                ),
               ),
             ),
             ElevatedButton(
@@ -687,7 +753,10 @@ class _AdminSemesterSettingsScreenState
   }
 
   void _showDeleteConfirmDialog(
-      BuildContext context, AppLocalizations l10n, _Semester semester) {
+    BuildContext context,
+    AppLocalizations l10n,
+    _Semester semester,
+  ) {
     final isDark = context.read<ThemeBloc>().state.isDark;
     showDialog(
       context: context,
@@ -716,7 +785,9 @@ class _AdminSemesterSettingsScreenState
             onPressed: () => Navigator.pop(context),
             child: Text(
               l10n.cancel,
-              style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
+              style: TextStyle(
+                color: AdminColors.getTextSecondaryColor(isDark),
+              ),
             ),
           ),
           ElevatedButton(

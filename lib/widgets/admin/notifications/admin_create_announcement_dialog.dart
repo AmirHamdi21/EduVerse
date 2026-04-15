@@ -24,7 +24,8 @@ class _AdminCreateAnnouncementDialogState
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   AnnouncementTarget _selectedTarget = AnnouncementTarget.all;
-  AdminNotificationPriority _selectedPriority = AdminNotificationPriority.normal;
+  AdminNotificationPriority _selectedPriority =
+      AdminNotificationPriority.normal;
   bool _isPinned = false;
 
   @override
@@ -115,10 +116,7 @@ class _AdminCreateAnnouncementDialogState
                         SizedBox(height: 2),
                         Text(
                           'Send a message to your audience',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.white70,
-                          ),
+                          style: TextStyle(fontSize: 12, color: Colors.white70),
                         ),
                       ],
                     ),
@@ -319,17 +317,11 @@ class _AdminCreateAnnouncementDialogState
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: AdminColors.primary,
-                width: 1.5,
-              ),
+              borderSide: BorderSide(color: AdminColors.primary, width: 1.5),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: AdminColors.error,
-                width: 1,
-              ),
+              borderSide: BorderSide(color: AdminColors.error, width: 1),
             ),
             contentPadding: const EdgeInsets.all(14),
           ),

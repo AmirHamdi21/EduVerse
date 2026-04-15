@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'announcement_colors.dart';
 
-enum AnnouncementFilterType {
-  all,
-  published,
-  scheduled,
-  draft,
-}
+enum AnnouncementFilterType { all, published, scheduled, draft }
 
 class AnnouncementFilterChips extends StatelessWidget {
   final AnnouncementFilterType selectedFilter;
@@ -70,7 +65,7 @@ class AnnouncementFilterChips extends StatelessWidget {
   ) {
     final isSelected = selectedFilter == filter;
     final count = counts[filter] ?? 0;
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -82,16 +77,14 @@ class AnnouncementFilterChips extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected
                 ? AnnouncementColors.primary
-                : (isDark 
-                    ? AnnouncementColors.darkCard
-                    : Colors.white),
+                : (isDark ? AnnouncementColors.darkCard : Colors.white),
             borderRadius: BorderRadius.circular(25),
             border: Border.all(
               color: isSelected
                   ? AnnouncementColors.primary
-                  : (isDark 
-                      ? AnnouncementColors.darkBorder.withOpacity(0.5)
-                      : AnnouncementColors.border),
+                  : (isDark
+                        ? AnnouncementColors.darkBorder.withOpacity(0.5)
+                        : AnnouncementColors.border),
               width: 1.5,
             ),
             boxShadow: isSelected
@@ -128,7 +121,10 @@ class AnnouncementFilterChips extends StatelessWidget {
               if (count > 0) ...[
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? Colors.white.withOpacity(0.2)
@@ -157,19 +153,19 @@ class AnnouncementFilterChips extends StatelessWidget {
   Color _getCountBgColor(AnnouncementFilterType filter) {
     switch (filter) {
       case AnnouncementFilterType.all:
-        return isDark 
+        return isDark
             ? AnnouncementColors.primary.withOpacity(0.2)
             : AnnouncementColors.primarySurface;
       case AnnouncementFilterType.published:
-        return isDark 
+        return isDark
             ? AnnouncementColors.published.withOpacity(0.2)
             : AnnouncementColors.publishedLight;
       case AnnouncementFilterType.scheduled:
-        return isDark 
+        return isDark
             ? AnnouncementColors.scheduled.withOpacity(0.2)
             : AnnouncementColors.scheduledLight;
       case AnnouncementFilterType.draft:
-        return isDark 
+        return isDark
             ? AnnouncementColors.draft.withOpacity(0.2)
             : AnnouncementColors.draftLight;
     }

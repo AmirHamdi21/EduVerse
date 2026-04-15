@@ -15,6 +15,10 @@ import 'package:edu_verse/bloc/grades/grades_cubit.dart';
 import 'package:edu_verse/bloc/labs/labs_cubit.dart';
 import 'package:edu_verse/bloc/materials/materials_bloc.dart';
 import 'package:edu_verse/bloc/course_structure/course_structure_bloc.dart';
+import 'package:edu_verse/bloc/admin_course_management/course_list_bloc.dart'
+    as admin_course_list;
+import 'package:edu_verse/bloc/admin_course_management/course_wizard_bloc.dart';
+import 'package:edu_verse/bloc/admin_course_management/admin_enrollment_bloc.dart';
 import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/bloc/notifications/notification_cubit.dart';
 import 'package:edu_verse/bloc/smart_study/smart_study_cubit.dart';
@@ -37,6 +41,7 @@ import 'package:edu_verse/services/api/assignment_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/api/lab_service.dart';
 import 'package:edu_verse/services/api/material_service.dart';
+import 'package:edu_verse/services/api/schedule_service.dart';
 import 'package:edu_verse/services/api/section_service.dart';
 import 'package:edu_verse/services/api/communication_service.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
@@ -95,7 +100,11 @@ class _MyAppState extends State<MyApp> {
   late CourseStructureBloc _courseStructureBloc;
   late TACoursesCubit _taCoursesCubit;
   late TALabsCubit _taLabsCubit;
+  late admin_course_list.CourseListBloc _adminCourseListBloc;
+  late CourseWizardBloc _courseWizardBloc;
+  late AdminEnrollmentBloc _adminEnrollmentBloc;
   late SectionService _sectionService;
+  late ScheduleService _scheduleService;
   late CourseService _courseService;
   late AssignmentService _assignmentService;
   late EnrollmentService _enrollmentService;
@@ -161,6 +170,7 @@ class _MyAppState extends State<MyApp> {
     _labService = LabService(coreApiClient: coreApiClient);
     _materialService = MaterialService(coreApiClient: coreApiClient);
     _sectionService = SectionService(coreApiClient: coreApiClient);
+    _scheduleService = ScheduleService(coreApiClient: coreApiClient);
     _communicationService = CommunicationService(coreApiClient: coreApiClient);
 
     _labsCubit = LabsCubit(
@@ -196,6 +206,24 @@ class _MyAppState extends State<MyApp> {
       assignmentService: _assignmentService,
     );
     _taLabsCubit = TALabsCubit(labService: _labService);
+
+    _adminCourseListBloc = admin_course_list.CourseListBloc(
+      courseService: _courseService,
+      sectionService: _sectionService,
+      scheduleService: _scheduleService,
+      enrollmentService: _enrollmentService,
+    );
+
+    _courseWizardBloc = CourseWizardBloc(
+      courseService: _courseService,
+      sectionService: _sectionService,
+      scheduleService: _scheduleService,
+      enrollmentService: _enrollmentService,
+    );
+
+    _adminEnrollmentBloc = AdminEnrollmentBloc(
+      enrollmentService: _enrollmentService,
+    );
 
     // Initialize theme and language from storage
     _initializeTheme();
@@ -235,6 +263,9 @@ class _MyAppState extends State<MyApp> {
     _courseStructureBloc.close();
     _taCoursesCubit.close();
     _taLabsCubit.close();
+    _adminCourseListBloc.close();
+    _courseWizardBloc.close();
+    _adminEnrollmentBloc.close();
     _sessionExpirySubscription?.cancel();
     super.dispose();
   }
@@ -266,6 +297,9 @@ class _MyAppState extends State<MyApp> {
         BlocProvider.value(value: _courseStructureBloc),
         BlocProvider.value(value: _taCoursesCubit),
         BlocProvider.value(value: _taLabsCubit),
+        BlocProvider.value(value: _adminCourseListBloc),
+        BlocProvider.value(value: _courseWizardBloc),
+        BlocProvider.value(value: _adminEnrollmentBloc),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {

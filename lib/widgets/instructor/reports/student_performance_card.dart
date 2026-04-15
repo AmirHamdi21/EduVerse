@@ -90,16 +90,13 @@ class StudentPerformanceCard extends StatelessWidget {
                     height: 44,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          gradeColor.withValues(alpha: 0.8),
-                          gradeColor,
-                        ],
+                        colors: [gradeColor.withValues(alpha: 0.8), gradeColor],
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Center(
                       child: Text(
-                        student.name.isNotEmpty 
+                        student.name.isNotEmpty
                             ? student.name.substring(0, 1).toUpperCase()
                             : '?',
                         style: const TextStyle(
@@ -131,9 +128,7 @@ class StudentPerformanceCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 6),
                             Icon(
-                              ReportsColors.getTrendIcon(
-                                student.trend.name,
-                              ),
+                              ReportsColors.getTrendIcon(student.trend.name),
                               size: 16,
                               color: ReportsColors.getTrendColor(
                                 student.trend.name,
@@ -187,10 +182,7 @@ class StudentPerformanceCard extends StatelessWidget {
               ),
             ),
             // Divider
-            Container(
-              height: 1,
-              color: ReportsColors.borderColor(isDark),
-            ),
+            Container(height: 1, color: ReportsColors.borderColor(isDark)),
             // Performance metrics
             Padding(
               padding: const EdgeInsets.all(16),
@@ -319,4 +311,3 @@ class StudentPerformanceCard extends StatelessWidget {
     );
   }
 }
-

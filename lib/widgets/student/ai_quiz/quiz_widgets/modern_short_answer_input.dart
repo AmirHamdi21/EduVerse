@@ -96,15 +96,13 @@ class _ModernShortAnswerInputState extends State<ModernShortAnswerInput>
                 : null,
             color: _isFocused
                 ? null
-                : (widget.isDark
-                    ? const Color(0xFF252D48)
-                    : Colors.white),
+                : (widget.isDark ? const Color(0xFF252D48) : Colors.white),
             border: Border.all(
               color: _isFocused
                   ? primaryColor
                   : (widget.isDark
-                      ? const Color(0xFF3A4456)
-                      : const Color(0xFFE5E7EB)),
+                        ? const Color(0xFF3A4456)
+                        : const Color(0xFFE5E7EB)),
               width: _isFocused ? 2 : 1,
             ),
             boxShadow: _isFocused
@@ -117,8 +115,9 @@ class _ModernShortAnswerInputState extends State<ModernShortAnswerInput>
                   ]
                 : [
                     BoxShadow(
-                      color: Colors.black
-                          .withOpacity(widget.isDark ? 0.2 : 0.04),
+                      color: Colors.black.withOpacity(
+                        widget.isDark ? 0.2 : 0.04,
+                      ),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -136,8 +135,8 @@ class _ModernShortAnswerInputState extends State<ModernShortAnswerInput>
                       color: _isFocused
                           ? primaryColor.withOpacity(0.3)
                           : (widget.isDark
-                              ? const Color(0xFF3A4456)
-                              : const Color(0xFFF3F4F6)),
+                                ? const Color(0xFF3A4456)
+                                : const Color(0xFFF3F4F6)),
                     ),
                   ),
                 ),
@@ -170,8 +169,8 @@ class _ModernShortAnswerInputState extends State<ModernShortAnswerInput>
                               color: _isFocused
                                   ? primaryColor
                                   : (widget.isDark
-                                      ? Colors.white
-                                      : const Color(0xFF1A1A2E)),
+                                        ? Colors.white
+                                        : const Color(0xFF1A1A2E)),
                               fontFamily: 'Arimo',
                             ),
                           ),
@@ -217,7 +216,7 @@ class _ModernShortAnswerInputState extends State<ModernShortAnswerInput>
                   ],
                 ),
               ),
-              
+
               // Text field
               Padding(
                 padding: EdgeInsets.all(responsive.p16),
@@ -256,7 +255,7 @@ class _ModernShortAnswerInputState extends State<ModernShortAnswerInput>
                   keyboardType: TextInputType.multiline,
                 ),
               ),
-              
+
               // Footer with tips
               Container(
                 padding: EdgeInsets.symmetric(

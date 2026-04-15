@@ -57,14 +57,7 @@ class CalendarEvent {
   }
 }
 
-enum EventType {
-  lecture,
-  lab,
-  assignment,
-  exam,
-  quiz,
-  personalTask,
-}
+enum EventType { lecture, lab, assignment, exam, quiz, personalTask }
 
 class AiReminder {
   final String id;
@@ -84,18 +77,9 @@ class AiReminder {
   });
 }
 
-enum ReminderType {
-  quiz,
-  missedSession,
-  deadline,
-  suggestion,
-}
+enum ReminderType { quiz, missedSession, deadline, suggestion }
 
-enum CalendarViewType {
-  month,
-  week,
-  day,
-}
+enum CalendarViewType { month, week, day }
 
 class EventFilter {
   final bool lectures;
@@ -171,8 +155,8 @@ class CalendarState extends Equatable {
     this.filter = const EventFilter(),
     this.isFilterVisible = false,
     this.isAddEventVisible = false,
-  })  : selectedDate = selectedDate ?? const _DefaultDate(),
-        focusedMonth = focusedMonth ?? const _DefaultDate();
+  }) : selectedDate = selectedDate ?? const _DefaultDate(),
+       focusedMonth = focusedMonth ?? const _DefaultDate();
 
   // Get filtered events
   List<CalendarEvent> get filteredEvents {
@@ -195,24 +179,29 @@ class CalendarState extends Equatable {
     return filteredEvents.where((event) {
       return event.date.isAfter(now.subtract(const Duration(days: 1))) &&
           event.date.isBefore(weekLater);
-    }).toList()
-      ..sort((a, b) => a.date.compareTo(b.date));
+    }).toList()..sort((a, b) => a.date.compareTo(b.date));
   }
 
   // Check if date has events
   bool hasEventsOnDate(DateTime date) {
-    return filteredEvents.any((event) =>
-        event.date.year == date.year &&
-        event.date.month == date.month &&
-        event.date.day == date.day);
+    return filteredEvents.any(
+      (event) =>
+          event.date.year == date.year &&
+          event.date.month == date.month &&
+          event.date.day == date.day,
+    );
   }
 
   // Get events for a specific date
   List<CalendarEvent> getEventsForDate(DateTime date) {
-    return filteredEvents.where((event) =>
-        event.date.year == date.year &&
-        event.date.month == date.month &&
-        event.date.day == date.day).toList();
+    return filteredEvents
+        .where(
+          (event) =>
+              event.date.year == date.year &&
+              event.date.month == date.month &&
+              event.date.day == date.day,
+        )
+        .toList();
   }
 
   CalendarState copyWith({
@@ -233,7 +222,9 @@ class CalendarState extends Equatable {
     return CalendarState(
       isLoading: isLoading ?? this.isLoading,
       error: clearError ? null : (error ?? this.error),
-      successMessage: clearSuccess ? null : (successMessage ?? this.successMessage),
+      successMessage: clearSuccess
+          ? null
+          : (successMessage ?? this.successMessage),
       events: events ?? this.events,
       aiReminders: aiReminders ?? this.aiReminders,
       selectedDate: selectedDate ?? this.selectedDate,
@@ -247,18 +238,18 @@ class CalendarState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isLoading,
-        error,
-        successMessage,
-        events,
-        aiReminders,
-        selectedDate,
-        focusedMonth,
-        viewType,
-        filter,
-        isFilterVisible,
-        isAddEventVisible,
-      ];
+    isLoading,
+    error,
+    successMessage,
+    events,
+    aiReminders,
+    selectedDate,
+    focusedMonth,
+    viewType,
+    filter,
+    isFilterVisible,
+    isAddEventVisible,
+  ];
 }
 
 // Helper class for default date

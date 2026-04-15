@@ -82,10 +82,7 @@ class VoiceToTextBloc extends Bloc<VoiceToTextEvent, VoiceToTextState> {
     });
   }
 
-  void _onChangeLanguage(
-    ChangeLanguage event,
-    Emitter<VoiceToTextState> emit,
-  ) {
+  void _onChangeLanguage(ChangeLanguage event, Emitter<VoiceToTextState> emit) {
     emit(state.copyWith(selectedLanguage: event.language));
   }
 
@@ -505,9 +502,9 @@ class VoiceToTextBloc extends Bloc<VoiceToTextEvent, VoiceToTextState> {
     Emitter<VoiceToTextState> emit,
   ) async {
     try {
-      final recording = state.recordings.where(
-        (r) => r.id == event.recordingId,
-      ).firstOrNull;
+      final recording = state.recordings
+          .where((r) => r.id == event.recordingId)
+          .firstOrNull;
 
       if (recording == null) {
         emit(state.copyWith(errorMessage: 'Recording not found'));

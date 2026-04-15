@@ -25,8 +25,8 @@ class ApiUsageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final successRate = totalRequests > 0 
-        ? (successfulRequests / totalRequests * 100).round() 
+    final successRate = totalRequests > 0
+        ? (successfulRequests / totalRequests * 100).round()
         : 100;
 
     return Container(
@@ -34,9 +34,7 @@ class ApiUsageCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,8 +117,8 @@ class ApiUsageCard extends StatelessWidget {
           Container(
             height: 120,
             decoration: BoxDecoration(
-              color: isDark 
-                  ? Colors.white.withValues(alpha: 0.05) 
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.05)
                   : Colors.grey.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -143,7 +141,8 @@ class ApiUsageCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: List.generate(12, (index) {
-                        final height = (0.3 + (index % 3) * 0.25 + (index / 12) * 0.3);
+                        final height =
+                            (0.3 + (index % 3) * 0.25 + (index / 12) * 0.3);
                         return Container(
                           width: 16,
                           height: 60 * height,
@@ -177,13 +176,20 @@ class ApiUsageCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          ...recentActivity.take(5).map((activity) => _buildActivityItem(activity, l10n)),
+          ...recentActivity
+              .take(5)
+              .map((activity) => _buildActivityItem(activity, l10n)),
         ],
       ),
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -223,7 +229,10 @@ class ApiUsageCard extends StatelessWidget {
     );
   }
 
-  Widget _buildActivityItem(Map<String, dynamic> activity, AppLocalizations l10n) {
+  Widget _buildActivityItem(
+    Map<String, dynamic> activity,
+    AppLocalizations l10n,
+  ) {
     final method = activity['method'] as String? ?? 'GET';
     final endpoint = activity['endpoint'] as String? ?? '/api/unknown';
     final status = activity['status'] as int? ?? 200;
@@ -235,8 +244,8 @@ class ApiUsageCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: isDark 
-            ? Colors.white.withValues(alpha: 0.03) 
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
             : Colors.grey.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(

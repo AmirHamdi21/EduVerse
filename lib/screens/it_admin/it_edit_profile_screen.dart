@@ -11,18 +11,18 @@ class ITEditProfileScreen extends StatefulWidget {
 
 class _ITEditProfileScreenState extends State<ITEditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // Controllers
   late TextEditingController _fullNameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   late TextEditingController _employeeIdController;
-  
+
   // Dropdown values
   String _department = 'IT Division';
   String _timezone = 'UTC-5 (EST)';
   String _language = 'English';
-  
+
   bool _isSaving = false;
   bool _hasChanges = false;
 
@@ -63,7 +63,7 @@ class _ITEditProfileScreenState extends State<ITEditProfileScreen> {
     _emailController = TextEditingController(text: 'michael.chen@eduverse.edu');
     _phoneController = TextEditingController(text: '+1 (555) 123-4567');
     _employeeIdController = TextEditingController(text: 'IT-2024-001');
-    
+
     // Add listeners for change detection
     _fullNameController.addListener(_onFieldChanged);
     _emailController.addListener(_onFieldChanged);
@@ -136,18 +136,14 @@ class _ITEditProfileScreenState extends State<ITEditProfileScreen> {
             ),
             content: Text(
               'You have unsaved changes. Are you sure you want to discard them?',
-              style: TextStyle(
-                color: ITColors.textSecondaryColor(isDark),
-              ),
+              style: TextStyle(color: ITColors.textSecondaryColor(isDark)),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
                 child: Text(
                   'Keep Editing',
-                  style: TextStyle(
-                    color: ITColors.textSecondaryColor(isDark),
-                  ),
+                  style: TextStyle(color: ITColors.textSecondaryColor(isDark)),
                 ),
               ),
               ElevatedButton(
@@ -175,8 +171,9 @@ class _ITEditProfileScreenState extends State<ITEditProfileScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? ITColors.darkBackground : ITColors.lightBackground,
+      backgroundColor: isDark
+          ? ITColors.darkBackground
+          : ITColors.lightBackground,
       appBar: AppBar(
         backgroundColor: isDark ? ITColors.darkCard : Colors.white,
         surfaceTintColor: Colors.transparent,
@@ -629,11 +626,11 @@ class _ITEditProfileScreenState extends State<ITEditProfileScreen> {
             filled: true,
             fillColor: enabled
                 ? (isDark
-                    ? Colors.white.withValues(alpha: 0.05)
-                    : Colors.grey.withValues(alpha: 0.05))
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.grey.withValues(alpha: 0.05))
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.02)
-                    : Colors.grey.withValues(alpha: 0.08)),
+                      ? Colors.white.withValues(alpha: 0.02)
+                      : Colors.grey.withValues(alpha: 0.08)),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,

@@ -53,10 +53,7 @@ class IntegrationStatsCard extends StatelessWidget {
                     ),
                     Text(
                       'Manage all your integrations',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
                     ),
                   ],
                 ),
@@ -100,10 +97,7 @@ class IntegrationStatsCard extends StatelessWidget {
             ),
             Text(
               label,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 11,
-              ),
+              style: const TextStyle(color: Colors.white70, fontSize: 11),
             ),
           ],
         ),

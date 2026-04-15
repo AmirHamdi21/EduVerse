@@ -72,11 +72,7 @@ class ITProfileQuickActions extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           child: Row(
             children: [
-              Icon(
-                icon,
-                size: 20,
-                color: ITColors.textSecondaryColor(isDark),
-              ),
+              Icon(icon, size: 20, color: ITColors.textSecondaryColor(isDark)),
               const SizedBox(width: 14),
               Expanded(
                 child: Text(

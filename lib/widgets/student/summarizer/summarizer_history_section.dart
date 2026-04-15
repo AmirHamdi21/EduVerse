@@ -7,10 +7,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class SummarizerHistorySection extends StatelessWidget {
   final bool isDark;
 
-  const SummarizerHistorySection({
-    super.key,
-    required this.isDark,
-  });
+  const SummarizerHistorySection({super.key, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -375,7 +372,9 @@ class _SummaryDetailSheetState extends State<_SummaryDetailSheet> {
       },
       builder: (context, state) {
         // Check if summary exists first
-        final summaryIndex = state.summaries.indexWhere((s) => s.id == widget.summaryId);
+        final summaryIndex = state.summaries.indexWhere(
+          (s) => s.id == widget.summaryId,
+        );
         if (summaryIndex == -1) {
           // Summary was deleted, return empty container
           return const SizedBox.shrink();
@@ -390,7 +389,9 @@ class _SummaryDetailSheetState extends State<_SummaryDetailSheet> {
             return Container(
               decoration: BoxDecoration(
                 color: widget.isDark ? const Color(0xFF101828) : Colors.white,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
               ),
               child: Column(
                 children: [
@@ -440,12 +441,17 @@ class _SummaryDetailSheetState extends State<_SummaryDetailSheet> {
                         ),
                         IconButton(
                           onPressed: () {
-                            context.read<SummarizerCubit>().toggleFavorite(summary.id);
+                            context.read<SummarizerCubit>().toggleFavorite(
+                              summary.id,
+                            );
                           },
                           icon: AnimatedSwitcher(
                             duration: const Duration(milliseconds: 200),
                             transitionBuilder: (child, animation) {
-                              return ScaleTransition(scale: animation, child: child);
+                              return ScaleTransition(
+                                scale: animation,
+                                child: child,
+                              );
                             },
                             child: Icon(
                               summary.isFavorite
@@ -455,13 +461,14 @@ class _SummaryDetailSheetState extends State<_SummaryDetailSheet> {
                               color: summary.isFavorite
                                   ? const Color(0xFFEF4444)
                                   : (widget.isDark
-                                      ? const Color(0xFF64748B)
-                                      : const Color(0xFF94A3B8)),
+                                        ? const Color(0xFF64748B)
+                                        : const Color(0xFF94A3B8)),
                             ),
                           ),
                         ),
                         IconButton(
-                          onPressed: () => _showDeleteConfirmation(context, l10n),
+                          onPressed: () =>
+                              _showDeleteConfirmation(context, l10n),
                           icon: Icon(
                             Icons.delete_outline_rounded,
                             color: widget.isDark
@@ -508,8 +515,18 @@ class _SummaryDetailSheetState extends State<_SummaryDetailSheet> {
 
   String _formatFullDate(DateTime date) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year} at ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
   }
@@ -758,12 +775,14 @@ class _DeleteConfirmDialogState extends State<_DeleteConfirmDialog>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -828,14 +847,19 @@ class _DeleteConfirmDialogState extends State<_DeleteConfirmDialog>
                               height: 88,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                                  colors: [
+                                    Color(0xFFEF4444),
+                                    Color(0xFFDC2626),
+                                  ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+                                    color: const Color(
+                                      0xFFEF4444,
+                                    ).withValues(alpha: 0.4),
                                     blurRadius: 24,
                                     offset: const Offset(0, 8),
                                   ),
@@ -856,7 +880,9 @@ class _DeleteConfirmDialogState extends State<_DeleteConfirmDialog>
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: widget.isDark ? Colors.white : const Color(0xFF1A1A2E),
+                          color: widget.isDark
+                              ? Colors.white
+                              : const Color(0xFF1A1A2E),
                         ),
                       ),
                     ],
@@ -876,7 +902,9 @@ class _DeleteConfirmDialogState extends State<_DeleteConfirmDialog>
                               : const Color(0xFFFEF2F2),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                            color: const Color(
+                              0xFFEF4444,
+                            ).withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -884,7 +912,9 @@ class _DeleteConfirmDialogState extends State<_DeleteConfirmDialog>
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+                                color: const Color(
+                                  0xFFEF4444,
+                                ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(
@@ -918,7 +948,9 @@ class _DeleteConfirmDialogState extends State<_DeleteConfirmDialog>
                             child: GestureDetector(
                               onTap: widget.onCancel,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   color: widget.isDark
                                       ? const Color(0xFF252D48)
@@ -963,15 +995,22 @@ class _DeleteConfirmDialogState extends State<_DeleteConfirmDialog>
                             child: GestureDetector(
                               onTap: widget.onDelete,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                                    colors: [
+                                      Color(0xFFEF4444),
+                                      Color(0xFFDC2626),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+                                      color: const Color(
+                                        0xFFEF4444,
+                                      ).withValues(alpha: 0.4),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),

@@ -76,10 +76,7 @@ class TACourseOverview extends Equatable {
 
 /// Sections & Labs sub-tab combined data.
 class TACourseSectionsLabs extends Equatable {
-  const TACourseSectionsLabs({
-    required this.sections,
-    required this.labs,
-  });
+  const TACourseSectionsLabs({required this.sections, required this.labs});
 
   final List<SectionModel> sections;
   final List<LabModel> labs;
@@ -131,8 +128,10 @@ class TACoursesState extends Equatable {
     this.structureData = const TASubTabInitial<dynamic>(),
     this.materialsData = const TASubTabInitial<List<CourseMaterialModel>>(),
     this.assignmentsData = const TASubTabInitial<List<AssignmentModel>>(),
-    this.pendingGradingData = const TASubTabInitial<List<AssignmentSubmissionModel>>(),
-    this.attendanceSummaryData = const TASubTabInitial<List<TALabAttendanceSummary>>(),
+    this.pendingGradingData =
+        const TASubTabInitial<List<AssignmentSubmissionModel>>(),
+    this.attendanceSummaryData =
+        const TASubTabInitial<List<TALabAttendanceSummary>>(),
     this.studentsData = const TASubTabInitial<List<dynamic>>(),
     this.sectionStudentCounts = const <int, int>{},
   });
@@ -187,7 +186,8 @@ class TACoursesState extends Equatable {
       materialsData: materialsData ?? this.materialsData,
       assignmentsData: assignmentsData ?? this.assignmentsData,
       pendingGradingData: pendingGradingData ?? this.pendingGradingData,
-      attendanceSummaryData: attendanceSummaryData ?? this.attendanceSummaryData,
+      attendanceSummaryData:
+          attendanceSummaryData ?? this.attendanceSummaryData,
       studentsData: studentsData ?? this.studentsData,
       sectionStudentCounts: sectionStudentCounts ?? this.sectionStudentCounts,
     );

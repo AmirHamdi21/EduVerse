@@ -7,12 +7,14 @@ class AddCourseProgressIndicator extends StatelessWidget {
   final bool isDark;
   final int currentStep;
   final ValueChanged<int> onStepTapped;
+  final bool allowDirectNavigation;
 
   const AddCourseProgressIndicator({
     super.key,
     required this.isDark,
     required this.currentStep,
     required this.onStepTapped,
+    this.allowDirectNavigation = true,
   });
 
   @override
@@ -29,7 +31,11 @@ class AddCourseProgressIndicator extends StatelessWidget {
 
           return Expanded(
             child: GestureDetector(
-              onTap: () => onStepTapped(index),
+              onTap: () {
+                if (allowDirectNavigation || index <= currentStep) {
+                  onStepTapped(index);
+                }
+              },
               child: Row(
                 children: [
                   Container(
@@ -42,8 +48,8 @@ class AddCourseProgressIndicator extends StatelessWidget {
                       color: isCompleted || isCurrent
                           ? null
                           : (isDark
-                              ? AdminColors.darkSurface
-                              : Colors.grey[200]),
+                                ? AdminColors.darkSurface
+                                : Colors.grey[200]),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -77,8 +83,9 @@ class AddCourseProgressIndicator extends StatelessWidget {
                                 ? AdminColors.primary
                                 : AdminColors.getTextSecondaryColor(isDark),
                             fontSize: 12,
-                            fontWeight:
-                                isCurrent ? FontWeight.w600 : FontWeight.normal,
+                            fontWeight: isCurrent
+                                ? FontWeight.w600
+                                : FontWeight.normal,
                           ),
                         ),
                       ],
@@ -96,8 +103,8 @@ class AddCourseProgressIndicator extends StatelessWidget {
                           color: isCompleted
                               ? null
                               : (isDark
-                                  ? AdminColors.darkSurface
-                                  : Colors.grey[200]),
+                                    ? AdminColors.darkSurface
+                                    : Colors.grey[200]),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),

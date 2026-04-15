@@ -9,7 +9,8 @@ class AttendanceSettingsSheet extends StatefulWidget {
   const AttendanceSettingsSheet({super.key, required this.isDark});
 
   @override
-  State<AttendanceSettingsSheet> createState() => _AttendanceSettingsSheetState();
+  State<AttendanceSettingsSheet> createState() =>
+      _AttendanceSettingsSheetState();
 }
 
 class _AttendanceSettingsSheetState extends State<AttendanceSettingsSheet> {
@@ -214,7 +215,11 @@ class _AttendanceSettingsSheetState extends State<AttendanceSettingsSheet> {
   }
 
   Widget _buildThresholdChip(
-      bool isDark, String label, bool isSelected, VoidCallback onTap) {
+    bool isDark,
+    String label,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(

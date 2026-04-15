@@ -17,7 +17,9 @@ class StudentAttendanceReportCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final attendanceColor = ReportsColors.getAttendanceColor(student.attendanceRate);
+    final attendanceColor = ReportsColors.getAttendanceColor(
+      student.attendanceRate,
+    );
 
     return GestureDetector(
       onTap: onTap,
@@ -153,4 +155,3 @@ class StudentAttendanceReportCard extends StatelessWidget {
     );
   }
 }
-

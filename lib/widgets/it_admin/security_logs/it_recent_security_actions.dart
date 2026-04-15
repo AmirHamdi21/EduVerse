@@ -60,7 +60,10 @@ class ITRecentSecurityActions extends StatelessWidget {
           ...actions.asMap().entries.map((entry) {
             final index = entry.key;
             final action = entry.value;
-            return _buildActionItem(action, isLast: index == actions.length - 1);
+            return _buildActionItem(
+              action,
+              isLast: index == actions.length - 1,
+            );
           }),
         ],
       ),

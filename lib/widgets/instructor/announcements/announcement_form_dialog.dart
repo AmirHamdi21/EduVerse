@@ -27,7 +27,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
   late TextEditingController _contentController;
   late AnimationController _animController;
   late Animation<double> _scaleAnimation;
-  
+
   bool _publishImmediately = true;
   DateTime? _scheduledDate;
   TimeOfDay? _scheduledTime;
@@ -47,18 +47,23 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.announcement?.title ?? '');
-    _contentController = TextEditingController(text: widget.announcement?.content ?? '');
-    
+    _titleController = TextEditingController(
+      text: widget.announcement?.title ?? '',
+    );
+    _contentController = TextEditingController(
+      text: widget.announcement?.content ?? '',
+    );
+
     if (widget.announcement != null) {
-      _publishImmediately = widget.announcement!.status != AnnouncementStatus.scheduled;
+      _publishImmediately =
+          widget.announcement!.status != AnnouncementStatus.scheduled;
       _scheduledDate = widget.announcement!.scheduledAt;
       if (_scheduledDate != null) {
         _scheduledTime = TimeOfDay.fromDateTime(_scheduledDate!);
       }
       _attachments = List.from(widget.announcement!.attachments);
     }
-    
+
     _animController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -80,8 +85,12 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
 
   void _validateAndSave({required bool asDraft}) {
     setState(() {
-      _titleError = _titleController.text.trim().isEmpty ? 'Title is required' : null;
-      _contentError = _contentController.text.trim().isEmpty ? 'Content is required' : null;
+      _titleError = _titleController.text.trim().isEmpty
+          ? 'Title is required'
+          : null;
+      _contentError = _contentController.text.trim().isEmpty
+          ? 'Content is required'
+          : null;
     });
 
     if (_titleError != null || _contentError != null) return;
@@ -91,7 +100,9 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
         SnackBar(
           content: const Text('Please select a schedule date'),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           backgroundColor: AnnouncementColors.scheduled,
         ),
       );
@@ -103,13 +114,17 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
     // Simulate API call
     Future.delayed(const Duration(milliseconds: 500), () {
       if (!mounted) return;
-      
+
       final status = asDraft
           ? AnnouncementStatus.draft
-          : (_publishImmediately ? AnnouncementStatus.published : AnnouncementStatus.scheduled);
+          : (_publishImmediately
+                ? AnnouncementStatus.published
+                : AnnouncementStatus.scheduled);
 
       DateTime? scheduledAt;
-      if (!_publishImmediately && _scheduledDate != null && _scheduledTime != null) {
+      if (!_publishImmediately &&
+          _scheduledDate != null &&
+          _scheduledTime != null) {
         scheduledAt = DateTime(
           _scheduledDate!.year,
           _scheduledDate!.month,
@@ -120,17 +135,23 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
       }
 
       final newAnnouncement = AnnouncementItem(
-        id: widget.announcement?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
+        id:
+            widget.announcement?.id ??
+            DateTime.now().millisecondsSinceEpoch.toString(),
         title: _titleController.text.trim(),
         content: _contentController.text.trim(),
         status: status,
         createdAt: widget.announcement?.createdAt ?? DateTime.now(),
         scheduledAt: scheduledAt,
-        publishedAt: status == AnnouncementStatus.published ? DateTime.now() : null,
+        publishedAt: status == AnnouncementStatus.published
+            ? DateTime.now()
+            : null,
         audience: _selectedAudience.split('(').first.trim(),
-        totalAudience: int.tryParse(
-          _selectedAudience.split('(').last.replaceAll(')', '').trim(),
-        ) ?? 120,
+        totalAudience:
+            int.tryParse(
+              _selectedAudience.split('(').last.replaceAll(')', '').trim(),
+            ) ??
+            120,
         readCount: widget.announcement?.readCount ?? 0,
         attachments: _attachments,
       );
@@ -142,7 +163,8 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
   Future<void> _selectDate() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _scheduledDate ?? DateTime.now().add(const Duration(days: 1)),
+      initialDate:
+          _scheduledDate ?? DateTime.now().add(const Duration(days: 1)),
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) {
@@ -151,8 +173,12 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
             colorScheme: ColorScheme.light(
               primary: AnnouncementColors.primary,
               onPrimary: Colors.white,
-              surface: widget.isDark ? AnnouncementColors.darkCard : Colors.white,
-              onSurface: widget.isDark ? Colors.white : AnnouncementColors.textPrimary,
+              surface: widget.isDark
+                  ? AnnouncementColors.darkCard
+                  : Colors.white,
+              onSurface: widget.isDark
+                  ? Colors.white
+                  : AnnouncementColors.textPrimary,
             ),
           ),
           child: child!,
@@ -174,8 +200,12 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
             colorScheme: ColorScheme.light(
               primary: AnnouncementColors.primary,
               onPrimary: Colors.white,
-              surface: widget.isDark ? AnnouncementColors.darkCard : Colors.white,
-              onSurface: widget.isDark ? Colors.white : AnnouncementColors.textPrimary,
+              surface: widget.isDark
+                  ? AnnouncementColors.darkCard
+                  : Colors.white,
+              onSurface: widget.isDark
+                  ? Colors.white
+                  : AnnouncementColors.textPrimary,
             ),
           ),
           child: child!,
@@ -231,7 +261,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
         _titleController.text = 'Important Update for Students';
       }
       if (_contentController.text.isEmpty) {
-        _contentController.text = 
+        _contentController.text =
             'Dear students,\n\nWe would like to inform you about an important update regarding your coursework. '
             'Please make sure to check your assignments and upcoming deadlines.\n\n'
             'If you have any questions, feel free to reach out during office hours.\n\n'
@@ -244,7 +274,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.announcement != null;
-    
+
     return ScaleTransition(
       scale: _scaleAnimation,
       child: Dialog(
@@ -304,7 +334,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: widget.isDark 
+            color: widget.isDark
                 ? AnnouncementColors.darkBorder.withOpacity(0.3)
                 : AnnouncementColors.border,
           ),
@@ -342,7 +372,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
               color: AnnouncementColors.textSecondaryColor(widget.isDark),
             ),
             style: IconButton.styleFrom(
-              backgroundColor: widget.isDark 
+              backgroundColor: widget.isDark
                   ? AnnouncementColors.darkSurface
                   : AnnouncementColors.surface,
             ),
@@ -377,13 +407,13 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
               color: AnnouncementColors.textTertiaryColor(widget.isDark),
             ),
             filled: true,
-            fillColor: widget.isDark 
+            fillColor: widget.isDark
                 ? AnnouncementColors.darkSurface.withOpacity(0.5)
                 : AnnouncementColors.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: _titleError != null 
+                color: _titleError != null
                     ? AnnouncementColors.delete
                     : AnnouncementColors.borderColor(widget.isDark),
               ),
@@ -391,7 +421,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: _titleError != null 
+                color: _titleError != null
                     ? AnnouncementColors.delete
                     : AnnouncementColors.borderColor(widget.isDark),
               ),
@@ -399,13 +429,16 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: _titleError != null 
+                color: _titleError != null
                     ? AnnouncementColors.delete
                     : AnnouncementColors.primary,
                 width: 2,
               ),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
             errorText: _titleError,
           ),
           onChanged: (_) {
@@ -489,13 +522,13 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
               color: AnnouncementColors.textTertiaryColor(widget.isDark),
             ),
             filled: true,
-            fillColor: widget.isDark 
+            fillColor: widget.isDark
                 ? AnnouncementColors.darkSurface.withOpacity(0.5)
                 : AnnouncementColors.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: _contentError != null 
+                color: _contentError != null
                     ? AnnouncementColors.delete
                     : AnnouncementColors.borderColor(widget.isDark),
               ),
@@ -503,7 +536,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: _contentError != null 
+                color: _contentError != null
                     ? AnnouncementColors.delete
                     : AnnouncementColors.borderColor(widget.isDark),
               ),
@@ -511,7 +544,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: _contentError != null 
+                color: _contentError != null
                     ? AnnouncementColors.delete
                     : AnnouncementColors.primary,
                 width: 2,
@@ -545,7 +578,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: widget.isDark 
+            color: widget.isDark
                 ? AnnouncementColors.darkSurface.withOpacity(0.5)
                 : AnnouncementColors.surface,
             borderRadius: BorderRadius.circular(14),
@@ -563,7 +596,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16),
               borderRadius: BorderRadius.circular(14),
-              dropdownColor: widget.isDark 
+              dropdownColor: widget.isDark
                   ? AnnouncementColors.darkCard
                   : Colors.white,
               items: _audienceOptions.map((option) {
@@ -594,12 +627,12 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: widget.isDark 
+        color: widget.isDark
             ? AnnouncementColors.darkSurface.withOpacity(0.3)
             : AnnouncementColors.primarySurface.withOpacity(0.5),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: widget.isDark 
+          color: widget.isDark
               ? AnnouncementColors.darkBorder.withOpacity(0.3)
               : AnnouncementColors.primary.withOpacity(0.2),
         ),
@@ -637,7 +670,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
 
   Widget _buildDateTimeRow() {
     final dateFormat = DateFormat('MMM d, yyyy');
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -655,7 +688,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
             Expanded(
               child: _buildDateTimePicker(
                 icon: Icons.calendar_today_rounded,
-                value: _scheduledDate != null 
+                value: _scheduledDate != null
                     ? dateFormat.format(_scheduledDate!)
                     : 'Select date',
                 onTap: _selectDate,
@@ -665,7 +698,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
             Expanded(
               child: _buildDateTimePicker(
                 icon: Icons.access_time_rounded,
-                value: _scheduledTime != null 
+                value: _scheduledTime != null
                     ? _scheduledTime!.format(context)
                     : 'Select time',
                 onTap: _selectTime,
@@ -690,9 +723,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           decoration: BoxDecoration(
-            color: widget.isDark 
-                ? AnnouncementColors.darkCard
-                : Colors.white,
+            color: widget.isDark ? AnnouncementColors.darkCard : Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: AnnouncementColors.borderColor(widget.isDark),
@@ -700,11 +731,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
           ),
           child: Row(
             children: [
-              Icon(
-                icon,
-                size: 18,
-                color: AnnouncementColors.primary,
-              ),
+              Icon(icon, size: 18, color: AnnouncementColors.primary),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -740,7 +767,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
           width: double.infinity,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: widget.isDark 
+            color: widget.isDark
                 ? AnnouncementColors.darkSurface.withOpacity(0.3)
                 : AnnouncementColors.primarySurface.withOpacity(0.3),
             borderRadius: BorderRadius.circular(16),
@@ -797,7 +824,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: widget.isDark 
+                color: widget.isDark
                     ? AnnouncementColors.darkSurface
                     : AnnouncementColors.surface,
                 borderRadius: BorderRadius.circular(10),
@@ -814,7 +841,9 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                     child: Text(
                       entry.value,
                       style: TextStyle(
-                        color: AnnouncementColors.textPrimaryColor(widget.isDark),
+                        color: AnnouncementColors.textPrimaryColor(
+                          widget.isDark,
+                        ),
                         fontSize: 13,
                       ),
                     ),
@@ -843,8 +872,10 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
       children: [
         Expanded(
           child: OutlinedButton.icon(
-            onPressed: _isLoading ? null : () => _validateAndSave(asDraft: true),
-            icon: _isLoading 
+            onPressed: _isLoading
+                ? null
+                : () => _validateAndSave(asDraft: true),
+            icon: _isLoading
                 ? const SizedBox(
                     width: 18,
                     height: 18,
@@ -853,7 +884,9 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                 : const Icon(Icons.save_outlined, size: 18),
             label: const Text('Save Draft'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: AnnouncementColors.textSecondaryColor(widget.isDark),
+              foregroundColor: AnnouncementColors.textSecondaryColor(
+                widget.isDark,
+              ),
               side: BorderSide(
                 color: AnnouncementColors.borderColor(widget.isDark),
               ),
@@ -868,8 +901,10 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
         Expanded(
           flex: 2,
           child: ElevatedButton.icon(
-            onPressed: _isLoading ? null : () => _validateAndSave(asDraft: false),
-            icon: _isLoading 
+            onPressed: _isLoading
+                ? null
+                : () => _validateAndSave(asDraft: false),
+            icon: _isLoading
                 ? const SizedBox(
                     width: 18,
                     height: 18,
@@ -879,7 +914,9 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                     ),
                   )
                 : Icon(
-                    _publishImmediately ? Icons.send_rounded : Icons.schedule_rounded,
+                    _publishImmediately
+                        ? Icons.send_rounded
+                        : Icons.schedule_rounded,
                     size: 18,
                   ),
             label: Text(_publishImmediately ? 'Publish' : 'Schedule'),

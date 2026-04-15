@@ -445,7 +445,8 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
                 onCourseChanged: (course) {
                   setState(() => _selectedDeadlineCourse = course);
                 },
-                onDeadlineTap: (deadline) => _handleDeadlineTap(deadline, isDark),
+                onDeadlineTap: (deadline) =>
+                    _handleDeadlineTap(deadline, isDark),
               ),
               const SizedBox(height: 12),
               TASessionComparisonCard(
@@ -523,15 +524,10 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
               ],
             ),
             const SizedBox(height: 20),
-            _buildActionButton(
-              'View Assignment',
-              Icons.assignment,
-              () {
-                Navigator.pop(context);
-                context.push('/ta/labs');
-              },
-              isDark,
-            ),
+            _buildActionButton('View Assignment', Icons.assignment, () {
+              Navigator.pop(context);
+              context.push('/ta/labs');
+            }, isDark),
             const SizedBox(height: 10),
             _buildActionButton(
               'Send Reminder to Students',
@@ -548,15 +544,10 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
               isDark,
             ),
             const SizedBox(height: 10),
-            _buildActionButton(
-              'View Submissions',
-              Icons.folder_open,
-              () {
-                Navigator.pop(context);
-                context.push('/ta/ai-grading');
-              },
-              isDark,
-            ),
+            _buildActionButton('View Submissions', Icons.folder_open, () {
+              Navigator.pop(context);
+              context.push('/ta/ai-grading');
+            }, isDark),
             const SizedBox(height: 20),
           ],
         ),
@@ -880,9 +871,24 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
         icon: Icons.people_alt_rounded,
         iconColor: TAColors.primary,
         children: [
-          _buildDetailItem('Average Attendance', '88%', TAColors.primary, isDark),
-          _buildDetailItem('Perfect Attendance', '15 students', TAColors.success, isDark),
-          _buildDetailItem('Low Attendance (<70%)', '5 students', TAColors.error, isDark),
+          _buildDetailItem(
+            'Average Attendance',
+            '88%',
+            TAColors.primary,
+            isDark,
+          ),
+          _buildDetailItem(
+            'Perfect Attendance',
+            '15 students',
+            TAColors.success,
+            isDark,
+          ),
+          _buildDetailItem(
+            'Low Attendance (<70%)',
+            '5 students',
+            TAColors.error,
+            isDark,
+          ),
           _buildDetailItem('This Week', '92%', TAColors.info, isDark),
           _buildDetailItem('Last Week', '85%', TAColors.warning, isDark),
           const SizedBox(height: 16),
@@ -903,7 +909,8 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
               Navigator.pop(context);
               _showActionDialog(
                 title: 'Send Reminder',
-                content: 'Send attendance reminder to students with low attendance?',
+                content:
+                    'Send attendance reminder to students with low attendance?',
                 onConfirm: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
@@ -932,31 +939,41 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
         icon: Icons.assignment_turned_in_rounded,
         iconColor: TAColors.success,
         children: [
-          _buildDetailItem('Total Submissions', '156', TAColors.primary, isDark),
-          _buildDetailItem('On-Time Submissions', '120 (77%)', TAColors.success, isDark),
-          _buildDetailItem('Late Submissions', '28 (18%)', TAColors.warning, isDark),
-          _buildDetailItem('Missing Submissions', '8 (5%)', TAColors.error, isDark),
+          _buildDetailItem(
+            'Total Submissions',
+            '156',
+            TAColors.primary,
+            isDark,
+          ),
+          _buildDetailItem(
+            'On-Time Submissions',
+            '120 (77%)',
+            TAColors.success,
+            isDark,
+          ),
+          _buildDetailItem(
+            'Late Submissions',
+            '28 (18%)',
+            TAColors.warning,
+            isDark,
+          ),
+          _buildDetailItem(
+            'Missing Submissions',
+            '8 (5%)',
+            TAColors.error,
+            isDark,
+          ),
           _buildDetailItem('Pending Review', '23', TAColors.info, isDark),
           const SizedBox(height: 16),
-          _buildActionButton(
-            'View All Submissions',
-            Icons.folder_open,
-            () {
-              Navigator.pop(context);
-              context.push('/ta/labs');
-            },
-            isDark,
-          ),
+          _buildActionButton('View All Submissions', Icons.folder_open, () {
+            Navigator.pop(context);
+            context.push('/ta/labs');
+          }, isDark),
           const SizedBox(height: 10),
-          _buildActionButton(
-            'Start AI Grading',
-            Icons.auto_fix_high,
-            () {
-              Navigator.pop(context);
-              context.push('/ta/ai-grading');
-            },
-            isDark,
-          ),
+          _buildActionButton('Start AI Grading', Icons.auto_fix_high, () {
+            Navigator.pop(context);
+            context.push('/ta/ai-grading');
+          }, isDark),
         ],
       ),
     );
@@ -973,31 +990,41 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
         icon: Icons.trending_up_rounded,
         iconColor: TAColors.info,
         children: [
-          _buildDetailItem('Discussion Posts', '45 this week', TAColors.primary, isDark),
-          _buildDetailItem('Forum Replies', '78 this week', TAColors.success, isDark),
+          _buildDetailItem(
+            'Discussion Posts',
+            '45 this week',
+            TAColors.primary,
+            isDark,
+          ),
+          _buildDetailItem(
+            'Forum Replies',
+            '78 this week',
+            TAColors.success,
+            isDark,
+          ),
           _buildDetailItem('Resource Downloads', '234', TAColors.info, isDark),
-          _buildDetailItem('Average Session Time', '42 min', TAColors.warning, isDark),
-          _buildDetailItem('Active Students', '48/52', TAColors.success, isDark),
+          _buildDetailItem(
+            'Average Session Time',
+            '42 min',
+            TAColors.warning,
+            isDark,
+          ),
+          _buildDetailItem(
+            'Active Students',
+            '48/52',
+            TAColors.success,
+            isDark,
+          ),
           const SizedBox(height: 16),
-          _buildActionButton(
-            'View Discussions',
-            Icons.forum,
-            () {
-              Navigator.pop(context);
-              context.push('/ta/discussions');
-            },
-            isDark,
-          ),
+          _buildActionButton('View Discussions', Icons.forum, () {
+            Navigator.pop(context);
+            context.push('/ta/discussions');
+          }, isDark),
           const SizedBox(height: 10),
-          _buildActionButton(
-            'View Student Inbox',
-            Icons.inbox,
-            () {
-              Navigator.pop(context);
-              context.push('/ta/student-inbox');
-            },
-            isDark,
-          ),
+          _buildActionButton('View Student Inbox', Icons.inbox, () {
+            Navigator.pop(context);
+            context.push('/ta/student-inbox');
+          }, isDark),
         ],
       ),
     );
@@ -1070,7 +1097,12 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
     );
   }
 
-  Widget _buildDetailItem(String label, String value, Color color, bool isDark) {
+  Widget _buildDetailItem(
+    String label,
+    String value,
+    Color color,
+    bool isDark,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -1106,7 +1138,12 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
     );
   }
 
-  Widget _buildActionButton(String label, IconData icon, VoidCallback onTap, bool isDark) {
+  Widget _buildActionButton(
+    String label,
+    IconData icon,
+    VoidCallback onTap,
+    bool isDark,
+  ) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -1117,9 +1154,7 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
           decoration: BoxDecoration(
             color: TAColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: TAColors.primary.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: TAColors.primary.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [

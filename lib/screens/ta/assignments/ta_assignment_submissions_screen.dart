@@ -14,10 +14,7 @@ import '../../../widgets/instructor/assignments/grading_panel.dart';
 class TAAssignmentSubmissionsScreen extends StatelessWidget {
   final AssignmentModel assignment;
 
-  const TAAssignmentSubmissionsScreen({
-    super.key,
-    required this.assignment,
-  });
+  const TAAssignmentSubmissionsScreen({super.key, required this.assignment});
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +72,7 @@ class _TASubmissionsBodyState extends State<_TASubmissionsBody> {
                 ),
               ],
             ),
-            iconTheme: IconThemeData(
-              color: TAColors.textPrimaryColor(isDark),
-            ),
+            iconTheme: IconThemeData(color: TAColors.textPrimaryColor(isDark)),
           ),
           body: BlocConsumer<TAAssignmentSubmissionsCubit, TASubsState>(
             // T025: Listener for grade success/error toasts
@@ -103,9 +98,7 @@ class _TASubmissionsBodyState extends State<_TASubmissionsBody> {
             builder: (context, state) {
               if (state is TASubsLoading || state is TASubsGrading) {
                 return Center(
-                  child: CircularProgressIndicator(
-                    color: TAColors.primary,
-                  ),
+                  child: CircularProgressIndicator(color: TAColors.primary),
                 );
               }
 
@@ -119,9 +112,7 @@ class _TASubmissionsBodyState extends State<_TASubmissionsBody> {
 
               // TASubsGradeSuccess/TASubsGradeError are transient — show spinner
               return Center(
-                child: CircularProgressIndicator(
-                  color: TAColors.primary,
-                ),
+                child: CircularProgressIndicator(color: TAColors.primary),
               );
             },
           ),
@@ -179,12 +170,10 @@ class _TASubmissionsBodyState extends State<_TASubmissionsBody> {
     );
   }
 
-  Widget _buildFilterBar(
-    bool isDark,
-    List<AssignmentSubmissionModel> allSubs,
-  ) {
-    final ungradedCount =
-        allSubs.where((s) => s.submissionStatus.value != 'graded').length;
+  Widget _buildFilterBar(bool isDark, List<AssignmentSubmissionModel> allSubs) {
+    final ungradedCount = allSubs
+        .where((s) => s.submissionStatus.value != 'graded')
+        .length;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -192,27 +181,53 @@ class _TASubmissionsBodyState extends State<_TASubmissionsBody> {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            _filterChip(isDark, 'All (${allSubs.length})', 'all',
-                _statusFilter, (v) => setState(() => _statusFilter = v)),
-            const SizedBox(width: 8),
-            _filterChip(isDark, 'Ungraded ($ungradedCount)', 'ungraded',
-                _statusFilter, (v) => setState(() => _statusFilter = v)),
+            _filterChip(
+              isDark,
+              'All (${allSubs.length})',
+              'all',
+              _statusFilter,
+              (v) => setState(() => _statusFilter = v),
+            ),
             const SizedBox(width: 8),
             _filterChip(
-                isDark,
-                'Graded (${allSubs.length - ungradedCount})',
-                'graded',
-                _statusFilter,
-                (v) => setState(() => _statusFilter = v)),
+              isDark,
+              'Ungraded ($ungradedCount)',
+              'ungraded',
+              _statusFilter,
+              (v) => setState(() => _statusFilter = v),
+            ),
+            const SizedBox(width: 8),
+            _filterChip(
+              isDark,
+              'Graded (${allSubs.length - ungradedCount})',
+              'graded',
+              _statusFilter,
+              (v) => setState(() => _statusFilter = v),
+            ),
             const SizedBox(width: 16),
-            _filterChip(isDark, 'All Time', 'all', _lateFilter,
-                (v) => setState(() => _lateFilter = v)),
+            _filterChip(
+              isDark,
+              'All Time',
+              'all',
+              _lateFilter,
+              (v) => setState(() => _lateFilter = v),
+            ),
             const SizedBox(width: 8),
-            _filterChip(isDark, 'Late', 'late', _lateFilter,
-                (v) => setState(() => _lateFilter = v)),
+            _filterChip(
+              isDark,
+              'Late',
+              'late',
+              _lateFilter,
+              (v) => setState(() => _lateFilter = v),
+            ),
             const SizedBox(width: 8),
-            _filterChip(isDark, 'On Time', 'ontime', _lateFilter,
-                (v) => setState(() => _lateFilter = v)),
+            _filterChip(
+              isDark,
+              'On Time',
+              'ontime',
+              _lateFilter,
+              (v) => setState(() => _lateFilter = v),
+            ),
           ],
         ),
       ),
@@ -457,9 +472,7 @@ class _TASubmissionsBodyState extends State<_TASubmissionsBody> {
           ),
           decoration: BoxDecoration(
             color: TAColors.cardColor(isDark),
-            borderRadius: const BorderRadius.vertical(
-              top: Radius.circular(20),
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -467,25 +480,22 @@ class _TASubmissionsBodyState extends State<_TASubmissionsBody> {
               maxScore: widget.assignment.maxGrade,
               initialScore: sub.score,
               initialFeedback: sub.feedback,
-              latePenaltyPercent:
-                  widget.assignment.latePenaltyPercent,
+              latePenaltyPercent: widget.assignment.latePenaltyPercent,
               daysLate: sub.isLate
                   ? widget.assignment.dueDate
-                          .difference(sub.submittedAt)
-                          .inDays
-                          .abs()
+                        .difference(sub.submittedAt)
+                        .inDays
+                        .abs()
                   : 0,
               onSave: (score, feedback) async {
                 Navigator.of(ctx).pop();
                 // Principle I: Route through cubit
-                context
-                    .read<TAAssignmentSubmissionsCubit>()
-                    .gradeSubmission(
-                      widget.assignment.assignmentId,
-                      sub.id,
-                      score,
-                      feedback,
-                    );
+                context.read<TAAssignmentSubmissionsCubit>().gradeSubmission(
+                  widget.assignment.assignmentId,
+                  sub.id,
+                  score,
+                  feedback,
+                );
               },
             ),
           ),
@@ -506,11 +516,7 @@ class _TASubmissionsBodyState extends State<_TASubmissionsBody> {
               color: TAColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(
-              Icons.inbox_rounded,
-              size: 48,
-              color: TAColors.primary,
-            ),
+            child: Icon(Icons.inbox_rounded, size: 48, color: TAColors.primary),
           ),
           const SizedBox(height: 16),
           Text(
@@ -543,9 +549,9 @@ class _TASubmissionsBodyState extends State<_TASubmissionsBody> {
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () {
-              context
-                  .read<TAAssignmentSubmissionsCubit>()
-                  .fetchSubmissions(widget.assignment.assignmentId);
+              context.read<TAAssignmentSubmissionsCubit>().fetchSubmissions(
+                widget.assignment.assignmentId,
+              );
             },
             icon: const Icon(Icons.refresh_rounded),
             label: const Text('Retry'),

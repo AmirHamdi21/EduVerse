@@ -12,7 +12,8 @@ class RewardsSheet extends StatefulWidget {
   State<RewardsSheet> createState() => _RewardsSheetState();
 }
 
-class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderStateMixin {
+class _RewardsSheetState extends State<RewardsSheet>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -140,7 +141,9 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
           indicatorSize: TabBarIndicatorSize.tab,
           indicatorPadding: const EdgeInsets.all(4),
           labelColor: Colors.white,
-          unselectedLabelColor: isDark ? Colors.white54 : const Color(0xFF6B7280),
+          unselectedLabelColor: isDark
+              ? Colors.white54
+              : const Color(0xFF6B7280),
           labelStyle: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
@@ -155,7 +158,11 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
     );
   }
 
-  Widget _buildRewardsTab(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildRewardsTab(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return BlocBuilder<GamificationCubit, GamificationState>(
       builder: (context, state) {
         if (state.rewards.isEmpty) {
@@ -171,7 +178,13 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
               reward: reward,
               userCoins: state.userCoins,
               onPurchase: () {
-                _showPurchaseDialog(context, reward, state.userCoins, l10n, isDark);
+                _showPurchaseDialog(
+                  context,
+                  reward,
+                  state.userCoins,
+                  l10n,
+                  isDark,
+                );
               },
             );
           },
@@ -180,7 +193,11 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
     );
   }
 
-  Widget _buildDailyRewardsTab(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildDailyRewardsTab(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -195,7 +212,11 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
     );
   }
 
-  Widget _buildDailyRewardCard(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildDailyRewardCard(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -203,7 +224,10 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? [const Color(0xFF2B7FFF).withValues(alpha: 0.2), const Color(0xFF8B5CF6).withValues(alpha: 0.2)]
+              ? [
+                  const Color(0xFF2B7FFF).withValues(alpha: 0.2),
+                  const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+                ]
               : [const Color(0xFFEFF6FF), const Color(0xFFF5F3FF)],
         ),
         borderRadius: BorderRadius.circular(20),
@@ -257,9 +281,21 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildRewardItem(Icons.monetization_on_rounded, '+50', l10n.coins, const Color(0xFFF59E0B), isDark),
+              _buildRewardItem(
+                Icons.monetization_on_rounded,
+                '+50',
+                l10n.coins,
+                const Color(0xFFF59E0B),
+                isDark,
+              ),
               const SizedBox(width: 24),
-              _buildRewardItem(Icons.stars_rounded, '+25', 'XP', const Color(0xFF8B5CF6), isDark),
+              _buildRewardItem(
+                Icons.stars_rounded,
+                '+25',
+                'XP',
+                const Color(0xFF8B5CF6),
+                isDark,
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -297,7 +333,13 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
     );
   }
 
-  Widget _buildRewardItem(IconData icon, String value, String label, Color color, bool isDark) {
+  Widget _buildRewardItem(
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+    bool isDark,
+  ) {
     return Column(
       children: [
         Container(
@@ -459,7 +501,9 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
                       l10n.completeWeeklyGoals,
                       style: TextStyle(
                         fontSize: 12,
-                        color: isDark ? Colors.white54 : const Color(0xFF6B7280),
+                        color: isDark
+                            ? Colors.white54
+                            : const Color(0xFF6B7280),
                       ),
                     ),
                   ],
@@ -475,7 +519,9 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
                 Container(
                   height: 8,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                    color: isDark
+                        ? const Color(0xFF374151)
+                        : const Color(0xFFE5E7EB),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -557,9 +603,7 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: isDark ? const Color(0xFF101828) : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -622,10 +666,7 @@ class _RewardsSheetState extends State<RewardsSheet> with SingleTickerProviderSt
               const SizedBox(height: 12),
               Text(
                 l10n.notEnoughCoins,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFFEF4444),
-                ),
+                style: const TextStyle(fontSize: 13, color: Color(0xFFEF4444)),
               ),
             ],
           ],
@@ -765,14 +806,21 @@ class _RewardCard extends StatelessWidget {
             GestureDetector(
               onTap: onPurchase,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   gradient: canAfford
                       ? const LinearGradient(
                           colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
                         )
                       : null,
-                  color: canAfford ? null : (isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB)),
+                  color: canAfford
+                      ? null
+                      : (isDark
+                            ? const Color(0xFF374151)
+                            : const Color(0xFFE5E7EB)),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -781,7 +829,9 @@ class _RewardCard extends StatelessWidget {
                     Icon(
                       Icons.monetization_on_rounded,
                       size: 16,
-                      color: canAfford ? Colors.white : (isDark ? Colors.white38 : const Color(0xFF9CA3AF)),
+                      color: canAfford
+                          ? Colors.white
+                          : (isDark ? Colors.white38 : const Color(0xFF9CA3AF)),
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -789,7 +839,11 @@ class _RewardCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: canAfford ? Colors.white : (isDark ? Colors.white38 : const Color(0xFF9CA3AF)),
+                        color: canAfford
+                            ? Colors.white
+                            : (isDark
+                                  ? Colors.white38
+                                  : const Color(0xFF9CA3AF)),
                       ),
                     ),
                   ],

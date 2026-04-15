@@ -29,9 +29,7 @@ class TACourseLabsTab extends StatelessWidget {
     }
 
     return Column(
-      children: labs
-          .map((lab) => _buildLabCard(lab, l10n, context))
-          .toList(),
+      children: labs.map((lab) => _buildLabCard(lab, l10n, context)).toList(),
     );
   }
 
@@ -83,7 +81,11 @@ class TACourseLabsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildLabCard(TALabItem lab, AppLocalizations l10n, BuildContext context) {
+  Widget _buildLabCard(
+    TALabItem lab,
+    AppLocalizations l10n,
+    BuildContext context,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -156,7 +158,9 @@ class TACourseLabsTab extends StatelessWidget {
 
   Widget _buildStatusBadge(TALabStatus status, AppLocalizations l10n) {
     final isActive = status == TALabStatus.active;
-    final color = isActive ? TAColors.success : TAColors.textSecondaryColor(isDark);
+    final color = isActive
+        ? TAColors.success
+        : TAColors.textSecondaryColor(isDark);
     final bgColor = isActive
         ? TAColors.success.withValues(alpha: 0.1)
         : TAColors.borderColor(isDark);
@@ -179,7 +183,12 @@ class TACourseLabsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressBar(double progress, int attended, int total, AppLocalizations l10n) {
+  Widget _buildProgressBar(
+    double progress,
+    int attended,
+    int total,
+    AppLocalizations l10n,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -261,18 +270,12 @@ class TACourseLabsTab extends StatelessWidget {
           decoration: BoxDecoration(
             color: TAColors.surfaceColor(isDark),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: TAColors.borderColor(isDark),
-            ),
+            border: Border.all(color: TAColors.borderColor(isDark)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                icon,
-                size: 16,
-                color: TAColors.textSecondaryColor(isDark),
-              ),
+              Icon(icon, size: 16, color: TAColors.textSecondaryColor(isDark)),
               const SizedBox(width: 6),
               Text(
                 label,

@@ -15,12 +15,28 @@ class FilterChipsBar extends StatelessWidget {
 
     final filters = [
       _FilterItem(FileFilterOption.all, l10n.all, Icons.folder_rounded),
-      _FilterItem(FileFilterOption.recent, l10n.recent, Icons.access_time_rounded),
-      _FilterItem(FileFilterOption.favorites, l10n.favorites, Icons.star_rounded),
+      _FilterItem(
+        FileFilterOption.recent,
+        l10n.recent,
+        Icons.access_time_rounded,
+      ),
+      _FilterItem(
+        FileFilterOption.favorites,
+        l10n.favorites,
+        Icons.star_rounded,
+      ),
       _FilterItem(FileFilterOption.pdf, 'PDF', Icons.picture_as_pdf_rounded),
-      _FilterItem(FileFilterOption.documents, l10n.documents, Icons.description_rounded),
+      _FilterItem(
+        FileFilterOption.documents,
+        l10n.documents,
+        Icons.description_rounded,
+      ),
       _FilterItem(FileFilterOption.images, l10n.images, Icons.image_rounded),
-      _FilterItem(FileFilterOption.videos, l10n.videos, Icons.video_library_rounded),
+      _FilterItem(
+        FileFilterOption.videos,
+        l10n.videos,
+        Icons.video_library_rounded,
+      ),
       _FilterItem(FileFilterOption.audio, l10n.audio, Icons.audiotrack_rounded),
     ];
 
@@ -55,20 +71,22 @@ class FilterChipsBar extends StatelessWidget {
                     color: isSelected
                         ? null
                         : isDark
-                            ? const Color(0xFF1E293B)
-                            : Colors.white,
+                        ? const Color(0xFF1E293B)
+                        : Colors.white,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: isSelected
                           ? Colors.transparent
                           : isDark
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFE2E8F0),
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFE2E8F0),
                     ),
                     boxShadow: isSelected
                         ? [
                             BoxShadow(
-                              color: const Color(0xFF3B82F6).withValues(alpha: 0.3),
+                              color: const Color(
+                                0xFF3B82F6,
+                              ).withValues(alpha: 0.3),
                               blurRadius: 8,
                               offset: const Offset(0, 2),
                             ),
@@ -84,8 +102,8 @@ class FilterChipsBar extends StatelessWidget {
                         color: isSelected
                             ? Colors.white
                             : isDark
-                                ? const Color(0xFF94A3B8)
-                                : const Color(0xFF64748B),
+                            ? const Color(0xFF94A3B8)
+                            : const Color(0xFF64748B),
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -96,8 +114,8 @@ class FilterChipsBar extends StatelessWidget {
                           color: isSelected
                               ? Colors.white
                               : isDark
-                                  ? Colors.white
-                                  : const Color(0xFF1E293B),
+                              ? Colors.white
+                              : const Color(0xFF1E293B),
                         ),
                       ),
                     ],

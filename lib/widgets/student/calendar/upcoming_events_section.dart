@@ -7,7 +7,7 @@ import 'package:edu_verse/generated_l10n/app_localizations.dart';
 
 class UpcomingEventsSection extends StatelessWidget {
   final void Function(CalendarEvent event)? onEventTap;
-  
+
   const UpcomingEventsSection({super.key, this.onEventTap});
 
   @override
@@ -18,8 +18,9 @@ class UpcomingEventsSection extends StatelessWidget {
 
     return BlocBuilder<CalendarCubit, CalendarState>(
       builder: (context, state) {
-        final hasEvents = state.upcomingEvents.isNotEmpty || state.events.isNotEmpty;
-        
+        final hasEvents =
+            state.upcomingEvents.isNotEmpty || state.events.isNotEmpty;
+
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Column(
@@ -30,29 +31,26 @@ class UpcomingEventsSection extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                  color: isDark
+                      ? const Color(0xFFF3F4F6)
+                      : const Color(0xFF101828),
                 ),
               ),
               const SizedBox(height: 16),
               // AI Reminders
-              ...state.aiReminders.map((reminder) => _buildAiReminderCard(
-                context,
-                reminder,
-                isDark,
-              )),
+              ...state.aiReminders.map(
+                (reminder) => _buildAiReminderCard(context, reminder, isDark),
+              ),
               // Upcoming Events
               if (state.upcomingEvents.isEmpty)
                 _buildEmptyState(context, l10n, isDark)
               else
-                ...state.upcomingEvents.take(5).map((event) => _buildEventCard(
-                  context,
-                  event,
-                  isDark,
-                )),
+                ...state.upcomingEvents
+                    .take(5)
+                    .map((event) => _buildEventCard(context, event, isDark)),
               const SizedBox(height: 16),
               // Only show "Add Your First Event" button when there are no events
-              if (!hasEvents)
-                _buildAddEventButton(context, l10n, isDark),
+              if (!hasEvents) _buildAddEventButton(context, l10n, isDark),
             ],
           ),
         );
@@ -78,12 +76,12 @@ class UpcomingEventsSection extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: gradientColors.map((c) => c.withValues(alpha: 0.15)).toList(),
+            colors: gradientColors
+                .map((c) => c.withValues(alpha: 0.15))
+                .toList(),
           ),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: gradientColors[0].withValues(alpha: 0.3),
-          ),
+          border: Border.all(color: gradientColors[0].withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
@@ -95,7 +93,9 @@ class UpcomingEventsSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
-                isQuizType ? Icons.psychology_rounded : Icons.notifications_active_rounded,
+                isQuizType
+                    ? Icons.psychology_rounded
+                    : Icons.notifications_active_rounded,
                 color: Colors.white,
                 size: 22,
               ),
@@ -128,7 +128,9 @@ class UpcomingEventsSection extends StatelessWidget {
                     reminder.message,
                     style: TextStyle(
                       fontSize: 14,
-                      color: isDark ? const Color(0xFFD1D5DC) : const Color(0xFF374151),
+                      color: isDark
+                          ? const Color(0xFFD1D5DC)
+                          : const Color(0xFF374151),
                       height: 1.4,
                     ),
                   ),
@@ -136,11 +138,14 @@ class UpcomingEventsSection extends StatelessWidget {
               ),
             ),
             GestureDetector(
-              onTap: () => context.read<CalendarCubit>().dismissReminder(reminder.id),
+              onTap: () =>
+                  context.read<CalendarCubit>().dismissReminder(reminder.id),
               child: Icon(
                 Icons.close_rounded,
                 size: 20,
-                color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                color: isDark
+                    ? const Color(0xFF6B7280)
+                    : const Color(0xFF9CA3AF),
               ),
             ),
           ],
@@ -149,7 +154,11 @@ class UpcomingEventsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildEventCard(BuildContext context, CalendarEvent event, bool isDark) {
+  Widget _buildEventCard(
+    BuildContext context,
+    CalendarEvent event,
+    bool isDark,
+  ) {
     return GestureDetector(
       onTap: () => onEventTap?.call(event),
       child: Padding(
@@ -190,7 +199,9 @@ class UpcomingEventsSection extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                        color: isDark
+                            ? const Color(0xFFF3F4F6)
+                            : const Color(0xFF101828),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -199,14 +210,18 @@ class UpcomingEventsSection extends StatelessWidget {
                         Icon(
                           Icons.access_time_rounded,
                           size: 14,
-                          color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                          color: isDark
+                              ? const Color(0xFF6B7280)
+                              : const Color(0xFF9CA3AF),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           event.time ?? 'All day',
                           style: TextStyle(
                             fontSize: 13,
-                            color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                            color: isDark
+                                ? const Color(0xFF99A1AF)
+                                : const Color(0xFF6B7280),
                           ),
                         ),
                         if (event.location != null) ...[
@@ -214,7 +229,9 @@ class UpcomingEventsSection extends StatelessWidget {
                           Icon(
                             Icons.location_on_outlined,
                             size: 14,
-                            color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                            color: isDark
+                                ? const Color(0xFF6B7280)
+                                : const Color(0xFF9CA3AF),
                           ),
                           const SizedBox(width: 4),
                           Expanded(
@@ -222,7 +239,9 @@ class UpcomingEventsSection extends StatelessWidget {
                               event.location!,
                               style: TextStyle(
                                 fontSize: 13,
-                                color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                                color: isDark
+                                    ? const Color(0xFF99A1AF)
+                                    : const Color(0xFF6B7280),
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
@@ -235,7 +254,10 @@ class UpcomingEventsSection extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: _getEventTypeColor(event.type).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
@@ -252,7 +274,11 @@ class UpcomingEventsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildEmptyState(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 32),
       child: Center(
@@ -268,7 +294,9 @@ class UpcomingEventsSection extends StatelessWidget {
               l10n.noUpcomingEvents,
               style: TextStyle(
                 fontSize: 15,
-                color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                color: isDark
+                    ? const Color(0xFF6B7280)
+                    : const Color(0xFF9CA3AF),
               ),
             ),
           ],
@@ -277,7 +305,11 @@ class UpcomingEventsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildAddEventButton(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildAddEventButton(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return GestureDetector(
       onTap: () {
         // This will be handled by the FAB, but we can also trigger from here
@@ -306,7 +338,9 @@ class UpcomingEventsSection extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                color: isDark
+                    ? const Color(0xFF99A1AF)
+                    : const Color(0xFF6B7280),
               ),
             ),
           ],

@@ -81,7 +81,9 @@ class StudyScheduleSection extends StatelessWidget {
                 Text(
                   l10n.smartStudyThisWeek,
                   style: TextStyle(
-                    color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                    color: isDark
+                        ? const Color(0xFFF3F4F6)
+                        : const Color(0xFF101828),
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),
@@ -90,7 +92,9 @@ class StudyScheduleSection extends StatelessWidget {
                 Text(
                   _getWeekRange(),
                   style: TextStyle(
-                    color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                    color: isDark
+                        ? const Color(0xFF99A1AF)
+                        : const Color(0xFF4A5565),
                     fontSize: 13,
                   ),
                 ),
@@ -185,13 +189,17 @@ class StudyScheduleSection extends StatelessWidget {
               Icon(
                 icon,
                 size: 18,
-                color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                color: isDark
+                    ? const Color(0xFF99A1AF)
+                    : const Color(0xFF4A5565),
               ),
               const SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyle(
-                  color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                  color: isDark
+                      ? const Color(0xFFF3F4F6)
+                      : const Color(0xFF101828),
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                 ),
@@ -260,7 +268,11 @@ class StudyScheduleSection extends StatelessWidget {
     );
   }
 
-  Widget _buildDaySection(BuildContext context, DaySchedule day, AppLocalizations l10n) {
+  Widget _buildDaySection(
+    BuildContext context,
+    DaySchedule day,
+    AppLocalizations l10n,
+  ) {
     final isToday = _isToday(day.date);
     final dayName = _getDayName(day.date);
 
@@ -277,7 +289,9 @@ class StudyScheduleSection extends StatelessWidget {
                 style: TextStyle(
                   color: isToday
                       ? const Color(0xFF2B7FFF)
-                      : (isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828)),
+                      : (isDark
+                            ? const Color(0xFFF3F4F6)
+                            : const Color(0xFF101828)),
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
                 ),
@@ -286,7 +300,9 @@ class StudyScheduleSection extends StatelessWidget {
               Text(
                 DateFormat('MMM d').format(day.date),
                 style: TextStyle(
-                  color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                  color: isDark
+                      ? const Color(0xFF99A1AF)
+                      : const Color(0xFF4A5565),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -294,7 +310,10 @@ class StudyScheduleSection extends StatelessWidget {
               if (isToday) ...[
                 const SizedBox(width: 10),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF2B7FFF).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
@@ -418,7 +437,9 @@ class StudyScheduleSection extends StatelessWidget {
 
   bool _isToday(DateTime date) {
     final now = DateTime.now();
-    return date.year == now.year && date.month == now.month && date.day == now.day;
+    return date.year == now.year &&
+        date.month == now.month &&
+        date.day == now.day;
   }
 }
 
@@ -453,12 +474,14 @@ class _SyncCalendarDialogState extends State<_SyncCalendarDialog>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -523,14 +546,19 @@ class _SyncCalendarDialogState extends State<_SyncCalendarDialog>
                               height: 88,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+                                  colors: [
+                                    Color(0xFF8B5CF6),
+                                    Color(0xFF7C3AED),
+                                  ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+                                    color: const Color(
+                                      0xFF8B5CF6,
+                                    ).withValues(alpha: 0.4),
                                     blurRadius: 24,
                                     offset: const Offset(0, 8),
                                   ),
@@ -551,7 +579,9 @@ class _SyncCalendarDialogState extends State<_SyncCalendarDialog>
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: widget.isDark ? Colors.white : const Color(0xFF1A1A2E),
+                          color: widget.isDark
+                              ? Colors.white
+                              : const Color(0xFF1A1A2E),
                         ),
                       ),
                     ],
@@ -571,7 +601,9 @@ class _SyncCalendarDialogState extends State<_SyncCalendarDialog>
                               : const Color(0xFFF5F3FF),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                            color: const Color(
+                              0xFF8B5CF6,
+                            ).withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -579,7 +611,9 @@ class _SyncCalendarDialogState extends State<_SyncCalendarDialog>
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
+                                color: const Color(
+                                  0xFF8B5CF6,
+                                ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(
@@ -613,7 +647,9 @@ class _SyncCalendarDialogState extends State<_SyncCalendarDialog>
                             child: GestureDetector(
                               onTap: widget.onCancel,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   color: widget.isDark
                                       ? const Color(0xFF252D48)
@@ -658,15 +694,22 @@ class _SyncCalendarDialogState extends State<_SyncCalendarDialog>
                             child: GestureDetector(
                               onTap: widget.onSync,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED)],
+                                    colors: [
+                                      Color(0xFF8B5CF6),
+                                      Color(0xFF7C3AED),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.4),
+                                      color: const Color(
+                                        0xFF8B5CF6,
+                                      ).withValues(alpha: 0.4),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),
@@ -740,12 +783,14 @@ class _ExportPdfDialogState extends State<_ExportPdfDialog>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -810,14 +855,19 @@ class _ExportPdfDialogState extends State<_ExportPdfDialog>
                               height: 88,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFF10B981), Color(0xFF059669)],
+                                  colors: [
+                                    Color(0xFF10B981),
+                                    Color(0xFF059669),
+                                  ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFF10B981).withValues(alpha: 0.4),
+                                    color: const Color(
+                                      0xFF10B981,
+                                    ).withValues(alpha: 0.4),
                                     blurRadius: 24,
                                     offset: const Offset(0, 8),
                                   ),
@@ -838,7 +888,9 @@ class _ExportPdfDialogState extends State<_ExportPdfDialog>
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: widget.isDark ? Colors.white : const Color(0xFF1A1A2E),
+                          color: widget.isDark
+                              ? Colors.white
+                              : const Color(0xFF1A1A2E),
                         ),
                       ),
                     ],
@@ -858,7 +910,9 @@ class _ExportPdfDialogState extends State<_ExportPdfDialog>
                               : const Color(0xFFECFDF5),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: const Color(0xFF10B981).withValues(alpha: 0.3),
+                            color: const Color(
+                              0xFF10B981,
+                            ).withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -866,7 +920,9 @@ class _ExportPdfDialogState extends State<_ExportPdfDialog>
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                                color: const Color(
+                                  0xFF10B981,
+                                ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(
@@ -900,7 +956,9 @@ class _ExportPdfDialogState extends State<_ExportPdfDialog>
                             child: GestureDetector(
                               onTap: widget.onCancel,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   color: widget.isDark
                                       ? const Color(0xFF252D48)
@@ -945,15 +1003,22 @@ class _ExportPdfDialogState extends State<_ExportPdfDialog>
                             child: GestureDetector(
                               onTap: widget.onExport,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFF10B981), Color(0xFF059669)],
+                                    colors: [
+                                      Color(0xFF10B981),
+                                      Color(0xFF059669),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF10B981).withValues(alpha: 0.4),
+                                      color: const Color(
+                                        0xFF10B981,
+                                      ).withValues(alpha: 0.4),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),

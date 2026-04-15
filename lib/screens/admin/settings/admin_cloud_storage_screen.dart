@@ -75,7 +75,9 @@ class _AdminCloudStorageScreenState extends State<AdminCloudStorageScreen> {
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -271,7 +273,9 @@ class _AdminCloudStorageScreenState extends State<AdminCloudStorageScreen> {
                     provider.name,
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
                       color: isSelected
                           ? provider.color
                           : AdminColors.getTextColor(isDark),
@@ -340,7 +344,11 @@ class _AdminCloudStorageScreenState extends State<AdminCloudStorageScreen> {
 
   Widget _buildStorageBreakdown(bool isDark, AppLocalizations l10n) {
     final items = [
-      _StorageItem(name: l10n.courseVideos, size: 28.5, color: AdminColors.primary),
+      _StorageItem(
+        name: l10n.courseVideos,
+        size: 28.5,
+        color: AdminColors.primary,
+      ),
       _StorageItem(name: l10n.documents, size: 8.2, color: AdminColors.success),
       _StorageItem(name: l10n.images, size: 5.1, color: AdminColors.warning),
       _StorageItem(name: l10n.userUploads, size: 3.9, color: AdminColors.error),
@@ -397,8 +405,7 @@ class _AdminCloudStorageScreenState extends State<AdminCloudStorageScreen> {
                   borderRadius: BorderRadius.circular(2),
                   child: LinearProgressIndicator(
                     value: percentage / 100,
-                    backgroundColor:
-                        AdminColors.getDividerColor(isDark),
+                    backgroundColor: AdminColors.getDividerColor(isDark),
                     valueColor: AlwaysStoppedAnimation<Color>(item.color),
                     minHeight: 4,
                   ),
@@ -481,8 +488,9 @@ class _AdminCloudStorageScreenState extends State<AdminCloudStorageScreen> {
           style: TextStyle(color: AdminColors.getTextColor(isDark)),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle:
-                TextStyle(color: AdminColors.getTextTertiaryColor(isDark)),
+            hintStyle: TextStyle(
+              color: AdminColors.getTextTertiaryColor(isDark),
+            ),
             prefixIcon: Icon(
               prefixIcon,
               color: AdminColors.getTextTertiaryColor(isDark),
@@ -496,8 +504,9 @@ class _AdminCloudStorageScreenState extends State<AdminCloudStorageScreen> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide:
-                  BorderSide(color: AdminColors.getDividerColor(isDark)),
+              borderSide: BorderSide(
+                color: AdminColors.getDividerColor(isDark),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -520,7 +529,8 @@ class _AdminCloudStorageScreenState extends State<AdminCloudStorageScreen> {
                 behavior: SnackBarBehavior.floating,
                 backgroundColor: AdminColors.success,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             );
           },
@@ -535,8 +545,9 @@ class _AdminCloudStorageScreenState extends State<AdminCloudStorageScreen> {
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             side: BorderSide(color: AdminColors.primary),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -548,7 +559,8 @@ class _AdminCloudStorageScreenState extends State<AdminCloudStorageScreen> {
                 behavior: SnackBarBehavior.floating,
                 backgroundColor: AdminColors.success,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             );
           },
@@ -556,8 +568,9 @@ class _AdminCloudStorageScreenState extends State<AdminCloudStorageScreen> {
             backgroundColor: AdminColors.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
           child: Text(
             l10n.saveConfiguration,
@@ -586,9 +599,5 @@ class _StorageItem {
   final double size;
   final Color color;
 
-  _StorageItem({
-    required this.name,
-    required this.size,
-    required this.color,
-  });
+  _StorageItem({required this.name, required this.size, required this.color});
 }

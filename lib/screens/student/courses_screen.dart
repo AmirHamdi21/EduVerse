@@ -42,23 +42,26 @@ class _CoursesScreenState extends State<CoursesScreen> {
   // ── In-memory filter/sort helpers (T012, T013) ───────────────────────
 
   List<CourseEnrollmentModel> _applyFilters(
-      List<CourseEnrollmentModel> enrollments) {
+    List<CourseEnrollmentModel> enrollments,
+  ) {
     var filtered = enrollments.where((enrollment) {
       // Search filter
-      final matchesSearch = _searchQuery.isEmpty ||
-          (enrollment.course?.courseName ?? '')
-              .toLowerCase()
-              .contains(_searchQuery.toLowerCase()) ||
-          (enrollment.course?.courseCode ?? '')
-              .toLowerCase()
-              .contains(_searchQuery.toLowerCase()) ||
-          (enrollment.course?.departmentName ?? '')
-              .toLowerCase()
-              .contains(_searchQuery.toLowerCase());
+      final matchesSearch =
+          _searchQuery.isEmpty ||
+          (enrollment.course?.courseName ?? '').toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          ) ||
+          (enrollment.course?.courseCode ?? '').toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          ) ||
+          (enrollment.course?.departmentName ?? '').toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
 
       // Status filter — backend sends 'enrolled' which maps to 'active' in UI
       final statusLower = enrollment.status.toLowerCase();
-      final matchesFilter = _selectedFilter == 'all' ||
+      final matchesFilter =
+          _selectedFilter == 'all' ||
           (_selectedFilter == 'completed' && statusLower == 'completed') ||
           (_selectedFilter == 'active' &&
               (statusLower == 'active' || statusLower == 'enrolled')) ||
@@ -76,24 +79,33 @@ class _CoursesScreenState extends State<CoursesScreen> {
   void _sortEnrollments(List<CourseEnrollmentModel> enrollments) {
     switch (_selectedSort) {
       case 'title_asc':
-        enrollments.sort((a, b) => (a.course?.courseName ?? '')
-            .compareTo(b.course?.courseName ?? ''));
+        enrollments.sort(
+          (a, b) => (a.course?.courseName ?? '').compareTo(
+            b.course?.courseName ?? '',
+          ),
+        );
         break;
       case 'title_desc':
-        enrollments.sort((a, b) => (b.course?.courseName ?? '')
-            .compareTo(a.course?.courseName ?? ''));
+        enrollments.sort(
+          (a, b) => (b.course?.courseName ?? '').compareTo(
+            a.course?.courseName ?? '',
+          ),
+        );
         break;
       case 'credits_desc':
         enrollments.sort(
-            (a, b) => (b.course?.credits ?? 0).compareTo(a.course?.credits ?? 0));
+          (a, b) => (b.course?.credits ?? 0).compareTo(a.course?.credits ?? 0),
+        );
         break;
       case 'credits_asc':
         enrollments.sort(
-            (a, b) => (a.course?.credits ?? 0).compareTo(b.course?.credits ?? 0));
+          (a, b) => (a.course?.credits ?? 0).compareTo(b.course?.credits ?? 0),
+        );
         break;
       case 'date':
-        enrollments
-            .sort((a, b) => b.enrollmentDate.compareTo(a.enrollmentDate));
+        enrollments.sort(
+          (a, b) => b.enrollmentDate.compareTo(a.enrollmentDate),
+        );
         break;
     }
   }
@@ -107,8 +119,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
         return Scaffold(
           floatingActionButton: const JoinCourseButton(),
-          backgroundColor:
-              isDark ? const Color(0xFF1A1A2E) : const Color(0xFFFAFAFA),
+          backgroundColor: isDark
+              ? const Color(0xFF1A1A2E)
+              : const Color(0xFFFAFAFA),
           // T007: BlocListener for offline Snackbar warnings
           body: BlocListener<CoursesBloc, CoursesState>(
             listener: (context, state) {
@@ -117,7 +130,11 @@ class _CoursesScreenState extends State<CoursesScreen> {
                   SnackBar(
                     content: Row(
                       children: [
-                        const Icon(Icons.wifi_off, color: Colors.white, size: 18),
+                        const Icon(
+                          Icons.wifi_off,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -132,15 +149,16 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     backgroundColor: const Color(0xFFEF4444),
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     duration: const Duration(seconds: 4),
                     action: SnackBarAction(
                       label: 'RETRY',
                       textColor: Colors.white,
                       onPressed: () {
-                        context
-                            .read<CoursesBloc>()
-                            .add(const StudentCoursesFetched());
+                        context.read<CoursesBloc>().add(
+                          const StudentCoursesFetched(),
+                        );
                       },
                     ),
                   ),
@@ -152,8 +170,11 @@ class _CoursesScreenState extends State<CoursesScreen> {
                   SnackBar(
                     content: const Row(
                       children: [
-                        Icon(Icons.cloud_off_outlined,
-                            color: Colors.white, size: 18),
+                        Icon(
+                          Icons.cloud_off_outlined,
+                          color: Colors.white,
+                          size: 18,
+                        ),
                         SizedBox(width: 8),
                         Text(
                           'Offline: Showing cached data',
@@ -164,7 +185,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     backgroundColor: const Color(0xFFF59E0B),
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     duration: const Duration(seconds: 3),
                   ),
                 );
@@ -194,8 +216,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                             ),
                             const SizedBox(height: 12),
                             Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 FilterButton(
                                   selectedFilter: _selectedFilter,
@@ -333,9 +354,23 @@ class _CoursesScreenState extends State<CoursesScreen> {
                   const SizedBox(height: 24),
                   Row(
                     children: [
-                      Expanded(child: _shimmerBox(double.infinity, 40, isDark, radius: 14)),
+                      Expanded(
+                        child: _shimmerBox(
+                          double.infinity,
+                          40,
+                          isDark,
+                          radius: 14,
+                        ),
+                      ),
                       const SizedBox(width: 12),
-                      Expanded(child: _shimmerBox(double.infinity, 40, isDark, radius: 14)),
+                      Expanded(
+                        child: _shimmerBox(
+                          double.infinity,
+                          40,
+                          isDark,
+                          radius: 14,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -347,8 +382,12 @@ class _CoursesScreenState extends State<CoursesScreen> {
     );
   }
 
-  Widget _shimmerBox(double width, double height, bool isDark,
-      {double radius = 8}) {
+  Widget _shimmerBox(
+    double width,
+    double height,
+    bool isDark, {
+    double radius = 8,
+  }) {
     return Container(
       width: width,
       height: height,
@@ -381,7 +420,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
               child: Icon(
                 Icons.school_outlined,
                 size: 40,
-                color: isDark ? Colors.white30 : const Color(0xFF155DFC).withOpacity(0.4),
+                color: isDark
+                    ? Colors.white30
+                    : const Color(0xFF155DFC).withOpacity(0.4),
               ),
             ),
             const SizedBox(height: 20),
@@ -471,7 +512,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
               child: Icon(
                 Icons.cloud_off_outlined,
                 size: 40,
-                color: isDark ? const Color(0xFFFCA5A5) : const Color(0xFFEF4444),
+                color: isDark
+                    ? const Color(0xFFFCA5A5)
+                    : const Color(0xFFEF4444),
               ),
             ),
             const SizedBox(height: 20),
@@ -502,9 +545,12 @@ class _CoursesScreenState extends State<CoursesScreen> {
                 backgroundColor: const Color(0xFF155DFC),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
             ),
           ],

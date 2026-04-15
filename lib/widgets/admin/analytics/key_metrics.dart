@@ -61,9 +61,7 @@ class KeyMetricsGrid extends StatelessWidget {
         decoration: BoxDecoration(
           color: AdminColors.getCardColor(isDark),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AdminColors.getCardBorderColor(isDark),
-          ),
+          border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -85,17 +83,19 @@ class KeyMetricsGrid extends StatelessWidget {
                     color: metric.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    metric.icon,
-                    size: 20,
-                    color: metric.color,
-                  ),
+                  child: Icon(metric.icon, size: 20, color: metric.color),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: (metric.isPositive ? AdminColors.success : AdminColors.error)
-                        .withValues(alpha: 0.1),
+                    color:
+                        (metric.isPositive
+                                ? AdminColors.success
+                                : AdminColors.error)
+                            .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Row(
@@ -169,7 +169,7 @@ class KeyMetricsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -207,9 +207,7 @@ class KeyMetricsRow extends StatelessWidget {
         decoration: BoxDecoration(
           color: AdminColors.getCardColor(isDark),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: AdminColors.getCardBorderColor(isDark),
-          ),
+          border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,11 +221,7 @@ class KeyMetricsRow extends StatelessWidget {
                     color: metric.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(
-                    metric.icon,
-                    size: 18,
-                    color: metric.color,
-                  ),
+                  child: Icon(metric.icon, size: 18, color: metric.color),
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.min,

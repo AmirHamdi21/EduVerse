@@ -77,7 +77,7 @@ class ITGovernanceRulesSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Role Restrictions
           _buildSubsectionHeader('Role Restrictions', Icons.people_rounded),
           const SizedBox(height: 12),
@@ -85,14 +85,16 @@ class ITGovernanceRulesSection extends StatelessWidget {
             'Enable AI for Students',
             'Allow students to access AI features',
             rules.enableAIForStudents,
-            (value) => onRulesChanged(rules.copyWith(enableAIForStudents: value)),
+            (value) =>
+                onRulesChanged(rules.copyWith(enableAIForStudents: value)),
             Icons.school_rounded,
           ),
           _buildCheckboxTile(
             'Enable AI for Instructors',
             'Allow instructors to access AI features',
             rules.enableAIForInstructors,
-            (value) => onRulesChanged(rules.copyWith(enableAIForInstructors: value)),
+            (value) =>
+                onRulesChanged(rules.copyWith(enableAIForInstructors: value)),
             Icons.cast_for_education_rounded,
           ),
           _buildCheckboxTile(
@@ -102,9 +104,9 @@ class ITGovernanceRulesSection extends StatelessWidget {
             (value) => onRulesChanged(rules.copyWith(enableAIForTA: value)),
             Icons.assistant_rounded,
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // AI Capabilities
           _buildSubsectionHeader('AI Capabilities', Icons.auto_awesome_rounded),
           const SizedBox(height: 12),
@@ -112,7 +114,9 @@ class ITGovernanceRulesSection extends StatelessWidget {
             'Analyze Student Submissions',
             'Use AI to analyze and provide feedback on submissions',
             rules.analyzeStudentSubmissions,
-            (value) => onRulesChanged(rules.copyWith(analyzeStudentSubmissions: value)),
+            (value) => onRulesChanged(
+              rules.copyWith(analyzeStudentSubmissions: value),
+            ),
             Icons.analytics_rounded,
           ),
           const SizedBox(height: 16),
@@ -122,11 +126,13 @@ class ITGovernanceRulesSection extends StatelessWidget {
             rules.maxResponseLength.toDouble(),
             512,
             8192,
-            (value) => onRulesChanged(rules.copyWith(maxResponseLength: value.round())),
+            (value) => onRulesChanged(
+              rules.copyWith(maxResponseLength: value.round()),
+            ),
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // Compliance & Privacy
           _buildSubsectionHeader('Compliance & Privacy', Icons.shield_rounded),
           const SizedBox(height: 12),
@@ -141,14 +147,16 @@ class ITGovernanceRulesSection extends StatelessWidget {
             'Enable Inappropriate Content Filters',
             'Block inappropriate content in AI responses',
             rules.enableContentFilters,
-            (value) => onRulesChanged(rules.copyWith(enableContentFilters: value)),
+            (value) =>
+                onRulesChanged(rules.copyWith(enableContentFilters: value)),
             Icons.filter_alt_rounded,
           ),
           _buildCheckboxTile(
             'Block Sensitive Topics',
             'Prevent AI from discussing sensitive topics',
             rules.blockSensitiveTopics,
-            (value) => onRulesChanged(rules.copyWith(blockSensitiveTopics: value)),
+            (value) =>
+                onRulesChanged(rules.copyWith(blockSensitiveTopics: value)),
             Icons.block_rounded,
           ),
         ],
@@ -159,11 +167,7 @@ class ITGovernanceRulesSection extends StatelessWidget {
   Widget _buildSubsectionHeader(String title, IconData icon) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 18,
-          color: ITColors.textSecondaryColor(isDark),
-        ),
+        Icon(icon, size: 18, color: ITColors.textSecondaryColor(isDark)),
         const SizedBox(width: 8),
         Text(
           title,
@@ -208,12 +212,16 @@ class ITGovernanceRulesSection extends StatelessWidget {
                     color: value
                         ? ITColors.primary
                         : (isDark
-                            ? Colors.white.withValues(alpha: 0.1)
-                            : Colors.grey.withValues(alpha: 0.2)),
+                              ? Colors.white.withValues(alpha: 0.1)
+                              : Colors.grey.withValues(alpha: 0.2)),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: value
-                      ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
+                      ? const Icon(
+                          Icons.check_rounded,
+                          size: 16,
+                          color: Colors.white,
+                        )
                       : null,
                 ),
                 const SizedBox(width: 12),
@@ -286,7 +294,10 @@ class ITGovernanceRulesSection extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: ITColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),

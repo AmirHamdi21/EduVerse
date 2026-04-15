@@ -64,10 +64,7 @@ class CourseActionButtons extends StatelessWidget {
           height: 48,
           decoration: BoxDecoration(
             color: bgColor,
-            border: Border.all(
-              color: const Color(0xFF155DFC),
-              width: 1.5,
-            ),
+            border: Border.all(color: const Color(0xFF155DFC), width: 1.5),
             borderRadius: BorderRadius.circular(14),
           ),
           child: Material(
@@ -78,11 +75,7 @@ class CourseActionButtons extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.chat_bubble_outline,
-                    color: textColor,
-                    size: 18,
-                  ),
+                  Icon(Icons.chat_bubble_outline, color: textColor, size: 18),
                   const SizedBox(width: 8),
                   Text(
                     'Join Course Chat',

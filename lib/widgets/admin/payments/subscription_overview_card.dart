@@ -77,7 +77,9 @@ class SubscriptionOverviewCard extends StatelessWidget {
                       l10n.manageSubscriptions,
                       style: TextStyle(
                         fontSize: 13,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -189,7 +191,9 @@ class SubscriptionOverviewCard extends StatelessWidget {
                   label,
                   style: TextStyle(
                     fontSize: 11,
-                    color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                    color: AdminColors.getTextColor(
+                      isDark,
+                    ).withValues(alpha: 0.6),
                   ),
                 ),
               ],

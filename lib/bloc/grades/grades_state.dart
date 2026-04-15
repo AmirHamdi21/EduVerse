@@ -7,11 +7,16 @@ enum GradesFilter { all, excellent, good, average, poor }
 extension GradesFilterExtension on GradesFilter {
   String get label {
     switch (this) {
-      case GradesFilter.all: return 'All';
-      case GradesFilter.excellent: return 'Excellent (A)';
-      case GradesFilter.good: return 'Good (B)';
-      case GradesFilter.average: return 'Average (C)';
-      case GradesFilter.poor: return 'Below Average';
+      case GradesFilter.all:
+        return 'All';
+      case GradesFilter.excellent:
+        return 'Excellent (A)';
+      case GradesFilter.good:
+        return 'Good (B)';
+      case GradesFilter.average:
+        return 'Average (C)';
+      case GradesFilter.poor:
+        return 'Below Average';
     }
   }
 
@@ -37,10 +42,14 @@ enum GradesSortBy { name, grade, credits, recent }
 extension GradesSortByExtension on GradesSortBy {
   String get label {
     switch (this) {
-      case GradesSortBy.name: return 'Name';
-      case GradesSortBy.grade: return 'Grade';
-      case GradesSortBy.credits: return 'Credits';
-      case GradesSortBy.recent: return 'Recent';
+      case GradesSortBy.name:
+        return 'Name';
+      case GradesSortBy.grade:
+        return 'Grade';
+      case GradesSortBy.credits:
+        return 'Credits';
+      case GradesSortBy.recent:
+        return 'Recent';
     }
   }
 }
@@ -107,10 +116,14 @@ class GradesState extends Equatable {
     // Apply search filter
     if (searchQuery.isNotEmpty) {
       final query = searchQuery.toLowerCase();
-      result = result.where((c) =>
-          c.courseName.toLowerCase().contains(query) ||
-          c.courseCode.toLowerCase().contains(query) ||
-          c.instructor.toLowerCase().contains(query)).toList();
+      result = result
+          .where(
+            (c) =>
+                c.courseName.toLowerCase().contains(query) ||
+                c.courseCode.toLowerCase().contains(query) ||
+                c.instructor.toLowerCase().contains(query),
+          )
+          .toList();
     }
 
     // Apply grade filter
@@ -130,10 +143,12 @@ class GradesState extends Equatable {
           comparison = b.creditHours.compareTo(a.creditHours);
           break;
         case GradesSortBy.recent:
-          final aDate = a.assessments.isNotEmpty && a.assessments.last.gradedDate != null
+          final aDate =
+              a.assessments.isNotEmpty && a.assessments.last.gradedDate != null
               ? a.assessments.last.gradedDate!
               : DateTime(2000);
-          final bDate = b.assessments.isNotEmpty && b.assessments.last.gradedDate != null
+          final bDate =
+              b.assessments.isNotEmpty && b.assessments.last.gradedDate != null
               ? b.assessments.last.gradedDate!
               : DateTime(2000);
           comparison = bDate.compareTo(aDate);
@@ -158,26 +173,27 @@ class GradesState extends Equatable {
   int get allCount => courses.length;
   int get inProgressCount => courses.where((c) => c.pendingCount > 0).length;
   int get completedCount => courses.where((c) => c.pendingCount == 0).length;
-  int get needAttentionCount => courses.where((c) => c.currentPercentage < 70).length;
+  int get needAttentionCount =>
+      courses.where((c) => c.currentPercentage < 70).length;
 
   /// Calculate GPA for selected semester
   double get semesterGPA {
     final semesterCourses = selectedSemesterId != null
         ? courses.where((c) => c.semesterId == selectedSemesterId).toList()
         : courses;
-    
+
     if (semesterCourses.isEmpty) return 0;
-    
+
     double totalPoints = 0;
     int totalCredits = 0;
-    
+
     for (final course in semesterCourses) {
       if (course.gradedCount > 0) {
         totalPoints += course.currentGrade.gpa * course.creditHours;
         totalCredits += course.creditHours;
       }
     }
-    
+
     return totalCredits > 0 ? totalPoints / totalCredits : 0;
   }
 
@@ -202,7 +218,9 @@ class GradesState extends Equatable {
     return GradesState(
       courses: courses ?? this.courses,
       semesters: semesters ?? this.semesters,
-      selectedSemesterId: clearSemester ? null : (selectedSemesterId ?? this.selectedSemesterId),
+      selectedSemesterId: clearSemester
+          ? null
+          : (selectedSemesterId ?? this.selectedSemesterId),
       filter: filter ?? this.filter,
       sortBy: sortBy ?? this.sortBy,
       sortAscending: sortAscending ?? this.sortAscending,
@@ -219,19 +237,19 @@ class GradesState extends Equatable {
 
   @override
   List<Object?> get props => [
-        courses,
-        semesters,
-        selectedSemesterId,
-        filter,
-        sortBy,
-        sortAscending,
-        viewMode,
-        searchQuery,
-        isLoading,
-        errorMessage,
-        statistics,
-        gradeTrend,
-        selectedTabIndex,
-        isGeneratingPdf,
-      ];
+    courses,
+    semesters,
+    selectedSemesterId,
+    filter,
+    sortBy,
+    sortAscending,
+    viewMode,
+    searchQuery,
+    isLoading,
+    errorMessage,
+    statistics,
+    gradeTrend,
+    selectedTabIndex,
+    isGeneratingPdf,
+  ];
 }

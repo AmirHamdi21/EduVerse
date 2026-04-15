@@ -57,11 +57,7 @@ class AdminSettingsSection extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: Icon(
-                    icon,
-                    size: 18,
-                    color: Colors.white,
-                  ),
+                  child: Icon(icon, size: 18, color: Colors.white),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -75,7 +71,10 @@ class AdminSettingsSection extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AdminColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -93,10 +92,7 @@ class AdminSettingsSection extends StatelessWidget {
             ),
           ),
 
-          Divider(
-            color: AdminColors.getDividerColor(isDark),
-            height: 1,
-          ),
+          Divider(color: AdminColors.getDividerColor(isDark), height: 1),
 
           // Items
           ...items.asMap().entries.map((entry) {
@@ -106,10 +102,7 @@ class AdminSettingsSection extends StatelessWidget {
 
             return Column(
               children: [
-                _AdminSettingsItemTile(
-                  item: item,
-                  isDark: isDark,
-                ),
+                _AdminSettingsItemTile(item: item, isDark: isDark),
                 if (!isLast)
                   Divider(
                     color: AdminColors.getDividerColor(isDark),
@@ -153,10 +146,7 @@ class _AdminSettingsItemTile extends StatelessWidget {
   final AdminSettingsItem item;
   final bool isDark;
 
-  const _AdminSettingsItemTile({
-    required this.item,
-    required this.isDark,
-  });
+  const _AdminSettingsItemTile({required this.item, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -181,15 +171,11 @@ class _AdminSettingsItemTile extends StatelessWidget {
                 color: item.isDestructive
                     ? AdminColors.error.withValues(alpha: 0.1)
                     : (isDark
-                        ? AdminColors.darkBackground
-                        : AdminColors.lightBackground),
+                          ? AdminColors.darkBackground
+                          : AdminColors.lightBackground),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                item.icon,
-                size: 18,
-                color: iconColor,
-              ),
+              child: Icon(item.icon, size: 18, color: iconColor),
             ),
             const SizedBox(width: 14),
             Expanded(

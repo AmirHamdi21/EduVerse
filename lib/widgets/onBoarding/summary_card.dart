@@ -32,8 +32,12 @@ class SummaryCard extends StatelessWidget {
                   AppTheme.onBoardingbackgroundCyan,
                 ],
               );
-        final borderColor = isDark ? AppTheme.onBoardingcyan : AppTheme.onBoardingborderBlue;
-        final textColor = isDark ? AppTheme.darkTextSecondary : AppTheme.onBoardingtextMedium;
+        final borderColor = isDark
+            ? AppTheme.onBoardingcyan
+            : AppTheme.onBoardingborderBlue;
+        final textColor = isDark
+            ? AppTheme.darkTextSecondary
+            : AppTheme.onBoardingtextMedium;
 
         return Container(
           padding: EdgeInsets.all(responsive.p20),

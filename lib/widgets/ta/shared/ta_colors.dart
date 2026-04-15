@@ -84,7 +84,8 @@ class TAColors {
 
   // Theme-aware color getters
   static Color background(bool isDark) => isDark ? darkBg : lightBackground;
-  static Color scaffoldColor(bool isDark) => isDark ? darkBackground : lightBackground;
+  static Color scaffoldColor(bool isDark) =>
+      isDark ? darkBackground : lightBackground;
   static Color cardColor(bool isDark) => isDark ? darkCard : card;
   static Color surfaceColor(bool isDark) => isDark ? darkSurface : surface;
   static Color borderColor(bool isDark) => isDark ? darkBorder : border;

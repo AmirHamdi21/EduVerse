@@ -34,8 +34,8 @@ class ChatInputBar extends StatelessWidget {
         left: 16,
         right: 16,
         top: 12,
-        bottom: MediaQuery.of(context).viewInsets.bottom > 0 
-            ? 12 
+        bottom: MediaQuery.of(context).viewInsets.bottom > 0
+            ? 12
             : MediaQuery.of(context).padding.bottom + 12,
       ),
       decoration: BoxDecoration(
@@ -197,11 +197,7 @@ class ChatInputBar extends StatelessWidget {
                   valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                 ),
               )
-            : const Icon(
-                Icons.send_rounded,
-                size: 20,
-                color: Colors.white,
-              ),
+            : const Icon(Icons.send_rounded, size: 20, color: Colors.white),
       ),
     );
   }

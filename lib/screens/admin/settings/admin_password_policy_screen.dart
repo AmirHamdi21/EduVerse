@@ -43,7 +43,9 @@ class _AdminPasswordPolicyScreenState extends State<AdminPasswordPolicyScreen> {
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -122,10 +124,7 @@ class _AdminPasswordPolicyScreenState extends State<AdminPasswordPolicyScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            color.withValues(alpha: 0.2),
-            color.withValues(alpha: 0.1),
-          ],
+          colors: [color.withValues(alpha: 0.2), color.withValues(alpha: 0.1)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -169,8 +168,10 @@ class _AdminPasswordPolicyScreenState extends State<AdminPasswordPolicyScreen> {
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: color,
                   borderRadius: BorderRadius.circular(20),
@@ -201,7 +202,10 @@ class _AdminPasswordPolicyScreenState extends State<AdminPasswordPolicyScreen> {
   }
 
   Widget _buildComplexitySection(
-      bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return _buildSection(
       isDark: isDark,
       title: l10n.passwordComplexity,
@@ -254,7 +258,10 @@ class _AdminPasswordPolicyScreenState extends State<AdminPasswordPolicyScreen> {
   }
 
   Widget _buildExpirationSection(
-      bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return _buildSection(
       isDark: isDark,
       title: l10n.passwordExpiration,
@@ -290,7 +297,10 @@ class _AdminPasswordPolicyScreenState extends State<AdminPasswordPolicyScreen> {
   }
 
   Widget _buildLockoutSection(
-      bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return _buildSection(
       isDark: isDark,
       title: l10n.accountLockout,
@@ -322,7 +332,10 @@ class _AdminPasswordPolicyScreenState extends State<AdminPasswordPolicyScreen> {
   }
 
   Widget _buildAdvancedSection(
-      bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return _buildSection(
       isDark: isDark,
       title: l10n.advanced,
@@ -378,10 +391,7 @@ class _AdminPasswordPolicyScreenState extends State<AdminPasswordPolicyScreen> {
               ],
             ),
           ),
-          Divider(
-            height: 1,
-            color: AdminColors.getDividerColor(isDark),
-          ),
+          Divider(height: 1, color: AdminColors.getDividerColor(isDark)),
           ...children,
         ],
       ),
@@ -415,8 +425,10 @@ class _AdminPasswordPolicyScreenState extends State<AdminPasswordPolicyScreen> {
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AdminColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -515,8 +527,9 @@ class _AdminPasswordPolicyScreenState extends State<AdminPasswordPolicyScreen> {
             content: Text(l10n.passwordPolicySaved),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AdminColors.success,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       },

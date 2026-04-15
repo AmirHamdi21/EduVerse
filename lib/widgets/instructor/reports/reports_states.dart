@@ -6,11 +6,7 @@ class ReportsLoadingState extends StatelessWidget {
   final bool isDark;
   final String? message;
 
-  const ReportsLoadingState({
-    super.key,
-    required this.isDark,
-    this.message,
-  });
+  const ReportsLoadingState({super.key, required this.isDark, this.message});
 
   @override
   Widget build(BuildContext context) {

@@ -331,9 +331,7 @@ class ITDRRunbooksSection extends StatelessWidget {
         color: isDark ? ITColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
       ),
       child: Column(

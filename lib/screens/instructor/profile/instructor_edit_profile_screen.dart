@@ -23,11 +23,14 @@ class _InstructorEditProfileScreenState
   // Personal Info Controllers
   final _firstNameController = TextEditingController(text: 'Ahmed');
   final _lastNameController = TextEditingController(text: 'Mohamed');
-  final _emailController = TextEditingController(text: 'dr.ahmed@university.edu');
+  final _emailController = TextEditingController(
+    text: 'dr.ahmed@university.edu',
+  );
   final _phoneController = TextEditingController(text: '+20 123 456 7890');
   final _locationController = TextEditingController(text: 'Cairo, Egypt');
   final _bioController = TextEditingController(
-    text: 'Associate Professor of Computer Science with 15 years of teaching experience. Specialized in Data Structures, Algorithms, and Machine Learning.',
+    text:
+        'Associate Professor of Computer Science with 15 years of teaching experience. Specialized in Data Structures, Algorithms, and Machine Learning.',
   );
   DateTime? _dateOfBirth = DateTime(1980, 5, 15);
 
@@ -35,14 +38,24 @@ class _InstructorEditProfileScreenState
   final _departmentController = TextEditingController(text: 'Computer Science');
   final _titleController = TextEditingController(text: 'Associate Professor');
   final _employeeIdController = TextEditingController(text: 'EMP-2010-001');
-  final _specializationController = TextEditingController(text: 'Data Structures & Algorithms');
+  final _specializationController = TextEditingController(
+    text: 'Data Structures & Algorithms',
+  );
   final _officeController = TextEditingController(text: 'Building A, Room 215');
-  final _officeHoursController = TextEditingController(text: 'Mon, Wed 2:00 PM - 4:00 PM');
+  final _officeHoursController = TextEditingController(
+    text: 'Mon, Wed 2:00 PM - 4:00 PM',
+  );
 
   // Social Links Controllers
-  final _websiteController = TextEditingController(text: 'https://ahmed.university.edu');
-  final _linkedinController = TextEditingController(text: 'linkedin.com/in/drahmed');
-  final _googleScholarController = TextEditingController(text: 'scholar.google.com/drahmed');
+  final _websiteController = TextEditingController(
+    text: 'https://ahmed.university.edu',
+  );
+  final _linkedinController = TextEditingController(
+    text: 'linkedin.com/in/drahmed',
+  );
+  final _googleScholarController = TextEditingController(
+    text: 'scholar.google.com/drahmed',
+  );
   final _researchGateController = TextEditingController();
 
   bool _hasChanges = false;
@@ -94,8 +107,9 @@ class _InstructorEditProfileScreenState
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       body: FadeTransition(
         opacity: _fadeAnimation,
         child: CustomScrollView(
@@ -106,8 +120,7 @@ class _InstructorEditProfileScreenState
               expandedHeight: 180,
               pinned: true,
               elevation: 0,
-              backgroundColor:
-                  isDark ? const Color(0xFF0F172A) : Colors.white,
+              backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
               surfaceTintColor: Colors.transparent,
               leading: IconButton(
                 onPressed: () => _handleBack(context, l10n, isDark),
@@ -159,10 +172,7 @@ class _InstructorEditProfileScreenState
                     Container(
                       decoration: const BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
-                            Color(0xFF155CFB),
-                            Color(0xFF7C3AED),
-                          ],
+                          colors: [Color(0xFF155CFB), Color(0xFF7C3AED)],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -192,7 +202,9 @@ class _InstructorEditProfileScreenState
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.black.withValues(alpha: 0.4),
                             borderRadius: BorderRadius.circular(20),
@@ -419,8 +431,8 @@ class _InstructorEditProfileScreenState
                               color: _hasChanges
                                   ? Colors.white
                                   : (isDark
-                                      ? const Color(0xFF64748B)
-                                      : const Color(0xFF94A3B8)),
+                                        ? const Color(0xFF64748B)
+                                        : const Color(0xFF94A3B8)),
                             ),
                           ),
                         ),
@@ -472,8 +484,7 @@ class _InstructorEditProfileScreenState
           content: Text(
             'You have unsaved changes. Are you sure you want to discard them?',
             style: TextStyle(
-              color:
-                  isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
           ),
           actions: [

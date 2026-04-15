@@ -6,11 +6,13 @@ import '../shared/admin_colors.dart';
 /// Header widget for Add Course screen
 class AddCourseHeader extends StatelessWidget {
   final bool isDark;
+  final bool isEditing;
   final VoidCallback onReset;
 
   const AddCourseHeader({
     super.key,
     required this.isDark,
+    this.isEditing = false,
     required this.onReset,
   });
 
@@ -61,7 +63,7 @@ class AddCourseHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.createNewCourse,
+                  isEditing ? l10n.editCourse : l10n.createNewCourse,
                   style: TextStyle(
                     color: AdminColors.getTextColor(isDark),
                     fontSize: 20,

@@ -539,13 +539,15 @@ class _AddEventSheetState extends State<AddEventSheet> {
                         onSurface: const Color(0xFF1F2937),
                       ),
                 timePickerTheme: TimePickerThemeData(
-                  backgroundColor: isDark ? const Color(0xFF101828) : Colors.white,
+                  backgroundColor: isDark
+                      ? const Color(0xFF101828)
+                      : Colors.white,
                 ),
               ),
               child: MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                  alwaysUse24HourFormat: false,
-                ),
+                data: MediaQuery.of(
+                  context,
+                ).copyWith(alwaysUse24HourFormat: false),
                 child: child!,
               ),
             );

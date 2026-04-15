@@ -28,7 +28,9 @@ class AuditStatsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: isGoodScore ? AdminColors.greenGradient : AdminColors.orangeGradient,
+        gradient: isGoodScore
+            ? AdminColors.greenGradient
+            : AdminColors.orangeGradient,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -80,7 +82,10 @@ class AuditStatsCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
@@ -89,7 +94,9 @@ class AuditStatsCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      isGoodScore ? Icons.verified_rounded : Icons.warning_rounded,
+                      isGoodScore
+                          ? Icons.verified_rounded
+                          : Icons.warning_rounded,
                       color: Colors.white,
                       size: 16,
                     ),

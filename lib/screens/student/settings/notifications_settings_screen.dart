@@ -32,11 +32,13 @@ class _NotificationsSettingsScreenState
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -183,8 +185,8 @@ class _NotificationsSettingsScreenState
           colors: _pushEnabled
               ? [const Color(0xFF3B82F6), const Color(0xFF2563EB)]
               : isDark
-                  ? [const Color(0xFF1E293B), const Color(0xFF334155)]
-                  : [const Color(0xFFE2E8F0), const Color(0xFFCBD5E1)],
+              ? [const Color(0xFF1E293B), const Color(0xFF334155)]
+              : [const Color(0xFFE2E8F0), const Color(0xFFCBD5E1)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),

@@ -50,11 +50,7 @@ class MyFilesCubit extends Cubit<MyFilesState> {
       folders = decoded.map((e) => MyFolder.fromJson(e)).toList();
     }
 
-    emit(state.copyWith(
-      files: files,
-      folders: folders,
-      isLoading: false,
-    ));
+    emit(state.copyWith(files: files, folders: folders, isLoading: false));
   }
 
   Future<List<MyFile>> _verifyFilesExist(List<MyFile> files) async {
@@ -75,8 +71,9 @@ class MyFilesCubit extends Cubit<MyFilesState> {
 
   Future<void> _saveFolders() async {
     final prefs = await SharedPreferences.getInstance();
-    final foldersJson =
-        jsonEncode(state.folders.map((e) => e.toJson()).toList());
+    final foldersJson = jsonEncode(
+      state.folders.map((e) => e.toJson()).toList(),
+    );
     await prefs.setString(_foldersKey, foldersJson);
   }
 
@@ -90,13 +87,15 @@ class MyFilesCubit extends Cubit<MyFilesState> {
           (typeDistribution[file.type] ?? 0) + file.size;
     }
 
-    emit(state.copyWith(
-      storageStats: StorageStats(
-        usedSpace: totalSize,
-        totalSpace: 5 * 1024 * 1024 * 1024, // 5GB
-        typeDistribution: typeDistribution,
+    emit(
+      state.copyWith(
+        storageStats: StorageStats(
+          usedSpace: totalSize,
+          totalSpace: 5 * 1024 * 1024 * 1024, // 5GB
+          typeDistribution: typeDistribution,
+        ),
       ),
-    ));
+    );
   }
 
   void _applyFiltersAndSort() {
@@ -104,8 +103,9 @@ class MyFilesCubit extends Cubit<MyFilesState> {
 
     // Apply folder filter
     if (state.currentFolderId != null) {
-      filtered =
-          filtered.where((f) => f.folderId == state.currentFolderId).toList();
+      filtered = filtered
+          .where((f) => f.folderId == state.currentFolderId)
+          .toList();
     }
 
     // Apply search filter
@@ -125,11 +125,13 @@ class MyFilesCubit extends Cubit<MyFilesState> {
         break;
       case FileFilterOption.documents:
         filtered = filtered
-            .where((f) =>
-                f.type == FileType.document ||
-                f.type == FileType.pdf ||
-                f.type == FileType.spreadsheet ||
-                f.type == FileType.presentation)
+            .where(
+              (f) =>
+                  f.type == FileType.document ||
+                  f.type == FileType.pdf ||
+                  f.type == FileType.spreadsheet ||
+                  f.type == FileType.presentation,
+            )
             .toList();
         break;
       case FileFilterOption.images:
@@ -143,8 +145,9 @@ class MyFilesCubit extends Cubit<MyFilesState> {
         break;
       case FileFilterOption.recent:
         final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-        filtered =
-            filtered.where((f) => f.modifiedAt.isAfter(sevenDaysAgo)).toList();
+        filtered = filtered
+            .where((f) => f.modifiedAt.isAfter(sevenDaysAgo))
+            .toList();
         break;
       case FileFilterOption.favorites:
         filtered = filtered.where((f) => f.isFavorite).toList();
@@ -155,11 +158,13 @@ class MyFilesCubit extends Cubit<MyFilesState> {
     switch (state.sortOption) {
       case FileSortOption.nameAsc:
         filtered.sort(
-            (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+          (a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+        );
         break;
       case FileSortOption.nameDesc:
         filtered.sort(
-            (a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()));
+          (a, b) => b.name.toLowerCase().compareTo(a.name.toLowerCase()),
+        );
         break;
       case FileSortOption.dateNewest:
         filtered.sort((a, b) => b.modifiedAt.compareTo(a.modifiedAt));
@@ -209,10 +214,12 @@ class MyFilesCubit extends Cubit<MyFilesState> {
   }
 
   void toggleMultiSelectMode() {
-    emit(state.copyWith(
-      isMultiSelectMode: !state.isMultiSelectMode,
-      selectedFileIds: {},
-    ));
+    emit(
+      state.copyWith(
+        isMultiSelectMode: !state.isMultiSelectMode,
+        selectedFileIds: {},
+      ),
+    );
   }
 
   void toggleFileSelection(String fileId) {
@@ -245,12 +252,14 @@ class MyFilesCubit extends Cubit<MyFilesState> {
 
   Future<void> uploadFiles() async {
     try {
-      emit(state.copyWith(
-        uploadProgress: const UploadProgress(
-          fileName: '',
-          status: UploadStatus.picking,
+      emit(
+        state.copyWith(
+          uploadProgress: const UploadProgress(
+            fileName: '',
+            status: UploadStatus.picking,
+          ),
         ),
-      ));
+      );
 
       final result = await picker.FilePicker.platform.pickFiles(
         allowMultiple: true,
@@ -275,26 +284,31 @@ class MyFilesCubit extends Cubit<MyFilesState> {
         final platformFile = result.files[i];
         if (platformFile.path == null) continue;
 
-        emit(state.copyWith(
-          uploadProgress: UploadProgress(
-            fileName: platformFile.name,
-            progress: i / totalFiles,
-            status: UploadStatus.uploading,
-          ),
-        ));
-
-        final sourceFile = File(platformFile.path!);
-        final targetPath = '${filesDir.path}/${_uuid.v4()}_${platformFile.name}';
-        
-        // Simulate upload progress
-        await _copyFileWithProgress(sourceFile, targetPath, (progress) {
-          emit(state.copyWith(
+        emit(
+          state.copyWith(
             uploadProgress: UploadProgress(
               fileName: platformFile.name,
-              progress: (i + progress) / totalFiles,
+              progress: i / totalFiles,
               status: UploadStatus.uploading,
             ),
-          ));
+          ),
+        );
+
+        final sourceFile = File(platformFile.path!);
+        final targetPath =
+            '${filesDir.path}/${_uuid.v4()}_${platformFile.name}';
+
+        // Simulate upload progress
+        await _copyFileWithProgress(sourceFile, targetPath, (progress) {
+          emit(
+            state.copyWith(
+              uploadProgress: UploadProgress(
+                fileName: platformFile.name,
+                progress: (i + progress) / totalFiles,
+                status: UploadStatus.uploading,
+              ),
+            ),
+          );
         });
 
         final extension = platformFile.name.split('.').last;
@@ -316,14 +330,16 @@ class MyFilesCubit extends Cubit<MyFilesState> {
       }
 
       final updatedFiles = [...state.files, ...newFiles];
-      emit(state.copyWith(
-        files: updatedFiles,
-        uploadProgress: UploadProgress(
-          fileName: '${newFiles.length} files',
-          progress: 1.0,
-          status: UploadStatus.completed,
+      emit(
+        state.copyWith(
+          files: updatedFiles,
+          uploadProgress: UploadProgress(
+            fileName: '${newFiles.length} files',
+            progress: 1.0,
+            status: UploadStatus.completed,
+          ),
         ),
-      ));
+      );
 
       await _saveFiles();
       await _calculateStorageStats();
@@ -333,13 +349,15 @@ class MyFilesCubit extends Cubit<MyFilesState> {
       await Future.delayed(const Duration(seconds: 2));
       emit(state.copyWith(clearUploadProgress: true));
     } catch (e) {
-      emit(state.copyWith(
-        uploadProgress: UploadProgress(
-          fileName: '',
-          status: UploadStatus.failed,
-          errorMessage: e.toString(),
+      emit(
+        state.copyWith(
+          uploadProgress: UploadProgress(
+            fileName: '',
+            status: UploadStatus.failed,
+            errorMessage: e.toString(),
+          ),
         ),
-      ));
+      );
     }
   }
 
@@ -350,7 +368,7 @@ class MyFilesCubit extends Cubit<MyFilesState> {
   ) async {
     final target = File(targetPath);
     final sourceSize = await source.length();
-    
+
     if (sourceSize < 1024 * 1024) {
       // Small files - just copy
       await source.copy(targetPath);
@@ -361,14 +379,14 @@ class MyFilesCubit extends Cubit<MyFilesState> {
     // Large files - copy with progress
     final input = source.openRead();
     final output = target.openWrite();
-    
+
     int bytesWritten = 0;
     await for (var chunk in input) {
       output.add(chunk);
       bytesWritten += chunk.length;
       onProgress(bytesWritten / sourceSize);
     }
-    
+
     await output.close();
   }
 
@@ -400,7 +418,7 @@ class MyFilesCubit extends Cubit<MyFilesState> {
 
   Future<void> deleteFile(String fileId) async {
     final file = state.files.firstWhere((f) => f.id == fileId);
-    
+
     try {
       final sourceFile = File(file.path);
       if (await sourceFile.exists()) {
@@ -426,13 +444,16 @@ class MyFilesCubit extends Cubit<MyFilesState> {
       } catch (_) {}
     }
 
-    final updatedFiles =
-        state.files.where((f) => !state.selectedFileIds.contains(f.id)).toList();
-    emit(state.copyWith(
-      files: updatedFiles,
-      selectedFileIds: {},
-      isMultiSelectMode: false,
-    ));
+    final updatedFiles = state.files
+        .where((f) => !state.selectedFileIds.contains(f.id))
+        .toList();
+    emit(
+      state.copyWith(
+        files: updatedFiles,
+        selectedFileIds: {},
+        isMultiSelectMode: false,
+      ),
+    );
     await _saveFiles();
     await _calculateStorageStats();
     _applyFiltersAndSort();
@@ -479,8 +500,9 @@ class MyFilesCubit extends Cubit<MyFilesState> {
 
   Future<void> deleteFolder(String folderId) async {
     // Delete all files in folder
-    final filesToDelete =
-        state.files.where((f) => f.folderId == folderId).toList();
+    final filesToDelete = state.files
+        .where((f) => f.folderId == folderId)
+        .toList();
     for (var file in filesToDelete) {
       try {
         final sourceFile = File(file.path);
@@ -490,9 +512,12 @@ class MyFilesCubit extends Cubit<MyFilesState> {
       } catch (_) {}
     }
 
-    final updatedFiles =
-        state.files.where((f) => f.folderId != folderId).toList();
-    final updatedFolders = state.folders.where((f) => f.id != folderId).toList();
+    final updatedFiles = state.files
+        .where((f) => f.folderId != folderId)
+        .toList();
+    final updatedFolders = state.folders
+        .where((f) => f.id != folderId)
+        .toList();
 
     emit(state.copyWith(files: updatedFiles, folders: updatedFolders));
     await _saveFiles();
@@ -509,11 +534,13 @@ class MyFilesCubit extends Cubit<MyFilesState> {
       return f;
     }).toList();
 
-    emit(state.copyWith(
-      files: updatedFiles,
-      selectedFileIds: {},
-      isMultiSelectMode: false,
-    ));
+    emit(
+      state.copyWith(
+        files: updatedFiles,
+        selectedFileIds: {},
+        isMultiSelectMode: false,
+      ),
+    );
     await _saveFiles();
     _applyFiltersAndSort();
   }

@@ -100,9 +100,10 @@ class SecurityPoliciesCard extends StatelessWidget {
   }
 
   Widget _buildPolicyItem(SecurityPolicyItem policy, AppLocalizations l10n) {
-    final isEnabled = policy.status.toLowerCase() == 'enabled' || 
-                      policy.status.toLowerCase() == 'strong' ||
-                      policy.status.toLowerCase() == 'active';
+    final isEnabled =
+        policy.status.toLowerCase() == 'enabled' ||
+        policy.status.toLowerCase() == 'strong' ||
+        policy.status.toLowerCase() == 'active';
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -128,11 +129,7 @@ class SecurityPoliciesCard extends StatelessWidget {
                     color: policy.color.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    policy.icon,
-                    color: policy.color,
-                    size: 20,
-                  ),
+                  child: Icon(policy.icon, color: policy.color, size: 20),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -159,7 +156,10 @@ class SecurityPoliciesCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: isEnabled
                         ? AdminColors.success.withValues(alpha: 0.15)
@@ -171,7 +171,9 @@ class SecurityPoliciesCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
-                      color: isEnabled ? AdminColors.success : AdminColors.warning,
+                      color: isEnabled
+                          ? AdminColors.success
+                          : AdminColors.warning,
                     ),
                   ),
                 ),

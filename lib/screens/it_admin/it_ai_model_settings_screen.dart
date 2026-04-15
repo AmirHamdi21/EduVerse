@@ -11,7 +11,8 @@ class ITAIModelSettingsScreen extends StatefulWidget {
   const ITAIModelSettingsScreen({super.key});
 
   @override
-  State<ITAIModelSettingsScreen> createState() => _ITAIModelSettingsScreenState();
+  State<ITAIModelSettingsScreen> createState() =>
+      _ITAIModelSettingsScreenState();
 }
 
 class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
@@ -236,7 +237,7 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
 
   void _showLogsBottomSheet() {
     final isDark = context.read<ThemeBloc>().state.isDark;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -261,7 +262,7 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            
+
             // Header
             Padding(
               padding: const EdgeInsets.all(20),
@@ -312,14 +313,14 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
                 ],
               ),
             ),
-            
+
             Divider(
               height: 1,
               color: isDark
                   ? Colors.white.withValues(alpha: 0.1)
                   : Colors.grey.withValues(alpha: 0.1),
             ),
-            
+
             // Logs list
             Expanded(
               child: ListView.builder(
@@ -331,7 +332,7 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
                 },
               ),
             ),
-            
+
             // Bottom buttons
             Container(
               padding: const EdgeInsets.all(16),
@@ -420,8 +421,8 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
                   log.status == RequestStatus.success
                       ? Icons.check_circle_rounded
                       : log.status == RequestStatus.failed
-                          ? Icons.error_rounded
-                          : Icons.pending_rounded,
+                      ? Icons.error_rounded
+                      : Icons.pending_rounded,
                   size: 20,
                   color: log.statusColor,
                 ),
@@ -450,7 +451,10 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: log.statusColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -469,7 +473,11 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
           const SizedBox(height: 12),
           Row(
             children: [
-              _buildLogDetail('Provider', _getProviderName(log.provider), isDark),
+              _buildLogDetail(
+                'Provider',
+                _getProviderName(log.provider),
+                isDark,
+              ),
               const SizedBox(width: 16),
               _buildLogDetail('Model', _getModelShortName(log.model), isDark),
               if (log.tokensUsed > 0) ...[
@@ -574,7 +582,10 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
           backgroundColor: isDark
               ? const Color(0xFF1A1A2E)
               : const Color(0xFFFAFAFA),
-          drawer: ITDrawer(currentRoute: '/it-admin/ai-settings', isDark: isDark),
+          drawer: ITDrawer(
+            currentRoute: '/it-admin/ai-settings',
+            isDark: isDark,
+          ),
           floatingActionButton: _hasUnsavedChanges
               ? FloatingActionButton.extended(
                   onPressed: _showSaveDialog,
@@ -582,7 +593,10 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
                   icon: const Icon(Icons.save_rounded, color: Colors.white),
                   label: const Text(
                     'Save Changes',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 )
               : null,
@@ -611,9 +625,7 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: ITColors.primary),
-      );
+      return Center(child: CircularProgressIndicator(color: ITColors.primary));
     }
 
     if (_errorMessage != null) {
@@ -644,7 +656,7 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
                   onModelChanged: _handleModelChanged,
                 ),
                 const SizedBox(height: 20),
-                
+
                 // API Keys Section
                 ITAPIKeysSection(
                   isDark: isDark,
@@ -655,7 +667,7 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
                   onRegenerateKey: _handleRegenerateKey,
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Governance Rules Section
                 ITGovernanceRulesSection(
                   isDark: isDark,
@@ -663,7 +675,7 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
                   onRulesChanged: _handleRulesChanged,
                 ),
                 const SizedBox(height: 20),
-                
+
                 // System Limits Section
                 ITSystemLimitsSection(
                   isDark: isDark,
@@ -671,7 +683,7 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
                   onLimitsChanged: _handleLimitsChanged,
                 ),
                 const SizedBox(height: 20),
-                
+
                 // AI Request Logs Section
                 ITAIRequestLogsSection(
                   isDark: isDark,
@@ -720,7 +732,10 @@ class _ITAIModelSettingsScreenState extends State<ITAIModelSettingsScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: ITColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

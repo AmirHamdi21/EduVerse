@@ -5,13 +5,13 @@ import 'package:edu_verse/models/labs/lab_submission_model.dart';
 void main() {
   group('LabSubmissionModel.fromJson isLate parsing', () {
     Map<String, dynamic> _baseJson({dynamic isLate}) => <String, dynamic>{
-          'id': 1,
-          'labId': 10,
-          'userId': 100,
-          'submissionStatus': 'submitted',
-          'isLate': isLate,
-          'submittedAt': '2025-10-01T10:00:00Z',
-        };
+      'id': 1,
+      'labId': 10,
+      'userId': 100,
+      'submissionStatus': 'submitted',
+      'isLate': isLate,
+      'submittedAt': '2025-10-01T10:00:00Z',
+    };
 
     test('parses boolean true correctly', () {
       final model = LabSubmissionModel.fromJson(_baseJson(isLate: true));

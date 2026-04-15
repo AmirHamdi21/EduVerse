@@ -25,11 +25,13 @@ class _ChatSwipeSettingsScreenState extends State<ChatSwipeSettingsScreen> {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -150,16 +152,16 @@ class _ChatSwipeSettingsScreenState extends State<ChatSwipeSettingsScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF0F172A)
-                  : const Color(0xFFF8FAFC),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundColor: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                  backgroundColor: const Color(
+                    0xFF8B5CF6,
+                  ).withValues(alpha: 0.1),
                   child: const Icon(
                     Icons.person_rounded,
                     size: 20,
@@ -272,9 +274,7 @@ class _ChatSwipeSettingsScreenState extends State<ChatSwipeSettingsScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF0F172A)
-                  : const Color(0xFFF1F5F9),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -339,9 +339,19 @@ class _ChatSwipeSettingsScreenState extends State<ChatSwipeSettingsScreen> {
     final actions = [
       ('delete', l10n.delete, Icons.delete_rounded, const Color(0xFFEF4444)),
       ('archive', l10n.archive, Icons.archive_rounded, const Color(0xFFF59E0B)),
-      ('mark_read', l10n.markAsRead, Icons.mark_email_read_rounded, const Color(0xFF3B82F6)),
+      (
+        'mark_read',
+        l10n.markAsRead,
+        Icons.mark_email_read_rounded,
+        const Color(0xFF3B82F6),
+      ),
       ('pin', l10n.pin, Icons.push_pin_rounded, const Color(0xFF8B5CF6)),
-      ('mute', l10n.mute, Icons.notifications_off_rounded, const Color(0xFF64748B)),
+      (
+        'mute',
+        l10n.mute,
+        Icons.notifications_off_rounded,
+        const Color(0xFF64748B),
+      ),
     ];
 
     return Container(
@@ -399,13 +409,11 @@ class _ChatSwipeSettingsScreenState extends State<ChatSwipeSettingsScreen> {
                     color: isSelected
                         ? action.$4.withValues(alpha: 0.15)
                         : (isDark
-                            ? const Color(0xFF0F172A)
-                            : const Color(0xFFF8FAFC)),
+                              ? const Color(0xFF0F172A)
+                              : const Color(0xFFF8FAFC)),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isSelected
-                          ? action.$4
-                          : Colors.transparent,
+                      color: isSelected ? action.$4 : Colors.transparent,
                       width: 2,
                     ),
                   ),

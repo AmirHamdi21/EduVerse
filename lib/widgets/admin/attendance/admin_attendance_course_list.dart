@@ -66,7 +66,9 @@ class AdminAttendanceCourseList extends StatelessWidget {
         color: isDark ? AdminColors.darkCard : AdminColors.lightCard,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
       ),
       child: Column(
@@ -75,7 +77,9 @@ class AdminAttendanceCourseList extends StatelessWidget {
           Icon(
             Icons.school_outlined,
             size: 64,
-            color: isDark ? AdminColors.darkTextTertiary : AdminColors.lightTextTertiary,
+            color: isDark
+                ? AdminColors.darkTextTertiary
+                : AdminColors.lightTextTertiary,
           ),
           const SizedBox(height: 16),
           Text(
@@ -91,7 +95,9 @@ class AdminAttendanceCourseList extends StatelessWidget {
             'Try adjusting your filters or search criteria',
             style: TextStyle(
               fontSize: 14,
-              color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+              color: isDark
+                  ? AdminColors.darkTextSecondary
+                  : AdminColors.lightTextSecondary,
             ),
           ),
         ],
@@ -103,8 +109,8 @@ class AdminAttendanceCourseList extends StatelessWidget {
     final rateColor = course.attendanceRate >= 0.9
         ? AdminColors.success
         : course.attendanceRate >= 0.75
-            ? AdminColors.warning
-            : AdminColors.error;
+        ? AdminColors.warning
+        : AdminColors.error;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -112,7 +118,9 @@ class AdminAttendanceCourseList extends StatelessWidget {
         color: isDark ? AdminColors.darkCard : AdminColors.lightCard,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
         boxShadow: isDark
             ? null
@@ -158,7 +166,9 @@ class AdminAttendanceCourseList extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: isDark ? AdminColors.darkText : AdminColors.lightText,
+                              color: isDark
+                                  ? AdminColors.darkText
+                                  : AdminColors.lightText,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -172,7 +182,9 @@ class AdminAttendanceCourseList extends StatelessWidget {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AdminColors.primary.withValues(alpha: 0.1),
+                                  color: AdminColors.primary.withValues(
+                                    alpha: 0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                                 child: Text(
@@ -287,7 +299,12 @@ class AdminAttendanceCourseList extends StatelessWidget {
     );
   }
 
-  Widget _buildMiniStat(IconData icon, String value, String label, Color color) {
+  Widget _buildMiniStat(
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+  ) {
     return Expanded(
       child: Column(
         children: [
@@ -305,7 +322,9 @@ class AdminAttendanceCourseList extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 10,
-              color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+              color: isDark
+                  ? AdminColors.darkTextSecondary
+                  : AdminColors.lightTextSecondary,
             ),
           ),
         ],

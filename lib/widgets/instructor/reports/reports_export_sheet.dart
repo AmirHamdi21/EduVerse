@@ -114,11 +114,7 @@ class ReportsExportSheet extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: ReportsColors.primary,
-              size: 28,
-            ),
+            Icon(icon, color: ReportsColors.primary, size: 28),
             const SizedBox(height: 8),
             Text(
               label,

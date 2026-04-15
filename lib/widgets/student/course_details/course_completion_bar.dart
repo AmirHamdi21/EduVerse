@@ -13,7 +13,9 @@ class CourseCompletionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = isDark ? Colors.white : const Color(0xFF364153);
-    final backgroundColor = isDark ? const Color(0xFF3D3D54) : const Color(0xFFE5E7EB);
+    final backgroundColor = isDark
+        ? const Color(0xFF3D3D54)
+        : const Color(0xFFE5E7EB);
 
     return Column(
       children: [
@@ -47,9 +49,7 @@ class CourseCompletionBar extends StatelessWidget {
             value: progress,
             minHeight: 8,
             backgroundColor: backgroundColor,
-            valueColor: const AlwaysStoppedAnimation<Color>(
-              Color(0xFF2B7FFF),
-            ),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF2B7FFF)),
           ),
         ),
       ],

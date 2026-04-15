@@ -55,8 +55,9 @@ class _MockAdapter implements HttpClientAdapter {
 
   String _encodeMap(dynamic map) {
     if (map is! Map) return _encodeValue(map);
-    final entries =
-        map.entries.map((e) => '"${e.key}":${_encodeValue(e.value)}');
+    final entries = map.entries.map(
+      (e) => '"${e.key}":${_encodeValue(e.value)}',
+    );
     return '{${entries.join(',')}}';
   }
 
@@ -74,8 +75,7 @@ CoursesBloc _buildBloc(Map<String, dynamic> Function(RequestOptions) handler) {
     courseService: CourseService(coreApiClient: coreApiClient),
     enrollmentService: EnrollmentService(coreApiClient: coreApiClient),
     materialService: MaterialService(coreApiClient: coreApiClient),
-    communicationService:
-        CommunicationService(coreApiClient: coreApiClient),
+    communicationService: CommunicationService(coreApiClient: coreApiClient),
   );
 }
 
@@ -93,113 +93,106 @@ void main() {
     });
 
     test(
-        'StudentCoursesFetched emits [CoursesLoading, CoursesLoaded] on success',
-        () async {
-      final bloc = _buildBloc((options) {
-        if (options.path.contains('/enrollments/my-courses')) {
-          return {
-            'statusCode': 200,
-            'data': [
-              {
-                'id': '1',
-                'courseId': '1',
-                'userId': 42,
-                'enrollmentDate': '2026-01-15T00:00:00.000Z',
-                'role': 'student',
-                'status': 'active',
-                'createdAt': '2026-01-15T00:00:00.000Z',
-                'updatedAt': '2026-01-15T00:00:00.000Z',
-              }
-            ],
-          };
-        }
-        return {'data': []};
-      });
+      'StudentCoursesFetched emits [CoursesLoading, CoursesLoaded] on success',
+      () async {
+        final bloc = _buildBloc((options) {
+          if (options.path.contains('/enrollments/my-courses')) {
+            return {
+              'statusCode': 200,
+              'data': [
+                {
+                  'id': '1',
+                  'courseId': '1',
+                  'userId': 42,
+                  'enrollmentDate': '2026-01-15T00:00:00.000Z',
+                  'role': 'student',
+                  'status': 'active',
+                  'createdAt': '2026-01-15T00:00:00.000Z',
+                  'updatedAt': '2026-01-15T00:00:00.000Z',
+                },
+              ],
+            };
+          }
+          return {'data': []};
+        });
 
-      bloc.add(const StudentCoursesFetched());
+        bloc.add(const StudentCoursesFetched());
 
-      await expectLater(
-        bloc.stream,
-        emitsInOrder([
-          isA<CoursesLoading>(),
-          isA<CoursesLoaded>(),
-        ]),
-      );
-
-      final loaded = bloc.state as CoursesLoaded;
-      expect(loaded.enrollments.length, 1);
-      expect(loaded.enrollments.first.role, 'student');
-
-      await bloc.close();
-    });
-
-    test(
-        'AllCoursesFetched emits [CoursesLoading, AllCoursesLoaded] on success',
-        () async {
-      final bloc = _buildBloc((options) {
-        if (options.path.contains('/courses') &&
-            !options.path.contains('/enrollments')) {
-          return {
-            'statusCode': 200,
-            'data': [
-              {
-                'courseId': 1,
-                'courseCode': 'CS101',
-                'courseName': 'Intro',
-                'credits': 3,
-              }
-            ],
-          };
-        }
-        return {'data': []};
-      });
-
-      bloc.add(const AllCoursesFetched());
-
-      await expectLater(
-        bloc.stream,
-        emitsInOrder([
-          isA<CoursesLoading>(),
-          isA<AllCoursesLoaded>(),
-        ]),
-      );
-
-      final loaded = bloc.state as AllCoursesLoaded;
-      expect(loaded.courses.length, 1);
-      expect(loaded.courses.first.courseCode, 'CS101');
-
-      await bloc.close();
-    });
-
-    test(
-        'StudentCoursesFetched emits CoursesError when network fails and no cache',
-        () async {
-      final bloc = _buildBloc((options) {
-        throw DioException(
-          requestOptions: options,
-          type: DioExceptionType.connectionTimeout,
-          message: 'Connection timeout',
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([isA<CoursesLoading>(), isA<CoursesLoaded>()]),
         );
-      });
 
-      bloc.add(const StudentCoursesFetched());
+        final loaded = bloc.state as CoursesLoaded;
+        expect(loaded.enrollments.length, 1);
+        expect(loaded.enrollments.first.role, 'student');
 
-      await expectLater(
-        bloc.stream,
-        emitsInOrder([
-          isA<CoursesLoading>(),
-          isA<CoursesError>(),
-        ]),
-      );
+        await bloc.close();
+      },
+    );
 
-      final errorState = bloc.state as CoursesError;
-      expect(errorState.message, isNotEmpty);
+    test(
+      'AllCoursesFetched emits [CoursesLoading, AllCoursesLoaded] on success',
+      () async {
+        final bloc = _buildBloc((options) {
+          if (options.path.contains('/courses') &&
+              !options.path.contains('/enrollments')) {
+            return {
+              'statusCode': 200,
+              'data': [
+                {
+                  'courseId': 1,
+                  'courseCode': 'CS101',
+                  'courseName': 'Intro',
+                  'credits': 3,
+                },
+              ],
+            };
+          }
+          return {'data': []};
+        });
 
-      await bloc.close();
-    });
+        bloc.add(const AllCoursesFetched());
 
-    test('AnnouncementsFetched emits AnnouncementsLoaded on success',
-        () async {
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([isA<CoursesLoading>(), isA<AllCoursesLoaded>()]),
+        );
+
+        final loaded = bloc.state as AllCoursesLoaded;
+        expect(loaded.courses.length, 1);
+        expect(loaded.courses.first.courseCode, 'CS101');
+
+        await bloc.close();
+      },
+    );
+
+    test(
+      'StudentCoursesFetched emits CoursesError when network fails and no cache',
+      () async {
+        final bloc = _buildBloc((options) {
+          throw DioException(
+            requestOptions: options,
+            type: DioExceptionType.connectionTimeout,
+            message: 'Connection timeout',
+          );
+        });
+
+        bloc.add(const StudentCoursesFetched());
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([isA<CoursesLoading>(), isA<CoursesError>()]),
+        );
+
+        final errorState = bloc.state as CoursesError;
+        expect(errorState.message, isNotEmpty);
+
+        await bloc.close();
+      },
+    );
+
+    test('AnnouncementsFetched emits AnnouncementsLoaded on success', () async {
       final bloc = _buildBloc((options) {
         if (options.path.contains('/announcements')) {
           return {
@@ -215,7 +208,7 @@ void main() {
                 'publishedAt': '2026-01-10T00:00:00.000Z',
                 'createdAt': '2026-01-10T00:00:00.000Z',
                 'updatedAt': '2026-01-10T00:00:00.000Z',
-              }
+              },
             ],
           };
         }
@@ -226,10 +219,7 @@ void main() {
 
       await expectLater(
         bloc.stream,
-        emitsInOrder([
-          isA<CoursesLoading>(),
-          isA<AnnouncementsLoaded>(),
-        ]),
+        emitsInOrder([isA<CoursesLoading>(), isA<AnnouncementsLoaded>()]),
       );
 
       final loaded = bloc.state as AnnouncementsLoaded;
@@ -254,7 +244,7 @@ void main() {
                 'submissionType': 'file',
                 'createdAt': '2026-01-20T08:00:00.000Z',
                 'updatedAt': '2026-01-20T08:00:00.000Z',
-              }
+              },
             ],
           };
         }
@@ -265,10 +255,7 @@ void main() {
 
       await expectLater(
         bloc.stream,
-        emitsInOrder([
-          isA<CoursesLoading>(),
-          isA<AssignmentsLoaded>(),
-        ]),
+        emitsInOrder([isA<CoursesLoading>(), isA<AssignmentsLoaded>()]),
       );
 
       final loaded = bloc.state as AssignmentsLoaded;

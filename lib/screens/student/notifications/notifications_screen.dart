@@ -422,14 +422,16 @@ class _NotificationsScreenState extends State<NotificationsScreen>
   ) {
     switch (value) {
       case 'swipe_settings':
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const NotificationSwipeSettingsScreen(),
-          ),
-        ).then((_) {
-          // Force rebuild to reload swipe settings
-          if (mounted) setState(() {});
-        });
+        Navigator.of(context)
+            .push(
+              MaterialPageRoute(
+                builder: (context) => const NotificationSwipeSettingsScreen(),
+              ),
+            )
+            .then((_) {
+              // Force rebuild to reload swipe settings
+              if (mounted) setState(() {});
+            });
         break;
       case 'mark_all_read':
         context.read<NotificationCubit>().markAllAsRead();

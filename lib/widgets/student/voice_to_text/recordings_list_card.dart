@@ -119,7 +119,12 @@ class RecordingsListCard extends StatelessWidget {
                     child: Row(
                       children: [
                         Expanded(
-                          child: _buildFilterDropdown(context, state, isDark, l10n),
+                          child: _buildFilterDropdown(
+                            context,
+                            state,
+                            isDark,
+                            l10n,
+                          ),
                         ),
                         const SizedBox(width: 12),
                         _buildSortButton(context, state, isDark, l10n),
@@ -150,9 +155,11 @@ class RecordingsListCard extends StatelessWidget {
                         final recording = state.filteredRecordings[index];
                         return _RecordingItem(
                           recording: recording,
-                          isPlaying: state.currentPlayingRecording?.id == recording.id,
+                          isPlaying:
+                              state.currentPlayingRecording?.id == recording.id,
                           playbackStatus: state.playbackStatus,
-                          playbackProgress: state.currentPlayingRecording?.id == recording.id
+                          playbackProgress:
+                              state.currentPlayingRecording?.id == recording.id
                               ? state.playbackProgress
                               : 0,
                         );
@@ -181,9 +188,7 @@ class RecordingsListCard extends StatelessWidget {
             : const Color(0xFFF1F5F9),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color: isDark
-              ? const Color(0xFF1E2939)
-              : const Color(0xFFE5E7EB),
+          color: isDark ? const Color(0xFF1E2939) : const Color(0xFFE5E7EB),
         ),
       ),
       child: DropdownButtonHideUnderline(
@@ -230,9 +235,7 @@ class RecordingsListCard extends StatelessWidget {
               : const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isDark
-                ? const Color(0xFF1E2939)
-                : const Color(0xFFE5E7EB),
+            color: isDark ? const Color(0xFF1E2939) : const Color(0xFFE5E7EB),
           ),
         ),
         child: Icon(
@@ -242,9 +245,7 @@ class RecordingsListCard extends StatelessWidget {
         ),
       ),
       color: isDark ? const Color(0xFF1E2939) : Colors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       itemBuilder: (context) => RecordingSort.values.map((sort) {
         return PopupMenuItem(
           value: sort,
@@ -295,9 +296,7 @@ class RecordingsListCard extends StatelessWidget {
             child: Icon(
               Icons.mic_none_rounded,
               size: 48,
-              color: isDark
-                  ? const Color(0xFF64748B)
-                  : const Color(0xFF94A3B8),
+              color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
             ),
           ),
           const SizedBox(height: 16),
@@ -306,9 +305,7 @@ class RecordingsListCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
-              color: isDark
-                  ? const Color(0xFFF3F4F6)
-                  : const Color(0xFF101828),
+              color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
             ),
           ),
           const SizedBox(height: 8),
@@ -317,9 +314,7 @@ class RecordingsListCard extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color: isDark
-                  ? const Color(0xFF64748B)
-                  : const Color(0xFF94A3B8),
+              color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
             ),
           ),
         ],
@@ -389,8 +384,8 @@ class _RecordingItem extends StatelessWidget {
               color: isPlaying
                   ? const Color(0xFF155DFC).withOpacity(0.5)
                   : (isDark
-                      ? const Color(0xFF1E2939)
-                      : const Color(0xFFE5E7EB)),
+                        ? const Color(0xFF1E2939)
+                        : const Color(0xFFE5E7EB)),
               width: isPlaying ? 2 : 1,
             ),
             boxShadow: [
@@ -445,7 +440,9 @@ class _RecordingItem extends StatelessWidget {
                           isPlaying && playbackStatus == PlaybackStatus.playing
                               ? Icons.pause_rounded
                               : Icons.play_arrow_rounded,
-                          color: isPlaying ? Colors.white : const Color(0xFF155DFC),
+                          color: isPlaying
+                              ? Colors.white
+                              : const Color(0xFF155DFC),
                           size: 24,
                         ),
                       ),
@@ -565,7 +562,9 @@ class _RecordingItem extends StatelessWidget {
                               Icon(
                                 Icons.copy_rounded,
                                 size: 20,
-                                color: isDark ? Colors.white : const Color(0xFF101828),
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF101828),
                               ),
                               const SizedBox(width: 12),
                               Text(l10n.voiceToTextCopy),
@@ -597,7 +596,9 @@ class _RecordingItem extends StatelessWidget {
                             bloc.add(ToggleFavorite(recording.id));
                             break;
                           case 'copy':
-                            bloc.add(CopyTranscription(recording.transcription));
+                            bloc.add(
+                              CopyTranscription(recording.transcription),
+                            );
                             break;
                           case 'delete':
                             _showDeleteConfirmation(context, recording, l10n);
@@ -681,7 +682,9 @@ class _RecordingItem extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              context.read<VoiceToTextBloc>().add(DeleteRecording(recording.id));
+              context.read<VoiceToTextBloc>().add(
+                DeleteRecording(recording.id),
+              );
               Navigator.pop(ctx);
             },
             style: TextButton.styleFrom(foregroundColor: Colors.red),

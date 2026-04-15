@@ -104,9 +104,12 @@ class ReportsColors {
   static Color cardColor(bool isDark) => isDark ? darkCard : card;
   static Color surfaceColor(bool isDark) => isDark ? darkSurface : surface;
   static Color borderColor(bool isDark) => isDark ? darkBorder : border;
-  static Color textPrimaryColor(bool isDark) => isDark ? darkTextPrimary : textPrimary;
-  static Color textSecondaryColor(bool isDark) => isDark ? darkTextSecondary : textSecondary;
-  static Color textTertiaryColor(bool isDark) => isDark ? darkTextTertiary : textTertiary;
+  static Color textPrimaryColor(bool isDark) =>
+      isDark ? darkTextPrimary : textPrimary;
+  static Color textSecondaryColor(bool isDark) =>
+      isDark ? darkTextSecondary : textSecondary;
+  static Color textTertiaryColor(bool isDark) =>
+      isDark ? darkTextTertiary : textTertiary;
 
   // Grade color helpers
   static Color getGradeColor(double percentage) {

@@ -52,9 +52,10 @@ class _ModernMcqOptionsState extends State<ModernMcqOptions>
     );
 
     _scaleAnimations = _controllers.map((controller) {
-      return Tween<double>(begin: 1.0, end: 0.95).animate(
-        CurvedAnimation(parent: controller, curve: Curves.easeInOut),
-      );
+      return Tween<double>(
+        begin: 1.0,
+        end: 0.95,
+      ).animate(CurvedAnimation(parent: controller, curve: Curves.easeInOut));
     }).toList();
   }
 
@@ -82,7 +83,7 @@ class _ModernMcqOptionsState extends State<ModernMcqOptions>
     _controllers[index].forward().then((_) {
       _controllers[index].reverse();
     });
-    
+
     setState(() {
       _selectedAnswer = optionId;
     });
@@ -94,30 +95,27 @@ class _ModernMcqOptionsState extends State<ModernMcqOptions>
     final responsive = context.responsive;
 
     return Column(
-      children: List.generate(
-        widget.question.options.length,
-        (index) {
-          final option = widget.question.options[index];
-          final isSelected = _selectedAnswer == option.id;
-          final color = optionColors[index % optionColors.length];
+      children: List.generate(widget.question.options.length, (index) {
+        final option = widget.question.options[index];
+        final isSelected = _selectedAnswer == option.id;
+        final color = optionColors[index % optionColors.length];
 
-          return Padding(
-            padding: EdgeInsets.only(
-              bottom: index < widget.question.options.length - 1 ? 12 : 0,
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: index < widget.question.options.length - 1 ? 12 : 0,
+          ),
+          child: ScaleTransition(
+            scale: _scaleAnimations[index],
+            child: _buildOptionCard(
+              option: option,
+              index: index,
+              isSelected: isSelected,
+              color: color,
+              responsive: responsive,
             ),
-            child: ScaleTransition(
-              scale: _scaleAnimations[index],
-              child: _buildOptionCard(
-                option: option,
-                index: index,
-                isSelected: isSelected,
-                color: color,
-                responsive: responsive,
-              ),
-            ),
-          );
-        },
-      ),
+          ),
+        );
+      }),
     );
   }
 
@@ -145,15 +143,13 @@ class _ModernMcqOptionsState extends State<ModernMcqOptions>
               : null,
           color: isSelected
               ? null
-              : (widget.isDark
-                  ? const Color(0xFF252D48)
-                  : Colors.white),
+              : (widget.isDark ? const Color(0xFF252D48) : Colors.white),
           border: Border.all(
             color: isSelected
                 ? Colors.transparent
                 : (widget.isDark
-                    ? const Color(0xFF3A4456)
-                    : const Color(0xFFE5E7EB)),
+                      ? const Color(0xFF3A4456)
+                      : const Color(0xFFE5E7EB)),
             width: 2,
           ),
           boxShadow: isSelected
@@ -186,10 +182,7 @@ class _ModernMcqOptionsState extends State<ModernMcqOptions>
                 borderRadius: BorderRadius.circular(12),
                 border: isSelected
                     ? null
-                    : Border.all(
-                        color: color.withOpacity(0.3),
-                        width: 1,
-                      ),
+                    : Border.all(color: color.withOpacity(0.3), width: 1),
               ),
               child: Center(
                 child: Text(
@@ -204,7 +197,7 @@ class _ModernMcqOptionsState extends State<ModernMcqOptions>
               ),
             ),
             SizedBox(width: responsive.p14),
-            
+
             // Option text
             Expanded(
               child: Text(
@@ -215,14 +208,14 @@ class _ModernMcqOptionsState extends State<ModernMcqOptions>
                   color: isSelected
                       ? Colors.white
                       : (widget.isDark
-                          ? Colors.white
-                          : const Color(0xFF1A1A2E)),
+                            ? Colors.white
+                            : const Color(0xFF1A1A2E)),
                   fontFamily: 'Arimo',
                   height: 1.4,
                 ),
               ),
             ),
-            
+
             // Selection indicator
             AnimatedContainer(
               duration: const Duration(milliseconds: 250),

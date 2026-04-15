@@ -33,7 +33,9 @@ class _GamificationView extends StatelessWidget {
     final isDark = themeState.isDark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF9FAFB),
+      backgroundColor: isDark
+          ? const Color(0xFF0A0A0A)
+          : const Color(0xFFF9FAFB),
       body: BlocConsumer<GamificationCubit, GamificationState>(
         listener: (context, state) {
           if (state.successMessage != null) {
@@ -64,9 +66,7 @@ class _GamificationView extends StatelessWidget {
         builder: (context, state) {
           if (state.isLoading) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF2B7FFF),
-              ),
+              child: CircularProgressIndicator(color: Color(0xFF2B7FFF)),
             );
           }
 
@@ -81,7 +81,8 @@ class _GamificationView extends StatelessWidget {
                 ),
                 Expanded(
                   child: RefreshIndicator(
-                    onRefresh: () => context.read<GamificationCubit>().loadData(),
+                    onRefresh: () =>
+                        context.read<GamificationCubit>().loadData(),
                     color: const Color(0xFF2B7FFF),
                     child: SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
@@ -104,16 +105,24 @@ class _GamificationView extends StatelessWidget {
                             isComparing: state.isComparing,
                             compareUsers: state.compareUsers,
                             onFilterChanged: (filter) {
-                              context.read<GamificationCubit>().setLeaderboardFilter(filter);
+                              context
+                                  .read<GamificationCubit>()
+                                  .setLeaderboardFilter(filter);
                             },
                             onSearch: (query) {
-                              context.read<GamificationCubit>().searchLeaderboard(query);
+                              context
+                                  .read<GamificationCubit>()
+                                  .searchLeaderboard(query);
                             },
                             onToggleCompare: () {
-                              context.read<GamificationCubit>().toggleCompareMode();
+                              context
+                                  .read<GamificationCubit>()
+                                  .toggleCompareMode();
                             },
                             onUserSelected: (user) {
-                              context.read<GamificationCubit>().toggleCompareUser(user);
+                              context
+                                  .read<GamificationCubit>()
+                                  .toggleCompareUser(user);
                             },
                           ),
                           const SizedBox(height: 20),
@@ -133,7 +142,11 @@ class _GamificationView extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildHeader(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return Row(
       children: [
         Container(
@@ -179,7 +192,11 @@ class _GamificationView extends StatelessWidget {
     );
   }
 
-  Widget _buildBottomButton(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildBottomButton(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -242,10 +259,8 @@ class _GamificationView extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (sheetContext) => BlocProvider.value(
-        value: cubit,
-        child: const RewardsSheet(),
-      ),
+      builder: (sheetContext) =>
+          BlocProvider.value(value: cubit, child: const RewardsSheet()),
     );
   }
 }

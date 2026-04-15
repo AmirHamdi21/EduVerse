@@ -34,10 +34,12 @@ class _ITAlertsRulesTabState extends State<ITAlertsRulesTab> {
   @override
   Widget build(BuildContext context) {
     final filteredRules = widget.rules.where((rule) {
-      final matchesSearch = widget.searchQuery.isEmpty ||
+      final matchesSearch =
+          widget.searchQuery.isEmpty ||
           rule.name.toLowerCase().contains(widget.searchQuery.toLowerCase()) ||
           rule.service.toLowerCase().contains(widget.searchQuery.toLowerCase());
-      final matchesSeverity = widget.selectedSeverity == null ||
+      final matchesSeverity =
+          widget.selectedSeverity == null ||
           rule.severity == widget.selectedSeverity;
       return matchesSearch && matchesSeverity;
     }).toList();
@@ -75,7 +77,10 @@ class _ITAlertsRulesTabState extends State<ITAlertsRulesTab> {
                       size: 20,
                     ),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                   ),
                 ),
               ),
@@ -93,7 +98,10 @@ class _ITAlertsRulesTabState extends State<ITAlertsRulesTab> {
             GestureDetector(
               onTap: widget.onCreateRule,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [ITColors.primary, ITColors.primaryLight],
@@ -182,7 +190,10 @@ class _ITAlertsRulesTabState extends State<ITAlertsRulesTab> {
     );
   }
 
-  PopupMenuItem<AlertSeverity?> _buildSeverityMenuItem(AlertSeverity? severity, String label) {
+  PopupMenuItem<AlertSeverity?> _buildSeverityMenuItem(
+    AlertSeverity? severity,
+    String label,
+  ) {
     return PopupMenuItem(
       value: severity,
       child: Row(
@@ -199,9 +210,7 @@ class _ITAlertsRulesTabState extends State<ITAlertsRulesTab> {
             ),
           Text(
             label,
-            style: TextStyle(
-              color: ITColors.textPrimaryColor(widget.isDark),
-            ),
+            style: TextStyle(color: ITColors.textPrimaryColor(widget.isDark)),
           ),
         ],
       ),
@@ -232,7 +241,9 @@ class _ITAlertsRulesTabState extends State<ITAlertsRulesTab> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: _getSeverityColor(rule.severity).withValues(alpha: 0.15),
+                  color: _getSeverityColor(
+                    rule.severity,
+                  ).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -304,22 +315,29 @@ class _ITAlertsRulesTabState extends State<ITAlertsRulesTab> {
           const SizedBox(height: 12),
           Row(
             children: [
-              ...rule.tags.take(3).map((tag) => Container(
-                margin: const EdgeInsets.only(right: 6),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: ITColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  tag,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: ITColors.primary,
+              ...rule.tags
+                  .take(3)
+                  .map(
+                    (tag) => Container(
+                      margin: const EdgeInsets.only(right: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ITColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        tag,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: ITColors.primary,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              )),
               const Spacer(),
               GestureDetector(
                 onTap: () => widget.onRuleTap(rule),

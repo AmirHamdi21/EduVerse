@@ -18,20 +18,24 @@ class InstructorDashboardCubit extends Cubit<InstructorDashboardState> {
       final courses = _generateDemoCourses();
       final stats = _calculateStats(courses);
 
-      emit(state.copyWith(
-        courses: courses,
-        isLoading: false,
-        totalStudents: stats['totalStudents'] as int,
-        pendingAssignments: stats['pendingAssignments'] as int,
-        pendingQuizzes: stats['pendingQuizzes'] as int,
-        unreadMessages: stats['unreadMessages'] as int,
-        overallProgress: stats['overallProgress'] as double,
-      ));
+      emit(
+        state.copyWith(
+          courses: courses,
+          isLoading: false,
+          totalStudents: stats['totalStudents'] as int,
+          pendingAssignments: stats['pendingAssignments'] as int,
+          pendingQuizzes: stats['pendingQuizzes'] as int,
+          unreadMessages: stats['unreadMessages'] as int,
+          overallProgress: stats['overallProgress'] as double,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Failed to load dashboard: $e',
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'Failed to load dashboard: $e',
+        ),
+      );
     }
   }
 
@@ -118,7 +122,8 @@ class InstructorDashboardCubit extends Cubit<InstructorDashboardState> {
         id: '4',
         code: 'CS410',
         name: 'Machine Learning Fundamentals',
-        description: 'Introduction to machine learning algorithms and applications',
+        description:
+            'Introduction to machine learning algorithms and applications',
         totalStudents: 29,
         progress: 81,
         colorValue: 0xFF8B5CF6,
@@ -154,7 +159,9 @@ class InstructorDashboardCubit extends Cubit<InstructorDashboardState> {
       'pendingAssignments': pendingAssignments,
       'pendingQuizzes': pendingQuizzes,
       'unreadMessages': unreadMessages,
-      'overallProgress': courses.isNotEmpty ? totalProgress / courses.length : 0.0,
+      'overallProgress': courses.isNotEmpty
+          ? totalProgress / courses.length
+          : 0.0,
     };
   }
 }

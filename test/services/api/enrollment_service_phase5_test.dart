@@ -98,10 +98,7 @@ void main() {
                   'name': 'Computer Science 500',
                   'code': 'CS500',
                 },
-                'section': <String, dynamic>{
-                  'id': 15,
-                  'sectionNumber': 1,
-                },
+                'section': <String, dynamic>{'id': 15, 'sectionNumber': 1},
               },
             ],
           },

@@ -3,26 +3,28 @@ import 'package:flutter/material.dart';
 /// Instructor theme colors - Modern colorful palette based on deep blue
 class InstructorColors {
   // Primary Blue Spectrum
-  static const Color primary = Color(0xFF0D47A1);           // Deep Blue
-  static const Color primaryMedium = Color(0xFF1565C0);     // Medium Blue
-  static const Color primaryLight = Color(0xFF42A5F5);      // Light Blue
-  static const Color primaryLighter = Color(0xFF90CAF9);    // Lighter Blue
-  static const Color primaryBackground = Color(0xFFF0F7FF); // Very Light Blue tint
+  static const Color primary = Color(0xFF0D47A1); // Deep Blue
+  static const Color primaryMedium = Color(0xFF1565C0); // Medium Blue
+  static const Color primaryLight = Color(0xFF42A5F5); // Light Blue
+  static const Color primaryLighter = Color(0xFF90CAF9); // Lighter Blue
+  static const Color primaryBackground = Color(
+    0xFFF0F7FF,
+  ); // Very Light Blue tint
 
   // Secondary Accent Colors
-  static const Color accentOrange = Color(0xFFFF6D00);      // Vibrant Orange
-  static const Color accentPurple = Color(0xFF7C4DFF);      // Vibrant Purple
-  static const Color accentTeal = Color(0xFF00BFA5);        // Vibrant Teal
-  static const Color accentPink = Color(0xFFE91E63);        // Modern Pink
-  static const Color accentIndigo = Color(0xFF536DFE);      // Indigo accent
+  static const Color accentOrange = Color(0xFFFF6D00); // Vibrant Orange
+  static const Color accentPurple = Color(0xFF7C4DFF); // Vibrant Purple
+  static const Color accentTeal = Color(0xFF00BFA5); // Vibrant Teal
+  static const Color accentPink = Color(0xFFE91E63); // Modern Pink
+  static const Color accentIndigo = Color(0xFF536DFE); // Indigo accent
 
   // Status Colors
-  static const Color success = Color(0xFF00C853);           // Vibrant Green
-  static const Color successLight = Color(0xFFB9F6CA);      // Light Green
-  static const Color warning = Color(0xFFFFAB00);           // Amber
-  static const Color warningLight = Color(0xFFFFE57F);      // Light Amber
-  static const Color error = Color(0xFFFF1744);             // Modern Red
-  static const Color errorLight = Color(0xFFFF8A80);        // Light Red
+  static const Color success = Color(0xFF00C853); // Vibrant Green
+  static const Color successLight = Color(0xFFB9F6CA); // Light Green
+  static const Color warning = Color(0xFFFFAB00); // Amber
+  static const Color warningLight = Color(0xFFFFE57F); // Light Amber
+  static const Color error = Color(0xFFFF1744); // Modern Red
+  static const Color errorLight = Color(0xFFFF8A80); // Light Red
 
   // Neutral Colors
   static const Color textPrimary = Color(0xFF1E293B);
@@ -73,13 +75,13 @@ class InstructorColors {
 
   // Course card color options
   static const List<Color> courseColors = [
-    Color(0xFF0D47A1),  // Deep Blue
-    Color(0xFF7C4DFF),  // Purple
-    Color(0xFFFF6D00),  // Orange
-    Color(0xFF00BFA5),  // Teal
-    Color(0xFFE91E63),  // Pink
-    Color(0xFF00C853),  // Green
-    Color(0xFF536DFE),  // Indigo
-    Color(0xFFFFAB00),  // Amber
+    Color(0xFF0D47A1), // Deep Blue
+    Color(0xFF7C4DFF), // Purple
+    Color(0xFFFF6D00), // Orange
+    Color(0xFF00BFA5), // Teal
+    Color(0xFFE91E63), // Pink
+    Color(0xFF00C853), // Green
+    Color(0xFF536DFE), // Indigo
+    Color(0xFFFFAB00), // Amber
   ];
 }

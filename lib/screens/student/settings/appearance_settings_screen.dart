@@ -30,11 +30,13 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
     final currentFontSize = themeState.fontSize;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -122,7 +124,11 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
     );
   }
 
-  Widget _buildThemeSelector(bool isDark, AppLocalizations l10n, AppThemeMode currentMode) {
+  Widget _buildThemeSelector(
+    bool isDark,
+    AppLocalizations l10n,
+    AppThemeMode currentMode,
+  ) {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
@@ -146,7 +152,9 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
             selectedColor: const Color(0xFFF59E0B),
             onTap: () {
               HapticFeedback.selectionClick();
-              context.read<ThemeBloc>().add(const SetThemeModeEvent(AppThemeMode.light));
+              context.read<ThemeBloc>().add(
+                const SetThemeModeEvent(AppThemeMode.light),
+              );
             },
           ),
           const SizedBox(width: 8),
@@ -158,7 +166,9 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
             selectedColor: const Color(0xFF6366F1),
             onTap: () {
               HapticFeedback.selectionClick();
-              context.read<ThemeBloc>().add(const SetThemeModeEvent(AppThemeMode.dark));
+              context.read<ThemeBloc>().add(
+                const SetThemeModeEvent(AppThemeMode.dark),
+              );
             },
           ),
           const SizedBox(width: 8),
@@ -170,7 +180,9 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
             selectedColor: const Color(0xFF3B82F6),
             onTap: () {
               HapticFeedback.selectionClick();
-              context.read<ThemeBloc>().add(const SetThemeModeEvent(AppThemeMode.system));
+              context.read<ThemeBloc>().add(
+                const SetThemeModeEvent(AppThemeMode.system),
+              );
             },
           ),
         ],
@@ -195,10 +207,15 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
           decoration: BoxDecoration(
             color: isSelected
                 ? selectedColor
-                : (currentIsDark ? const Color(0xFF0F172A).withValues(alpha: 0.5) : const Color(0xFFF1F5F9)),
+                : (currentIsDark
+                      ? const Color(0xFF0F172A).withValues(alpha: 0.5)
+                      : const Color(0xFFF1F5F9)),
             borderRadius: BorderRadius.circular(12),
             border: isSelected
-                ? Border.all(color: selectedColor.withValues(alpha: 0.3), width: 2)
+                ? Border.all(
+                    color: selectedColor.withValues(alpha: 0.3),
+                    width: 2,
+                  )
                 : null,
           ),
           child: Column(
@@ -299,7 +316,11 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
     );
   }
 
-  Widget _buildFontSizeSelector(bool isDark, AppLocalizations l10n, FontSizeOption currentFontSize) {
+  Widget _buildFontSizeSelector(
+    bool isDark,
+    AppLocalizations l10n,
+    FontSizeOption currentFontSize,
+  ) {
     final sizes = [l10n.small, l10n.medium, l10n.large];
     final fontSizes = [12.0, 14.0, 16.0];
     final fontSizeIndex = currentFontSize.index;
@@ -353,9 +374,7 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
                   max: 2,
                   divisions: 2,
                   activeColor: const Color(0xFF3B82F6),
-                  inactiveColor: isDark
-                      ? Colors.white12
-                      : Colors.black12,
+                  inactiveColor: isDark ? Colors.white12 : Colors.black12,
                   onChanged: (v) {
                     HapticFeedback.selectionClick();
                     final newIndex = v.round();
@@ -426,9 +445,7 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF0F172A)
-                  : const Color(0xFFF1F5F9),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -537,10 +554,7 @@ class _AppearanceSettingsScreenState extends State<AppearanceSettingsScreen> {
                     ),
                     Text(
                       'See how your app will look',
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.white70,
-                      ),
+                      style: TextStyle(fontSize: 13, color: Colors.white70),
                     ),
                   ],
                 ),

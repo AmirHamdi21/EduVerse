@@ -86,7 +86,10 @@ class ITSearchResultCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
@@ -103,9 +106,14 @@ class ITSearchResultCard extends StatelessWidget {
                     if (result.status != 'active') ...[
                       const SizedBox(height: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
-                          color: _getStatusColor(result.status).withValues(alpha: 0.1),
+                          color: _getStatusColor(
+                            result.status,
+                          ).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(

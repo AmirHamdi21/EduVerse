@@ -38,9 +38,7 @@ class DepartmentAiInsights extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.primary.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: AdminColors.primary.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +125,10 @@ class DepartmentAiInsights extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AdminColors.warning,
                     borderRadius: BorderRadius.circular(12),
@@ -161,11 +162,7 @@ class DepartmentAiInsights extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              icon,
-              color: progressColor,
-              size: 18,
-            ),
+            Icon(icon, color: progressColor, size: 18),
             const SizedBox(width: 8),
             Text(
               label,

@@ -163,8 +163,9 @@ class _MaterialsTabState extends State<_MaterialsTab> {
       backgroundColor: Colors.transparent,
       builder: (context) {
         return BlocProvider(
-          create: (_) =>
-              MaterialViewerBloc(materialService: widget.coursesBloc.materialService),
+          create: (_) => MaterialViewerBloc(
+            materialService: widget.coursesBloc.materialService,
+          ),
           child: Container(
             constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height * 0.92,
@@ -247,7 +248,9 @@ class _MaterialsTabState extends State<_MaterialsTab> {
       itemBuilder: (context, index) {
         final weekNumber = weeks[index];
         final materials = grouped[weekNumber] ?? const <CourseMaterialModel>[];
-        final bundles = MaterialBundleModel.detectBundles(materials).values.toList();
+        final bundles = MaterialBundleModel.detectBundles(
+          materials,
+        ).values.toList();
 
         return WeekAccordion(
           weekNumber: weekNumber,

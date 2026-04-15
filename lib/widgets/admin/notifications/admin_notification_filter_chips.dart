@@ -49,8 +49,8 @@ class AdminNotificationFilterChips extends StatelessWidget {
                   color: isSelected
                       ? null
                       : (isDark
-                          ? Colors.white.withOpacity(0.08)
-                          : Colors.grey.withOpacity(0.08)),
+                            ? Colors.white.withOpacity(0.08)
+                            : Colors.grey.withOpacity(0.08)),
                   borderRadius: BorderRadius.circular(20),
                   border: isSelected
                       ? null
@@ -75,8 +75,9 @@ class AdminNotificationFilterChips extends StatelessWidget {
                       _getCategoryLabel(category),
                       style: TextStyle(
                         fontSize: 13,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
                         color: isSelected
                             ? Colors.white
                             : AdminColors.getTextSecondaryColor(isDark),

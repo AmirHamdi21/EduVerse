@@ -48,12 +48,19 @@ class AdminLanguageSettingsScreen extends StatelessWidget {
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
                 children: [
-                  _buildCurrentLanguageCard(isDark, l10n, currentLocale, responsive),
+                  _buildCurrentLanguageCard(
+                    isDark,
+                    l10n,
+                    currentLocale,
+                    responsive,
+                  ),
                   SizedBox(height: responsive.p24),
                   _buildSectionTitle(l10n.availableLanguages, isDark),
                   SizedBox(height: responsive.p12),
@@ -88,7 +95,11 @@ class AdminLanguageSettingsScreen extends StatelessWidget {
   }
 
   Widget _buildCurrentLanguageCard(
-      bool isDark, AppLocalizations l10n, Locale locale, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    Locale locale,
+    ResponsiveUtil responsive,
+  ) {
     final isEnglish = locale.languageCode == 'en';
     return Container(
       padding: EdgeInsets.all(responsive.p20),
@@ -149,11 +160,7 @@ class AdminLanguageSettingsScreen extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.check_circle_rounded,
-                  color: Colors.white,
-                  size: 16,
-                ),
+                Icon(Icons.check_circle_rounded, color: Colors.white, size: 16),
                 const SizedBox(width: 6),
                 Text(
                   l10n.active,
@@ -231,10 +238,7 @@ class AdminLanguageSettingsScreen extends StatelessWidget {
                     : AdminColors.getBackgroundColor(isDark),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text(
-                flag,
-                style: const TextStyle(fontSize: 28),
-              ),
+              child: Text(flag, style: const TextStyle(fontSize: 28)),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -265,9 +269,7 @@ class AdminLanguageSettingsScreen extends StatelessWidget {
               width: 24,
               height: 24,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? AdminColors.primary
-                    : Colors.transparent,
+                color: isSelected ? AdminColors.primary : Colors.transparent,
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
@@ -296,9 +298,7 @@ class AdminLanguageSettingsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.primary.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: AdminColors.primary.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [

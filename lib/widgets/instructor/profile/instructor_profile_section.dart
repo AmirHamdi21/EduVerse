@@ -45,11 +45,7 @@ class InstructorProfileSection extends StatelessWidget {
                     color: InstructorColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    icon,
-                    color: InstructorColors.primary,
-                    size: 22,
-                  ),
+                  child: Icon(icon, color: InstructorColors.primary, size: 22),
                 ),
                 const SizedBox(width: 14),
                 Text(
@@ -63,10 +59,7 @@ class InstructorProfileSection extends StatelessWidget {
               ],
             ),
           ),
-          Divider(
-            height: 1,
-            color: InstructorColors.borderColor(isDark),
-          ),
+          Divider(height: 1, color: InstructorColors.borderColor(isDark)),
           Padding(
             padding: const EdgeInsets.all(20),
             child: Column(children: children),

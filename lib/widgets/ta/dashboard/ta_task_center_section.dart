@@ -32,8 +32,8 @@ class _TATaskCenterSectionState extends State<TATaskCenterSection> {
     final filteredTasks = _selectedFilter == 'all'
         ? widget.tasks
         : widget.tasks
-            .where((task) => task.type.toLowerCase() == _selectedFilter)
-            .toList();
+              .where((task) => task.type.toLowerCase() == _selectedFilter)
+              .toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,10 +84,26 @@ class _TATaskCenterSectionState extends State<TATaskCenterSection> {
 
   Widget _buildFilterChips(AppLocalizations l10n) {
     final filters = [
-      _FilterOption(id: 'all', label: l10n.taAllTasks, icon: Icons.list_rounded),
-      _FilterOption(id: 'grading', label: l10n.taGrading, icon: Icons.grading_rounded),
-      _FilterOption(id: 'review', label: l10n.taReviews, icon: Icons.rate_review_rounded),
-      _FilterOption(id: 'discussion', label: l10n.taDiscussions, icon: Icons.forum_rounded),
+      _FilterOption(
+        id: 'all',
+        label: l10n.taAllTasks,
+        icon: Icons.list_rounded,
+      ),
+      _FilterOption(
+        id: 'grading',
+        label: l10n.taGrading,
+        icon: Icons.grading_rounded,
+      ),
+      _FilterOption(
+        id: 'review',
+        label: l10n.taReviews,
+        icon: Icons.rate_review_rounded,
+      ),
+      _FilterOption(
+        id: 'discussion',
+        label: l10n.taDiscussions,
+        icon: Icons.forum_rounded,
+      ),
     ];
 
     return SingleChildScrollView(
@@ -141,8 +157,9 @@ class _TATaskCenterSectionState extends State<TATaskCenterSection> {
                               ? Colors.white
                               : TAColors.textPrimaryColor(widget.isDark),
                           fontSize: 13,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.w500,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
                         ),
                       ),
                     ],
@@ -205,7 +222,9 @@ class _TATaskCenterSectionState extends State<TATaskCenterSection> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: widget.isDark ? 0.2 : 0.04),
+                color: Colors.black.withValues(
+                  alpha: widget.isDark ? 0.2 : 0.04,
+                ),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -219,7 +238,9 @@ class _TATaskCenterSectionState extends State<TATaskCenterSection> {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: typeColor.withValues(alpha: widget.isDark ? 0.2 : 0.1),
+                      color: typeColor.withValues(
+                        alpha: widget.isDark ? 0.2 : 0.1,
+                      ),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -307,18 +328,11 @@ class _TATaskCenterSectionState extends State<TATaskCenterSection> {
     );
   }
 
-  Widget _buildTaskInfo({
-    required IconData icon,
-    required String label,
-  }) {
+  Widget _buildTaskInfo({required IconData icon, required String label}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: 14,
-          color: TAColors.textTertiaryColor(widget.isDark),
-        ),
+        Icon(icon, size: 14, color: TAColors.textTertiaryColor(widget.isDark)),
         const SizedBox(width: 4),
         Text(
           label,
@@ -362,11 +376,7 @@ class _FilterOption {
   final String label;
   final IconData icon;
 
-  _FilterOption({
-    required this.id,
-    required this.label,
-    required this.icon,
-  });
+  _FilterOption({required this.id, required this.label, required this.icon});
 }
 
 class TATaskModel {

@@ -29,13 +29,13 @@ class AnnouncementCard extends StatelessWidget {
         color: isDark ? AnnouncementColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark 
+          color: isDark
               ? AnnouncementColors.darkBorder.withOpacity(0.3)
               : AnnouncementColors.border,
         ),
         boxShadow: [
           BoxShadow(
-            color: isDark 
+            color: isDark
                 ? Colors.black.withOpacity(0.2)
                 : AnnouncementColors.primary.withOpacity(0.06),
             blurRadius: 20,
@@ -168,9 +168,7 @@ class AnnouncementCard extends StatelessWidget {
                   const SizedBox(width: 12),
                   Text(
                     'Delete',
-                    style: TextStyle(
-                      color: AnnouncementColors.delete,
-                    ),
+                    style: TextStyle(color: AnnouncementColors.delete),
                   ),
                 ],
               ),
@@ -210,24 +208,18 @@ class AnnouncementCard extends StatelessWidget {
     final statusColor = _getStatusColor();
     final statusLightColor = _getStatusLightColor();
     final statusIcon = _getStatusIcon();
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: isDark ? statusColor.withOpacity(0.15) : statusLightColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: statusColor.withOpacity(0.3),
-        ),
+        border: Border.all(color: statusColor.withOpacity(0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            statusIcon,
-            size: 14,
-            color: statusColor,
-          ),
+          Icon(statusIcon, size: 14, color: statusColor),
           const SizedBox(width: 6),
           Text(
             announcement.status.displayName,
@@ -246,12 +238,12 @@ class AnnouncementCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isDark 
+        color: isDark
             ? AnnouncementColors.darkSurface
             : AnnouncementColors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark 
+          color: isDark
               ? AnnouncementColors.darkBorder.withOpacity(0.5)
               : AnnouncementColors.border,
         ),
@@ -281,12 +273,13 @@ class AnnouncementCard extends StatelessWidget {
   Widget _buildMetadata() {
     final dateFormat = DateFormat('MMM d, yyyy - h:mm a');
     final DateTime date;
-    if (announcement.status == AnnouncementStatus.scheduled && announcement.scheduledAt != null) {
+    if (announcement.status == AnnouncementStatus.scheduled &&
+        announcement.scheduledAt != null) {
       date = announcement.scheduledAt!;
     } else {
       date = announcement.publishedAt ?? announcement.createdAt;
     }
-    
+
     return Row(
       children: [
         Icon(
@@ -322,7 +315,7 @@ class AnnouncementCard extends StatelessWidget {
 
   Widget _buildReadRate() {
     final percentage = announcement.readRate;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -352,7 +345,7 @@ class AnnouncementCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(4),
           child: LinearProgressIndicator(
             value: percentage / 100,
-            backgroundColor: isDark 
+            backgroundColor: isDark
                 ? AnnouncementColors.darkSurface
                 : AnnouncementColors.surface,
             valueColor: AlwaysStoppedAnimation<Color>(
@@ -409,16 +402,16 @@ class AnnouncementCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: isPrimary
                 ? AnnouncementColors.primary
-                : (isDark 
-                    ? AnnouncementColors.darkSurface
-                    : AnnouncementColors.surface),
+                : (isDark
+                      ? AnnouncementColors.darkSurface
+                      : AnnouncementColors.surface),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isPrimary
                   ? AnnouncementColors.primary
-                  : (isDark 
-                      ? AnnouncementColors.darkBorder.withOpacity(0.5)
-                      : AnnouncementColors.border),
+                  : (isDark
+                        ? AnnouncementColors.darkBorder.withOpacity(0.5)
+                        : AnnouncementColors.border),
             ),
           ),
           child: Row(
@@ -458,7 +451,7 @@ class AnnouncementCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isDark 
+            color: isDark
                 ? AnnouncementColors.delete.withOpacity(0.1)
                 : AnnouncementColors.deleteLight,
             borderRadius: BorderRadius.circular(12),

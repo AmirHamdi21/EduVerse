@@ -6,10 +6,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class AiNotesSearchBar extends StatefulWidget {
   final Function(String) onSearch;
 
-  const AiNotesSearchBar({
-    super.key,
-    required this.onSearch,
-  });
+  const AiNotesSearchBar({super.key, required this.onSearch});
 
   @override
   State<AiNotesSearchBar> createState() => _AiNotesSearchBarState();
@@ -48,7 +45,9 @@ class _AiNotesSearchBarState extends State<AiNotesSearchBar> {
         border: Border.all(
           color: _isFocused
               ? const Color(0xFF8B5CF6)
-              : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.08)),
+              : (isDark
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.08)),
           width: _isFocused ? 2 : 1,
         ),
         boxShadow: _isFocused
@@ -106,10 +105,12 @@ class _AiNotesSearchBarState extends State<AiNotesSearchBar> {
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );
   }
 }
-

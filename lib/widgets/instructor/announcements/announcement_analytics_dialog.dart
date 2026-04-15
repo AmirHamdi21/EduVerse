@@ -185,9 +185,7 @@ class _AnnouncementAnalyticsDialogState
             ? color.withOpacity(0.15)
             : color.withOpacity(0.08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withOpacity(0.2),
-        ),
+        border: Border.all(color: color.withOpacity(0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -200,11 +198,7 @@ class _AnnouncementAnalyticsDialogState
                   color: color.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
-                  icon,
-                  size: 18,
-                  color: color,
-                ),
+                child: Icon(icon, size: 18, color: color),
               ),
               const SizedBox(width: 10),
               Text(
@@ -241,9 +235,7 @@ class _AnnouncementAnalyticsDialogState
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AnnouncementColors.accent.withOpacity(0.2),
-        ),
+        border: Border.all(color: AnnouncementColors.accent.withOpacity(0.2)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -316,10 +308,7 @@ class _AnnouncementAnalyticsDialogState
             ),
           ),
           const SizedBox(height: 20),
-          SizedBox(
-            height: 150,
-            child: _buildSimpleChart(),
-          ),
+          SizedBox(height: 150, child: _buildSimpleChart()),
           const SizedBox(height: 12),
           _buildChartLegend(),
         ],
@@ -341,14 +330,14 @@ class _AnnouncementAnalyticsDialogState
     }
 
     final maxViews = data.map((d) => d.views).reduce((a, b) => a > b ? a : b);
-    
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: data.asMap().entries.map((entry) {
         final index = entry.key;
         final point = entry.value;
         final heightRatio = maxViews > 0 ? point.views / maxViews : 0.0;
-        
+
         return Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),

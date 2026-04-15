@@ -33,10 +33,16 @@ class _UploadDropZoneState extends State<UploadDropZone> {
         duration: const Duration(milliseconds: 200),
         padding: EdgeInsets.all(widget.isCompact ? 20 : 32),
         decoration: BoxDecoration(
-          color: UploadMaterialsColors.dropZoneColor(widget.isDark, _isDragOver),
+          color: UploadMaterialsColors.dropZoneColor(
+            widget.isDark,
+            _isDragOver,
+          ),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: UploadMaterialsColors.dropZoneBorder(widget.isDark, _isDragOver),
+            color: UploadMaterialsColors.dropZoneBorder(
+              widget.isDark,
+              _isDragOver,
+            ),
             width: _isDragOver ? 2 : 1,
             strokeAlign: BorderSide.strokeAlignInside,
           ),
@@ -52,7 +58,9 @@ class _UploadDropZoneState extends State<UploadDropZone> {
                 borderRadius: BorderRadius.circular(widget.isCompact ? 16 : 20),
                 boxShadow: [
                   BoxShadow(
-                    color: UploadMaterialsColors.uploadGreen.withValues(alpha: 0.3),
+                    color: UploadMaterialsColors.uploadGreen.withValues(
+                      alpha: 0.3,
+                    ),
                     blurRadius: 16,
                     offset: const Offset(0, 6),
                   ),
@@ -84,7 +92,10 @@ class _UploadDropZoneState extends State<UploadDropZone> {
             if (!widget.isCompact) ...[
               const SizedBox(height: 16),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: widget.isDark
                       ? UploadMaterialsColors.darkSurface
@@ -94,7 +105,9 @@ class _UploadDropZoneState extends State<UploadDropZone> {
                 child: Text(
                   'Supports: PDF, DOC, PPT, XLS, MP4, MP3, Images & more',
                   style: TextStyle(
-                    color: UploadMaterialsColors.textTertiaryColor(widget.isDark),
+                    color: UploadMaterialsColors.textTertiaryColor(
+                      widget.isDark,
+                    ),
                     fontSize: 12,
                   ),
                 ),
@@ -134,9 +147,7 @@ class UploadTypeButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: isDark
-                ? UploadMaterialsColors.darkCard
-                : Colors.white,
+            color: isDark ? UploadMaterialsColors.darkCard : Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: UploadMaterialsColors.borderColor(isDark),
@@ -161,11 +172,7 @@ class UploadTypeButton extends StatelessWidget {
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 22,
-                ),
+                child: Icon(icon, color: color, size: 22),
               ),
               const SizedBox(height: 8),
               Text(

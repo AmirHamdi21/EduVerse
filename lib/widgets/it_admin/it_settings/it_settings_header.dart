@@ -30,10 +30,7 @@ class ITSettingsHeader extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                ITColors.primary,
-                ITColors.primaryLight,
-              ],
+              colors: [ITColors.primary, ITColors.primaryLight],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

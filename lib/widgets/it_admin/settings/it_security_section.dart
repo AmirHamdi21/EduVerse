@@ -35,10 +35,12 @@ class ITSecuritySection extends StatelessWidget {
         children: [
           _buildHeader(),
           const SizedBox(height: 16),
-          ...settings.map((setting) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _buildSettingItem(setting),
-              )),
+          ...settings.map(
+            (setting) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildSettingItem(setting),
+            ),
+          ),
         ],
       ),
     );
@@ -53,11 +55,7 @@ class ITSecuritySection extends StatelessWidget {
             color: ITColors.error.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            Icons.security_rounded,
-            color: ITColors.error,
-            size: 20,
-          ),
+          child: Icon(Icons.security_rounded, color: ITColors.error, size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -156,7 +154,9 @@ class ITSecuritySection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(6),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 5),
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         color: ITColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),

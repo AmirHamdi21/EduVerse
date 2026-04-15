@@ -57,9 +57,7 @@ class TASessionComparisonCard extends StatelessWidget {
           const SizedBox(height: 14),
           Row(
             children: [
-              Expanded(
-                child: _buildSessionLabel(currentSession, true),
-              ),
+              Expanded(child: _buildSessionLabel(currentSession, true)),
               const SizedBox(width: 8),
               Icon(
                 Icons.compare_arrows_rounded,
@@ -67,9 +65,7 @@ class TASessionComparisonCard extends StatelessWidget {
                 color: TAColors.textTertiaryColor(isDark),
               ),
               const SizedBox(width: 8),
-              Expanded(
-                child: _buildSessionLabel(previousSession, false),
-              ),
+              Expanded(child: _buildSessionLabel(previousSession, false)),
             ],
           ),
           const SizedBox(height: 14),
@@ -77,7 +73,9 @@ class TASessionComparisonCard extends StatelessWidget {
             final index = entry.key;
             final metric = entry.value;
             return Padding(
-              padding: EdgeInsets.only(bottom: index < metrics.length - 1 ? 10 : 0),
+              padding: EdgeInsets.only(
+                bottom: index < metrics.length - 1 ? 10 : 0,
+              ),
               child: _buildMetricRow(metric),
             );
           }),
@@ -98,7 +96,9 @@ class TASessionComparisonCard extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
-          color: isCurrent ? TAColors.primary : TAColors.textSecondaryColor(isDark),
+          color: isCurrent
+              ? TAColors.primary
+              : TAColors.textSecondaryColor(isDark),
           fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
@@ -109,7 +109,7 @@ class TASessionComparisonCard extends StatelessWidget {
 
   Widget _buildMetricRow(ComparisonMetric metric) {
     final isPositive = metric.change >= 0;
-    
+
     return Row(
       children: [
         Expanded(
@@ -148,7 +148,9 @@ class TASessionComparisonCard extends StatelessWidget {
           width: 50,
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
           decoration: BoxDecoration(
-            color: (isPositive ? TAColors.success : TAColors.error).withValues(alpha: 0.12),
+            color: (isPositive ? TAColors.success : TAColors.error).withValues(
+              alpha: 0.12,
+            ),
             borderRadius: BorderRadius.circular(6),
           ),
           child: Row(
@@ -156,7 +158,9 @@ class TASessionComparisonCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                isPositive ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+                isPositive
+                    ? Icons.arrow_upward_rounded
+                    : Icons.arrow_downward_rounded,
                 size: 10,
                 color: isPositive ? TAColors.success : TAColors.error,
               ),

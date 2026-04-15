@@ -76,14 +76,15 @@ class _ITProfileNotificationsTabState extends State<ITProfileNotificationsTab> {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           _buildToggleTile(
             icon: Icons.warning_rounded,
             iconColor: ITColors.error,
             title: 'Security Alerts',
             subtitle: 'Get notified about security threats',
             value: _prefs.securityAlerts,
-            onChanged: (val) => _updatePrefs(_prefs.copyWith(securityAlerts: val)),
+            onChanged: (val) =>
+                _updatePrefs(_prefs.copyWith(securityAlerts: val)),
           ),
           _buildToggleTile(
             icon: Icons.power_off_rounded,
@@ -112,17 +113,13 @@ class _ITProfileNotificationsTabState extends State<ITProfileNotificationsTab> {
             onChanged: (val) =>
                 _updatePrefs(_prefs.copyWith(aiAnomalyNotifications: val)),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Delivery Methods section
           Row(
             children: [
-              Icon(
-                Icons.send_rounded,
-                size: 18,
-                color: ITColors.primary,
-              ),
+              Icon(Icons.send_rounded, size: 18, color: ITColors.primary),
               const SizedBox(width: 8),
               Text(
                 'Delivery Methods',
@@ -135,13 +132,14 @@ class _ITProfileNotificationsTabState extends State<ITProfileNotificationsTab> {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           _buildDeliveryMethodTile(
             icon: Icons.email_rounded,
             title: 'Email',
             subtitle: 'Receive alerts via email',
             value: _prefs.emailDelivery,
-            onChanged: (val) => _updatePrefs(_prefs.copyWith(emailDelivery: val)),
+            onChanged: (val) =>
+                _updatePrefs(_prefs.copyWith(emailDelivery: val)),
           ),
           _buildDeliveryMethodTile(
             icon: Icons.sms_rounded,
@@ -155,19 +153,21 @@ class _ITProfileNotificationsTabState extends State<ITProfileNotificationsTab> {
             title: 'In-App',
             subtitle: 'Push notifications in the app',
             value: _prefs.inAppDelivery,
-            onChanged: (val) => _updatePrefs(_prefs.copyWith(inAppDelivery: val)),
+            onChanged: (val) =>
+                _updatePrefs(_prefs.copyWith(inAppDelivery: val)),
           ),
           _buildDeliveryMethodTile(
             icon: Icons.tag_rounded,
             title: 'Slack',
             subtitle: 'Send alerts to Slack channel',
             value: _prefs.slackDelivery,
-            onChanged: (val) => _updatePrefs(_prefs.copyWith(slackDelivery: val)),
+            onChanged: (val) =>
+                _updatePrefs(_prefs.copyWith(slackDelivery: val)),
             badge: 'Connected',
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           // Save button
           SizedBox(
             width: double.infinity,

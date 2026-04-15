@@ -17,13 +17,15 @@ class AINoteCubit extends Cubit<AINotesState> {
       final recommendations = _generateSampleRecommendations();
       final stats = _calculateStats(notes);
 
-      emit(AINotesLoaded(
-        notes: notes,
-        filteredNotes: notes,
-        categories: categories,
-        recommendations: recommendations,
-        stats: stats,
-      ));
+      emit(
+        AINotesLoaded(
+          notes: notes,
+          filteredNotes: notes,
+          categories: categories,
+          recommendations: recommendations,
+          stats: stats,
+        ),
+      );
     } catch (e) {
       emit(AINotesError(message: e.toString()));
     }
@@ -41,10 +43,7 @@ class AINoteCubit extends Cubit<AINotesState> {
       query,
     );
 
-    emit(currentState.copyWith(
-      searchQuery: query,
-      filteredNotes: filtered,
-    ));
+    emit(currentState.copyWith(searchQuery: query, filteredNotes: filtered));
   }
 
   void applyFilter(NotesFilter filter, {String? categoryId}) {
@@ -61,12 +60,14 @@ class AINoteCubit extends Cubit<AINotesState> {
       currentState.searchQuery,
     );
 
-    emit(currentState.copyWith(
-      currentFilter: filter,
-      selectedCategoryId: newCategoryId,
-      clearSelectedCategory: filter != NotesFilter.byCourse,
-      filteredNotes: filtered,
-    ));
+    emit(
+      currentState.copyWith(
+        currentFilter: filter,
+        selectedCategoryId: newCategoryId,
+        clearSelectedCategory: filter != NotesFilter.byCourse,
+        filteredNotes: filtered,
+      ),
+    );
   }
 
   void applySort(NotesSort sort) {
@@ -81,10 +82,7 @@ class AINoteCubit extends Cubit<AINotesState> {
       currentState.searchQuery,
     );
 
-    emit(currentState.copyWith(
-      currentSort: sort,
-      filteredNotes: filtered,
-    ));
+    emit(currentState.copyWith(currentSort: sort, filteredNotes: filtered));
   }
 
   void selectNote(AINote note) {
@@ -128,12 +126,14 @@ class AINoteCubit extends Cubit<AINotesState> {
       updatedSelectedNote = updatedNotes.firstWhere((n) => n.id == noteId);
     }
 
-    emit(currentState.copyWith(
-      notes: updatedNotes,
-      filteredNotes: filtered,
-      stats: stats,
-      selectedNote: updatedSelectedNote,
-    ));
+    emit(
+      currentState.copyWith(
+        notes: updatedNotes,
+        filteredNotes: filtered,
+        stats: stats,
+        selectedNote: updatedSelectedNote,
+      ),
+    );
   }
 
   void toggleNoteExpanded(String noteId) {
@@ -155,10 +155,7 @@ class AINoteCubit extends Cubit<AINotesState> {
       currentState.searchQuery,
     );
 
-    emit(currentState.copyWith(
-      notes: updatedNotes,
-      filteredNotes: filtered,
-    ));
+    emit(currentState.copyWith(notes: updatedNotes, filteredNotes: filtered));
   }
 
   Future<void> generateFlashcards(String noteId) async {
@@ -173,14 +170,14 @@ class AINoteCubit extends Cubit<AINotesState> {
       await Future.delayed(const Duration(seconds: 2));
 
       // In a real app, this would call an AI service
-      emit(currentState.copyWith(
-        isGeneratingContent: false,
-      ));
+      emit(currentState.copyWith(isGeneratingContent: false));
     } catch (e) {
-      emit(currentState.copyWith(
-        isGeneratingContent: false,
-        error: 'Failed to generate flashcards: ${e.toString()}',
-      ));
+      emit(
+        currentState.copyWith(
+          isGeneratingContent: false,
+          error: 'Failed to generate flashcards: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -199,7 +196,8 @@ class AINoteCubit extends Cubit<AINotesState> {
         if (note.id == noteId) {
           return note.copyWith(
             updatedAt: DateTime.now(),
-            content: '${note.content}\n\n[Regenerated with additional insights]',
+            content:
+                '${note.content}\n\n[Regenerated with additional insights]',
           );
         }
         return note;
@@ -218,17 +216,21 @@ class AINoteCubit extends Cubit<AINotesState> {
         updatedSelectedNote = updatedNotes.firstWhere((n) => n.id == noteId);
       }
 
-      emit(currentState.copyWith(
-        notes: updatedNotes,
-        filteredNotes: filtered,
-        selectedNote: updatedSelectedNote,
-        isGeneratingContent: false,
-      ));
+      emit(
+        currentState.copyWith(
+          notes: updatedNotes,
+          filteredNotes: filtered,
+          selectedNote: updatedSelectedNote,
+          isGeneratingContent: false,
+        ),
+      );
     } catch (e) {
-      emit(currentState.copyWith(
-        isGeneratingContent: false,
-        error: 'Failed to regenerate note: ${e.toString()}',
-      ));
+      emit(
+        currentState.copyWith(
+          isGeneratingContent: false,
+          error: 'Failed to regenerate note: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -236,7 +238,9 @@ class AINoteCubit extends Cubit<AINotesState> {
     final currentState = state;
     if (currentState is! AINotesLoaded) return;
 
-    final updatedNotes = currentState.notes.where((n) => n.id != noteId).toList();
+    final updatedNotes = currentState.notes
+        .where((n) => n.id != noteId)
+        .toList();
 
     final filtered = _applyFiltersAndSort(
       updatedNotes,
@@ -248,12 +252,14 @@ class AINoteCubit extends Cubit<AINotesState> {
 
     final stats = _calculateStats(updatedNotes);
 
-    emit(currentState.copyWith(
-      notes: updatedNotes,
-      filteredNotes: filtered,
-      stats: stats,
-      clearSelectedNote: currentState.selectedNote?.id == noteId,
-    ));
+    emit(
+      currentState.copyWith(
+        notes: updatedNotes,
+        filteredNotes: filtered,
+        stats: stats,
+        clearSelectedNote: currentState.selectedNote?.id == noteId,
+      ),
+    );
   }
 
   void clearError() {
@@ -278,7 +284,9 @@ class AINoteCubit extends Cubit<AINotesState> {
         break;
       case NotesFilter.byCourse:
         if (categoryId != null) {
-          filtered = filtered.where((n) => n.category.id == categoryId).toList();
+          filtered = filtered
+              .where((n) => n.category.id == categoryId)
+              .toList();
         }
         break;
       case NotesFilter.byDate:
@@ -326,7 +334,7 @@ class AINoteCubit extends Cubit<AINotesState> {
   NotesQuickStats _calculateStats(List<AINote> notes) {
     final now = DateTime.now();
     final weekAgo = now.subtract(const Duration(days: 7));
-    
+
     return NotesQuickStats(
       totalNotes: notes.length,
       favoritedCount: notes.where((n) => n.isFavorited).length,
@@ -340,7 +348,8 @@ class AINoteCubit extends Cubit<AINotesState> {
       AINote(
         id: 'note_1',
         title: 'Lecture 4 - Machine Learning Basics',
-        content: '''This lecture covers fundamental concepts in machine learning, including supervised vs unsupervised learning, model evaluation metrics, and the bias-variance tradeoff.
+        content:
+            '''This lecture covers fundamental concepts in machine learning, including supervised vs unsupervised learning, model evaluation metrics, and the bias-variance tradeoff.
 
 Key Topics:
 • Supervised Learning - Using labeled data to train models
@@ -348,19 +357,26 @@ Key Topics:
 • Overfitting and Underfitting
 
 The lecture emphasized the importance of proper data splitting and cross-validation techniques to ensure model generalization.''',
-        summary: 'This lecture covers fundamental concepts in machine learning, including supervised vs unsupervised learning, model evaluation metrics, and the bias-variance tradeoff.',
+        summary:
+            'This lecture covers fundamental concepts in machine learning, including supervised vs unsupervised learning, model evaluation metrics, and the bias-variance tradeoff.',
         category: NoteCategories.machineLearning,
         createdAt: DateTime.now().subtract(const Duration(days: 2)),
         updatedAt: DateTime.now().subtract(const Duration(days: 2)),
         isFavorited: true,
-        keyTopics: ['Supervised Learning', 'Unsupervised Learning', 'Model Evaluation', 'Bias-Variance Tradeoff'],
+        keyTopics: [
+          'Supervised Learning',
+          'Unsupervised Learning',
+          'Model Evaluation',
+          'Bias-Variance Tradeoff',
+        ],
         tags: ['ML', 'Basics', 'Fundamentals'],
         source: NoteSource.lecture,
       ),
       AINote(
         id: 'note_2',
         title: 'Summary of Binary Trees',
-        content: '''This note covers binary search trees & trees, including properties, traversal methods (in-order, pre-order, post-order), and complexity.
+        content:
+            '''This note covers binary search trees & trees, including properties, traversal methods (in-order, pre-order, post-order), and complexity.
 
 Binary Tree Properties:
 • Each node has at most 2 children
@@ -371,7 +387,8 @@ Time Complexity:
 • Search: O(log n) average, O(n) worst
 • Insert: O(log n) average, O(n) worst
 • Delete: O(log n) average, O(n) worst''',
-        summary: 'This note covers binary search trees & trees, including properties, traversal methods (in-order, pre-order, post-order), and complexity.',
+        summary:
+            'This note covers binary search trees & trees, including properties, traversal methods (in-order, pre-order, post-order), and complexity.',
         category: NoteCategories.dataStructures,
         createdAt: DateTime.now().subtract(const Duration(days: 5)),
         updatedAt: DateTime.now().subtract(const Duration(days: 5)),
@@ -382,7 +399,8 @@ Time Complexity:
       AINote(
         id: 'note_3',
         title: 'API Design Principles',
-        content: '''A summary of best practices for designing RESTful APIs. Key topics include proper naming conventions, HTTP methods, status codes, and versioning.
+        content:
+            '''A summary of best practices for designing RESTful APIs. Key topics include proper naming conventions, HTTP methods, status codes, and versioning.
 
 REST Principles:
 • Use nouns for resources
@@ -395,7 +413,8 @@ Best Practices:
 • Pagination for large datasets
 • Error handling and messages
 • Documentation (OpenAPI/Swagger)''',
-        summary: 'A summary of best practices for designing RESTful APIs. Key topics include proper naming conventions, HTTP methods, status codes, and versioning.',
+        summary:
+            'A summary of best practices for designing RESTful APIs. Key topics include proper naming conventions, HTTP methods, status codes, and versioning.',
         category: NoteCategories.webDevelopment,
         createdAt: DateTime.now().subtract(const Duration(days: 8)),
         updatedAt: DateTime.now().subtract(const Duration(days: 8)),
@@ -406,7 +425,8 @@ Best Practices:
       AINote(
         id: 'note_4',
         title: 'Introduction to Neural Networks',
-        content: '''An overview of neural network architecture, including perceptrons, activation functions, backpropagation, and gradient descent.
+        content:
+            '''An overview of neural network architecture, including perceptrons, activation functions, backpropagation, and gradient descent.
 
 Network Components:
 • Input Layer - receives raw data
@@ -423,19 +443,26 @@ Training Process:
 • Loss calculation
 • Backpropagation
 • Weight updates''',
-        summary: 'An overview of neural network architecture, including perceptrons, activation functions, backpropagation, and gradient descent.',
+        summary:
+            'An overview of neural network architecture, including perceptrons, activation functions, backpropagation, and gradient descent.',
         category: NoteCategories.deepLearning,
         createdAt: DateTime.now().subtract(const Duration(days: 10)),
         updatedAt: DateTime.now().subtract(const Duration(days: 10)),
         isFavorited: true,
-        keyTopics: ['Neural Networks', 'Activation Functions', 'Backpropagation', 'Gradient Descent'],
+        keyTopics: [
+          'Neural Networks',
+          'Activation Functions',
+          'Backpropagation',
+          'Gradient Descent',
+        ],
         tags: ['Deep Learning', 'Neural Networks'],
         source: NoteSource.lecture,
       ),
       AINote(
         id: 'note_5',
         title: 'Database Normalization',
-        content: '''Understanding database normalization forms (1NF, 2NF, 3NF, BCNF) and their importance in reducing data redundancy.
+        content:
+            '''Understanding database normalization forms (1NF, 2NF, 3NF, BCNF) and their importance in reducing data redundancy.
 
 Normal Forms:
 • 1NF - Atomic values, no repeating groups
@@ -448,7 +475,8 @@ Benefits:
 • Improves data integrity
 • Easier maintenance
 • Efficient storage''',
-        summary: 'Understanding database normalization forms (1NF, 2NF, 3NF, BCNF) and their importance in reducing data redundancy.',
+        summary:
+            'Understanding database normalization forms (1NF, 2NF, 3NF, BCNF) and their importance in reducing data redundancy.',
         category: NoteCategories.databases,
         createdAt: DateTime.now().subtract(const Duration(days: 12)),
         updatedAt: DateTime.now().subtract(const Duration(days: 12)),
@@ -459,7 +487,8 @@ Benefits:
       AINote(
         id: 'note_6',
         title: 'Algorithms Complexity Analysis',
-        content: '''Deep dive into Big O notation, time and space complexity analysis, and common algorithm patterns.
+        content:
+            '''Deep dive into Big O notation, time and space complexity analysis, and common algorithm patterns.
 
 Time Complexity Classes:
 • O(1) - Constant time
@@ -473,7 +502,8 @@ Space Complexity:
 • In-place algorithms
 • Auxiliary space
 • Stack space for recursion''',
-        summary: 'Deep dive into Big O notation, time and space complexity analysis, and common algorithm patterns.',
+        summary:
+            'Deep dive into Big O notation, time and space complexity analysis, and common algorithm patterns.',
         category: NoteCategories.algorithms,
         createdAt: DateTime.now().subtract(const Duration(days: 15)),
         updatedAt: DateTime.now().subtract(const Duration(days: 15)),

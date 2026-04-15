@@ -25,13 +25,13 @@ class TACoursesCubit extends Cubit<TACoursesState> {
     required CourseService courseService,
     required MaterialService materialService,
     required AssignmentService assignmentService,
-  })  : _enrollmentService = enrollmentService,
-        _sectionService = sectionService,
-        _labService = labService,
-        _courseService = courseService,
-        _materialService = materialService,
-        _assignmentService = assignmentService,
-        super(const TACoursesState());
+  }) : _enrollmentService = enrollmentService,
+       _sectionService = sectionService,
+       _labService = labService,
+       _courseService = courseService,
+       _materialService = materialService,
+       _assignmentService = assignmentService,
+       super(const TACoursesState());
 
   final EnrollmentService _enrollmentService;
   final SectionService _sectionService;
@@ -44,31 +44,37 @@ class TACoursesCubit extends Cubit<TACoursesState> {
 
   /// Fetches the TA's assigned teaching courses.
   Future<void> fetchTACourses() async {
-    emit(state.copyWith(
-      coursesStatus: const TASubTabLoading<List<TeachingCourseModel>>(),
-    ));
+    emit(
+      state.copyWith(
+        coursesStatus: const TASubTabLoading<List<TeachingCourseModel>>(),
+      ),
+    );
 
     final result = await _enrollmentService.getTeachingCourses();
 
     if (!result.isSuccess || result.data == null) {
-      emit(state.copyWith(
-        coursesStatus: TASubTabError<List<TeachingCourseModel>>(
-          result.error?.message ?? 'Failed to load teaching courses',
+      emit(
+        state.copyWith(
+          coursesStatus: TASubTabError<List<TeachingCourseModel>>(
+            result.error?.message ?? 'Failed to load teaching courses',
+          ),
         ),
-      ));
+      );
       return;
     }
 
-    emit(state.copyWith(
-      coursesStatus: TASubTabLoaded<List<TeachingCourseModel>>(result.data!),
-    ));
+    emit(
+      state.copyWith(
+        coursesStatus: TASubTabLoaded<List<TeachingCourseModel>>(result.data!),
+      ),
+    );
 
     // Fetch student counts for all sections in parallel
     final sectionIds = result.data!
         .map((tc) => tc.sectionId)
         .where((id) => id > 0)
         .toList();
-    
+
     if (sectionIds.isNotEmpty) {
       await fetchAllSectionStudentsCounts(sectionIds);
     }
@@ -78,9 +84,9 @@ class TACoursesCubit extends Cubit<TACoursesState> {
 
   /// Aggregates course overview statistics.
   Future<void> fetchCourseOverview(int courseId) async {
-    emit(state.copyWith(
-      overviewData: const TASubTabLoading<TACourseOverview>(),
-    ));
+    emit(
+      state.copyWith(overviewData: const TASubTabLoading<TACourseOverview>()),
+    );
 
     try {
       // Fetch assignments count
@@ -119,22 +125,26 @@ class TACoursesCubit extends Cubit<TACoursesState> {
         }
       }
 
-      emit(state.copyWith(
-        overviewData: TASubTabLoaded<TACourseOverview>(
-          TACourseOverview(
-            totalStudents: 0,
-            totalAssignments: totalAssignments,
-            totalLabs: totalLabs,
-            pendingGrading: pendingGrading,
+      emit(
+        state.copyWith(
+          overviewData: TASubTabLoaded<TACourseOverview>(
+            TACourseOverview(
+              totalStudents: 0,
+              totalAssignments: totalAssignments,
+              totalLabs: totalLabs,
+              pendingGrading: pendingGrading,
+            ),
           ),
         ),
-      ));
+      );
     } catch (e) {
-      emit(state.copyWith(
-        overviewData: TASubTabError<TACourseOverview>(
-          'Failed to load course overview: $e',
+      emit(
+        state.copyWith(
+          overviewData: TASubTabError<TACourseOverview>(
+            'Failed to load course overview: $e',
+          ),
         ),
-      ));
+      );
     }
   }
 
@@ -142,37 +152,45 @@ class TACoursesCubit extends Cubit<TACoursesState> {
 
   /// Loads sections and labs for a course.
   Future<void> fetchCourseSectionsAndLabs(int courseId) async {
-    emit(state.copyWith(
-      sectionsLabsData: const TASubTabLoading<TACourseSectionsLabs>(),
-    ));
+    emit(
+      state.copyWith(
+        sectionsLabsData: const TASubTabLoading<TACourseSectionsLabs>(),
+      ),
+    );
 
     try {
       final sectionsResult = await _sectionService.getByCourse(courseId);
       final labsResult = await _labService.getAll(courseId: courseId);
 
       if (!sectionsResult.isSuccess) {
-        emit(state.copyWith(
-          sectionsLabsData: TASubTabError<TACourseSectionsLabs>(
-            sectionsResult.error?.message ?? 'Failed to load sections',
+        emit(
+          state.copyWith(
+            sectionsLabsData: TASubTabError<TACourseSectionsLabs>(
+              sectionsResult.error?.message ?? 'Failed to load sections',
+            ),
           ),
-        ));
+        );
         return;
       }
 
-      emit(state.copyWith(
-        sectionsLabsData: TASubTabLoaded<TACourseSectionsLabs>(
-          TACourseSectionsLabs(
-            sections: sectionsResult.data ?? const [],
-            labs: labsResult.data ?? const [],
+      emit(
+        state.copyWith(
+          sectionsLabsData: TASubTabLoaded<TACourseSectionsLabs>(
+            TACourseSectionsLabs(
+              sections: sectionsResult.data ?? const [],
+              labs: labsResult.data ?? const [],
+            ),
           ),
         ),
-      ));
+      );
     } catch (e) {
-      emit(state.copyWith(
-        sectionsLabsData: TASubTabError<TACourseSectionsLabs>(
-          'Failed to load sections & labs: $e',
+      emit(
+        state.copyWith(
+          sectionsLabsData: TASubTabError<TACourseSectionsLabs>(
+            'Failed to load sections & labs: $e',
+          ),
         ),
-      ));
+      );
     }
   }
 
@@ -180,21 +198,19 @@ class TACoursesCubit extends Cubit<TACoursesState> {
 
   /// Loads week-based course structure.
   Future<void> fetchCourseStructure(int courseId) async {
-    emit(state.copyWith(
-      structureData: const TASubTabLoading<dynamic>(),
-    ));
+    emit(state.copyWith(structureData: const TASubTabLoading<dynamic>()));
 
     try {
       final structure = await _courseService.getCourseStructure(courseId);
-      emit(state.copyWith(
-        structureData: TASubTabLoaded<dynamic>(structure),
-      ));
+      emit(state.copyWith(structureData: TASubTabLoaded<dynamic>(structure)));
     } catch (e) {
-      emit(state.copyWith(
-        structureData: TASubTabError<dynamic>(
-          'Failed to load course structure: $e',
+      emit(
+        state.copyWith(
+          structureData: TASubTabError<dynamic>(
+            'Failed to load course structure: $e',
+          ),
         ),
-      ));
+      );
     }
   }
 
@@ -202,21 +218,27 @@ class TACoursesCubit extends Cubit<TACoursesState> {
 
   /// Loads published course materials.
   Future<void> fetchCourseMaterials(int courseId) async {
-    emit(state.copyWith(
-      materialsData: const TASubTabLoading<List<CourseMaterialModel>>(),
-    ));
+    emit(
+      state.copyWith(
+        materialsData: const TASubTabLoading<List<CourseMaterialModel>>(),
+      ),
+    );
 
     try {
       final materials = await _materialService.getMaterials(courseId);
-      emit(state.copyWith(
-        materialsData: TASubTabLoaded<List<CourseMaterialModel>>(materials),
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        materialsData: TASubTabError<List<CourseMaterialModel>>(
-          'Failed to load materials: $e',
+      emit(
+        state.copyWith(
+          materialsData: TASubTabLoaded<List<CourseMaterialModel>>(materials),
         ),
-      ));
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          materialsData: TASubTabError<List<CourseMaterialModel>>(
+            'Failed to load materials: $e',
+          ),
+        ),
+      );
     }
   }
 
@@ -224,9 +246,11 @@ class TACoursesCubit extends Cubit<TACoursesState> {
 
   /// Loads all assignments for a course.
   Future<void> fetchCourseAssignments(int courseId) async {
-    emit(state.copyWith(
-      assignmentsData: const TASubTabLoading<List<AssignmentModel>>(),
-    ));
+    emit(
+      state.copyWith(
+        assignmentsData: const TASubTabLoading<List<AssignmentModel>>(),
+      ),
+    );
 
     try {
       final result = await _assignmentService.getAll(
@@ -235,25 +259,31 @@ class TACoursesCubit extends Cubit<TACoursesState> {
       );
 
       if (!result.isSuccess || result.data == null) {
-        emit(state.copyWith(
-          assignmentsData: TASubTabError<List<AssignmentModel>>(
-            result.error?.message ?? 'Failed to load assignments',
+        emit(
+          state.copyWith(
+            assignmentsData: TASubTabError<List<AssignmentModel>>(
+              result.error?.message ?? 'Failed to load assignments',
+            ),
           ),
-        ));
+        );
         return;
       }
 
-      emit(state.copyWith(
-        assignmentsData: TASubTabLoaded<List<AssignmentModel>>(
-          result.data!.data,
+      emit(
+        state.copyWith(
+          assignmentsData: TASubTabLoaded<List<AssignmentModel>>(
+            result.data!.data,
+          ),
         ),
-      ));
+      );
     } catch (e) {
-      emit(state.copyWith(
-        assignmentsData: TASubTabError<List<AssignmentModel>>(
-          'Failed to load assignments: $e',
+      emit(
+        state.copyWith(
+          assignmentsData: TASubTabError<List<AssignmentModel>>(
+            'Failed to load assignments: $e',
+          ),
         ),
-      ));
+      );
     }
   }
 
@@ -261,10 +291,12 @@ class TACoursesCubit extends Cubit<TACoursesState> {
 
   /// Fetches ungraded assignment submissions across all course assignments.
   Future<void> fetchPendingGrading(int courseId) async {
-    emit(state.copyWith(
-      pendingGradingData:
-          const TASubTabLoading<List<AssignmentSubmissionModel>>(),
-    ));
+    emit(
+      state.copyWith(
+        pendingGradingData:
+            const TASubTabLoading<List<AssignmentSubmissionModel>>(),
+      ),
+    );
 
     try {
       final assignmentsResult = await _assignmentService.getAll(
@@ -273,11 +305,13 @@ class TACoursesCubit extends Cubit<TACoursesState> {
       );
 
       if (!assignmentsResult.isSuccess || assignmentsResult.data == null) {
-        emit(state.copyWith(
-          pendingGradingData: TASubTabError<List<AssignmentSubmissionModel>>(
-            assignmentsResult.error?.message ?? 'Failed to load assignments',
+        emit(
+          state.copyWith(
+            pendingGradingData: TASubTabError<List<AssignmentSubmissionModel>>(
+              assignmentsResult.error?.message ?? 'Failed to load assignments',
+            ),
           ),
-        ));
+        );
         return;
       }
 
@@ -296,16 +330,21 @@ class TACoursesCubit extends Cubit<TACoursesState> {
         }
       }
 
-      emit(state.copyWith(
-        pendingGradingData:
-            TASubTabLoaded<List<AssignmentSubmissionModel>>(pending),
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        pendingGradingData: TASubTabError<List<AssignmentSubmissionModel>>(
-          'Failed to load pending grading: $e',
+      emit(
+        state.copyWith(
+          pendingGradingData: TASubTabLoaded<List<AssignmentSubmissionModel>>(
+            pending,
+          ),
         ),
-      ));
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          pendingGradingData: TASubTabError<List<AssignmentSubmissionModel>>(
+            'Failed to load pending grading: $e',
+          ),
+        ),
+      );
     }
   }
 
@@ -313,20 +352,24 @@ class TACoursesCubit extends Cubit<TACoursesState> {
 
   /// Aggregates attendance per-lab (N sequential calls, client-side).
   Future<void> fetchAttendanceSummary(int courseId) async {
-    emit(state.copyWith(
-      attendanceSummaryData:
-          const TASubTabLoading<List<TALabAttendanceSummary>>(),
-    ));
+    emit(
+      state.copyWith(
+        attendanceSummaryData:
+            const TASubTabLoading<List<TALabAttendanceSummary>>(),
+      ),
+    );
 
     try {
       final labsResult = await _labService.getAll(courseId: courseId);
 
       if (!labsResult.isSuccess || labsResult.data == null) {
-        emit(state.copyWith(
-          attendanceSummaryData: TASubTabError<List<TALabAttendanceSummary>>(
-            labsResult.error?.message ?? 'Failed to load labs for attendance',
+        emit(
+          state.copyWith(
+            attendanceSummaryData: TASubTabError<List<TALabAttendanceSummary>>(
+              labsResult.error?.message ?? 'Failed to load labs for attendance',
+            ),
           ),
-        ));
+        );
         return;
       }
 
@@ -357,26 +400,33 @@ class TACoursesCubit extends Cubit<TACoursesState> {
           }
         }
 
-        summaries.add(TALabAttendanceSummary(
-          labId: labId,
-          labTitle: lab.title,
-          presentCount: present,
-          absentCount: absent,
-          excusedCount: excused,
-          lateCount: lateCount,
-        ));
+        summaries.add(
+          TALabAttendanceSummary(
+            labId: labId,
+            labTitle: lab.title,
+            presentCount: present,
+            absentCount: absent,
+            excusedCount: excused,
+            lateCount: lateCount,
+          ),
+        );
       }
 
-      emit(state.copyWith(
-        attendanceSummaryData:
-            TASubTabLoaded<List<TALabAttendanceSummary>>(summaries),
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        attendanceSummaryData: TASubTabError<List<TALabAttendanceSummary>>(
-          'Failed to load attendance summary: $e',
+      emit(
+        state.copyWith(
+          attendanceSummaryData: TASubTabLoaded<List<TALabAttendanceSummary>>(
+            summaries,
+          ),
         ),
-      ));
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          attendanceSummaryData: TASubTabError<List<TALabAttendanceSummary>>(
+            'Failed to load attendance summary: $e',
+          ),
+        ),
+      );
     }
   }
 
@@ -384,31 +434,35 @@ class TACoursesCubit extends Cubit<TACoursesState> {
 
   /// Loads students for a specific section.
   Future<void> fetchSectionStudents(int sectionId) async {
-    emit(state.copyWith(
-      studentsData: const TASubTabLoading<List<dynamic>>(),
-    ));
+    emit(state.copyWith(studentsData: const TASubTabLoading<List<dynamic>>()));
 
     try {
       final result = await _enrollmentService.getSectionStudentsLite(sectionId);
 
       if (!result.isSuccess || result.data == null) {
-        emit(state.copyWith(
-          studentsData: TASubTabError<List<dynamic>>(
-            result.error?.message ?? 'Failed to load section students',
+        emit(
+          state.copyWith(
+            studentsData: TASubTabError<List<dynamic>>(
+              result.error?.message ?? 'Failed to load section students',
+            ),
           ),
-        ));
+        );
         return;
       }
 
-      emit(state.copyWith(
-        studentsData: TASubTabLoaded<List<dynamic>>(result.data!),
-      ));
-    } catch (e) {
-      emit(state.copyWith(
-        studentsData: TASubTabError<List<dynamic>>(
-          'Failed to load students: $e',
+      emit(
+        state.copyWith(
+          studentsData: TASubTabLoaded<List<dynamic>>(result.data!),
         ),
-      ));
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          studentsData: TASubTabError<List<dynamic>>(
+            'Failed to load students: $e',
+          ),
+        ),
+      );
     }
   }
 
@@ -418,7 +472,9 @@ class TACoursesCubit extends Cubit<TACoursesState> {
 
     // Fetch all counts in parallel
     final futures = sectionIds.map((sectionId) async {
-      final result = await _enrollmentService.getSectionStudentsCount(sectionId);
+      final result = await _enrollmentService.getSectionStudentsCount(
+        sectionId,
+      );
       if (result.isSuccess && result.data != null) {
         return MapEntry(sectionId, result.data!);
       }
@@ -428,9 +484,7 @@ class TACoursesCubit extends Cubit<TACoursesState> {
     final entries = await Future.wait<MapEntry<int, int>>(futures);
     final counts = Map<int, int>.fromEntries(entries);
 
-    emit(state.copyWith(
-      sectionStudentCounts: counts,
-    ));
+    emit(state.copyWith(sectionStudentCounts: counts));
   }
 
   // ── Assignment Deletion (Principle I) ────────────────────────
@@ -440,11 +494,13 @@ class TACoursesCubit extends Cubit<TACoursesState> {
     final result = await _assignmentService.delete(assignmentId);
 
     if (!result.isSuccess) {
-      emit(state.copyWith(
-        assignmentsData: TASubTabError<List<AssignmentModel>>(
-          result.error?.message ?? 'Failed to delete assignment',
+      emit(
+        state.copyWith(
+          assignmentsData: TASubTabError<List<AssignmentModel>>(
+            result.error?.message ?? 'Failed to delete assignment',
+          ),
         ),
-      ));
+      );
       return;
     }
 

@@ -33,7 +33,10 @@ class ITAlertsTabBar extends StatelessWidget {
               onTap: () => onTabChanged(tab),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? (isDark ? ITColors.primary : Colors.white)
@@ -66,7 +69,9 @@ class ITAlertsTabBar extends StatelessWidget {
                       _getTabLabel(tab),
                       style: TextStyle(
                         fontSize: 13,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
                         color: isSelected
                             ? (isDark ? Colors.white : ITColors.primary)
                             : ITColors.textSecondaryColor(isDark),

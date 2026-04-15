@@ -45,10 +45,18 @@ class MyCoursesSection extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
-            ...courses.take(4).map((course) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: _CourseCard(course: course, isDark: isDark, l10n: l10n),
-                )),
+            ...courses
+                .take(4)
+                .map(
+                  (course) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _CourseCard(
+                      course: course,
+                      isDark: isDark,
+                      l10n: l10n,
+                    ),
+                  ),
+                ),
           ],
         );
       },
@@ -75,7 +83,9 @@ class _CourseCard extends StatelessWidget {
         color: isDark ? const Color(0xFF16213E) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE2E8F0),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : const Color(0xFFE2E8F0),
         ),
         boxShadow: [
           BoxShadow(
@@ -92,7 +102,10 @@ class _CourseCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: Color(course.colorValue).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
@@ -109,7 +122,10 @@ class _CourseCard extends StatelessWidget {
               const SizedBox(width: 8),
               if (course.assignments.any((a) => !a.isGraded))
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(6),
@@ -117,7 +133,11 @@ class _CourseCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.pending_actions, color: Color(0xFFF59E0B), size: 12),
+                      const Icon(
+                        Icons.pending_actions,
+                        color: Color(0xFFF59E0B),
+                        size: 12,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         '${course.assignments.where((a) => !a.isGraded).length} ${l10n.pending}',
@@ -170,8 +190,12 @@ class _CourseCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4),
                   child: LinearProgressIndicator(
                     value: course.progress / 100,
-                    backgroundColor: isDark ? Colors.grey[800] : Colors.grey[200],
-                    valueColor: AlwaysStoppedAnimation<Color>(Color(course.colorValue)),
+                    backgroundColor: isDark
+                        ? Colors.grey[800]
+                        : Colors.grey[200],
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Color(course.colorValue),
+                    ),
                     minHeight: 6,
                   ),
                 ),
@@ -253,7 +277,8 @@ class _CourseCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  onSelected: (value) => _handleMenuAction(context, value, course, l10n),
+                  onSelected: (value) =>
+                      _handleMenuAction(context, value, course, l10n),
                   itemBuilder: (ctx) => [
                     _menuItem(Icons.announcement_outlined, l10n.announcements),
                     _menuItem(Icons.analytics_outlined, l10n.analytics),
@@ -299,7 +324,11 @@ class _CourseCard extends StatelessWidget {
       value: text,
       child: Row(
         children: [
-          Icon(icon, size: 18, color: isDark ? Colors.white70 : Colors.grey[700]),
+          Icon(
+            icon,
+            size: 18,
+            color: isDark ? Colors.white70 : Colors.grey[700],
+          ),
           const SizedBox(width: 10),
           Text(
             text,
@@ -311,7 +340,11 @@ class _CourseCard extends StatelessWidget {
   }
 
   void _handleMenuAction(
-      BuildContext context, String action, InstructorCourseModel course, AppLocalizations l10n) {
+    BuildContext context,
+    String action,
+    InstructorCourseModel course,
+    AppLocalizations l10n,
+  ) {
     if (action == l10n.archive) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -320,9 +353,9 @@ class _CourseCard extends StatelessWidget {
         ),
       );
     } else if (action == l10n.analytics) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.analyticsComingSoon)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.analyticsComingSoon)));
     } else if (action == l10n.announcements) {
       _showAnnouncementsSheet(context, course, l10n);
     }
@@ -368,41 +401,54 @@ class _CourseCard extends StatelessWidget {
                   padding: const EdgeInsets.all(24),
                   child: Column(
                     children: [
-                      Icon(Icons.folder_open,
-                          size: 48, color: isDark ? Colors.grey[600] : Colors.grey[400]),
+                      Icon(
+                        Icons.folder_open,
+                        size: 48,
+                        color: isDark ? Colors.grey[600] : Colors.grey[400],
+                      ),
                       const SizedBox(height: 12),
                       Text(
                         l10n.noMaterialsYet,
-                        style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                        style: TextStyle(
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                        ),
                       ),
                     ],
                   ),
                 ),
               )
             else
-              ...course.materials.map((m) => ListTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF155CFB).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        _getMaterialIcon(m.type),
-                        color: const Color(0xFF155CFB),
-                      ),
+              ...course.materials.map(
+                (m) => ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF155CFB).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    title: Text(
-                      m.title,
-                      style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                    child: Icon(
+                      _getMaterialIcon(m.type),
+                      color: const Color(0xFF155CFB),
                     ),
-                    subtitle: Text(
-                      '${m.type} • ${m.fileSize}',
-                      style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                  ),
+                  title: Text(
+                    m.title,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black,
                     ),
-                    trailing: Icon(Icons.download,
-                        color: isDark ? Colors.grey[400] : Colors.grey[600]),
-                  )),
+                  ),
+                  subtitle: Text(
+                    '${m.type} • ${m.fileSize}',
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
+                  ),
+                  trailing: Icon(
+                    Icons.download,
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  ),
+                ),
+              ),
             const SizedBox(height: 16),
           ],
         ),
@@ -411,7 +457,10 @@ class _CourseCard extends StatelessWidget {
   }
 
   void _showAnnouncementsSheet(
-      BuildContext context, InstructorCourseModel course, AppLocalizations l10n) {
+    BuildContext context,
+    InstructorCourseModel course,
+    AppLocalizations l10n,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -459,7 +508,9 @@ class _CourseCard extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF155CFB),
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
                   ),
                 ),
               ],
@@ -471,39 +522,45 @@ class _CourseCard extends StatelessWidget {
                   padding: const EdgeInsets.all(24),
                   child: Text(
                     l10n.noAnnouncementsYet,
-                    style: TextStyle(color: isDark ? Colors.grey[400] : Colors.grey[600]),
+                    style: TextStyle(
+                      color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    ),
                   ),
                 ),
               )
             else
-              ...course.announcements.map((a) => Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.grey[50],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          a.title,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : Colors.black,
-                          ),
+              ...course.announcements.map(
+                (a) => Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : Colors.grey[50],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        a.title,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? Colors.white : Colors.black,
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          a.content,
-                          style: TextStyle(
-                            color: isDark ? Colors.grey[400] : Colors.grey[600],
-                            fontSize: 13,
-                          ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        a.content,
+                        style: TextStyle(
+                          color: isDark ? Colors.grey[400] : Colors.grey[600],
+                          fontSize: 13,
                         ),
-                      ],
-                    ),
-                  )),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             const SizedBox(height: 16),
           ],
         ),

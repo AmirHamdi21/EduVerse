@@ -59,9 +59,7 @@ class SystemHealthMetricsGrid extends StatelessWidget {
         decoration: BoxDecoration(
           color: ITColors.cardColor(isDark),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: ITColors.borderColor(isDark),
-          ),
+          border: Border.all(color: ITColors.borderColor(isDark)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,7 +69,10 @@ class SystemHealthMetricsGrid extends StatelessWidget {
               children: [
                 Icon(metric.icon, color: metricColor, size: 24),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),

@@ -24,9 +24,7 @@ class ExampleSettingsScreen extends StatelessWidget {
     final localizations = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(localizations.settings),
-      ),
+      appBar: AppBar(title: Text(localizations.settings)),
       body: ListView(
         children: [
           _buildLanguageSection(context, localizations),
@@ -73,8 +71,7 @@ class ExampleSettingsScreen extends StatelessWidget {
     String languageCode,
     String languageName,
   ) {
-    final currentLanguage =
-        context.read<LanguageCubit>().getCurrentLanguage();
+    final currentLanguage = context.read<LanguageCubit>().getCurrentLanguage();
     final isSelected = currentLanguage == languageCode;
 
     return ListTile(
@@ -87,9 +84,7 @@ class ExampleSettingsScreen extends StatelessWidget {
         // Optional: Show confirmation
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              'Language changed to $languageName',
-            ),
+            content: Text('Language changed to $languageName'),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -121,9 +116,7 @@ class ExampleSettingsScreen extends StatelessWidget {
               ),
               value: isDark,
               onChanged: (value) {
-                context.read<ThemeBloc>().add(
-                      SetThemeEvent(value),
-                    );
+                context.read<ThemeBloc>().add(SetThemeEvent(value));
               },
             );
           },
@@ -177,4 +170,3 @@ class ExampleSettingsScreen extends StatelessWidget {
 ///      },
 ///    )
 ///    ```
-

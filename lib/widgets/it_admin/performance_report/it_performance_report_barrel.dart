@@ -177,10 +177,7 @@ class TrendDataPoint {
   final DateTime time;
   final double value;
 
-  const TrendDataPoint({
-    required this.time,
-    required this.value,
-  });
+  const TrendDataPoint({required this.time, required this.value});
 }
 
 class ResourceUtilization {

@@ -51,9 +51,7 @@ class QuizProgressBar extends StatelessWidget {
             backgroundColor: isDark
                 ? const Color(0xFF3A4456)
                 : const Color(0xFFECECF0),
-            valueColor: const AlwaysStoppedAnimation<Color>(
-              Color(0xFF155DFC),
-            ),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF155DFC)),
           ),
         ),
       ],

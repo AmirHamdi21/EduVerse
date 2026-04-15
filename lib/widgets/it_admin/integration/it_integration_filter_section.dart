@@ -114,8 +114,8 @@ class ITIntegrationFilterSection extends StatelessWidget {
                     color: isSelected
                         ? ITColors.primary
                         : (isDark
-                            ? Colors.white.withValues(alpha: 0.1)
-                            : ITColors.border),
+                              ? Colors.white.withValues(alpha: 0.1)
+                              : ITColors.border),
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

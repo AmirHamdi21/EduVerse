@@ -83,15 +83,15 @@ class ITPerformanceTrendsSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Trend tabs
           _buildTrendTabs(),
           const SizedBox(height: 20),
-          
+
           // Chart
           _buildChart(),
           const SizedBox(height: 16),
-          
+
           // Legend
           _buildLegend(),
         ],
@@ -101,7 +101,7 @@ class ITPerformanceTrendsSection extends StatelessWidget {
 
   Widget _buildTrendTabs() {
     final tabs = ['CPU Usage', 'Memory', 'Response Time'];
-    
+
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
@@ -158,14 +158,14 @@ class ITPerformanceTrendsSection extends StatelessWidget {
     final data = selectedTrendTab == 0
         ? cpuData
         : selectedTrendTab == 1
-            ? memoryData
-            : responseTimeData;
+        ? memoryData
+        : responseTimeData;
 
     final color = selectedTrendTab == 0
         ? ITColors.primary
         : selectedTrendTab == 1
-            ? ITColors.purple
-            : ITColors.teal;
+        ? ITColors.purple
+        : ITColors.teal;
 
     if (data.isEmpty) {
       return Container(
@@ -200,21 +200,27 @@ class ITPerformanceTrendsSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      selectedTrendTab == 2 ? '${maxValue.round()}ms' : '${maxValue.round()}%',
+                      selectedTrendTab == 2
+                          ? '${maxValue.round()}ms'
+                          : '${maxValue.round()}%',
                       style: TextStyle(
                         fontSize: 10,
                         color: ITColors.textSecondaryColor(isDark),
                       ),
                     ),
                     Text(
-                      selectedTrendTab == 2 ? '${((maxValue + minValue) / 2).round()}ms' : '${((maxValue + minValue) / 2).round()}%',
+                      selectedTrendTab == 2
+                          ? '${((maxValue + minValue) / 2).round()}ms'
+                          : '${((maxValue + minValue) / 2).round()}%',
                       style: TextStyle(
                         fontSize: 10,
                         color: ITColors.textSecondaryColor(isDark),
                       ),
                     ),
                     Text(
-                      selectedTrendTab == 2 ? '${minValue.round()}ms' : '${minValue.round()}%',
+                      selectedTrendTab == 2
+                          ? '${minValue.round()}ms'
+                          : '${minValue.round()}%',
                       style: TextStyle(
                         fontSize: 10,
                         color: ITColors.textSecondaryColor(isDark),
@@ -251,20 +257,20 @@ class ITPerformanceTrendsSection extends StatelessWidget {
           padding: const EdgeInsets.only(left: 48),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(
-              data.length > 6 ? 6 : data.length,
-              (index) {
-                final dataIndex = (data.length * index / 5).floor().clamp(0, data.length - 1);
-                final point = data[dataIndex];
-                return Text(
-                  '${point.time.hour}:${point.time.minute.toString().padLeft(2, '0')}',
-                  style: TextStyle(
-                    fontSize: 9,
-                    color: ITColors.textSecondaryColor(isDark),
-                  ),
-                );
-              },
-            ),
+            children: List.generate(data.length > 6 ? 6 : data.length, (index) {
+              final dataIndex = (data.length * index / 5).floor().clamp(
+                0,
+                data.length - 1,
+              );
+              final point = data[dataIndex];
+              return Text(
+                '${point.time.hour}:${point.time.minute.toString().padLeft(2, '0')}',
+                style: TextStyle(
+                  fontSize: 9,
+                  color: ITColors.textSecondaryColor(isDark),
+                ),
+              );
+            }),
           ),
         ),
       ],
@@ -348,10 +354,7 @@ class _ChartPainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [
-          color.withValues(alpha: 0.3),
-          color.withValues(alpha: 0.0),
-        ],
+        colors: [color.withValues(alpha: 0.3), color.withValues(alpha: 0.0)],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
 
     final path = Path();
@@ -360,7 +363,10 @@ class _ChartPainter extends CustomPainter {
     for (var i = 0; i < data.length; i++) {
       final x = size.width * i / (data.length - 1);
       final normalizedValue = (data[i].value - minValue) / range;
-      final y = size.height - (normalizedValue * size.height * 0.9) - size.height * 0.05;
+      final y =
+          size.height -
+          (normalizedValue * size.height * 0.9) -
+          size.height * 0.05;
 
       if (i == 0) {
         path.moveTo(x, y);
@@ -387,10 +393,13 @@ class _ChartPainter extends CustomPainter {
 
     for (var i = 0; i < data.length; i++) {
       if (i % (data.length ~/ 6 + 1) != 0 && i != data.length - 1) continue;
-      
+
       final x = size.width * i / (data.length - 1);
       final normalizedValue = (data[i].value - minValue) / range;
-      final y = size.height - (normalizedValue * size.height * 0.9) - size.height * 0.05;
+      final y =
+          size.height -
+          (normalizedValue * size.height * 0.9) -
+          size.height * 0.05;
 
       canvas.drawCircle(Offset(x, y), 4, dotPaint);
       canvas.drawCircle(Offset(x, y), 4, dotBorderPaint);

@@ -38,7 +38,11 @@ class ITSecurityLogsTabSection extends StatelessWidget {
           child: Row(
             children: [
               _buildMainTab(0, Icons.article_rounded, 'Security Logs'),
-              _buildMainTab(1, Icons.admin_panel_settings_rounded, 'Access Control'),
+              _buildMainTab(
+                1,
+                Icons.admin_panel_settings_rounded,
+                'Access Control',
+              ),
               _buildMainTab(2, Icons.policy_rounded, 'Policies'),
             ],
           ),
@@ -123,15 +127,15 @@ class ITSecurityLogsTabSection extends StatelessWidget {
             color: isSelected
                 ? ITColors.primary.withValues(alpha: 0.1)
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.05)
-                    : Colors.white),
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.white),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isSelected
                   ? ITColors.primary
                   : (isDark
-                      ? Colors.white.withValues(alpha: 0.1)
-                      : ITColors.border),
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : ITColors.border),
             ),
           ),
           child: Row(

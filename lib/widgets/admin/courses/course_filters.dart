@@ -37,7 +37,7 @@ class CourseFilters extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     final filters = [
       CourseFilter(
         id: 'all',
@@ -93,7 +93,9 @@ class CourseFilters extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
       ),
       child: Wrap(
@@ -117,18 +119,22 @@ class CourseFilters extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: BoxDecoration(
             gradient: isSelected
-                ? LinearGradient(colors: [chipColor, chipColor.withValues(alpha: 0.8)])
+                ? LinearGradient(
+                    colors: [chipColor, chipColor.withValues(alpha: 0.8)],
+                  )
                 : null,
             color: isSelected
                 ? null
                 : (isDark
-                    ? AdminColors.darkSurface.withValues(alpha: 0.5)
-                    : Colors.white),
+                      ? AdminColors.darkSurface.withValues(alpha: 0.5)
+                      : Colors.white),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isSelected
                   ? chipColor
-                  : (isDark ? AdminColors.darkCardBorder : AdminColors.lightDivider),
+                  : (isDark
+                        ? AdminColors.darkCardBorder
+                        : AdminColors.lightDivider),
               width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected

@@ -77,7 +77,9 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -183,8 +185,10 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
@@ -409,7 +413,8 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
                           color: AdminColors.getBackgroundColor(isDark),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                              color: AdminColors.getDividerColor(isDark)),
+                            color: AdminColors.getDividerColor(isDark),
+                          ),
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
@@ -417,16 +422,25 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
                             isExpanded: true,
                             dropdownColor: AdminColors.getCardColor(isDark),
                             style: TextStyle(
-                                color: AdminColors.getTextColor(isDark)),
+                              color: AdminColors.getTextColor(isDark),
+                            ),
                             items: [
                               DropdownMenuItem(
-                                  value: 'hourly', child: Text(l10n.hourly)),
+                                value: 'hourly',
+                                child: Text(l10n.hourly),
+                              ),
                               DropdownMenuItem(
-                                  value: 'daily', child: Text(l10n.daily)),
+                                value: 'daily',
+                                child: Text(l10n.daily),
+                              ),
                               DropdownMenuItem(
-                                  value: 'weekly', child: Text(l10n.weekly)),
+                                value: 'weekly',
+                                child: Text(l10n.weekly),
+                              ),
                               DropdownMenuItem(
-                                  value: 'monthly', child: Text(l10n.monthly)),
+                                value: 'monthly',
+                                child: Text(l10n.monthly),
+                              ),
                             ],
                             onChanged: (v) =>
                                 setState(() => _backupFrequency = v!),
@@ -456,7 +470,8 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
                           color: AdminColors.getBackgroundColor(isDark),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                              color: AdminColors.getDividerColor(isDark)),
+                            color: AdminColors.getDividerColor(isDark),
+                          ),
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<int>(
@@ -464,10 +479,15 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
                             isExpanded: true,
                             dropdownColor: AdminColors.getCardColor(isDark),
                             style: TextStyle(
-                                color: AdminColors.getTextColor(isDark)),
+                              color: AdminColors.getTextColor(isDark),
+                            ),
                             items: [7, 14, 30, 60, 90]
-                                .map((d) => DropdownMenuItem(
-                                    value: d, child: Text('$d ${l10n.days}')))
+                                .map(
+                                  (d) => DropdownMenuItem(
+                                    value: d,
+                                    child: Text('$d ${l10n.days}'),
+                                  ),
+                                )
                                 .toList(),
                             onChanged: (v) =>
                                 setState(() => _retentionDays = v!),
@@ -526,7 +546,10 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
   }
 
   Widget _buildBackupsListSection(
-      bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -570,10 +593,11 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: (backup.type == 'automatic'
-                      ? AdminColors.primary
-                      : AdminColors.success)
-                  .withValues(alpha: 0.1),
+              color:
+                  (backup.type == 'automatic'
+                          ? AdminColors.primary
+                          : AdminColors.success)
+                      .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -623,8 +647,7 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
               ),
               const SizedBox(height: 4),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: AdminColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
@@ -664,8 +687,11 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
                 value: 'restore',
                 child: Row(
                   children: [
-                    Icon(Icons.restore_rounded,
-                        size: 18, color: AdminColors.primary),
+                    Icon(
+                      Icons.restore_rounded,
+                      size: 18,
+                      color: AdminColors.primary,
+                    ),
                     const SizedBox(width: 8),
                     Text(l10n.restore),
                   ],
@@ -675,8 +701,11 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
                 value: 'download',
                 child: Row(
                   children: [
-                    Icon(Icons.download_rounded,
-                        size: 18, color: AdminColors.success),
+                    Icon(
+                      Icons.download_rounded,
+                      size: 18,
+                      color: AdminColors.success,
+                    ),
                     const SizedBox(width: 8),
                     Text(l10n.download),
                   ],
@@ -686,11 +715,16 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
                 value: 'delete',
                 child: Row(
                   children: [
-                    Icon(Icons.delete_rounded,
-                        size: 18, color: AdminColors.error),
+                    Icon(
+                      Icons.delete_rounded,
+                      size: 18,
+                      color: AdminColors.error,
+                    ),
                     const SizedBox(width: 8),
-                    Text(l10n.delete,
-                        style: TextStyle(color: AdminColors.error)),
+                    Text(
+                      l10n.delete,
+                      style: TextStyle(color: AdminColors.error),
+                    ),
                   ],
                 ),
               ),
@@ -760,8 +794,9 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
             value: value,
             onChanged: onChanged,
             activeColor: AdminColors.primary,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(4),
+            ),
           ),
           Expanded(
             child: Column(
@@ -830,7 +865,9 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
           content: Text(l10n.backupCreated),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AdminColors.success,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     }
@@ -851,8 +888,11 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
                 color: AdminColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(Icons.warning_rounded,
-                  color: AdminColors.warning, size: 24),
+              child: Icon(
+                Icons.warning_rounded,
+                color: AdminColors.warning,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 12),
             Text(
@@ -871,9 +911,12 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel,
-                style:
-                    TextStyle(color: AdminColors.getTextSecondaryColor(isDark))),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(
+                color: AdminColors.getTextSecondaryColor(isDark),
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -902,7 +945,9 @@ class _AdminBackupRestoreScreenState extends State<AdminBackupRestoreScreen> {
           content: Text(l10n.backupRestored),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AdminColors.success,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     }

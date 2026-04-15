@@ -37,8 +37,9 @@ class _InstructorCalendarView extends StatelessWidget {
     final isDark = themeState.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF030712) : const Color(0xFFF9FAFB),
+      backgroundColor: isDark
+          ? const Color(0xFF030712)
+          : const Color(0xFFF9FAFB),
       body: BlocConsumer<InstructorCalendarCubit, InstructorCalendarState>(
         listener: (context, state) {
           if (state.successMessage != null) {
@@ -77,7 +78,8 @@ class _InstructorCalendarView extends StatelessWidget {
                 child: Column(
                   children: [
                     InstructorCalendarAppBar(
-                      onAddEvent: () => _showAddEventSheet(context, isDark, l10n),
+                      onAddEvent: () =>
+                          _showAddEventSheet(context, isDark, l10n),
                     ),
                     Expanded(
                       child: SingleChildScrollView(
@@ -116,11 +118,7 @@ class _InstructorCalendarView extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAddEventSheet(
-          context,
-          isDark,
-          l10n,
-        ),
+        onPressed: () => _showAddEventSheet(context, isDark, l10n),
         backgroundColor: const Color(0xFF155CFB),
         icon: const Icon(Icons.add_rounded, color: Colors.white),
         label: Text(
@@ -147,7 +145,9 @@ class _InstructorCalendarView extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF155CFB).withValues(alpha: isDark ? 0.15 : 0.1),
+                  const Color(
+                    0xFF155CFB,
+                  ).withValues(alpha: isDark ? 0.15 : 0.1),
                   Colors.transparent,
                 ],
               ),
@@ -164,7 +164,9 @@ class _InstructorCalendarView extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF7C3AED).withValues(alpha: isDark ? 0.1 : 0.05),
+                  const Color(
+                    0xFF7C3AED,
+                  ).withValues(alpha: isDark ? 0.1 : 0.05),
                   Colors.transparent,
                 ],
               ),
@@ -203,7 +205,8 @@ class _InstructorCalendarView extends StatelessWidget {
         return InstructorMonthViewCalendar(
           onDateSelected: (date) =>
               context.read<InstructorCalendarCubit>().selectDate(date),
-          onDateDoubleTap: (date) => _showDateEvents(context, date, state, isDark),
+          onDateDoubleTap: (date) =>
+              _showDateEvents(context, date, state, isDark),
         );
       case CalendarViewType.week:
         return InstructorWeekViewCalendar(
@@ -224,7 +227,7 @@ class _InstructorCalendarView extends StatelessWidget {
     AppLocalizations l10n,
   ) {
     final cubit = context.read<InstructorCalendarCubit>();
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -239,9 +242,8 @@ class _InstructorCalendarView extends StatelessWidget {
             initialChildSize: 0.85,
             minChildSize: 0.5,
             maxChildSize: 0.95,
-            builder: (_, controller) => InstructorAddEventSheet(
-              initialDate: cubit.state.selectedDate,
-            ),
+            builder: (_, controller) =>
+                InstructorAddEventSheet(initialDate: cubit.state.selectedDate),
           ),
         ),
       ),
@@ -254,7 +256,7 @@ class _InstructorCalendarView extends StatelessWidget {
     bool isDark,
   ) {
     final cubit = context.read<InstructorCalendarCubit>();
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -274,16 +276,12 @@ class _InstructorCalendarView extends StatelessWidget {
   ) {
     final events = state.getEventsForDate(date);
     if (events.isEmpty) {
-      _showAddEventSheet(
-        context,
-        isDark,
-        AppLocalizations.of(context),
-      );
+      _showAddEventSheet(context, isDark, AppLocalizations.of(context));
       return;
     }
 
     final cubit = context.read<InstructorCalendarCubit>();
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -320,8 +318,18 @@ class _DateEventsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
 
     return Container(
@@ -421,8 +429,7 @@ class _DateEventsSheet extends StatelessWidget {
             ),
             Icon(
               Icons.chevron_right_rounded,
-              color:
-                  isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
           ],
         ),

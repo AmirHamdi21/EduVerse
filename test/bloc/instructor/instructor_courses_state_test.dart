@@ -60,10 +60,7 @@ void main() {
           ),
         ],
         sectionStudents: const <SectionStudentModel>[
-          SectionStudentModel(
-            userId: 7,
-            status: 'enrolled',
-          ),
+          SectionStudentModel(userId: 7, status: 'enrolled'),
         ],
       );
 
@@ -80,10 +77,7 @@ void main() {
           ),
         ],
         sectionStudents: const <SectionStudentModel>[
-          SectionStudentModel(
-            userId: 7,
-            status: 'enrolled',
-          ),
+          SectionStudentModel(userId: 7, status: 'enrolled'),
         ],
       );
 

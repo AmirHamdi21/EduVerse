@@ -31,9 +31,10 @@ class _GenerateNewSetPanelState extends State<GenerateNewSetPanel>
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _controller.forward();
@@ -93,7 +94,9 @@ class _GenerateNewSetPanelState extends State<GenerateNewSetPanel>
                         Text(
                           'Generate New Set',
                           style: TextStyle(
-                            color: widget.isDark ? Colors.white : const Color(0xFF101828),
+                            color: widget.isDark
+                                ? Colors.white
+                                : const Color(0xFF101828),
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             fontFamily: 'Arimo',
@@ -103,7 +106,9 @@ class _GenerateNewSetPanelState extends State<GenerateNewSetPanel>
                         Text(
                           'Create AI-powered flashcards',
                           style: TextStyle(
-                            color: widget.isDark ? const Color(0xFFB0B0B0) : const Color(0xFF6B7280),
+                            color: widget.isDark
+                                ? const Color(0xFFB0B0B0)
+                                : const Color(0xFF6B7280),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
                             fontFamily: 'Arimo',
@@ -115,7 +120,7 @@ class _GenerateNewSetPanelState extends State<GenerateNewSetPanel>
                 ],
               ),
             ),
-            
+
             // Divider
             Container(
               height: 1,
@@ -123,7 +128,7 @@ class _GenerateNewSetPanelState extends State<GenerateNewSetPanel>
                   ? const Color(0xFF4D4D64).withOpacity(0.3)
                   : const Color(0xFFE5E7EB),
             ),
-            
+
             // Options
             Padding(
               padding: const EdgeInsets.all(20),
@@ -132,14 +137,18 @@ class _GenerateNewSetPanelState extends State<GenerateNewSetPanel>
                   // Weak topics toggle
                   GestureDetector(
                     onTap: () {
-                      widget.onIncludeWeakTopicsChanged(!widget.includeWeakTopics);
+                      widget.onIncludeWeakTopicsChanged(
+                        !widget.includeWeakTopics,
+                      );
                     },
                     child: Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: widget.includeWeakTopics
                             ? const Color(0xFF2B7FFF).withOpacity(0.1)
-                            : (widget.isDark ? const Color(0xFF1A1A2E) : const Color(0xFFF8F9FA)),
+                            : (widget.isDark
+                                  ? const Color(0xFF1A1A2E)
+                                  : const Color(0xFFF8F9FA)),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: widget.includeWeakTopics
@@ -156,12 +165,17 @@ class _GenerateNewSetPanelState extends State<GenerateNewSetPanel>
                             decoration: BoxDecoration(
                               gradient: widget.includeWeakTopics
                                   ? const LinearGradient(
-                                      colors: [Color(0xFF2B7FFF), Color(0xFF1E5FCC)],
+                                      colors: [
+                                        Color(0xFF2B7FFF),
+                                        Color(0xFF1E5FCC),
+                                      ],
                                     )
                                   : null,
                               color: widget.includeWeakTopics
                                   ? null
-                                  : (widget.isDark ? const Color(0xFF4D4D64) : const Color(0xFFE5E7EB)),
+                                  : (widget.isDark
+                                        ? const Color(0xFF4D4D64)
+                                        : const Color(0xFFE5E7EB)),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: widget.includeWeakTopics
@@ -180,7 +194,9 @@ class _GenerateNewSetPanelState extends State<GenerateNewSetPanel>
                                 Text(
                                   'Focus on weak topics',
                                   style: TextStyle(
-                                    color: widget.isDark ? Colors.white : const Color(0xFF101828),
+                                    color: widget.isDark
+                                        ? Colors.white
+                                        : const Color(0xFF101828),
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
                                     fontFamily: 'Arimo',
@@ -190,7 +206,9 @@ class _GenerateNewSetPanelState extends State<GenerateNewSetPanel>
                                 Text(
                                   'AI will prioritize topics you need practice',
                                   style: TextStyle(
-                                    color: widget.isDark ? const Color(0xFFB0B0B0) : const Color(0xFF6B7280),
+                                    color: widget.isDark
+                                        ? const Color(0xFFB0B0B0)
+                                        : const Color(0xFF6B7280),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w400,
                                     fontFamily: 'Arimo',
@@ -204,7 +222,7 @@ class _GenerateNewSetPanelState extends State<GenerateNewSetPanel>
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Generate button
                   GestureDetector(
                     onTap: widget.onGeneratePressed,

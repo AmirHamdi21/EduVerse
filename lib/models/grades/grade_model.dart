@@ -1,24 +1,51 @@
 import 'package:flutter/material.dart';
 
 /// Grade letter enumeration
-enum GradeLetter { aPlus, a, aMinus, bPlus, b, bMinus, cPlus, c, cMinus, dPlus, d, f, pending }
+enum GradeLetter {
+  aPlus,
+  a,
+  aMinus,
+  bPlus,
+  b,
+  bMinus,
+  cPlus,
+  c,
+  cMinus,
+  dPlus,
+  d,
+  f,
+  pending,
+}
 
 extension GradeLetterExtension on GradeLetter {
   String get label {
     switch (this) {
-      case GradeLetter.aPlus: return 'A+';
-      case GradeLetter.a: return 'A';
-      case GradeLetter.aMinus: return 'A-';
-      case GradeLetter.bPlus: return 'B+';
-      case GradeLetter.b: return 'B';
-      case GradeLetter.bMinus: return 'B-';
-      case GradeLetter.cPlus: return 'C+';
-      case GradeLetter.c: return 'C';
-      case GradeLetter.cMinus: return 'C-';
-      case GradeLetter.dPlus: return 'D+';
-      case GradeLetter.d: return 'D';
-      case GradeLetter.f: return 'F';
-      case GradeLetter.pending: return '-';
+      case GradeLetter.aPlus:
+        return 'A+';
+      case GradeLetter.a:
+        return 'A';
+      case GradeLetter.aMinus:
+        return 'A-';
+      case GradeLetter.bPlus:
+        return 'B+';
+      case GradeLetter.b:
+        return 'B';
+      case GradeLetter.bMinus:
+        return 'B-';
+      case GradeLetter.cPlus:
+        return 'C+';
+      case GradeLetter.c:
+        return 'C';
+      case GradeLetter.cMinus:
+        return 'C-';
+      case GradeLetter.dPlus:
+        return 'D+';
+      case GradeLetter.d:
+        return 'D';
+      case GradeLetter.f:
+        return 'F';
+      case GradeLetter.pending:
+        return '-';
     }
   }
 
@@ -50,66 +77,116 @@ extension GradeLetterExtension on GradeLetter {
 
   double get gpa {
     switch (this) {
-      case GradeLetter.aPlus: return 4.0;
-      case GradeLetter.a: return 4.0;
-      case GradeLetter.aMinus: return 3.7;
-      case GradeLetter.bPlus: return 3.3;
-      case GradeLetter.b: return 3.0;
-      case GradeLetter.bMinus: return 2.7;
-      case GradeLetter.cPlus: return 2.3;
-      case GradeLetter.c: return 2.0;
-      case GradeLetter.cMinus: return 1.7;
-      case GradeLetter.dPlus: return 1.3;
-      case GradeLetter.d: return 1.0;
-      case GradeLetter.f: return 0.0;
-      case GradeLetter.pending: return 0.0;
+      case GradeLetter.aPlus:
+        return 4.0;
+      case GradeLetter.a:
+        return 4.0;
+      case GradeLetter.aMinus:
+        return 3.7;
+      case GradeLetter.bPlus:
+        return 3.3;
+      case GradeLetter.b:
+        return 3.0;
+      case GradeLetter.bMinus:
+        return 2.7;
+      case GradeLetter.cPlus:
+        return 2.3;
+      case GradeLetter.c:
+        return 2.0;
+      case GradeLetter.cMinus:
+        return 1.7;
+      case GradeLetter.dPlus:
+        return 1.3;
+      case GradeLetter.d:
+        return 1.0;
+      case GradeLetter.f:
+        return 0.0;
+      case GradeLetter.pending:
+        return 0.0;
     }
   }
 }
 
 /// Assessment type enumeration
-enum AssessmentType { exam, quiz, assignment, project, lab, presentation, midterm, finalExam, participation }
+enum AssessmentType {
+  exam,
+  quiz,
+  assignment,
+  project,
+  lab,
+  presentation,
+  midterm,
+  finalExam,
+  participation,
+}
 
 extension AssessmentTypeExtension on AssessmentType {
   String get label {
     switch (this) {
-      case AssessmentType.exam: return 'Exam';
-      case AssessmentType.quiz: return 'Quiz';
-      case AssessmentType.assignment: return 'Assignment';
-      case AssessmentType.project: return 'Project';
-      case AssessmentType.lab: return 'Lab';
-      case AssessmentType.presentation: return 'Presentation';
-      case AssessmentType.midterm: return 'Midterm';
-      case AssessmentType.finalExam: return 'Final Exam';
-      case AssessmentType.participation: return 'Participation';
+      case AssessmentType.exam:
+        return 'Exam';
+      case AssessmentType.quiz:
+        return 'Quiz';
+      case AssessmentType.assignment:
+        return 'Assignment';
+      case AssessmentType.project:
+        return 'Project';
+      case AssessmentType.lab:
+        return 'Lab';
+      case AssessmentType.presentation:
+        return 'Presentation';
+      case AssessmentType.midterm:
+        return 'Midterm';
+      case AssessmentType.finalExam:
+        return 'Final Exam';
+      case AssessmentType.participation:
+        return 'Participation';
     }
   }
 
   IconData get icon {
     switch (this) {
-      case AssessmentType.exam: return Icons.assignment_rounded;
-      case AssessmentType.quiz: return Icons.quiz_rounded;
-      case AssessmentType.assignment: return Icons.article_rounded;
-      case AssessmentType.project: return Icons.folder_special_rounded;
-      case AssessmentType.lab: return Icons.science_rounded;
-      case AssessmentType.presentation: return Icons.present_to_all_rounded;
-      case AssessmentType.midterm: return Icons.event_note_rounded;
-      case AssessmentType.finalExam: return Icons.school_rounded;
-      case AssessmentType.participation: return Icons.groups_rounded;
+      case AssessmentType.exam:
+        return Icons.assignment_rounded;
+      case AssessmentType.quiz:
+        return Icons.quiz_rounded;
+      case AssessmentType.assignment:
+        return Icons.article_rounded;
+      case AssessmentType.project:
+        return Icons.folder_special_rounded;
+      case AssessmentType.lab:
+        return Icons.science_rounded;
+      case AssessmentType.presentation:
+        return Icons.present_to_all_rounded;
+      case AssessmentType.midterm:
+        return Icons.event_note_rounded;
+      case AssessmentType.finalExam:
+        return Icons.school_rounded;
+      case AssessmentType.participation:
+        return Icons.groups_rounded;
     }
   }
 
   Color get color {
     switch (this) {
-      case AssessmentType.exam: return const Color(0xFF6366F1);
-      case AssessmentType.quiz: return const Color(0xFF8B5CF6);
-      case AssessmentType.assignment: return const Color(0xFF3B82F6);
-      case AssessmentType.project: return const Color(0xFF10B981);
-      case AssessmentType.lab: return const Color(0xFF14B8A6);
-      case AssessmentType.presentation: return const Color(0xFFF59E0B);
-      case AssessmentType.midterm: return const Color(0xFFEC4899);
-      case AssessmentType.finalExam: return const Color(0xFFEF4444);
-      case AssessmentType.participation: return const Color(0xFF64748B);
+      case AssessmentType.exam:
+        return const Color(0xFF6366F1);
+      case AssessmentType.quiz:
+        return const Color(0xFF8B5CF6);
+      case AssessmentType.assignment:
+        return const Color(0xFF3B82F6);
+      case AssessmentType.project:
+        return const Color(0xFF10B981);
+      case AssessmentType.lab:
+        return const Color(0xFF14B8A6);
+      case AssessmentType.presentation:
+        return const Color(0xFFF59E0B);
+      case AssessmentType.midterm:
+        return const Color(0xFFEC4899);
+      case AssessmentType.finalExam:
+        return const Color(0xFFEF4444);
+      case AssessmentType.participation:
+        return const Color(0xFF64748B);
     }
   }
 }
@@ -341,8 +418,10 @@ class GradeStatistics {
     required this.gradeDistribution,
   });
 
-  double get passRate => totalCourses > 0 ? (passedCourses / totalCourses) * 100 : 0;
-  double get creditCompletionRate => totalCredits > 0 ? (completedCredits / totalCredits) * 100 : 0;
+  double get passRate =>
+      totalCourses > 0 ? (passedCourses / totalCourses) * 100 : 0;
+  double get creditCompletionRate =>
+      totalCredits > 0 ? (completedCredits / totalCredits) * 100 : 0;
 }
 
 /// Grade trend data point

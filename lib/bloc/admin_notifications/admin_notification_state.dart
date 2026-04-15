@@ -1,12 +1,7 @@
 import 'package:equatable/equatable.dart';
 import '../../models/admin/admin_notification_model.dart';
 
-enum AdminNotificationLoadingStatus {
-  initial,
-  loading,
-  loaded,
-  error,
-}
+enum AdminNotificationLoadingStatus { initial, loading, loaded, error }
 
 class AdminNotificationState extends Equatable {
   final AdminNotificationLoadingStatus status;
@@ -41,8 +36,7 @@ class AdminNotificationState extends Equatable {
     var filtered = notifications.where((n) => !n.isArchived).toList();
 
     if (selectedCategory != AdminNotificationCategory.all) {
-      filtered =
-          filtered.where((n) => n.category == selectedCategory).toList();
+      filtered = filtered.where((n) => n.category == selectedCategory).toList();
     }
 
     if (searchQuery.isNotEmpty) {
@@ -75,9 +69,7 @@ class AdminNotificationState extends Equatable {
   }
 
   List<AdminNotificationModel> get bookmarkedNotifications {
-    return notifications
-        .where((n) => n.isBookmarked)
-        .toList()
+    return notifications.where((n) => n.isBookmarked).toList()
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
   }
 
@@ -126,13 +118,13 @@ class AdminNotificationState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        notifications,
-        announcements,
-        selectedCategory,
-        searchQuery,
-        isSearching,
-        errorMessage,
-        currentTab,
-      ];
+    status,
+    notifications,
+    announcements,
+    selectedCategory,
+    searchQuery,
+    isSearching,
+    errorMessage,
+    currentTab,
+  ];
 }

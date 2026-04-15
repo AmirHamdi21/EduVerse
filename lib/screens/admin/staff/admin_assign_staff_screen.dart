@@ -186,7 +186,8 @@ class _AdminAssignStaffScreenState extends State<AdminAssignStaffScreen>
       AiSuggestion(
         id: '1',
         title: 'Course LAB102 lacks assigned instructor',
-        description: 'We suggest Dr. Robert Kim as an ideal candidate for MATH301 lab section.',
+        description:
+            'We suggest Dr. Robert Kim as an ideal candidate for MATH301 lab section.',
         type: SuggestionType.assignInstructor,
         confidencePercent: 94,
         courseId: '2',
@@ -237,9 +238,13 @@ class _AdminAssignStaffScreenState extends State<AdminAssignStaffScreen>
         // Just show courses - in real app would filter by TA status
         break;
       case 'aiSuggestions':
-        final coursesWithSuggestions =
-            _suggestions.where((s) => s.courseId != null).map((s) => s.courseId).toSet();
-        filtered = filtered.where((c) => coursesWithSuggestions.contains(c.id)).toList();
+        final coursesWithSuggestions = _suggestions
+            .where((s) => s.courseId != null)
+            .map((s) => s.courseId)
+            .toSet();
+        filtered = filtered
+            .where((c) => coursesWithSuggestions.contains(c.id))
+            .toList();
         break;
     }
 
@@ -329,7 +334,9 @@ class _AdminAssignStaffScreenState extends State<AdminAssignStaffScreen>
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
-                    isInstructor ? Icons.person_add_rounded : Icons.group_add_rounded,
+                    isInstructor
+                        ? Icons.person_add_rounded
+                        : Icons.group_add_rounded,
                     color: Colors.white,
                     size: 20,
                   ),
@@ -376,7 +383,14 @@ class _AdminAssignStaffScreenState extends State<AdminAssignStaffScreen>
               itemCount: staff.length,
               itemBuilder: (context, index) {
                 final member = staff[index];
-                return _buildStaffOption(ctx, isDark, l10n, member, course, isInstructor);
+                return _buildStaffOption(
+                  ctx,
+                  isDark,
+                  l10n,
+                  member,
+                  course,
+                  isInstructor,
+                );
               },
             ),
           ),
@@ -393,7 +407,9 @@ class _AdminAssignStaffScreenState extends State<AdminAssignStaffScreen>
     CourseAssignment course,
     bool isInstructor,
   ) {
-    final accentColor = isInstructor ? AdminColors.secondary : AdminColors.accent;
+    final accentColor = isInstructor
+        ? AdminColors.secondary
+        : AdminColors.accent;
 
     return Material(
       color: Colors.transparent,
@@ -453,9 +469,14 @@ class _AdminAssignStaffScreenState extends State<AdminAssignStaffScreen>
                         ),
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
-                            color: _getStatusColor(member.status).withValues(alpha: 0.1),
+                            color: _getStatusColor(
+                              member.status,
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -497,7 +518,11 @@ class _AdminAssignStaffScreenState extends State<AdminAssignStaffScreen>
     }
   }
 
-  void _applyAssignment(CourseAssignment course, StaffMember member, bool isInstructor) {
+  void _applyAssignment(
+    CourseAssignment course,
+    StaffMember member,
+    bool isInstructor,
+  ) {
     final l10n = AppLocalizations.of(context);
 
     setState(() {
@@ -565,10 +590,11 @@ class _AdminAssignStaffScreenState extends State<AdminAssignStaffScreen>
           children: [
             CircleAvatar(
               radius: 36,
-              backgroundColor: (member.isInstructor
-                      ? AdminColors.secondary
-                      : AdminColors.accent)
-                  .withValues(alpha: 0.2),
+              backgroundColor:
+                  (member.isInstructor
+                          ? AdminColors.secondary
+                          : AdminColors.accent)
+                      .withValues(alpha: 0.2),
               child: Text(
                 member.initials,
                 style: TextStyle(
@@ -636,7 +662,12 @@ class _AdminAssignStaffScreenState extends State<AdminAssignStaffScreen>
     );
   }
 
-  Widget _buildStatColumn(String label, String value, Color color, bool isDark) {
+  Widget _buildStatColumn(
+    String label,
+    String value,
+    Color color,
+    bool isDark,
+  ) {
     return Column(
       children: [
         Text(
@@ -709,7 +740,8 @@ class _AdminAssignStaffScreenState extends State<AdminAssignStaffScreen>
                   selectedFilter: _selectedFilter,
                   selectedDepartment: _selectedDepartment,
                   onFilterChanged: (f) => setState(() => _selectedFilter = f),
-                  onDepartmentChanged: (d) => setState(() => _selectedDepartment = d),
+                  onDepartmentChanged: (d) =>
+                      setState(() => _selectedDepartment = d),
                   filterCounts: _filterCounts,
                 ),
                 Expanded(
@@ -733,16 +765,14 @@ class _AdminAssignStaffScreenState extends State<AdminAssignStaffScreen>
           StaffViewToggle(
             isDark: isDark,
             isListView: _isListView,
-            onViewChanged: (isListView) => setState(() => _isListView = isListView),
+            onViewChanged: (isListView) =>
+                setState(() => _isListView = isListView),
           ),
           const SizedBox(height: 16),
           AnimatedSwitcher(
             duration: const Duration(milliseconds: 300),
             transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
+              return FadeTransition(opacity: animation, child: child);
             },
             child: _isListView
                 ? StaffListView(

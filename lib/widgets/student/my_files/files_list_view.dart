@@ -22,18 +22,15 @@ class FilesListView extends StatelessWidget {
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final file = files[index];
-            return _FileListItem(
-              file: file,
-              isDark: isDark,
-              onTap: () => onFileTap(file),
-              onLongPress: () => onFileLongPress(file),
-            );
-          },
-          childCount: files.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final file = files[index];
+          return _FileListItem(
+            file: file,
+            isDark: isDark,
+            onTap: () => onFileTap(file),
+            onLongPress: () => onFileLongPress(file),
+          );
+        }, childCount: files.length),
       ),
     );
   }
@@ -64,7 +61,8 @@ class _FileListItem extends StatelessWidget {
       builder: (context, state) {
         final isMultiSelect = state.isMultiSelectMode;
         final isSelected = state.selectedFileIds.contains(file.id);
-        final currentFile = state.files.where((f) => f.id == file.id).firstOrNull ?? file;
+        final currentFile =
+            state.files.where((f) => f.id == file.id).firstOrNull ?? file;
 
         return GestureDetector(
           onTap: () {
@@ -91,8 +89,8 @@ class _FileListItem extends StatelessWidget {
                 color: isSelected
                     ? const Color(0xFF3B82F6)
                     : isDark
-                        ? const Color(0xFF334155)
-                        : const Color(0xFFE2E8F0),
+                    ? const Color(0xFF334155)
+                    : const Color(0xFFE2E8F0),
                 width: isSelected ? 2 : 1,
               ),
               boxShadow: [
@@ -100,8 +98,8 @@ class _FileListItem extends StatelessWidget {
                   color: isSelected
                       ? const Color(0xFF3B82F6).withValues(alpha: 0.15)
                       : isDark
-                          ? Colors.black.withValues(alpha: 0.15)
-                          : Colors.black.withValues(alpha: 0.03),
+                      ? Colors.black.withValues(alpha: 0.15)
+                      : Colors.black.withValues(alpha: 0.03),
                   blurRadius: isSelected ? 10 : 6,
                   offset: const Offset(0, 2),
                 ),
@@ -124,8 +122,8 @@ class _FileListItem extends StatelessWidget {
                         color: isSelected
                             ? const Color(0xFF3B82F6)
                             : isDark
-                                ? const Color(0xFF475569)
-                                : const Color(0xFFCBD5E1),
+                            ? const Color(0xFF475569)
+                            : const Color(0xFFCBD5E1),
                         width: 2,
                       ),
                     ),
@@ -195,8 +193,9 @@ class _FileListItem extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: _getFileColor(currentFile.type)
-                                  .withValues(alpha: 0.15),
+                              color: _getFileColor(
+                                currentFile.type,
+                              ).withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(4),
                             ),
                             child: Text(
@@ -323,23 +322,23 @@ class _FileListItem extends StatelessWidget {
 
   String _truncateFileName(String name, int maxLength) {
     if (name.length <= maxLength) return name;
-    
+
     // Find the extension
     final lastDot = name.lastIndexOf('.');
     if (lastDot == -1 || lastDot == 0) {
       // No extension, just truncate
       return '${name.substring(0, maxLength - 3)}...';
     }
-    
+
     final extension = name.substring(lastDot);
     final baseName = name.substring(0, lastDot);
-    
+
     // Reserve space for extension and "..."
     final availableLength = maxLength - extension.length - 3;
     if (availableLength <= 0) {
       return '${name.substring(0, maxLength - 3)}...';
     }
-    
+
     return '${baseName.substring(0, availableLength)}...$extension';
   }
 }

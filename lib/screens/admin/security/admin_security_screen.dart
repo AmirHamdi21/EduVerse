@@ -435,7 +435,11 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
     );
   }
 
-  Widget _buildContent(bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+  Widget _buildContent(
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return NestedScrollView(
       headerSliverBuilder: (context, innerBoxIsScrolled) => [
         SliverToBoxAdapter(
@@ -485,7 +489,10 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
         indicatorSize: TabBarIndicatorSize.tab,
         dividerColor: Colors.transparent,
         labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+        unselectedLabelStyle: const TextStyle(
+          fontWeight: FontWeight.w500,
+          fontSize: 13,
+        ),
         tabs: [
           Tab(text: l10n.overview),
           Tab(text: l10n.accessControls),
@@ -495,13 +502,19 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
     );
   }
 
-  Widget _buildOverviewTab(bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+  Widget _buildOverviewTab(
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return RefreshIndicator(
       onRefresh: () async => _loadData(),
       color: AdminColors.secondary,
       child: ListView(
         padding: responsive.contentPadding,
-        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
         children: [
           const SizedBox(height: 16),
           SecurityOverviewCard(
@@ -540,10 +553,16 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
     );
   }
 
-  Widget _buildAccessControlsTab(bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+  Widget _buildAccessControlsTab(
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return ListView(
       padding: responsive.contentPadding,
-      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       children: [
         const SizedBox(height: 16),
         AccessControlsCard(
@@ -553,10 +572,7 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
           onManage: () => context.push('/admin/settings'),
         ),
         const SizedBox(height: 20),
-        SecurityPoliciesCard(
-          isDark: isDark,
-          policies: _securityPolicies,
-        ),
+        SecurityPoliciesCard(isDark: isDark, policies: _securityPolicies),
         const SizedBox(height: 20),
         ActiveSessionsCard(
           isDark: isDark,
@@ -579,10 +595,16 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
     );
   }
 
-  Widget _buildActivityLogsTab(bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+  Widget _buildActivityLogsTab(
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return ListView(
       padding: responsive.contentPadding,
-      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+      physics: const BouncingScrollPhysics(
+        parent: AlwaysScrollableScrollPhysics(),
+      ),
       children: [
         const SizedBox(height: 16),
         SecurityFilters(
@@ -592,7 +614,8 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
           userRole: _userRole,
           dateRange: _dateRange,
           onSearchChanged: (value) => setState(() => _searchQuery = value),
-          onActivityTypeChanged: (value) => setState(() => _activityType = value),
+          onActivityTypeChanged: (value) =>
+              setState(() => _activityType = value),
           onUserRoleChanged: (value) => setState(() => _userRole = value),
           onDateRangeChanged: (value) => setState(() => _dateRange = value),
           onClearFilters: _clearFilters,
@@ -644,7 +667,9 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
           final l10n = AppLocalizations.of(context);
           return AlertDialog(
             backgroundColor: AdminColors.getCardColor(isDark),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             title: Row(
               children: [
                 Icon(Icons.info_outline_rounded, color: AdminColors.primary),
@@ -751,7 +776,9 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
-              setState(() => _activeSessions.removeWhere((s) => s.id == session.id));
+              setState(
+                () => _activeSessions.removeWhere((s) => s.id == session.id),
+              );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(l10n.sessionTerminated),
@@ -760,7 +787,10 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: AdminColors.error),
-            child: Text(l10n.terminate, style: const TextStyle(color: Colors.white)),
+            child: Text(
+              l10n.terminate,
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -782,7 +812,9 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
           ElevatedButton(
             onPressed: () {
               Navigator.pop(ctx);
-              setState(() => _activeSessions.removeWhere((s) => !s.isCurrentSession));
+              setState(
+                () => _activeSessions.removeWhere((s) => !s.isCurrentSession),
+              );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(l10n.allSessionsTerminated),
@@ -791,7 +823,10 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: AdminColors.error),
-            child: Text(l10n.terminateAll, style: const TextStyle(color: Colors.white)),
+            child: Text(
+              l10n.terminateAll,
+              style: const TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -821,7 +856,9 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
           final isDark = themeState.isDark;
           return AlertDialog(
             backgroundColor: AdminColors.getCardColor(isDark),
-            title: Text(isWhitelist ? l10n.addToWhitelist : l10n.addToBlacklist),
+            title: Text(
+              isWhitelist ? l10n.addToWhitelist : l10n.addToBlacklist,
+            ),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -830,7 +867,9 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
                   decoration: InputDecoration(
                     labelText: l10n.ipAddress,
                     hintText: '192.168.1.1',
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -838,7 +877,9 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
                   controller: descController,
                   decoration: InputDecoration(
                     labelText: l10n.description,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ],
@@ -853,15 +894,19 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
                   if (ipController.text.isNotEmpty) {
                     Navigator.pop(ctx);
                     setState(() {
-                      _ipRules.add(IpRule(
-                        id: DateTime.now().millisecondsSinceEpoch.toString(),
-                        ipAddress: ipController.text,
-                        description: descController.text.isEmpty 
-                            ? (isWhitelist ? 'Whitelisted IP' : 'Blacklisted IP')
-                            : descController.text,
-                        isWhitelisted: isWhitelist,
-                        addedDate: DateTime.now(),
-                      ));
+                      _ipRules.add(
+                        IpRule(
+                          id: DateTime.now().millisecondsSinceEpoch.toString(),
+                          ipAddress: ipController.text,
+                          description: descController.text.isEmpty
+                              ? (isWhitelist
+                                    ? 'Whitelisted IP'
+                                    : 'Blacklisted IP')
+                              : descController.text,
+                          isWhitelisted: isWhitelist,
+                          addedDate: DateTime.now(),
+                        ),
+                      );
                     });
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -872,9 +917,14 @@ class _AdminSecurityScreenState extends State<AdminSecurityScreen>
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isWhitelist ? AdminColors.success : AdminColors.error,
+                  backgroundColor: isWhitelist
+                      ? AdminColors.success
+                      : AdminColors.error,
                 ),
-                child: Text(l10n.add, style: const TextStyle(color: Colors.white)),
+                child: Text(
+                  l10n.add,
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
             ],
           );

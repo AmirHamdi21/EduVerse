@@ -1,26 +1,67 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+
 import '../../../generated_l10n/app_localizations.dart';
 import '../shared/admin_colors.dart';
 
-/// Course staff assignment widget
+class StaffMemberOption extends Equatable {
+  final int userId;
+  final String fullName;
+
+  const StaffMemberOption({required this.userId, required this.fullName});
+
+  @override
+  List<Object?> get props => <Object?>[userId, fullName];
+}
+
+class InstructorAssignmentDraft extends Equatable {
+  final int? userId;
+  final String role;
+  final String? responsibilities;
+
+  const InstructorAssignmentDraft({
+    this.userId,
+    this.role = 'primary',
+    this.responsibilities,
+  });
+
+  InstructorAssignmentDraft copyWith({
+    int? userId,
+    bool clearUserId = false,
+    String? role,
+    String? responsibilities,
+  }) {
+    return InstructorAssignmentDraft(
+      userId: clearUserId ? null : (userId ?? this.userId),
+      role: role ?? this.role,
+      responsibilities: responsibilities ?? this.responsibilities,
+    );
+  }
+
+  @override
+  List<Object?> get props => <Object?>[userId, role, responsibilities];
+}
+
+class _RoleOption {
+  final String value;
+  final String label;
+
+  const _RoleOption({required this.value, required this.label});
+}
+
+/// Course staff assignment widget.
 class CourseStaffAssignment extends StatelessWidget {
   final bool isDark;
-  final String? selectedInstructor;
-  final List<String> selectedTAs;
-  final ValueChanged<String?> onInstructorChanged;
-  final ValueChanged<List<String>> onTAsChanged;
-  final List<String> availableInstructors;
-  final List<String> availableTAs;
+  final List<InstructorAssignmentDraft> assignments;
+  final ValueChanged<List<InstructorAssignmentDraft>> onAssignmentsChanged;
+  final List<StaffMemberOption> availableStaff;
 
   const CourseStaffAssignment({
     super.key,
     required this.isDark,
-    this.selectedInstructor,
-    this.selectedTAs = const [],
-    required this.onInstructorChanged,
-    required this.onTAsChanged,
-    this.availableInstructors = const [],
-    this.availableTAs = const [],
+    required this.assignments,
+    required this.onAssignmentsChanged,
+    this.availableStaff = const <StaffMemberOption>[],
   });
 
   @override
@@ -36,11 +77,13 @@ class CourseStaffAssignment extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
         boxShadow: isDark
             ? null
-            : [
+            : <BoxShadow>[
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
@@ -50,9 +93,9 @@ class CourseStaffAssignment extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
           Row(
-            children: [
+            children: <Widget>[
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
@@ -74,285 +117,241 @@ class CourseStaffAssignment extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                 ),
               ),
+              const Spacer(),
+              IconButton(
+                onPressed: () {
+                  final next = List<InstructorAssignmentDraft>.from(assignments)
+                    ..add(const InstructorAssignmentDraft());
+                  onAssignmentsChanged(next);
+                },
+                icon: Icon(
+                  Icons.add_circle_rounded,
+                  color: AdminColors.primary,
+                ),
+                tooltip: l10n.add,
+              ),
             ],
           ),
-          const SizedBox(height: 20),
-          _buildInstructorSection(l10n),
-          const SizedBox(height: 20),
-          _buildTASection(l10n),
+          const SizedBox(height: 18),
+          if (availableStaff.isEmpty)
+            _buildEmptyStaffSource(context)
+          else if (assignments.isEmpty)
+            _buildAddPrompt(context)
+          else
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: assignments.length,
+              itemBuilder: (context, index) {
+                final assignment = assignments[index];
+                return _buildAssignmentRow(
+                  context: context,
+                  assignment: assignment,
+                  index: index,
+                );
+              },
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildInstructorSection(AppLocalizations l10n) {
-    final instructors = availableInstructors.isEmpty
-        ? [
-            'Dr. Sarah Johnson',
-            'Dr. Ahmed Hassan',
-            'Dr. James Wilson',
-            'Dr. Emily Chen',
-            'Prof. Maria Garcia',
-          ]
-        : availableInstructors;
+  Widget _buildEmptyStaffSource(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.assignInstructor,
-          style: TextStyle(
-            color: AdminColors.getTextColor(isDark),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-          decoration: BoxDecoration(
-            color: isDark
-                ? AdminColors.darkSurface.withValues(alpha: 0.5)
-                : const Color(0xFFF3F3F5),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: selectedInstructor,
-              isExpanded: true,
-              hint: Row(
-                children: [
-                  Icon(
-                    Icons.person_rounded,
-                    size: 18,
-                    color: AdminColors.getTextTertiaryColor(isDark),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    l10n.selectInstructor,
-                    style: TextStyle(
-                      color: AdminColors.getTextTertiaryColor(isDark),
-                      fontSize: 15,
-                    ),
-                  ),
-                ],
-              ),
-              icon: Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: AdminColors.getTextSecondaryColor(isDark),
-              ),
-              dropdownColor: isDark ? AdminColors.darkCard : Colors.white,
-              items: instructors.map((instructor) {
-                return DropdownMenuItem<String>(
-                  value: instructor,
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 14,
-                        backgroundColor: AdminColors.secondary.withValues(alpha: 0.2),
-                        child: Text(
-                          instructor.split(' ').map((n) => n[0]).take(2).join(),
-                          style: TextStyle(
-                            color: AdminColors.secondary,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        instructor,
-                        style: TextStyle(
-                          color: AdminColors.getTextColor(isDark),
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-              onChanged: onInstructorChanged,
-            ),
-          ),
-        ),
-        if (selectedInstructor != null) ...[
-          const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: AdminColors.secondary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 18,
-                  backgroundColor: AdminColors.secondary,
-                  child: Text(
-                    selectedInstructor!.split(' ').map((n) => n[0]).take(2).join(),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        selectedInstructor!,
-                        style: TextStyle(
-                          color: AdminColors.getTextColor(isDark),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        l10n.instructor,
-                        style: TextStyle(
-                          color: AdminColors.getTextSecondaryColor(isDark),
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => onInstructorChanged(null),
-                  icon: Icon(
-                    Icons.close_rounded,
-                    color: AdminColors.getTextSecondaryColor(isDark),
-                    size: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ],
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AdminColors.darkSurface.withValues(alpha: 0.45)
+            : AdminColors.lightBackground,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Text(
+        l10n.noData,
+        style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
+      ),
     );
   }
 
-  Widget _buildTASection(AppLocalizations l10n) {
-    final tas = availableTAs.isEmpty
-        ? [
-            'Mike Chen',
-            'Sara Ali',
-            'John Smith',
-            'Alex Brown',
-            'Emily Davis',
-          ]
-        : availableTAs;
+  Widget _buildAddPrompt(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              l10n.assignTAs,
-              style: TextStyle(
-                color: AdminColors.getTextColor(isDark),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                color: AdminColors.accent.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                l10n.optional,
-                style: TextStyle(
-                  color: AdminColors.accent,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AdminColors.darkSurface.withValues(alpha: 0.45)
+            : AdminColors.lightBackground,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Text(
+        l10n.add,
+        style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
+      ),
+    );
+  }
+
+  Widget _buildAssignmentRow({
+    required BuildContext context,
+    required InstructorAssignmentDraft assignment,
+    required int index,
+  }) {
+    final l10n = AppLocalizations.of(context);
+    final roleOptions = <_RoleOption>[
+      _RoleOption(value: 'primary', label: l10n.rolePrimary),
+      _RoleOption(value: 'co_instructor', label: l10n.roleCoInstructor),
+      _RoleOption(value: 'guest', label: l10n.roleGuestInstructor),
+      _RoleOption(value: 'ta', label: l10n.teachingAssistant),
+    ];
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AdminColors.darkSurface.withValues(alpha: 0.5)
+            : const Color(0xFFF3F3F5),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightDivider,
         ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: tas.map((ta) {
-            final isSelected = selectedTAs.contains(ta);
-            return Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  final newList = List<String>.from(selectedTAs);
-                  if (isSelected) {
-                    newList.remove(ta);
-                  } else {
-                    newList.add(ta);
-                  }
-                  onTAsChanged(newList);
-                },
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? AdminColors.accent.withValues(alpha: 0.1)
-                        : (isDark
-                            ? AdminColors.darkSurface.withValues(alpha: 0.5)
-                            : const Color(0xFFF3F3F5)),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isSelected
-                          ? AdminColors.accent
-                          : Colors.transparent,
+      ),
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: DropdownButtonFormField<int>(
+                  initialValue: assignment.userId,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
                     ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (isSelected)
-                        Icon(
-                          Icons.check_circle_rounded,
-                          size: 16,
-                          color: AdminColors.accent,
-                        )
-                      else
-                        CircleAvatar(
-                          radius: 10,
-                          backgroundColor: AdminColors.accent.withValues(alpha: 0.2),
+                  hint: Text(l10n.user),
+                  dropdownColor: isDark ? AdminColors.darkCard : Colors.white,
+                  items: availableStaff
+                      .map(
+                        (staff) => DropdownMenuItem<int>(
+                          value: staff.userId,
                           child: Text(
-                            ta.split(' ').map((n) => n[0]).take(2).join(),
+                            staff.fullName,
                             style: TextStyle(
-                              color: AdminColors.accent,
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
+                              color: AdminColors.getTextColor(isDark),
+                              fontSize: 13,
                             ),
                           ),
                         ),
-                      const SizedBox(width: 8),
-                      Text(
-                        ta,
-                        style: TextStyle(
-                          color: isSelected
-                              ? AdminColors.accent
-                              : AdminColors.getTextColor(isDark),
-                          fontSize: 13,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
+                      )
+                      .toList(),
+                  onChanged: (userId) {
+                    _updateAssignment(
+                      index,
+                      assignment.copyWith(userId: userId),
+                    );
+                  },
                 ),
               ),
-            );
-          }).toList(),
-        ),
-      ],
+              const SizedBox(width: 8),
+              Expanded(
+                child: DropdownButtonFormField<String>(
+                  initialValue:
+                      roleOptions.any(
+                        (option) => option.value == assignment.role,
+                      )
+                      ? assignment.role
+                      : roleOptions.first.value,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                  ),
+                  dropdownColor: isDark ? AdminColors.darkCard : Colors.white,
+                  items: roleOptions
+                      .map(
+                        (roleOption) => DropdownMenuItem<String>(
+                          value: roleOption.value,
+                          child: Text(
+                            roleOption.label,
+                            style: TextStyle(
+                              color: AdminColors.getTextColor(isDark),
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: (role) {
+                    if (role == null) {
+                      return;
+                    }
+                    _updateAssignment(index, assignment.copyWith(role: role));
+                  },
+                ),
+              ),
+              IconButton(
+                onPressed: () {
+                  final next = List<InstructorAssignmentDraft>.from(assignments)
+                    ..removeAt(index);
+                  onAssignmentsChanged(next);
+                },
+                icon: Icon(
+                  Icons.delete_outline_rounded,
+                  color: AdminColors.error,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            initialValue: assignment.responsibilities,
+            onChanged: (value) {
+              _updateAssignment(
+                index,
+                assignment.copyWith(responsibilities: value),
+              );
+            },
+            style: TextStyle(
+              color: AdminColors.getTextColor(isDark),
+              fontSize: 13,
+            ),
+            decoration: InputDecoration(
+              hintText: l10n.description,
+              isDense: true,
+              filled: true,
+              fillColor: isDark
+                  ? AdminColors.darkCard.withValues(alpha: 0.65)
+                  : Colors.white,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
+  }
+
+  void _updateAssignment(int index, InstructorAssignmentDraft updated) {
+    final next = List<InstructorAssignmentDraft>.from(assignments)
+      ..[index] = updated;
+    onAssignmentsChanged(next);
   }
 }

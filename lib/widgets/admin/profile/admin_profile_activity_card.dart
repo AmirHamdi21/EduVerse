@@ -39,9 +39,7 @@ class AdminProfileActivityCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
         boxShadow: [
           if (!isDark)
             BoxShadow(
@@ -96,7 +94,9 @@ class AdminProfileActivityCard extends StatelessWidget {
           if (activities.isEmpty)
             _buildEmptyState(l10n)
           else
-            ...activities.take(5).map((activity) => _buildActivityItem(activity)),
+            ...activities
+                .take(5)
+                .map((activity) => _buildActivityItem(activity)),
         ],
       ),
     );
@@ -139,11 +139,7 @@ class AdminProfileActivityCard extends StatelessWidget {
               color: activity.color.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              activity.icon,
-              color: activity.color,
-              size: 16,
-            ),
+            child: Icon(activity.icon, color: activity.color, size: 16),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -184,7 +180,7 @@ class AdminProfileActivityCard extends StatelessWidget {
   String _formatTime(DateTime time) {
     final now = DateTime.now();
     final diff = now.difference(time);
-    
+
     if (diff.inMinutes < 1) return 'Just now';
     if (diff.inHours < 1) return '${diff.inMinutes}m ago';
     if (diff.inDays < 1) return '${diff.inHours}h ago';

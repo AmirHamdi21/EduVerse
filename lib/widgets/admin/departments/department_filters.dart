@@ -3,7 +3,14 @@ import '../../../generated_l10n/app_localizations.dart';
 import '../shared/admin_colors.dart';
 
 enum DepartmentViewType { list, card, health }
-enum DepartmentFilterType { all, understaffed, missingCourses, noHead, aiWarnings }
+
+enum DepartmentFilterType {
+  all,
+  understaffed,
+  missingCourses,
+  noHead,
+  aiWarnings,
+}
 
 class DepartmentFilters extends StatelessWidget {
   final bool isDark;
@@ -50,14 +57,9 @@ class DepartmentFilters extends StatelessWidget {
         // Search and Faculty Filter Row
         Row(
           children: [
-            Expanded(
-              flex: 2,
-              child: _buildSearchField(l10n),
-            ),
+            Expanded(flex: 2, child: _buildSearchField(l10n)),
             const SizedBox(width: 12),
-            Expanded(
-              child: _buildFacultyDropdown(l10n),
-            ),
+            Expanded(child: _buildFacultyDropdown(l10n)),
             const SizedBox(width: 12),
             _buildViewToggle(),
           ],
@@ -88,7 +90,8 @@ class DepartmentFilters extends StatelessWidget {
                 label: l10n?.missingCourses ?? 'Missing Courses',
                 count: missingCoursesCount,
                 isSelected: filterType == DepartmentFilterType.missingCourses,
-                onTap: () => onFilterChanged(DepartmentFilterType.missingCourses),
+                onTap: () =>
+                    onFilterChanged(DepartmentFilterType.missingCourses),
                 color: AdminColors.error,
               ),
               const SizedBox(width: 8),
@@ -119,16 +122,11 @@ class DepartmentFilters extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
       ),
       child: TextField(
         onChanged: onSearchChanged,
-        style: TextStyle(
-          color: AdminColors.getTextColor(isDark),
-          fontSize: 14,
-        ),
+        style: TextStyle(color: AdminColors.getTextColor(isDark), fontSize: 14),
         decoration: InputDecoration(
           hintText: l10n?.searchDepartments ?? 'Search departments...',
           hintStyle: TextStyle(
@@ -141,7 +139,10 @@ class DepartmentFilters extends StatelessWidget {
             size: 20,
           ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );
@@ -153,9 +154,7 @@ class DepartmentFilters extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -174,7 +173,9 @@ class DepartmentFilters extends StatelessWidget {
             return DropdownMenuItem(
               value: faculty,
               child: Text(
-                faculty == 'All' ? (l10n?.allFaculties ?? 'All Faculties') : faculty,
+                faculty == 'All'
+                    ? (l10n?.allFaculties ?? 'All Faculties')
+                    : faculty,
                 overflow: TextOverflow.ellipsis,
               ),
             );
@@ -192,9 +193,7 @@ class DepartmentFilters extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -256,14 +255,10 @@ class DepartmentFilters extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected
-              ? color
-              : AdminColors.getCardColor(isDark),
+          color: isSelected ? color : AdminColors.getCardColor(isDark),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected
-                ? color
-                : AdminColors.getCardBorderColor(isDark),
+            color: isSelected ? color : AdminColors.getCardBorderColor(isDark),
           ),
         ),
         child: Row(

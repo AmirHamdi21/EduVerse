@@ -131,7 +131,10 @@ class AdminAppBar extends StatelessWidget {
                                     Text(
                                       _getGreeting(),
                                       style: TextStyle(
-                                        color: AdminColors.getTextSecondaryColor(isDark),
+                                        color:
+                                            AdminColors.getTextSecondaryColor(
+                                              isDark,
+                                            ),
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
                                         letterSpacing: 0.2,
@@ -148,8 +151,14 @@ class AdminAppBar extends StatelessWidget {
                                 ShaderMask(
                                   shaderCallback: (bounds) => LinearGradient(
                                     colors: isDark
-                                        ? [Colors.white, Colors.white.withValues(alpha: 0.9)]
-                                        : [const Color(0xFF0F172A), const Color(0xFF334155)],
+                                        ? [
+                                            Colors.white,
+                                            Colors.white.withValues(alpha: 0.9),
+                                          ]
+                                        : [
+                                            const Color(0xFF0F172A),
+                                            const Color(0xFF334155),
+                                          ],
                                   ).createShader(bounds),
                                   child: Text(
                                     l10n.admin,
@@ -217,8 +226,14 @@ class AdminAppBar extends StatelessWidget {
                   top: 6,
                   right: 6,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                    constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 1,
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
                     decoration: BoxDecoration(
                       color: AdminColors.error,
                       borderRadius: BorderRadius.circular(8),
@@ -271,11 +286,7 @@ class AdminAppBar extends StatelessWidget {
                   : Colors.black.withValues(alpha: 0.08),
             ),
           ),
-          child: Icon(
-            icon,
-            color: AdminColors.getTextColor(isDark),
-            size: 20,
-          ),
+          child: Icon(icon, color: AdminColors.getTextColor(isDark), size: 20),
         ),
       ),
     );

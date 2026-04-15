@@ -102,10 +102,7 @@ class AdminColors {
   static LinearGradient darkBackgroundGradient = const LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [
-      Color(0xFF0F172A),
-      Color(0xFF1A1A2E),
-    ],
+    colors: [Color(0xFF0F172A), Color(0xFF1A1A2E)],
   );
 
   // Helper methods

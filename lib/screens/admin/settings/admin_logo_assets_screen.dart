@@ -83,7 +83,9 @@ class _AdminLogoAssetsScreenState extends State<AdminLogoAssetsScreen> {
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -146,9 +148,7 @@ class _AdminLogoAssetsScreenState extends State<AdminLogoAssetsScreen> {
       decoration: BoxDecoration(
         color: AdminColors.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.primary.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: AdminColors.primary.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -208,7 +208,11 @@ class _AdminLogoAssetsScreenState extends State<AdminLogoAssetsScreen> {
   }
 
   Widget _buildAssetCard(
-      _Asset asset, bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    _Asset asset,
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return Container(
       margin: EdgeInsets.only(bottom: responsive.p12),
       padding: EdgeInsets.all(responsive.p16),
@@ -233,10 +237,7 @@ class _AdminLogoAssetsScreenState extends State<AdminLogoAssetsScreen> {
             child: asset.url != null
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(11),
-                    child: Image.file(
-                      File(asset.url!),
-                      fit: BoxFit.cover,
-                    ),
+                    child: Image.file(File(asset.url!), fit: BoxFit.cover),
                   )
                 : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -294,11 +295,9 @@ class _AdminLogoAssetsScreenState extends State<AdminLogoAssetsScreen> {
           Column(
             children: [
               IconButton(
-                onPressed: () => _showUploadDialog(context, asset, l10n, isDark),
-                icon: Icon(
-                  Icons.upload_rounded,
-                  color: AdminColors.primary,
-                ),
+                onPressed: () =>
+                    _showUploadDialog(context, asset, l10n, isDark),
+                icon: Icon(Icons.upload_rounded, color: AdminColors.primary),
                 tooltip: l10n.upload,
               ),
               if (asset.url != null)
@@ -339,7 +338,11 @@ class _AdminLogoAssetsScreenState extends State<AdminLogoAssetsScreen> {
   }
 
   void _showUploadDialog(
-      BuildContext context, _Asset asset, AppLocalizations l10n, bool isDark) {
+    BuildContext context,
+    _Asset asset,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -353,8 +356,11 @@ class _AdminLogoAssetsScreenState extends State<AdminLogoAssetsScreen> {
                 gradient: AdminColors.primaryGradient,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child:
-                  const Icon(Icons.upload_rounded, color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.upload_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Text(
@@ -422,7 +428,9 @@ class _AdminLogoAssetsScreenState extends State<AdminLogoAssetsScreen> {
             onPressed: () => Navigator.pop(context),
             child: Text(
               l10n.cancel,
-              style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
+              style: TextStyle(
+                color: AdminColors.getTextSecondaryColor(isDark),
+              ),
             ),
           ),
           ElevatedButton(

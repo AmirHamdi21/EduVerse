@@ -35,10 +35,12 @@ class ITNotificationSection extends StatelessWidget {
         children: [
           _buildHeader(),
           const SizedBox(height: 16),
-          ...settings.map((setting) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _buildNotificationItem(setting),
-              )),
+          ...settings.map(
+            (setting) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildNotificationItem(setting),
+            ),
+          ),
         ],
       ),
     );

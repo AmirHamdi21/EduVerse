@@ -5,29 +5,33 @@ import 'calendar_state.dart';
 
 class CalendarCubit extends Cubit<CalendarState> {
   static const String _eventsStorageKey = 'calendar_events';
-  
-  CalendarCubit() : super(CalendarState(
-    selectedDate: DateTime.now(),
-    focusedMonth: DateTime.now(),
-  )) {
+
+  CalendarCubit()
+    : super(
+        CalendarState(
+          selectedDate: DateTime.now(),
+          focusedMonth: DateTime.now(),
+        ),
+      ) {
     _initialize();
   }
 
   Future<void> _initialize() async {
     // Load saved events first
     final savedEvents = await _loadEventsFromStorage();
-    
+
     if (savedEvents.isNotEmpty) {
-      emit(state.copyWith(
-        events: savedEvents,
-        aiReminders: _getMockReminders(),
-      ));
+      emit(
+        state.copyWith(events: savedEvents, aiReminders: _getMockReminders()),
+      );
     } else {
       // Only use mock events if no saved events exist
-      emit(state.copyWith(
-        events: _getMockEvents(),
-        aiReminders: _getMockReminders(),
-      ));
+      emit(
+        state.copyWith(
+          events: _getMockEvents(),
+          aiReminders: _getMockReminders(),
+        ),
+      );
       // Save mock events to storage
       await _saveEventsToStorage(_getMockEvents());
     }
@@ -37,11 +41,13 @@ class CalendarCubit extends Cubit<CalendarState> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final eventsJson = prefs.getString(_eventsStorageKey);
-      
+
       if (eventsJson == null) return [];
-      
+
       final List<dynamic> eventsList = json.decode(eventsJson);
-      return eventsList.map((e) => _eventFromJson(e as Map<String, dynamic>)).toList();
+      return eventsList
+          .map((e) => _eventFromJson(e as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       return [];
     }
@@ -50,7 +56,9 @@ class CalendarCubit extends Cubit<CalendarState> {
   Future<void> _saveEventsToStorage(List<CalendarEvent> events) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final eventsJson = json.encode(events.map((e) => _eventToJson(e)).toList());
+      final eventsJson = json.encode(
+        events.map((e) => _eventToJson(e)).toList(),
+      );
       await prefs.setString(_eventsStorageKey, eventsJson);
     } catch (e) {
       // Handle error silently
@@ -164,7 +172,8 @@ class CalendarCubit extends Cubit<CalendarState> {
       AiReminder(
         id: '2',
         title: 'AI Smart Reminder',
-        message: "You've missed 1 lab session — would you like to schedule a review?",
+        message:
+            "You've missed 1 lab session — would you like to schedule a review?",
         type: ReminderType.missedSession,
         createdAt: DateTime.now(),
       ),
@@ -181,10 +190,7 @@ class CalendarCubit extends Cubit<CalendarState> {
 
   void goToToday() {
     final today = DateTime.now();
-    emit(state.copyWith(
-      selectedDate: today,
-      focusedMonth: today,
-    ));
+    emit(state.copyWith(selectedDate: today, focusedMonth: today));
   }
 
   void goToPreviousMonth() {
@@ -227,13 +233,17 @@ class CalendarCubit extends Cubit<CalendarState> {
         newFilter = currentFilter.copyWith(labs: !currentFilter.labs);
         break;
       case 'assignments':
-        newFilter = currentFilter.copyWith(assignments: !currentFilter.assignments);
+        newFilter = currentFilter.copyWith(
+          assignments: !currentFilter.assignments,
+        );
         break;
       case 'exams':
         newFilter = currentFilter.copyWith(exams: !currentFilter.exams);
         break;
       case 'personalTasks':
-        newFilter = currentFilter.copyWith(personalTasks: !currentFilter.personalTasks);
+        newFilter = currentFilter.copyWith(
+          personalTasks: !currentFilter.personalTasks,
+        );
         break;
       default:
         return;
@@ -284,14 +294,16 @@ class CalendarCubit extends Cubit<CalendarState> {
     );
 
     final updatedEvents = [...state.events, newEvent];
-    
-    emit(state.copyWith(
-      isLoading: false,
-      events: updatedEvents,
-      isAddEventVisible: false,
-      successMessage: 'Event added successfully',
-    ));
-    
+
+    emit(
+      state.copyWith(
+        isLoading: false,
+        events: updatedEvents,
+        isAddEventVisible: false,
+        successMessage: 'Event added successfully',
+      ),
+    );
+
     // Save to storage
     await _saveEventsToStorage(updatedEvents);
     _clearSuccess();
@@ -304,12 +316,14 @@ class CalendarCubit extends Cubit<CalendarState> {
 
     final updatedEvents = state.events.where((e) => e.id != eventId).toList();
 
-    emit(state.copyWith(
-      isLoading: false,
-      events: updatedEvents,
-      successMessage: 'Event deleted',
-    ));
-    
+    emit(
+      state.copyWith(
+        isLoading: false,
+        events: updatedEvents,
+        successMessage: 'Event deleted',
+      ),
+    );
+
     // Save to storage
     await _saveEventsToStorage(updatedEvents);
     _clearSuccess();
@@ -332,7 +346,9 @@ class CalendarCubit extends Cubit<CalendarState> {
   }
 
   void dismissReminder(String reminderId) {
-    final updatedReminders = state.aiReminders.where((r) => r.id != reminderId).toList();
+    final updatedReminders = state.aiReminders
+        .where((r) => r.id != reminderId)
+        .toList();
     emit(state.copyWith(aiReminders: updatedReminders));
   }
 
@@ -361,7 +377,7 @@ class CalendarCubit extends Cubit<CalendarState> {
     final parts = time.split(':');
     var hour = int.parse(parts[0]);
     final isPM = time.contains('PM');
-    
+
     hour++;
     if (hour == 12) {
       return '12:00 ${isPM ? 'PM' : 'AM'}';

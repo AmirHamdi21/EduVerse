@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Available swipe actions for notifications
-enum SwipeAction {
-  delete,
-  markRead,
-  markUnread,
-  archive,
-  bookmark,
-  none,
-}
+enum SwipeAction { delete, markRead, markUnread, archive, bookmark, none }
 
 /// Extension to provide UI properties for swipe actions
 extension SwipeActionExtension on SwipeAction {

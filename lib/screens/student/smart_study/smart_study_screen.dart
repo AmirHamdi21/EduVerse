@@ -24,7 +24,9 @@ class SmartStudyScreen extends StatelessWidget {
           final isDark = themeState.isDark;
 
           return Scaffold(
-            backgroundColor: isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF9FAFB),
+            backgroundColor: isDark
+                ? const Color(0xFF0A0A0A)
+                : const Color(0xFFF9FAFB),
             body: SafeArea(
               child: BlocConsumer<SmartStudyCubit, SmartStudyState>(
                 listener: (context, state) {
@@ -33,7 +35,11 @@ class SmartStudyScreen extends StatelessWidget {
                     context.read<SmartStudyCubit>().clearError();
                   }
                   if (state.successMessage != null) {
-                    _showSuccessSnackBar(context, state.successMessage!, isDark);
+                    _showSuccessSnackBar(
+                      context,
+                      state.successMessage!,
+                      isDark,
+                    );
                     context.read<SmartStudyCubit>().clearSuccess();
                   }
                 },
@@ -49,7 +55,8 @@ class SmartStudyScreen extends StatelessWidget {
                       Expanded(
                         child: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 300),
-                          child: state.currentTab == SmartStudyTab.topicsToReview
+                          child:
+                              state.currentTab == SmartStudyTab.topicsToReview
                               ? _buildTopicsTab(context, state, isDark)
                               : _buildScheduleTab(context, state, isDark),
                         ),
@@ -60,7 +67,8 @@ class SmartStudyScreen extends StatelessWidget {
               ),
             ),
             floatingActionButton: _buildFAB(context, isDark),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
           );
         },
       ),
@@ -95,38 +103,35 @@ class SmartStudyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopicsTab(BuildContext context, SmartStudyState state, bool isDark) {
+  Widget _buildTopicsTab(
+    BuildContext context,
+    SmartStudyState state,
+    bool isDark,
+  ) {
     final l10n = AppLocalizations.of(context);
 
     return CustomScrollView(
       key: const ValueKey('topics'),
       slivers: [
-        SliverToBoxAdapter(
-          child: SmartStudyFilters(isDark: isDark),
-        ),
+        SliverToBoxAdapter(child: SmartStudyFilters(isDark: isDark)),
         if (state.filteredTopics.isEmpty)
-          SliverFillRemaining(
-            child: _buildEmptyState(l10n, isDark),
-          )
+          SliverFillRemaining(child: _buildEmptyState(l10n, isDark))
         else
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  if (index < state.filteredTopics.length) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: TopicReviewCard(
-                        topic: state.filteredTopics[index],
-                        isDark: isDark,
-                      ),
-                    );
-                  }
-                  return null;
-                },
-                childCount: state.filteredTopics.length,
-              ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                if (index < state.filteredTopics.length) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 16),
+                    child: TopicReviewCard(
+                      topic: state.filteredTopics[index],
+                      isDark: isDark,
+                    ),
+                  );
+                }
+                return null;
+              }, childCount: state.filteredTopics.length),
             ),
           ),
         if (state.filteredTopics.isNotEmpty && state.aiInsight != null)
@@ -146,14 +151,16 @@ class SmartStudyScreen extends StatelessWidget {
             ),
           ),
         if (state.filteredTopics.isNotEmpty && state.aiInsight == null)
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 100),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 100)),
       ],
     );
   }
 
-  Widget _buildScheduleTab(BuildContext context, SmartStudyState state, bool isDark) {
+  Widget _buildScheduleTab(
+    BuildContext context,
+    SmartStudyState state,
+    bool isDark,
+  ) {
     return SingleChildScrollView(
       key: const ValueKey('schedule'),
       padding: const EdgeInsets.only(bottom: 100),
@@ -263,7 +270,9 @@ class SmartStudyScreen extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF364153) : const Color(0xFFE5E7EB),
+                  color: isDark
+                      ? const Color(0xFF364153)
+                      : const Color(0xFFE5E7EB),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -272,7 +281,9 @@ class SmartStudyScreen extends StatelessWidget {
             Text(
               l10n.smartStudyQuickActions,
               style: TextStyle(
-                color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                color: isDark
+                    ? const Color(0xFFF3F4F6)
+                    : const Color(0xFF101828),
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
               ),
@@ -345,7 +356,9 @@ class SmartStudyScreen extends StatelessWidget {
                   : const Color(0xFFF3F4F6),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDark ? const Color(0xFF364153) : const Color(0xFFE5E7EB),
+                color: isDark
+                    ? const Color(0xFF364153)
+                    : const Color(0xFFE5E7EB),
               ),
             ),
             child: Row(
@@ -367,7 +380,9 @@ class SmartStudyScreen extends StatelessWidget {
                       Text(
                         title,
                         style: TextStyle(
-                          color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                          color: isDark
+                              ? const Color(0xFFF3F4F6)
+                              : const Color(0xFF101828),
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -375,7 +390,9 @@ class SmartStudyScreen extends StatelessWidget {
                       Text(
                         subtitle,
                         style: TextStyle(
-                          color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                          color: isDark
+                              ? const Color(0xFF99A1AF)
+                              : const Color(0xFF4A5565),
                           fontSize: 13,
                         ),
                       ),
@@ -384,7 +401,9 @@ class SmartStudyScreen extends StatelessWidget {
                 ),
                 Icon(
                   Icons.chevron_right_rounded,
-                  color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                  color: isDark
+                      ? const Color(0xFF99A1AF)
+                      : const Color(0xFF4A5565),
                 ),
               ],
             ),
@@ -411,7 +430,11 @@ class SmartStudyScreen extends StatelessWidget {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle_rounded, color: Colors.white, size: 20),
+            const Icon(
+              Icons.check_circle_rounded,
+              color: Colors.white,
+              size: 20,
+            ),
             const SizedBox(width: 12),
             Expanded(child: Text(message)),
           ],

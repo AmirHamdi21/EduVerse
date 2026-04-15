@@ -17,11 +17,13 @@ class ProfileCubit extends Cubit<ProfileState> {
       final settings = const AppSettings();
       final devices = _generateSampleDevices();
 
-      emit(ProfileLoaded(
-        profile: profile,
-        settings: settings,
-        connectedDevices: devices,
-      ));
+      emit(
+        ProfileLoaded(
+          profile: profile,
+          settings: settings,
+          connectedDevices: devices,
+        ),
+      );
     } catch (e) {
       emit(ProfileError(message: e.toString()));
     }
@@ -51,16 +53,20 @@ class ProfileCubit extends Cubit<ProfileState> {
     try {
       await Future.delayed(const Duration(seconds: 1));
 
-      emit(currentState.copyWith(
-        profile: updatedProfile.copyWith(updatedAt: DateTime.now()),
-        isEditing: false,
-        isSaving: false,
-      ));
+      emit(
+        currentState.copyWith(
+          profile: updatedProfile.copyWith(updatedAt: DateTime.now()),
+          isEditing: false,
+          isSaving: false,
+        ),
+      );
     } catch (e) {
-      emit(currentState.copyWith(
-        isSaving: false,
-        error: 'Failed to update profile: ${e.toString()}',
-      ));
+      emit(
+        currentState.copyWith(
+          isSaving: false,
+          error: 'Failed to update profile: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -76,54 +82,68 @@ class ProfileCubit extends Cubit<ProfileState> {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(currentState.copyWith(
-      settings: currentState.settings.copyWith(pushNotifications: value),
-    ));
+    emit(
+      currentState.copyWith(
+        settings: currentState.settings.copyWith(pushNotifications: value),
+      ),
+    );
   }
 
   void toggleEmailAlerts(bool value) {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(currentState.copyWith(
-      settings: currentState.settings.copyWith(emailAlerts: value),
-    ));
+    emit(
+      currentState.copyWith(
+        settings: currentState.settings.copyWith(emailAlerts: value),
+      ),
+    );
   }
 
   void toggleAiSuggestions(bool value) {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(currentState.copyWith(
-      settings: currentState.settings.copyWith(aiSuggestions: value),
-    ));
+    emit(
+      currentState.copyWith(
+        settings: currentState.settings.copyWith(aiSuggestions: value),
+      ),
+    );
   }
 
   void toggleAutoDarkMode(bool value) {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(currentState.copyWith(
-      settings: currentState.settings.copyWith(autoDarkMode: value),
-    ));
+    emit(
+      currentState.copyWith(
+        settings: currentState.settings.copyWith(autoDarkMode: value),
+      ),
+    );
   }
 
   void toggleWeeklyPerformanceSummary(bool value) {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(currentState.copyWith(
-      settings: currentState.settings.copyWith(weeklyPerformanceSummary: value),
-    ));
+    emit(
+      currentState.copyWith(
+        settings: currentState.settings.copyWith(
+          weeklyPerformanceSummary: value,
+        ),
+      ),
+    );
   }
 
   void setThemeMode(ThemeMode mode) {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(currentState.copyWith(
-      settings: currentState.settings.copyWith(themeMode: mode),
-    ));
+    emit(
+      currentState.copyWith(
+        settings: currentState.settings.copyWith(themeMode: mode),
+      ),
+    );
   }
 
   void setAccentColor(AccentColor color) {
@@ -131,27 +151,33 @@ class ProfileCubit extends Cubit<ProfileState> {
     if (currentState is! ProfileLoaded) return;
 
     HapticFeedback.selectionClick();
-    emit(currentState.copyWith(
-      settings: currentState.settings.copyWith(accentColor: color),
-    ));
+    emit(
+      currentState.copyWith(
+        settings: currentState.settings.copyWith(accentColor: color),
+      ),
+    );
   }
 
   void toggleTwoFactorAuth(bool value) {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(currentState.copyWith(
-      settings: currentState.settings.copyWith(twoFactorAuth: value),
-    ));
+    emit(
+      currentState.copyWith(
+        settings: currentState.settings.copyWith(twoFactorAuth: value),
+      ),
+    );
   }
 
   void setLanguage(String languageCode) {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(currentState.copyWith(
-      settings: currentState.settings.copyWith(languageCode: languageCode),
-    ));
+    emit(
+      currentState.copyWith(
+        settings: currentState.settings.copyWith(languageCode: languageCode),
+      ),
+    );
   }
 
   Future<void> removeDevice(String deviceId) async {
@@ -167,7 +193,10 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(currentState.copyWith(connectedDevices: updatedDevices));
   }
 
-  Future<void> changePassword(String currentPassword, String newPassword) async {
+  Future<void> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
@@ -177,10 +206,12 @@ class ProfileCubit extends Cubit<ProfileState> {
       await Future.delayed(const Duration(seconds: 1));
       emit(currentState.copyWith(isSaving: false));
     } catch (e) {
-      emit(currentState.copyWith(
-        isSaving: false,
-        error: 'Failed to change password: ${e.toString()}',
-      ));
+      emit(
+        currentState.copyWith(
+          isSaving: false,
+          error: 'Failed to change password: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -194,10 +225,12 @@ class ProfileCubit extends Cubit<ProfileState> {
       await Future.delayed(const Duration(seconds: 2));
       emit(currentState.copyWith(isSaving: false));
     } catch (e) {
-      emit(currentState.copyWith(
-        isSaving: false,
-        error: 'Failed to export data: ${e.toString()}',
-      ));
+      emit(
+        currentState.copyWith(
+          isSaving: false,
+          error: 'Failed to export data: ${e.toString()}',
+        ),
+      );
     }
   }
 
@@ -227,7 +260,8 @@ class ProfileCubit extends Cubit<ProfileState> {
       expectedGraduation: '2026',
       dateOfBirth: DateTime(2002, 5, 15),
       location: 'New York, USA',
-      bio: 'Passionate about AI and machine learning. Love building innovative solutions.',
+      bio:
+          'Passionate about AI and machine learning. Love building innovative solutions.',
       gpa: 3.8,
       rank: 125,
       coursesEnrolled: 12,

@@ -56,7 +56,8 @@ class CoursePreviewModal extends StatelessWidget {
                 Positioned.fill(
                   child: CustomPaint(
                     painter: PatternPainter(
-                        color: Colors.white.withValues(alpha: 0.1)),
+                      color: Colors.white.withValues(alpha: 0.1),
+                    ),
                   ),
                 ),
                 Padding(
@@ -66,7 +67,9 @@ class CoursePreviewModal extends StatelessWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 4),
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(8),
@@ -112,8 +115,9 @@ class CoursePreviewModal extends StatelessWidget {
                   Text(
                     'About this course',
                     style: TextStyle(
-                      color:
-                          isDark ? Colors.white : InstructorColors.textPrimary,
+                      color: isDark
+                          ? Colors.white
+                          : InstructorColors.textPrimary,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -181,12 +185,14 @@ class CoursePreviewModal extends StatelessWidget {
                                 ? Colors.white70
                                 : InstructorColors.textSecondary,
                             side: BorderSide(
-                                color: isDark
-                                    ? InstructorColors.darkBorder
-                                    : InstructorColors.border),
+                              color: isDark
+                                  ? InstructorColors.darkBorder
+                                  : InstructorColors.border,
+                            ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14)),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                           ),
                         ),
                       ),
@@ -196,8 +202,10 @@ class CoursePreviewModal extends StatelessWidget {
                         child: ElevatedButton.icon(
                           onPressed: () {
                             Navigator.pop(context);
-                            context.push('/instructor/course-management',
-                                extra: course.course);
+                            context.push(
+                              '/instructor/course-management',
+                              extra: course.course,
+                            );
                           },
                           icon: const Icon(Icons.open_in_new_rounded),
                           label: const Text('Open Course'),
@@ -206,7 +214,8 @@ class CoursePreviewModal extends StatelessWidget {
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14)),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                             elevation: 0,
                           ),
                         ),
@@ -255,8 +264,7 @@ class CoursePreviewModal extends StatelessWidget {
                 Text(
                   value,
                   style: TextStyle(
-                    color:
-                        isDark ? Colors.white : InstructorColors.textPrimary,
+                    color: isDark ? Colors.white : InstructorColors.textPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
                   ),

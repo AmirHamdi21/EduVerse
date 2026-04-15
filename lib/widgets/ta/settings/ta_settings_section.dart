@@ -30,11 +30,7 @@ class TASettingsSection extends StatelessWidget {
                   color: TAColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  icon,
-                  size: 16,
-                  color: TAColors.primary,
-                ),
+                child: Icon(icon, size: 16, color: TAColors.primary),
               ),
               const SizedBox(width: 8),
               Text(
@@ -61,7 +57,7 @@ class TASettingsSection extends StatelessWidget {
               final index = entry.key;
               final item = entry.value;
               final isLast = index == items.length - 1;
-              
+
               return Column(
                 children: [
                   _buildSettingsItem(item, isLast),
@@ -69,7 +65,9 @@ class TASettingsSection extends StatelessWidget {
                     Divider(
                       height: 1,
                       indent: 56,
-                      color: TAColors.borderColor(isDark).withValues(alpha: 0.3),
+                      color: TAColors.borderColor(
+                        isDark,
+                      ).withValues(alpha: 0.3),
                     ),
                 ],
               );
@@ -86,7 +84,9 @@ class TASettingsSection extends StatelessWidget {
       child: InkWell(
         onTap: item.onTap,
         borderRadius: BorderRadius.vertical(
-          top: items.indexOf(item) == 0 ? const Radius.circular(16) : Radius.zero,
+          top: items.indexOf(item) == 0
+              ? const Radius.circular(16)
+              : Radius.zero,
           bottom: isLast ? const Radius.circular(16) : Radius.zero,
         ),
         child: Padding(
@@ -97,7 +97,9 @@ class TASettingsSection extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: (item.iconColor ?? TAColors.primary).withValues(alpha: 0.1),
+                  color: (item.iconColor ?? TAColors.primary).withValues(
+                    alpha: 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(

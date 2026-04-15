@@ -373,10 +373,7 @@ class SubmissionDetailViewer extends StatelessWidget {
           decoration: BoxDecoration(
             color: TAColors.surfaceColor(isDark),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: TAColors.borderColor(isDark),
-              width: 1,
-            ),
+            border: Border.all(color: TAColors.borderColor(isDark), width: 1),
           ),
           child: content,
         ),
@@ -384,7 +381,11 @@ class SubmissionDetailViewer extends StatelessWidget {
     );
   }
 
-  Widget _buildFileCard(BuildContext context, bool isDark, DriveFileModel file) {
+  Widget _buildFileCard(
+    BuildContext context,
+    bool isDark,
+    DriveFileModel file,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -479,10 +480,22 @@ class SubmissionDetailViewer extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
-    final hour = date.hour > 12 ? date.hour - 12 : (date.hour == 0 ? 12 : date.hour);
+    final hour = date.hour > 12
+        ? date.hour - 12
+        : (date.hour == 0 ? 12 : date.hour);
     final suffix = date.hour >= 12 ? 'PM' : 'AM';
     return '${months[date.month - 1]} ${date.day}, ${date.year} $hour:${date.minute.toString().padLeft(2, '0')} $suffix';
   }
@@ -495,10 +508,10 @@ class SubmissionDetailViewer extends StatelessWidget {
     if (file.iframeUrl.isEmpty) {
       return;
     }
-    
+
     // Close submission viewer first
     Navigator.of(context, rootNavigator: true).pop();
-    
+
     // Open file preview screen
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
@@ -515,7 +528,7 @@ class SubmissionDetailViewer extends StatelessWidget {
     if (file.downloadUrl.isEmpty) {
       return;
     }
-    
+
     final url = Uri.parse(file.downloadUrl);
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);

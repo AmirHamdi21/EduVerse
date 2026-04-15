@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class StatisticsTabContent extends StatefulWidget {
   final bool isDark;
 
-  const StatisticsTabContent({
-    super.key,
-    required this.isDark,
-  });
+  const StatisticsTabContent({super.key, required this.isDark});
 
   @override
   State<StatisticsTabContent> createState() => _StatisticsTabContentState();
@@ -44,12 +41,14 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
       vsync: this,
     );
 
-    _gpaAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _gpaController, curve: Curves.easeOut),
-    );
-    _gradeAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _gradeController, curve: Curves.easeOut),
-    );
+    _gpaAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _gpaController, curve: Curves.easeOut));
+    _gradeAnimation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _gradeController, curve: Curves.easeOut));
     _topicsAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _topicsController, curve: Curves.easeOut),
     );
@@ -84,8 +83,9 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
   Widget build(BuildContext context) {
     final bgColor = widget.isDark ? const Color(0xFF2D2D44) : Colors.white;
     final textColor = widget.isDark ? Colors.white : const Color(0xFF101828);
-    final secondaryTextColor =
-        widget.isDark ? const Color(0xFFB0B0B0) : const Color(0xFF4A5565);
+    final secondaryTextColor = widget.isDark
+        ? const Color(0xFFB0B0B0)
+        : const Color(0xFF4A5565);
 
     return Column(
       children: [
@@ -97,7 +97,10 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
                 opacity: _gpaAnimation,
                 child: ScaleTransition(
                   scale: Tween<double>(begin: 0.9, end: 1).animate(
-                    CurvedAnimation(parent: _gpaController, curve: Curves.easeOut),
+                    CurvedAnimation(
+                      parent: _gpaController,
+                      curve: Curves.easeOut,
+                    ),
                   ),
                   child: _buildGPACard(bgColor, textColor),
                 ),
@@ -110,7 +113,9 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
                 child: ScaleTransition(
                   scale: Tween<double>(begin: 0.9, end: 1).animate(
                     CurvedAnimation(
-                        parent: _gradeController, curve: Curves.easeOut),
+                      parent: _gradeController,
+                      curve: Curves.easeOut,
+                    ),
                   ),
                   child: _buildAverageGradeCard(bgColor, textColor),
                 ),
@@ -123,13 +128,21 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
         FadeTransition(
           opacity: _topicsAnimation,
           child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.1),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(parent: _topicsController, curve: Curves.easeOut),
+            position:
+                Tween<Offset>(
+                  begin: const Offset(0, 0.1),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(
+                    parent: _topicsController,
+                    curve: Curves.easeOut,
+                  ),
+                ),
+            child: _buildScoresByTopicCard(
+              bgColor,
+              textColor,
+              secondaryTextColor,
             ),
-            child: _buildScoresByTopicCard(bgColor, textColor, secondaryTextColor),
           ),
         ),
         const SizedBox(height: 24),
@@ -137,14 +150,21 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
         FadeTransition(
           opacity: _breakdownAnimation,
           child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.1),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(
-                  parent: _breakdownController, curve: Curves.easeOut),
+            position:
+                Tween<Offset>(
+                  begin: const Offset(0, 0.1),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(
+                    parent: _breakdownController,
+                    curve: Curves.easeOut,
+                  ),
+                ),
+            child: _buildGradeBreakdownCard(
+              bgColor,
+              textColor,
+              secondaryTextColor,
             ),
-            child: _buildGradeBreakdownCard(bgColor, textColor, secondaryTextColor),
           ),
         ),
       ],
@@ -284,7 +304,10 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
   }
 
   Widget _buildScoresByTopicCard(
-      Color bgColor, Color textColor, Color secondaryTextColor) {
+    Color bgColor,
+    Color textColor,
+    Color secondaryTextColor,
+  ) {
     final topics = [
       {'name': 'AI Foundations', 'score': '92', 'total': '100'},
       {'name': 'Machine Learning', 'score': '85', 'total': '100'},
@@ -297,8 +320,9 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
       decoration: BoxDecoration(
         color: bgColor,
         border: Border.all(
-          color:
-              widget.isDark ? const Color(0xFF3D3D54) : const Color(0xFFE5E7EB),
+          color: widget.isDark
+              ? const Color(0xFF3D3D54)
+              : const Color(0xFFE5E7EB),
           width: 1,
         ),
         borderRadius: BorderRadius.circular(16),
@@ -341,28 +365,25 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
             ),
             const SizedBox(height: 20),
             Column(
-              children: List.generate(
-                topics.length,
-                (index) {
-                  final topic = topics[index];
-                  final score = int.parse(topic['score']!);
-                  final total = int.parse(topic['total']!);
-                  final percentage = (score / total) * 100;
+              children: List.generate(topics.length, (index) {
+                final topic = topics[index];
+                final score = int.parse(topic['score']!);
+                final total = int.parse(topic['total']!);
+                final percentage = (score / total) * 100;
 
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      bottom: index == topics.length - 1 ? 0 : 16,
-                    ),
-                    child: _buildTopicScore(
-                      topic['name']!,
-                      '${topic['score']}/${topic['total']}',
-                      percentage,
-                      textColor,
-                      secondaryTextColor,
-                    ),
-                  );
-                },
-              ),
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: index == topics.length - 1 ? 0 : 16,
+                  ),
+                  child: _buildTopicScore(
+                    topic['name']!,
+                    '${topic['score']}/${topic['total']}',
+                    percentage,
+                    textColor,
+                    secondaryTextColor,
+                  ),
+                );
+              }),
             ),
           ],
         ),
@@ -444,7 +465,10 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
   }
 
   Widget _buildGradeBreakdownCard(
-      Color bgColor, Color textColor, Color secondaryTextColor) {
+    Color bgColor,
+    Color textColor,
+    Color secondaryTextColor,
+  ) {
     final breakdown = [
       {'name': 'Assignments (40%)', 'percentage': '89'},
       {'name': 'Labs (30%)', 'percentage': '92'},
@@ -456,8 +480,9 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
       decoration: BoxDecoration(
         color: bgColor,
         border: Border.all(
-          color:
-              widget.isDark ? const Color(0xFF3D3D54) : const Color(0xFFE5E7EB),
+          color: widget.isDark
+              ? const Color(0xFF3D3D54)
+              : const Color(0xFFE5E7EB),
           width: 1,
         ),
         borderRadius: BorderRadius.circular(16),
@@ -485,51 +510,48 @@ class _StatisticsTabContentState extends State<StatisticsTabContent>
             ),
             const SizedBox(height: 20),
             Column(
-              children: List.generate(
-                breakdown.length,
-                (index) {
-                  final item = breakdown[index];
-                  final isLast = index == breakdown.length - 1;
+              children: List.generate(breakdown.length, (index) {
+                final item = breakdown[index];
+                final isLast = index == breakdown.length - 1;
 
-                  return Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              item['name']!,
-                              style: TextStyle(
-                                color: secondaryTextColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: 'Arimo',
-                              ),
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            item['name']!,
+                            style: TextStyle(
+                              color: secondaryTextColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: 'Arimo',
                             ),
-                            Text(
-                              '${item['percentage']}%',
-                              style: const TextStyle(
-                                color: Color(0xFF155DFC),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: 'Arimo',
-                              ),
+                          ),
+                          Text(
+                            '${item['percentage']}%',
+                            style: const TextStyle(
+                              color: Color(0xFF155DFC),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: 'Arimo',
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      if (!isLast)
-                        Divider(
-                          color: widget.isDark
-                              ? const Color(0xFF3D3D54)
-                              : const Color(0xFFE5E7EB),
-                          height: 1,
-                        ),
-                    ],
-                  );
-                },
-              ),
+                    ),
+                    if (!isLast)
+                      Divider(
+                        color: widget.isDark
+                            ? const Color(0xFF3D3D54)
+                            : const Color(0xFFE5E7EB),
+                        height: 1,
+                      ),
+                  ],
+                );
+              }),
             ),
           ],
         ),

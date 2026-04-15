@@ -80,7 +80,9 @@ class QuickActionsBar extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
-                color: isDark ? const Color(0xFFD1D5DC) : const Color(0xFF374151),
+                color: isDark
+                    ? const Color(0xFFD1D5DC)
+                    : const Color(0xFF374151),
               ),
             ),
           ],

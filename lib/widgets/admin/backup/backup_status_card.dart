@@ -28,7 +28,9 @@ class BackupStatusCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: isHealthy ? AdminColors.greenGradient : AdminColors.orangeGradient,
+        gradient: isHealthy
+            ? AdminColors.greenGradient
+            : AdminColors.orangeGradient,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -50,7 +52,9 @@ class BackupStatusCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(
-                  isHealthy ? Icons.cloud_done_rounded : Icons.cloud_off_rounded,
+                  isHealthy
+                      ? Icons.cloud_done_rounded
+                      : Icons.cloud_off_rounded,
                   color: Colors.white,
                   size: 28,
                 ),
@@ -69,7 +73,9 @@ class BackupStatusCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      isHealthy ? l10n.allSystemsOperational : l10n.backupRequired,
+                      isHealthy
+                          ? l10n.allSystemsOperational
+                          : l10n.backupRequired,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -80,7 +86,10 @@ class BackupStatusCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),

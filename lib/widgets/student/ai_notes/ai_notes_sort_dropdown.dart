@@ -80,7 +80,11 @@ class AiNotesSortDropdown extends StatelessWidget {
     }
   }
 
-  void _showSortOptions(BuildContext context, bool isDark, AppLocalizations l10n) {
+  void _showSortOptions(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -131,12 +135,14 @@ class AiNotesSortDropdown extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            ...NotesSort.values.map((sort) => _buildSortTile(
-                  context,
-                  sort: sort,
-                  isDark: isDark,
-                  l10n: l10n,
-                )),
+            ...NotesSort.values.map(
+              (sort) => _buildSortTile(
+                context,
+                sort: sort,
+                isDark: isDark,
+                l10n: l10n,
+              ),
+            ),
             const SizedBox(height: 24),
           ],
         ),
@@ -167,8 +173,8 @@ class AiNotesSortDropdown extends StatelessWidget {
             color: isSelected
                 ? const Color(0xFF8B5CF6).withValues(alpha: 0.15)
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.05)
-                    : Colors.black.withValues(alpha: 0.05)),
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.05)),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(
@@ -233,4 +239,3 @@ class AiNotesSortDropdown extends StatelessWidget {
     }
   }
 }
-

@@ -29,11 +29,23 @@ class StaffFilters extends StatelessWidget {
 
     final filters = [
       _FilterItem('all', l10n.allCourses, Icons.grid_view_rounded),
-      _FilterItem('needsInstructor', l10n.needsInstructor, Icons.person_off_rounded),
+      _FilterItem(
+        'needsInstructor',
+        l10n.needsInstructor,
+        Icons.person_off_rounded,
+      ),
       _FilterItem('needsTA', l10n.needsTA, Icons.group_off_rounded),
-      _FilterItem('instructorOverloaded', l10n.instructorOverloaded, Icons.warning_amber_rounded),
+      _FilterItem(
+        'instructorOverloaded',
+        l10n.instructorOverloaded,
+        Icons.warning_amber_rounded,
+      ),
       _FilterItem('taOverloaded', l10n.taOverloaded, Icons.schedule_rounded),
-      _FilterItem('aiSuggestions', l10n.aiSuggestions, Icons.auto_awesome_rounded),
+      _FilterItem(
+        'aiSuggestions',
+        l10n.aiSuggestions,
+        Icons.auto_awesome_rounded,
+      ),
     ];
 
     return Container(
@@ -62,24 +74,28 @@ class StaffFilters extends StatelessWidget {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          gradient: isSelected ? AdminColors.primaryGradient : null,
+                          gradient: isSelected
+                              ? AdminColors.primaryGradient
+                              : null,
                           color: isSelected
                               ? null
                               : (isDark
-                                  ? AdminColors.darkSurface
-                                  : Colors.white),
+                                    ? AdminColors.darkSurface
+                                    : Colors.white),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: isSelected
                                 ? Colors.transparent
                                 : (isDark
-                                    ? AdminColors.darkCardBorder
-                                    : AdminColors.lightCardBorder),
+                                      ? AdminColors.darkCardBorder
+                                      : AdminColors.lightCardBorder),
                           ),
                           boxShadow: isSelected
                               ? [
                                   BoxShadow(
-                                    color: AdminColors.primary.withValues(alpha: 0.3),
+                                    color: AdminColors.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
@@ -119,7 +135,9 @@ class StaffFilters extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? Colors.white.withValues(alpha: 0.2)
-                                      : AdminColors.primary.withValues(alpha: 0.1),
+                                      : AdminColors.primary.withValues(
+                                          alpha: 0.1,
+                                        ),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(

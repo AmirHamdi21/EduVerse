@@ -93,14 +93,18 @@ class AttendanceColors {
   );
 
   // Theme-aware color getters
-  static Color background(bool isDark) => isDark ? darkBg : const Color(0xFFFAFAFA);
+  static Color background(bool isDark) =>
+      isDark ? darkBg : const Color(0xFFFAFAFA);
   static Color cardColor(bool isDark) => isDark ? darkCard : card;
   static Color surfaceColor(bool isDark) => isDark ? darkSurface : surface;
   static Color borderColor(bool isDark) => isDark ? darkBorder : border;
-  static Color textPrimaryColor(bool isDark) => isDark ? darkTextPrimary : textPrimary;
-  static Color textSecondaryColor(bool isDark) => isDark ? darkTextSecondary : textSecondary;
-  static Color textTertiaryColor(bool isDark) => isDark ? darkTextTertiary : textTertiary;
-  
+  static Color textPrimaryColor(bool isDark) =>
+      isDark ? darkTextPrimary : textPrimary;
+  static Color textSecondaryColor(bool isDark) =>
+      isDark ? darkTextSecondary : textSecondary;
+  static Color textTertiaryColor(bool isDark) =>
+      isDark ? darkTextTertiary : textTertiary;
+
   // Background color aliases for screen usage
   static const Color darkBackground = darkBg;
   static const Color lightBackground = Color(0xFFFAFAFA);

@@ -153,7 +153,9 @@ class TACourseGradingTab extends StatelessWidget {
                   label: Text(l10n.taCourseApplyAIScore),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: TAColors.primary,
-                    side: BorderSide(color: TAColors.primary.withValues(alpha: 0.3)),
+                    side: BorderSide(
+                      color: TAColors.primary.withValues(alpha: 0.3),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -234,11 +236,7 @@ class TACourseGradingTab extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(
-            Icons.psychology_rounded,
-            color: Colors.white,
-            size: 24,
-          ),
+          const Icon(Icons.psychology_rounded, color: Colors.white, size: 24),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

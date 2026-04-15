@@ -134,11 +134,7 @@ class AccessControlsCard extends StatelessWidget {
                 color: control.color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                control.icon,
-                color: control.color,
-                size: 20,
-              ),
+              child: Icon(control.icon, color: control.color, size: 20),
             ),
             const SizedBox(width: 14),
             Expanded(

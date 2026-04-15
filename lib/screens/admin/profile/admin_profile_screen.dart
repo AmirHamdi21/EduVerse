@@ -166,7 +166,8 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
           ),
           ElevatedButton(
             onPressed: () {
-              if (newPasswordController.text == confirmPasswordController.text &&
+              if (newPasswordController.text ==
+                      confirmPasswordController.text &&
                   newPasswordController.text.isNotEmpty) {
                 Navigator.pop(context);
                 _showSnackBar(l10n.passwordChangedSuccess);
@@ -199,12 +200,10 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
       style: TextStyle(color: AdminColors.getTextColor(isDark)),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(
-          color: AdminColors.getTextSecondaryColor(isDark),
-        ),
+        labelStyle: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
         filled: true,
-        fillColor: isDark 
-            ? AdminColors.darkBackground 
+        fillColor: isDark
+            ? AdminColors.darkBackground
             : const Color(0xFFF1F5F9),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -222,10 +221,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
           children: [
-            Icon(
-              Icons.security_rounded,
-              color: AdminColors.success,
-            ),
+            Icon(Icons.security_rounded, color: AdminColors.success),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
@@ -262,10 +258,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.check_circle_rounded,
-                    color: AdminColors.success,
-                  ),
+                  Icon(Icons.check_circle_rounded, color: AdminColors.success),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -317,9 +310,7 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
         ),
         content: Text(
           l10n.logoutConfirmMessage,
-          style: TextStyle(
-            color: AdminColors.getTextSecondaryColor(isDark),
-          ),
+          style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
         ),
         actions: [
           TextButton(
@@ -397,10 +388,13 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
                             ),
                             actions: [
                               IconButton(
-                                onPressed: () => context.push('/admin/edit-profile'),
+                                onPressed: () =>
+                                    context.push('/admin/edit-profile'),
                                 icon: Icon(
                                   Icons.edit_rounded,
-                                  color: AdminColors.getTextSecondaryColor(isDark),
+                                  color: AdminColors.getTextSecondaryColor(
+                                    isDark,
+                                  ),
                                 ),
                                 tooltip: l10n.editProfile,
                               ),
@@ -422,8 +416,10 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
                                   role: _adminProfile['role'],
                                   department: _adminProfile['department'],
                                   isDark: isDark,
-                                  onEditPressed: () => context.push('/admin/edit-profile'),
-                                  onImageTap: () => _showSnackBar(l10n.changeProfilePhoto),
+                                  onEditPressed: () =>
+                                      context.push('/admin/edit-profile'),
+                                  onImageTap: () =>
+                                      _showSnackBar(l10n.changeProfilePhoto),
                                 ),
 
                                 const SizedBox(height: 16),
@@ -432,8 +428,10 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
                                 AdminProfileStatsCard(
                                   isDark: isDark,
                                   usersManaged: _adminProfile['usersManaged'],
-                                  coursesCreated: _adminProfile['coursesCreated'],
-                                  reportsGenerated: _adminProfile['reportsGenerated'],
+                                  coursesCreated:
+                                      _adminProfile['coursesCreated'],
+                                  reportsGenerated:
+                                      _adminProfile['reportsGenerated'],
                                   systemUptime: _adminProfile['systemUptime'],
                                 ),
 
@@ -447,7 +445,8 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
                                   items: [
                                     ProfileInfoItem(
                                       label: l10n.fullName,
-                                      value: '${_adminProfile['firstName']} ${_adminProfile['lastName']}',
+                                      value:
+                                          '${_adminProfile['firstName']} ${_adminProfile['lastName']}',
                                       icon: Icons.badge_outlined,
                                     ),
                                     ProfileInfoItem(
@@ -488,12 +487,16 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
                                     ),
                                     ProfileInfoItem(
                                       label: l10n.joinDate,
-                                      value: _formatDate(_adminProfile['joinDate']),
+                                      value: _formatDate(
+                                        _adminProfile['joinDate'],
+                                      ),
                                       icon: Icons.calendar_today_rounded,
                                     ),
                                     ProfileInfoItem(
                                       label: l10n.lastLogin,
-                                      value: _formatDateTime(_adminProfile['lastLogin']),
+                                      value: _formatDateTime(
+                                        _adminProfile['lastLogin'],
+                                      ),
                                       icon: Icons.access_time_rounded,
                                     ),
                                   ],
@@ -509,10 +512,14 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
                                   items: [
                                     ProfileInfoItem(
                                       label: l10n.language,
-                                      value: _adminProfile['language'] == 'en' ? 'English' : 'العربية',
+                                      value: _adminProfile['language'] == 'en'
+                                          ? 'English'
+                                          : 'العربية',
                                       icon: Icons.language_rounded,
                                       trailing: TextButton(
-                                        onPressed: () => _showSnackBar(l10n.languageSettings),
+                                        onPressed: () => _showSnackBar(
+                                          l10n.languageSettings,
+                                        ),
                                         child: Text(
                                           l10n.change,
                                           style: TextStyle(
@@ -544,11 +551,16 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
                                 // Quick Actions
                                 AdminProfileActionsCard(
                                   isDark: isDark,
-                                  onEditProfile: () => context.push('/admin/edit-profile'),
-                                  onChangePassword: () => _showChangePasswordDialog(isDark, l10n),
-                                  onTwoFactorAuth: () => _showTwoFactorDialog(isDark, l10n),
-                                  onExportData: () => _showSnackBar(l10n.exportingData),
-                                  onLogout: () => _showLogoutDialog(isDark, l10n),
+                                  onEditProfile: () =>
+                                      context.push('/admin/edit-profile'),
+                                  onChangePassword: () =>
+                                      _showChangePasswordDialog(isDark, l10n),
+                                  onTwoFactorAuth: () =>
+                                      _showTwoFactorDialog(isDark, l10n),
+                                  onExportData: () =>
+                                      _showSnackBar(l10n.exportingData),
+                                  onLogout: () =>
+                                      _showLogoutDialog(isDark, l10n),
                                 ),
 
                                 const SizedBox(height: 32),
@@ -570,15 +582,11 @@ class _AdminProfileScreenState extends State<AdminProfileScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: AdminColors.primary,
-          ),
+          CircularProgressIndicator(color: AdminColors.primary),
           const SizedBox(height: 16),
           Text(
             'Loading profile...',
-            style: TextStyle(
-              color: AdminColors.getTextSecondaryColor(isDark),
-            ),
+            style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
           ),
         ],
       ),

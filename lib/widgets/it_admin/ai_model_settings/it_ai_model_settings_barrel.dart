@@ -145,9 +145,11 @@ class GovernanceRules {
   }) {
     return GovernanceRules(
       enableAIForStudents: enableAIForStudents ?? this.enableAIForStudents,
-      enableAIForInstructors: enableAIForInstructors ?? this.enableAIForInstructors,
+      enableAIForInstructors:
+          enableAIForInstructors ?? this.enableAIForInstructors,
       enableAIForTA: enableAIForTA ?? this.enableAIForTA,
-      analyzeStudentSubmissions: analyzeStudentSubmissions ?? this.analyzeStudentSubmissions,
+      analyzeStudentSubmissions:
+          analyzeStudentSubmissions ?? this.analyzeStudentSubmissions,
       maxResponseLength: maxResponseLength ?? this.maxResponseLength,
       storeAILogs: storeAILogs ?? this.storeAILogs,
       enableContentFilters: enableContentFilters ?? this.enableContentFilters,
@@ -198,7 +200,8 @@ class SystemLimits {
       studentLimit: studentLimit ?? this.studentLimit,
       taUsage: taUsage ?? this.taUsage,
       taLimit: taLimit ?? this.taLimit,
-      highLoadWarningEnabled: highLoadWarningEnabled ?? this.highLoadWarningEnabled,
+      highLoadWarningEnabled:
+          highLoadWarningEnabled ?? this.highLoadWarningEnabled,
       highLoadThreshold: highLoadThreshold ?? this.highLoadThreshold,
     );
   }

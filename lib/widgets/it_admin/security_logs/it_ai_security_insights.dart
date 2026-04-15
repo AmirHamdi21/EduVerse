@@ -34,7 +34,11 @@ class ITAISecurityInsights extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(Icons.auto_awesome_rounded, color: ITColors.purple, size: 18),
+              child: Icon(
+                Icons.auto_awesome_rounded,
+                color: ITColors.purple,
+                size: 18,
+              ),
             ),
             const SizedBox(width: 10),
             Text(
@@ -72,7 +76,9 @@ class ITAISecurityInsights extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: _getSeverityColor(insight.severity).withValues(alpha: 0.1),
+                color: _getSeverityColor(
+                  insight.severity,
+                ).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(

@@ -30,7 +30,8 @@ class AnnouncementItem {
     this.courseId,
   });
 
-  double get readRate => totalAudience > 0 ? (readCount / totalAudience) * 100 : 0;
+  double get readRate =>
+      totalAudience > 0 ? (readCount / totalAudience) * 100 : 0;
 
   AnnouncementItem copyWith({
     String? id,
@@ -65,11 +66,7 @@ class AnnouncementItem {
   }
 }
 
-enum AnnouncementStatus {
-  draft,
-  scheduled,
-  published,
-}
+enum AnnouncementStatus { draft, scheduled, published }
 
 extension AnnouncementStatusExtension on AnnouncementStatus {
   String get displayName {

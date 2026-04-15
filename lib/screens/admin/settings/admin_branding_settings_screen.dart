@@ -37,7 +37,9 @@ class _AdminBrandingSettingsScreenState
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -110,7 +112,10 @@ class _AdminBrandingSettingsScreenState
   }
 
   Widget _buildPreviewCard(
-      bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return Container(
       padding: EdgeInsets.all(responsive.p20),
       decoration: BoxDecoration(
@@ -262,7 +267,8 @@ class _AdminBrandingSettingsScreenState
                 ),
               ),
               GestureDetector(
-                onTap: () => _showColorPicker(context, color, onColorChanged, isDark),
+                onTap: () =>
+                    _showColorPicker(context, color, onColorChanged, isDark),
                 child: Container(
                   width: 48,
                   height: 48,
@@ -317,12 +323,54 @@ class _AdminBrandingSettingsScreenState
 
   Widget _buildPresetColors(bool isDark, AppLocalizations l10n) {
     final presets = [
-      (_Colors(const Color(0xFF155DFC), const Color(0xFF8B5CF6), const Color(0xFF00B8DB)), 'Default'),
-      (_Colors(const Color(0xFF10B981), const Color(0xFF059669), const Color(0xFF34D399)), 'Nature'),
-      (_Colors(const Color(0xFFEC4899), const Color(0xFFF472B6), const Color(0xFFFBBF24)), 'Vibrant'),
-      (_Colors(const Color(0xFF6366F1), const Color(0xFF8B5CF6), const Color(0xFFA855F7)), 'Purple'),
-      (_Colors(const Color(0xFFEF4444), const Color(0xFFF97316), const Color(0xFFFBBF24)), 'Warm'),
-      (_Colors(const Color(0xFF0EA5E9), const Color(0xFF06B6D4), const Color(0xFF14B8A6)), 'Ocean'),
+      (
+        _Colors(
+          const Color(0xFF155DFC),
+          const Color(0xFF8B5CF6),
+          const Color(0xFF00B8DB),
+        ),
+        'Default',
+      ),
+      (
+        _Colors(
+          const Color(0xFF10B981),
+          const Color(0xFF059669),
+          const Color(0xFF34D399),
+        ),
+        'Nature',
+      ),
+      (
+        _Colors(
+          const Color(0xFFEC4899),
+          const Color(0xFFF472B6),
+          const Color(0xFFFBBF24),
+        ),
+        'Vibrant',
+      ),
+      (
+        _Colors(
+          const Color(0xFF6366F1),
+          const Color(0xFF8B5CF6),
+          const Color(0xFFA855F7),
+        ),
+        'Purple',
+      ),
+      (
+        _Colors(
+          const Color(0xFFEF4444),
+          const Color(0xFFF97316),
+          const Color(0xFFFBBF24),
+        ),
+        'Warm',
+      ),
+      (
+        _Colors(
+          const Color(0xFF0EA5E9),
+          const Color(0xFF06B6D4),
+          const Color(0xFF14B8A6),
+        ),
+        'Ocean',
+      ),
     ];
 
     return Container(
@@ -393,8 +441,12 @@ class _AdminBrandingSettingsScreenState
     );
   }
 
-  void _showColorPicker(BuildContext context, Color currentColor,
-      ValueChanged<Color> onColorChanged, bool isDark) {
+  void _showColorPicker(
+    BuildContext context,
+    Color currentColor,
+    ValueChanged<Color> onColorChanged,
+    bool isDark,
+  ) {
     final colors = [
       const Color(0xFF155DFC),
       const Color(0xFF8B5CF6),
@@ -470,8 +522,11 @@ class _AdminBrandingSettingsScreenState
                       ],
                     ),
                     child: isSelected
-                        ? const Icon(Icons.check_rounded,
-                            color: Colors.white, size: 28)
+                        ? const Icon(
+                            Icons.check_rounded,
+                            color: Colors.white,
+                            size: 28,
+                          )
                         : null,
                   ),
                 );
@@ -492,8 +547,9 @@ class _AdminBrandingSettingsScreenState
             content: Text(l10n.brandingSaved),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AdminColors.success,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       },

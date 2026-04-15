@@ -31,11 +31,13 @@ class LanguageSettingsScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -90,12 +92,7 @@ class LanguageSettingsScreen extends StatelessWidget {
 
                 return Column(
                   children: [
-                    _buildLanguageItem(
-                      context,
-                      isDark,
-                      lang,
-                      isSelected,
-                    ),
+                    _buildLanguageItem(context, isDark, lang, isSelected),
                     if (!isLast)
                       Divider(
                         color: isDark ? Colors.white12 : Colors.black12,
@@ -149,10 +146,7 @@ class LanguageSettingsScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
             ),
             child: Center(
-              child: Text(
-                language.flag,
-                style: const TextStyle(fontSize: 32),
-              ),
+              child: Text(language.flag, style: const TextStyle(fontSize: 32)),
             ),
           ),
           const SizedBox(width: 16),
@@ -162,10 +156,7 @@ class LanguageSettingsScreen extends StatelessWidget {
               children: [
                 const Text(
                   'Current Language',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.white70,
-                  ),
+                  style: TextStyle(fontSize: 13, color: Colors.white70),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -308,9 +299,7 @@ class LanguageSettingsScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark
-            ? const Color(0xFF1E293B)
-            : const Color(0xFFFEF3C7),
+        color: isDark ? const Color(0xFF1E293B) : const Color(0xFFFEF3C7),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark

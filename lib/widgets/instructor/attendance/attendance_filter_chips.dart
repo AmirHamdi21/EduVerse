@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'attendance_colors.dart';
 
-enum AttendanceFilterType {
-  all,
-  unmarked,
-  present,
-  absent,
-}
+enum AttendanceFilterType { all, unmarked, present, absent }
 
 class AttendanceFilterChips extends StatelessWidget {
   final AttendanceFilterType selectedFilter;
@@ -87,8 +82,8 @@ class AttendanceFilterChips extends StatelessWidget {
               color: isSelected
                   ? AttendanceColors.primary
                   : (isDark
-                      ? AttendanceColors.darkBorder.withValues(alpha: 0.5)
-                      : AttendanceColors.border),
+                        ? AttendanceColors.darkBorder.withValues(alpha: 0.5)
+                        : AttendanceColors.border),
               width: 1.5,
             ),
             boxShadow: isSelected
@@ -125,7 +120,10 @@ class AttendanceFilterChips extends StatelessWidget {
               if (count > 0) ...[
                 const SizedBox(width: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? Colors.white.withValues(alpha: 0.2)
@@ -274,8 +272,8 @@ class AttendanceQuickActions extends StatelessWidget {
             color: isPrimary
                 ? color
                 : (isDark
-                    ? color.withValues(alpha: 0.15)
-                    : color.withValues(alpha: 0.1)),
+                      ? color.withValues(alpha: 0.15)
+                      : color.withValues(alpha: 0.1)),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: color.withValues(alpha: isPrimary ? 1 : 0.3),
@@ -284,11 +282,7 @@ class AttendanceQuickActions extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                icon,
-                size: 16,
-                color: isPrimary ? Colors.white : color,
-              ),
+              Icon(icon, size: 16, color: isPrimary ? Colors.white : color),
               const SizedBox(width: 6),
               Text(
                 label,

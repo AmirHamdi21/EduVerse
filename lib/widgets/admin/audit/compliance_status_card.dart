@@ -97,7 +97,9 @@ class ComplianceStatusCard extends StatelessWidget {
                       '$compliantCount/$totalCount ${l10n.checksCompliant}',
                       style: TextStyle(
                         fontSize: 13,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -111,7 +113,9 @@ class ComplianceStatusCard extends StatelessWidget {
                         height: 16,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
                       )
                     : const Icon(Icons.play_arrow_rounded, size: 18),
@@ -119,7 +123,10 @@ class ComplianceStatusCard extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AdminColors.secondary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -156,8 +163,8 @@ class ComplianceStatusCard extends StatelessWidget {
             color: item.status == 'non_compliant'
                 ? AdminColors.error.withValues(alpha: 0.3)
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.black.withValues(alpha: 0.05)),
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.05)),
           ),
         ),
         child: Row(
@@ -188,7 +195,10 @@ class ComplianceStatusCard extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: statusColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(8),
@@ -209,14 +219,19 @@ class ComplianceStatusCard extends StatelessWidget {
                     item.description,
                     style: TextStyle(
                       fontSize: 12,
-                      color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                      color: AdminColors.getTextColor(
+                        isDark,
+                      ).withValues(alpha: 0.6),
                     ),
                   ),
                   const SizedBox(height: 6),
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AdminColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),

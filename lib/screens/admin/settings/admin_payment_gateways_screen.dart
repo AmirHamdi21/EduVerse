@@ -71,7 +71,9 @@ class _AdminPaymentGatewaysScreenState
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -261,8 +263,11 @@ class _AdminPaymentGatewaysScreenState
                   color: AdminColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child:
-                    Icon(Icons.settings_rounded, color: AdminColors.primary, size: 20),
+                child: Icon(
+                  Icons.settings_rounded,
+                  color: AdminColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -297,7 +302,8 @@ class _AdminPaymentGatewaysScreenState
                         color: AdminColors.getBackgroundColor(isDark),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                            color: AdminColors.getDividerColor(isDark)),
+                          color: AdminColors.getDividerColor(isDark),
+                        ),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
@@ -305,14 +311,17 @@ class _AdminPaymentGatewaysScreenState
                           isExpanded: true,
                           dropdownColor: AdminColors.getCardColor(isDark),
                           style: TextStyle(
-                              color: AdminColors.getTextColor(isDark)),
+                            color: AdminColors.getTextColor(isDark),
+                          ),
                           icon: Icon(
                             Icons.keyboard_arrow_down_rounded,
                             color: AdminColors.getTextTertiaryColor(isDark),
                           ),
                           items: ['USD', 'EUR', 'GBP', 'CAD', 'AUD']
-                              .map((c) =>
-                                  DropdownMenuItem(value: c, child: Text(c)))
+                              .map(
+                                (c) =>
+                                    DropdownMenuItem(value: c, child: Text(c)),
+                              )
                               .toList(),
                           onChanged: (v) =>
                               setState(() => _currency = v ?? 'USD'),
@@ -336,8 +345,10 @@ class _AdminPaymentGatewaysScreenState
                   ),
                   const SizedBox(height: 8),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: _testMode
                           ? AdminColors.warning.withValues(alpha: 0.1)
@@ -352,8 +363,11 @@ class _AdminPaymentGatewaysScreenState
                     child: Row(
                       children: [
                         if (_testMode)
-                          Icon(Icons.warning_rounded,
-                              size: 16, color: AdminColors.warning),
+                          Icon(
+                            Icons.warning_rounded,
+                            size: 16,
+                            color: AdminColors.warning,
+                          ),
                         if (_testMode) const SizedBox(width: 4),
                         Switch.adaptive(
                           value: _testMode,
@@ -373,7 +387,10 @@ class _AdminPaymentGatewaysScreenState
   }
 
   Widget _buildGatewaysSection(
-      bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -392,7 +409,10 @@ class _AdminPaymentGatewaysScreenState
   }
 
   Widget _buildGatewayCard(
-      _PaymentGateway gateway, bool isDark, AppLocalizations l10n) {
+    _PaymentGateway gateway,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -432,12 +452,15 @@ class _AdminPaymentGatewaysScreenState
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
+                              horizontal: 8,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
-                              color: (gateway.isConfigured
-                                      ? AdminColors.success
-                                      : Colors.grey)
-                                  .withValues(alpha: 0.1),
+                              color:
+                                  (gateway.isConfigured
+                                          ? AdminColors.success
+                                          : Colors.grey)
+                                      .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -472,7 +495,8 @@ class _AdminPaymentGatewaysScreenState
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: TextButton.icon(
-              onPressed: () => _showConfigureDialog(context, gateway, isDark, l10n),
+              onPressed: () =>
+                  _showConfigureDialog(context, gateway, isDark, l10n),
               icon: Icon(
                 Icons.settings_rounded,
                 size: 18,
@@ -490,7 +514,10 @@ class _AdminPaymentGatewaysScreenState
   }
 
   Widget _buildRecentTransactions(
-      bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     final transactions = [
       _Transaction(
         id: '#TXN-001',
@@ -536,8 +563,11 @@ class _AdminPaymentGatewaysScreenState
                       color: AdminColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(Icons.receipt_long_rounded,
-                        color: AdminColors.primary, size: 20),
+                    child: Icon(
+                      Icons.receipt_long_rounded,
+                      color: AdminColors.primary,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Text(
@@ -560,14 +590,19 @@ class _AdminPaymentGatewaysScreenState
             ],
           ),
           const SizedBox(height: 16),
-          ...transactions.map((txn) => _buildTransactionItem(txn, isDark, l10n)),
+          ...transactions.map(
+            (txn) => _buildTransactionItem(txn, isDark, l10n),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildTransactionItem(
-      _Transaction txn, bool isDark, AppLocalizations l10n) {
+    _Transaction txn,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final isCompleted = txn.status == 'completed';
 
     return Container(
@@ -587,9 +622,7 @@ class _AdminPaymentGatewaysScreenState
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
-              isCompleted
-                  ? Icons.check_circle_rounded
-                  : Icons.pending_rounded,
+              isCompleted ? Icons.check_circle_rounded : Icons.pending_rounded,
               color: isCompleted ? AdminColors.success : AdminColors.warning,
               size: 22,
             ),
@@ -653,8 +686,12 @@ class _AdminPaymentGatewaysScreenState
     }
   }
 
-  void _showConfigureDialog(BuildContext context, _PaymentGateway gateway,
-      bool isDark, AppLocalizations l10n) {
+  void _showConfigureDialog(
+    BuildContext context,
+    _PaymentGateway gateway,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -709,8 +746,12 @@ class _AdminPaymentGatewaysScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel,
-                style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark))),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(
+                color: AdminColors.getTextSecondaryColor(isDark),
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -722,7 +763,8 @@ class _AdminPaymentGatewaysScreenState
                   behavior: SnackBarBehavior.floating,
                   backgroundColor: AdminColors.success,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               );
             },

@@ -64,12 +64,16 @@ class SearchRecentSection extends StatelessWidget {
             ],
           ),
         ),
-        ...recentSearches.take(5).map((query) => _RecentSearchItem(
-              query: query,
-              onTap: () => onTap(query),
-              onRemove: () => onRemove(query),
-              isDark: isDark,
-            )),
+        ...recentSearches
+            .take(5)
+            .map(
+              (query) => _RecentSearchItem(
+                query: query,
+                onTap: () => onTap(query),
+                onRemove: () => onRemove(query),
+                isDark: isDark,
+              ),
+            ),
       ],
     );
   }

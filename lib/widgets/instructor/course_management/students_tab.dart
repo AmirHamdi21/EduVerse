@@ -233,8 +233,12 @@ class _StudentCard extends StatelessWidget {
   Color get _avatarColor => _avatarColors[index % _avatarColors.length];
 
   String get _initials {
-    final first = (student.firstName?.isNotEmpty ?? false) ? student.firstName![0] : '';
-    final last = (student.lastName?.isNotEmpty ?? false) ? student.lastName![0] : '';
+    final first = (student.firstName?.isNotEmpty ?? false)
+        ? student.firstName![0]
+        : '';
+    final last = (student.lastName?.isNotEmpty ?? false)
+        ? student.lastName![0]
+        : '';
     final value = (first + last).trim();
     return value.isEmpty ? 'S' : value.toUpperCase();
   }

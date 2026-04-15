@@ -58,10 +58,12 @@ class AiRecommendationsSection extends StatelessWidget {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
-              ...recommendations.map((rec) => Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: _buildRecommendationCard(context, rec, isDark, l10n),
-                  )),
+              ...recommendations.map(
+                (rec) => Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: _buildRecommendationCard(context, rec, isDark, l10n),
+                ),
+              ),
               // Generate Flashcards card
               _buildGenerateFlashcardsCard(context, isDark, l10n),
             ],
@@ -108,11 +110,7 @@ class AiRecommendationsSection extends StatelessWidget {
                       color: rec.type.color.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(
-                      rec.type.icon,
-                      size: 18,
-                      color: rec.type.color,
-                    ),
+                    child: Icon(rec.type.icon, size: 18, color: rec.type.color),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -129,7 +127,10 @@ class AiRecommendationsSection extends StatelessWidget {
                   ),
                   if (rec.isNew)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFEF4444),
                         borderRadius: BorderRadius.circular(4),
@@ -266,4 +267,3 @@ class AiRecommendationsSection extends StatelessWidget {
     return '${date.day}/${date.month}';
   }
 }
-

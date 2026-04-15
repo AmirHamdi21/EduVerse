@@ -38,12 +38,10 @@ class InstructorNotificationsTabBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         labelColor: Colors.white,
-        unselectedLabelColor:
-            isDarkMode ? AppTheme.darkTextSecondary : AppTheme.textLight,
-        labelStyle: const TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-        ),
+        unselectedLabelColor: isDarkMode
+            ? AppTheme.darkTextSecondary
+            : AppTheme.textLight,
+        labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
         unselectedLabelStyle: const TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 14,

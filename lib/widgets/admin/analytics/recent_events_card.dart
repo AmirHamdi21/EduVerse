@@ -41,9 +41,7 @@ class RecentEventsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -81,10 +79,7 @@ class RecentEventsCard extends StatelessWidget {
                   onPressed: onViewAll,
                   child: Text(
                     l10n.viewAll,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AdminColors.primary,
-                    ),
+                    style: TextStyle(fontSize: 13, color: AdminColors.primary),
                   ),
                 ),
             ],
@@ -104,9 +99,7 @@ class RecentEventsCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark
-              ? AdminColors.darkSurface
-              : AdminColors.lightBackground,
+          color: isDark ? AdminColors.darkSurface : AdminColors.lightBackground,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: _getEventColor(event.type).withValues(alpha: 0.3),

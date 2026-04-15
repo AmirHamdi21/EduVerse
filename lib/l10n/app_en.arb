@@ -3132,6 +3132,29 @@
   "aiInsights": "AI Insights",
   "noInstructorAssigned": "No instructor assigned yet",
   "noTAAssigned": "Consider assigning TAs for better student support",
+  "sectionLabel": "Section {sectionNumber}",
+  "@sectionLabel": {
+    "placeholders": {
+      "sectionNumber": {}
+    }
+  },
+  "sectionScheduleLabel": "Section {sectionNumber} - {day}",
+  "@sectionScheduleLabel": {
+    "placeholders": {
+      "sectionNumber": {},
+      "day": {}
+    }
+  },
+  "studentUserIdHint": "Student User ID",
+  "idValue": "ID {id}",
+  "@idValue": {
+    "placeholders": {
+      "id": {}
+    }
+  },
+  "rolePrimary": "Primary Instructor",
+  "roleCoInstructor": "Co-Instructor",
+  "roleGuestInstructor": "Guest Instructor",
   "recommendMoreTAs": "Consider adding more TAs for large class size",
   "largeClassSuggestion": "Consider adding labs for better engagement",
   "labCapacityWarning": "Lab capacity may not accommodate all students",

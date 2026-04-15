@@ -84,8 +84,8 @@ class TACourseQuickActions extends StatelessWidget {
           decoration: BoxDecoration(
             color: isAI
                 ? (isDark
-                    ? TAColors.primary.withValues(alpha: 0.15)
-                    : TAColors.primarySurface)
+                      ? TAColors.primary.withValues(alpha: 0.15)
+                      : TAColors.primarySurface)
                 : TAColors.cardColor(isDark),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
@@ -100,7 +100,9 @@ class TACourseQuickActions extends StatelessWidget {
               Icon(
                 icon,
                 size: 18,
-                color: isAI ? TAColors.primary : TAColors.textSecondaryColor(isDark),
+                color: isAI
+                    ? TAColors.primary
+                    : TAColors.textSecondaryColor(isDark),
               ),
               const SizedBox(width: 8),
               Flexible(

@@ -47,7 +47,7 @@ class AddCourseBottomBar extends StatelessWidget {
             if (currentStep > 0)
               Expanded(
                 child: OutlinedButton.icon(
-                  onPressed: onPrevious,
+                  onPressed: isSubmitting ? null : onPrevious,
                   icon: const Icon(Icons.arrow_back_rounded, size: 20),
                   label: Text(l10n.previous),
                   style: OutlinedButton.styleFrom(
@@ -82,8 +82,9 @@ class AddCourseBottomBar extends StatelessWidget {
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : Icon(

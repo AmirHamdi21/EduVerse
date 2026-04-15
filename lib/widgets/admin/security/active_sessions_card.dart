@@ -128,9 +128,16 @@ class ActiveSessionsCard extends StatelessWidget {
                     value: 'terminate_all',
                     child: Row(
                       children: [
-                        Icon(Icons.logout_rounded, color: AdminColors.error, size: 18),
+                        Icon(
+                          Icons.logout_rounded,
+                          color: AdminColors.error,
+                          size: 18,
+                        ),
                         const SizedBox(width: 8),
-                        Text(l10n.terminateAll, style: TextStyle(color: AdminColors.error)),
+                        Text(
+                          l10n.terminateAll,
+                          style: TextStyle(color: AdminColors.error),
+                        ),
                       ],
                     ),
                   ),
@@ -139,7 +146,9 @@ class ActiveSessionsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          ...sessions.take(5).map((session) => _buildSessionItem(session, l10n)),
+          ...sessions
+              .take(5)
+              .map((session) => _buildSessionItem(session, l10n)),
           if (sessions.length > 5) ...[
             const SizedBox(height: 8),
             Center(
@@ -159,7 +168,7 @@ class ActiveSessionsCard extends StatelessWidget {
 
   Widget _buildSessionItem(ActiveSession session, AppLocalizations l10n) {
     final timeAgo = _getTimeAgo(session.lastActive, l10n);
-    
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
@@ -168,8 +177,8 @@ class ActiveSessionsCard extends StatelessWidget {
           color: session.isCurrentSession
               ? AdminColors.success.withValues(alpha: 0.08)
               : isDark
-                  ? Colors.white.withValues(alpha: 0.03)
-                  : AdminColors.getBackgroundColor(isDark),
+              ? Colors.white.withValues(alpha: 0.03)
+              : AdminColors.getBackgroundColor(isDark),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: session.isCurrentSession
@@ -209,7 +218,10 @@ class ActiveSessionsCard extends StatelessWidget {
                       if (session.isCurrentSession) ...[
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: AdminColors.success,
                             borderRadius: BorderRadius.circular(6),
@@ -268,11 +280,15 @@ class ActiveSessionsCard extends StatelessWidget {
 
   IconData _getDeviceIcon(String device) {
     final lower = device.toLowerCase();
-    if (lower.contains('iphone') || lower.contains('android') || lower.contains('mobile')) {
+    if (lower.contains('iphone') ||
+        lower.contains('android') ||
+        lower.contains('mobile')) {
       return Icons.smartphone_rounded;
     } else if (lower.contains('ipad') || lower.contains('tablet')) {
       return Icons.tablet_rounded;
-    } else if (lower.contains('mac') || lower.contains('windows') || lower.contains('linux')) {
+    } else if (lower.contains('mac') ||
+        lower.contains('windows') ||
+        lower.contains('linux')) {
       return Icons.laptop_rounded;
     }
     return Icons.devices_other_rounded;
@@ -280,7 +296,9 @@ class ActiveSessionsCard extends StatelessWidget {
 
   Color _getDeviceColor(String device) {
     final lower = device.toLowerCase();
-    if (lower.contains('iphone') || lower.contains('mac') || lower.contains('ipad')) {
+    if (lower.contains('iphone') ||
+        lower.contains('mac') ||
+        lower.contains('ipad')) {
       return AdminColors.chartPurple;
     } else if (lower.contains('windows')) {
       return AdminColors.primary;

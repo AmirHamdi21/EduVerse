@@ -33,11 +33,13 @@ class _StorageSettingsScreenState extends State<StorageSettingsScreen> {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -241,10 +243,25 @@ class _StorageSettingsScreenState extends State<StorageSettingsScreen> {
 
   Widget _buildStorageBreakdownCard(bool isDark, AppLocalizations l10n) {
     final items = [
-      (Icons.description_rounded, l10n.documents, _documentsSize, const Color(0xFF3B82F6)),
-      (Icons.play_circle_rounded, l10n.videos, _videosSize, const Color(0xFF8B5CF6)),
+      (
+        Icons.description_rounded,
+        l10n.documents,
+        _documentsSize,
+        const Color(0xFF3B82F6),
+      ),
+      (
+        Icons.play_circle_rounded,
+        l10n.videos,
+        _videosSize,
+        const Color(0xFF8B5CF6),
+      ),
       (Icons.cached_rounded, l10n.cache, _cacheSize, const Color(0xFFF59E0B)),
-      (Icons.more_horiz_rounded, l10n.other, _otherSize, const Color(0xFF6B7280)),
+      (
+        Icons.more_horiz_rounded,
+        l10n.other,
+        _otherSize,
+        const Color(0xFF6B7280),
+      ),
     ];
 
     return Container(
@@ -280,45 +297,47 @@ class _StorageSettingsScreenState extends State<StorageSettingsScreen> {
           ),
           const SizedBox(height: 20),
           // Legend
-          ...items.map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 12,
-                      height: 12,
-                      decoration: BoxDecoration(
-                        color: item.$4,
-                        borderRadius: BorderRadius.circular(3),
-                      ),
+          ...items.map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                children: [
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: item.$4,
+                      borderRadius: BorderRadius.circular(3),
                     ),
-                    const SizedBox(width: 12),
-                    Icon(
-                      item.$1,
-                      size: 18,
-                      color: isDark ? Colors.white54 : Colors.black45,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        item.$2,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '${item.$3.toStringAsFixed(1)} GB',
+                  ),
+                  const SizedBox(width: 12),
+                  Icon(
+                    item.$1,
+                    size: 18,
+                    color: isDark ? Colors.white54 : Colors.black45,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      item.$2,
                       style: TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white70 : Colors.black54,
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
-                  ],
-                ),
-              )),
+                  ),
+                  Text(
+                    '${item.$3.toStringAsFixed(1)} GB',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white70 : Colors.black54,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -471,16 +490,14 @@ class _StorageSettingsScreenState extends State<StorageSettingsScreen> {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    margin: EdgeInsets.only(
-                      right: q.$1 != 'high' ? 8 : 0,
-                    ),
+                    margin: EdgeInsets.only(right: q.$1 != 'high' ? 8 : 0),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? const Color(0xFF3B82F6)
                           : (isDark
-                              ? const Color(0xFF0F172A)
-                              : const Color(0xFFF1F5F9)),
+                                ? const Color(0xFF0F172A)
+                                : const Color(0xFFF1F5F9)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
@@ -488,8 +505,9 @@ class _StorageSettingsScreenState extends State<StorageSettingsScreen> {
                         q.$2,
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                           color: isSelected
                               ? Colors.white
                               : (isDark ? Colors.white70 : Colors.black54),
@@ -557,16 +575,14 @@ class _StorageSettingsScreenState extends State<StorageSettingsScreen> {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    margin: EdgeInsets.only(
-                      right: f.$1 != 'monthly' ? 8 : 0,
-                    ),
+                    margin: EdgeInsets.only(right: f.$1 != 'monthly' ? 8 : 0),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? const Color(0xFF3B82F6)
                           : (isDark
-                              ? const Color(0xFF0F172A)
-                              : const Color(0xFFF1F5F9)),
+                                ? const Color(0xFF0F172A)
+                                : const Color(0xFFF1F5F9)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
@@ -574,8 +590,9 @@ class _StorageSettingsScreenState extends State<StorageSettingsScreen> {
                         f.$2,
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                           color: isSelected
                               ? Colors.white
                               : (isDark ? Colors.white70 : Colors.black54),
@@ -671,11 +688,7 @@ class _StorageSettingsScreenState extends State<StorageSettingsScreen> {
                 color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                icon,
-                size: 20,
-                color: color,
-              ),
+              child: Icon(icon, size: 20, color: color),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -808,12 +821,14 @@ class _ClearDialogState extends State<_ClearDialog>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -836,9 +851,7 @@ class _ClearDialogState extends State<_ClearDialog>
             constraints: const BoxConstraints(maxWidth: 340),
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: widget.isDark
-                  ? const Color(0xFF1E293B)
-                  : Colors.white,
+              color: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
@@ -866,11 +879,7 @@ class _ClearDialogState extends State<_ClearDialog>
                     shape: BoxShape.circle,
                   ),
                   child: Center(
-                    child: Icon(
-                      widget.icon,
-                      size: 44,
-                      color: widget.color,
-                    ),
+                    child: Icon(widget.icon, size: 44, color: widget.color),
                   ),
                 ),
                 const SizedBox(height: 20),

@@ -31,12 +31,12 @@ class _TASettingsScreenState extends State<TASettingsScreen>
   bool _twoFactorAuth = false;
   bool _autoGradeAssist = true;
   bool _studentAlerts = true;
-  
+
   // Grading preferences state
   bool _showAISuggestions = true;
   bool _autoSaveGrades = true;
   bool _plagiarismCheck = false;
-  
+
   // Font size state
   FontSizeOption _selectedFontSize = FontSizeOption.medium;
 
@@ -184,7 +184,8 @@ class _TASettingsScreenState extends State<TASettingsScreen>
                       icon: Icons.swipe_rounded,
                       title: l10n.taNotifSwipeSettings,
                       subtitle: l10n.swipeActionsDesc,
-                      onTap: () => context.push('/settings/swipe-actions/notifications'),
+                      onTap: () =>
+                          context.push('/settings/swipe-actions/notifications'),
                     ),
                   ],
                 ),
@@ -440,18 +441,12 @@ class _TASettingsScreenState extends State<TASettingsScreen>
           decoration: BoxDecoration(
             color: TAColors.error.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: TAColors.error.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: TAColors.error.withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.logout_rounded,
-                color: TAColors.error,
-                size: 20,
-              ),
+              Icon(Icons.logout_rounded, color: TAColors.error, size: 20),
               const SizedBox(width: 10),
               Text(
                 l10n.logout,
@@ -670,7 +665,9 @@ class _TASettingsScreenState extends State<TASettingsScreen>
               isSelected: themeMode == AppThemeMode.light,
               isDark: isDark,
               onTap: () {
-                context.read<ThemeBloc>().add(const SetThemeModeEvent(AppThemeMode.light));
+                context.read<ThemeBloc>().add(
+                  const SetThemeModeEvent(AppThemeMode.light),
+                );
                 Navigator.pop(ctx);
               },
             ),
@@ -681,7 +678,9 @@ class _TASettingsScreenState extends State<TASettingsScreen>
               isSelected: themeMode == AppThemeMode.dark,
               isDark: isDark,
               onTap: () {
-                context.read<ThemeBloc>().add(const SetThemeModeEvent(AppThemeMode.dark));
+                context.read<ThemeBloc>().add(
+                  const SetThemeModeEvent(AppThemeMode.dark),
+                );
                 Navigator.pop(ctx);
               },
             ),
@@ -692,7 +691,9 @@ class _TASettingsScreenState extends State<TASettingsScreen>
               isSelected: themeMode == AppThemeMode.system,
               isDark: isDark,
               onTap: () {
-                context.read<ThemeBloc>().add(const SetThemeModeEvent(AppThemeMode.system));
+                context.read<ThemeBloc>().add(
+                  const SetThemeModeEvent(AppThemeMode.system),
+                );
                 Navigator.pop(ctx);
               },
             ),
@@ -790,8 +791,11 @@ class _TASettingsScreenState extends State<TASettingsScreen>
               ),
               const SizedBox(height: 20),
               _buildFontSizeOptionNew(
-                l10n.small, 'Aa', 14, isDark, 
-                FontSizeOption.small, 
+                l10n.small,
+                'Aa',
+                14,
+                isDark,
+                FontSizeOption.small,
                 _selectedFontSize,
                 (option) {
                   setSheetState(() {});
@@ -803,8 +807,11 @@ class _TASettingsScreenState extends State<TASettingsScreen>
               ),
               const SizedBox(height: 10),
               _buildFontSizeOptionNew(
-                l10n.medium, 'Aa', 16, isDark, 
-                FontSizeOption.medium, 
+                l10n.medium,
+                'Aa',
+                16,
+                isDark,
+                FontSizeOption.medium,
                 _selectedFontSize,
                 (option) {
                   setSheetState(() {});
@@ -816,8 +823,11 @@ class _TASettingsScreenState extends State<TASettingsScreen>
               ),
               const SizedBox(height: 10),
               _buildFontSizeOptionNew(
-                l10n.large, 'Aa', 18, isDark, 
-                FontSizeOption.large, 
+                l10n.large,
+                'Aa',
+                18,
+                isDark,
+                FontSizeOption.large,
                 _selectedFontSize,
                 (option) {
                   setSheetState(() {});
@@ -1149,7 +1159,10 @@ class _TASettingsScreenState extends State<TASettingsScreen>
                   ),
                   child: const Text(
                     'Save Preferences',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -1233,10 +1246,11 @@ class _TASettingsScreenState extends State<TASettingsScreen>
               Navigator.pop(context);
               _showSnackBar('Cache cleared successfully', isDark);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TAColors.primary,
+            style: ElevatedButton.styleFrom(backgroundColor: TAColors.primary),
+            child: Text(
+              l10n.clearCache,
+              style: const TextStyle(color: Colors.white),
             ),
-            child: Text(l10n.clearCache, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -1267,9 +1281,7 @@ class _TASettingsScreenState extends State<TASettingsScreen>
               Navigator.pop(context);
               _showSnackBar('Data export started...', isDark);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TAColors.primary,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: TAColors.primary),
             child: const Text('Export', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -1323,7 +1335,9 @@ class _TASettingsScreenState extends State<TASettingsScreen>
                 maxLines: 4,
                 decoration: InputDecoration(
                   hintText: 'Tell us what you think...',
-                  hintStyle: TextStyle(color: TAColors.textTertiaryColor(isDark)),
+                  hintStyle: TextStyle(
+                    color: TAColors.textTertiaryColor(isDark),
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: TAColors.borderColor(isDark)),
@@ -1356,7 +1370,10 @@ class _TASettingsScreenState extends State<TASettingsScreen>
                   ),
                   child: const Text(
                     'Submit Feedback',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -1414,7 +1431,9 @@ class _TASettingsScreenState extends State<TASettingsScreen>
                 maxLines: 4,
                 decoration: InputDecoration(
                   hintText: 'Describe the bug in detail...',
-                  hintStyle: TextStyle(color: TAColors.textTertiaryColor(isDark)),
+                  hintStyle: TextStyle(
+                    color: TAColors.textTertiaryColor(isDark),
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(color: TAColors.borderColor(isDark)),
@@ -1447,7 +1466,10 @@ class _TASettingsScreenState extends State<TASettingsScreen>
                   ),
                   child: const Text(
                     'Submit Bug Report',
-                    style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -1483,10 +1505,11 @@ class _TASettingsScreenState extends State<TASettingsScreen>
               Navigator.pop(context);
               context.go('/login');
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TAColors.error,
+            style: ElevatedButton.styleFrom(backgroundColor: TAColors.error),
+            child: Text(
+              l10n.logout,
+              style: const TextStyle(color: Colors.white),
             ),
-            child: Text(l10n.logout, style: const TextStyle(color: Colors.white)),
           ),
         ],
       ),

@@ -25,10 +25,7 @@ class ITAiTuningAdvisor extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? [
-                  const Color(0xFF2A2A4A),
-                  const Color(0xFF1A1A2E),
-                ]
+              ? [const Color(0xFF2A2A4A), const Color(0xFF1A1A2E)]
               : [
                   ITColors.primary.withValues(alpha: 0.08),
                   ITColors.teal.withValues(alpha: 0.05),
@@ -79,7 +76,10 @@ class ITAiTuningAdvisor extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: ITColors.success.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
@@ -126,9 +126,7 @@ class ITAiTuningAdvisor extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: isDark
             ? null
@@ -181,7 +179,7 @@ class ITAiTuningAdvisor extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          
+
           // Confidence bar
           Row(
             children: [
@@ -224,13 +222,16 @@ class ITAiTuningAdvisor extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          
+
           // Action button
           if (suggestion.actionLabel != null)
             GestureDetector(
               onTap: () => onApplySuggestion(suggestion),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [color, color.withValues(alpha: 0.8)],

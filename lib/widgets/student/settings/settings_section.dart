@@ -43,11 +43,7 @@ class SettingsSection extends StatelessWidget {
                     color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(
-                    icon,
-                    size: 18,
-                    color: const Color(0xFF3B82F6),
-                  ),
+                  child: Icon(icon, size: 18, color: const Color(0xFF3B82F6)),
                 ),
                 const SizedBox(width: 10),
                 Text(
@@ -62,10 +58,7 @@ class SettingsSection extends StatelessWidget {
             ),
           ),
 
-          Divider(
-            color: isDark ? Colors.white12 : Colors.black12,
-            height: 1,
-          ),
+          Divider(color: isDark ? Colors.white12 : Colors.black12, height: 1),
 
           // Items
           ...items.asMap().entries.map((entry) {
@@ -75,10 +68,7 @@ class SettingsSection extends StatelessWidget {
 
             return Column(
               children: [
-                _SettingsItemTile(
-                  item: item,
-                  isDark: isDark,
-                ),
+                _SettingsItemTile(item: item, isDark: isDark),
                 if (!isLast)
                   Divider(
                     color: isDark ? Colors.white12 : Colors.black12,
@@ -116,10 +106,7 @@ class _SettingsItemTile extends StatelessWidget {
   final SettingsItem item;
   final bool isDark;
 
-  const _SettingsItemTile({
-    required this.item,
-    required this.isDark,
-  });
+  const _SettingsItemTile({required this.item, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -137,13 +124,17 @@ class _SettingsItemTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                color: isDark
+                    ? const Color(0xFF0F172A)
+                    : const Color(0xFFF1F5F9),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 item.icon,
                 size: 18,
-                color: item.iconColor ?? (isDark ? Colors.white70 : Colors.black54),
+                color:
+                    item.iconColor ??
+                    (isDark ? Colors.white70 : Colors.black54),
               ),
             ),
             const SizedBox(width: 12),

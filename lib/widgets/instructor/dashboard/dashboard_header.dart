@@ -117,9 +117,7 @@ class InstructorAITeachingCard extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(isDark ? 0.1 : 0.2),
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: Colors.white.withOpacity(0.15),
-                    ),
+                    border: Border.all(color: Colors.white.withOpacity(0.15)),
                   ),
                   child: Row(
                     children: [
@@ -205,9 +203,7 @@ class InstructorAITeachingCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.15),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.1),
-        ),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
       ),
       child: Row(
         children: [

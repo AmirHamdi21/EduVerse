@@ -17,11 +17,11 @@ class ITSecurityLogsScreen extends StatefulWidget {
 class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
   bool _isLoading = true;
   String? _errorMessage;
-  
+
   // Tab state
   int _selectedMainTab = 0;
   int _selectedSubTab = 0;
-  
+
   // Filters
   String _searchQuery = '';
   String _selectedFilter = 'All Events';
@@ -185,7 +185,8 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
       SecurityIncident(
         id: 'inc1',
         title: 'Brute Force Attack Detected',
-        description: 'Multiple failed login attempts from IP 45.142.212.81 targeting admin accounts.',
+        description:
+            'Multiple failed login attempts from IP 45.142.212.81 targeting admin accounts.',
         severity: IncidentSeverity.critical,
         status: IncidentStatus.active,
         detectedAt: now.subtract(const Duration(hours: 2)),
@@ -195,7 +196,8 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
       SecurityIncident(
         id: 'inc2',
         title: 'Unusual Access Pattern',
-        description: 'System detected logins from 3 different locations for user accounts within 5 minutes.',
+        description:
+            'System detected logins from 3 different locations for user accounts within 5 minutes.',
         severity: IncidentSeverity.warning,
         status: IncidentStatus.investigating,
         detectedAt: now.subtract(const Duration(hours: 4)),
@@ -204,7 +206,8 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
       SecurityIncident(
         id: 'inc3',
         title: 'API Rate Limit Exceeded',
-        description: 'Service account exceeded 1000 requests per minute threshold.',
+        description:
+            'Service account exceeded 1000 requests per minute threshold.',
         severity: IncidentSeverity.info,
         status: IncidentStatus.active,
         detectedAt: now.subtract(const Duration(hours: 6)),
@@ -275,7 +278,11 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
         icon: Icons.engineering_rounded,
         color: ITColors.orange,
         userCount: 8,
-        permissions: ['Security logs', 'System monitoring', 'Backup management'],
+        permissions: [
+          'Security logs',
+          'System monitoring',
+          'Backup management',
+        ],
       ),
     ];
   }
@@ -291,7 +298,8 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
       SecurityPolicy(
         id: 'password',
         name: 'Password Strength',
-        description: 'Minimum 12 characters, mixed case, numbers, symbols required',
+        description:
+            'Minimum 12 characters, mixed case, numbers, symbols required',
         value: 'Strong',
         isEnabled: true,
       ),
@@ -338,7 +346,8 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
       AISecurityInsight(
         id: 'ai3',
         title: 'Recommendation',
-        description: 'Enable geo-blocking to block non-US logins for admin roles.',
+        description:
+            'Enable geo-blocking to block non-US logins for admin roles.',
         severity: IncidentSeverity.info,
         icon: Icons.tips_and_updates_rounded,
       ),
@@ -392,8 +401,13 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
 
     // Filter by high risk
     if (_showHighRiskOnly) {
-      filtered = filtered.where((log) =>
-          log.riskLevel == RiskLevel.high || log.riskLevel == RiskLevel.critical).toList();
+      filtered = filtered
+          .where(
+            (log) =>
+                log.riskLevel == RiskLevel.high ||
+                log.riskLevel == RiskLevel.critical,
+          )
+          .toList();
     }
 
     // Filter by event type
@@ -420,21 +434,31 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
     // Filter by search
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
-      filtered = filtered.where((log) =>
-          log.userName.toLowerCase().contains(query) ||
-          log.userEmail.toLowerCase().contains(query) ||
-          log.ipAddress.toLowerCase().contains(query) ||
-          (log.location?.toLowerCase().contains(query) ?? false)).toList();
+      filtered = filtered
+          .where(
+            (log) =>
+                log.userName.toLowerCase().contains(query) ||
+                log.userEmail.toLowerCase().contains(query) ||
+                log.ipAddress.toLowerCase().contains(query) ||
+                (log.location?.toLowerCase().contains(query) ?? false),
+          )
+          .toList();
     }
 
     return filtered;
   }
 
-  List<AccessRequest> get _pendingRequests =>
-      _accessRequests.where((r) => r.status == AccessRequestStatus.pending).toList();
+  List<AccessRequest> get _pendingRequests => _accessRequests
+      .where((r) => r.status == AccessRequestStatus.pending)
+      .toList();
 
-  List<SecurityIncident> get _activeIncidents =>
-      _incidents.where((i) => i.status != IncidentStatus.dismissed && i.status != IncidentStatus.resolved).toList();
+  List<SecurityIncident> get _activeIncidents => _incidents
+      .where(
+        (i) =>
+            i.status != IncidentStatus.dismissed &&
+            i.status != IncidentStatus.resolved,
+      )
+      .toList();
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -450,7 +474,9 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
     setState(() {
       final index = _accessRequests.indexWhere((r) => r.id == request.id);
       if (index != -1) {
-        _accessRequests[index] = request.copyWith(status: AccessRequestStatus.approved);
+        _accessRequests[index] = request.copyWith(
+          status: AccessRequestStatus.approved,
+        );
       }
     });
     _showSnackBar('Approved access request for ${request.userName}');
@@ -460,7 +486,9 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
     setState(() {
       final index = _accessRequests.indexWhere((r) => r.id == request.id);
       if (index != -1) {
-        _accessRequests[index] = request.copyWith(status: AccessRequestStatus.denied);
+        _accessRequests[index] = request.copyWith(
+          status: AccessRequestStatus.denied,
+        );
       }
     });
     _showSnackBar('Denied access request for ${request.userName}');
@@ -492,7 +520,7 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
 
   void _showIncidentDetails(SecurityIncident incident) {
     final isDark = context.read<ThemeBloc>().state.isDark;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -509,7 +537,9 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
           setState(() {
             final index = _incidents.indexWhere((i) => i.id == incident.id);
             if (index != -1) {
-              _incidents[index] = incident.copyWith(status: IncidentStatus.resolved);
+              _incidents[index] = incident.copyWith(
+                status: IncidentStatus.resolved,
+              );
             }
           });
           _showSnackBar('Incident marked as resolved');
@@ -550,7 +580,10 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
           backgroundColor: isDark
               ? const Color(0xFF1A1A2E)
               : const Color(0xFFFAFAFA),
-          drawer: ITDrawer(currentRoute: '/it-admin/security-logs', isDark: isDark),
+          drawer: ITDrawer(
+            currentRoute: '/it-admin/security-logs',
+            isDark: isDark,
+          ),
           body: SafeArea(
             child: Container(
               decoration: isDark
@@ -576,9 +609,7 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: ITColors.primary),
-      );
+      return Center(child: CircularProgressIndicator(color: ITColors.primary));
     }
 
     if (_errorMessage != null) {
@@ -652,7 +683,8 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
                 ITRecentSecurityActions(
                   isDark: isDark,
                   actions: _recentActions,
-                  onViewAll: () => _showSnackBar('Viewing all security actions'),
+                  onViewAll: () =>
+                      _showSnackBar('Viewing all security actions'),
                 ),
                 const SizedBox(height: 24),
               ]),
@@ -675,8 +707,10 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
           showHighRiskOnly: _showHighRiskOnly,
           onSearchChanged: (query) => setState(() => _searchQuery = query),
           onFilterChanged: (filter) => setState(() => _selectedFilter = filter),
-          onFlaggedOnlyChanged: (value) => setState(() => _showFlaggedOnly = value),
-          onHighRiskOnlyChanged: (value) => setState(() => _showHighRiskOnly = value),
+          onFlaggedOnlyChanged: (value) =>
+              setState(() => _showFlaggedOnly = value),
+          onHighRiskOnlyChanged: (value) =>
+              setState(() => _showHighRiskOnly = value),
           onLogTap: _handleLogTap,
         );
       case 1:
@@ -686,7 +720,8 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
             requests: _pendingRequests,
             onApprove: _handleApproveRequest,
             onDeny: _handleDenyRequest,
-            onViewDetails: (request) => _showSnackBar('Viewing details for ${request.userName}'),
+            onViewDetails: (request) =>
+                _showSnackBar('Viewing details for ${request.userName}'),
           );
         } else {
           return ITRolePermissionsSection(
@@ -739,7 +774,10 @@ class _ITSecurityLogsScreenState extends State<ITSecurityLogsScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: ITColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

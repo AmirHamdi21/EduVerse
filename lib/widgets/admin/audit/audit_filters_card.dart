@@ -81,7 +81,11 @@ class AuditFiltersCard extends StatelessWidget {
               if (_hasActiveFilters)
                 TextButton.icon(
                   onPressed: onClearFilters,
-                  icon: Icon(Icons.clear_rounded, size: 16, color: AdminColors.error),
+                  icon: Icon(
+                    Icons.clear_rounded,
+                    size: 16,
+                    color: AdminColors.error,
+                  ),
                   label: Text(
                     l10n.clearAll,
                     style: TextStyle(color: AdminColors.error),
@@ -107,7 +111,10 @@ class AuditFiltersCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
             ),
             style: TextStyle(color: AdminColors.getTextColor(isDark)),
           ),
@@ -126,13 +133,37 @@ class AuditFiltersCard extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildFilterChip(context, null, l10n.all, selectedSeverity, onSeverityChanged),
-              _buildFilterChip(context, 'info', l10n.info, selectedSeverity, onSeverityChanged,
-                  color: AdminColors.primary),
-              _buildFilterChip(context, 'warning', l10n.warning, selectedSeverity, onSeverityChanged,
-                  color: AdminColors.warning),
-              _buildFilterChip(context, 'critical', l10n.critical, selectedSeverity, onSeverityChanged,
-                  color: AdminColors.error),
+              _buildFilterChip(
+                context,
+                null,
+                l10n.all,
+                selectedSeverity,
+                onSeverityChanged,
+              ),
+              _buildFilterChip(
+                context,
+                'info',
+                l10n.info,
+                selectedSeverity,
+                onSeverityChanged,
+                color: AdminColors.primary,
+              ),
+              _buildFilterChip(
+                context,
+                'warning',
+                l10n.warning,
+                selectedSeverity,
+                onSeverityChanged,
+                color: AdminColors.warning,
+              ),
+              _buildFilterChip(
+                context,
+                'critical',
+                l10n.critical,
+                selectedSeverity,
+                onSeverityChanged,
+                color: AdminColors.error,
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -150,12 +181,48 @@ class AuditFiltersCard extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildFilterChip(context, null, l10n.all, selectedAction, onActionChanged),
-              _buildFilterChip(context, 'login', l10n.login, selectedAction, onActionChanged),
-              _buildFilterChip(context, 'logout', l10n.logout, selectedAction, onActionChanged),
-              _buildFilterChip(context, 'create', l10n.create, selectedAction, onActionChanged),
-              _buildFilterChip(context, 'update', l10n.update, selectedAction, onActionChanged),
-              _buildFilterChip(context, 'delete', l10n.delete, selectedAction, onActionChanged),
+              _buildFilterChip(
+                context,
+                null,
+                l10n.all,
+                selectedAction,
+                onActionChanged,
+              ),
+              _buildFilterChip(
+                context,
+                'login',
+                l10n.login,
+                selectedAction,
+                onActionChanged,
+              ),
+              _buildFilterChip(
+                context,
+                'logout',
+                l10n.logout,
+                selectedAction,
+                onActionChanged,
+              ),
+              _buildFilterChip(
+                context,
+                'create',
+                l10n.create,
+                selectedAction,
+                onActionChanged,
+              ),
+              _buildFilterChip(
+                context,
+                'update',
+                l10n.update,
+                selectedAction,
+                onActionChanged,
+              ),
+              _buildFilterChip(
+                context,
+                'delete',
+                l10n.delete,
+                selectedAction,
+                onActionChanged,
+              ),
             ],
           ),
           const SizedBox(height: 16),
@@ -179,7 +246,9 @@ class AuditFiltersCard extends StatelessWidget {
                     : Colors.black.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
                 border: dateRange != null
-                    ? Border.all(color: AdminColors.primary.withValues(alpha: 0.5))
+                    ? Border.all(
+                        color: AdminColors.primary.withValues(alpha: 0.5),
+                      )
                     : null,
               ),
               child: Row(
@@ -189,7 +258,9 @@ class AuditFiltersCard extends StatelessWidget {
                     size: 18,
                     color: dateRange != null
                         ? AdminColors.primary
-                        : AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                        : AdminColors.getTextColor(
+                            isDark,
+                          ).withValues(alpha: 0.5),
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -200,7 +271,9 @@ class AuditFiltersCard extends StatelessWidget {
                       fontSize: 13,
                       color: dateRange != null
                           ? AdminColors.primary
-                          : AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                          : AdminColors.getTextColor(
+                              isDark,
+                            ).withValues(alpha: 0.6),
                     ),
                   ),
                   const Spacer(),
@@ -210,7 +283,9 @@ class AuditFiltersCard extends StatelessWidget {
                       child: Icon(
                         Icons.close_rounded,
                         size: 18,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.5),
                       ),
                     ),
                 ],
@@ -247,8 +322,8 @@ class AuditFiltersCard extends StatelessWidget {
           color: isSelected
               ? null
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.05)),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.05)),
           borderRadius: BorderRadius.circular(10),
           border: !isSelected && color != null
               ? Border.all(color: color.withValues(alpha: 0.5))
@@ -261,10 +336,7 @@ class AuditFiltersCard extends StatelessWidget {
               Container(
                 width: 8,
                 height: 8,
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
               const SizedBox(width: 6),
             ],
@@ -273,7 +345,9 @@ class AuditFiltersCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : AdminColors.getTextColor(isDark),
+                color: isSelected
+                    ? Colors.white
+                    : AdminColors.getTextColor(isDark),
               ),
             ),
           ],

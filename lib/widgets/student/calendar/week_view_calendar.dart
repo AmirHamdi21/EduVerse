@@ -9,10 +9,7 @@ import 'package:intl/intl.dart';
 class WeekViewCalendar extends StatelessWidget {
   final Function(DateTime, List<CalendarEvent>) onDateTap;
 
-  const WeekViewCalendar({
-    super.key,
-    required this.onDateTap,
-  });
+  const WeekViewCalendar({super.key, required this.onDateTap});
 
   @override
   Widget build(BuildContext context) {
@@ -54,19 +51,25 @@ class WeekViewCalendar extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              final newDate = state.selectedDate.subtract(const Duration(days: 7));
+              final newDate = state.selectedDate.subtract(
+                const Duration(days: 7),
+              );
               context.read<CalendarCubit>().selectDate(newDate);
             },
             child: Container(
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6),
+                color: isDark
+                    ? const Color(0xFF1E2939)
+                    : const Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 Icons.chevron_left_rounded,
-                color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                color: isDark
+                    ? const Color(0xFF99A1AF)
+                    : const Color(0xFF6B7280),
               ),
             ),
           ),
@@ -82,19 +85,25 @@ class WeekViewCalendar extends StatelessWidget {
             children: [
               GestureDetector(
                 onTap: () {
-                  final newDate = state.selectedDate.add(const Duration(days: 7));
+                  final newDate = state.selectedDate.add(
+                    const Duration(days: 7),
+                  );
                   context.read<CalendarCubit>().selectDate(newDate);
                 },
                 child: Container(
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6),
+                    color: isDark
+                        ? const Color(0xFF1E2939)
+                        : const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     Icons.chevron_right_rounded,
-                    color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                    color: isDark
+                        ? const Color(0xFF99A1AF)
+                        : const Color(0xFF6B7280),
                   ),
                 ),
               ),
@@ -102,12 +111,19 @@ class WeekViewCalendar extends StatelessWidget {
               GestureDetector(
                 onTap: () => context.read<CalendarCubit>().goToToday(),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6),
+                    color: isDark
+                        ? const Color(0xFF1E2939)
+                        : const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                      color: isDark
+                          ? const Color(0xFF374151)
+                          : const Color(0xFFE5E7EB),
                     ),
                   ),
                   child: Text(
@@ -115,7 +131,9 @@ class WeekViewCalendar extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: isDark ? const Color(0xFFD1D5DC) : const Color(0xFF374151),
+                      color: isDark
+                          ? const Color(0xFFD1D5DC)
+                          : const Color(0xFF374151),
                     ),
                   ),
                 ),
@@ -141,10 +159,12 @@ class WeekViewCalendar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         children: weekDays.map((date) {
-          final isToday = date.year == today.year &&
+          final isToday =
+              date.year == today.year &&
               date.month == today.month &&
               date.day == today.day;
-          final isSelected = date.year == state.selectedDate.year &&
+          final isSelected =
+              date.year == state.selectedDate.year &&
               date.month == state.selectedDate.month &&
               date.day == state.selectedDate.day;
           final hasEvents = state.hasEventsOnDate(date);
@@ -164,7 +184,9 @@ class WeekViewCalendar extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? const Color(0xFF2B7FFF)
-                      : (isDark ? const Color(0xFF1E2939) : const Color(0xFFF9FAFB)),
+                      : (isDark
+                            ? const Color(0xFF1E2939)
+                            : const Color(0xFFF9FAFB)),
                   borderRadius: BorderRadius.circular(12),
                   border: isToday && !isSelected
                       ? Border.all(color: const Color(0xFF2B7FFF), width: 1.5)
@@ -179,7 +201,9 @@ class WeekViewCalendar extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                         color: isSelected
                             ? Colors.white70
-                            : (isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF)),
+                            : (isDark
+                                  ? const Color(0xFF6B7280)
+                                  : const Color(0xFF9CA3AF)),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -190,7 +214,9 @@ class WeekViewCalendar extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         color: isSelected
                             ? Colors.white
-                            : (isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828)),
+                            : (isDark
+                                  ? const Color(0xFFF3F4F6)
+                                  : const Color(0xFF101828)),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -199,7 +225,9 @@ class WeekViewCalendar extends StatelessWidget {
                         width: 6,
                         height: 6,
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.white : const Color(0xFFF59E0B),
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xFFF59E0B),
                           shape: BoxShape.circle,
                         ),
                       )
@@ -232,14 +260,18 @@ class WeekViewCalendar extends StatelessWidget {
               Icon(
                 Icons.event_available_rounded,
                 size: 48,
-                color: isDark ? const Color(0xFF374151) : const Color(0xFFD1D5DC),
+                color: isDark
+                    ? const Color(0xFF374151)
+                    : const Color(0xFFD1D5DC),
               ),
               const SizedBox(height: 12),
               Text(
                 'No events on this day',
                 style: TextStyle(
                   fontSize: 14,
-                  color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                  color: isDark
+                      ? const Color(0xFF6B7280)
+                      : const Color(0xFF9CA3AF),
                 ),
               ),
             ],
@@ -258,7 +290,11 @@ class WeekViewCalendar extends StatelessWidget {
     );
   }
 
-  Widget _buildEventCard(BuildContext context, CalendarEvent event, bool isDark) {
+  Widget _buildEventCard(
+    BuildContext context,
+    CalendarEvent event,
+    bool isDark,
+  ) {
     return GestureDetector(
       onTap: () {
         context.read<CalendarCubit>().showEventDetails(event);
@@ -293,7 +329,9 @@ class WeekViewCalendar extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                      color: isDark
+                          ? const Color(0xFFF3F4F6)
+                          : const Color(0xFF101828),
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -302,14 +340,18 @@ class WeekViewCalendar extends StatelessWidget {
                       Icon(
                         Icons.access_time_rounded,
                         size: 14,
-                        color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                        color: isDark
+                            ? const Color(0xFF6B7280)
+                            : const Color(0xFF9CA3AF),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         event.time ?? 'All day',
                         style: TextStyle(
                           fontSize: 13,
-                          color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                          color: isDark
+                              ? const Color(0xFF99A1AF)
+                              : const Color(0xFF6B7280),
                         ),
                       ),
                     ],

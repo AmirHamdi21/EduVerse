@@ -44,7 +44,9 @@ class _AdminRegistrationSettingsScreenState
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -97,8 +99,7 @@ class _AdminRegistrationSettingsScreenState
                         title: l10n.enableSocialLogin,
                         subtitle: l10n.enableSocialLoginDesc,
                         value: _allowSocialLogin,
-                        onChanged: (v) =>
-                            setState(() => _allowSocialLogin = v),
+                        onChanged: (v) => setState(() => _allowSocialLogin = v),
                       ),
                       if (_allowSocialLogin) ...[
                         _buildDivider(isDark),
@@ -192,8 +193,9 @@ class _AdminRegistrationSettingsScreenState
                                 leading: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color:
-                                        AdminColors.primary.withValues(alpha: 0.1),
+                                    color: AdminColors.primary.withValues(
+                                      alpha: 0.1,
+                                    ),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Icon(
@@ -210,8 +212,10 @@ class _AdminRegistrationSettingsScreenState
                                   ),
                                 ),
                                 trailing: IconButton(
-                                  icon: Icon(Icons.delete_outline_rounded,
-                                      color: AdminColors.error),
+                                  icon: Icon(
+                                    Icons.delete_outline_rounded,
+                                    color: AdminColors.error,
+                                  ),
                                   onPressed: () {
                                     setState(() {
                                       _allowedDomains.remove(domain);
@@ -260,21 +264,26 @@ class _AdminRegistrationSettingsScreenState
   }
 
   Widget _buildStatusCard(
-      bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return Container(
       padding: EdgeInsets.all(responsive.p20),
       decoration: BoxDecoration(
         gradient: _allowSelfRegistration
             ? AdminColors.greenGradient
             : LinearGradient(
-                colors: [AdminColors.warning, AdminColors.warningLight]),
+                colors: [AdminColors.warning, AdminColors.warningLight],
+              ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: (_allowSelfRegistration
-                    ? AdminColors.success
-                    : AdminColors.warning)
-                .withValues(alpha: 0.3),
+            color:
+                (_allowSelfRegistration
+                        ? AdminColors.success
+                        : AdminColors.warning)
+                    .withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -337,8 +346,7 @@ class _AdminRegistrationSettingsScreenState
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(color: AdminColors.getCardBorderColor(isDark)),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -451,10 +459,9 @@ class _AdminRegistrationSettingsScreenState
           dropdownColor: AdminColors.getCardColor(isDark),
           style: TextStyle(color: AdminColors.getTextColor(isDark)),
           items: items
-              .map((e) => DropdownMenuItem(
-                    value: e,
-                    child: Text(e.toUpperCase()),
-                  ))
+              .map(
+                (e) => DropdownMenuItem(value: e, child: Text(e.toUpperCase())),
+              )
               .toList(),
           onChanged: onChanged,
         ),
@@ -497,8 +504,10 @@ class _AdminRegistrationSettingsScreenState
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AdminColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -543,7 +552,10 @@ class _AdminRegistrationSettingsScreenState
   }
 
   void _showAddDomainDialog(
-      BuildContext context, AppLocalizations l10n, bool isDark) {
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     final controller = TextEditingController();
     showDialog(
       context: context,
@@ -562,8 +574,9 @@ class _AdminRegistrationSettingsScreenState
           style: TextStyle(color: AdminColors.getTextColor(isDark)),
           decoration: InputDecoration(
             hintText: '@domain.edu',
-            hintStyle:
-                TextStyle(color: AdminColors.getTextTertiaryColor(isDark)),
+            hintStyle: TextStyle(
+              color: AdminColors.getTextTertiaryColor(isDark),
+            ),
             filled: true,
             fillColor: AdminColors.getBackgroundColor(isDark),
             border: OutlineInputBorder(
@@ -575,9 +588,12 @@ class _AdminRegistrationSettingsScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel,
-                style: TextStyle(
-                    color: AdminColors.getTextSecondaryColor(isDark))),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(
+                color: AdminColors.getTextSecondaryColor(isDark),
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -607,8 +623,9 @@ class _AdminRegistrationSettingsScreenState
             content: Text(l10n.settingsSaved),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AdminColors.success,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       },

@@ -56,7 +56,11 @@ class GamificationAppBar extends StatelessWidget {
     );
   }
 
-  Widget _buildTimeFilters(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildTimeFilters(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return Container(
       height: 40,
       padding: const EdgeInsets.all(4),
@@ -67,24 +71,9 @@ class GamificationAppBar extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildFilterChip(
-            context,
-            l10n.weekly,
-            TimeFilter.weekly,
-            isDark,
-          ),
-          _buildFilterChip(
-            context,
-            l10n.monthly,
-            TimeFilter.monthly,
-            isDark,
-          ),
-          _buildFilterChip(
-            context,
-            l10n.allTime,
-            TimeFilter.allTime,
-            isDark,
-          ),
+          _buildFilterChip(context, l10n.weekly, TimeFilter.weekly, isDark),
+          _buildFilterChip(context, l10n.monthly, TimeFilter.monthly, isDark),
+          _buildFilterChip(context, l10n.allTime, TimeFilter.allTime, isDark),
         ],
       ),
     );
@@ -104,9 +93,7 @@ class GamificationAppBar extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFF2B7FFF)
-              : Colors.transparent,
+          color: isSelected ? const Color(0xFF2B7FFF) : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Text(
@@ -147,7 +134,7 @@ class GamificationAppBar extends StatelessWidget {
 
   void _showSettingsSheet(BuildContext context, bool isDark) {
     final l10n = AppLocalizations.of(context);
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -166,7 +153,9 @@ class GamificationAppBar extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                  color: isDark
+                      ? const Color(0xFF374151)
+                      : const Color(0xFFE5E7EB),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -227,7 +216,9 @@ class GamificationAppBar extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6),
+                color: isDark
+                    ? const Color(0xFF1E2939)
+                    : const Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(

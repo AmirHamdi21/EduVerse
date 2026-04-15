@@ -84,11 +84,7 @@ class TAAIInsightsPanel extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            Icons.auto_awesome,
-            color: TAColors.primary,
-            size: 22,
-          ),
+          child: Icon(Icons.auto_awesome, color: TAColors.primary, size: 22),
         ),
         const SizedBox(width: 14),
         Expanded(
@@ -133,9 +129,7 @@ class TAAIInsightsPanel extends StatelessWidget {
             ? TAColors.error.withValues(alpha: 0.1)
             : TAColors.error.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: TAColors.error.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: TAColors.error.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +153,9 @@ class TAAIInsightsPanel extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          ...studentsNeedingSupport.map((student) => _buildAtRiskStudentItem(student)),
+          ...studentsNeedingSupport.map(
+            (student) => _buildAtRiskStudentItem(student),
+          ),
         ],
       ),
     );
@@ -320,20 +316,14 @@ class TAAIInsightsPanel extends StatelessWidget {
             ? TAColors.warning.withValues(alpha: 0.1)
             : TAColors.warning.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: TAColors.warning.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: TAColors.warning.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.security_rounded,
-                size: 18,
-                color: TAColors.warning,
-              ),
+              Icon(Icons.security_rounded, size: 18, color: TAColors.warning),
               const SizedBox(width: 8),
               Text(
                 l10n.taPerformanceAcademicIntegrityAlerts,
@@ -358,11 +348,7 @@ class TAAIInsightsPanel extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.info_outline_rounded,
-            size: 16,
-            color: TAColors.warning,
-          ),
+          Icon(Icons.info_outline_rounded, size: 16, color: TAColors.warning),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -435,10 +421,7 @@ class TARecommendedAction {
   final String action;
   final ActionPriority priority;
 
-  TARecommendedAction({
-    required this.action,
-    required this.priority,
-  });
+  TARecommendedAction({required this.action, required this.priority});
 }
 
 class TAAcademicAlert {

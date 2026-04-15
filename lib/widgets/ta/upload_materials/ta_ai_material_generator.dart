@@ -20,7 +20,7 @@ class TAAIMaterialGenerator extends StatelessWidget {
 
   static void show(BuildContext context, bool isDark) {
     final l10n = AppLocalizations.of(context);
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,

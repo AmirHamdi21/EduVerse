@@ -9,7 +9,8 @@ class AssignmentSettingsSheet extends StatefulWidget {
   const AssignmentSettingsSheet({super.key, required this.isDark});
 
   @override
-  State<AssignmentSettingsSheet> createState() => _AssignmentSettingsSheetState();
+  State<AssignmentSettingsSheet> createState() =>
+      _AssignmentSettingsSheetState();
 }
 
 class _AssignmentSettingsSheetState extends State<AssignmentSettingsSheet> {
@@ -27,7 +28,8 @@ class _AssignmentSettingsSheetState extends State<AssignmentSettingsSheet> {
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _enableLateSubmission = prefs.getBool('assignment_late_submission') ?? true;
+      _enableLateSubmission =
+          prefs.getBool('assignment_late_submission') ?? true;
       _latePenalty = prefs.getInt('assignment_late_penalty') ?? 10;
       _defaultDays = prefs.getInt('assignment_default_days') ?? 7;
       _isLoading = false;
@@ -102,8 +104,12 @@ class _AssignmentSettingsSheetState extends State<AssignmentSettingsSheet> {
                       child: SliderTheme(
                         data: SliderTheme.of(context).copyWith(
                           trackHeight: 6,
-                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
-                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
+                          thumbShape: const RoundSliderThumbShape(
+                            enabledThumbRadius: 10,
+                          ),
+                          overlayShape: const RoundSliderOverlayShape(
+                            overlayRadius: 20,
+                          ),
                         ),
                         child: Slider(
                           value: _latePenalty.toDouble(),
@@ -111,15 +117,21 @@ class _AssignmentSettingsSheetState extends State<AssignmentSettingsSheet> {
                           max: 25,
                           divisions: 25,
                           activeColor: InstructorColors.primary,
-                          inactiveColor: InstructorColors.primary.withValues(alpha: 0.2),
+                          inactiveColor: InstructorColors.primary.withValues(
+                            alpha: 0.2,
+                          ),
                           label: '$_latePenalty%',
-                          onChanged: (value) => setState(() => _latePenalty = value.round()),
+                          onChanged: (value) =>
+                              setState(() => _latePenalty = value.round()),
                         ),
                       ),
                     ),
                     Container(
                       width: 50,
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: InstructorColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
@@ -245,7 +257,11 @@ class _AssignmentSettingsSheetState extends State<AssignmentSettingsSheet> {
   }
 
   Widget _buildDaysChip(
-      bool isDark, String label, bool isSelected, VoidCallback onTap) {
+    bool isDark,
+    String label,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(

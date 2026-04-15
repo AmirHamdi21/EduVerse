@@ -239,32 +239,32 @@ class ITColors {
 
   // Card shadow
   static List<BoxShadow> cardShadow(bool isDark) => [
-        BoxShadow(
-          color: isDark
-              ? Colors.black.withValues(alpha: 0.3)
-              : const Color(0xFFA2F4FD).withValues(alpha: 0.5),
-          blurRadius: 20,
-          spreadRadius: 0,
-          offset: const Offset(0, 8),
-        ),
-        BoxShadow(
-          color: isDark
-              ? Colors.black.withValues(alpha: 0.2)
-              : const Color(0xFFA2F4FD).withValues(alpha: 0.5),
-          blurRadius: 10,
-          spreadRadius: 0,
-          offset: const Offset(0, 4),
-        ),
-      ];
+    BoxShadow(
+      color: isDark
+          ? Colors.black.withValues(alpha: 0.3)
+          : const Color(0xFFA2F4FD).withValues(alpha: 0.5),
+      blurRadius: 20,
+      spreadRadius: 0,
+      offset: const Offset(0, 8),
+    ),
+    BoxShadow(
+      color: isDark
+          ? Colors.black.withValues(alpha: 0.2)
+          : const Color(0xFFA2F4FD).withValues(alpha: 0.5),
+      blurRadius: 10,
+      spreadRadius: 0,
+      offset: const Offset(0, 4),
+    ),
+  ];
 
   static List<BoxShadow> lightCardShadow(bool isDark) => [
-        BoxShadow(
-          color: isDark
-              ? Colors.black.withValues(alpha: 0.2)
-              : Colors.black.withValues(alpha: 0.05),
-          blurRadius: 10,
-          spreadRadius: 0,
-          offset: const Offset(0, 4),
-        ),
-      ];
+    BoxShadow(
+      color: isDark
+          ? Colors.black.withValues(alpha: 0.2)
+          : Colors.black.withValues(alpha: 0.05),
+      blurRadius: 10,
+      spreadRadius: 0,
+      offset: const Offset(0, 4),
+    ),
+  ];
 }

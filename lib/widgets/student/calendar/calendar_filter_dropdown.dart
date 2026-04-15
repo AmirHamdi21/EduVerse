@@ -65,7 +65,9 @@ class CalendarFilterDropdown extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: isDark ? const Color(0xFFD1D5DC) : const Color(0xFF374151),
+                color: isDark
+                    ? const Color(0xFFD1D5DC)
+                    : const Color(0xFF374151),
               ),
             ),
             const SizedBox(width: 4),
@@ -106,13 +108,7 @@ class CalendarFilterDropdown extends StatelessWidget {
             'lectures',
             isDark,
           ),
-          _buildFilterItem(
-            l10n.labsFilter,
-            '🔬',
-            filter.labs,
-            'labs',
-            isDark,
-          ),
+          _buildFilterItem(l10n.labsFilter, '🔬', filter.labs, 'labs', isDark),
           _buildFilterItem(
             l10n.assignmentsFilter,
             '📝',
@@ -157,7 +153,9 @@ class CalendarFilterDropdown extends StatelessWidget {
               ? null
               : Border(
                   bottom: BorderSide(
-                    color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6),
+                    color: isDark
+                        ? const Color(0xFF1E2939)
+                        : const Color(0xFFF3F4F6),
                   ),
                 ),
         ),
@@ -170,12 +168,16 @@ class CalendarFilterDropdown extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isEnabled
                     ? const Color(0xFF2B7FFF)
-                    : (isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6)),
+                    : (isDark
+                          ? const Color(0xFF1E2939)
+                          : const Color(0xFFF3F4F6)),
                 borderRadius: BorderRadius.circular(6),
                 border: Border.all(
                   color: isEnabled
                       ? const Color(0xFF2B7FFF)
-                      : (isDark ? const Color(0xFF374151) : const Color(0xFFD1D5DC)),
+                      : (isDark
+                            ? const Color(0xFF374151)
+                            : const Color(0xFFD1D5DC)),
                 ),
               ),
               child: isEnabled
@@ -187,17 +189,16 @@ class CalendarFilterDropdown extends StatelessWidget {
                   : null,
             ),
             const SizedBox(width: 12),
-            Text(
-              emoji,
-              style: const TextStyle(fontSize: 16),
-            ),
+            Text(emoji, style: const TextStyle(fontSize: 16)),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: isDark ? const Color(0xFFD1D5DC) : const Color(0xFF374151),
+                color: isDark
+                    ? const Color(0xFFD1D5DC)
+                    : const Color(0xFF374151),
               ),
             ),
           ],

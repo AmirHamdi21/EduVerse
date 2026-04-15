@@ -44,9 +44,10 @@ class _CollapsibleSectionState extends State<CollapsibleSection>
       duration: const Duration(milliseconds: 200),
       vsync: this,
     );
-    _iconTurns = Tween<double>(begin: 0.0, end: 0.5).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _iconTurns = Tween<double>(
+      begin: 0.0,
+      end: 0.5,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
     _heightFactor = CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
@@ -78,12 +79,10 @@ class _CollapsibleSectionState extends State<CollapsibleSection>
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: widget.isDark
-            ? CreateAssignmentColors.darkCard
-            : Colors.white,
+        color: widget.isDark ? CreateAssignmentColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _isExpanded 
+          color: _isExpanded
               ? _accent.withValues(alpha: 0.3)
               : CreateAssignmentColors.borderColor(widget.isDark),
         ),
@@ -113,11 +112,7 @@ class _CollapsibleSectionState extends State<CollapsibleSection>
                       color: _accent.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(
-                      widget.icon,
-                      size: 18,
-                      color: _accent,
-                    ),
+                    child: Icon(widget.icon, size: 18, color: _accent),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -127,7 +122,9 @@ class _CollapsibleSectionState extends State<CollapsibleSection>
                         Text(
                           widget.title,
                           style: TextStyle(
-                            color: CreateAssignmentColors.textPrimaryColor(widget.isDark),
+                            color: CreateAssignmentColors.textPrimaryColor(
+                              widget.isDark,
+                            ),
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
                           ),
@@ -137,7 +134,9 @@ class _CollapsibleSectionState extends State<CollapsibleSection>
                           Text(
                             widget.subtitle!,
                             style: TextStyle(
-                              color: CreateAssignmentColors.textTertiaryColor(widget.isDark),
+                              color: CreateAssignmentColors.textTertiaryColor(
+                                widget.isDark,
+                              ),
                               fontSize: 12,
                             ),
                           ),
@@ -153,7 +152,9 @@ class _CollapsibleSectionState extends State<CollapsibleSection>
                     turns: _iconTurns,
                     child: Icon(
                       Icons.keyboard_arrow_up_rounded,
-                      color: CreateAssignmentColors.textSecondaryColor(widget.isDark),
+                      color: CreateAssignmentColors.textSecondaryColor(
+                        widget.isDark,
+                      ),
                     ),
                   ),
                 ],

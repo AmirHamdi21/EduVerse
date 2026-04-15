@@ -13,13 +13,7 @@ enum AdminNotificationType {
 }
 
 /// Priority levels for admin notifications
-enum AdminNotificationPriority {
-  low,
-  normal,
-  high,
-  urgent,
-  critical,
-}
+enum AdminNotificationPriority { low, normal, high, urgent, critical }
 
 /// Category for filtering admin notifications
 enum AdminNotificationCategory {
@@ -183,26 +177,26 @@ class AdminNotificationModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        message,
-        type,
-        priority,
-        category,
-        createdAt,
-        isRead,
-        isBookmarked,
-        isArchived,
-        userId,
-        userName,
-        userRole,
-        courseId,
-        courseName,
-        actionUrl,
-        metadata,
-        imageUrl,
-        requiresAction,
-      ];
+    id,
+    title,
+    message,
+    type,
+    priority,
+    category,
+    createdAt,
+    isRead,
+    isBookmarked,
+    isArchived,
+    userId,
+    userName,
+    userRole,
+    courseId,
+    courseName,
+    actionUrl,
+    metadata,
+    imageUrl,
+    requiresAction,
+  ];
 }
 
 /// Admin Announcement model
@@ -279,20 +273,20 @@ class AdminAnnouncementModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        content,
-        target,
-        targetId,
-        targetName,
-        priority,
-        createdAt,
-        scheduledAt,
-        expiresAt,
-        isPublished,
-        isPinned,
-        createdBy,
-        viewCount,
-        attachments,
-      ];
+    id,
+    title,
+    content,
+    target,
+    targetId,
+    targetName,
+    priority,
+    createdAt,
+    scheduledAt,
+    expiresAt,
+    isPublished,
+    isPinned,
+    createdBy,
+    viewCount,
+    attachments,
+  ];
 }

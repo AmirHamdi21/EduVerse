@@ -23,7 +23,7 @@ class CardProgressIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = (currentIndex + 1) / totalCards;
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -53,7 +53,9 @@ class CardProgressIndicator extends StatelessWidget {
                       value: progress,
                       strokeWidth: 4,
                       backgroundColor: const Color(0xFF2B7FFF).withOpacity(0.2),
-                      valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF2B7FFF)),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                        Color(0xFF2B7FFF),
+                      ),
                     ),
                   ),
                   Text(
@@ -76,7 +78,9 @@ class CardProgressIndicator extends StatelessWidget {
                     Text(
                       'Progress',
                       style: TextStyle(
-                        color: isDark ? const Color(0xFFB0B0B0) : const Color(0xFF6B7280),
+                        color: isDark
+                            ? const Color(0xFFB0B0B0)
+                            : const Color(0xFF6B7280),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         fontFamily: 'Arimo',
@@ -110,7 +114,9 @@ class CardProgressIndicator extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: canGoPrevious
                           ? const Color(0xFF2B7FFF).withOpacity(0.1)
-                          : (isDark ? const Color(0xFF1A1A2E) : const Color(0xFFF3F4F6)),
+                          : (isDark
+                                ? const Color(0xFF1A1A2E)
+                                : const Color(0xFFF3F4F6)),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
                         color: canGoPrevious
@@ -125,7 +131,9 @@ class CardProgressIndicator extends StatelessWidget {
                           Icons.arrow_back_ios_new,
                           color: canGoPrevious
                               ? const Color(0xFF2B7FFF)
-                              : (isDark ? const Color(0xFF4D4D64) : const Color(0xFFD1D5DB)),
+                              : (isDark
+                                    ? const Color(0xFF4D4D64)
+                                    : const Color(0xFFD1D5DB)),
                           size: 18,
                         ),
                         const SizedBox(width: 8),
@@ -134,7 +142,9 @@ class CardProgressIndicator extends StatelessWidget {
                           style: TextStyle(
                             color: canGoPrevious
                                 ? const Color(0xFF2B7FFF)
-                                : (isDark ? const Color(0xFF4D4D64) : const Color(0xFFD1D5DB)),
+                                : (isDark
+                                      ? const Color(0xFF4D4D64)
+                                      : const Color(0xFFD1D5DB)),
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Arimo',
@@ -158,7 +168,11 @@ class CardProgressIndicator extends StatelessWidget {
                               colors: [Color(0xFF2B7FFF), Color(0xFF1E5FCC)],
                             )
                           : null,
-                      color: canGoNext ? null : (isDark ? const Color(0xFF1A1A2E) : const Color(0xFFF3F4F6)),
+                      color: canGoNext
+                          ? null
+                          : (isDark
+                                ? const Color(0xFF1A1A2E)
+                                : const Color(0xFFF3F4F6)),
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: canGoNext
                           ? [
@@ -178,7 +192,9 @@ class CardProgressIndicator extends StatelessWidget {
                           style: TextStyle(
                             color: canGoNext
                                 ? Colors.white
-                                : (isDark ? const Color(0xFF4D4D64) : const Color(0xFFD1D5DB)),
+                                : (isDark
+                                      ? const Color(0xFF4D4D64)
+                                      : const Color(0xFFD1D5DB)),
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             fontFamily: 'Arimo',
@@ -189,7 +205,9 @@ class CardProgressIndicator extends StatelessWidget {
                           Icons.arrow_forward_ios,
                           color: canGoNext
                               ? Colors.white
-                              : (isDark ? const Color(0xFF4D4D64) : const Color(0xFFD1D5DB)),
+                              : (isDark
+                                    ? const Color(0xFF4D4D64)
+                                    : const Color(0xFFD1D5DB)),
                           size: 18,
                         ),
                       ],

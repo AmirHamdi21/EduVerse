@@ -11,14 +11,14 @@ import '../../../widgets/ta/upload_materials/ta_upload_materials_barrel.dart';
 /// Reuses the same UI/UX design as the main Upload Materials screen but scoped to a section.
 ///
 /// ⚠️ BACKEND INTEGRATION REQUIRED ⚠️
-/// 
+///
 /// This screen's UI is complete, but backend endpoints for section-specific materials
 /// do not exist yet. The backend's CourseMaterial entity does NOT have a sectionId field.
 ///
 /// REQUIRED BACKEND CHANGES:
-/// 
+///
 /// 1. Database Migration:
-///    ALTER TABLE course_materials 
+///    ALTER TABLE course_materials
 ///    ADD COLUMN section_id BIGINT UNSIGNED NULL AFTER course_id,
 ///    ADD FOREIGN KEY (section_id) REFERENCES course_sections(id) ON DELETE SET NULL;
 ///
@@ -51,7 +51,8 @@ class TASectionMaterialsScreen extends StatefulWidget {
   });
 
   @override
-  State<TASectionMaterialsScreen> createState() => _TASectionMaterialsScreenState();
+  State<TASectionMaterialsScreen> createState() =>
+      _TASectionMaterialsScreenState();
 }
 
 class _TASectionMaterialsScreenState extends State<TASectionMaterialsScreen> {
@@ -128,9 +129,13 @@ class _TASectionMaterialsScreenState extends State<TASectionMaterialsScreen> {
 
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
-      filtered = filtered.where((m) =>
-          m.name.toLowerCase().contains(query) ||
-          m.uploadedBy.toLowerCase().contains(query)).toList();
+      filtered = filtered
+          .where(
+            (m) =>
+                m.name.toLowerCase().contains(query) ||
+                m.uploadedBy.toLowerCase().contains(query),
+          )
+          .toList();
     }
 
     if (_selectedFileType != 'all') {
@@ -324,7 +329,7 @@ class _TASectionMaterialsScreenState extends State<TASectionMaterialsScreen> {
 
   void _showURLInputDialog(bool isDark) {
     final controller = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -423,7 +428,8 @@ class _TASectionMaterialsScreenState extends State<TASectionMaterialsScreen> {
             ),
             actions: [
               IconButton(
-                onPressed: () => context.read<ThemeBloc>().add(const ToggleThemeEvent()),
+                onPressed: () =>
+                    context.read<ThemeBloc>().add(const ToggleThemeEvent()),
                 icon: Icon(
                   isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
                   color: TAColors.textSecondaryColor(isDark),
@@ -432,17 +438,23 @@ class _TASectionMaterialsScreenState extends State<TASectionMaterialsScreen> {
             ],
           ),
           body: _isLoading
-              ? Center(child: CircularProgressIndicator(color: TAColors.primary))
+              ? Center(
+                  child: CircularProgressIndicator(color: TAColors.primary),
+                )
               : Column(
                   children: [
                     // Search bar
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: TextField(
-                        onChanged: (value) => setState(() => _searchQuery = value),
+                        onChanged: (value) =>
+                            setState(() => _searchQuery = value),
                         decoration: InputDecoration(
                           hintText: 'Search materials...',
-                          prefixIcon: Icon(Icons.search, color: TAColors.textSecondaryColor(isDark)),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: TAColors.textSecondaryColor(isDark),
+                          ),
                           filled: true,
                           fillColor: TAColors.cardColor(isDark),
                           border: OutlineInputBorder(
@@ -491,9 +503,18 @@ class _TASectionMaterialsScreenState extends State<TASectionMaterialsScreen> {
                           ),
                         ),
                         items: const [
-                          DropdownMenuItem(value: 'recent', child: Text('Most Recent')),
-                          DropdownMenuItem(value: 'name', child: Text('Name A-Z')),
-                          DropdownMenuItem(value: 'size', child: Text('File Size')),
+                          DropdownMenuItem(
+                            value: 'recent',
+                            child: Text('Most Recent'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'name',
+                            child: Text('Name A-Z'),
+                          ),
+                          DropdownMenuItem(
+                            value: 'size',
+                            child: Text('File Size'),
+                          ),
                         ],
                         onChanged: (value) {
                           if (value != null) {
@@ -510,7 +531,9 @@ class _TASectionMaterialsScreenState extends State<TASectionMaterialsScreen> {
                       child: _filteredMaterials.isEmpty
                           ? _buildEmptyState(isDark)
                           : ListView.builder(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               itemCount: _filteredMaterials.length,
                               itemBuilder: (context, index) {
                                 final material = _filteredMaterials[index];
@@ -529,7 +552,10 @@ class _TASectionMaterialsScreenState extends State<TASectionMaterialsScreen> {
             onPressed: () => _showUploadDialog(isDark, l10n),
             backgroundColor: TAColors.primary,
             icon: const Icon(Icons.upload_rounded, color: Colors.white),
-            label: const Text('Upload Material', style: TextStyle(color: Colors.white)),
+            label: const Text(
+              'Upload Material',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         );
       },
@@ -550,13 +576,17 @@ class _TASectionMaterialsScreenState extends State<TASectionMaterialsScreen> {
             color: isSelected ? TAColors.primary : TAColors.cardColor(isDark),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isSelected ? TAColors.primary : TAColors.borderColor(isDark),
+              color: isSelected
+                  ? TAColors.primary
+                  : TAColors.borderColor(isDark),
             ),
           ),
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : TAColors.textPrimaryColor(isDark),
+              color: isSelected
+                  ? Colors.white
+                  : TAColors.textPrimaryColor(isDark),
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),
@@ -673,7 +703,10 @@ class _MaterialCard extends StatelessWidget {
                 ),
                 if (material.isAIGenerated)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: TAColors.primary.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(6),
@@ -706,7 +739,10 @@ class _MaterialCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 IconButton(
                   onPressed: onDelete,
-                  icon: Icon(Icons.delete_outline_rounded, color: TAColors.error),
+                  icon: Icon(
+                    Icons.delete_outline_rounded,
+                    color: TAColors.error,
+                  ),
                   tooltip: 'Delete',
                 ),
               ],

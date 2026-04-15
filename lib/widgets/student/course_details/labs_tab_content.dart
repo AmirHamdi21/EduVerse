@@ -5,10 +5,7 @@ import 'lab_card.dart';
 class LabsTabContent extends StatefulWidget {
   final bool isDark;
 
-  const LabsTabContent({
-    super.key,
-    required this.isDark,
-  });
+  const LabsTabContent({super.key, required this.isDark});
 
   @override
   State<LabsTabContent> createState() => _LabsTabContentState();
@@ -60,10 +57,7 @@ class _LabsTabContentState extends State<LabsTabContent> {
         labs.length,
         (index) => Padding(
           padding: EdgeInsets.only(bottom: index == labs.length - 1 ? 0 : 16),
-          child: LabCard(
-            lab: labs[index],
-            isDark: widget.isDark,
-          ),
+          child: LabCard(lab: labs[index], isDark: widget.isDark),
         ),
       ),
     );

@@ -14,7 +14,8 @@ class InstructorSettingsScreen extends StatefulWidget {
   const InstructorSettingsScreen({super.key});
 
   @override
-  State<InstructorSettingsScreen> createState() => _InstructorSettingsScreenState();
+  State<InstructorSettingsScreen> createState() =>
+      _InstructorSettingsScreenState();
 }
 
 class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
@@ -38,150 +39,126 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _buildProfileSection(isDark, l10n),
-                        _buildSection(
-                          isDark,
-                          l10n.preferences,
-                          [
-                            _SettingItem(
-                              icon: Icons.palette_outlined,
-                              title: l10n.appearance,
-                              subtitle: l10n.appearanceDesc,
-                              route: '/settings/appearance',
-                            ),
-                            _SettingItem(
-                              icon: Icons.language_outlined,
-                              title: l10n.language,
-                              subtitle: l10n.languageDesc,
-                              route: '/settings/language',
-                            ),
-                            _SettingItem(
-                              icon: Icons.notifications_outlined,
-                              title: l10n.notifications,
-                              subtitle: l10n.notificationsDesc,
-                              route: '/settings/notifications',
-                            ),
-                          ],
-                        ),
-                        _buildSection(
-                          isDark,
-                          l10n.teachingSettings,
-                          [
-                            _SettingItem(
-                              icon: Icons.grading_outlined,
-                              title: l10n.gradingPreferences,
-                              subtitle: l10n.gradingPreferencesDesc,
-                              onTap: () => _showGradingSettings(isDark, l10n),
-                            ),
-                            _SettingItem(
-                              icon: Icons.assignment_outlined,
-                              title: l10n.assignmentDefaults,
-                              subtitle: l10n.assignmentDefaultsDesc,
-                              onTap: () => _showAssignmentDefaults(isDark, l10n),
-                            ),
-                            _SettingItem(
-                              icon: Icons.how_to_reg_outlined,
-                              title: l10n.attendanceSettings,
-                              subtitle: l10n.attendanceSettingsDesc,
-                              onTap: () => _showAttendanceSettings(isDark, l10n),
-                            ),
-                          ],
-                        ),
-                        _buildSection(
-                          isDark,
-                          l10n.privacySecurity,
-                          [
-                            _SettingItem(
-                              icon: Icons.lock_outline,
-                              title: l10n.privacy,
-                              subtitle: l10n.privacyDesc,
-                              route: '/settings/privacy',
-                            ),
-                            _SettingItem(
-                              icon: Icons.security_outlined,
-                              title: l10n.twoFactorAuth,
-                              subtitle: l10n.twoFactorAuthDesc,
-                              route: '/settings/two-factor-auth',
-                            ),
-                            _SettingItem(
-                              icon: Icons.devices_outlined,
-                              title: l10n.connectedDevices,
-                              subtitle: l10n.connectedDevicesDesc,
-                              route: '/settings/connected-devices',
-                            ),
-                            _SettingItem(
-                              icon: Icons.history_outlined,
-                              title: l10n.loginHistory,
-                              subtitle: l10n.loginHistoryDesc,
-                              route: '/settings/login-history',
-                            ),
-                          ],
-                        ),
-                        _buildSection(
-                          isDark,
-                          l10n.dataStorage,
-                          [
-                            _SettingItem(
-                              icon: Icons.storage_outlined,
-                              title: l10n.storageUsage,
-                              subtitle: l10n.storageUsageDesc,
-                              route: '/settings/storage',
-                            ),
-                            _SettingItem(
-                              icon: Icons.cloud_download_outlined,
-                              title: l10n.exportData,
-                              subtitle: l10n.exportDataDesc,
-                              onTap: () => _showExportOptions(isDark, l10n),
-                            ),
-                          ],
-                        ),
-                        _buildSection(
-                          isDark,
-                          l10n.support,
-                          [
-                            _SettingItem(
-                              icon: Icons.help_outline,
-                              title: l10n.helpCenter,
-                              subtitle: l10n.helpCenterDesc,
-                              route: '/settings/help',
-                            ),
-                            _SettingItem(
-                              icon: Icons.feedback_outlined,
-                              title: l10n.sendFeedback,
-                              subtitle: l10n.sendFeedbackDesc,
-                              onTap: () => _showFeedbackSheet(isDark, l10n),
-                            ),
-                            _SettingItem(
-                              icon: Icons.share_outlined,
-                              title: l10n.shareApp,
-                              subtitle: l10n.shareAppDesc,
-                              route: '/settings/share-app',
-                            ),
-                          ],
-                        ),
-                        _buildSection(
-                          isDark,
-                          l10n.legal,
-                          [
-                            _SettingItem(
-                              icon: Icons.description_outlined,
-                              title: l10n.termsOfService,
-                              subtitle: l10n.termsOfServiceDesc,
-                              route: '/settings/terms',
-                            ),
-                            _SettingItem(
-                              icon: Icons.privacy_tip_outlined,
-                              title: l10n.privacyPolicy,
-                              subtitle: l10n.privacyPolicyDesc,
-                              route: '/settings/privacy-policy',
-                            ),
-                            _SettingItem(
-                              icon: Icons.info_outline,
-                              title: l10n.about,
-                              subtitle: l10n.aboutDesc,
-                              route: '/settings/about',
-                            ),
-                          ],
-                        ),
+                        _buildSection(isDark, l10n.preferences, [
+                          _SettingItem(
+                            icon: Icons.palette_outlined,
+                            title: l10n.appearance,
+                            subtitle: l10n.appearanceDesc,
+                            route: '/settings/appearance',
+                          ),
+                          _SettingItem(
+                            icon: Icons.language_outlined,
+                            title: l10n.language,
+                            subtitle: l10n.languageDesc,
+                            route: '/settings/language',
+                          ),
+                          _SettingItem(
+                            icon: Icons.notifications_outlined,
+                            title: l10n.notifications,
+                            subtitle: l10n.notificationsDesc,
+                            route: '/settings/notifications',
+                          ),
+                        ]),
+                        _buildSection(isDark, l10n.teachingSettings, [
+                          _SettingItem(
+                            icon: Icons.grading_outlined,
+                            title: l10n.gradingPreferences,
+                            subtitle: l10n.gradingPreferencesDesc,
+                            onTap: () => _showGradingSettings(isDark, l10n),
+                          ),
+                          _SettingItem(
+                            icon: Icons.assignment_outlined,
+                            title: l10n.assignmentDefaults,
+                            subtitle: l10n.assignmentDefaultsDesc,
+                            onTap: () => _showAssignmentDefaults(isDark, l10n),
+                          ),
+                          _SettingItem(
+                            icon: Icons.how_to_reg_outlined,
+                            title: l10n.attendanceSettings,
+                            subtitle: l10n.attendanceSettingsDesc,
+                            onTap: () => _showAttendanceSettings(isDark, l10n),
+                          ),
+                        ]),
+                        _buildSection(isDark, l10n.privacySecurity, [
+                          _SettingItem(
+                            icon: Icons.lock_outline,
+                            title: l10n.privacy,
+                            subtitle: l10n.privacyDesc,
+                            route: '/settings/privacy',
+                          ),
+                          _SettingItem(
+                            icon: Icons.security_outlined,
+                            title: l10n.twoFactorAuth,
+                            subtitle: l10n.twoFactorAuthDesc,
+                            route: '/settings/two-factor-auth',
+                          ),
+                          _SettingItem(
+                            icon: Icons.devices_outlined,
+                            title: l10n.connectedDevices,
+                            subtitle: l10n.connectedDevicesDesc,
+                            route: '/settings/connected-devices',
+                          ),
+                          _SettingItem(
+                            icon: Icons.history_outlined,
+                            title: l10n.loginHistory,
+                            subtitle: l10n.loginHistoryDesc,
+                            route: '/settings/login-history',
+                          ),
+                        ]),
+                        _buildSection(isDark, l10n.dataStorage, [
+                          _SettingItem(
+                            icon: Icons.storage_outlined,
+                            title: l10n.storageUsage,
+                            subtitle: l10n.storageUsageDesc,
+                            route: '/settings/storage',
+                          ),
+                          _SettingItem(
+                            icon: Icons.cloud_download_outlined,
+                            title: l10n.exportData,
+                            subtitle: l10n.exportDataDesc,
+                            onTap: () => _showExportOptions(isDark, l10n),
+                          ),
+                        ]),
+                        _buildSection(isDark, l10n.support, [
+                          _SettingItem(
+                            icon: Icons.help_outline,
+                            title: l10n.helpCenter,
+                            subtitle: l10n.helpCenterDesc,
+                            route: '/settings/help',
+                          ),
+                          _SettingItem(
+                            icon: Icons.feedback_outlined,
+                            title: l10n.sendFeedback,
+                            subtitle: l10n.sendFeedbackDesc,
+                            onTap: () => _showFeedbackSheet(isDark, l10n),
+                          ),
+                          _SettingItem(
+                            icon: Icons.share_outlined,
+                            title: l10n.shareApp,
+                            subtitle: l10n.shareAppDesc,
+                            route: '/settings/share-app',
+                          ),
+                        ]),
+                        _buildSection(isDark, l10n.legal, [
+                          _SettingItem(
+                            icon: Icons.description_outlined,
+                            title: l10n.termsOfService,
+                            subtitle: l10n.termsOfServiceDesc,
+                            route: '/settings/terms',
+                          ),
+                          _SettingItem(
+                            icon: Icons.privacy_tip_outlined,
+                            title: l10n.privacyPolicy,
+                            subtitle: l10n.privacyPolicyDesc,
+                            route: '/settings/privacy-policy',
+                          ),
+                          _SettingItem(
+                            icon: Icons.info_outline,
+                            title: l10n.about,
+                            subtitle: l10n.aboutDesc,
+                            route: '/settings/about',
+                          ),
+                        ]),
                         _buildLogoutButton(isDark, l10n),
                         const SizedBox(height: 24),
                       ],
@@ -232,10 +209,7 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              InstructorColors.primary,
-              InstructorColors.primaryLight,
-            ],
+            colors: [InstructorColors.primary, InstructorColors.primaryLight],
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
@@ -289,7 +263,10 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
                   ),
                   const SizedBox(height: 4),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(10),
@@ -386,7 +363,9 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
               ? null
               : Border(
                   bottom: BorderSide(
-                    color: InstructorColors.borderColor(isDark).withValues(alpha: 0.5),
+                    color: InstructorColors.borderColor(
+                      isDark,
+                    ).withValues(alpha: 0.5),
                   ),
                 ),
         ),
@@ -399,11 +378,7 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
                 color: InstructorColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                item.icon,
-                color: InstructorColors.primary,
-                size: 20,
-              ),
+              child: Icon(item.icon, color: InstructorColors.primary, size: 20),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -515,10 +490,30 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            _buildExportOption(isDark, Icons.grade_outlined, l10n.exportGrades, () {}),
-            _buildExportOption(isDark, Icons.people_outlined, l10n.exportStudentList, () {}),
-            _buildExportOption(isDark, Icons.how_to_reg_outlined, l10n.exportAttendance, () {}),
-            _buildExportOption(isDark, Icons.assessment_outlined, l10n.exportReports, () {}),
+            _buildExportOption(
+              isDark,
+              Icons.grade_outlined,
+              l10n.exportGrades,
+              () {},
+            ),
+            _buildExportOption(
+              isDark,
+              Icons.people_outlined,
+              l10n.exportStudentList,
+              () {},
+            ),
+            _buildExportOption(
+              isDark,
+              Icons.how_to_reg_outlined,
+              l10n.exportAttendance,
+              () {},
+            ),
+            _buildExportOption(
+              isDark,
+              Icons.assessment_outlined,
+              l10n.exportReports,
+              () {},
+            ),
             SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
           ],
         ),
@@ -526,7 +521,12 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
     );
   }
 
-  Widget _buildExportOption(bool isDark, IconData icon, String title, VoidCallback onTap) {
+  Widget _buildExportOption(
+    bool isDark,
+    IconData icon,
+    String title,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: () {
         Navigator.pop(context);
@@ -536,7 +536,9 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
             content: Text('Exporting $title...'),
             backgroundColor: InstructorColors.primary,
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         );
       },
@@ -581,7 +583,9 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
       builder: (context) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
@@ -631,15 +635,21 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
                       : Colors.black.withValues(alpha: 0.03),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: InstructorColors.borderColor(isDark)),
+                    borderSide: BorderSide(
+                      color: InstructorColors.borderColor(isDark),
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: InstructorColors.borderColor(isDark)),
+                    borderSide: BorderSide(
+                      color: InstructorColors.borderColor(isDark),
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: InstructorColors.primary),
+                    borderSide: const BorderSide(
+                      color: InstructorColors.primary,
+                    ),
                   ),
                 ),
               ),
@@ -724,7 +734,12 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
     );
   }
 
-  Widget _buildScaleChip(bool isDark, String label, bool isSelected, VoidCallback onTap) {
+  Widget _buildScaleChip(
+    bool isDark,
+    String label,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -778,9 +793,7 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
         ),
         content: Text(
           l10n.logoutConfirmMessage,
-          style: TextStyle(
-            color: InstructorColors.textSecondaryColor(isDark),
-          ),
+          style: TextStyle(color: InstructorColors.textSecondaryColor(isDark)),
         ),
         actions: [
           TextButton(

@@ -119,10 +119,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: AdminColors.primary,
-            strokeWidth: 3,
-          ),
+          CircularProgressIndicator(color: AdminColors.primary, strokeWidth: 3),
           const SizedBox(height: 16),
           Text(
             'Loading dashboard...',
@@ -181,7 +178,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AdminColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

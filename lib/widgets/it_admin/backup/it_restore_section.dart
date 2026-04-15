@@ -66,7 +66,11 @@ class ITRestoreSection extends StatelessWidget {
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.restore_rounded, color: Colors.white, size: 16),
+                        Icon(
+                          Icons.restore_rounded,
+                          color: Colors.white,
+                          size: 16,
+                        ),
                         SizedBox(width: 4),
                         Text(
                           'New Restore',
@@ -114,8 +118,8 @@ class ITRestoreSection extends StatelessWidget {
           color: point.isVerified
               ? ITColors.success.withValues(alpha: 0.3)
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.1)
-                  : ITColors.border),
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : ITColors.border),
         ),
         boxShadow: ITColors.lightCardShadow(isDark),
       ),
@@ -281,9 +285,7 @@ class ITRestoreSection extends StatelessWidget {
           decoration: BoxDecoration(
             color: ITColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: ITColors.primary.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: ITColors.primary.withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -312,9 +314,7 @@ class ITRestoreSection extends StatelessWidget {
         color: isDark ? ITColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
       ),
       child: Column(

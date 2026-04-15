@@ -199,7 +199,8 @@ class InstructorCalendarFilter {
     this.showPast = false,
   });
 
-  bool get hasActiveFilters => types.isNotEmpty || courseId != null || !showRecurring;
+  bool get hasActiveFilters =>
+      types.isNotEmpty || courseId != null || !showRecurring;
 
   InstructorCalendarFilter copyWith({
     Set<InstructorEventType>? types,

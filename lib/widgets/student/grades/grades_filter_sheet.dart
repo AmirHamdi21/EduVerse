@@ -75,7 +75,7 @@ class _GradesFilterSheetState extends State<GradesFilterSheet> {
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          
+
           // Header
           Padding(
             padding: EdgeInsets.all(responsive.p20),
@@ -85,7 +85,9 @@ class _GradesFilterSheetState extends State<GradesFilterSheet> {
                 Text(
                   l10n.filterAndSort,
                   style: TextStyle(
-                    color: widget.isDark ? Colors.white : const Color(0xFF1E293B),
+                    color: widget.isDark
+                        ? Colors.white
+                        : const Color(0xFF1E293B),
                     fontSize: responsive.fontSize20,
                     fontWeight: FontWeight.w700,
                   ),
@@ -139,15 +141,15 @@ class _GradesFilterSheetState extends State<GradesFilterSheet> {
                       color: isSelected
                           ? null
                           : (widget.isDark
-                              ? Colors.white.withValues(alpha: 0.05)
-                              : Colors.black.withValues(alpha: 0.03)),
+                                ? Colors.white.withValues(alpha: 0.05)
+                                : Colors.black.withValues(alpha: 0.03)),
                       borderRadius: BorderRadius.circular(responsive.radius12),
                       border: Border.all(
                         color: isSelected
                             ? Colors.transparent
                             : (widget.isDark
-                                ? Colors.white.withValues(alpha: 0.1)
-                                : Colors.black.withValues(alpha: 0.05)),
+                                  ? Colors.white.withValues(alpha: 0.1)
+                                  : Colors.black.withValues(alpha: 0.05)),
                       ),
                     ),
                     child: Text(
@@ -156,10 +158,12 @@ class _GradesFilterSheetState extends State<GradesFilterSheet> {
                         color: isSelected
                             ? Colors.white
                             : (widget.isDark
-                                ? const Color(0xFF94A3B8)
-                                : const Color(0xFF64748B)),
+                                  ? const Color(0xFF94A3B8)
+                                  : const Color(0xFF64748B)),
                         fontSize: responsive.fontSize13,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
                       ),
                     ),
                   ),
@@ -201,15 +205,15 @@ class _GradesFilterSheetState extends State<GradesFilterSheet> {
                       color: isSelected
                           ? null
                           : (widget.isDark
-                              ? Colors.white.withValues(alpha: 0.05)
-                              : Colors.black.withValues(alpha: 0.03)),
+                                ? Colors.white.withValues(alpha: 0.05)
+                                : Colors.black.withValues(alpha: 0.03)),
                       borderRadius: BorderRadius.circular(responsive.radius12),
                       border: Border.all(
                         color: isSelected
                             ? Colors.transparent
                             : (widget.isDark
-                                ? Colors.white.withValues(alpha: 0.1)
-                                : Colors.black.withValues(alpha: 0.05)),
+                                  ? Colors.white.withValues(alpha: 0.1)
+                                  : Colors.black.withValues(alpha: 0.05)),
                       ),
                     ),
                     child: Row(
@@ -221,10 +225,12 @@ class _GradesFilterSheetState extends State<GradesFilterSheet> {
                             color: isSelected
                                 ? Colors.white
                                 : (widget.isDark
-                                    ? const Color(0xFF94A3B8)
-                                    : const Color(0xFF64748B)),
+                                      ? const Color(0xFF94A3B8)
+                                      : const Color(0xFF64748B)),
                             fontSize: responsive.fontSize13,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w500,
                           ),
                         ),
                         if (isSelected) ...[

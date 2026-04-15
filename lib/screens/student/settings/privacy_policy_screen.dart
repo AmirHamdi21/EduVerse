@@ -13,11 +13,13 @@ class PrivacyPolicyScreen extends StatelessWidget {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -236,11 +238,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(
-                  icon,
-                  size: 20,
-                  color: color,
-                ),
+                child: Icon(icon, size: 20, color: color),
               ),
               const SizedBox(width: 12),
               Expanded(

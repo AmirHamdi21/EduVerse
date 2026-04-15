@@ -110,7 +110,9 @@ class SubscriptionPlansCard extends StatelessWidget {
                       l10n.managePricingPlans,
                       style: TextStyle(
                         fontSize: 13,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -123,7 +125,10 @@ class SubscriptionPlansCard extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AdminColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -162,15 +167,15 @@ class SubscriptionPlansCard extends StatelessWidget {
         color: plan.isActive
             ? null
             : (isDark
-                ? Colors.white.withValues(alpha: 0.05)
-                : Colors.black.withValues(alpha: 0.03)),
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.black.withValues(alpha: 0.03)),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: plan.isActive
               ? planColor.withValues(alpha: 0.4)
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.05)),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.05)),
         ),
       ),
       child: Column(
@@ -231,7 +236,9 @@ class SubscriptionPlansCard extends StatelessWidget {
                       plan.description,
                       style: TextStyle(
                         fontSize: 12,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -252,7 +259,9 @@ class SubscriptionPlansCard extends StatelessWidget {
                     '/${_getIntervalLabel(l10n, plan.interval)}',
                     style: TextStyle(
                       fontSize: 11,
-                      color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                      color: AdminColors.getTextColor(
+                        isDark,
+                      ).withValues(alpha: 0.5),
                     ),
                   ),
                 ],
@@ -272,13 +281,19 @@ class SubscriptionPlansCard extends StatelessWidget {
                 '${plan.subscriberCount} ${l10n.subscribers}',
                 style: TextStyle(
                   fontSize: 12,
-                  color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                  color: AdminColors.getTextColor(
+                    isDark,
+                  ).withValues(alpha: 0.5),
                 ),
               ),
               const Spacer(),
               TextButton.icon(
                 onPressed: () => onEdit(plan),
-                icon: Icon(Icons.edit_rounded, size: 16, color: AdminColors.primary),
+                icon: Icon(
+                  Icons.edit_rounded,
+                  size: 16,
+                  color: AdminColors.primary,
+                ),
                 label: Text(
                   l10n.edit,
                   style: TextStyle(color: AdminColors.primary),
@@ -301,7 +316,8 @@ class SubscriptionPlansCard extends StatelessWidget {
     final lowerName = name.toLowerCase();
     if (lowerName.contains('premium') || lowerName.contains('pro')) {
       return const Color(0xFFFFD700);
-    } else if (lowerName.contains('enterprise') || lowerName.contains('business')) {
+    } else if (lowerName.contains('enterprise') ||
+        lowerName.contains('business')) {
       return AdminColors.secondary;
     } else if (lowerName.contains('basic') || lowerName.contains('free')) {
       return AdminColors.accent;
@@ -313,7 +329,8 @@ class SubscriptionPlansCard extends StatelessWidget {
     final lowerName = name.toLowerCase();
     if (lowerName.contains('premium') || lowerName.contains('pro')) {
       return Icons.workspace_premium_rounded;
-    } else if (lowerName.contains('enterprise') || lowerName.contains('business')) {
+    } else if (lowerName.contains('enterprise') ||
+        lowerName.contains('business')) {
       return Icons.business_rounded;
     } else if (lowerName.contains('basic') || lowerName.contains('free')) {
       return Icons.star_outline_rounded;

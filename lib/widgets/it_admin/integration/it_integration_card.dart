@@ -39,8 +39,8 @@ class ITIntegrationCard extends StatelessWidget {
             color: isConnected
                 ? ITColors.success.withValues(alpha: 0.3)
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.1)
-                    : ITColors.border),
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : ITColors.border),
             width: isConnected ? 1.5 : 1,
           ),
           boxShadow: ITColors.lightCardShadow(isDark),
@@ -172,7 +172,9 @@ class ITIntegrationCard extends StatelessWidget {
                   _buildApiBadge('API Key', Icons.vpn_key_rounded),
               ],
             ),
-            if (isConnected && (integration.requestCount != null || integration.uptime != null)) ...[
+            if (isConnected &&
+                (integration.requestCount != null ||
+                    integration.uptime != null)) ...[
               const SizedBox(height: 12),
               // Metrics row
               Container(
@@ -210,7 +212,9 @@ class ITIntegrationCard extends StatelessWidget {
                 ),
               ),
             ],
-            if (integration.lastSync != null || onConfigure != null || onSync != null) ...[
+            if (integration.lastSync != null ||
+                onConfigure != null ||
+                onSync != null) ...[
               const SizedBox(height: 12),
               // Footer row
               Row(
@@ -432,11 +436,7 @@ class ITIntegrationCard extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                icon,
-                size: 14,
-                color: isPrimary ? Colors.white : color,
-              ),
+              Icon(icon, size: 14, color: isPrimary ? Colors.white : color),
               const SizedBox(width: 4),
               Text(
                 label,

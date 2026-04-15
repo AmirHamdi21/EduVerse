@@ -70,7 +70,9 @@ class _AiChatViewState extends State<_AiChatView> {
     final isDark = themeState.isDark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF030712) : const Color(0xFFF9FAFB),
+      backgroundColor: isDark
+          ? const Color(0xFF030712)
+          : const Color(0xFFF9FAFB),
       body: BlocConsumer<AiChatCubit, AiChatState>(
         listener: (context, state) {
           if (state.successMessage != null) {
@@ -107,13 +109,14 @@ class _AiChatViewState extends State<_AiChatView> {
             children: [
               // Background decorations
               _buildBackgroundDecorations(isDark),
-              
+
               // Main content
               SafeArea(
                 child: Column(
                   children: [
                     AiChatAppBar(
-                      onClearChat: () => _showClearChatDialog(context, l10n, isDark),
+                      onClearChat: () =>
+                          _showClearChatDialog(context, l10n, isDark),
                     ),
                     AiChatHeader(
                       chatMode: state.chatMode,
@@ -146,8 +149,10 @@ class _AiChatViewState extends State<_AiChatView> {
                       isRecording: state.isRecording,
                       isSending: state.isAiTyping,
                       onSend: _handleSend,
-                      onAttachment: () => _showAttachmentOptions(context, isDark),
-                      onVoiceToggle: () => context.read<AiChatCubit>().toggleRecording(),
+                      onAttachment: () =>
+                          _showAttachmentOptions(context, isDark),
+                      onVoiceToggle: () =>
+                          context.read<AiChatCubit>().toggleRecording(),
                     ),
                   ],
                 ),
@@ -202,16 +207,18 @@ class _AiChatViewState extends State<_AiChatView> {
     );
   }
 
-  void _showClearChatDialog(BuildContext context, AppLocalizations l10n, bool isDark) {
+  void _showClearChatDialog(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     final cubit = context.read<AiChatCubit>();
-    
+
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: isDark ? const Color(0xFF101828) : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
             Container(
@@ -274,7 +281,7 @@ class _AiChatViewState extends State<_AiChatView> {
 
   void _showAttachmentOptions(BuildContext context, bool isDark) {
     final l10n = AppLocalizations.of(context);
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -291,7 +298,9 @@ class _AiChatViewState extends State<_AiChatView> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                color: isDark
+                    ? const Color(0xFF374151)
+                    : const Color(0xFFE5E7EB),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),

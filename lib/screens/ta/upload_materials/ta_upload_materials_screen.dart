@@ -12,7 +12,8 @@ class TAUploadMaterialsScreen extends StatefulWidget {
   const TAUploadMaterialsScreen({super.key});
 
   @override
-  State<TAUploadMaterialsScreen> createState() => _TAUploadMaterialsScreenState();
+  State<TAUploadMaterialsScreen> createState() =>
+      _TAUploadMaterialsScreenState();
 }
 
 class _TAUploadMaterialsScreenState extends State<TAUploadMaterialsScreen> {
@@ -126,9 +127,13 @@ class _TAUploadMaterialsScreenState extends State<TAUploadMaterialsScreen> {
 
     if (_searchQuery.isNotEmpty) {
       final query = _searchQuery.toLowerCase();
-      filtered = filtered.where((m) =>
-          m.name.toLowerCase().contains(query) ||
-          m.uploadedBy.toLowerCase().contains(query)).toList();
+      filtered = filtered
+          .where(
+            (m) =>
+                m.name.toLowerCase().contains(query) ||
+                m.uploadedBy.toLowerCase().contains(query),
+          )
+          .toList();
     }
 
     if (_selectedFileType != 'all') {
@@ -315,7 +320,7 @@ class _TAUploadMaterialsScreenState extends State<TAUploadMaterialsScreen> {
 
   void _showURLInputDialog(bool isDark, AppLocalizations l10n) {
     final controller = TextEditingController();
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -366,20 +371,27 @@ class _TAUploadMaterialsScreenState extends State<TAUploadMaterialsScreen> {
     _showSnackBar(l10n.taUploadUploading);
     Future.delayed(const Duration(seconds: 2), () {
       setState(() {
-        _materials.insert(0, TAMaterialItem(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          name: 'New_Material.pdf',
-          size: '1.2 MB',
-          uploadDate: 'Just now',
-          uploadedBy: 'You',
-          type: TAMaterialType.pdf,
-        ));
+        _materials.insert(
+          0,
+          TAMaterialItem(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            name: 'New_Material.pdf',
+            size: '1.2 MB',
+            uploadDate: 'Just now',
+            uploadedBy: 'You',
+            type: TAMaterialType.pdf,
+          ),
+        );
       });
       _showSnackBar(l10n.taUploadSuccess);
     });
   }
 
-  void _showDeleteConfirmation(bool isDark, AppLocalizations l10n, TAMaterialItem material) {
+  void _showDeleteConfirmation(
+    bool isDark,
+    AppLocalizations l10n,
+    TAMaterialItem material,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -441,19 +453,16 @@ class _TAUploadMaterialsScreenState extends State<TAUploadMaterialsScreen> {
                   SliverToBoxAdapter(
                     child: _buildCourseLabSelector(isDark, l10n),
                   ),
-                  SliverToBoxAdapter(
-                    child: _buildStats(isDark, l10n),
-                  ),
+                  SliverToBoxAdapter(child: _buildStats(isDark, l10n)),
                   SliverToBoxAdapter(
                     child: TAUploadArea(
                       isDark: isDark,
                       onUploadTap: () => _showUploadDialog(isDark, l10n),
-                      onAIGenerateTap: () => TAAIMaterialGenerator.show(context, isDark),
+                      onAIGenerateTap: () =>
+                          TAAIMaterialGenerator.show(context, isDark),
                     ),
                   ),
-                  SliverToBoxAdapter(
-                    child: _buildFilterBar(isDark, l10n),
-                  ),
+                  SliverToBoxAdapter(child: _buildFilterBar(isDark, l10n)),
                   _buildMaterialsList(isDark, l10n),
                   const SliverToBoxAdapter(child: SizedBox(height: 24)),
                 ],
@@ -510,7 +519,8 @@ class _TAUploadMaterialsScreenState extends State<TAUploadMaterialsScreen> {
           onTap: () => _showSnackBar('AI suggestions'),
         ),
         IconButton(
-          onPressed: () => context.read<ThemeBloc>().add(const ToggleThemeEvent()),
+          onPressed: () =>
+              context.read<ThemeBloc>().add(const ToggleThemeEvent()),
           icon: Icon(
             isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
             color: TAColors.textPrimaryColor(isDark),
@@ -547,7 +557,11 @@ class _TAUploadMaterialsScreenState extends State<TAUploadMaterialsScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 14, color: TAColors.textSecondaryColor(isDark)),
+                Icon(
+                  icon,
+                  size: 14,
+                  color: TAColors.textSecondaryColor(isDark),
+                ),
                 const SizedBox(width: 4),
                 Text(
                   label,
@@ -794,11 +808,26 @@ class _TAUploadMaterialsScreenState extends State<TAUploadMaterialsScreen> {
                   fontSize: 12,
                 ),
                 items: [
-                  DropdownMenuItem(value: 'all', child: Text(l10n.taUploadAllFiles)),
-                  DropdownMenuItem(value: 'pdf', child: Text(l10n.taUploadPDFs)),
-                  DropdownMenuItem(value: 'video', child: Text(l10n.taUploadVideos)),
-                  DropdownMenuItem(value: 'code', child: Text(l10n.taUploadCode)),
-                  DropdownMenuItem(value: 'ai', child: Text(l10n.taUploadAIGenerated)),
+                  DropdownMenuItem(
+                    value: 'all',
+                    child: Text(l10n.taUploadAllFiles),
+                  ),
+                  DropdownMenuItem(
+                    value: 'pdf',
+                    child: Text(l10n.taUploadPDFs),
+                  ),
+                  DropdownMenuItem(
+                    value: 'video',
+                    child: Text(l10n.taUploadVideos),
+                  ),
+                  DropdownMenuItem(
+                    value: 'code',
+                    child: Text(l10n.taUploadCode),
+                  ),
+                  DropdownMenuItem(
+                    value: 'ai',
+                    child: Text(l10n.taUploadAIGenerated),
+                  ),
                 ],
                 onChanged: (value) {
                   if (value != null) setState(() => _selectedFileType = value);
@@ -832,9 +861,18 @@ class _TAUploadMaterialsScreenState extends State<TAUploadMaterialsScreen> {
                   fontSize: 12,
                 ),
                 items: [
-                  DropdownMenuItem(value: 'recent', child: Text(l10n.taUploadRecent)),
-                  DropdownMenuItem(value: 'name', child: Text(l10n.taUploadByName)),
-                  DropdownMenuItem(value: 'size', child: Text(l10n.taUploadBySize)),
+                  DropdownMenuItem(
+                    value: 'recent',
+                    child: Text(l10n.taUploadRecent),
+                  ),
+                  DropdownMenuItem(
+                    value: 'name',
+                    child: Text(l10n.taUploadByName),
+                  ),
+                  DropdownMenuItem(
+                    value: 'size',
+                    child: Text(l10n.taUploadBySize),
+                  ),
                 ],
                 onChanged: (value) {
                   if (value != null) setState(() => _selectedSortBy = value);
@@ -862,28 +900,23 @@ class _TAUploadMaterialsScreenState extends State<TAUploadMaterialsScreen> {
     final materials = _filteredMaterials;
 
     if (materials.isEmpty) {
-      return SliverToBoxAdapter(
-        child: _buildEmptyState(isDark, l10n),
-      );
+      return SliverToBoxAdapter(child: _buildEmptyState(isDark, l10n));
     }
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final material = materials[index];
-            return TAMaterialCard(
-              material: material,
-              isDark: isDark,
-              onView: () => TAFilePreviewModal.show(context, material, isDark),
-              onDownload: () => _showSnackBar('Downloading ${material.name}...'),
-              onReplace: () => _showSnackBar('Replace ${material.name}'),
-              onDelete: () => _showDeleteConfirmation(isDark, l10n, material),
-            );
-          },
-          childCount: materials.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final material = materials[index];
+          return TAMaterialCard(
+            material: material,
+            isDark: isDark,
+            onView: () => TAFilePreviewModal.show(context, material, isDark),
+            onDownload: () => _showSnackBar('Downloading ${material.name}...'),
+            onReplace: () => _showSnackBar('Replace ${material.name}'),
+            onDelete: () => _showDeleteConfirmation(isDark, l10n, material),
+          );
+        }, childCount: materials.length),
       ),
     );
   }

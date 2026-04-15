@@ -133,9 +133,7 @@ class _AnnouncementLoadingSkeletonState
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: widget.isDark
-            ? AnnouncementColors.darkCard
-            : Colors.white,
+        color: widget.isDark ? AnnouncementColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: widget.isDark
@@ -212,16 +210,10 @@ class _AnnouncementLoadingSkeletonState
         gradient: LinearGradient(
           begin: Alignment(-1 + 2 * _shimmerController.value, 0),
           end: Alignment(1 + 2 * _shimmerController.value, 0),
-          colors: [
-            baseColor,
-            highlightColor,
-            baseColor,
-          ],
+          colors: [baseColor, highlightColor, baseColor],
           stops: const [0.0, 0.5, 1.0],
         ),
-        borderRadius: isCircle
-            ? null
-            : BorderRadius.circular(borderRadius),
+        borderRadius: isCircle ? null : BorderRadius.circular(borderRadius),
         shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
       ),
     );

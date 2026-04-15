@@ -16,8 +16,12 @@ class InfoCard extends StatelessWidget {
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final cardColor = isDark ? Color(0xFF1A2847) : const Color(0xCCEFF6FF);
-        final borderColor = isDark ? AppTheme.onBoardingcyan : AppTheme.onBoardingborderBlue;
-        final textColor = isDark ? AppTheme.darkTextSecondary : AppTheme.onBoardingtextMedium;
+        final borderColor = isDark
+            ? AppTheme.onBoardingcyan
+            : AppTheme.onBoardingborderBlue;
+        final textColor = isDark
+            ? AppTheme.darkTextSecondary
+            : AppTheme.onBoardingtextMedium;
 
         return Container(
           width: double.infinity,

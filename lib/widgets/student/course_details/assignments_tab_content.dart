@@ -5,10 +5,7 @@ import 'assignment_card.dart';
 class AssignmentsTabContent extends StatefulWidget {
   final bool isDark;
 
-  const AssignmentsTabContent({
-    super.key,
-    required this.isDark,
-  });
+  const AssignmentsTabContent({super.key, required this.isDark});
 
   @override
   State<AssignmentsTabContent> createState() => _AssignmentsTabContentState();
@@ -48,8 +45,7 @@ class _AssignmentsTabContentState extends State<AssignmentsTabContent> {
       Assignment(
         id: '3',
         title: 'Assignment 3: Final Project Proposal',
-        description:
-            'Submit a detailed proposal for your final AI project.',
+        description: 'Submit a detailed proposal for your final AI project.',
         dueDate: DateTime(2025, 12, 15),
         status: AssignmentStatus.notStarted,
         progressPercentage: 0,
@@ -65,8 +61,9 @@ class _AssignmentsTabContentState extends State<AssignmentsTabContent> {
       children: List.generate(
         assignments.length,
         (index) => Padding(
-          padding:
-              EdgeInsets.only(bottom: index == assignments.length - 1 ? 0 : 16),
+          padding: EdgeInsets.only(
+            bottom: index == assignments.length - 1 ? 0 : 16,
+          ),
           child: AssignmentCard(
             assignment: assignments[index],
             isDark: widget.isDark,

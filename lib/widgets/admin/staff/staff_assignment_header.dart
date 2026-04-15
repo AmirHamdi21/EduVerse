@@ -24,14 +24,8 @@ class StaffAssignmentHeader extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? [
-                  AdminColors.darkCard,
-                  AdminColors.darkSurface,
-                ]
-              : [
-                  const Color(0xFFEFF6FF),
-                  const Color(0xFFFAF5FF),
-                ],
+              ? [AdminColors.darkCard, AdminColors.darkSurface]
+              : [const Color(0xFFEFF6FF), const Color(0xFFFAF5FF)],
         ),
       ),
       child: SafeArea(

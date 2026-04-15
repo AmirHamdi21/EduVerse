@@ -163,8 +163,8 @@ class InstructorCalendarFilterDropdown extends StatelessWidget {
                 color: item.isActive
                     ? item.color
                     : (isDark
-                        ? const Color(0xFF374151)
-                        : const Color(0xFFE5E7EB)),
+                          ? const Color(0xFF374151)
+                          : const Color(0xFFE5E7EB)),
                 width: item.isActive ? 1.5 : 1,
               ),
             ),
@@ -177,20 +177,22 @@ class InstructorCalendarFilterDropdown extends StatelessWidget {
                   color: item.isActive
                       ? item.color
                       : (isDark
-                          ? const Color(0xFF94A3B8)
-                          : const Color(0xFF64748B)),
+                            ? const Color(0xFF94A3B8)
+                            : const Color(0xFF64748B)),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   item.label,
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight: item.isActive ? FontWeight.w600 : FontWeight.w500,
+                    fontWeight: item.isActive
+                        ? FontWeight.w600
+                        : FontWeight.w500,
                     color: item.isActive
                         ? item.color
                         : (isDark
-                            ? const Color(0xFFE2E8F0)
-                            : const Color(0xFF334155)),
+                              ? const Color(0xFFE2E8F0)
+                              : const Color(0xFF334155)),
                   ),
                 ),
               ],

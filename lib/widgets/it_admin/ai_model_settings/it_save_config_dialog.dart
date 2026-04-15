@@ -115,7 +115,7 @@ class _ITSaveConfigDialogState extends State<ITSaveConfigDialog> {
               ],
             ),
           ),
-          
+
           // Content
           Padding(
             padding: const EdgeInsets.all(20),
@@ -153,7 +153,7 @@ class _ITSaveConfigDialogState extends State<ITSaveConfigDialog> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                
+
                 // What will be saved
                 Text(
                   'This will update:',
@@ -168,9 +168,9 @@ class _ITSaveConfigDialogState extends State<ITSaveConfigDialog> {
                 _buildCheckItem('API keys and credentials'),
                 _buildCheckItem('Governance rules and policies'),
                 _buildCheckItem('System limits and quotas'),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Buttons
                 Row(
                   children: [
@@ -179,7 +179,9 @@ class _ITSaveConfigDialogState extends State<ITSaveConfigDialog> {
                         onPressed: widget.onResetToDefault,
                         style: OutlinedButton.styleFrom(
                           foregroundColor: ITColors.error,
-                          side: BorderSide(color: ITColors.error.withValues(alpha: 0.5)),
+                          side: BorderSide(
+                            color: ITColors.error.withValues(alpha: 0.5),
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -199,7 +201,9 @@ class _ITSaveConfigDialogState extends State<ITSaveConfigDialog> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          disabledBackgroundColor: ITColors.primary.withValues(alpha: 0.5),
+                          disabledBackgroundColor: ITColors.primary.withValues(
+                            alpha: 0.5,
+                          ),
                         ),
                         child: _isSaving
                             ? const SizedBox(
@@ -241,11 +245,7 @@ class _ITSaveConfigDialogState extends State<ITSaveConfigDialog> {
               color: ITColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
             ),
-            child: Icon(
-              Icons.check_rounded,
-              size: 14,
-              color: ITColors.success,
-            ),
+            child: Icon(Icons.check_rounded, size: 14, color: ITColors.success),
           ),
           const SizedBox(width: 12),
           Text(

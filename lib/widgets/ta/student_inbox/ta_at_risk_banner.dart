@@ -17,18 +17,16 @@ class TAAtRiskBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     if (atRiskCount == 0) return const SizedBox.shrink();
-    
+
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: TAColors.warning.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: TAColors.warning.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: TAColors.warning.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -70,10 +68,7 @@ class TAAtRiskBanner extends StatelessWidget {
           if (onViewAll != null)
             IconButton(
               onPressed: onViewAll,
-              icon: Icon(
-                Icons.chevron_right_rounded,
-                color: TAColors.warning,
-              ),
+              icon: Icon(Icons.chevron_right_rounded, color: TAColors.warning),
             ),
         ],
       ),

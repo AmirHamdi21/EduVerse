@@ -80,10 +80,7 @@ class _CourseSelectorState extends State<CourseSelector>
               gradient: const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF2B7FFF),
-                  Color(0xFF155DFC),
-                ],
+                colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
               ),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
@@ -109,9 +106,10 @@ class _CourseSelectorState extends State<CourseSelector>
                     ),
                   ),
                   RotationTransition(
-                    turns: Tween<double>(begin: 0, end: 0.5).animate(
-                      _dropdownAnimation,
-                    ),
+                    turns: Tween<double>(
+                      begin: 0,
+                      end: 0.5,
+                    ).animate(_dropdownAnimation),
                     child: const Icon(
                       Icons.expand_more,
                       color: Colors.white,
@@ -143,60 +141,57 @@ class _CourseSelectorState extends State<CourseSelector>
                   ),
                 ),
                 child: Column(
-                  children: List.generate(
-                    widget.courses.length,
-                    (index) {
-                      final course = widget.courses[index];
-                      final isLast = index == widget.courses.length - 1;
+                  children: List.generate(widget.courses.length, (index) {
+                    final course = widget.courses[index];
+                    final isLast = index == widget.courses.length - 1;
 
-                      return GestureDetector(
-                        onTap: () {
-                          widget.onCourseChanged(course);
-                          _toggleDropdown();
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            border: !isLast
-                                ? Border(
-                                    bottom: BorderSide(
-                                      color: widget.isDark
-                                          ? const Color(0xFF4D4D64)
-                                          : const Color(0xFFE5E7EB),
-                                      width: 1,
-                                    ),
-                                  )
-                                : null,
-                          ),
-                          child: Row(
-                            children: [
-                              Text(
-                                course.name,
-                                style: TextStyle(
-                                  color: widget.isDark
-                                      ? Colors.white
-                                      : const Color(0xFF101828),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: 'Arimo',
-                                ),
-                              ),
-                              const Spacer(),
-                              if (course.id == widget.selectedCourse.id)
-                                const Icon(
-                                  Icons.check,
-                                  color: Color(0xFF2B7FFF),
-                                  size: 20,
-                                ),
-                            ],
-                          ),
+                    return GestureDetector(
+                      onTap: () {
+                        widget.onCourseChanged(course);
+                        _toggleDropdown();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
                         ),
-                      );
-                    },
-                  ),
+                        decoration: BoxDecoration(
+                          border: !isLast
+                              ? Border(
+                                  bottom: BorderSide(
+                                    color: widget.isDark
+                                        ? const Color(0xFF4D4D64)
+                                        : const Color(0xFFE5E7EB),
+                                    width: 1,
+                                  ),
+                                )
+                              : null,
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              course.name,
+                              style: TextStyle(
+                                color: widget.isDark
+                                    ? Colors.white
+                                    : const Color(0xFF101828),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                fontFamily: 'Arimo',
+                              ),
+                            ),
+                            const Spacer(),
+                            if (course.id == widget.selectedCourse.id)
+                              const Icon(
+                                Icons.check,
+                                color: Color(0xFF2B7FFF),
+                                size: 20,
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
                 ),
               ),
             ),

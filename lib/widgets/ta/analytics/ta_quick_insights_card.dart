@@ -57,7 +57,9 @@ class TAQuickInsightsCard extends StatelessWidget {
             final index = entry.key;
             final insight = entry.value;
             return Padding(
-              padding: EdgeInsets.only(bottom: index < insights.length - 1 ? 10 : 0),
+              padding: EdgeInsets.only(
+                bottom: index < insights.length - 1 ? 10 : 0,
+              ),
               child: _buildInsightItem(insight),
             );
           }),
@@ -77,10 +79,7 @@ class TAQuickInsightsCard extends StatelessWidget {
                 ),
                 child: const Text(
                   'View All Insights',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
                 ),
               ),
             ),
@@ -123,8 +122,5 @@ class QuickInsight {
   final String text;
   final Color color;
 
-  QuickInsight({
-    required this.text,
-    this.color = TAColors.primary,
-  });
+  QuickInsight({required this.text, this.color = TAColors.primary});
 }

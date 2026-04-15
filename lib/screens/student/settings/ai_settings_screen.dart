@@ -29,11 +29,13 @@ class _AISettingsScreenState extends State<AISettingsScreen> {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -166,9 +168,7 @@ class _AISettingsScreenState extends State<AISettingsScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: (_aiAssistant
-                    ? const Color(0xFF8B5CF6)
-                    : Colors.grey)
+            color: (_aiAssistant ? const Color(0xFF8B5CF6) : Colors.grey)
                 .withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
@@ -391,16 +391,14 @@ class _AISettingsScreenState extends State<AISettingsScreen> {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    margin: EdgeInsets.only(
-                      right: o.$1 != 'detailed' ? 8 : 0,
-                    ),
+                    margin: EdgeInsets.only(right: o.$1 != 'detailed' ? 8 : 0),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? const Color(0xFF8B5CF6)
                           : (isDark
-                              ? const Color(0xFF0F172A)
-                              : const Color(0xFFF1F5F9)),
+                                ? const Color(0xFF0F172A)
+                                : const Color(0xFFF1F5F9)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
@@ -408,8 +406,9 @@ class _AISettingsScreenState extends State<AISettingsScreen> {
                         o.$2,
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                           color: isSelected
                               ? Colors.white
                               : (isDark ? Colors.white70 : Colors.black54),
@@ -477,16 +476,14 @@ class _AISettingsScreenState extends State<AISettingsScreen> {
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    margin: EdgeInsets.only(
-                      right: p.$1 != 'academic' ? 8 : 0,
-                    ),
+                    margin: EdgeInsets.only(right: p.$1 != 'academic' ? 8 : 0),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? const Color(0xFF8B5CF6)
                           : (isDark
-                              ? const Color(0xFF0F172A)
-                              : const Color(0xFFF1F5F9)),
+                                ? const Color(0xFF0F172A)
+                                : const Color(0xFFF1F5F9)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Column(
@@ -691,18 +688,12 @@ class _AISettingsScreenState extends State<AISettingsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
-        color: isDark
-            ? const Color(0xFF0F172A)
-            : const Color(0xFFF8FAFC),
+        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: const Color(0xFF8B5CF6),
-          ),
+          Icon(icon, size: 20, color: const Color(0xFF8B5CF6)),
           const SizedBox(height: 8),
           Text(
             value,

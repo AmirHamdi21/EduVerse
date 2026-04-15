@@ -26,7 +26,14 @@ class CloudServicesSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Active Services', style: TextStyle(color: ITColors.textPrimaryColor(isDark), fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            'Active Services',
+            style: TextStyle(
+              color: ITColors.textPrimaryColor(isDark),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           ...services.map((service) => _buildServiceRow(service)),
         ],
@@ -36,18 +43,25 @@ class CloudServicesSection extends StatelessWidget {
 
   Widget _buildServiceRow(CloudService service) {
     final statusColor = ITColors.getStatusColor(service.status);
-    
+
     return GestureDetector(
       onTap: () => onServiceTap(service),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(border: Border(bottom: BorderSide(color: ITColors.borderColor(isDark)))),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: ITColors.borderColor(isDark)),
+          ),
+        ),
         child: Row(
           children: [
             Container(
               width: 8,
               height: 8,
-              decoration: BoxDecoration(color: statusColor, shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                color: statusColor,
+                shape: BoxShape.circle,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -55,15 +69,39 @@ class CloudServicesSection extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(service.name, style: TextStyle(color: ITColors.textPrimaryColor(isDark), fontWeight: FontWeight.w500)),
-                  Text('${service.type} • ${service.region}', style: TextStyle(color: ITColors.textSecondaryColor(isDark), fontSize: 12)),
+                  Text(
+                    service.name,
+                    style: TextStyle(
+                      color: ITColors.textPrimaryColor(isDark),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Text(
+                    '${service.type} • ${service.region}',
+                    style: TextStyle(
+                      color: ITColors.textSecondaryColor(isDark),
+                      fontSize: 12,
+                    ),
+                  ),
                 ],
               ),
             ),
             Expanded(
-              child: Text(service.provider, style: TextStyle(color: ITColors.textSecondaryColor(isDark), fontSize: 12)),
+              child: Text(
+                service.provider,
+                style: TextStyle(
+                  color: ITColors.textSecondaryColor(isDark),
+                  fontSize: 12,
+                ),
+              ),
             ),
-            Text('\$${service.monthlyCost.toStringAsFixed(0)}', style: TextStyle(color: ITColors.textPrimaryColor(isDark), fontWeight: FontWeight.w500)),
+            Text(
+              '\$${service.monthlyCost.toStringAsFixed(0)}',
+              style: TextStyle(
+                color: ITColors.textPrimaryColor(isDark),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),

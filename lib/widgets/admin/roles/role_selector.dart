@@ -23,9 +23,17 @@ class RoleSelector extends StatelessWidget {
 
     final roles = [
       _RoleItem(id: 'student', name: l10n.student, icon: Icons.school_rounded),
-      _RoleItem(id: 'instructor', name: l10n.instructor, icon: Icons.person_rounded),
+      _RoleItem(
+        id: 'instructor',
+        name: l10n.instructor,
+        icon: Icons.person_rounded,
+      ),
       _RoleItem(id: 'ta', name: l10n.ta, icon: Icons.support_agent_rounded),
-      _RoleItem(id: 'admin', name: l10n.admin, icon: Icons.admin_panel_settings_rounded),
+      _RoleItem(
+        id: 'admin',
+        name: l10n.admin,
+        icon: Icons.admin_panel_settings_rounded,
+      ),
     ];
 
     return Container(
@@ -37,7 +45,9 @@ class RoleSelector extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
       ),
       child: SingleChildScrollView(
@@ -68,20 +78,22 @@ class RoleSelector extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             decoration: BoxDecoration(
               gradient: isSelected
-                  ? LinearGradient(colors: [color, color.withValues(alpha: 0.8)])
+                  ? LinearGradient(
+                      colors: [color, color.withValues(alpha: 0.8)],
+                    )
                   : null,
               color: isSelected
                   ? null
                   : (isDark
-                      ? AdminColors.darkSurface.withValues(alpha: 0.5)
-                      : Colors.white),
+                        ? AdminColors.darkSurface.withValues(alpha: 0.5)
+                        : Colors.white),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isSelected
                     ? color
                     : (isDark
-                        ? AdminColors.darkCardBorder
-                        : AdminColors.lightDivider),
+                          ? AdminColors.darkCardBorder
+                          : AdminColors.lightDivider),
                 width: isSelected ? 2 : 1,
               ),
               boxShadow: isSelected
@@ -137,18 +149,16 @@ class RoleSelector extends StatelessWidget {
                 : Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: isDark ? AdminColors.darkCardBorder : AdminColors.lightDivider,
+              color: isDark
+                  ? AdminColors.darkCardBorder
+                  : AdminColors.lightDivider,
               style: BorderStyle.solid,
             ),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.add_rounded,
-                size: 18,
-                color: AdminColors.primary,
-              ),
+              Icon(Icons.add_rounded, size: 18, color: AdminColors.primary),
               const SizedBox(width: 8),
               Text(
                 l10n.customRole,

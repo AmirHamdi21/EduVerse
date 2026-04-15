@@ -30,11 +30,7 @@ class MaterialTypeIcon extends StatelessWidget {
         color: config.color.withValues(alpha: isDark ? 0.2 : 0.1),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Icon(
-        config.icon,
-        color: config.color,
-        size: size,
-      ),
+      child: Icon(config.icon, color: config.color, size: size),
     );
   }
 

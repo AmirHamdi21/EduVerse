@@ -69,10 +69,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       _buildStudentsTab(const <SectionStudentModel>[
-        SectionStudentModel(
-          userId: 2,
-          status: 'enrolled',
-        ),
+        SectionStudentModel(userId: 2, status: 'enrolled'),
       ]),
     );
     await tester.pumpAndSettle();

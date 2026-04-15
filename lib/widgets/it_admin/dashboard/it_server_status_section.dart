@@ -29,9 +29,7 @@ class ITServerStatusSection extends StatelessWidget {
             ? Colors.white.withValues(alpha: 0.03)
             : Colors.white.withValues(alpha: 0.8),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: ITColors.lightCardShadow(isDark),

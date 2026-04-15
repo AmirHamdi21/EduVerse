@@ -19,11 +19,15 @@ class _AdminEmailSettingsScreenState extends State<AdminEmailSettingsScreen> {
   final _formKey = GlobalKey<FormState>();
   final _hostController = TextEditingController(text: 'smtp.gmail.com');
   final _portController = TextEditingController(text: '587');
-  final _usernameController = TextEditingController(text: 'noreply@eduverse.com');
+  final _usernameController = TextEditingController(
+    text: 'noreply@eduverse.com',
+  );
   final _passwordController = TextEditingController();
   final _senderNameController = TextEditingController(text: 'EduVerse');
-  final _senderEmailController = TextEditingController(text: 'noreply@eduverse.com');
-  
+  final _senderEmailController = TextEditingController(
+    text: 'noreply@eduverse.com',
+  );
+
   bool _enableSsl = true;
   bool _enableTls = true;
   bool _testLoading = false;
@@ -57,7 +61,9 @@ class _AdminEmailSettingsScreenState extends State<AdminEmailSettingsScreen> {
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: Form(
                 key: _formKey,
                 child: ListView(
@@ -170,8 +176,11 @@ class _AdminEmailSettingsScreenState extends State<AdminEmailSettingsScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.check_circle_rounded,
-                    color: Colors.white, size: 16),
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: Colors.white,
+                  size: 16,
+                ),
                 const SizedBox(width: 4),
                 Text(
                   l10n.connected,
@@ -377,13 +386,12 @@ class _AdminEmailSettingsScreenState extends State<AdminEmailSettingsScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(
-                color: AdminColors.primary,
-                width: 2,
-              ),
+              borderSide: BorderSide(color: AdminColors.primary, width: 2),
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
           ),
         ),
       ],
@@ -490,7 +498,9 @@ class _AdminEmailSettingsScreenState extends State<AdminEmailSettingsScreen> {
               : Text(
                   l10n.saveConfiguration,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
         ),
       ],
@@ -509,7 +519,9 @@ class _AdminEmailSettingsScreenState extends State<AdminEmailSettingsScreen> {
           content: Text(l10n.testEmailSent),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AdminColors.success,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     }
@@ -527,7 +539,9 @@ class _AdminEmailSettingsScreenState extends State<AdminEmailSettingsScreen> {
           content: Text(l10n.emailConfigSaved),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AdminColors.success,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     }

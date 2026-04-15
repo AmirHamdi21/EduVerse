@@ -53,7 +53,7 @@ class TALabMaterialCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -86,11 +86,7 @@ class TALabMaterialCard extends StatelessWidget {
                   color: _getTypeColor().withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  _getTypeIcon(),
-                  color: _getTypeColor(),
-                  size: 24,
-                ),
+                child: Icon(_getTypeIcon(), color: _getTypeColor(), size: 24),
               ),
               const SizedBox(width: 14),
               // Material details
@@ -136,7 +132,10 @@ class TALabMaterialCard extends StatelessWidget {
               ),
               // Type badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: _getTypeColor().withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
@@ -158,7 +157,9 @@ class TALabMaterialCard extends StatelessWidget {
             Wrap(
               spacing: 8,
               runSpacing: 6,
-              children: material.aiTags.map((tag) => _buildAITag(tag, l10n)).toList(),
+              children: material.aiTags
+                  .map((tag) => _buildAITag(tag, l10n))
+                  .toList(),
             ),
           ],
           const SizedBox(height: 14),
@@ -264,9 +265,7 @@ class TALabMaterialCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(6),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -379,9 +378,11 @@ class TALabMaterialCard extends StatelessWidget {
   }
 
   bool _hasWarningTag() {
-    return material.aiTags.any((tag) =>
-        tag == TAMaterialAITag.lowClarity ||
-        tag == TAMaterialAITag.suggestUpdate ||
-        tag == TAMaterialAITag.outdated);
+    return material.aiTags.any(
+      (tag) =>
+          tag == TAMaterialAITag.lowClarity ||
+          tag == TAMaterialAITag.suggestUpdate ||
+          tag == TAMaterialAITag.outdated,
+    );
   }
 }

@@ -77,8 +77,18 @@ class InstructorCalendarHeader extends StatelessWidget {
   String _getSubtitle(AppLocalizations l10n) {
     final now = DateTime.now();
     final monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return '${monthNames[now.month - 1]} ${now.year}';
   }

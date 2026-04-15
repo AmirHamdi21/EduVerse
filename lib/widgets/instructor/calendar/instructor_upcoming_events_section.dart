@@ -8,10 +8,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class InstructorUpcomingEventsSection extends StatelessWidget {
   final Function(InstructorCalendarEvent) onEventTap;
 
-  const InstructorUpcomingEventsSection({
-    super.key,
-    required this.onEventTap,
-  });
+  const InstructorUpcomingEventsSection({super.key, required this.onEventTap});
 
   @override
   Widget build(BuildContext context) {
@@ -40,8 +37,10 @@ class InstructorUpcomingEventsSection extends StatelessWidget {
                     ),
                   ),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF155CFB).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -61,11 +60,9 @@ class InstructorUpcomingEventsSection extends StatelessWidget {
               if (upcomingEvents.isEmpty)
                 _buildEmptyState(isDark, l10n)
               else
-                ...upcomingEvents.map((event) => _buildEventCard(
-                      context,
-                      event,
-                      isDark,
-                    )),
+                ...upcomingEvents.map(
+                  (event) => _buildEventCard(context, event, isDark),
+                ),
             ],
           ),
         );
@@ -88,15 +85,13 @@ class InstructorUpcomingEventsSection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color:
-                  isDark ? const Color(0xFF374151) : const Color(0xFFF1F5F9),
+              color: isDark ? const Color(0xFF374151) : const Color(0xFFF1F5F9),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.event_available_rounded,
               size: 32,
-              color:
-                  isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
           ),
           const SizedBox(height: 16),
@@ -114,8 +109,7 @@ class InstructorUpcomingEventsSection extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color:
-                  isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
           ),
         ],
@@ -211,7 +205,9 @@ class InstructorUpcomingEventsSection extends StatelessWidget {
                         const SizedBox(width: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: isDark
                                 ? const Color(0xFF374151)
@@ -246,8 +242,8 @@ class InstructorUpcomingEventsSection extends StatelessWidget {
                     color: _isToday(event.date)
                         ? const Color(0xFF155CFB)
                         : (isDark
-                            ? const Color(0xFF94A3B8)
-                            : const Color(0xFF64748B)),
+                              ? const Color(0xFF94A3B8)
+                              : const Color(0xFF64748B)),
                   ),
                 ),
                 if (event.studentCount != null) ...[

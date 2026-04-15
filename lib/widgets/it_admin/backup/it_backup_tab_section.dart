@@ -25,21 +25,17 @@ class ITBackupTabSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : ITColors.surface,
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : ITColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
       ),
       child: Row(
         children: List.generate(tabs.length, (index) {
           final isSelected = selectedIndex == index;
           final tab = tabs[index];
-          
+
           return Expanded(
             child: GestureDetector(
               onTap: () => onTabChanged(index),
@@ -47,9 +43,7 @@ class ITBackupTabSection extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? ITColors.primary
-                      : Colors.transparent,
+                  color: isSelected ? ITColors.primary : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: isSelected
                       ? [

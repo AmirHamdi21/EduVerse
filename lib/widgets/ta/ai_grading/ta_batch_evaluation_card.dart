@@ -19,7 +19,7 @@ class TABatchEvaluationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
@@ -33,9 +33,7 @@ class TABatchEvaluationCard extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: TAColors.primary.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: TAColors.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

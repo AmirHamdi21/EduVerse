@@ -10,11 +10,7 @@ class FileDetailsSheet extends StatelessWidget {
   final MyFile file;
   final bool isDark;
 
-  const FileDetailsSheet({
-    super.key,
-    required this.file,
-    required this.isDark,
-  });
+  const FileDetailsSheet({super.key, required this.file, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -141,11 +137,7 @@ class FileDetailsSheet extends StatelessWidget {
           : Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  _getFileIcon(file.type),
-                  color: Colors.white,
-                  size: 48,
-                ),
+                Icon(_getFileIcon(file.type), color: Colors.white, size: 48),
                 const SizedBox(height: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -180,11 +172,7 @@ class FileDetailsSheet extends StatelessWidget {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.image_rounded,
-                color: Colors.white,
-                size: 48,
-              ),
+              const Icon(Icons.image_rounded, color: Colors.white, size: 48),
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -234,13 +222,17 @@ class FileDetailsSheet extends StatelessWidget {
                 return pFile?.isFavorite != cFile?.isFavorite;
               },
               builder: (context, state) {
-                final currentFile = state.files.where((f) => f.id == file.id).firstOrNull ?? file;
+                final currentFile =
+                    state.files.where((f) => f.id == file.id).firstOrNull ??
+                    file;
                 return _buildActionButton(
                   context,
                   icon: currentFile.isFavorite
                       ? Icons.star_rounded
                       : Icons.star_outline_rounded,
-                  label: currentFile.isFavorite ? l10n.unfavorite : l10n.favorite,
+                  label: currentFile.isFavorite
+                      ? l10n.unfavorite
+                      : l10n.favorite,
                   color: const Color(0xFFF59E0B),
                   onTap: () =>
                       context.read<MyFilesCubit>().toggleFavorite(file.id),
@@ -277,9 +269,7 @@ class FileDetailsSheet extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withValues(alpha: isDark ? 0.15 : 0.1),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: color.withValues(alpha: 0.3),
-          ),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Column(
           children: [
@@ -305,9 +295,7 @@ class FileDetailsSheet extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark
-              ? const Color(0xFF0F172A)
-              : const Color(0xFFF8FAFC),
+          color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -398,9 +386,7 @@ class FileDetailsSheet extends StatelessWidget {
         content: Text(
           '${l10n.deleteFileConfirmation} "${file.name}"?',
           style: TextStyle(
-            color: isDark
-                ? const Color(0xFF94A3B8)
-                : const Color(0xFF64748B),
+            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
           ),
         ),
         actions: [
@@ -508,8 +494,18 @@ class FileDetailsSheet extends StatelessWidget {
 
   String _formatFullDate(DateTime date) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year} at ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }

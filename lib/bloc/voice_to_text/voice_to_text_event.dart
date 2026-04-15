@@ -223,13 +223,7 @@ class ChangeLanguage extends VoiceToTextEvent {
   List<Object?> get props => [language];
 }
 
-enum RecordingFilter {
-  all,
-  favorites,
-  today,
-  thisWeek,
-  thisMonth,
-}
+enum RecordingFilter { all, favorites, today, thisWeek, thisMonth }
 
 enum RecordingSort {
   dateNewest,

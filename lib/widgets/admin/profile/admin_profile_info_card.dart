@@ -22,9 +22,7 @@ class AdminProfileInfoCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
         boxShadow: [
           if (!isDark)
             BoxShadow(
@@ -45,11 +43,7 @@ class AdminProfileInfoCard extends StatelessWidget {
                   color: AdminColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  icon,
-                  color: AdminColors.primary,
-                  size: 18,
-                ),
+                child: Icon(icon, color: AdminColors.primary, size: 18),
               ),
               const SizedBox(width: 12),
               Text(
@@ -77,9 +71,7 @@ class AdminProfileInfoCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isDark 
-                  ? AdminColors.darkSurface 
-                  : const Color(0xFFF1F5F9),
+              color: isDark ? AdminColors.darkSurface : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(

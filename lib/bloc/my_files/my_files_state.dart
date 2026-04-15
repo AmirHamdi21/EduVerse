@@ -34,18 +34,9 @@ enum FileFilterOption {
   favorites,
 }
 
-enum ViewMode {
-  grid,
-  list,
-}
+enum ViewMode { grid, list }
 
-enum UploadStatus {
-  idle,
-  picking,
-  uploading,
-  completed,
-  failed,
-}
+enum UploadStatus { idle, picking, uploading, completed, failed }
 
 class MyFile {
   final String id;
@@ -396,16 +387,18 @@ class MyFilesState {
       files: files ?? this.files,
       filteredFiles: filteredFiles ?? this.filteredFiles,
       folders: folders ?? this.folders,
-      currentFolderId:
-          clearCurrentFolder ? null : (currentFolderId ?? this.currentFolderId),
+      currentFolderId: clearCurrentFolder
+          ? null
+          : (currentFolderId ?? this.currentFolderId),
       filterOption: filterOption ?? this.filterOption,
       sortOption: sortOption ?? this.sortOption,
       viewMode: viewMode ?? this.viewMode,
       searchQuery: searchQuery ?? this.searchQuery,
       isLoading: isLoading ?? this.isLoading,
       error: clearError ? null : (error ?? this.error),
-      selectedFile:
-          clearSelectedFile ? null : (selectedFile ?? this.selectedFile),
+      selectedFile: clearSelectedFile
+          ? null
+          : (selectedFile ?? this.selectedFile),
       selectedFileIds: selectedFileIds ?? this.selectedFileIds,
       isMultiSelectMode: isMultiSelectMode ?? this.isMultiSelectMode,
       uploadProgress: clearUploadProgress

@@ -19,11 +19,17 @@ class DatabaseQuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: _buildActionButton('Backup', Icons.backup_rounded, onBackup)),
+        Expanded(
+          child: _buildActionButton('Backup', Icons.backup_rounded, onBackup),
+        ),
         const SizedBox(width: 12),
-        Expanded(child: _buildActionButton('Optimize', Icons.tune_rounded, onOptimize)),
+        Expanded(
+          child: _buildActionButton('Optimize', Icons.tune_rounded, onOptimize),
+        ),
         const SizedBox(width: 12),
-        Expanded(child: _buildActionButton('Query', Icons.code_rounded, onQuery)),
+        Expanded(
+          child: _buildActionButton('Query', Icons.code_rounded, onQuery),
+        ),
       ],
     );
   }
@@ -42,7 +48,14 @@ class DatabaseQuickActions extends StatelessWidget {
           children: [
             Icon(icon, color: ITColors.primary, size: 24),
             const SizedBox(height: 8),
-            Text(label, style: TextStyle(color: ITColors.textPrimaryColor(isDark), fontSize: 12, fontWeight: FontWeight.w500)),
+            Text(
+              label,
+              style: TextStyle(
+                color: ITColors.textPrimaryColor(isDark),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),

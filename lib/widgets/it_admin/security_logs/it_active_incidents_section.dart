@@ -31,7 +31,11 @@ class ITActiveIncidentsSection extends StatelessWidget {
                 color: ITColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(Icons.warning_amber_rounded, color: ITColors.error, size: 18),
+              child: Icon(
+                Icons.warning_amber_rounded,
+                color: ITColors.error,
+                size: 18,
+              ),
             ),
             const SizedBox(width: 10),
             Text(
@@ -89,20 +93,28 @@ class ITActiveIncidentsSection extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    _getSeverityColor(incident.severity).withValues(alpha: 0.15),
-                    _getSeverityColor(incident.severity).withValues(alpha: 0.05),
+                    _getSeverityColor(
+                      incident.severity,
+                    ).withValues(alpha: 0.15),
+                    _getSeverityColor(
+                      incident.severity,
+                    ).withValues(alpha: 0.05),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(15),
+                ),
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: _getSeverityColor(incident.severity).withValues(alpha: 0.2),
+                      color: _getSeverityColor(
+                        incident.severity,
+                      ).withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
@@ -146,13 +158,19 @@ class ITActiveIncidentsSection extends StatelessWidget {
                     onPressed: () => onHide(incident),
                     style: TextButton.styleFrom(
                       foregroundColor: _getSeverityColor(incident.severity),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: const Text(
                       'Hide',
-                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
@@ -177,7 +195,11 @@ class ITActiveIncidentsSection extends StatelessWidget {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      Icon(Icons.access_time_rounded, size: 12, color: ITColors.textTertiaryColor(isDark)),
+                      Icon(
+                        Icons.access_time_rounded,
+                        size: 12,
+                        color: ITColors.textTertiaryColor(isDark),
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         _formatTime(incident.detectedAt),

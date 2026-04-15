@@ -11,17 +11,18 @@ class ITPerformanceReportScreen extends StatefulWidget {
   const ITPerformanceReportScreen({super.key});
 
   @override
-  State<ITPerformanceReportScreen> createState() => _ITPerformanceReportScreenState();
+  State<ITPerformanceReportScreen> createState() =>
+      _ITPerformanceReportScreenState();
 }
 
 class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
   bool _isLoading = true;
   String? _errorMessage;
-  
+
   // State
   TimePeriod _selectedPeriod = TimePeriod.today;
   int _selectedTrendTab = 0;
-  
+
   // Data
   List<PerformanceMetric> _metrics = [];
   List<ServerHealth> _servers = [];
@@ -269,16 +270,20 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
   List<TrendDataPoint> _getMockTrendData(double minValue, double maxValue) {
     final now = DateTime.now();
     final data = <TrendDataPoint>[];
-    
+
     for (var i = 23; i >= 0; i--) {
       final time = now.subtract(Duration(hours: i));
       final range = maxValue - minValue;
-      final value = minValue + (range * 0.5) + 
-          (range * 0.3 * (i % 6 - 3) / 3) + 
+      final value =
+          minValue +
+          (range * 0.5) +
+          (range * 0.3 * (i % 6 - 3) / 3) +
           (range * 0.2 * ((i * 17) % 7 - 3) / 3);
-      data.add(TrendDataPoint(time: time, value: value.clamp(minValue, maxValue)));
+      data.add(
+        TrendDataPoint(time: time, value: value.clamp(minValue, maxValue)),
+      );
     }
-    
+
     return data;
   }
 
@@ -307,7 +312,7 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
 
   void _showServerDetails(ServerHealth server) {
     final isDark = context.read<ThemeBloc>().state.isDark;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -333,7 +338,7 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            
+
             // Server info
             Row(
               children: [
@@ -366,7 +371,10 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: server.statusColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(8),
@@ -402,15 +410,30 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // Metrics
-            _buildDetailMetricRow('CPU Usage', server.cpuUsage, ITColors.primary, isDark),
+            _buildDetailMetricRow(
+              'CPU Usage',
+              server.cpuUsage,
+              ITColors.primary,
+              isDark,
+            ),
             const SizedBox(height: 12),
-            _buildDetailMetricRow('Memory Usage', server.memoryUsage, ITColors.purple, isDark),
+            _buildDetailMetricRow(
+              'Memory Usage',
+              server.memoryUsage,
+              ITColors.purple,
+              isDark,
+            ),
             const SizedBox(height: 12),
-            _buildDetailMetricRow('Disk Usage', server.diskUsage, ITColors.teal, isDark),
+            _buildDetailMetricRow(
+              'Disk Usage',
+              server.diskUsage,
+              ITColors.teal,
+              isDark,
+            ),
             const SizedBox(height: 20),
-            
+
             // Uptime
             Container(
               padding: const EdgeInsets.all(16),
@@ -422,11 +445,7 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.timer_rounded,
-                    size: 20,
-                    color: ITColors.success,
-                  ),
+                  Icon(Icons.timer_rounded, size: 20, color: ITColors.success),
                   const SizedBox(width: 12),
                   Text(
                     'Uptime: ${server.uptime}',
@@ -440,7 +459,7 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            
+
             // Actions
             Row(
               children: [
@@ -486,10 +505,19 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
     );
   }
 
-  Widget _buildDetailMetricRow(String label, double value, Color color, bool isDark) {
+  Widget _buildDetailMetricRow(
+    String label,
+    double value,
+    Color color,
+    bool isDark,
+  ) {
     final isHigh = value > 80;
     final isMedium = value > 60 && value <= 80;
-    final displayColor = isHigh ? ITColors.error : isMedium ? ITColors.warning : color;
+    final displayColor = isHigh
+        ? ITColors.error
+        : isMedium
+        ? ITColors.warning
+        : color;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -559,7 +587,10 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
           backgroundColor: isDark
               ? const Color(0xFF1A1A2E)
               : const Color(0xFFFAFAFA),
-          drawer: ITDrawer(currentRoute: '/it-admin/performance', isDark: isDark),
+          drawer: ITDrawer(
+            currentRoute: '/it-admin/performance',
+            isDark: isDark,
+          ),
           body: SafeArea(
             child: Container(
               decoration: isDark
@@ -585,9 +616,7 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: ITColors.primary),
-      );
+      return Center(child: CircularProgressIndicator(color: ITColors.primary));
     }
 
     if (_errorMessage != null) {
@@ -618,15 +647,16 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
                   onCustomTap: () => _showSnackBar('Custom date range picker'),
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Performance Overview Cards
                 ITPerformanceOverviewCards(
                   isDark: isDark,
                   metrics: _metrics,
-                  onViewDetails: () => _showSnackBar('Viewing detailed metrics'),
+                  onViewDetails: () =>
+                      _showSnackBar('Viewing detailed metrics'),
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Server Health Section
                 ITServerHealthSection(
                   isDark: isDark,
@@ -635,7 +665,7 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
                   onViewAll: () => _showSnackBar('Viewing all servers'),
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Performance Trends Section
                 ITPerformanceTrendsSection(
                   isDark: isDark,
@@ -648,7 +678,7 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
                   },
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Recent Alerts Section
                 ITRecentAlertsSection(
                   isDark: isDark,
@@ -657,7 +687,7 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
                   onViewAll: () => _showSnackBar('Viewing all alerts'),
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Resource Utilization Section
                 ITResourceUtilizationSection(
                   isDark: isDark,
@@ -704,7 +734,10 @@ class _ITPerformanceReportScreenState extends State<ITPerformanceReportScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: ITColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

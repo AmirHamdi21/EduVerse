@@ -36,10 +36,7 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
     );
 
     _animation = Tween<double>(begin: 0.0, end: widget.value).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: widget.curve,
-      ),
+      CurvedAnimation(parent: _animationController, curve: widget.curve),
     );
 
     Future.delayed(const Duration(milliseconds: 100), () {
@@ -55,11 +52,8 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
     if (oldWidget.value != widget.value) {
       _animation = Tween<double>(begin: _animation.value, end: widget.value)
           .animate(
-        CurvedAnimation(
-          parent: _animationController,
-          curve: widget.curve,
-        ),
-      );
+            CurvedAnimation(parent: _animationController, curve: widget.curve),
+          );
       _animationController.forward(from: 0.0);
     }
   }
@@ -86,7 +80,8 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
               Container(
                 height: widget.minHeight,
                 width: _animation.value > 0
-                    ? _animation.value * (MediaQuery.of(context).size.width - 32)
+                    ? _animation.value *
+                          (MediaQuery.of(context).size.width - 32)
                     : 0,
                 decoration: BoxDecoration(
                   color: widget.valueColor,
@@ -145,10 +140,7 @@ class _CompactAnimatedProgressBarState extends State<CompactAnimatedProgressBar>
     );
 
     _animation = Tween<double>(begin: 0.0, end: widget.value).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: widget.curve,
-      ),
+      CurvedAnimation(parent: _animationController, curve: widget.curve),
     );
 
     Future.delayed(const Duration(milliseconds: 50), () {
@@ -164,11 +156,8 @@ class _CompactAnimatedProgressBarState extends State<CompactAnimatedProgressBar>
     if (oldWidget.value != widget.value) {
       _animation = Tween<double>(begin: _animation.value, end: widget.value)
           .animate(
-        CurvedAnimation(
-          parent: _animationController,
-          curve: widget.curve,
-        ),
-      );
+            CurvedAnimation(parent: _animationController, curve: widget.curve),
+          );
       _animationController.forward(from: 0.0);
     }
   }

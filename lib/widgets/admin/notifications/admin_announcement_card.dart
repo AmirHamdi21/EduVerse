@@ -247,9 +247,7 @@ class AdminAnnouncementCard extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 announcement.isPinned ? 'Unpin' : 'Pin',
-                style: TextStyle(
-                  color: AdminColors.getTextColor(isDark),
-                ),
+                style: TextStyle(color: AdminColors.getTextColor(isDark)),
               ),
             ],
           ),
@@ -258,17 +256,11 @@ class AdminAnnouncementCard extends StatelessWidget {
           value: 'edit',
           child: Row(
             children: [
-              Icon(
-                Icons.edit_rounded,
-                size: 20,
-                color: AdminColors.primary,
-              ),
+              Icon(Icons.edit_rounded, size: 20, color: AdminColors.primary),
               const SizedBox(width: 12),
               Text(
                 'Edit',
-                style: TextStyle(
-                  color: AdminColors.getTextColor(isDark),
-                ),
+                style: TextStyle(color: AdminColors.getTextColor(isDark)),
               ),
             ],
           ),
@@ -278,16 +270,9 @@ class AdminAnnouncementCard extends StatelessWidget {
           value: 'delete',
           child: Row(
             children: [
-              Icon(
-                Icons.delete_rounded,
-                size: 20,
-                color: AdminColors.error,
-              ),
+              Icon(Icons.delete_rounded, size: 20, color: AdminColors.error),
               const SizedBox(width: 12),
-              Text(
-                'Delete',
-                style: TextStyle(color: AdminColors.error),
-              ),
+              Text('Delete', style: TextStyle(color: AdminColors.error)),
             ],
           ),
         ),

@@ -75,7 +75,10 @@ class TAChartCard extends StatelessWidget {
                 return GestureDetector(
                   onTap: () => onFilterChanged?.call(index),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? TAColors.primary.withValues(alpha: 0.15)
@@ -89,7 +92,9 @@ class TAChartCard extends StatelessWidget {
                             ? TAColors.primary
                             : TAColors.textSecondaryColor(isDark),
                         fontSize: 11,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
                       ),
                     ),
                   ),
@@ -104,15 +109,19 @@ class TAChartCard extends StatelessWidget {
   Widget _buildVerticalBarChart() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final barWidth = (constraints.maxWidth - (data.length - 1) * 8) / data.length;
-        final maxValue = data.map((d) => d.value).reduce((a, b) => a > b ? a : b);
-        
+        final barWidth =
+            (constraints.maxWidth - (data.length - 1) * 8) / data.length;
+        final maxValue = data
+            .map((d) => d.value)
+            .reduce((a, b) => a > b ? a : b);
+
         return Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: List.generate(data.length, (index) {
             final item = data[index];
-            final barHeight = (item.value / maxValue) * (constraints.maxHeight - 24);
-            
+            final barHeight =
+                (item.value / maxValue) * (constraints.maxHeight - 24);
+
             return Container(
               width: barWidth,
               margin: EdgeInsets.only(right: index < data.length - 1 ? 8 : 0),
@@ -128,7 +137,9 @@ class TAChartCard extends StatelessWidget {
                         end: Alignment.topCenter,
                         colors: [
                           item.color ?? TAColors.primary,
-                          (item.color ?? TAColors.primary).withValues(alpha: 0.6),
+                          (item.color ?? TAColors.primary).withValues(
+                            alpha: 0.6,
+                          ),
                         ],
                       ),
                       borderRadius: BorderRadius.circular(6),
@@ -155,12 +166,12 @@ class TAChartCard extends StatelessWidget {
 
   Widget _buildHorizontalBarChart() {
     final maxValue = data.map((d) => d.value).reduce((a, b) => a > b ? a : b);
-    
+
     return Column(
       children: List.generate(data.length, (index) {
         final item = data[index];
         final percentage = item.value / maxValue;
-        
+
         return Padding(
           padding: EdgeInsets.only(bottom: index < data.length - 1 ? 10 : 0),
           child: Row(
@@ -192,7 +203,9 @@ class TAChartCard extends StatelessWidget {
                         gradient: LinearGradient(
                           colors: [
                             item.color ?? TAColors.primary,
-                            (item.color ?? TAColors.primary).withValues(alpha: 0.7),
+                            (item.color ?? TAColors.primary).withValues(
+                              alpha: 0.7,
+                            ),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(6),
@@ -227,14 +240,7 @@ class ChartData {
   final double value;
   final Color? color;
 
-  ChartData({
-    required this.label,
-    required this.value,
-    this.color,
-  });
+  ChartData({required this.label, required this.value, this.color});
 }
 
-enum ChartType {
-  bar,
-  horizontalBar,
-}
+enum ChartType { bar, horizontalBar }

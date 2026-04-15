@@ -83,7 +83,11 @@ class ITRolePermissionsSection extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.people_rounded, size: 14, color: ITColors.textTertiaryColor(isDark)),
+                    Icon(
+                      Icons.people_rounded,
+                      size: 14,
+                      color: ITColors.textTertiaryColor(isDark),
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       '${role.userCount} users',

@@ -14,8 +14,7 @@ class UploadProgressOverlay extends StatelessWidget {
       builder: (context, state) {
         final progress = state.uploadProgress;
 
-        if (progress == null ||
-            progress.status == UploadStatus.idle) {
+        if (progress == null || progress.status == UploadStatus.idle) {
           return const SizedBox.shrink();
         }
 
@@ -38,7 +37,7 @@ class _UploadProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     Color statusColor;
     IconData statusIcon;
     String statusText;
@@ -75,10 +74,7 @@ class _UploadProgressCard extends StatelessWidget {
       builder: (context, value, child) {
         return Transform.translate(
           offset: Offset(0, 20 * (1 - value)),
-          child: Opacity(
-            opacity: value,
-            child: child,
-          ),
+          child: Opacity(opacity: value, child: child),
         );
       },
       child: Container(
@@ -105,11 +101,7 @@ class _UploadProgressCard extends StatelessWidget {
                     color: statusColor.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    statusIcon,
-                    color: statusColor,
-                    size: 24,
-                  ),
+                  child: Icon(statusIcon, color: statusColor, size: 24),
                 ),
                 const SizedBox(width: 14),
                 Expanded(

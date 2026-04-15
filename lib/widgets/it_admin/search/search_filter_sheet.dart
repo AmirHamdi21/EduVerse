@@ -6,7 +6,8 @@ class ITSearchFilterSheet extends StatefulWidget {
   final String selectedStatus;
   final String selectedPriority;
   final DateTimeRange? dateRange;
-  final Function(String status, String priority, DateTimeRange? dateRange) onApply;
+  final Function(String status, String priority, DateTimeRange? dateRange)
+  onApply;
 
   const ITSearchFilterSheet({
     super.key,
@@ -66,7 +67,7 @@ class _ITSearchFilterSheetState extends State<ITSearchFilterSheet> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // Status Filter
           Text(
             'Status',
@@ -80,26 +81,41 @@ class _ITSearchFilterSheetState extends State<ITSearchFilterSheet> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: ['all', 'operational', 'degraded', 'offline', 'maintenance'].map((status) {
-              final isSelected = _status == status;
-              return FilterChip(
-                label: Text(status == 'all' ? 'All' : status[0].toUpperCase() + status.substring(1)),
-                selected: isSelected,
-                onSelected: (_) => setState(() => _status = status),
-                selectedColor: ITColors.primary,
-                backgroundColor: ITColors.cardColor(widget.isDark),
-                labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : ITColors.textSecondaryColor(widget.isDark),
-                ),
-                side: BorderSide(
-                  color: isSelected ? ITColors.primary : ITColors.borderColor(widget.isDark),
-                ),
-                showCheckmark: false,
-              );
-            }).toList(),
+            children:
+                [
+                  'all',
+                  'operational',
+                  'degraded',
+                  'offline',
+                  'maintenance',
+                ].map((status) {
+                  final isSelected = _status == status;
+                  return FilterChip(
+                    label: Text(
+                      status == 'all'
+                          ? 'All'
+                          : status[0].toUpperCase() + status.substring(1),
+                    ),
+                    selected: isSelected,
+                    onSelected: (_) => setState(() => _status = status),
+                    selectedColor: ITColors.primary,
+                    backgroundColor: ITColors.cardColor(widget.isDark),
+                    labelStyle: TextStyle(
+                      color: isSelected
+                          ? Colors.white
+                          : ITColors.textSecondaryColor(widget.isDark),
+                    ),
+                    side: BorderSide(
+                      color: isSelected
+                          ? ITColors.primary
+                          : ITColors.borderColor(widget.isDark),
+                    ),
+                    showCheckmark: false,
+                  );
+                }).toList(),
           ),
           const SizedBox(height: 20),
-          
+
           // Priority Filter
           Text(
             'Priority',
@@ -113,27 +129,37 @@ class _ITSearchFilterSheetState extends State<ITSearchFilterSheet> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: ['all', 'critical', 'high', 'medium', 'low'].map((priority) {
+            children: ['all', 'critical', 'high', 'medium', 'low'].map((
+              priority,
+            ) {
               final isSelected = _priority == priority;
               final color = _getPriorityColor(priority);
               return FilterChip(
-                label: Text(priority == 'all' ? 'All' : priority[0].toUpperCase() + priority.substring(1)),
+                label: Text(
+                  priority == 'all'
+                      ? 'All'
+                      : priority[0].toUpperCase() + priority.substring(1),
+                ),
                 selected: isSelected,
                 onSelected: (_) => setState(() => _priority = priority),
                 selectedColor: color,
                 backgroundColor: ITColors.cardColor(widget.isDark),
                 labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : ITColors.textSecondaryColor(widget.isDark),
+                  color: isSelected
+                      ? Colors.white
+                      : ITColors.textSecondaryColor(widget.isDark),
                 ),
                 side: BorderSide(
-                  color: isSelected ? color : ITColors.borderColor(widget.isDark),
+                  color: isSelected
+                      ? color
+                      : ITColors.borderColor(widget.isDark),
                 ),
                 showCheckmark: false,
               );
             }).toList(),
           ),
           const SizedBox(height: 20),
-          
+
           // Date Range
           Text(
             'Date Range',
@@ -182,7 +208,10 @@ class _ITSearchFilterSheetState extends State<ITSearchFilterSheet> {
                   if (_dateRange != null)
                     IconButton(
                       onPressed: () => setState(() => _dateRange = null),
-                      icon: Icon(Icons.close_rounded, color: ITColors.textSecondaryColor(widget.isDark)),
+                      icon: Icon(
+                        Icons.close_rounded,
+                        color: ITColors.textSecondaryColor(widget.isDark),
+                      ),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
                     ),
@@ -191,7 +220,7 @@ class _ITSearchFilterSheetState extends State<ITSearchFilterSheet> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // Action Buttons
           Row(
             children: [
@@ -206,12 +235,18 @@ class _ITSearchFilterSheetState extends State<ITSearchFilterSheet> {
                   },
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    side: BorderSide(color: ITColors.borderColor(widget.isDark)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    side: BorderSide(
+                      color: ITColors.borderColor(widget.isDark),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: Text(
                     'Reset',
-                    style: TextStyle(color: ITColors.textPrimaryColor(widget.isDark)),
+                    style: TextStyle(
+                      color: ITColors.textPrimaryColor(widget.isDark),
+                    ),
                   ),
                 ),
               ),
@@ -225,9 +260,14 @@ class _ITSearchFilterSheetState extends State<ITSearchFilterSheet> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ITColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  child: const Text('Apply', style: TextStyle(color: Colors.white)),
+                  child: const Text(
+                    'Apply',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ],

@@ -30,11 +30,13 @@ class _EmailNotificationsSettingsScreenState
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -193,10 +195,7 @@ class _EmailNotificationsSettingsScreenState
               children: [
                 const Text(
                   'Email Address',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.white70,
-                  ),
+                  style: TextStyle(fontSize: 13, color: Colors.white70),
                 ),
                 const SizedBox(height: 4),
                 const Text(
@@ -285,9 +284,7 @@ class _EmailNotificationsSettingsScreenState
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF0F172A)
-                  : const Color(0xFFF1F5F9),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -375,16 +372,14 @@ class _EmailNotificationsSettingsScreenState
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    margin: EdgeInsets.only(
-                      right: f.$1 != 'monthly' ? 8 : 0,
-                    ),
+                    margin: EdgeInsets.only(right: f.$1 != 'monthly' ? 8 : 0),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? const Color(0xFF3B82F6)
                           : (isDark
-                              ? const Color(0xFF0F172A)
-                              : const Color(0xFFF1F5F9)),
+                                ? const Color(0xFF0F172A)
+                                : const Color(0xFFF1F5F9)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Center(
@@ -392,8 +387,9 @@ class _EmailNotificationsSettingsScreenState
                         f.$2,
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                           color: isSelected
                               ? Colors.white
                               : (isDark ? Colors.white70 : Colors.black54),
@@ -507,12 +503,14 @@ class _UnsubscribeConfirmDialogState extends State<_UnsubscribeConfirmDialog>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -535,9 +533,7 @@ class _UnsubscribeConfirmDialogState extends State<_UnsubscribeConfirmDialog>
             constraints: const BoxConstraints(maxWidth: 340),
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: widget.isDark
-                  ? const Color(0xFF1E293B)
-                  : Colors.white,
+              color: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
@@ -662,8 +658,9 @@ class _UnsubscribeConfirmDialogState extends State<_UnsubscribeConfirmDialog>
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color:
-                                    const Color(0xFFEF4444).withValues(alpha: 0.4),
+                                color: const Color(
+                                  0xFFEF4444,
+                                ).withValues(alpha: 0.4),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),

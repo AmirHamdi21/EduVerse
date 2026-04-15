@@ -8134,6 +8134,33 @@ class AppLocalizationsEn extends AppLocalizations {
       'Consider assigning TAs for better student support';
 
   @override
+  String sectionLabel(Object sectionNumber) {
+    return 'Section $sectionNumber';
+  }
+
+  @override
+  String sectionScheduleLabel(Object sectionNumber, Object day) {
+    return 'Section $sectionNumber - $day';
+  }
+
+  @override
+  String get studentUserIdHint => 'Student User ID';
+
+  @override
+  String idValue(Object id) {
+    return 'ID $id';
+  }
+
+  @override
+  String get rolePrimary => 'Primary Instructor';
+
+  @override
+  String get roleCoInstructor => 'Co-Instructor';
+
+  @override
+  String get roleGuestInstructor => 'Guest Instructor';
+
+  @override
   String get recommendMoreTAs =>
       'Consider adding more TAs for large class size';
 

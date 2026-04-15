@@ -74,7 +74,8 @@ class StudentAttendanceCard extends StatelessWidget {
                               fontSize: 12,
                             ),
                           ),
-                          if (student.note != null && student.note!.isNotEmpty) ...[
+                          if (student.note != null &&
+                              student.note!.isNotEmpty) ...[
                             const SizedBox(height: 4),
                             Row(
                               children: [
@@ -116,7 +117,11 @@ class StudentAttendanceCard extends StatelessWidget {
   }
 
   Widget _buildAvatar() {
-    final initials = student.studentName.split(' ').map((e) => e[0]).take(2).join();
+    final initials = student.studentName
+        .split(' ')
+        .map((e) => e[0])
+        .take(2)
+        .join();
     final colors = [
       AttendanceColors.primary,
       AttendanceColors.present,
@@ -263,15 +268,15 @@ class StudentAttendanceCard extends StatelessWidget {
               color: isSelected
                   ? color
                   : (isDark
-                      ? AttendanceColors.darkSurface
-                      : AttendanceColors.surface),
+                        ? AttendanceColors.darkSurface
+                        : AttendanceColors.surface),
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
                 color: isSelected
                     ? color
                     : (isDark
-                        ? AttendanceColors.darkBorder.withValues(alpha: 0.5)
-                        : AttendanceColors.border),
+                          ? AttendanceColors.darkBorder.withValues(alpha: 0.5)
+                          : AttendanceColors.border),
               ),
             ),
             child: Row(

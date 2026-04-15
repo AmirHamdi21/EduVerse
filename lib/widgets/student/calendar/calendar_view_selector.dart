@@ -34,21 +34,9 @@ class CalendarViewSelector extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildViewTab(
-                  l10n.monthView,
-                  CalendarViewType.month,
-                  isDark,
-                ),
-                _buildViewTab(
-                  l10n.weekView,
-                  CalendarViewType.week,
-                  isDark,
-                ),
-                _buildViewTab(
-                  l10n.dayView,
-                  CalendarViewType.day,
-                  isDark,
-                ),
+                _buildViewTab(l10n.monthView, CalendarViewType.month, isDark),
+                _buildViewTab(l10n.weekView, CalendarViewType.week, isDark),
+                _buildViewTab(l10n.dayView, CalendarViewType.day, isDark),
               ],
             ),
           ),
@@ -66,9 +54,7 @@ class CalendarViewSelector extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFF2B7FFF)
-              : Colors.transparent,
+          color: isSelected ? const Color(0xFF2B7FFF) : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           boxShadow: isSelected
               ? [

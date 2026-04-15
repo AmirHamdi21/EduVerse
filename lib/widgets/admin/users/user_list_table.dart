@@ -56,7 +56,9 @@ class UserListTable extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
       ),
       child: Column(
@@ -195,10 +197,7 @@ class UserListTable extends StatelessWidget {
               ],
             ),
           ),
-          Expanded(
-            flex: 1,
-            child: _buildRoleBadge(user.role, roleColor, l10n),
-          ),
+          Expanded(flex: 1, child: _buildRoleBadge(user.role, roleColor, l10n)),
           SizedBox(
             width: 120,
             child: Row(
@@ -415,10 +414,7 @@ class UserListTable extends StatelessWidget {
                   color: AdminColors.getTextSecondaryColor(isDark),
                 ),
                 iconSize: 20,
-                constraints: const BoxConstraints(
-                  minWidth: 32,
-                  minHeight: 32,
-                ),
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
               ),
               IconButton(
                 onPressed: () {},
@@ -427,10 +423,7 @@ class UserListTable extends StatelessWidget {
                   color: AdminColors.getTextSecondaryColor(isDark),
                 ),
                 iconSize: 20,
-                constraints: const BoxConstraints(
-                  minWidth: 32,
-                  minHeight: 32,
-                ),
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
               ),
             ],
           ),

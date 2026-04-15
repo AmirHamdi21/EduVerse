@@ -62,8 +62,8 @@ class _AdminNotificationTileState extends State<AdminNotificationTile>
 
   Future<void> _loadSwipeSettings() async {
     AdminNotificationSwipeSettingsService.instance.clearCache();
-    final settings =
-        await AdminNotificationSwipeSettingsService.instance.getSwipeSettings();
+    final settings = await AdminNotificationSwipeSettingsService.instance
+        .getSwipeSettings();
     if (mounted) {
       setState(() => _swipeSettings = settings);
     }
@@ -114,7 +114,8 @@ class _AdminNotificationTileState extends State<AdminNotificationTile>
               ? l10n.adminNotificationDeleteConfirmMessage
               : l10n.adminNotificationArchiveConfirmMessage,
           style: TextStyle(
-              color: AdminColors.getTextSecondaryColor(widget.isDark)),
+            color: AdminColors.getTextSecondaryColor(widget.isDark),
+          ),
         ),
         actions: [
           TextButton(
@@ -124,11 +125,14 @@ class _AdminNotificationTileState extends State<AdminNotificationTile>
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  action == SwipeAction.delete ? AdminColors.error : AdminColors.primary,
+              backgroundColor: action == SwipeAction.delete
+                  ? AdminColors.error
+                  : AdminColors.primary,
               foregroundColor: Colors.white,
             ),
-            child: Text(action == SwipeAction.delete ? l10n.delete : l10n.archive),
+            child: Text(
+              action == SwipeAction.delete ? l10n.delete : l10n.archive,
+            ),
           ),
         ],
       ),
@@ -188,10 +192,7 @@ class _AdminNotificationTileState extends State<AdminNotificationTile>
 
     return Container(
       alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
-      padding: EdgeInsets.only(
-        left: isLeft ? 24 : 0,
-        right: isLeft ? 0 : 24,
-      ),
+      padding: EdgeInsets.only(left: isLeft ? 24 : 0, right: isLeft ? 0 : 24),
       decoration: BoxDecoration(
         color: action.color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(16),
@@ -216,11 +217,7 @@ class _AdminNotificationTileState extends State<AdminNotificationTile>
               color: action.color,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              action.icon,
-              color: Colors.white,
-              size: 20,
-            ),
+            child: Icon(action.icon, color: Colors.white, size: 20),
           ),
           if (isLeft) ...[
             const SizedBox(width: 8),
@@ -420,10 +417,7 @@ class _AdminNotificationTileState extends State<AdminNotificationTile>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            colors[0].withOpacity(0.15),
-            colors[1].withOpacity(0.15),
-          ],
+          colors: [colors[0].withOpacity(0.15), colors[1].withOpacity(0.15)],
         ),
         borderRadius: BorderRadius.circular(14),
       ),

@@ -29,11 +29,13 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -259,9 +261,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF0F172A)
-                  : const Color(0xFFF1F5F9),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -325,9 +325,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF0F172A)
-                  : const Color(0xFFF1F5F9),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -363,9 +361,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF0F172A)
-                  : const Color(0xFFF1F5F9),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(8),
             ),
             child: DropdownButton<String>(
@@ -373,8 +369,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
               underline: const SizedBox.shrink(),
               isDense: true,
               borderRadius: BorderRadius.circular(12),
-              dropdownColor:
-                  isDark ? const Color(0xFF1E293B) : Colors.white,
+              dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -386,10 +381,7 @@ class _PrivacySettingsScreenState extends State<PrivacySettingsScreen> {
                 color: isDark ? Colors.white54 : Colors.black45,
               ),
               items: options.map((o) {
-                return DropdownMenuItem(
-                  value: o.$1,
-                  child: Text(o.$2),
-                );
+                return DropdownMenuItem(value: o.$1, child: Text(o.$2));
               }).toList(),
               onChanged: (v) {
                 HapticFeedback.selectionClick();

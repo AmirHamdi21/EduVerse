@@ -56,8 +56,9 @@ class _SummarizerScreenState extends State<SummarizerScreen>
           final l10n = AppLocalizations.of(context);
 
           return Scaffold(
-            backgroundColor:
-                isDark ? const Color(0xFF0A0A0A) : const Color(0xFFF9FAFB),
+            backgroundColor: isDark
+                ? const Color(0xFF0A0A0A)
+                : const Color(0xFFF9FAFB),
             body: Stack(
               children: [
                 // Background gradient
@@ -67,9 +68,7 @@ class _SummarizerScreenState extends State<SummarizerScreen>
                   child: Column(
                     children: [
                       SummarizerAppBar(isDark: isDark),
-                      Expanded(
-                        child: _buildContent(isDark, l10n),
-                      ),
+                      Expanded(child: _buildContent(isDark, l10n)),
                     ],
                   ),
                 ),
@@ -92,14 +91,8 @@ class _SummarizerScreenState extends State<SummarizerScreen>
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: isDark
-                ? [
-                    const Color(0xFF0A0A0A),
-                    const Color(0xFF030712),
-                  ]
-                : [
-                    const Color(0xFFF9FAFB),
-                    Colors.white,
-                  ],
+                ? [const Color(0xFF0A0A0A), const Color(0xFF030712)]
+                : [const Color(0xFFF9FAFB), Colors.white],
           ),
         ),
       ),
@@ -121,42 +114,35 @@ class _SummarizerScreenState extends State<SummarizerScreen>
               child: FadeTransition(
                 opacity: _animationController,
                 child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.1),
-                    end: Offset.zero,
-                  ).animate(CurvedAnimation(
-                    parent: _animationController,
-                    curve: Curves.easeOut,
-                  )),
+                  position:
+                      Tween<Offset>(
+                        begin: const Offset(0, 0.1),
+                        end: Offset.zero,
+                      ).animate(
+                        CurvedAnimation(
+                          parent: _animationController,
+                          curve: Curves.easeOut,
+                        ),
+                      ),
                   child: SummarizerInputSection(isDark: isDark),
                 ),
               ),
             ),
 
             // Summarization type selector
-            SliverToBoxAdapter(
-              child: SummarizerTypeSelector(isDark: isDark),
-            ),
+            SliverToBoxAdapter(child: SummarizerTypeSelector(isDark: isDark)),
 
             // Generate button
-            SliverToBoxAdapter(
-              child: SummarizerGenerateButton(isDark: isDark),
-            ),
+            SliverToBoxAdapter(child: SummarizerGenerateButton(isDark: isDark)),
 
             // Result section (shows current summary or empty state)
-            SliverToBoxAdapter(
-              child: SummarizerResultSection(isDark: isDark),
-            ),
+            SliverToBoxAdapter(child: SummarizerResultSection(isDark: isDark)),
 
             // History section
-            SliverToBoxAdapter(
-              child: SummarizerHistorySection(isDark: isDark),
-            ),
+            SliverToBoxAdapter(child: SummarizerHistorySection(isDark: isDark)),
 
             // Bottom padding
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 100),
-            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         );
       },
@@ -179,10 +165,7 @@ class _SummarizerScreenState extends State<SummarizerScreen>
               );
             },
             backgroundColor: const Color(0xFF3B82F6),
-            child: const Icon(
-              Icons.add_rounded,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.add_rounded, color: Colors.white),
           );
         }
         return const SizedBox.shrink();

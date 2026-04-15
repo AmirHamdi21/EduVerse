@@ -60,7 +60,10 @@ class AiNoteCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: note.category.color.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(8),
@@ -87,7 +90,10 @@ class AiNoteCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.05)
@@ -115,7 +121,9 @@ class AiNoteCard extends StatelessWidget {
                   ),
                   const Spacer(),
                   _buildIconButton(
-                    icon: note.isFavorited ? Icons.favorite : Icons.favorite_border,
+                    icon: note.isFavorited
+                        ? Icons.favorite
+                        : Icons.favorite_border,
                     color: note.isFavorited ? const Color(0xFFEF4444) : null,
                     isDark: isDark,
                     onTap: () {
@@ -191,23 +199,30 @@ class AiNoteCard extends StatelessWidget {
                 Wrap(
                   spacing: 6,
                   runSpacing: 6,
-                  children: note.keyTopics.map((topic) => Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.08)
-                          : const Color(0xFFF1F5F9),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      topic,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: isDark ? Colors.white70 : Colors.black54,
-                      ),
-                    ),
-                  )).toList(),
+                  children: note.keyTopics
+                      .map(
+                        (topic) => Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : const Color(0xFFF1F5F9),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            topic,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: isDark ? Colors.white70 : Colors.black54,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
                 ),
               ],
               const SizedBox(height: 12),
@@ -217,8 +232,12 @@ class AiNoteCard extends StatelessWidget {
                   Expanded(
                     child: _buildActionButton(
                       context,
-                      icon: note.isExpanded ? Icons.expand_less : Icons.expand_more,
-                      label: note.isExpanded ? l10n.showLess : l10n.viewStructure,
+                      icon: note.isExpanded
+                          ? Icons.expand_less
+                          : Icons.expand_more,
+                      label: note.isExpanded
+                          ? l10n.showLess
+                          : l10n.viewStructure,
                       isDark: isDark,
                       onTap: onExpandToggle,
                     ),
@@ -290,11 +309,7 @@ class AiNoteCard extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 18,
-                color: const Color(0xFF8B5CF6),
-              ),
+              Icon(icon, size: 18, color: const Color(0xFF8B5CF6)),
               const SizedBox(width: 6),
               Text(
                 label,
@@ -321,7 +336,11 @@ class AiNoteCard extends StatelessWidget {
     );
   }
 
-  void _showMoreOptions(BuildContext context, bool isDark, AppLocalizations l10n) {
+  void _showMoreOptions(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -350,7 +369,9 @@ class AiNoteCard extends StatelessWidget {
               isDark: isDark,
               onTap: () {
                 Navigator.pop(context);
-                Clipboard.setData(ClipboardData(text: '${note.title}\n\n${note.content}'));
+                Clipboard.setData(
+                  ClipboardData(text: '${note.title}\n\n${note.content}'),
+                );
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(l10n.copiedToClipboard),
@@ -429,11 +450,20 @@ class AiNoteCard extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: (isDestructive ? const Color(0xFFEF4444) : const Color(0xFF8B5CF6))
-                .withValues(alpha: 0.1),
+            color:
+                (isDestructive
+                        ? const Color(0xFFEF4444)
+                        : const Color(0xFF8B5CF6))
+                    .withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(icon, color: isDestructive ? const Color(0xFFEF4444) : const Color(0xFF8B5CF6), size: 20),
+          child: Icon(
+            icon,
+            color: isDestructive
+                ? const Color(0xFFEF4444)
+                : const Color(0xFF8B5CF6),
+            size: 20,
+          ),
         ),
         title: Text(
           label,
@@ -447,7 +477,11 @@ class AiNoteCard extends StatelessWidget {
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, bool isDark, AppLocalizations l10n) {
+  void _showDeleteConfirmation(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -497,12 +531,14 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -567,14 +603,19 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog>
                               height: 88,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                                  colors: [
+                                    Color(0xFFEF4444),
+                                    Color(0xFFDC2626),
+                                  ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+                                    color: const Color(
+                                      0xFFEF4444,
+                                    ).withValues(alpha: 0.4),
                                     blurRadius: 24,
                                     offset: const Offset(0, 8),
                                   ),
@@ -595,7 +636,9 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog>
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: widget.isDark ? Colors.white : const Color(0xFF1A1A2E),
+                          color: widget.isDark
+                              ? Colors.white
+                              : const Color(0xFF1A1A2E),
                         ),
                       ),
                     ],
@@ -626,7 +669,9 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog>
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+                                color: const Color(
+                                  0xFF8B5CF6,
+                                ).withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(
@@ -642,7 +687,9 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog>
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: widget.isDark ? Colors.white : const Color(0xFF1A1A2E),
+                                  color: widget.isDark
+                                      ? Colors.white
+                                      : const Color(0xFF1A1A2E),
                                 ),
                                 maxLines: 2,
                                 overflow: TextOverflow.ellipsis,
@@ -661,7 +708,9 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog>
                               : const Color(0xFFFEF2F2),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                            color: const Color(
+                              0xFFEF4444,
+                            ).withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -669,7 +718,9 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog>
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+                                color: const Color(
+                                  0xFFEF4444,
+                                ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(
@@ -703,7 +754,9 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog>
                             child: GestureDetector(
                               onTap: widget.onCancel,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   color: widget.isDark
                                       ? const Color(0xFF252D48)
@@ -751,15 +804,22 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog>
                                 widget.onDelete();
                               },
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                                    colors: [
+                                      Color(0xFFEF4444),
+                                      Color(0xFFDC2626),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+                                      color: const Color(
+                                        0xFFEF4444,
+                                      ).withValues(alpha: 0.4),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),
@@ -800,4 +860,3 @@ class _DeleteNoteDialogState extends State<_DeleteNoteDialog>
     );
   }
 }
-

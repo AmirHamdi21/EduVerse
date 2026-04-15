@@ -5,10 +5,7 @@ import 'grading_theme_colors.dart';
 class GradingSkeleton extends StatefulWidget {
   final bool isDark;
 
-  const GradingSkeleton({
-    super.key,
-    required this.isDark,
-  });
+  const GradingSkeleton({super.key, required this.isDark});
 
   @override
   State<GradingSkeleton> createState() => _GradingSkeletonState();
@@ -49,7 +46,9 @@ class _GradingSkeletonState extends State<GradingSkeleton>
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: widget.isDark ? 0.1 : 0.03),
+                color: Colors.black.withValues(
+                  alpha: widget.isDark ? 0.1 : 0.03,
+                ),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -94,7 +93,10 @@ class _GradingSkeletonState extends State<GradingSkeleton>
                     const SizedBox(height: 16),
                     // Info bar
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
                       decoration: BoxDecoration(
                         color: widget.isDark
                             ? GradingColors.darkSurface.withValues(alpha: 0.3)
@@ -140,7 +142,7 @@ class _GradingSkeletonState extends State<GradingSkeleton>
     final highlightColor = widget.isDark
         ? GradingColors.darkBorder
         : GradingColors.divider;
-    
+
     return Color.lerp(baseColor, highlightColor, (progress * 2 - 1).abs())!;
   }
 
@@ -203,10 +205,7 @@ class _GradingSkeletonState extends State<GradingSkeleton>
 class StatsSkeletonDashboard extends StatefulWidget {
   final bool isDark;
 
-  const StatsSkeletonDashboard({
-    super.key,
-    required this.isDark,
-  });
+  const StatsSkeletonDashboard({super.key, required this.isDark});
 
   @override
   State<StatsSkeletonDashboard> createState() => _StatsSkeletonDashboardState();
@@ -239,7 +238,7 @@ class _StatsSkeletonDashboardState extends State<StatsSkeletonDashboard>
     final highlightColor = widget.isDark
         ? GradingColors.darkBorder
         : GradingColors.divider;
-    
+
     return Color.lerp(baseColor, highlightColor, (progress * 2 - 1).abs())!;
   }
 
@@ -305,17 +304,11 @@ class _StatsSkeletonDashboardState extends State<StatsSkeletonDashboard>
           const SizedBox(height: 20),
           Row(
             children: [
-              Expanded(
-                child: _buildShimmerBox(height: 80, radius: 16),
-              ),
+              Expanded(child: _buildShimmerBox(height: 80, radius: 16)),
               const SizedBox(width: 12),
-              Expanded(
-                child: _buildShimmerBox(height: 80, radius: 16),
-              ),
+              Expanded(child: _buildShimmerBox(height: 80, radius: 16)),
               const SizedBox(width: 12),
-              Expanded(
-                child: _buildShimmerBox(height: 80, radius: 16),
-              ),
+              Expanded(child: _buildShimmerBox(height: 80, radius: 16)),
             ],
           ),
         ],

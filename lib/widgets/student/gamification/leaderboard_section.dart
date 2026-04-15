@@ -153,7 +153,11 @@ class LeaderboardSection extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchBar(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildSearchBar(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return Row(
       children: [
         Expanded(
@@ -200,7 +204,9 @@ class LeaderboardSection extends StatelessWidget {
               border: Border.all(
                 color: isComparing
                     ? const Color(0xFF2B7FFF)
-                    : (isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB)),
+                    : (isDark
+                          ? const Color(0xFF374151)
+                          : const Color(0xFFE5E7EB)),
               ),
             ),
             child: Row(
@@ -255,7 +261,11 @@ class LeaderboardSection extends StatelessWidget {
     );
   }
 
-  Widget _buildCompareButton(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildCompareButton(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return GestureDetector(
       onTap: () => _showCompareSheet(context, l10n, isDark),
       child: Container(
@@ -297,7 +307,11 @@ class LeaderboardSection extends StatelessWidget {
     );
   }
 
-  void _showCompareSheet(BuildContext context, AppLocalizations l10n, bool isDark) {
+  void _showCompareSheet(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -317,7 +331,9 @@ class LeaderboardSection extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                  color: isDark
+                      ? const Color(0xFF374151)
+                      : const Color(0xFFE5E7EB),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -378,18 +394,20 @@ class _LeaderboardItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: entry.isCurrentUser
               ? (isDark
-                  ? const Color(0xFF2B7FFF).withValues(alpha: 0.15)
-                  : const Color(0xFFF0F7FF))
+                    ? const Color(0xFF2B7FFF).withValues(alpha: 0.15)
+                    : const Color(0xFFF0F7FF))
               : (isSelected
-                  ? (isDark
-                      ? const Color(0xFF8B5CF6).withValues(alpha: 0.15)
-                      : const Color(0xFFF5F3FF))
-                  : Colors.transparent),
+                    ? (isDark
+                          ? const Color(0xFF8B5CF6).withValues(alpha: 0.15)
+                          : const Color(0xFFF5F3FF))
+                    : Colors.transparent),
           border: Border(
             bottom: isLast
                 ? BorderSide.none
                 : BorderSide(
-                    color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                    color: isDark
+                        ? const Color(0xFF374151)
+                        : const Color(0xFFE5E7EB),
                   ),
             left: entry.isCurrentUser
                 ? const BorderSide(color: Color(0xFF2B7FFF), width: 3)
@@ -415,7 +433,9 @@ class _LeaderboardItem extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : const Color(0xFF1F2937),
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF1F2937),
                           ),
                         ),
                       ),
@@ -427,7 +447,9 @@ class _LeaderboardItem extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF2B7FFF).withValues(alpha: 0.2),
+                            color: const Color(
+                              0xFF2B7FFF,
+                            ).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -435,7 +457,9 @@ class _LeaderboardItem extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2B7FFF),
+                              color: isDark
+                                  ? const Color(0xFF60A5FA)
+                                  : const Color(0xFF2B7FFF),
                             ),
                           ),
                         ),
@@ -457,11 +481,16 @@ class _LeaderboardItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  entry.xp.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},'),
+                  entry.xp.toString().replaceAllMapped(
+                    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                    (m) => '${m[1]},',
+                  ),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2B7FFF),
+                    color: isDark
+                        ? const Color(0xFF60A5FA)
+                        : const Color(0xFF2B7FFF),
                   ),
                 ),
                 Text(
@@ -486,7 +515,9 @@ class _LeaderboardItem extends StatelessWidget {
                   border: Border.all(
                     color: isSelected
                         ? const Color(0xFF8B5CF6)
-                        : (isDark ? const Color(0xFF374151) : const Color(0xFFD1D5DB)),
+                        : (isDark
+                              ? const Color(0xFF374151)
+                              : const Color(0xFFD1D5DB)),
                     width: 2,
                   ),
                 ),

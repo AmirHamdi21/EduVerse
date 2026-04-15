@@ -77,16 +77,17 @@ class ITSystemLimitsSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Daily Requests Limit
           _buildLimitInput(
             'Daily Requests per Day/User',
             limits.dailyRequestsPerUser,
             'req/day',
-            (value) => onLimitsChanged(limits.copyWith(dailyRequestsPerUser: value)),
+            (value) =>
+                onLimitsChanged(limits.copyWith(dailyRequestsPerUser: value)),
           ),
           const SizedBox(height: 20),
-          
+
           // Usage Progress
           Text(
             'Usage Progress',
@@ -117,9 +118,9 @@ class ITSystemLimitsSection extends StatelessWidget {
             limits.taLimit,
             ITColors.purple,
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // High Load Warning
           _buildHighLoadWarning(),
         ],
@@ -157,7 +158,10 @@ class ITSystemLimitsSection extends StatelessWidget {
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.05)
@@ -195,10 +199,7 @@ class ITSystemLimitsSection extends StatelessWidget {
               const SizedBox(width: 8),
               Column(
                 children: [
-                  _buildAdjustButton(
-                    Icons.add,
-                    () => onChanged(value + 1000),
-                  ),
+                  _buildAdjustButton(Icons.add, () => onChanged(value + 1000)),
                   const SizedBox(height: 4),
                   _buildAdjustButton(
                     Icons.remove,
@@ -222,21 +223,12 @@ class ITSystemLimitsSection extends StatelessWidget {
           color: ITColors.primary.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(
-          icon,
-          size: 16,
-          color: ITColors.primary,
-        ),
+        child: Icon(icon, size: 16, color: ITColors.primary),
       ),
     );
   }
 
-  Widget _buildUsageProgress(
-    String label,
-    int used,
-    int limit,
-    Color color,
-  ) {
+  Widget _buildUsageProgress(String label, int used, int limit, Color color) {
     final progress = (used / limit).clamp(0.0, 1.0);
     final percentage = (progress * 100).round();
 
@@ -303,10 +295,7 @@ class ITSystemLimitsSection extends StatelessWidget {
                   height: 6,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        color,
-                        color.withValues(alpha: 0.7),
-                      ],
+                      colors: [color, color.withValues(alpha: 0.7)],
                     ),
                     borderRadius: BorderRadius.circular(3),
                   ),
@@ -368,8 +357,9 @@ class ITSystemLimitsSection extends StatelessWidget {
               ),
               Switch(
                 value: limits.highLoadWarningEnabled,
-                onChanged: (value) =>
-                    onLimitsChanged(limits.copyWith(highLoadWarningEnabled: value)),
+                onChanged: (value) => onLimitsChanged(
+                  limits.copyWith(highLoadWarningEnabled: value),
+                ),
                 activeColor: ITColors.warning,
               ),
             ],
@@ -396,21 +386,27 @@ class ITSystemLimitsSection extends StatelessWidget {
                       thumbColor: ITColors.warning,
                       overlayColor: ITColors.warning.withValues(alpha: 0.2),
                       trackHeight: 4,
-                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                      thumbShape: const RoundSliderThumbShape(
+                        enabledThumbRadius: 6,
+                      ),
                     ),
                     child: Slider(
                       value: limits.highLoadThreshold.toDouble(),
                       min: 50,
                       max: 100,
                       divisions: 10,
-                      onChanged: (value) =>
-                          onLimitsChanged(limits.copyWith(highLoadThreshold: value.round())),
+                      onChanged: (value) => onLimitsChanged(
+                        limits.copyWith(highLoadThreshold: value.round()),
+                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: ITColors.warning.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),

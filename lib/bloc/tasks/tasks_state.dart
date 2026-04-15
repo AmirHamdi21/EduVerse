@@ -45,8 +45,9 @@ class TasksFilter {
       priority: clearPriority ? null : (priority ?? this.priority),
       category: clearCategory ? null : (category ?? this.category),
       courseCode: clearCourseCode ? null : (courseCode ?? this.courseCode),
-      isBookmarked:
-          clearIsBookmarked ? null : (isBookmarked ?? this.isBookmarked),
+      isBookmarked: clearIsBookmarked
+          ? null
+          : (isBookmarked ?? this.isBookmarked),
       dueDateFrom: clearDueDateFrom ? null : (dueDateFrom ?? this.dueDateFrom),
       dueDateTo: clearDueDateTo ? null : (dueDateTo ?? this.dueDateTo),
     );
@@ -181,10 +182,12 @@ abstract class TasksState extends Equatable {
     final today = DateTime(now.year, now.month, now.day);
     final tomorrow = today.add(const Duration(days: 1));
     return tasks
-        .where((t) =>
-            t.dueDate.isAfter(today) &&
-            t.dueDate.isBefore(tomorrow) &&
-            t.status != TaskStatus.completed)
+        .where(
+          (t) =>
+              t.dueDate.isAfter(today) &&
+              t.dueDate.isBefore(tomorrow) &&
+              t.status != TaskStatus.completed,
+        )
         .toList();
   }
 
@@ -192,16 +195,24 @@ abstract class TasksState extends Equatable {
     final now = DateTime.now();
     final endOfWeek = now.add(Duration(days: 7 - now.weekday));
     return tasks
-        .where((t) =>
-            t.dueDate.isBefore(endOfWeek) &&
-            t.dueDate.isAfter(now) &&
-            t.status != TaskStatus.completed)
+        .where(
+          (t) =>
+              t.dueDate.isBefore(endOfWeek) &&
+              t.dueDate.isAfter(now) &&
+              t.status != TaskStatus.completed,
+        )
         .toList();
   }
 
   @override
-  List<Object?> get props =>
-      [tasks, filter, sortBy, sortAscending, viewMode, searchQuery];
+  List<Object?> get props => [
+    tasks,
+    filter,
+    sortBy,
+    sortAscending,
+    viewMode,
+    searchQuery,
+  ];
 }
 
 class TasksInitial extends TasksState {

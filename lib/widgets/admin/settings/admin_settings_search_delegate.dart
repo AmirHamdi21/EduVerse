@@ -6,36 +6,32 @@ class AdminSettingsSearchDelegate extends SearchDelegate<String> {
   final bool isDark;
   final AppLocalizations l10n;
 
-  AdminSettingsSearchDelegate({
-    required this.isDark,
-    required this.l10n,
-  }) : super(
-          searchFieldLabel: 'Search settings...',
-          searchFieldStyle: TextStyle(
-            color: isDark ? Colors.white : Colors.black87,
-            fontSize: 16,
-          ),
-        );
+  AdminSettingsSearchDelegate({required this.isDark, required this.l10n})
+    : super(
+        searchFieldLabel: 'Search settings...',
+        searchFieldStyle: TextStyle(
+          color: isDark ? Colors.white : Colors.black87,
+          fontSize: 16,
+        ),
+      );
 
   @override
   ThemeData appBarTheme(BuildContext context) {
     return Theme.of(context).copyWith(
       appBarTheme: AppBarTheme(
-        backgroundColor:
-            isDark ? AdminColors.darkBackground : AdminColors.lightBackground,
+        backgroundColor: isDark
+            ? AdminColors.darkBackground
+            : AdminColors.lightBackground,
         elevation: 0,
-        iconTheme: IconThemeData(
-          color: isDark ? Colors.white : Colors.black87,
-        ),
+        iconTheme: IconThemeData(color: isDark ? Colors.white : Colors.black87),
       ),
       inputDecorationTheme: InputDecorationTheme(
         border: InputBorder.none,
-        hintStyle: TextStyle(
-          color: isDark ? Colors.white54 : Colors.black38,
-        ),
+        hintStyle: TextStyle(color: isDark ? Colors.white54 : Colors.black38),
       ),
-      scaffoldBackgroundColor:
-          isDark ? AdminColors.darkBackground : AdminColors.lightBackground,
+      scaffoldBackgroundColor: isDark
+          ? AdminColors.darkBackground
+          : AdminColors.lightBackground,
     );
   }
 
@@ -147,10 +143,12 @@ class AdminSettingsSearchDelegate extends SearchDelegate<String> {
     final filteredOptions = query.isEmpty
         ? settingsOptions
         : settingsOptions
-            .where((item) =>
-                item.title.toLowerCase().contains(query.toLowerCase()) ||
-                item.subtitle.toLowerCase().contains(query.toLowerCase()))
-            .toList();
+              .where(
+                (item) =>
+                    item.title.toLowerCase().contains(query.toLowerCase()) ||
+                    item.subtitle.toLowerCase().contains(query.toLowerCase()),
+              )
+              .toList();
 
     if (filteredOptions.isEmpty) {
       return Center(
@@ -200,9 +198,7 @@ class AdminSettingsSearchDelegate extends SearchDelegate<String> {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
       ),
       child: ListTile(
         onTap: () => close(context, item.route),
@@ -212,11 +208,7 @@ class AdminSettingsSearchDelegate extends SearchDelegate<String> {
             gradient: AdminColors.primaryGradient,
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            item.icon,
-            size: 20,
-            color: Colors.white,
-          ),
+          child: Icon(item.icon, size: 20, color: Colors.white),
         ),
         title: Text(
           item.title,

@@ -123,16 +123,29 @@ class ITIntegrationDetailSheet extends StatelessWidget {
               _buildSectionTitle('Connection Settings'),
               const SizedBox(height: 12),
               _buildSettingsCard([
-                _buildSettingRow('API Endpoint', 
-                    integration.connectionSettings!.apiEndpoint ?? 'Not configured'),
-                _buildSettingRow('Auto Sync', 
-                    integration.connectionSettings!.autoSync ? 'Enabled' : 'Disabled'),
-                _buildSettingRow('Sync Interval', 
-                    '${integration.connectionSettings!.syncInterval} min'),
-                _buildSettingRow('Rate Limit', 
-                    '${integration.connectionSettings!.rateLimitPerMinute}/min'),
-                _buildSettingRow('Timeout', 
-                    '${integration.connectionSettings!.timeout}s'),
+                _buildSettingRow(
+                  'API Endpoint',
+                  integration.connectionSettings!.apiEndpoint ??
+                      'Not configured',
+                ),
+                _buildSettingRow(
+                  'Auto Sync',
+                  integration.connectionSettings!.autoSync
+                      ? 'Enabled'
+                      : 'Disabled',
+                ),
+                _buildSettingRow(
+                  'Sync Interval',
+                  '${integration.connectionSettings!.syncInterval} min',
+                ),
+                _buildSettingRow(
+                  'Rate Limit',
+                  '${integration.connectionSettings!.rateLimitPerMinute}/min',
+                ),
+                _buildSettingRow(
+                  'Timeout',
+                  '${integration.connectionSettings!.timeout}s',
+                ),
               ]),
               const SizedBox(height: 20),
             ],
@@ -360,14 +373,10 @@ class ITIntegrationDetailSheet extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : ITColors.surface,
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : ITColors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
       ),
       child: Column(children: children),
@@ -402,18 +411,14 @@ class ITIntegrationDetailSheet extends StatelessWidget {
 
   Widget _buildPerformanceGrid() {
     final metrics = integration.performanceMetrics!;
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.05)
-            : ITColors.surface,
+        color: isDark ? Colors.white.withValues(alpha: 0.05) : ITColors.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
       ),
       child: Column(
@@ -466,7 +471,12 @@ class ITIntegrationDetailSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildMetricTile(String label, String value, IconData icon, Color color) {
+  Widget _buildMetricTile(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -527,11 +537,7 @@ class ITIntegrationDetailSheet extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 18,
-                color: isPrimary ? Colors.white : color,
-              ),
+              Icon(icon, size: 18, color: isPrimary ? Colors.white : color),
               const SizedBox(width: 8),
               Text(
                 label,

@@ -23,14 +23,11 @@ class GradeCard extends StatelessWidget {
 
     if (animation != null) {
       return SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 0.3),
-          end: Offset.zero,
-        ).animate(CurvedAnimation(parent: animation!, curve: Curves.easeOutCubic)),
-        child: FadeTransition(
-          opacity: animation!,
-          child: cardContent,
-        ),
+        position: Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
+            .animate(
+              CurvedAnimation(parent: animation!, curve: Curves.easeOutCubic),
+            ),
+        child: FadeTransition(opacity: animation!, child: cardContent),
       );
     }
     return cardContent;
@@ -51,7 +48,9 @@ class GradeCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.black : course.courseColor).withValues(alpha: 0.1),
+            color: (isDark ? Colors.black : course.courseColor).withValues(
+              alpha: 0.1,
+            ),
             blurRadius: 16,
             offset: const Offset(0, 6),
           ),
@@ -159,13 +158,17 @@ class GradeCard extends StatelessWidget {
                   Icon(
                     Icons.school_rounded,
                     size: 14,
-                    color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+                    color: isDark
+                        ? const Color(0xFF64748B)
+                        : const Color(0xFF94A3B8),
                   ),
                   SizedBox(width: responsive.p4),
                   Text(
                     '${course.creditHours} Credits',
                     style: TextStyle(
-                      color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                      color: isDark
+                          ? const Color(0xFF94A3B8)
+                          : const Color(0xFF64748B),
                       fontSize: responsive.fontSize12,
                     ),
                   ),
@@ -191,10 +194,7 @@ class GradeCard extends StatelessWidget {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            grade.color,
-            grade.color.withValues(alpha: 0.8),
-          ],
+          colors: [grade.color, grade.color.withValues(alpha: 0.8)],
         ),
         borderRadius: BorderRadius.circular(responsive.radius12),
         boxShadow: [
@@ -297,7 +297,9 @@ class GradeCard extends StatelessWidget {
     return Container(
       width: 1,
       height: 40,
-      color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
+      color: isDark
+          ? Colors.white.withValues(alpha: 0.1)
+          : Colors.black.withValues(alpha: 0.05),
     );
   }
 
@@ -314,7 +316,9 @@ class GradeCard extends StatelessWidget {
             Text(
               'Progress',
               style: TextStyle(
-                color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                color: isDark
+                    ? const Color(0xFF94A3B8)
+                    : const Color(0xFF64748B),
                 fontSize: responsive.fontSize12,
                 fontWeight: FontWeight.w500,
               ),
@@ -335,7 +339,9 @@ class GradeCard extends StatelessWidget {
             Container(
               height: 8,
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE2E8F0),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : const Color(0xFFE2E8F0),
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
@@ -384,7 +390,9 @@ class GradeCard extends StatelessWidget {
             Text(
               course.instructor,
               style: TextStyle(
-                color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                color: isDark
+                    ? const Color(0xFF94A3B8)
+                    : const Color(0xFF64748B),
                 fontSize: responsive.fontSize12,
               ),
             ),

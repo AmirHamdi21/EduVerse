@@ -29,21 +29,20 @@ class GamificationCubit extends Cubit<GamificationState> {
       final leaderboard = _getMockLeaderboard();
       final rewards = _getMockRewards();
 
-      emit(state.copyWith(
-        isLoading: false,
-        userProfile: userProfile,
-        badges: badges,
-        filteredBadges: badges,
-        leaderboard: leaderboard,
-        filteredLeaderboard: leaderboard,
-        rewards: rewards,
-        userCoins: 850,
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          userProfile: userProfile,
+          badges: badges,
+          filteredBadges: badges,
+          leaderboard: leaderboard,
+          filteredLeaderboard: leaderboard,
+          rewards: rewards,
+          userCoins: 850,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      ));
+      emit(state.copyWith(isLoading: false, error: e.toString()));
     }
   }
 
@@ -59,36 +58,37 @@ class GamificationCubit extends Cubit<GamificationState> {
 
   void searchLeaderboard(String query) {
     emit(state.copyWith(searchQuery: query));
-    
+
     if (query.isEmpty) {
       emit(state.copyWith(filteredLeaderboard: state.leaderboard));
     } else {
       final filtered = state.leaderboard
-          .where((entry) =>
-              entry.name.toLowerCase().contains(query.toLowerCase()))
+          .where(
+            (entry) => entry.name.toLowerCase().contains(query.toLowerCase()),
+          )
           .toList();
       emit(state.copyWith(filteredLeaderboard: filtered));
     }
   }
 
   void toggleCompareMode() {
-    emit(state.copyWith(
-      isComparing: !state.isComparing,
-      compareUsers: state.isComparing ? [] : state.compareUsers,
-    ));
+    emit(
+      state.copyWith(
+        isComparing: !state.isComparing,
+        compareUsers: state.isComparing ? [] : state.compareUsers,
+      ),
+    );
   }
 
   void toggleCompareUser(LeaderboardEntry user) {
     final currentUsers = List<LeaderboardEntry>.from(state.compareUsers);
-    
+
     if (currentUsers.any((u) => u.id == user.id)) {
       currentUsers.removeWhere((u) => u.id == user.id);
     } else if (currentUsers.length < 3) {
       currentUsers.add(user);
     } else {
-      emit(state.copyWith(
-        successMessage: 'Maximum 3 users can be compared',
-      ));
+      emit(state.copyWith(successMessage: 'Maximum 3 users can be compared'));
       _clearSuccessMessage();
       return;
     }
@@ -98,9 +98,7 @@ class GamificationCubit extends Cubit<GamificationState> {
 
   void purchaseReward(Reward reward) {
     if (state.userCoins < reward.cost) {
-      emit(state.copyWith(
-        error: 'Not enough coins',
-      ));
+      emit(state.copyWith(error: 'Not enough coins'));
       return;
     }
 
@@ -111,45 +109,49 @@ class GamificationCubit extends Cubit<GamificationState> {
       return r;
     }).toList();
 
-    emit(state.copyWith(
-      rewards: updatedRewards,
-      userCoins: state.userCoins - reward.cost,
-      successMessage: 'Reward purchased successfully!',
-    ));
+    emit(
+      state.copyWith(
+        rewards: updatedRewards,
+        userCoins: state.userCoins - reward.cost,
+        successMessage: 'Reward purchased successfully!',
+      ),
+    );
     _clearSuccessMessage();
   }
 
   void claimDailyReward() {
     final newCoins = state.userCoins + 50;
     final newXp = (state.userProfile?.currentXp ?? 0) + 25;
-    
-    emit(state.copyWith(
-      userCoins: newCoins,
-      userProfile: state.userProfile?.copyWith(currentXp: newXp),
-      successMessage: 'Daily reward claimed! +50 coins, +25 XP',
-    ));
+
+    emit(
+      state.copyWith(
+        userCoins: newCoins,
+        userProfile: state.userProfile?.copyWith(currentXp: newXp),
+        successMessage: 'Daily reward claimed! +50 coins, +25 XP',
+      ),
+    );
     _clearSuccessMessage();
   }
 
   void shareProgress() {
-    emit(state.copyWith(
-      successMessage: 'Progress shared successfully!',
-    ));
+    emit(state.copyWith(successMessage: 'Progress shared successfully!'));
     _clearSuccessMessage();
   }
 
   void _refreshLeaderboard() {
     // Simulate different data based on filters
     final baseLeaderboard = _getMockLeaderboard();
-    
+
     List<LeaderboardEntry> filtered;
     switch (state.leaderboardFilter) {
       case LeaderboardFilter.perCourse:
         filtered = baseLeaderboard.take(8).toList();
       case LeaderboardFilter.friends:
-        filtered = baseLeaderboard.where((e) => 
-          e.name == 'Sofia' || e.name == 'Ken' || e.isCurrentUser
-        ).toList();
+        filtered = baseLeaderboard
+            .where(
+              (e) => e.name == 'Sofia' || e.name == 'Ken' || e.isCurrentUser,
+            )
+            .toList();
       case LeaderboardFilter.global:
         filtered = baseLeaderboard;
     }
@@ -157,8 +159,11 @@ class GamificationCubit extends Cubit<GamificationState> {
     // Apply search if any
     if (state.searchQuery.isNotEmpty) {
       filtered = filtered
-          .where((entry) =>
-              entry.name.toLowerCase().contains(state.searchQuery.toLowerCase()))
+          .where(
+            (entry) => entry.name.toLowerCase().contains(
+              state.searchQuery.toLowerCase(),
+            ),
+          )
           .toList();
     }
 

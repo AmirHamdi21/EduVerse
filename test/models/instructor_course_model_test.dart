@@ -114,10 +114,7 @@ void main() {
           'name': 'Computer Science 101',
           'code': 'CS101',
         },
-        'section': <String, dynamic>{
-          'id': 6,
-          'sectionNumber': 1,
-        },
+        'section': <String, dynamic>{'id': 6, 'sectionNumber': 1},
       });
 
       expect(student.userId, 101);

@@ -27,10 +27,7 @@ class ITEnvironmentSection extends StatelessWidget {
             ? ITColors.darkCard.withValues(alpha: 0.8)
             : Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: ITColors.accent,
-          width: 1,
-        ),
+        border: Border.all(color: ITColors.accent, width: 1),
         boxShadow: ITColors.cardShadow(isDark),
       ),
       child: Column(
@@ -99,8 +96,8 @@ class ITEnvironmentSection extends StatelessWidget {
             color: isSelected
                 ? null
                 : isDark
-                    ? ITColors.darkSurface
-                    : Colors.white,
+                ? ITColors.darkSurface
+                : Colors.white,
             borderRadius: BorderRadius.circular(10),
             border: isSelected
                 ? null
@@ -157,11 +154,7 @@ class ITEnvironmentSection extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.check_circle_rounded,
-            color: ITColors.success,
-            size: 20,
-          ),
+          Icon(Icons.check_circle_rounded, color: ITColors.success, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

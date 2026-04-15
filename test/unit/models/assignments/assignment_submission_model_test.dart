@@ -5,14 +5,14 @@ import 'package:edu_verse/models/assignments/assignment_submission_model.dart';
 void main() {
   group('AssignmentSubmissionModel.fromJson isLate parsing', () {
     Map<String, dynamic> _baseJson({dynamic isLate}) => <String, dynamic>{
-          'id': 1,
-          'assignmentId': 10,
-          'userId': 100,
-          'submissionStatus': 'submitted',
-          'isLate': isLate,
-          'attemptNumber': 1,
-          'submittedAt': '2025-10-01T10:00:00Z',
-        };
+      'id': 1,
+      'assignmentId': 10,
+      'userId': 100,
+      'submissionStatus': 'submitted',
+      'isLate': isLate,
+      'attemptNumber': 1,
+      'submittedAt': '2025-10-01T10:00:00Z',
+    };
 
     test('parses int 0 as false', () {
       final model = AssignmentSubmissionModel.fromJson(_baseJson(isLate: 0));
@@ -25,8 +25,9 @@ void main() {
     });
 
     test('parses bool false as false', () {
-      final model =
-          AssignmentSubmissionModel.fromJson(_baseJson(isLate: false));
+      final model = AssignmentSubmissionModel.fromJson(
+        _baseJson(isLate: false),
+      );
       expect(model.isLate, isFalse);
     });
 

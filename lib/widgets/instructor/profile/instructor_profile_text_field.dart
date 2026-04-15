@@ -33,9 +33,7 @@ class InstructorProfileTextField extends StatelessWidget {
         enabled: enabled,
         keyboardType: keyboardType,
         maxLines: maxLines,
-        style: TextStyle(
-          color: InstructorColors.textPrimaryColor(isDark),
-        ),
+        style: TextStyle(color: InstructorColors.textPrimaryColor(isDark)),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(
@@ -56,10 +54,7 @@ class InstructorProfileTextField extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide(
-              color: InstructorColors.primary,
-              width: 1.5,
-            ),
+            borderSide: BorderSide(color: InstructorColors.primary, width: 1.5),
           ),
           disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(14),

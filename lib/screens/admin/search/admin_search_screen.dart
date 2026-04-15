@@ -25,9 +25,21 @@ class _AdminSearchScreenState extends State<AdminSearchScreen>
 
   bool _isLoading = false;
   String _selectedCategory = 'All';
-  final List<String> _categories = ['All', 'Users', 'Courses', 'Settings', 'Reports', 'Logs'];
+  final List<String> _categories = [
+    'All',
+    'Users',
+    'Courses',
+    'Settings',
+    'Reports',
+    'Logs',
+  ];
   List<SearchResult> _results = [];
-  List<String> _recentSearches = ['Ahmed Hassan', 'CS301', 'Payment settings', 'User reports'];
+  List<String> _recentSearches = [
+    'Ahmed Hassan',
+    'CS301',
+    'Payment settings',
+    'User reports',
+  ];
   Map<String, dynamic> _filters = {};
 
   @override
@@ -74,9 +86,9 @@ class _AdminSearchScreenState extends State<AdminSearchScreen>
     // Simulate search delay
     Future.delayed(const Duration(milliseconds: 500), () {
       if (!mounted) return;
-      
+
       final queryLower = query.toLowerCase();
-      
+
       // Mock search results
       final allResults = [
         const SearchResult(
@@ -146,9 +158,13 @@ class _AdminSearchScreenState extends State<AdminSearchScreen>
       ];
 
       // Filter by query
-      var filtered = allResults.where((r) =>
-          r.title.toLowerCase().contains(queryLower) ||
-          r.subtitle.toLowerCase().contains(queryLower)).toList();
+      var filtered = allResults
+          .where(
+            (r) =>
+                r.title.toLowerCase().contains(queryLower) ||
+                r.subtitle.toLowerCase().contains(queryLower),
+          )
+          .toList();
 
       // Filter by category
       if (_selectedCategory != 'All') {
@@ -233,7 +249,9 @@ class _AdminSearchScreenState extends State<AdminSearchScreen>
         final l10n = AppLocalizations.of(context);
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
-          value: isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
+          value: isDark
+              ? SystemUiOverlayStyle.light
+              : SystemUiOverlayStyle.dark,
           child: Scaffold(
             backgroundColor: AdminColors.getBackgroundColor(isDark),
             body: Container(
@@ -271,9 +289,7 @@ class _AdminSearchScreenState extends State<AdminSearchScreen>
                         categories: _categories,
                       ),
                       const SizedBox(height: 8),
-                      Expanded(
-                        child: _buildBody(isDark, l10n),
-                      ),
+                      Expanded(child: _buildBody(isDark, l10n)),
                     ],
                   ),
                 ),

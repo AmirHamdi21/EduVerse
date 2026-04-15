@@ -25,7 +25,11 @@ class WaveformVisualizer extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: state.waveformData.isEmpty
                   ? _buildIdleWaveform(isDark)
-                  : _buildActiveWaveform(state.waveformData, isDark, state.isRecording),
+                  : _buildActiveWaveform(
+                      state.waveformData,
+                      isDark,
+                      state.isRecording,
+                    ),
             );
           },
         );
@@ -45,10 +49,7 @@ class WaveformVisualizer extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
-              colors: [
-                const Color(0xFF155DFC),
-                const Color(0xFF00D3F2),
-              ],
+              colors: [const Color(0xFF155DFC), const Color(0xFF00D3F2)],
             ),
             borderRadius: BorderRadius.circular(2),
           ),
@@ -57,7 +58,11 @@ class WaveformVisualizer extends StatelessWidget {
     );
   }
 
-  Widget _buildActiveWaveform(List<double> data, bool isDark, bool isRecording) {
+  Widget _buildActiveWaveform(
+    List<double> data,
+    bool isDark,
+    bool isRecording,
+  ) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final barCount = (constraints.maxWidth / 8).floor();
@@ -78,14 +83,8 @@ class WaveformVisualizer extends StatelessWidget {
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: isRecording
-                      ? [
-                          const Color(0xFF155DFC),
-                          const Color(0xFF00D3F2),
-                        ]
-                      : [
-                          Colors.orange,
-                          Colors.orangeAccent,
-                        ],
+                      ? [const Color(0xFF155DFC), const Color(0xFF00D3F2)]
+                      : [Colors.orange, Colors.orangeAccent],
                 ),
                 borderRadius: BorderRadius.circular(2),
                 boxShadow: isRecording

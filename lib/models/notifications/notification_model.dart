@@ -15,12 +15,7 @@ enum NotificationType {
 }
 
 /// Priority levels for notifications
-enum NotificationPriority {
-  low,
-  normal,
-  high,
-  urgent,
-}
+enum NotificationPriority { low, normal, high, urgent }
 
 /// Category for filtering notifications
 enum NotificationCategory {
@@ -156,23 +151,23 @@ class NotificationModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        message,
-        type,
-        priority,
-        category,
-        createdAt,
-        isRead,
-        isBookmarked,
-        courseId,
-        courseName,
-        instructorName,
-        actionUrl,
-        tags,
-        imageUrl,
-        dueDate,
-      ];
+    id,
+    title,
+    message,
+    type,
+    priority,
+    category,
+    createdAt,
+    isRead,
+    isBookmarked,
+    courseId,
+    courseName,
+    instructorName,
+    actionUrl,
+    tags,
+    imageUrl,
+    dueDate,
+  ];
 }
 
 /// AI Insight model for special AI-related notifications
@@ -221,23 +216,18 @@ class AIInsightModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        message,
-        insightType,
-        actionText,
-        actionUrl,
-        createdAt,
-        isDismissed,
-      ];
+    id,
+    title,
+    message,
+    insightType,
+    actionText,
+    actionUrl,
+    createdAt,
+    isDismissed,
+  ];
 }
 
-enum AIInsightType {
-  performanceAlert,
-  recommendation,
-  studyTip,
-  reminder,
-}
+enum AIInsightType { performanceAlert, recommendation, studyTip, reminder }
 
 /// System Alert model
 class SystemAlertModel extends Equatable {
@@ -281,19 +271,14 @@ class SystemAlertModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        message,
-        alertType,
-        createdAt,
-        isDismissed,
-        actionText,
-      ];
+    id,
+    title,
+    message,
+    alertType,
+    createdAt,
+    isDismissed,
+    actionText,
+  ];
 }
 
-enum SystemAlertType {
-  update,
-  maintenance,
-  announcement,
-  warning,
-}
+enum SystemAlertType { update, maintenance, announcement, warning }

@@ -58,7 +58,8 @@ class ActionButtons extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: CreateAssignmentColors.primary,
               foregroundColor: Colors.white,
-              disabledBackgroundColor: CreateAssignmentColors.primary.withValues(alpha: 0.5),
+              disabledBackgroundColor: CreateAssignmentColors.primary
+                  .withValues(alpha: 0.5),
               disabledForegroundColor: Colors.white.withValues(alpha: 0.7),
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(

@@ -75,5 +75,6 @@ class CMColors {
   static Color borderColor(bool d) => d ? darkBorder : border;
   static Color text(bool d) => d ? Colors.white : textPrimary;
   static Color textSub(bool d) => d ? const Color(0xFF90CAF9) : textSecondary;
-  static Color textMutedColor(bool d) => d ? const Color(0xFF64748B) : textMuted;
+  static Color textMutedColor(bool d) =>
+      d ? const Color(0xFF64748B) : textMuted;
 }

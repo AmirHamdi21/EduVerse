@@ -187,7 +187,9 @@ class MaterialViewerBloc
       await Future<void>.delayed(const Duration(milliseconds: 350));
     }
 
-    throw Exception('Download timed out. Please check your connection and try again.');
+    throw Exception(
+      'Download timed out. Please check your connection and try again.',
+    );
   }
 
   static Future<Directory> _resolveDownloadDirectory() async {

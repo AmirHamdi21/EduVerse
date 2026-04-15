@@ -16,7 +16,7 @@ import 'package:edu_verse/services/api/enrollment_service.dart';
 /// extraction, and model parsing).
 class _FakeEnrollmentService extends EnrollmentService {
   _FakeEnrollmentService({required this.result})
-      : super(coreApiClient: CoreApiClient.test());
+    : super(coreApiClient: CoreApiClient.test());
 
   final ServiceResult<List<CourseEnrollmentModel>> result;
 
@@ -51,26 +51,29 @@ CourseEnrollmentModel _enrollment({String id = '1'}) {
 
 void main() {
   group('EnrollmentService.getMyCourses()', () {
-    test('returns success with enrollments when service call succeeds',
-        () async {
-      final enrollments = <CourseEnrollmentModel>[
-        _enrollment(),
-        _enrollment(id: '2'),
-      ];
+    test(
+      'returns success with enrollments when service call succeeds',
+      () async {
+        final enrollments = <CourseEnrollmentModel>[
+          _enrollment(),
+          _enrollment(id: '2'),
+        ];
 
-      final service = _FakeEnrollmentService(
-        result:
-            ServiceResult<List<CourseEnrollmentModel>>.success(enrollments),
-      );
+        final service = _FakeEnrollmentService(
+          result: ServiceResult<List<CourseEnrollmentModel>>.success(
+            enrollments,
+          ),
+        );
 
-      final result = await service.getMyCourses();
+        final result = await service.getMyCourses();
 
-      expect(result.isSuccess, isTrue);
-      expect(result.data, isNotNull);
-      expect(result.data!.length, 2);
-      expect(result.data!.first.course?.courseCode, 'CS101');
-      expect(result.data!.first.enrollmentStatus, EnrollmentStatus.enrolled);
-    });
+        expect(result.isSuccess, isTrue);
+        expect(result.data, isNotNull);
+        expect(result.data!.length, 2);
+        expect(result.data!.first.course?.courseCode, 'CS101');
+        expect(result.data!.first.enrollmentStatus, EnrollmentStatus.enrolled);
+      },
+    );
 
     test('returns empty list when no enrollments', () async {
       final service = _FakeEnrollmentService(
@@ -127,8 +130,9 @@ void main() {
       );
 
       final service = _FakeEnrollmentService(
-        result:
-            ServiceResult<List<CourseEnrollmentModel>>.success([enrollment]),
+        result: ServiceResult<List<CourseEnrollmentModel>>.success([
+          enrollment,
+        ]),
       );
 
       final result = await service.getMyCourses();

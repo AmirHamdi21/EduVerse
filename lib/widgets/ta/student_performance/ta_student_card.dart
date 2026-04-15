@@ -84,7 +84,9 @@ class TAStudentCard extends StatelessWidget {
                   ),
                   child: Center(
                     child: Text(
-                      student.name.isNotEmpty ? student.name[0].toUpperCase() : '?',
+                      student.name.isNotEmpty
+                          ? student.name[0].toUpperCase()
+                          : '?',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -189,13 +191,14 @@ class TAStudentCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: riskColor.withValues(alpha: isDark ? 0.2 : 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: riskColor.withValues(alpha: 0.3),
-                    ),
+                    border: Border.all(color: riskColor.withValues(alpha: 0.3)),
                   ),
                   child: Text(
                     _getRiskLabel(student.riskLevel, l10n),
@@ -249,8 +252,8 @@ class TAStudentCard extends StatelessWidget {
     final color = value >= 85
         ? TAColors.success
         : value >= 70
-            ? TAColors.warning
-            : TAColors.error;
+        ? TAColors.warning
+        : TAColors.error;
 
     return Column(
       children: [

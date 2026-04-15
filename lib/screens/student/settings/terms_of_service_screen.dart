@@ -13,11 +13,13 @@ class TermsOfServiceScreen extends StatelessWidget {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -191,7 +193,11 @@ class TermsOfServiceScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(bool isDark, {required String title, required String content}) {
+  Widget _buildSection(
+    bool isDark, {
+    required String title,
+    required String content,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

@@ -199,10 +199,7 @@ class IpManagementCard extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              color: color.withValues(alpha: 0.8),
-            ),
+            style: TextStyle(fontSize: 12, color: color.withValues(alpha: 0.8)),
           ),
         ],
       ),
@@ -267,7 +264,9 @@ class IpManagementCard extends StatelessWidget {
               width: 8,
               height: 8,
               decoration: BoxDecoration(
-                color: rule.isWhitelisted ? AdminColors.success : AdminColors.error,
+                color: rule.isWhitelisted
+                    ? AdminColors.success
+                    : AdminColors.error,
                 shape: BoxShape.circle,
               ),
             ),

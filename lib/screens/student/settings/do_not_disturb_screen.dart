@@ -26,11 +26,13 @@ class _DoNotDisturbScreenState extends State<DoNotDisturbScreen> {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -127,7 +129,9 @@ class _DoNotDisturbScreenState extends State<DoNotDisturbScreen> {
                 end: Alignment.bottomRight,
               )
             : null,
-        color: _enabled ? null : (isDark ? const Color(0xFF1E293B) : Colors.white),
+        color: _enabled
+            ? null
+            : (isDark ? const Color(0xFF1E293B) : Colors.white),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -167,7 +171,9 @@ class _DoNotDisturbScreenState extends State<DoNotDisturbScreen> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: _enabled ? Colors.white : (isDark ? Colors.white : Colors.black87),
+                    color: _enabled
+                        ? Colors.white
+                        : (isDark ? Colors.white : Colors.black87),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -233,7 +239,9 @@ class _DoNotDisturbScreenState extends State<DoNotDisturbScreen> {
             padding: const EdgeInsets.symmetric(vertical: 12),
             child: Divider(
               height: 1,
-              color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
+              color: isDark
+                  ? Colors.white10
+                  : Colors.black.withValues(alpha: 0.05),
             ),
           ),
           _buildTimeRow(
@@ -272,9 +280,7 @@ class _DoNotDisturbScreenState extends State<DoNotDisturbScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF0F172A)
-                  : const Color(0xFFF1F5F9),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -418,9 +424,7 @@ class _DoNotDisturbScreenState extends State<DoNotDisturbScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF0F172A)
-                  : const Color(0xFFF1F5F9),
+              color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -542,11 +546,7 @@ class _DoNotDisturbScreenState extends State<DoNotDisturbScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 20,
-              color: const Color(0xFF8B5CF6),
-            ),
+            Icon(icon, size: 20, color: const Color(0xFF8B5CF6)),
             const SizedBox(width: 8),
             Text(
               label,

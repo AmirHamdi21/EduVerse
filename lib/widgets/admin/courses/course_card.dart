@@ -1,61 +1,45 @@
 import 'package:flutter/material.dart';
+
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../models/core/course_model.dart';
+import '../../../models/core/enums/course_enums.dart';
 import '../shared/admin_colors.dart';
 
-/// Course model for the list
-class CourseModel {
-  final String id;
-  final String code;
-  final String name;
-  final String department;
+/// Course card widget bound to live [CourseModel] data.
+class CourseCard extends StatelessWidget {
+  final bool isDark;
+  final CourseModel course;
   final String? instructorName;
   final String? instructorInitials;
   final String? taName;
   final String? taInitials;
   final int studentCount;
   final int labCount;
-  final double avgGrade;
-  final String status; // 'healthy', 'warning', 'critical'
+  final double averageGrade;
   final String? aiInsight;
-  final bool isActive;
-  final bool hasLabs;
+  final VoidCallback onEdit;
+  final VoidCallback onAssign;
+  final VoidCallback onViewLabs;
+  final VoidCallback onViewDetails;
+  final VoidCallback? onDelete;
 
-  CourseModel({
-    required this.id,
-    required this.code,
-    required this.name,
-    required this.department,
+  const CourseCard({
+    super.key,
+    required this.isDark,
+    required this.course,
     this.instructorName,
     this.instructorInitials,
     this.taName,
     this.taInitials,
     this.studentCount = 0,
     this.labCount = 0,
-    this.avgGrade = 0.0,
-    this.status = 'healthy',
+    this.averageGrade = 0,
     this.aiInsight,
-    this.isActive = true,
-    this.hasLabs = false,
-  });
-}
-
-/// Course card widget
-class CourseCard extends StatelessWidget {
-  final bool isDark;
-  final CourseModel course;
-  final VoidCallback onEdit;
-  final VoidCallback onAssign;
-  final VoidCallback onViewLabs;
-  final VoidCallback onViewDetails;
-
-  const CourseCard({
-    super.key,
-    required this.isDark,
-    required this.course,
     required this.onEdit,
     required this.onAssign,
     required this.onViewLabs,
     required this.onViewDetails,
+    this.onDelete,
   });
 
   @override
@@ -70,11 +54,13 @@ class CourseCard extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
         boxShadow: isDark
             ? null
-            : [
+            : <BoxShadow>[
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
@@ -91,15 +77,16 @@ class CourseCard extends StatelessWidget {
             padding: const EdgeInsets.all(20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: <Widget>[
                 _buildHeader(l10n),
                 const SizedBox(height: 16),
                 _buildStaffSection(l10n),
                 const SizedBox(height: 16),
                 _buildStatsSection(l10n),
-                if (course.aiInsight != null) ...[
+                if (aiInsight != null &&
+                    aiInsight!.trim().isNotEmpty) ...<Widget>[
                   const SizedBox(height: 16),
-                  _buildAIInsight(l10n),
+                  _buildAIInsight(aiInsight!),
                 ],
                 const SizedBox(height: 16),
                 _buildActionButtons(l10n),
@@ -114,15 +101,31 @@ class CourseCard extends StatelessWidget {
   Widget _buildHeader(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Row(
-          children: [
-            _buildBadge(
-              label: course.code,
-              color: AdminColors.primary,
-            ),
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _buildBadge(label: course.code, color: AdminColors.primary),
             const SizedBox(width: 8),
-            _buildStatusBadge(),
+            _buildStatusBadge(l10n),
+            if (course.courseStatus == CourseStatus.inactive) ...<Widget>[
+              const SizedBox(width: 8),
+              _buildBadge(
+                label: '${l10n.draft}/${l10n.inactive}',
+                color: AdminColors.warning,
+              ),
+            ],
+            const Spacer(),
+            if (onDelete != null)
+              IconButton(
+                onPressed: onDelete,
+                icon: Icon(
+                  Icons.delete_outline_rounded,
+                  color: AdminColors.error,
+                  size: 20,
+                ),
+                tooltip: l10n.delete,
+              ),
           ],
         ),
         const SizedBox(height: 10),
@@ -136,7 +139,7 @@ class CourseCard extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          course.department,
+          course.departmentName ?? l10n.department,
           style: TextStyle(
             color: AdminColors.getTextSecondaryColor(isDark),
             fontSize: 14,
@@ -164,31 +167,32 @@ class CourseCard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge() {
-    Color statusColor;
-    IconData statusIcon;
-    String statusText;
+  Widget _buildStatusBadge(AppLocalizations l10n) {
+    late Color statusColor;
+    late IconData statusIcon;
+    late String statusText;
 
-    switch (course.status) {
-      case 'healthy':
+    switch (course.courseStatus) {
+      case CourseStatus.active:
         statusColor = AdminColors.success;
         statusIcon = Icons.check_circle_rounded;
-        statusText = 'Healthy';
+        statusText = l10n.active;
         break;
-      case 'warning':
+      case CourseStatus.inactive:
         statusColor = AdminColors.warning;
-        statusIcon = Icons.warning_rounded;
-        statusText = 'Warning';
+        statusIcon = Icons.pause_circle_rounded;
+        statusText = l10n.inactive;
         break;
-      case 'critical':
-        statusColor = AdminColors.error;
-        statusIcon = Icons.error_rounded;
-        statusText = 'Critical';
+      case CourseStatus.archived:
+        statusColor = AdminColors.getTextSecondaryColor(isDark);
+        statusIcon = Icons.archive_rounded;
+        statusText = l10n.archived;
         break;
-      default:
-        statusColor = AdminColors.success;
-        statusIcon = Icons.check_circle_rounded;
-        statusText = 'Healthy';
+      case CourseStatus.unknown:
+        statusColor = AdminColors.getTextSecondaryColor(isDark);
+        statusIcon = Icons.help_outline_rounded;
+        statusText = l10n.noData;
+        break;
     }
 
     return Container(
@@ -199,7 +203,7 @@ class CourseCard extends StatelessWidget {
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
+        children: <Widget>[
           Icon(statusIcon, size: 14, color: statusColor),
           const SizedBox(width: 4),
           Text(
@@ -216,22 +220,31 @@ class CourseCard extends StatelessWidget {
   }
 
   Widget _buildStaffSection(AppLocalizations l10n) {
+    final resolvedInstructor =
+        instructorName != null && instructorName!.trim().isNotEmpty
+        ? instructorName!
+        : l10n.notAssigned;
+
+    final resolvedTa = taName != null && taName!.trim().isNotEmpty
+        ? taName!
+        : l10n.notAssigned;
+
     return Column(
-      children: [
+      children: <Widget>[
         _buildStaffRow(
           label: l10n.instructor,
-          name: course.instructorName ?? l10n.notAssigned,
-          initials: course.instructorInitials ?? '?',
+          name: resolvedInstructor,
+          initials: _safeInitials(instructorInitials, resolvedInstructor),
           color: AdminColors.secondary,
-          isAssigned: course.instructorName != null,
+          isAssigned: resolvedInstructor != l10n.notAssigned,
         ),
         const SizedBox(height: 10),
         _buildStaffRow(
           label: l10n.teachingAssistant,
-          name: course.taName ?? l10n.notAssigned,
-          initials: course.taInitials ?? '?',
+          name: resolvedTa,
+          initials: _safeInitials(taInitials, resolvedTa),
           color: AdminColors.accent,
-          isAssigned: course.taName != null,
+          isAssigned: resolvedTa != l10n.notAssigned,
         ),
       ],
     );
@@ -245,13 +258,15 @@ class CourseCard extends StatelessWidget {
     required bool isAssigned,
   }) {
     return Row(
-      children: [
+      children: <Widget>[
         Container(
           width: 36,
           height: 36,
           decoration: BoxDecoration(
             gradient: isAssigned
-                ? LinearGradient(colors: [color, color.withValues(alpha: 0.7)])
+                ? LinearGradient(
+                    colors: <Color>[color, color.withValues(alpha: 0.7)],
+                  )
                 : null,
             color: isAssigned ? null : AdminColors.getTextTertiaryColor(isDark),
             borderRadius: BorderRadius.circular(10),
@@ -270,7 +285,7 @@ class CourseCard extends StatelessWidget {
         const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+          children: <Widget>[
             Text(
               label,
               style: TextStyle(
@@ -305,12 +320,12 @@ class CourseCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
-        children: [
+        children: <Widget>[
           Expanded(
             child: _buildStatItem(
               icon: Icons.people_rounded,
               label: l10n.students,
-              value: course.studentCount.toString(),
+              value: studentCount.toString(),
               color: AdminColors.primary,
             ),
           ),
@@ -319,7 +334,7 @@ class CourseCard extends StatelessWidget {
             child: _buildStatItem(
               icon: Icons.science_rounded,
               label: l10n.labs,
-              value: course.labCount.toString(),
+              value: labCount.toString(),
               color: AdminColors.accent,
             ),
           ),
@@ -328,8 +343,8 @@ class CourseCard extends StatelessWidget {
             child: _buildStatItem(
               icon: Icons.grade_rounded,
               label: l10n.avg,
-              value: '${course.avgGrade.toStringAsFixed(0)}%',
-              color: _getGradeColor(course.avgGrade),
+              value: '${averageGrade.toStringAsFixed(0)}%',
+              color: _getGradeColor(averageGrade),
             ),
           ),
         ],
@@ -344,7 +359,7 @@ class CourseCard extends StatelessWidget {
     required Color color,
   }) {
     return Column(
-      children: [
+      children: <Widget>[
         Icon(icon, size: 18, color: color),
         const SizedBox(height: 6),
         Text(
@@ -375,18 +390,16 @@ class CourseCard extends StatelessWidget {
     );
   }
 
-  Widget _buildAIInsight(AppLocalizations l10n) {
+  Widget _buildAIInsight(String text) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AdminColors.success.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AdminColors.success.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AdminColors.success.withValues(alpha: 0.3)),
       ),
       child: Row(
-        children: [
+        children: <Widget>[
           Icon(
             Icons.auto_awesome_rounded,
             size: 18,
@@ -395,7 +408,7 @@ class CourseCard extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              course.aiInsight!,
+              text,
               style: TextStyle(
                 color: AdminColors.getTextColor(isDark),
                 fontSize: 13,
@@ -409,7 +422,7 @@ class CourseCard extends StatelessWidget {
 
   Widget _buildActionButtons(AppLocalizations l10n) {
     return Row(
-      children: [
+      children: <Widget>[
         Expanded(
           child: _buildActionButton(
             icon: Icons.edit_rounded,
@@ -455,17 +468,15 @@ class CourseCard extends StatelessWidget {
                 : Colors.white,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isDark ? AdminColors.darkCardBorder : AdminColors.lightDivider,
+              color: isDark
+                  ? AdminColors.darkCardBorder
+                  : AdminColors.lightDivider,
             ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 16,
-                color: AdminColors.primary,
-              ),
+            children: <Widget>[
+              Icon(icon, size: 16, color: AdminColors.primary),
               const SizedBox(width: 6),
               Text(
                 label,
@@ -483,8 +494,25 @@ class CourseCard extends StatelessWidget {
   }
 
   Color _getGradeColor(double grade) {
-    if (grade >= 80) return AdminColors.success;
-    if (grade >= 60) return AdminColors.warning;
+    if (grade >= 80) {
+      return AdminColors.success;
+    }
+    if (grade >= 60) {
+      return AdminColors.warning;
+    }
     return AdminColors.error;
+  }
+
+  String _safeInitials(String? explicitInitials, String name) {
+    if (explicitInitials != null && explicitInitials.trim().isNotEmpty) {
+      return explicitInitials.trim();
+    }
+
+    final tokens = name.split(' ').where((value) => value.trim().isNotEmpty);
+    final initials = tokens.take(2).map((value) => value[0]).join();
+    if (initials.isNotEmpty) {
+      return initials.toUpperCase();
+    }
+    return '?';
   }
 }

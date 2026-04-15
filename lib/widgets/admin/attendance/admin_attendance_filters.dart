@@ -50,7 +50,9 @@ class AdminAttendanceFilters extends StatelessWidget {
         color: isDark ? AdminColors.darkCard : AdminColors.lightCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
       ),
       child: TextField(
@@ -61,23 +63,32 @@ class AdminAttendanceFilters extends StatelessWidget {
         decoration: InputDecoration(
           hintText: 'Search courses, instructors, students...',
           hintStyle: TextStyle(
-            color: isDark ? AdminColors.darkTextTertiary : AdminColors.lightTextTertiary,
+            color: isDark
+                ? AdminColors.darkTextTertiary
+                : AdminColors.lightTextTertiary,
           ),
           prefixIcon: Icon(
             Icons.search_rounded,
-            color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+            color: isDark
+                ? AdminColors.darkTextSecondary
+                : AdminColors.lightTextSecondary,
           ),
           suffixIcon: searchQuery.isNotEmpty
               ? IconButton(
                   icon: Icon(
                     Icons.clear_rounded,
-                    color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+                    color: isDark
+                        ? AdminColors.darkTextSecondary
+                        : AdminColors.lightTextSecondary,
                   ),
                   onPressed: () => onSearchChanged(''),
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );
@@ -114,14 +125,20 @@ class AdminAttendanceFilters extends StatelessWidget {
                 color: isSelected
                     ? Colors.white
                     : isDark
-                        ? AdminColors.darkText
-                        : AdminColors.lightText,
+                    ? AdminColors.darkText
+                    : AdminColors.lightText,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
-              backgroundColor: isDark ? AdminColors.darkCard : AdminColors.lightCard,
+              backgroundColor: isDark
+                  ? AdminColors.darkCard
+                  : AdminColors.lightCard,
               selectedColor: color,
               side: BorderSide(
-                color: isSelected ? color : (isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder),
+                color: isSelected
+                    ? color
+                    : (isDark
+                          ? AdminColors.darkCardBorder
+                          : AdminColors.lightCardBorder),
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -143,7 +160,9 @@ class AdminAttendanceFilters extends StatelessWidget {
               color: isDark ? AdminColors.darkCard : AdminColors.lightCard,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+                color: isDark
+                    ? AdminColors.darkCardBorder
+                    : AdminColors.lightCardBorder,
               ),
             ),
             child: DropdownButtonHideUnderline(
@@ -152,49 +171,61 @@ class AdminAttendanceFilters extends StatelessWidget {
                 hint: Text(
                   'All Departments',
                   style: TextStyle(
-                    color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+                    color: isDark
+                        ? AdminColors.darkTextSecondary
+                        : AdminColors.lightTextSecondary,
                   ),
                 ),
                 isExpanded: true,
                 icon: Icon(
                   Icons.keyboard_arrow_down_rounded,
-                  color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+                  color: isDark
+                      ? AdminColors.darkTextSecondary
+                      : AdminColors.lightTextSecondary,
                 ),
-                dropdownColor: isDark ? AdminColors.darkCard : AdminColors.lightCard,
+                dropdownColor: isDark
+                    ? AdminColors.darkCard
+                    : AdminColors.lightCard,
                 items: [
                   DropdownMenuItem<String>(
                     value: null,
                     child: Text(
                       'All Departments',
                       style: TextStyle(
-                        color: isDark ? AdminColors.darkText : AdminColors.lightText,
+                        color: isDark
+                            ? AdminColors.darkText
+                            : AdminColors.lightText,
                       ),
                     ),
                   ),
-                  ...departments.map((dept) => DropdownMenuItem<String>(
-                        value: dept,
-                        child: Text(
-                          dept,
-                          style: TextStyle(
-                            color: isDark ? AdminColors.darkText : AdminColors.lightText,
-                          ),
+                  ...departments.map(
+                    (dept) => DropdownMenuItem<String>(
+                      value: dept,
+                      child: Text(
+                        dept,
+                        style: TextStyle(
+                          color: isDark
+                              ? AdminColors.darkText
+                              : AdminColors.lightText,
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
                 ],
                 onChanged: onDepartmentChanged,
               ),
             ),
           ),
         ),
-        if (onClearFilters != null && (selectedDepartment != null || selectedFilter != AttendanceFilterType.all)) ...[
+        if (onClearFilters != null &&
+            (selectedDepartment != null ||
+                selectedFilter != AttendanceFilterType.all)) ...[
           const SizedBox(width: 12),
           TextButton.icon(
             onPressed: onClearFilters,
             icon: const Icon(Icons.clear_all_rounded, size: 18),
             label: const Text('Clear'),
-            style: TextButton.styleFrom(
-              foregroundColor: AdminColors.error,
-            ),
+            style: TextButton.styleFrom(foregroundColor: AdminColors.error),
           ),
         ],
       ],

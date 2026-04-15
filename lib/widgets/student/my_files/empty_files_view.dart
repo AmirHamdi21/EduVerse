@@ -87,9 +87,7 @@ class EmptyFilesView extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               height: 1.4,
-              color: isDark
-                  ? const Color(0xFF94A3B8)
-                  : const Color(0xFF64748B),
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
           ),
           const SizedBox(height: 24),
@@ -97,10 +95,7 @@ class EmptyFilesView extends StatelessWidget {
           GestureDetector(
             onTap: onUpload,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 28,
-                vertical: 14,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [Color(0xFF3B82F6), Color(0xFF06B6D4)],
@@ -117,7 +112,11 @@ class EmptyFilesView extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.cloud_upload_rounded, color: Colors.white, size: 20),
+                  const Icon(
+                    Icons.cloud_upload_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                   const SizedBox(width: 10),
                   Text(
                     l10n.uploadFirstFile,
@@ -137,9 +136,7 @@ class EmptyFilesView extends StatelessWidget {
             l10n.supportedFormats,
             style: TextStyle(
               fontSize: 11,
-              color: isDark
-                  ? const Color(0xFF64748B)
-                  : const Color(0xFF94A3B8),
+              color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
             ),
           ),
           const SizedBox(height: 6),

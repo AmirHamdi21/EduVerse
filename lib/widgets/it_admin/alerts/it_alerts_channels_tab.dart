@@ -76,7 +76,10 @@ class ITAlertsChannelsTab extends StatelessWidget {
               GestureDetector(
                 onTap: onAddChannel,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [ITColors.primary, ITColors.primaryLight],
@@ -185,44 +188,48 @@ class ITAlertsChannelsTab extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          
+
           // Channel config details
-          ...channel.config.entries.take(2).map((entry) => Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: Row(
-              children: [
-                Container(
-                  width: 4,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: ITColors.textSecondaryColor(isDark),
-                    shape: BoxShape.circle,
+          ...channel.config.entries
+              .take(2)
+              .map(
+                (entry) => Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 4,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: ITColors.textSecondaryColor(isDark),
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        '${entry.key}: ',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: ITColors.textSecondaryColor(isDark),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          entry.value,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: ITColors.textPrimaryColor(isDark),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 10),
-                Text(
-                  '${entry.key}: ',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: ITColors.textSecondaryColor(isDark),
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    entry.value,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: ITColors.textPrimaryColor(isDark),
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          )),
+              ),
           const SizedBox(height: 12),
-          
+
           // Action buttons
           Row(
             children: [

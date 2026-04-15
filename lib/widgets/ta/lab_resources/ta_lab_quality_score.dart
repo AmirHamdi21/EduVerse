@@ -25,9 +25,7 @@ class TALabQualityScore extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: _getScoreColor().withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: _getScoreColor().withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -98,11 +96,23 @@ class TALabQualityScore extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   children: [
-                    _buildMiniStat('Clarity', '${(score * 0.95).toInt()}%', isDark),
+                    _buildMiniStat(
+                      'Clarity',
+                      '${(score * 0.95).toInt()}%',
+                      isDark,
+                    ),
                     const SizedBox(width: 16),
-                    _buildMiniStat('Complete', '${(score * 0.92).toInt()}%', isDark),
+                    _buildMiniStat(
+                      'Complete',
+                      '${(score * 0.92).toInt()}%',
+                      isDark,
+                    ),
                     const SizedBox(width: 16),
-                    _buildMiniStat('Updated', '${(score * 0.88).toInt()}%', isDark),
+                    _buildMiniStat(
+                      'Updated',
+                      '${(score * 0.88).toInt()}%',
+                      isDark,
+                    ),
                   ],
                 ),
               ],

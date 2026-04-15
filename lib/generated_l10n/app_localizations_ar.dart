@@ -8104,6 +8104,33 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noTAAssigned => 'فكر في تعيين معيدين لدعم أفضل للطلاب';
 
   @override
+  String sectionLabel(Object sectionNumber) {
+    return 'الشعبة $sectionNumber';
+  }
+
+  @override
+  String sectionScheduleLabel(Object sectionNumber, Object day) {
+    return 'الشعبة $sectionNumber - $day';
+  }
+
+  @override
+  String get studentUserIdHint => 'معرف الطالب';
+
+  @override
+  String idValue(Object id) {
+    return 'معرف $id';
+  }
+
+  @override
+  String get rolePrimary => 'المدرس الأساسي';
+
+  @override
+  String get roleCoInstructor => 'مدرس مشارك';
+
+  @override
+  String get roleGuestInstructor => 'مدرس زائر';
+
+  @override
   String get recommendMoreTAs => 'فكر في إضافة معيدين للفصول الكبيرة';
 
   @override

@@ -32,7 +32,8 @@ class ITSystemStatusSection extends StatelessWidget {
 
   Widget _buildOverallStatusBadge(AppLocalizations l10n) {
     final statusColor = ITColors.getStatusColor(overallStatus);
-    final isOperational = overallStatus.toLowerCase() == 'normal' ||
+    final isOperational =
+        overallStatus.toLowerCase() == 'normal' ||
         overallStatus.toLowerCase() == 'operational';
 
     return Wrap(

@@ -56,7 +56,11 @@ class ITIntegritySection extends StatelessWidget {
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.verified_rounded, color: Colors.white, size: 16),
+                      Icon(
+                        Icons.verified_rounded,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                       SizedBox(width: 4),
                       Text(
                         'Verify Now',
@@ -214,8 +218,8 @@ class ITIntegritySection extends StatelessWidget {
           color: isWarning
               ? ITColors.warning.withValues(alpha: 0.3)
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.1)
-                  : ITColors.border),
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : ITColors.border),
         ),
         boxShadow: ITColors.lightCardShadow(isDark),
       ),
@@ -280,9 +284,7 @@ class ITIntegritySection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: check.passed
-                  ? ITColors.successLight
-                  : ITColors.errorLight,
+              color: check.passed ? ITColors.successLight : ITColors.errorLight,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -324,9 +326,7 @@ class ITIntegritySection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: check.passed
-                  ? ITColors.successLight
-                  : ITColors.errorLight,
+              color: check.passed ? ITColors.successLight : ITColors.errorLight,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -368,9 +368,7 @@ class ITIntegritySection extends StatelessWidget {
         color: isDark ? ITColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
       ),
       child: Column(

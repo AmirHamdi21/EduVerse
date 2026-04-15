@@ -70,7 +70,9 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -123,12 +125,15 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
       decoration: BoxDecoration(
         gradient: _enabled
             ? AdminColors.greenGradient
-            : LinearGradient(colors: [Colors.grey.shade600, Colors.grey.shade700]),
+            : LinearGradient(
+                colors: [Colors.grey.shade600, Colors.grey.shade700],
+              ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: (_enabled ? AdminColors.success : Colors.grey)
-                .withValues(alpha: 0.3),
+            color: (_enabled ? AdminColors.success : Colors.grey).withValues(
+              alpha: 0.3,
+            ),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -142,11 +147,7 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
               color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(
-              Icons.sms_rounded,
-              color: Colors.white,
-              size: 32,
-            ),
+            child: const Icon(Icons.sms_rounded, color: Colors.white, size: 32),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -200,7 +201,9 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 12),
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? provider.color.withValues(alpha: 0.15)
@@ -228,8 +231,9 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
                         provider.name,
                         style: TextStyle(
                           fontSize: 14,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.w500,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
                           color: isSelected
                               ? provider.color
                               : AdminColors.getTextColor(isDark),
@@ -414,8 +418,9 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
           style: TextStyle(color: AdminColors.getTextColor(isDark)),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle:
-                TextStyle(color: AdminColors.getTextTertiaryColor(isDark)),
+            hintStyle: TextStyle(
+              color: AdminColors.getTextTertiaryColor(isDark),
+            ),
             prefixIcon: Icon(
               prefixIcon,
               color: AdminColors.getTextTertiaryColor(isDark),
@@ -429,15 +434,18 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide:
-                  BorderSide(color: AdminColors.getDividerColor(isDark)),
+              borderSide: BorderSide(
+                color: AdminColors.getDividerColor(isDark),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: AdminColors.primary, width: 2),
             ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
           ),
         ),
       ],
@@ -508,8 +516,9 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
           style: OutlinedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 16),
             side: BorderSide(color: AdminColors.primary),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -519,8 +528,9 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
             backgroundColor: AdminColors.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: 16),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
           child: _saveLoading
               ? const SizedBox(
@@ -534,7 +544,9 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
               : Text(
                   l10n.saveConfiguration,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
         ),
       ],
@@ -553,7 +565,9 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
           content: Text(l10n.testSmsSent),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AdminColors.success,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     }
@@ -571,7 +585,9 @@ class _AdminSmsSettingsScreenState extends State<AdminSmsSettingsScreen> {
           content: Text(l10n.smsConfigSaved),
           behavior: SnackBarBehavior.floating,
           backgroundColor: AdminColors.success,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     }
@@ -583,9 +599,5 @@ class _SmsProvider {
   final IconData icon;
   final Color color;
 
-  _SmsProvider({
-    required this.name,
-    required this.icon,
-    required this.color,
-  });
+  _SmsProvider({required this.name, required this.icon, required this.color});
 }

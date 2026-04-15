@@ -81,8 +81,10 @@ class TALabActionButtons extends StatelessWidget {
     final bgColor = isAI
         ? TAColors.primary
         : (isPrimary
-            ? (isDark ? TAColors.primary.withValues(alpha: 0.2) : TAColors.primarySurface)
-            : TAColors.cardColor(isDark));
+              ? (isDark
+                    ? TAColors.primary.withValues(alpha: 0.2)
+                    : TAColors.primarySurface)
+              : TAColors.cardColor(isDark));
 
     final textColor = isAI
         ? Colors.white
@@ -116,11 +118,7 @@ class TALabActionButtons extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 18,
-                color: textColor,
-              ),
+              Icon(icon, size: 18, color: textColor),
               const SizedBox(width: 8),
               Text(
                 label,

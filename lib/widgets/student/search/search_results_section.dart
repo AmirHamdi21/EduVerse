@@ -99,7 +99,9 @@ class _ResultGroup extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: _getTypeColor().withValues(alpha: isDark ? 0.15 : 0.08),
+                  color: _getTypeColor().withValues(
+                    alpha: isDark ? 0.15 : 0.08,
+                  ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
@@ -114,18 +116,20 @@ class _ResultGroup extends StatelessWidget {
             ],
           ),
         ),
-        ...items.map((item) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
-              child: SearchResultCard(
-                item: item,
-                isDark: isDark,
-                onTap: () {
-                  if (item.route != null) {
-                    context.push(item.route!, extra: item.extra);
-                  }
-                },
-              ),
-            )),
+        ...items.map(
+          (item) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+            child: SearchResultCard(
+              item: item,
+              isDark: isDark,
+              onTap: () {
+                if (item.route != null) {
+                  context.push(item.route!, extra: item.extra);
+                }
+              },
+            ),
+          ),
+        ),
       ],
     );
   }

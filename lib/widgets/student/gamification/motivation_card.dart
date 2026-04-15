@@ -17,7 +17,11 @@ class MotivationCard extends StatelessWidget {
     return BlocBuilder<GamificationCubit, GamificationState>(
       builder: (context, state) {
         final nextUser = state.leaderboard
-            .where((e) => !e.isCurrentUser && e.rank == (state.userProfile?.rank ?? 0) - 1)
+            .where(
+              (e) =>
+                  !e.isCurrentUser &&
+                  e.rank == (state.userProfile?.rank ?? 0) - 1,
+            )
             .firstOrNull;
 
         final xpDifference = nextUser != null
@@ -37,10 +41,7 @@ class MotivationCard extends StatelessWidget {
                       const Color(0xFF2B7FFF).withValues(alpha: 0.2),
                       const Color(0xFF8B5CF6).withValues(alpha: 0.2),
                     ]
-                  : [
-                      const Color(0xFFEFF6FF),
-                      const Color(0xFFF5F3FF),
-                    ],
+                  : [const Color(0xFFEFF6FF), const Color(0xFFF5F3FF)],
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
@@ -91,7 +92,9 @@ class MotivationCard extends StatelessWidget {
                       text: TextSpan(
                         style: TextStyle(
                           fontSize: 13,
-                          color: isDark ? Colors.white70 : const Color(0xFF6B7280),
+                          color: isDark
+                              ? Colors.white70
+                              : const Color(0xFF6B7280),
                         ),
                         children: [
                           TextSpan(text: '${l10n.youreOnly} '),
@@ -107,7 +110,9 @@ class MotivationCard extends StatelessWidget {
                             text: nextName,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: isDark ? Colors.white : const Color(0xFF1F2937),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF1F2937),
                             ),
                           ),
                           const TextSpan(text: '!'),

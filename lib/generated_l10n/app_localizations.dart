@@ -15902,6 +15902,48 @@ abstract class AppLocalizations {
   /// **'Consider assigning TAs for better student support'**
   String get noTAAssigned;
 
+  /// No description provided for @sectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Section {sectionNumber}'**
+  String sectionLabel(Object sectionNumber);
+
+  /// No description provided for @sectionScheduleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Section {sectionNumber} - {day}'**
+  String sectionScheduleLabel(Object sectionNumber, Object day);
+
+  /// No description provided for @studentUserIdHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Student User ID'**
+  String get studentUserIdHint;
+
+  /// No description provided for @idValue.
+  ///
+  /// In en, this message translates to:
+  /// **'ID {id}'**
+  String idValue(Object id);
+
+  /// No description provided for @rolePrimary.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Instructor'**
+  String get rolePrimary;
+
+  /// No description provided for @roleCoInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Co-Instructor'**
+  String get roleCoInstructor;
+
+  /// No description provided for @roleGuestInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest Instructor'**
+  String get roleGuestInstructor;
+
   /// No description provided for @recommendMoreTAs.
   ///
   /// In en, this message translates to:

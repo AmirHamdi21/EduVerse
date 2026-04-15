@@ -188,9 +188,16 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
   }
 
   Widget _buildCalendarGrid(bool isDark, AttendanceState state) {
-    final firstDayOfMonth = DateTime(_focusedMonth.year, _focusedMonth.month, 1);
-    final lastDayOfMonth =
-        DateTime(_focusedMonth.year, _focusedMonth.month + 1, 0);
+    final firstDayOfMonth = DateTime(
+      _focusedMonth.year,
+      _focusedMonth.month,
+      1,
+    );
+    final lastDayOfMonth = DateTime(
+      _focusedMonth.year,
+      _focusedMonth.month + 1,
+      0,
+    );
     final firstWeekday = firstDayOfMonth.weekday % 7;
     final daysInMonth = lastDayOfMonth.day;
 
@@ -220,10 +227,8 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
               color: isSelected
                   ? const Color(0xFF3B82F6)
                   : isToday
-                      ? (isDark
-                          ? const Color(0xFF334155)
-                          : const Color(0xFFE2E8F0))
-                      : Colors.transparent,
+                  ? (isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0))
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               border: isToday && !isSelected
                   ? Border.all(color: const Color(0xFF3B82F6), width: 2)
@@ -236,13 +241,14 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
                   day.toString(),
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight:
-                        isToday || isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isToday || isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                     color: isSelected
                         ? Colors.white
                         : isDark
-                            ? Colors.white
-                            : const Color(0xFF1E293B),
+                        ? Colors.white
+                        : const Color(0xFF1E293B),
                   ),
                 ),
                 if (dayStatus != null)
@@ -276,7 +282,10 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
   }
 
   Widget _buildSelectedDateRecords(
-      bool isDark, AttendanceState state, AppLocalizations l10n) {
+    bool isDark,
+    AttendanceState state,
+    AppLocalizations l10n,
+  ) {
     final dayRecords = state.allRecords.where((r) {
       return _isSameDay(r.date, _selectedDate);
     }).toList();
@@ -314,7 +323,10 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
   }
 
   Widget _buildRecordItem(
-      AttendanceRecord record, bool isDark, AppLocalizations l10n) {
+    AttendanceRecord record,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final statusColor = _getStatusColor(record.status);
     final statusText = _getStatusText(record.status, l10n);
 
@@ -324,10 +336,7 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: statusColor.withValues(alpha: 0.3),
-          width: 1,
-        ),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         children: [
@@ -400,11 +409,13 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
 
     if (dayRecords.isEmpty) return null;
 
-    final hasAbsent =
-        dayRecords.any((r) => r.status == AttendanceStatus.absent);
+    final hasAbsent = dayRecords.any(
+      (r) => r.status == AttendanceStatus.absent,
+    );
     final hasLate = dayRecords.any((r) => r.status == AttendanceStatus.late);
-    final allPresent =
-        dayRecords.every((r) => r.status == AttendanceStatus.present);
+    final allPresent = dayRecords.every(
+      (r) => r.status == AttendanceStatus.present,
+    );
 
     if (hasAbsent) return const Color(0xFFEF4444);
     if (hasLate) return const Color(0xFFF59E0B);

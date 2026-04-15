@@ -120,11 +120,20 @@ class ITSecurityLogsList extends StatelessWidget {
                 fontSize: 13,
               ),
               items: const [
-                DropdownMenuItem(value: 'All Events', child: Text('All Events')),
+                DropdownMenuItem(
+                  value: 'All Events',
+                  child: Text('All Events'),
+                ),
                 DropdownMenuItem(value: 'Login', child: Text('Login Events')),
                 DropdownMenuItem(value: 'Logout', child: Text('Logout Events')),
-                DropdownMenuItem(value: 'Breach', child: Text('Breach Attempts')),
-                DropdownMenuItem(value: 'Permission', child: Text('Permission Changes')),
+                DropdownMenuItem(
+                  value: 'Breach',
+                  child: Text('Breach Attempts'),
+                ),
+                DropdownMenuItem(
+                  value: 'Permission',
+                  child: Text('Permission Changes'),
+                ),
                 DropdownMenuItem(value: 'API', child: Text('API Access')),
               ],
               onChanged: (value) {
@@ -157,22 +166,24 @@ class ITSecurityLogsList extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
               ? color.withValues(alpha: 0.1)
-              : (isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.white),
+              : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
                 ? color
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.1)
-                    : ITColors.border),
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : ITColors.border),
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 14, color: isSelected ? color : ITColors.textSecondaryColor(isDark)),
+            Icon(
+              icon,
+              size: 14,
+              color: isSelected ? color : ITColors.textSecondaryColor(isDark),
+            ),
             const SizedBox(width: 6),
             Text(
               label,
@@ -199,7 +210,11 @@ class ITSecurityLogsList extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: _getRiskBorderColor(log.riskLevel),
-            width: log.riskLevel == RiskLevel.critical || log.riskLevel == RiskLevel.high ? 1.5 : 1,
+            width:
+                log.riskLevel == RiskLevel.critical ||
+                    log.riskLevel == RiskLevel.high
+                ? 1.5
+                : 1,
           ),
           boxShadow: ITColors.lightCardShadow(isDark),
         ),
@@ -258,7 +273,11 @@ class ITSecurityLogsList extends StatelessWidget {
             const SizedBox(height: 10),
             Row(
               children: [
-                Icon(Icons.access_time_rounded, size: 12, color: ITColors.textTertiaryColor(isDark)),
+                Icon(
+                  Icons.access_time_rounded,
+                  size: 12,
+                  color: ITColors.textTertiaryColor(isDark),
+                ),
                 const SizedBox(width: 4),
                 Text(
                   _formatTime(log.timestamp),
@@ -268,7 +287,11 @@ class ITSecurityLogsList extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Icon(Icons.language_rounded, size: 12, color: ITColors.textTertiaryColor(isDark)),
+                Icon(
+                  Icons.language_rounded,
+                  size: 12,
+                  color: ITColors.textTertiaryColor(isDark),
+                ),
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
@@ -287,7 +310,11 @@ class ITSecurityLogsList extends StatelessWidget {
               const SizedBox(height: 6),
               Row(
                 children: [
-                  Icon(Icons.devices_rounded, size: 12, color: ITColors.textTertiaryColor(isDark)),
+                  Icon(
+                    Icons.devices_rounded,
+                    size: 12,
+                    color: ITColors.textTertiaryColor(isDark),
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     log.device!,
@@ -376,7 +403,11 @@ class ITSecurityLogsList extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.article_outlined, size: 48, color: ITColors.textTertiaryColor(isDark)),
+          Icon(
+            Icons.article_outlined,
+            size: 48,
+            color: ITColors.textTertiaryColor(isDark),
+          ),
           const SizedBox(height: 12),
           Text(
             'No logs found',
@@ -492,7 +523,7 @@ class ITSecurityLogsList extends StatelessWidget {
     if (diff.inMinutes < 1) return 'Just now';
     if (diff.inHours < 1) return '${diff.inMinutes}m ago';
     if (diff.inDays < 1) return '${diff.inHours}h ago';
-    
+
     return '${time.year}-${time.month.toString().padLeft(2, '0')}-${time.day.toString().padLeft(2, '0')} ${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
 }

@@ -43,11 +43,7 @@ class ProfileSectionCard extends StatelessWidget {
                     color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    icon,
-                    color: const Color(0xFF3B82F6),
-                    size: 20,
-                  ),
+                  child: Icon(icon, color: const Color(0xFF3B82F6), size: 20),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -64,10 +60,7 @@ class ProfileSectionCard extends StatelessWidget {
               ],
             ),
           ),
-          Divider(
-            color: isDark ? Colors.white12 : Colors.black12,
-            height: 1,
-          ),
+          Divider(color: isDark ? Colors.white12 : Colors.black12, height: 1),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Column(children: children),

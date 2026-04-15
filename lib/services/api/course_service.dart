@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../common/retry_helper.dart';
+import '../../common/service_error.dart';
 import 'core_api_client.dart';
 import '../../models/core/course_model.dart';
 import '../../models/core/course_structure_model.dart';
@@ -32,6 +34,40 @@ class CourseService {
     return data
         .map((e) => CourseModel.fromJson(e as Map<String, dynamic>))
         .toList();
+  }
+
+  /// GET /api/courses with admin-friendly filtering.
+  Future<ServiceResult<List<CourseModel>>> getCoursesCatalog({
+    String? search,
+    String? status,
+    int? departmentId,
+  }) {
+    return RetryHelper.execute<List<CourseModel>>(() async {
+      final queryParameters = <String, dynamic>{};
+      if (search != null && search.trim().isNotEmpty) {
+        queryParameters['search'] = search.trim();
+      }
+      if (status != null && status.trim().isNotEmpty) {
+        queryParameters['status'] = status.trim();
+      }
+      if (departmentId != null) {
+        queryParameters['departmentId'] = departmentId;
+      }
+
+      final response = await _client.dio.get(
+        '/courses',
+        queryParameters: queryParameters.isEmpty ? null : queryParameters,
+      );
+
+      final List data = response.data is List
+          ? response.data as List
+          : (response.data['data'] as List?) ?? [];
+
+      return data
+          .whereType<Map<String, dynamic>>()
+          .map(CourseModel.fromJson)
+          .toList();
+    }, fallbackMessage: 'Failed to load courses');
   }
 
   /// GET /api/courses/{courseId}
@@ -72,6 +108,37 @@ class CourseService {
         ? response.data as Map<String, dynamic>
         : (response.data['data'] as Map<String, dynamic>?) ?? {};
     return CourseModel.fromJson(data);
+  }
+
+  /// POST /api/courses
+  Future<ServiceResult<CourseModel>> createCourseAdmin(
+    Map<String, dynamic> body,
+  ) {
+    return RetryHelper.execute<CourseModel>(() async {
+      final response = await _client.dio.post('/courses', data: body);
+      return CourseModel.fromJson(_extractCourseMap(response.data));
+    }, fallbackMessage: 'Failed to create course');
+  }
+
+  /// PATCH /api/courses/:id
+  Future<ServiceResult<CourseModel>> updateCourseAdmin(
+    dynamic courseId,
+    Map<String, dynamic> body,
+  ) {
+    return RetryHelper.execute<CourseModel>(() async {
+      final response = await _client.dio.patch(
+        '/courses/$courseId',
+        data: body,
+      );
+      return CourseModel.fromJson(_extractCourseMap(response.data));
+    }, fallbackMessage: 'Failed to update course');
+  }
+
+  /// DELETE /api/courses/:id
+  Future<ServiceResult<void>> softDeleteCourse(dynamic courseId) {
+    return RetryHelper.executeVoid(() async {
+      await _client.dio.delete('/courses/$courseId');
+    }, fallbackMessage: 'Failed to delete course');
   }
 
   // ── Course Structure Endpoints ────────────────────────────────────────
@@ -249,6 +316,17 @@ class CourseService {
       createdAt: null,
       updatedAt: null,
     );
+  }
+
+  Map<String, dynamic> _extractCourseMap(dynamic payload) {
+    if (payload is Map<String, dynamic>) {
+      final data = payload['data'];
+      if (data is Map<String, dynamic>) {
+        return data;
+      }
+      return payload;
+    }
+    return <String, dynamic>{};
   }
 
   Future<List<CourseStructureModel>?> _loadCachedStructure(

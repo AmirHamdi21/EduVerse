@@ -29,9 +29,7 @@ class ITAlertsSection extends StatelessWidget {
             ? Colors.white.withValues(alpha: 0.03)
             : Colors.white.withValues(alpha: 0.8),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: ITColors.lightCardShadow(isDark),
@@ -120,8 +118,9 @@ class ITAlertsSection extends StatelessWidget {
             _buildEmptyState(l10n)
           else
             Column(
-              children:
-                  alerts.map((alert) => _buildAlertItem(alert, l10n)).toList(),
+              children: alerts
+                  .map((alert) => _buildAlertItem(alert, l10n))
+                  .toList(),
             ),
         ],
       ),
@@ -175,10 +174,7 @@ class ITAlertsSection extends StatelessWidget {
           color: ITColors.error.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
         ),
-        child: Icon(
-          Icons.close_rounded,
-          color: ITColors.error,
-        ),
+        child: Icon(Icons.close_rounded, color: ITColors.error),
       ),
       onDismissed: (_) => onDismiss?.call(alert),
       child: Padding(
@@ -194,9 +190,7 @@ class ITAlertsSection extends StatelessWidget {
                 color: isDark
                     ? severityColor.withValues(alpha: 0.1)
                     : severityColor.withValues(alpha: 0.08),
-                border: Border.all(
-                  color: severityColor.withValues(alpha: 0.3),
-                ),
+                border: Border.all(color: severityColor.withValues(alpha: 0.3)),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Row(

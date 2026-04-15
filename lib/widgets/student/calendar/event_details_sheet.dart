@@ -18,7 +18,7 @@ class EventDetailsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.75,
@@ -37,7 +37,9 @@ class EventDetailsSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                color: isDark
+                    ? const Color(0xFF374151)
+                    : const Color(0xFFE5E7EB),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -52,9 +54,14 @@ class EventDetailsSheet extends StatelessWidget {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
-                          color: _getEventTypeColor(event.type).withValues(alpha: 0.15),
+                          color: _getEventTypeColor(
+                            event.type,
+                          ).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -82,13 +89,17 @@ class EventDetailsSheet extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6),
+                            color: isDark
+                                ? const Color(0xFF1E2939)
+                                : const Color(0xFFF3F4F6),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.close_rounded,
                             size: 20,
-                            color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                            color: isDark
+                                ? const Color(0xFF99A1AF)
+                                : const Color(0xFF6B7280),
                           ),
                         ),
                       ),
@@ -120,7 +131,7 @@ class EventDetailsSheet extends StatelessWidget {
                     _buildInfoRow(
                       icon: Icons.access_time_rounded,
                       title: l10n.time,
-                      value: event.endTime != null 
+                      value: event.endTime != null
                           ? '${event.time} - ${event.endTime}'
                           : event.time!,
                       isDark: isDark,
@@ -158,7 +169,9 @@ class EventDetailsSheet extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                        color: isDark
+                            ? const Color(0xFF99A1AF)
+                            : const Color(0xFF6B7280),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -166,10 +179,14 @@ class EventDetailsSheet extends StatelessWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF9FAFB),
+                        color: isDark
+                            ? const Color(0xFF1E2939)
+                            : const Color(0xFFF9FAFB),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                          color: isDark
+                              ? const Color(0xFF374151)
+                              : const Color(0xFFE5E7EB),
                         ),
                       ),
                       child: Text(
@@ -177,7 +194,9 @@ class EventDetailsSheet extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           height: 1.5,
-                          color: isDark ? const Color(0xFFD1D5DC) : const Color(0xFF4B5563),
+                          color: isDark
+                              ? const Color(0xFFD1D5DC)
+                              : const Color(0xFF4B5563),
                         ),
                       ),
                     ),
@@ -256,7 +275,9 @@ class EventDetailsSheet extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                  color: isDark
+                      ? const Color(0xFF6B7280)
+                      : const Color(0xFF9CA3AF),
                 ),
               ),
               const SizedBox(height: 2),
@@ -265,7 +286,9 @@ class EventDetailsSheet extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF1F2937),
+                  color: isDark
+                      ? const Color(0xFFF3F4F6)
+                      : const Color(0xFF1F2937),
                 ),
               ),
             ],
@@ -290,9 +313,7 @@ class EventDetailsSheet extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: color.withValues(alpha: 0.3),
-          ),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -318,9 +339,7 @@ class EventDetailsSheet extends StatelessWidget {
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: isDark ? const Color(0xFF101828) : Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
             Container(

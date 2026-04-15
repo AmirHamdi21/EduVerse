@@ -30,11 +30,7 @@ class ITSettingsSection extends StatelessWidget {
                   color: ITColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  icon,
-                  size: 16,
-                  color: ITColors.primary,
-                ),
+                child: Icon(icon, size: 16, color: ITColors.primary),
               ),
               const SizedBox(width: 8),
               Text(
@@ -69,7 +65,9 @@ class ITSettingsSection extends StatelessWidget {
                     Divider(
                       height: 1,
                       indent: 56,
-                      color: ITColors.borderColor(isDark).withValues(alpha: 0.3),
+                      color: ITColors.borderColor(
+                        isDark,
+                      ).withValues(alpha: 0.3),
                     ),
                 ],
               );
@@ -97,7 +95,9 @@ class ITSettingsSection extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: (item.iconColor ?? ITColors.primary).withValues(alpha: 0.1),
+                  color: (item.iconColor ?? ITColors.primary).withValues(
+                    alpha: 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(

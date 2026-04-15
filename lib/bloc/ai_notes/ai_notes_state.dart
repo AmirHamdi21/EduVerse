@@ -70,9 +70,13 @@ class AINotesLoaded extends AINotesState {
       stats: stats ?? this.stats,
       currentFilter: currentFilter ?? this.currentFilter,
       currentSort: currentSort ?? this.currentSort,
-      selectedCategoryId: clearSelectedCategory ? null : (selectedCategoryId ?? this.selectedCategoryId),
+      selectedCategoryId: clearSelectedCategory
+          ? null
+          : (selectedCategoryId ?? this.selectedCategoryId),
       searchQuery: searchQuery ?? this.searchQuery,
-      selectedNote: clearSelectedNote ? null : (selectedNote ?? this.selectedNote),
+      selectedNote: clearSelectedNote
+          ? null
+          : (selectedNote ?? this.selectedNote),
       isGeneratingContent: isGeneratingContent ?? this.isGeneratingContent,
       error: clearError ? null : (error ?? this.error),
     );

@@ -42,7 +42,7 @@ class ITSearchQuickActions extends StatelessWidget {
           itemBuilder: (context, index) {
             final action = actions[index];
             final color = action['color'] as Color;
-            
+
             return Material(
               color: Colors.transparent,
               child: InkWell(
@@ -53,9 +53,7 @@ class ITSearchQuickActions extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: ITColors.cardColor(isDark),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: color.withValues(alpha: 0.3),
-                    ),
+                    border: Border.all(color: color.withValues(alpha: 0.3)),
                   ),
                   child: Row(
                     children: [

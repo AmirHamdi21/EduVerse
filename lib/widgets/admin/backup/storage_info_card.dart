@@ -80,7 +80,9 @@ class StorageInfoCard extends StatelessWidget {
                       l10n.backupStorageInfo,
                       style: TextStyle(
                         fontSize: 13,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -127,13 +129,18 @@ class StorageInfoCard extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: isCritical
                             ? AdminColors.error.withValues(alpha: 0.15)
                             : (isWarning
-                                ? AdminColors.warning.withValues(alpha: 0.15)
-                                : AdminColors.success.withValues(alpha: 0.15)),
+                                  ? AdminColors.warning.withValues(alpha: 0.15)
+                                  : AdminColors.success.withValues(
+                                      alpha: 0.15,
+                                    )),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -143,7 +150,9 @@ class StorageInfoCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                           color: isCritical
                               ? AdminColors.error
-                              : (isWarning ? AdminColors.warning : AdminColors.success),
+                              : (isWarning
+                                    ? AdminColors.warning
+                                    : AdminColors.success),
                         ),
                       ),
                     ),
@@ -161,7 +170,9 @@ class StorageInfoCard extends StatelessWidget {
                     valueColor: AlwaysStoppedAnimation<Color>(
                       isCritical
                           ? AdminColors.error
-                          : (isWarning ? AdminColors.warning : AdminColors.success),
+                          : (isWarning
+                                ? AdminColors.warning
+                                : AdminColors.success),
                     ),
                   ),
                 ),
@@ -228,9 +239,7 @@ class StorageInfoCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -259,7 +268,9 @@ class StorageInfoCard extends StatelessWidget {
                   label,
                   style: TextStyle(
                     fontSize: 11,
-                    color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                    color: AdminColors.getTextColor(
+                      isDark,
+                    ).withValues(alpha: 0.6),
                   ),
                 ),
               ],

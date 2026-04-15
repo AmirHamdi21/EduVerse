@@ -10,7 +10,7 @@ class CommunicationService {
   final CoreApiClient _client;
 
   CommunicationService({required CoreApiClient coreApiClient})
-      : _client = coreApiClient;
+    : _client = coreApiClient;
 
   // ── Announcements ─────────────────────────────────────────────────────
 
@@ -27,7 +27,8 @@ class CommunicationService {
 
   /// POST /api/announcements
   Future<AnnouncementModel> createAnnouncement(
-      Map<String, dynamic> body) async {
+    Map<String, dynamic> body,
+  ) async {
     final response = await _client.dio.post('/announcements', data: body);
     final Map<String, dynamic> data = response.data is Map<String, dynamic>
         ? response.data as Map<String, dynamic>
@@ -46,9 +47,10 @@ class CommunicationService {
 
   /// PUT /api/announcements/{id}
   Future<AnnouncementModel> updateAnnouncement(
-      dynamic id, Map<String, dynamic> body) async {
-    final response =
-        await _client.dio.put('/announcements/$id', data: body);
+    dynamic id,
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _client.dio.put('/announcements/$id', data: body);
     final Map<String, dynamic> data = response.data is Map<String, dynamic>
         ? response.data as Map<String, dynamic>
         : (response.data['data'] as Map<String, dynamic>?) ?? {};
@@ -67,8 +69,7 @@ class CommunicationService {
 
   /// GET /api/announcements/{id}/analytics
   Future<Map<String, dynamic>> getAnnouncementAnalytics(dynamic id) async {
-    final response =
-        await _client.dio.get('/announcements/$id/analytics');
+    final response = await _client.dio.get('/announcements/$id/analytics');
     return response.data is Map<String, dynamic>
         ? response.data as Map<String, dynamic>
         : (response.data['data'] as Map<String, dynamic>?) ?? {};
@@ -97,8 +98,7 @@ class CommunicationService {
   }
 
   /// POST /api/assignments
-  Future<AssignmentModel> createAssignment(
-      Map<String, dynamic> body) async {
+  Future<AssignmentModel> createAssignment(Map<String, dynamic> body) async {
     final response = await _client.dio.post('/assignments', data: body);
     final Map<String, dynamic> data = response.data is Map<String, dynamic>
         ? response.data as Map<String, dynamic>
@@ -108,9 +108,10 @@ class CommunicationService {
 
   /// PATCH /api/assignments/{id}
   Future<AssignmentModel> updateAssignment(
-      dynamic id, Map<String, dynamic> body) async {
-    final response =
-        await _client.dio.patch('/assignments/$id', data: body);
+    dynamic id,
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _client.dio.patch('/assignments/$id', data: body);
     final Map<String, dynamic> data = response.data is Map<String, dynamic>
         ? response.data as Map<String, dynamic>
         : (response.data['data'] as Map<String, dynamic>?) ?? {};
@@ -119,8 +120,7 @@ class CommunicationService {
 
   /// GET /api/assignments/{id}/submissions/my
   Future<Map<String, dynamic>> getMySubmission(dynamic id) async {
-    final response =
-        await _client.dio.get('/assignments/$id/submissions/my');
+    final response = await _client.dio.get('/assignments/$id/submissions/my');
     return response.data is Map<String, dynamic>
         ? response.data as Map<String, dynamic>
         : (response.data['data'] as Map<String, dynamic>?) ?? {};
@@ -128,8 +128,7 @@ class CommunicationService {
 
   /// GET /api/assignments/{id}/submissions
   Future<List<Map<String, dynamic>>> getAllSubmissions(dynamic id) async {
-    final response =
-        await _client.dio.get('/assignments/$id/submissions');
+    final response = await _client.dio.get('/assignments/$id/submissions');
     final List data = response.data is List
         ? response.data as List
         : (response.data['data'] as List?) ?? [];
@@ -145,14 +144,14 @@ class CommunicationService {
         ? response.data as List
         : (response.data['data'] as List?) ?? [];
     return data
-        .map(
-            (e) => DiscussionThreadModel.fromJson(e as Map<String, dynamic>))
+        .map((e) => DiscussionThreadModel.fromJson(e as Map<String, dynamic>))
         .toList();
   }
 
   /// POST /api/discussions
   Future<DiscussionThreadModel> createDiscussion(
-      Map<String, dynamic> body) async {
+    Map<String, dynamic> body,
+  ) async {
     final response = await _client.dio.post('/discussions', data: body);
     final Map<String, dynamic> data = response.data is Map<String, dynamic>
         ? response.data as Map<String, dynamic>
@@ -171,9 +170,10 @@ class CommunicationService {
 
   /// PUT /api/discussions/{id}
   Future<DiscussionThreadModel> updateDiscussion(
-      dynamic id, Map<String, dynamic> body) async {
-    final response =
-        await _client.dio.put('/discussions/$id', data: body);
+    dynamic id,
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _client.dio.put('/discussions/$id', data: body);
     final Map<String, dynamic> data = response.data is Map<String, dynamic>
         ? response.data as Map<String, dynamic>
         : (response.data['data'] as Map<String, dynamic>?) ?? {};
@@ -182,9 +182,13 @@ class CommunicationService {
 
   /// POST /api/discussions/{id}/reply
   Future<Map<String, dynamic>> replyToDiscussion(
-      dynamic id, Map<String, dynamic> body) async {
-    final response =
-        await _client.dio.post('/discussions/$id/reply', data: body);
+    dynamic id,
+    Map<String, dynamic> body,
+  ) async {
+    final response = await _client.dio.post(
+      '/discussions/$id/reply',
+      data: body,
+    );
     return response.data is Map<String, dynamic>
         ? response.data as Map<String, dynamic>
         : (response.data['data'] as Map<String, dynamic>?) ?? {};

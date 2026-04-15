@@ -35,10 +35,7 @@ class ITIntegrationStatsCard extends StatelessWidget {
                 end: Alignment.bottomRight,
               )
             : LinearGradient(
-                colors: [
-                  ITColors.primarySurface,
-                  Colors.white,
-                ],
+                colors: [ITColors.primarySurface, Colors.white],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -203,9 +200,7 @@ class ITIntegrationStatsCard extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
       ),
       child: Row(

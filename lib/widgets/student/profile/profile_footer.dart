@@ -5,10 +5,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class ProfileFooter extends StatelessWidget {
   final bool isDark;
 
-  const ProfileFooter({
-    super.key,
-    required this.isDark,
-  });
+  const ProfileFooter({super.key, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -90,11 +87,7 @@ class ProfileFooter extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Column(
           children: [
-            Icon(
-              icon,
-              size: 22,
-              color: const Color(0xFF3B82F6),
-            ),
+            Icon(icon, size: 22, color: const Color(0xFF3B82F6)),
             const SizedBox(height: 4),
             Text(
               label,
@@ -353,26 +346,14 @@ class _PrivacyPolicySheet extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildSection(
-                    l10n.dataCollection,
-                    l10n.dataCollectionDesc,
-                  ),
-                  _buildSection(
-                    l10n.dataUsage,
-                    l10n.dataUsageDesc,
-                  ),
-                  _buildSection(
-                    l10n.dataSecurity,
-                    l10n.dataSecurityDesc,
-                  ),
+                  _buildSection(l10n.dataCollection, l10n.dataCollectionDesc),
+                  _buildSection(l10n.dataUsage, l10n.dataUsageDesc),
+                  _buildSection(l10n.dataSecurity, l10n.dataSecurityDesc),
                   _buildSection(
                     l10n.thirdPartyServices,
                     l10n.thirdPartyServicesDesc,
                   ),
-                  _buildSection(
-                    l10n.yourRights,
-                    l10n.yourRightsDesc,
-                  ),
+                  _buildSection(l10n.yourRights, l10n.yourRightsDesc),
                 ],
               ),
             ),
@@ -438,11 +419,7 @@ class _AboutDialog extends StatelessWidget {
             ),
             child: const Column(
               children: [
-                Icon(
-                  Icons.school_rounded,
-                  size: 56,
-                  color: Colors.white,
-                ),
+                Icon(Icons.school_rounded, size: 56, color: Colors.white),
                 SizedBox(height: 12),
                 Text(
                   'EduVerse',
@@ -454,10 +431,7 @@ class _AboutDialog extends StatelessWidget {
                 ),
                 Text(
                   'Version 1.0.0',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
-                  ),
+                  style: TextStyle(fontSize: 14, color: Colors.white70),
                 ),
               ],
             ),
@@ -526,11 +500,7 @@ class _AboutDialog extends StatelessWidget {
           color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
           shape: BoxShape.circle,
         ),
-        child: Icon(
-          icon,
-          color: const Color(0xFF3B82F6),
-          size: 20,
-        ),
+        child: Icon(icon, color: const Color(0xFF3B82F6), size: 20),
       ),
     );
   }

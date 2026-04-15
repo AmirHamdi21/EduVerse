@@ -36,11 +36,13 @@ class _TwoFactorAuthSettingsScreenState
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -110,10 +112,11 @@ class _TwoFactorAuthSettingsScreenState
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: (_twoFactorEnabled
-                    ? const Color(0xFF10B981)
-                    : const Color(0xFFF59E0B))
-                .withValues(alpha: 0.3),
+            color:
+                (_twoFactorEnabled
+                        ? const Color(0xFF10B981)
+                        : const Color(0xFFF59E0B))
+                    .withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -275,8 +278,8 @@ class _TwoFactorAuthSettingsScreenState
                 color: isSelected
                     ? const Color(0xFF3B82F6).withValues(alpha: 0.1)
                     : (isDark
-                        ? const Color(0xFF0F172A)
-                        : const Color(0xFFF1F5F9)),
+                          ? const Color(0xFF0F172A)
+                          : const Color(0xFFF1F5F9)),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -466,9 +469,9 @@ class _TwoFactorAuthSettingsScreenState
                             child: GestureDetector(
                               onTap: () {
                                 HapticFeedback.mediumImpact();
-                                Clipboard.setData(ClipboardData(
-                                  text: _backupCodes.join('\n'),
-                                ));
+                                Clipboard.setData(
+                                  ClipboardData(text: _backupCodes.join('\n')),
+                                );
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(l10n.codesCopied),
@@ -481,11 +484,13 @@ class _TwoFactorAuthSettingsScreenState
                                 );
                               },
                               child: Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF3B82F6)
-                                      .withValues(alpha: 0.1),
+                                  color: const Color(
+                                    0xFF3B82F6,
+                                  ).withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Row(
@@ -518,8 +523,9 @@ class _TwoFactorAuthSettingsScreenState
                                 // Generate new codes
                               },
                               child: Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 12),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
                                 decoration: BoxDecoration(
                                   color: isDark
                                       ? const Color(0xFF0F172A)
@@ -697,35 +703,33 @@ class _TwoFactorAuthSettingsScreenState
             ),
           ),
           const SizedBox(height: 16),
-          ...benefits.map((b) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        b.$1,
-                        size: 18,
-                        color: const Color(0xFF10B981),
+          ...benefits.map(
+            (b) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(b.$1, size: 18, color: const Color(0xFF10B981)),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      b.$2,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: isDark ? Colors.white70 : Colors.black54,
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        b.$2,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isDark ? Colors.white70 : Colors.black54,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -819,12 +823,14 @@ class _Disable2FADialogState extends State<_Disable2FADialog>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -847,9 +853,7 @@ class _Disable2FADialogState extends State<_Disable2FADialog>
             constraints: const BoxConstraints(maxWidth: 340),
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: widget.isDark
-                  ? const Color(0xFF1E293B)
-                  : Colors.white,
+              color: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
@@ -971,8 +975,9 @@ class _Disable2FADialogState extends State<_Disable2FADialog>
                             borderRadius: BorderRadius.circular(12),
                             boxShadow: [
                               BoxShadow(
-                                color:
-                                    const Color(0xFFEF4444).withValues(alpha: 0.4),
+                                color: const Color(
+                                  0xFFEF4444,
+                                ).withValues(alpha: 0.4),
                                 blurRadius: 8,
                                 offset: const Offset(0, 4),
                               ),

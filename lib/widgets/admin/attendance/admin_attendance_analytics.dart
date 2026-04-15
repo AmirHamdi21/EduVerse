@@ -22,7 +22,9 @@ class AdminAttendanceAnalytics extends StatelessWidget {
         color: isDark ? AdminColors.darkCard : AdminColors.lightCard,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
       ),
       child: Column(
@@ -40,7 +42,10 @@ class AdminAttendanceAnalytics extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AdminColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -73,7 +78,9 @@ class AdminAttendanceAnalytics extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+              color: isDark
+                  ? AdminColors.darkTextSecondary
+                  : AdminColors.lightTextSecondary,
             ),
           ),
           const SizedBox(height: 16),
@@ -84,7 +91,9 @@ class AdminAttendanceAnalytics extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+              color: isDark
+                  ? AdminColors.darkTextSecondary
+                  : AdminColors.lightTextSecondary,
             ),
           ),
           const SizedBox(height: 16),
@@ -92,22 +101,26 @@ class AdminAttendanceAnalytics extends StatelessWidget {
             height: 120,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: weeklyTrends.map((trend) => _buildTrendBar(trend)).toList(),
+              children: weeklyTrends
+                  .map((trend) => _buildTrendBar(trend))
+                  .toList(),
             ),
           ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: weeklyTrends
-                .map((trend) => Text(
-                      trend.day,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: isDark
-                            ? AdminColors.darkTextTertiary
-                            : AdminColors.lightTextTertiary,
-                      ),
-                    ))
+                .map(
+                  (trend) => Text(
+                    trend.day,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isDark
+                          ? AdminColors.darkTextTertiary
+                          : AdminColors.lightTextTertiary,
+                    ),
+                  ),
+                )
                 .toList(),
           ),
         ],
@@ -119,8 +132,8 @@ class AdminAttendanceAnalytics extends StatelessWidget {
     final color = dept.rate >= 0.9
         ? AdminColors.success
         : dept.rate >= 0.75
-            ? AdminColors.warning
-            : AdminColors.error;
+        ? AdminColors.warning
+        : AdminColors.error;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
@@ -135,7 +148,9 @@ class AdminAttendanceAnalytics extends StatelessWidget {
                   dept.name,
                   style: TextStyle(
                     fontSize: 13,
-                    color: isDark ? AdminColors.darkText : AdminColors.lightText,
+                    color: isDark
+                        ? AdminColors.darkText
+                        : AdminColors.lightText,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -184,7 +199,9 @@ class AdminAttendanceAnalytics extends StatelessWidget {
   Widget _buildTrendBar(WeeklyTrend trend) {
     final maxHeight = 100.0;
     final barHeight = maxHeight * trend.rate;
-    final color = trend.isToday ? AdminColors.primary : AdminColors.primary.withValues(alpha: 0.5);
+    final color = trend.isToday
+        ? AdminColors.primary
+        : AdminColors.primary.withValues(alpha: 0.5);
 
     return Expanded(
       child: Padding(
@@ -197,7 +214,9 @@ class AdminAttendanceAnalytics extends StatelessWidget {
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
-                color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+                color: isDark
+                    ? AdminColors.darkTextSecondary
+                    : AdminColors.lightTextSecondary,
               ),
             ),
             const SizedBox(height: 4),
@@ -221,10 +240,7 @@ class DepartmentAttendance {
   final String name;
   final double rate;
 
-  const DepartmentAttendance({
-    required this.name,
-    required this.rate,
-  });
+  const DepartmentAttendance({required this.name, required this.rate});
 }
 
 class WeeklyTrend {

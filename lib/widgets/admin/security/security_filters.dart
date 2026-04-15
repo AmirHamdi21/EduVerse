@@ -2,8 +2,18 @@ import 'package:flutter/material.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../shared/admin_colors.dart';
 
-enum ActivityType { all, login, logout, passwordChange, roleChange, dataAccess, systemChange }
+enum ActivityType {
+  all,
+  login,
+  logout,
+  passwordChange,
+  roleChange,
+  dataAccess,
+  systemChange,
+}
+
 enum UserRoleFilter { all, admin, instructor, ta, student }
+
 enum DateRangeFilter { today, lastWeek, lastMonth, custom }
 
 class SecurityFilters extends StatelessWidget {
@@ -41,9 +51,7 @@ class SecurityFilters extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
       ),
       child: Column(
         children: [
@@ -75,16 +83,11 @@ class SecurityFilters extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AdminColors.darkSurface : AdminColors.lightBackground,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AdminColors.getDividerColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getDividerColor(isDark)),
       ),
       child: TextField(
         onChanged: onSearchChanged,
-        style: TextStyle(
-          color: AdminColors.getTextColor(isDark),
-          fontSize: 14,
-        ),
+        style: TextStyle(color: AdminColors.getTextColor(isDark), fontSize: 14),
         decoration: InputDecoration(
           hintText: l10n.searchActivityLogs,
           hintStyle: TextStyle(
@@ -97,7 +100,10 @@ class SecurityFilters extends StatelessWidget {
             size: 20,
           ),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );
@@ -109,9 +115,7 @@ class SecurityFilters extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AdminColors.darkSurface : AdminColors.lightBackground,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: AdminColors.getDividerColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getDividerColor(isDark)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<ActivityType>(
@@ -146,9 +150,7 @@ class SecurityFilters extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AdminColors.darkSurface : AdminColors.lightBackground,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: AdminColors.getDividerColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getDividerColor(isDark)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<UserRoleFilter>(
@@ -183,9 +185,7 @@ class SecurityFilters extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AdminColors.darkSurface : AdminColors.lightBackground,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: AdminColors.getDividerColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getDividerColor(isDark)),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<DateRangeFilter>(
@@ -227,11 +227,7 @@ class SecurityFilters extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.clear_rounded,
-              size: 16,
-              color: AdminColors.error,
-            ),
+            Icon(Icons.clear_rounded, size: 16, color: AdminColors.error),
             const SizedBox(width: 6),
             Text(
               l10n.clearFilters,

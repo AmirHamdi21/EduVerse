@@ -55,19 +55,19 @@ class _TAAIReplyAssistantState extends State<TAAIReplyAssistant> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    TAColors.primary.withValues(alpha: widget.isDark ? 0.2 : 0.1),
-                    TAColors.primary.withValues(alpha: widget.isDark ? 0.1 : 0.05),
+                    TAColors.primary.withValues(
+                      alpha: widget.isDark ? 0.2 : 0.1,
+                    ),
+                    TAColors.primary.withValues(
+                      alpha: widget.isDark ? 0.1 : 0.05,
+                    ),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    color: TAColors.primary,
-                    size: 18,
-                  ),
+                  Icon(Icons.auto_awesome, color: TAColors.primary, size: 18),
                   const SizedBox(width: 8),
                   Text(
                     l10n.taNotifAIReplyAssistant,
@@ -121,7 +121,9 @@ class _TAAIReplyAssistantState extends State<TAAIReplyAssistant> {
                   : TAColors.surfaceColor(widget.isDark),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: TAColors.borderColor(widget.isDark).withValues(alpha: 0.3),
+                color: TAColors.borderColor(
+                  widget.isDark,
+                ).withValues(alpha: 0.3),
               ),
             ),
             child: Row(

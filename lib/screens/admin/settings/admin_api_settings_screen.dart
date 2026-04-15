@@ -73,7 +73,9 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -116,10 +118,7 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
       actions: [
         IconButton(
           onPressed: () => _showDocumentation(context, isDark, l10n),
-          icon: Icon(
-            Icons.menu_book_rounded,
-            color: AdminColors.primary,
-          ),
+          icon: Icon(Icons.menu_book_rounded, color: AdminColors.primary),
           tooltip: l10n.apiDocumentation,
         ),
       ],
@@ -132,12 +131,15 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
       decoration: BoxDecoration(
         gradient: _apiEnabled
             ? AdminColors.primaryGradient
-            : LinearGradient(colors: [Colors.grey.shade600, Colors.grey.shade700]),
+            : LinearGradient(
+                colors: [Colors.grey.shade600, Colors.grey.shade700],
+              ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: (_apiEnabled ? AdminColors.primary : Colors.grey)
-                .withValues(alpha: 0.3),
+            color: (_apiEnabled ? AdminColors.primary : Colors.grey).withValues(
+              alpha: 0.3,
+            ),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -280,8 +282,11 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
                   color: AdminColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(Icons.speed_rounded,
-                    color: AdminColors.warning, size: 20),
+                child: Icon(
+                  Icons.speed_rounded,
+                  color: AdminColors.warning,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -384,7 +389,10 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
   }
 
   Widget _buildApiKeysSection(
-      bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -409,13 +417,19 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
           ],
         ),
         SizedBox(height: responsive.p12),
-        ..._apiKeys.map((key) => _buildApiKeyCard(key, isDark, l10n, responsive)),
+        ..._apiKeys.map(
+          (key) => _buildApiKeyCard(key, isDark, l10n, responsive),
+        ),
       ],
     );
   }
 
   Widget _buildApiKeyCard(
-      _ApiKey apiKey, bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    _ApiKey apiKey,
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return Container(
       margin: EdgeInsets.only(bottom: responsive.p12),
       decoration: BoxDecoration(
@@ -435,16 +449,18 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: (apiKey.isActive
-                                ? AdminColors.success
-                                : Colors.grey)
-                            .withValues(alpha: 0.1),
+                        color:
+                            (apiKey.isActive
+                                    ? AdminColors.success
+                                    : Colors.grey)
+                                .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Icon(
                         Icons.vpn_key_rounded,
-                        color:
-                            apiKey.isActive ? AdminColors.success : Colors.grey,
+                        color: apiKey.isActive
+                            ? AdminColors.success
+                            : Colors.grey,
                         size: 24,
                       ),
                     ),
@@ -482,8 +498,10 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: AdminColors.getBackgroundColor(isDark),
                     borderRadius: BorderRadius.circular(8),
@@ -509,12 +527,16 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
                               behavior: SnackBarBehavior.floating,
                               backgroundColor: AdminColors.success,
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                           );
                         },
-                        icon: Icon(Icons.copy_rounded,
-                            size: 18, color: AdminColors.primary),
+                        icon: Icon(
+                          Icons.copy_rounded,
+                          size: 18,
+                          color: AdminColors.primary,
+                        ),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -542,7 +564,9 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
                     }
                     return Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
@@ -567,10 +591,15 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
               Expanded(
                 child: TextButton.icon(
                   onPressed: () => _regenerateKey(apiKey, l10n),
-                  icon: Icon(Icons.refresh_rounded,
-                      size: 18, color: AdminColors.warning),
-                  label: Text(l10n.regenerate,
-                      style: TextStyle(color: AdminColors.warning)),
+                  icon: Icon(
+                    Icons.refresh_rounded,
+                    size: 18,
+                    color: AdminColors.warning,
+                  ),
+                  label: Text(
+                    l10n.regenerate,
+                    style: TextStyle(color: AdminColors.warning),
+                  ),
                 ),
               ),
               Container(
@@ -581,10 +610,15 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
               Expanded(
                 child: TextButton.icon(
                   onPressed: () => _deleteKey(apiKey, l10n),
-                  icon: Icon(Icons.delete_outline_rounded,
-                      size: 18, color: AdminColors.error),
-                  label: Text(l10n.revoke,
-                      style: TextStyle(color: AdminColors.error)),
+                  icon: Icon(
+                    Icons.delete_outline_rounded,
+                    size: 18,
+                    color: AdminColors.error,
+                  ),
+                  label: Text(
+                    l10n.revoke,
+                    style: TextStyle(color: AdminColors.error),
+                  ),
                 ),
               ),
             ],
@@ -599,7 +633,10 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
   }
 
   void _showCreateKeyDialog(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final nameController = TextEditingController();
     List<String> selectedPermissions = ['read'];
 
@@ -608,7 +645,9 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           backgroundColor: AdminColors.getCardColor(isDark),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: Row(
             children: [
               Container(
@@ -617,7 +656,11 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
                   gradient: AdminColors.primaryGradient,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.add_rounded, color: Colors.white, size: 20),
+                child: const Icon(
+                  Icons.add_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Text(
@@ -678,22 +721,28 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel,
-                  style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark))),
+              child: Text(
+                l10n.cancel,
+                style: TextStyle(
+                  color: AdminColors.getTextSecondaryColor(isDark),
+                ),
+              ),
             ),
             ElevatedButton(
               onPressed: () {
                 if (nameController.text.isNotEmpty) {
                   setState(() {
-                    _apiKeys.add(_ApiKey(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      name: nameController.text,
-                      key: 'pk_${DateTime.now().millisecondsSinceEpoch}_xxxx',
-                      createdAt: DateTime.now(),
-                      lastUsed: null,
-                      permissions: selectedPermissions,
-                      isActive: true,
-                    ));
+                    _apiKeys.add(
+                      _ApiKey(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        name: nameController.text,
+                        key: 'pk_${DateTime.now().millisecondsSinceEpoch}_xxxx',
+                        createdAt: DateTime.now(),
+                        lastUsed: null,
+                        permissions: selectedPermissions,
+                        isActive: true,
+                      ),
+                    );
                   });
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -702,7 +751,8 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
                       behavior: SnackBarBehavior.floating,
                       backgroundColor: AdminColors.success,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   );
                 }
@@ -720,7 +770,10 @@ class _AdminApiSettingsScreenState extends State<AdminApiSettingsScreen> {
   }
 
   void _showDocumentation(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,

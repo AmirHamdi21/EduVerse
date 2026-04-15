@@ -146,11 +146,7 @@ class TAActivityStatsSection extends StatelessWidget {
               color: color.withValues(alpha: isDark ? 0.2 : 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 22,
-            ),
+            child: Icon(icon, color: color, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -198,9 +194,7 @@ class TAActivityStatsSection extends StatelessWidget {
                 ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: TAColors.primary.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: TAColors.primary.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [

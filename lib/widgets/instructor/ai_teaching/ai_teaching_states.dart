@@ -6,11 +6,7 @@ class AIEmptyState extends StatelessWidget {
   final bool isDark;
   final VoidCallback? onGetStarted;
 
-  const AIEmptyState({
-    super.key,
-    required this.isDark,
-    this.onGetStarted,
-  });
+  const AIEmptyState({super.key, required this.isDark, this.onGetStarted});
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +79,9 @@ class AIEmptyState extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: AITeachingColors.primary.withValues(alpha: 0.3),
+                          color: AITeachingColors.primary.withValues(
+                            alpha: 0.3,
+                          ),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -121,41 +119,45 @@ class AIEmptyState extends StatelessWidget {
     final features = [
       {'icon': Icons.edit_note_rounded, 'text': 'Create quizzes & content'},
       {'icon': Icons.analytics_outlined, 'text': 'Analyze student data'},
-      {'icon': Icons.auto_fix_high_rounded, 'text': 'Enhance teaching materials'},
+      {
+        'icon': Icons.auto_fix_high_rounded,
+        'text': 'Enhance teaching materials',
+      },
     ];
 
     return Column(
       children: features
-          .map((f) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color:
-                            AITeachingColors.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        f['icon'] as IconData,
-                        color: AITeachingColors.primary,
-                        size: 18,
-                      ),
+          .map(
+            (f) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AITeachingColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    const SizedBox(width: 12),
-                    Text(
-                      f['text'] as String,
-                      style: TextStyle(
-                        color: AITeachingColors.textPrimaryColor(isDark),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    child: Icon(
+                      f['icon'] as IconData,
+                      color: AITeachingColors.primary,
+                      size: 18,
                     ),
-                  ],
-                ),
-              ))
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    f['text'] as String,
+                    style: TextStyle(
+                      color: AITeachingColors.textPrimaryColor(isDark),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
           .toList(),
     );
   }
@@ -165,10 +167,7 @@ class AIEmptyState extends StatelessWidget {
 class AITypingIndicator extends StatefulWidget {
   final bool isDark;
 
-  const AITypingIndicator({
-    super.key,
-    required this.isDark,
-  });
+  const AITypingIndicator({super.key, required this.isDark});
 
   @override
   State<AITypingIndicator> createState() => _AITypingIndicatorState();
@@ -243,8 +242,9 @@ class _AITypingIndicatorState extends State<AITypingIndicator>
                       width: 8,
                       height: 8,
                       decoration: BoxDecoration(
-                        color: AITeachingColors.primary
-                            .withValues(alpha: opacity),
+                        color: AITeachingColors.primary.withValues(
+                          alpha: opacity,
+                        ),
                         shape: BoxShape.circle,
                       ),
                     );

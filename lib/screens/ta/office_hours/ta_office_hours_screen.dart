@@ -23,16 +23,55 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
 
   // Mock office hours data
   final List<Map<String, dynamic>> _officeHours = [
-    {'day': 'Monday', 'startTime': '14:00', 'endTime': '16:00', 'location': 'Room 205', 'isOnline': false, 'isActive': true},
-    {'day': 'Wednesday', 'startTime': '10:00', 'endTime': '12:00', 'location': 'Room 205', 'isOnline': false, 'isActive': true},
-    {'day': 'Friday', 'startTime': '15:00', 'endTime': '17:00', 'location': 'Online - Zoom', 'isOnline': true, 'isActive': true},
+    {
+      'day': 'Monday',
+      'startTime': '14:00',
+      'endTime': '16:00',
+      'location': 'Room 205',
+      'isOnline': false,
+      'isActive': true,
+    },
+    {
+      'day': 'Wednesday',
+      'startTime': '10:00',
+      'endTime': '12:00',
+      'location': 'Room 205',
+      'isOnline': false,
+      'isActive': true,
+    },
+    {
+      'day': 'Friday',
+      'startTime': '15:00',
+      'endTime': '17:00',
+      'location': 'Online - Zoom',
+      'isOnline': true,
+      'isActive': true,
+    },
   ];
 
   // Upcoming appointments
   final List<Map<String, dynamic>> _appointments = [
-    {'studentName': 'John Smith', 'date': 'Mon, Feb 10', 'time': '2:30 PM', 'topic': 'Assignment Help', 'status': 'confirmed'},
-    {'studentName': 'Emily Davis', 'date': 'Mon, Feb 10', 'time': '3:00 PM', 'topic': 'Grade Discussion', 'status': 'pending'},
-    {'studentName': 'Michael Brown', 'date': 'Wed, Feb 12', 'time': '10:30 AM', 'topic': 'Lab Questions', 'status': 'confirmed'},
+    {
+      'studentName': 'John Smith',
+      'date': 'Mon, Feb 10',
+      'time': '2:30 PM',
+      'topic': 'Assignment Help',
+      'status': 'confirmed',
+    },
+    {
+      'studentName': 'Emily Davis',
+      'date': 'Mon, Feb 10',
+      'time': '3:00 PM',
+      'topic': 'Grade Discussion',
+      'status': 'pending',
+    },
+    {
+      'studentName': 'Michael Brown',
+      'date': 'Wed, Feb 12',
+      'time': '10:30 AM',
+      'topic': 'Lab Questions',
+      'status': 'confirmed',
+    },
   ];
 
   @override
@@ -99,7 +138,10 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
             icon: const Icon(Icons.add_rounded, color: Colors.white),
             label: Text(
               l10n.taOfficeAddSlot,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         );
@@ -214,7 +256,9 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: TAColors.borderColor(isDark).withValues(alpha: 0.5)),
+        border: Border.all(
+          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
+        ),
       ),
       child: Column(
         children: [
@@ -298,7 +342,9 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: (isOnline ? TAColors.info : TAColors.primary).withValues(alpha: 0.12),
+              color: (isOnline ? TAColors.info : TAColors.primary).withValues(
+                alpha: 0.12,
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -324,11 +370,16 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: isActive
                             ? TAColors.success.withValues(alpha: 0.12)
-                            : TAColors.textTertiaryColor(isDark).withValues(alpha: 0.12),
+                            : TAColors.textTertiaryColor(
+                                isDark,
+                              ).withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -356,7 +407,9 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
                 Row(
                   children: [
                     Icon(
-                      isOnline ? Icons.link_rounded : Icons.location_on_outlined,
+                      isOnline
+                          ? Icons.link_rounded
+                          : Icons.location_on_outlined,
                       size: 14,
                       color: TAColors.textTertiaryColor(isDark),
                     ),
@@ -422,7 +475,9 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
         if (_appointments.isEmpty)
           _buildEmptyAppointments(isDark, l10n)
         else
-          ..._appointments.take(3).map((apt) => _buildAppointmentCard(apt, isDark)),
+          ..._appointments
+              .take(3)
+              .map((apt) => _buildAppointmentCard(apt, isDark)),
       ],
     );
   }
@@ -433,7 +488,9 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: TAColors.borderColor(isDark).withValues(alpha: 0.5)),
+        border: Border.all(
+          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
+        ),
       ),
       child: Center(
         child: Column(
@@ -479,7 +536,10 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
             height: 50,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [TAColors.primary, TAColors.primary.withValues(alpha: 0.7)],
+                colors: [
+                  TAColors.primary,
+                  TAColors.primary.withValues(alpha: 0.7),
+                ],
               ),
               borderRadius: BorderRadius.circular(12),
             ),
@@ -511,7 +571,10 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: isPending
                             ? TAColors.warning.withValues(alpha: 0.12)
@@ -521,7 +584,9 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
                       child: Text(
                         isPending ? 'Pending' : 'Confirmed',
                         style: TextStyle(
-                          color: isPending ? TAColors.warning : TAColors.success,
+                          color: isPending
+                              ? TAColors.warning
+                              : TAColors.success,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
@@ -550,7 +615,10 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
           if (isPending) ...[
             IconButton(
               onPressed: () => _confirmAppointment(apt, isDark),
-              icon: const Icon(Icons.check_circle_outline_rounded, color: TAColors.success),
+              icon: const Icon(
+                Icons.check_circle_outline_rounded,
+                color: TAColors.success,
+              ),
             ),
             IconButton(
               onPressed: () => _declineAppointment(apt, isDark),
@@ -568,7 +636,9 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: TAColors.borderColor(isDark).withValues(alpha: 0.5)),
+        border: Border.all(
+          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -588,18 +658,8 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
             ],
           ),
           const SizedBox(height: 16),
-          _buildSettingRow(
-            'Allow walk-ins',
-            true,
-            isDark,
-            (value) {},
-          ),
-          _buildSettingRow(
-            'Email reminders',
-            true,
-            isDark,
-            (value) {},
-          ),
+          _buildSettingRow('Allow walk-ins', true, isDark, (value) {}),
+          _buildSettingRow('Email reminders', true, isDark, (value) {}),
           _buildSettingRow(
             'Auto-confirm appointments',
             false,
@@ -699,21 +759,27 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
-                  children: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-                      .map((day) => ChoiceChip(
-                            label: Text(day.substring(0, 3)),
-                            selected: selectedDay == day,
-                            onSelected: (selected) {
-                              if (selected) setSheetState(() => selectedDay = day);
-                            },
-                            selectedColor: TAColors.primary.withValues(alpha: 0.2),
-                            labelStyle: TextStyle(
-                              color: selectedDay == day
-                                  ? TAColors.primary
-                                  : TAColors.textPrimaryColor(isDark),
+                  children:
+                      ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+                          .map(
+                            (day) => ChoiceChip(
+                              label: Text(day.substring(0, 3)),
+                              selected: selectedDay == day,
+                              onSelected: (selected) {
+                                if (selected)
+                                  setSheetState(() => selectedDay = day);
+                              },
+                              selectedColor: TAColors.primary.withValues(
+                                alpha: 0.2,
+                              ),
+                              labelStyle: TextStyle(
+                                color: selectedDay == day
+                                    ? TAColors.primary
+                                    : TAColors.textPrimaryColor(isDark),
+                              ),
                             ),
-                          ))
-                      .toList(),
+                          )
+                          .toList(),
                 ),
                 const SizedBox(height: 20),
                 // Time pickers
@@ -763,20 +829,30 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
                   onChanged: (value) => location = value,
                   decoration: InputDecoration(
                     labelText: isOnline ? 'Meeting Link' : 'Location',
-                    labelStyle: TextStyle(color: TAColors.textSecondaryColor(isDark)),
+                    labelStyle: TextStyle(
+                      color: TAColors.textSecondaryColor(isDark),
+                    ),
                     hintText: isOnline ? 'https://zoom.us/...' : 'Room 205',
-                    hintStyle: TextStyle(color: TAColors.textTertiaryColor(isDark)),
+                    hintStyle: TextStyle(
+                      color: TAColors.textTertiaryColor(isDark),
+                    ),
                     prefixIcon: Icon(
-                      isOnline ? Icons.link_rounded : Icons.location_on_outlined,
+                      isOnline
+                          ? Icons.link_rounded
+                          : Icons.location_on_outlined,
                       color: TAColors.textSecondaryColor(isDark),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: TAColors.borderColor(isDark)),
+                      borderSide: BorderSide(
+                        color: TAColors.borderColor(isDark),
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: TAColors.borderColor(isDark)),
+                      borderSide: BorderSide(
+                        color: TAColors.borderColor(isDark),
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -794,9 +870,13 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
                       setState(() {
                         _officeHours.add({
                           'day': selectedDay,
-                          'startTime': '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}',
-                          'endTime': '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}',
-                          'location': location.isEmpty ? (isOnline ? 'Online' : 'TBD') : location,
+                          'startTime':
+                              '${startTime.hour.toString().padLeft(2, '0')}:${startTime.minute.toString().padLeft(2, '0')}',
+                          'endTime':
+                              '${endTime.hour.toString().padLeft(2, '0')}:${endTime.minute.toString().padLeft(2, '0')}',
+                          'location': location.isEmpty
+                              ? (isOnline ? 'Online' : 'TBD')
+                              : location,
                           'isOnline': isOnline,
                           'isActive': true,
                         });
@@ -875,7 +955,11 @@ class _TAOfficeHoursScreenState extends State<TAOfficeHoursScreen>
     );
   }
 
-  void _handleSlotAction(String action, Map<String, dynamic> slot, bool isDark) {
+  void _handleSlotAction(
+    String action,
+    Map<String, dynamic> slot,
+    bool isDark,
+  ) {
     switch (action) {
       case 'edit':
         _showEditSlotSheet(slot, isDark);

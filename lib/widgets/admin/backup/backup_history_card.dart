@@ -95,7 +95,9 @@ class BackupHistoryCard extends StatelessWidget {
                       '${backups.length} ${l10n.backupsAvailable}',
                       style: TextStyle(
                         fontSize: 13,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -123,13 +125,17 @@ class BackupHistoryCard extends StatelessWidget {
                     Icon(
                       Icons.cloud_off_rounded,
                       size: 48,
-                      color: AdminColors.getTextColor(isDark).withValues(alpha: 0.3),
+                      color: AdminColors.getTextColor(
+                        isDark,
+                      ).withValues(alpha: 0.3),
                     ),
                     const SizedBox(height: 12),
                     Text(
                       l10n.noBackups,
                       style: TextStyle(
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -137,13 +143,19 @@ class BackupHistoryCard extends StatelessWidget {
               ),
             )
           else
-            ...backups.take(5).map((backup) => _buildBackupItem(context, backup, l10n)),
+            ...backups
+                .take(5)
+                .map((backup) => _buildBackupItem(context, backup, l10n)),
         ],
       ),
     );
   }
 
-  Widget _buildBackupItem(BuildContext context, BackupItem backup, AppLocalizations l10n) {
+  Widget _buildBackupItem(
+    BuildContext context,
+    BackupItem backup,
+    AppLocalizations l10n,
+  ) {
     final isCompleted = backup.status == 'completed';
     final isFailed = backup.status == 'failed';
     final isAutomatic = backup.type == 'automatic';
@@ -160,8 +172,8 @@ class BackupHistoryCard extends StatelessWidget {
           color: isFailed
               ? AdminColors.error.withValues(alpha: 0.3)
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.05)),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.05)),
         ),
       ),
       child: Row(
@@ -172,14 +184,16 @@ class BackupHistoryCard extends StatelessWidget {
               color: isCompleted
                   ? AdminColors.success.withValues(alpha: 0.15)
                   : (isFailed
-                      ? AdminColors.error.withValues(alpha: 0.15)
-                      : AdminColors.warning.withValues(alpha: 0.15)),
+                        ? AdminColors.error.withValues(alpha: 0.15)
+                        : AdminColors.warning.withValues(alpha: 0.15)),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
               isCompleted
                   ? Icons.cloud_done_rounded
-                  : (isFailed ? Icons.cloud_off_rounded : Icons.cloud_sync_rounded),
+                  : (isFailed
+                        ? Icons.cloud_off_rounded
+                        : Icons.cloud_sync_rounded),
               color: isCompleted
                   ? AdminColors.success
                   : (isFailed ? AdminColors.error : AdminColors.warning),
@@ -204,7 +218,10 @@ class BackupHistoryCard extends StatelessWidget {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: isAutomatic
                             ? AdminColors.primary.withValues(alpha: 0.15)
@@ -216,7 +233,9 @@ class BackupHistoryCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: isAutomatic ? AdminColors.primary : AdminColors.secondary,
+                          color: isAutomatic
+                              ? AdminColors.primary
+                              : AdminColors.secondary,
                         ),
                       ),
                     ),
@@ -228,28 +247,36 @@ class BackupHistoryCard extends StatelessWidget {
                     Icon(
                       Icons.access_time_rounded,
                       size: 12,
-                      color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                      color: AdminColors.getTextColor(
+                        isDark,
+                      ).withValues(alpha: 0.5),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       _formatDate(backup.date),
                       style: TextStyle(
                         fontSize: 12,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.5),
                       ),
                     ),
                     const SizedBox(width: 12),
                     Icon(
                       Icons.storage_rounded,
                       size: 12,
-                      color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                      color: AdminColors.getTextColor(
+                        isDark,
+                      ).withValues(alpha: 0.5),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       backup.size,
                       style: TextStyle(
                         fontSize: 12,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.5),
                       ),
                     ),
                   ],
@@ -263,14 +290,20 @@ class BackupHistoryCard extends StatelessWidget {
               color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
             ),
             color: AdminColors.getCardColor(isDark),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             itemBuilder: (context) => [
               if (isCompleted)
                 PopupMenuItem(
                   value: 'restore',
                   child: Row(
                     children: [
-                      Icon(Icons.restore_rounded, size: 18, color: AdminColors.primary),
+                      Icon(
+                        Icons.restore_rounded,
+                        size: 18,
+                        color: AdminColors.primary,
+                      ),
                       const SizedBox(width: 10),
                       Text(l10n.restore),
                     ],
@@ -281,7 +314,11 @@ class BackupHistoryCard extends StatelessWidget {
                   value: 'download',
                   child: Row(
                     children: [
-                      Icon(Icons.download_rounded, size: 18, color: AdminColors.accent),
+                      Icon(
+                        Icons.download_rounded,
+                        size: 18,
+                        color: AdminColors.accent,
+                      ),
                       const SizedBox(width: 10),
                       Text(l10n.download),
                     ],
@@ -291,9 +328,16 @@ class BackupHistoryCard extends StatelessWidget {
                 value: 'delete',
                 child: Row(
                   children: [
-                    Icon(Icons.delete_outline_rounded, size: 18, color: AdminColors.error),
+                    Icon(
+                      Icons.delete_outline_rounded,
+                      size: 18,
+                      color: AdminColors.error,
+                    ),
                     const SizedBox(width: 10),
-                    Text(l10n.delete, style: TextStyle(color: AdminColors.error)),
+                    Text(
+                      l10n.delete,
+                      style: TextStyle(color: AdminColors.error),
+                    ),
                   ],
                 ),
               ),

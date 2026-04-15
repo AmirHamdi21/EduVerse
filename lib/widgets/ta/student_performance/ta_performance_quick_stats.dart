@@ -102,9 +102,7 @@ class TAPerformanceQuickStats extends StatelessWidget {
           decoration: BoxDecoration(
             color: color.withValues(alpha: isDark ? 0.15 : 0.08),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: color.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: color.withValues(alpha: 0.3)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

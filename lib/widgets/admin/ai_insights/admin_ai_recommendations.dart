@@ -46,7 +46,9 @@ class AdminAIRecommendations extends StatelessWidget {
         color: isDark ? AdminColors.darkCard : AdminColors.lightCard,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
       ),
       child: Column(
@@ -73,7 +75,9 @@ class AdminAIRecommendations extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: isDark ? AdminColors.darkText : AdminColors.lightText,
+                    color: isDark
+                        ? AdminColors.darkText
+                        : AdminColors.lightText,
                   ),
                 ),
               ),
@@ -81,16 +85,15 @@ class AdminAIRecommendations extends StatelessWidget {
                 onPressed: () {},
                 child: Text(
                   'View All',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AdminColors.primary,
-                  ),
+                  style: TextStyle(fontSize: 13, color: AdminColors.primary),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          ...recommendations.take(3).map((rec) => _buildRecommendationItem(rec)),
+          ...recommendations
+              .take(3)
+              .map((rec) => _buildRecommendationItem(rec)),
         ],
       ),
     );
@@ -101,7 +104,9 @@ class AdminAIRecommendations extends StatelessWidget {
 
     return Dismissible(
       key: Key(recommendation.id),
-      direction: onDismiss != null ? DismissDirection.endToStart : DismissDirection.none,
+      direction: onDismiss != null
+          ? DismissDirection.endToStart
+          : DismissDirection.none,
       onDismissed: (_) => onDismiss?.call(recommendation),
       background: Container(
         alignment: Alignment.centerRight,
@@ -119,9 +124,7 @@ class AdminAIRecommendations extends StatelessWidget {
               ? Colors.white.withValues(alpha: 0.05)
               : Colors.grey.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: priorityColor.withValues(alpha: 0.3),
-          ),
+          border: Border.all(color: priorityColor.withValues(alpha: 0.3)),
         ),
         child: Material(
           color: Colors.transparent,
@@ -157,12 +160,17 @@ class AdminAIRecommendations extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: isDark ? AdminColors.darkText : AdminColors.lightText,
+                                  color: isDark
+                                      ? AdminColors.darkText
+                                      : AdminColors.lightText,
                                 ),
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: priorityColor.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(10),
@@ -183,7 +191,9 @@ class AdminAIRecommendations extends StatelessWidget {
                           recommendation.description,
                           style: TextStyle(
                             fontSize: 12,
-                            color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+                            color: isDark
+                                ? AdminColors.darkTextSecondary
+                                : AdminColors.lightTextSecondary,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+
 import '../../../generated_l10n/app_localizations.dart';
 import '../shared/admin_colors.dart';
 
-/// Course details form widget
+/// Course details form widget.
 class CourseDetailsForm extends StatelessWidget {
   final bool isDark;
+  final bool isEditing;
+  final GlobalKey<FormState> formKey;
   final TextEditingController nameController;
   final TextEditingController codeController;
   final TextEditingController descriptionController;
@@ -16,10 +19,13 @@ class CourseDetailsForm extends StatelessWidget {
   final ValueChanged<String?> onSemesterChanged;
   final VoidCallback onUploadSyllabus;
   final String? syllabusFileName;
+  final Map<String, String> backendErrors;
 
   const CourseDetailsForm({
     super.key,
     required this.isDark,
+    this.isEditing = false,
+    required this.formKey,
     required this.nameController,
     required this.codeController,
     required this.descriptionController,
@@ -31,6 +37,7 @@ class CourseDetailsForm extends StatelessWidget {
     required this.onSemesterChanged,
     required this.onUploadSyllabus,
     this.syllabusFileName,
+    this.backendErrors = const <String, String>{},
   });
 
   @override
@@ -46,11 +53,13 @@ class CourseDetailsForm extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
         boxShadow: isDark
             ? null
-            : [
+            : <BoxShadow>[
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
@@ -58,80 +67,128 @@ class CourseDetailsForm extends StatelessWidget {
                 ),
               ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            l10n.courseDetails,
-            style: TextStyle(
-              color: AdminColors.getTextColor(isDark),
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
+      child: Form(
+        key: formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              l10n.courseDetails,
+              style: TextStyle(
+                color: AdminColors.getTextColor(isDark),
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
             ),
-          ),
-          const SizedBox(height: 20),
-          _buildTextField(
-            controller: nameController,
-            label: '${l10n.courseName} *',
-            hint: l10n.courseNameHint,
-          ),
-          const SizedBox(height: 16),
-          _buildTextField(
-            controller: codeController,
-            label: '${l10n.courseCode} *',
-            hint: l10n.courseCodeHint,
-          ),
-          const SizedBox(height: 16),
-          _buildDropdown(
-            label: '${l10n.department} *',
-            hint: l10n.selectDepartment,
-            value: selectedDepartment,
-            items: [
-              'Computer Science',
-              'Mathematics',
-              'Physics',
-              'Engineering',
-              'English',
-              'Chemistry',
-              'Biology',
+            const SizedBox(height: 20),
+            _buildTextField(
+              controller: nameController,
+              label: '${l10n.courseName} *',
+              hint: l10n.courseNameHint,
+              errorText: backendErrors['name'],
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return l10n.fillRequiredFields;
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildTextField(
+              controller: codeController,
+              label: '${l10n.courseCode} *',
+              hint: l10n.courseCodeHint,
+              readOnly: isEditing,
+              errorText: backendErrors['code'],
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return l10n.fillRequiredFields;
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildDropdown(
+              label: '${l10n.department} *',
+              hint: l10n.selectDepartment,
+              value: selectedDepartment,
+              readOnly: isEditing,
+              items: const <String>[
+                'Computer Science',
+                'Mathematics',
+                'Physics',
+                'Engineering',
+                'English',
+                'Chemistry',
+                'Biology',
+              ],
+              onChanged: onDepartmentChanged,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return l10n.fillRequiredFields;
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildDropdown(
+              label: '${l10n.academicLevel} *',
+              hint: l10n.selectLevel,
+              value: selectedLevel,
+              items: <String>[
+                l10n.freshman,
+                l10n.sophomore,
+                l10n.junior,
+                l10n.senior,
+                l10n.graduate,
+              ],
+              onChanged: onLevelChanged,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return l10n.fillRequiredFields;
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildDropdown(
+              label: '${l10n.semester} *',
+              hint: l10n.selectSemester,
+              value: selectedSemester,
+              items: <String>[
+                l10n.fallSemester,
+                l10n.springSemester,
+                l10n.summerSemester,
+              ],
+              onChanged: onSemesterChanged,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return l10n.fillRequiredFields;
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildTextArea(
+              controller: descriptionController,
+              label: l10n.courseDescription,
+              hint: l10n.courseDescriptionHint,
+            ),
+            const SizedBox(height: 16),
+            _buildUploadSection(l10n),
+            if (backendErrors['general'] != null) ...<Widget>[
+              const SizedBox(height: 12),
+              Text(
+                backendErrors['general']!,
+                style: TextStyle(
+                  color: AdminColors.error,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
-            onChanged: onDepartmentChanged,
-          ),
-          const SizedBox(height: 16),
-          _buildDropdown(
-            label: '${l10n.academicLevel} *',
-            hint: l10n.selectLevel,
-            value: selectedLevel,
-            items: [
-              l10n.freshman,
-              l10n.sophomore,
-              l10n.junior,
-              l10n.senior,
-              l10n.graduate,
-            ],
-            onChanged: onLevelChanged,
-          ),
-          const SizedBox(height: 16),
-          _buildDropdown(
-            label: '${l10n.semester} *',
-            hint: l10n.selectSemester,
-            value: selectedSemester,
-            items: [
-              l10n.fallSemester,
-              l10n.springSemester,
-              l10n.summerSemester,
-            ],
-            onChanged: onSemesterChanged,
-          ),
-          const SizedBox(height: 16),
-          _buildTextArea(
-            controller: descriptionController,
-            label: l10n.courseDescription,
-            hint: l10n.courseDescriptionHint,
-          ),
-          const SizedBox(height: 16),
-          _buildUploadSection(l10n),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -140,10 +197,13 @@ class CourseDetailsForm extends StatelessWidget {
     required TextEditingController controller,
     required String label,
     required String hint,
+    String? errorText,
+    String? Function(String?)? validator,
+    bool readOnly = false,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           label,
           style: TextStyle(
@@ -153,30 +213,32 @@ class CourseDetailsForm extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: isDark
+        TextFormField(
+          controller: controller,
+          readOnly: readOnly,
+          validator: validator,
+          style: TextStyle(
+            color: AdminColors.getTextColor(isDark),
+            fontSize: 15,
+          ),
+          decoration: InputDecoration(
+            hintText: hint,
+            errorText: errorText,
+            filled: true,
+            fillColor: isDark
                 ? AdminColors.darkSurface.withValues(alpha: 0.5)
                 : const Color(0xFFF3F3F5),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: TextField(
-            controller: controller,
-            style: TextStyle(
-              color: AdminColors.getTextColor(isDark),
+            hintStyle: TextStyle(
+              color: AdminColors.getTextTertiaryColor(isDark),
               fontSize: 15,
             ),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: TextStyle(
-                color: AdminColors.getTextTertiaryColor(isDark),
-                fontSize: 15,
-              ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 12,
-              ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
             ),
           ),
         ),
@@ -190,10 +252,17 @@ class CourseDetailsForm extends StatelessWidget {
     required String? value,
     required List<String> items,
     required ValueChanged<String?> onChanged,
+    String? Function(String?)? validator,
+    bool readOnly = false,
   }) {
+    final hasValue = value != null && value.trim().isNotEmpty;
+    final dropdownItems = hasValue && !items.contains(value)
+        ? <String>[value!, ...items]
+        : items;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           label,
           style: TextStyle(
@@ -203,32 +272,38 @@ class CourseDetailsForm extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-          decoration: BoxDecoration(
-            color: isDark
+        DropdownButtonFormField<String>(
+          initialValue: hasValue ? value : null,
+          validator: validator,
+          dropdownColor: isDark ? AdminColors.darkCard : Colors.white,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: isDark
                 ? AdminColors.darkSurface.withValues(alpha: 0.5)
                 : const Color(0xFFF3F3F5),
-            borderRadius: BorderRadius.circular(10),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 8,
+            ),
           ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: value,
-              isExpanded: true,
-              hint: Text(
-                hint,
-                style: TextStyle(
-                  color: AdminColors.getTextTertiaryColor(isDark),
-                  fontSize: 15,
-                ),
-              ),
-              icon: Icon(
-                Icons.keyboard_arrow_down_rounded,
-                color: AdminColors.getTextSecondaryColor(isDark),
-              ),
-              dropdownColor: isDark ? AdminColors.darkCard : Colors.white,
-              items: items.map((item) {
-                return DropdownMenuItem<String>(
+          hint: Text(
+            hint,
+            style: TextStyle(
+              color: AdminColors.getTextTertiaryColor(isDark),
+              fontSize: 15,
+            ),
+          ),
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: AdminColors.getTextSecondaryColor(isDark),
+          ),
+          items: dropdownItems
+              .map(
+                (item) => DropdownMenuItem<String>(
                   value: item,
                   child: Text(
                     item,
@@ -237,11 +312,10 @@ class CourseDetailsForm extends StatelessWidget {
                       fontSize: 15,
                     ),
                   ),
-                );
-              }).toList(),
-              onChanged: onChanged,
-            ),
-          ),
+                ),
+              )
+              .toList(),
+          onChanged: readOnly ? null : onChanged,
         ),
       ],
     );
@@ -254,7 +328,7 @@ class CourseDetailsForm extends StatelessWidget {
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           label,
           style: TextStyle(
@@ -264,31 +338,30 @@ class CourseDetailsForm extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: isDark
+        TextFormField(
+          controller: controller,
+          maxLines: 3,
+          style: TextStyle(
+            color: AdminColors.getTextColor(isDark),
+            fontSize: 15,
+          ),
+          decoration: InputDecoration(
+            hintText: hint,
+            filled: true,
+            fillColor: isDark
                 ? AdminColors.darkSurface.withValues(alpha: 0.5)
                 : const Color(0xFFF3F3F5),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: TextField(
-            controller: controller,
-            maxLines: 3,
-            style: TextStyle(
-              color: AdminColors.getTextColor(isDark),
+            hintStyle: TextStyle(
+              color: AdminColors.getTextTertiaryColor(isDark),
               fontSize: 15,
             ),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: TextStyle(
-                color: AdminColors.getTextTertiaryColor(isDark),
-                fontSize: 15,
-              ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 12,
-              ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
             ),
           ),
         ),
@@ -299,7 +372,7 @@ class CourseDetailsForm extends StatelessWidget {
   Widget _buildUploadSection(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+      children: <Widget>[
         Text(
           l10n.uploadSyllabus,
           style: TextStyle(
@@ -326,11 +399,10 @@ class CourseDetailsForm extends StatelessWidget {
                   color: isDark
                       ? AdminColors.primary.withValues(alpha: 0.3)
                       : const Color(0xFF8EC5FF),
-                  style: BorderStyle.solid,
                 ),
               ),
               child: Column(
-                children: [
+                children: <Widget>[
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
@@ -358,7 +430,7 @@ class CourseDetailsForm extends StatelessWidget {
                           : FontWeight.normal,
                     ),
                   ),
-                  if (syllabusFileName == null) ...[
+                  if (syllabusFileName == null) ...<Widget>[
                     const SizedBox(height: 4),
                     Text(
                       l10n.pdfMaxSize,

@@ -36,7 +36,9 @@ class UserManagementFilters extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
       ),
       child: Column(
@@ -121,10 +123,7 @@ class UserManagementFilters extends StatelessWidget {
           ),
           dropdownColor: isDark ? AdminColors.darkCard : Colors.white,
           items: items.map((item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(item),
-            );
+            return DropdownMenuItem<String>(value: item, child: Text(item));
           }).toList(),
           onChanged: (val) => onChanged(val ?? items.first),
         ),
@@ -150,7 +149,9 @@ class UserManagementFilters extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? AdminColors.primary
-                : (isDark ? AdminColors.darkCardBorder : AdminColors.lightDivider),
+                : (isDark
+                      ? AdminColors.darkCardBorder
+                      : AdminColors.lightDivider),
           ),
         ),
         child: Row(

@@ -117,14 +117,16 @@ class ITIntegrationListSection extends StatelessWidget {
           ),
         ),
         // Integration cards
-        ...integrations.map((integration) => ITIntegrationCard(
-              isDark: isDark,
-              integration: integration,
-              onTap: () => onIntegrationTap(integration),
-              onConfigure: () => onConfigure(integration),
-              onSync: () => onSync(integration),
-              onToggleConnection: () => onToggleConnection(integration),
-            )),
+        ...integrations.map(
+          (integration) => ITIntegrationCard(
+            isDark: isDark,
+            integration: integration,
+            onTap: () => onIntegrationTap(integration),
+            onConfigure: () => onConfigure(integration),
+            onSync: () => onSync(integration),
+            onToggleConnection: () => onToggleConnection(integration),
+          ),
+        ),
       ],
     );
   }
@@ -136,9 +138,7 @@ class ITIntegrationListSection extends StatelessWidget {
         color: isDark ? ITColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
       ),
       child: Column(

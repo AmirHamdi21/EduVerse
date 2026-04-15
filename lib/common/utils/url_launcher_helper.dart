@@ -43,18 +43,13 @@ class UrlLauncherHelper {
             const Icon(Icons.error_outline, color: Colors.white, size: 18),
             const SizedBox(width: 8),
             Expanded(
-              child: Text(
-                message,
-                style: const TextStyle(fontSize: 13),
-              ),
+              child: Text(message, style: const TextStyle(fontSize: 13)),
             ),
           ],
         ),
         behavior: SnackBarBehavior.floating,
         backgroundColor: Colors.red.shade700,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         duration: const Duration(seconds: 4),
       ),
     );

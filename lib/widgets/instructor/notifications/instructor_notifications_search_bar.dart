@@ -51,8 +51,10 @@ class InstructorNotificationsSearchBar extends StatelessWidget {
             borderRadius: BorderRadius.circular(14),
             borderSide: BorderSide(color: AppTheme.primaryColor, width: 1.5),
           ),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
         ),
       ),
     );

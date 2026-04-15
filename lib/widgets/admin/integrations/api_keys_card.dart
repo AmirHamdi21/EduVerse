@@ -70,11 +70,7 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.key_rounded,
-                color: AdminColors.secondary,
-                size: 20,
-              ),
+              Icon(Icons.key_rounded, color: AdminColors.secondary, size: 20),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -93,7 +89,10 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AdminColors.primary,
                   foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -147,19 +146,22 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
 
   Widget _buildApiKeyItem(ApiKey apiKey, AppLocalizations l10n) {
     final isRevealed = _revealedKeys.contains(apiKey.id);
-    final isExpired = apiKey.expiresAt != null && apiKey.expiresAt!.isBefore(DateTime.now());
+    final isExpired =
+        apiKey.expiresAt != null && apiKey.expiresAt!.isBefore(DateTime.now());
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: widget.isDark 
-            ? Colors.white.withValues(alpha: 0.05) 
+        color: widget.isDark
+            ? Colors.white.withValues(alpha: 0.05)
             : Colors.grey.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isExpired 
+          color: isExpired
               ? AdminColors.error.withValues(alpha: 0.3)
-              : AdminColors.getCardBorderColor(widget.isDark).withValues(alpha: 0.5),
+              : AdminColors.getCardBorderColor(
+                  widget.isDark,
+                ).withValues(alpha: 0.5),
         ),
       ),
       child: Padding(
@@ -173,17 +175,19 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: (apiKey.isActive && !isExpired 
-                        ? AdminColors.success 
-                        : AdminColors.error).withValues(alpha: 0.15),
+                    color:
+                        (apiKey.isActive && !isExpired
+                                ? AdminColors.success
+                                : AdminColors.error)
+                            .withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
-                    apiKey.isActive && !isExpired 
-                        ? Icons.key_rounded 
+                    apiKey.isActive && !isExpired
+                        ? Icons.key_rounded
                         : Icons.key_off_rounded,
-                    color: apiKey.isActive && !isExpired 
-                        ? AdminColors.success 
+                    color: apiKey.isActive && !isExpired
+                        ? AdminColors.success
                         : AdminColors.error,
                     size: 18,
                   ),
@@ -206,9 +210,14 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
                           const SizedBox(width: 8),
                           if (isExpired)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
-                                color: AdminColors.error.withValues(alpha: 0.15),
+                                color: AdminColors.error.withValues(
+                                  alpha: 0.15,
+                                ),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
@@ -227,7 +236,9 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
                         Text(
                           apiKey.description!,
                           style: TextStyle(
-                            color: AdminColors.getTextSecondaryColor(widget.isDark),
+                            color: AdminColors.getTextSecondaryColor(
+                              widget.isDark,
+                            ),
                             fontSize: 12,
                           ),
                         ),
@@ -269,9 +280,16 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
                       value: 'revoke',
                       child: Row(
                         children: [
-                          Icon(Icons.block_rounded, size: 18, color: AdminColors.warning),
+                          Icon(
+                            Icons.block_rounded,
+                            size: 18,
+                            color: AdminColors.warning,
+                          ),
                           const SizedBox(width: 8),
-                          Text(l10n.revoke, style: TextStyle(color: AdminColors.warning)),
+                          Text(
+                            l10n.revoke,
+                            style: TextStyle(color: AdminColors.warning),
+                          ),
                         ],
                       ),
                     ),
@@ -279,9 +297,16 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete_rounded, size: 18, color: AdminColors.error),
+                          Icon(
+                            Icons.delete_rounded,
+                            size: 18,
+                            color: AdminColors.error,
+                          ),
                           const SizedBox(width: 8),
-                          Text(l10n.delete, style: TextStyle(color: AdminColors.error)),
+                          Text(
+                            l10n.delete,
+                            style: TextStyle(color: AdminColors.error),
+                          ),
                         ],
                       ),
                     ),
@@ -294,8 +319,8 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: widget.isDark 
-                    ? Colors.black.withValues(alpha: 0.3) 
+                color: widget.isDark
+                    ? Colors.black.withValues(alpha: 0.3)
                     : Colors.grey.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -327,7 +352,10 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
                       });
                     },
                     padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                    constraints: const BoxConstraints(
+                      minWidth: 32,
+                      minHeight: 32,
+                    ),
                   ),
                   IconButton(
                     icon: const Icon(Icons.copy_rounded, size: 18),
@@ -342,7 +370,10 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
                       );
                     },
                     padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                    constraints: const BoxConstraints(
+                      minWidth: 32,
+                      minHeight: 32,
+                    ),
                   ),
                 ],
               ),
@@ -352,21 +383,28 @@ class _ApiKeysCardState extends State<ApiKeysCard> {
             Wrap(
               spacing: 6,
               runSpacing: 6,
-              children: apiKey.permissions.map((perm) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AdminColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  perm,
-                  style: TextStyle(
-                    color: AdminColors.primary,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              )).toList(),
+              children: apiKey.permissions
+                  .map(
+                    (perm) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AdminColors.primary.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        perm,
+                        style: TextStyle(
+                          color: AdminColors.primary,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
             const SizedBox(height: 8),
             Row(

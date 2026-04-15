@@ -51,7 +51,8 @@ class TAAssignmentModel extends Equatable {
           ? json['userId'] as int
           : int.tryParse(json['userId']?.toString() ?? '') ?? 0,
       responsibilities: json['responsibilities'] as String?,
-      assignedAt: DateTime.tryParse(json['assignedAt']?.toString() ?? '') ??
+      assignedAt:
+          DateTime.tryParse(json['assignedAt']?.toString() ?? '') ??
           DateTime.now(),
       firstName: json['firstName']?.toString() ?? '',
       lastName: json['lastName']?.toString() ?? '',
@@ -74,13 +75,13 @@ class TAAssignmentModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        sectionId,
-        userId,
-        responsibilities,
-        assignedAt,
-        firstName,
-        lastName,
-        email,
-      ];
+    id,
+    sectionId,
+    userId,
+    responsibilities,
+    assignedAt,
+    firstName,
+    lastName,
+    email,
+  ];
 }

@@ -255,8 +255,5 @@ class NoisyRule {
   final String name;
   final int count;
 
-  const NoisyRule({
-    required this.name,
-    required this.count,
-  });
+  const NoisyRule({required this.name, required this.count});
 }

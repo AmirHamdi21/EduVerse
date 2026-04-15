@@ -22,7 +22,8 @@ class TAReviewSubmissionModal extends StatefulWidget {
   });
 
   @override
-  State<TAReviewSubmissionModal> createState() => _TAReviewSubmissionModalState();
+  State<TAReviewSubmissionModal> createState() =>
+      _TAReviewSubmissionModalState();
 }
 
 class _TAReviewSubmissionModalState extends State<TAReviewSubmissionModal> {
@@ -141,7 +142,9 @@ class _TAReviewSubmissionModalState extends State<TAReviewSubmissionModal> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: TAColors.primary.withValues(alpha: widget.isDark ? 0.2 : 0.1),
+              color: TAColors.primary.withValues(
+                alpha: widget.isDark ? 0.2 : 0.1,
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Center(
@@ -221,7 +224,9 @@ class _TAReviewSubmissionModalState extends State<TAReviewSubmissionModal> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: TAColors.primary.withValues(alpha: widget.isDark ? 0.2 : 0.1),
+            color: TAColors.primary.withValues(
+              alpha: widget.isDark ? 0.2 : 0.1,
+            ),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -269,20 +274,14 @@ class _TAReviewSubmissionModalState extends State<TAReviewSubmissionModal> {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: TAColors.primary.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: TAColors.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.auto_awesome,
-                size: 20,
-                color: TAColors.primary,
-              ),
+              Icon(Icons.auto_awesome, size: 20, color: TAColors.primary),
               const SizedBox(width: 8),
               Text(
                 l10n.taLabAIGradingAssistant,
@@ -370,11 +369,14 @@ class _TAReviewSubmissionModalState extends State<TAReviewSubmissionModal> {
                 child: OutlinedButton(
                   onPressed: () {
                     widget.onApplyAIScore?.call(widget.submission.aiScore!);
-                    _scoreController.text = widget.submission.aiScore.toString();
+                    _scoreController.text = widget.submission.aiScore
+                        .toString();
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: TAColors.textPrimaryColor(widget.isDark),
-                    side: BorderSide(color: TAColors.borderColor(widget.isDark)),
+                    side: BorderSide(
+                      color: TAColors.borderColor(widget.isDark),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -389,7 +391,9 @@ class _TAReviewSubmissionModalState extends State<TAReviewSubmissionModal> {
                   onPressed: () {},
                   style: OutlinedButton.styleFrom(
                     foregroundColor: TAColors.textPrimaryColor(widget.isDark),
-                    side: BorderSide(color: TAColors.borderColor(widget.isDark)),
+                    side: BorderSide(
+                      color: TAColors.borderColor(widget.isDark),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -462,15 +466,14 @@ class _TAReviewSubmissionModalState extends State<TAReviewSubmissionModal> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: TAColors.primary,
-                ),
+                borderSide: BorderSide(color: TAColors.primary),
               ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
             ),
-            style: TextStyle(
-              color: TAColors.textPrimaryColor(widget.isDark),
-            ),
+            style: TextStyle(color: TAColors.textPrimaryColor(widget.isDark)),
           ),
           const SizedBox(height: 14),
           Text(
@@ -506,15 +509,11 @@ class _TAReviewSubmissionModalState extends State<TAReviewSubmissionModal> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(
-                  color: TAColors.primary,
-                ),
+                borderSide: BorderSide(color: TAColors.primary),
               ),
               contentPadding: const EdgeInsets.all(14),
             ),
-            style: TextStyle(
-              color: TAColors.textPrimaryColor(widget.isDark),
-            ),
+            style: TextStyle(color: TAColors.textPrimaryColor(widget.isDark)),
           ),
         ],
       ),

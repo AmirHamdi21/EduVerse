@@ -39,28 +39,28 @@ class _QuizSubmitDialogState extends State<QuizSubmitDialog>
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.5, curve: Curves.easeOutBack),
       ),
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.3, curve: Curves.easeOut),
       ),
     );
-    
+
     _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
       ),
     );
-    
+
     _controller.forward();
   }
 
@@ -73,8 +73,10 @@ class _QuizSubmitDialogState extends State<QuizSubmitDialog>
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
-    final unansweredCount = widget.totalQuestions - widget.answeredCount - widget.skippedCount;
-    final completionPercentage = (widget.answeredCount / widget.totalQuestions * 100).toInt();
+    final unansweredCount =
+        widget.totalQuestions - widget.answeredCount - widget.skippedCount;
+    final completionPercentage =
+        (widget.answeredCount / widget.totalQuestions * 100).toInt();
 
     return FadeTransition(
       opacity: _fadeAnimation,
@@ -132,11 +134,16 @@ class _QuizSubmitDialogState extends State<QuizSubmitDialog>
                                 CustomPaint(
                                   size: const Size(120, 120),
                                   painter: _CircleProgressPainter(
-                                    progress: _progressAnimation.value * (widget.answeredCount / widget.totalQuestions),
+                                    progress:
+                                        _progressAnimation.value *
+                                        (widget.answeredCount /
+                                            widget.totalQuestions),
                                     backgroundColor: widget.isDark
                                         ? const Color(0xFF3A4456)
                                         : const Color(0xFFE5E7EB),
-                                    progressColor: _getProgressColor(completionPercentage),
+                                    progressColor: _getProgressColor(
+                                      completionPercentage,
+                                    ),
                                     strokeWidth: 10,
                                   ),
                                 ),
@@ -149,7 +156,9 @@ class _QuizSubmitDialogState extends State<QuizSubmitDialog>
                                       style: TextStyle(
                                         fontSize: responsive.fontSize28,
                                         fontWeight: FontWeight.bold,
-                                        color: _getProgressColor(completionPercentage),
+                                        color: _getProgressColor(
+                                          completionPercentage,
+                                        ),
                                         fontFamily: 'Arimo',
                                       ),
                                     ),
@@ -176,7 +185,9 @@ class _QuizSubmitDialogState extends State<QuizSubmitDialog>
                         style: TextStyle(
                           fontSize: responsive.fontSize24,
                           fontWeight: FontWeight.bold,
-                          color: widget.isDark ? Colors.white : const Color(0xFF1A1A2E),
+                          color: widget.isDark
+                              ? Colors.white
+                              : const Color(0xFF1A1A2E),
                           fontFamily: 'Arimo',
                         ),
                       ),
@@ -241,10 +252,14 @@ class _QuizSubmitDialogState extends State<QuizSubmitDialog>
                         Container(
                           padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
+                            color: const Color(
+                              0xFFF59E0B,
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
-                              color: const Color(0xFFF59E0B).withValues(alpha: 0.3),
+                              color: const Color(
+                                0xFFF59E0B,
+                              ).withValues(alpha: 0.3),
                             ),
                           ),
                           child: Row(
@@ -252,7 +267,9 @@ class _QuizSubmitDialogState extends State<QuizSubmitDialog>
                               Container(
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFF59E0B).withValues(alpha: 0.15),
+                                  color: const Color(
+                                    0xFFF59E0B,
+                                  ).withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: const Icon(
@@ -287,7 +304,9 @@ class _QuizSubmitDialogState extends State<QuizSubmitDialog>
                             child: GestureDetector(
                               onTap: widget.onCancel,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   color: widget.isDark
                                       ? const Color(0xFF252D48)
@@ -321,15 +340,22 @@ class _QuizSubmitDialogState extends State<QuizSubmitDialog>
                             child: GestureDetector(
                               onTap: widget.onSubmit,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFF10B981), Color(0xFF059669)],
+                                    colors: [
+                                      Color(0xFF10B981),
+                                      Color(0xFF059669),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF10B981).withValues(alpha: 0.4),
+                                      color: const Color(
+                                        0xFF10B981,
+                                      ).withValues(alpha: 0.4),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),
@@ -389,9 +415,7 @@ class _QuizSubmitDialogState extends State<QuizSubmitDialog>
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,

@@ -199,4 +199,3 @@ class AttendanceOverviewCard extends StatelessWidget {
     );
   }
 }
-

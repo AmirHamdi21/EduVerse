@@ -42,7 +42,9 @@ class _AdminAppearanceSettingsScreenState
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -113,7 +115,10 @@ class _AdminAppearanceSettingsScreenState
   }
 
   Widget _buildThemeSelector(
-      bool isDark, AppLocalizations l10n, AppThemeMode currentMode) {
+    bool isDark,
+    AppLocalizations l10n,
+    AppThemeMode currentMode,
+  ) {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
@@ -131,9 +136,9 @@ class _AdminAppearanceSettingsScreenState
             selectedColor: const Color(0xFFF59E0B),
             onTap: () {
               HapticFeedback.selectionClick();
-              context
-                  .read<ThemeBloc>()
-                  .add(const SetThemeModeEvent(AppThemeMode.light));
+              context.read<ThemeBloc>().add(
+                const SetThemeModeEvent(AppThemeMode.light),
+              );
             },
           ),
           _buildThemeOption(
@@ -144,9 +149,9 @@ class _AdminAppearanceSettingsScreenState
             selectedColor: const Color(0xFF6366F1),
             onTap: () {
               HapticFeedback.selectionClick();
-              context
-                  .read<ThemeBloc>()
-                  .add(const SetThemeModeEvent(AppThemeMode.dark));
+              context.read<ThemeBloc>().add(
+                const SetThemeModeEvent(AppThemeMode.dark),
+              );
             },
           ),
           _buildThemeOption(
@@ -157,9 +162,9 @@ class _AdminAppearanceSettingsScreenState
             selectedColor: AdminColors.primary,
             onTap: () {
               HapticFeedback.selectionClick();
-              context
-                  .read<ThemeBloc>()
-                  .add(const SetThemeModeEvent(AppThemeMode.system));
+              context.read<ThemeBloc>().add(
+                const SetThemeModeEvent(AppThemeMode.system),
+              );
             },
           ),
         ],
@@ -244,7 +249,8 @@ class _AdminAppearanceSettingsScreenState
         children: colors.map((colorData) {
           final color = colorData.$1;
           final name = colorData.$2;
-          final isSelected = _selectedAccent == AccentColor.blue &&
+          final isSelected =
+              _selectedAccent == AccentColor.blue &&
               color == AdminColors.primary;
           return GestureDetector(
             onTap: () {
@@ -273,8 +279,11 @@ class _AdminAppearanceSettingsScreenState
                     ],
                   ),
                   child: isSelected
-                      ? const Icon(Icons.check_rounded,
-                          color: Colors.white, size: 24)
+                      ? const Icon(
+                          Icons.check_rounded,
+                          color: Colors.white,
+                          size: 24,
+                        )
                       : null,
                 ),
                 const SizedBox(height: 6),
@@ -294,7 +303,10 @@ class _AdminAppearanceSettingsScreenState
   }
 
   Widget _buildFontSizeSelector(
-      bool isDark, AppLocalizations l10n, FontSizeOption currentSize) {
+    bool isDark,
+    AppLocalizations l10n,
+    FontSizeOption currentSize,
+  ) {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
@@ -310,9 +322,9 @@ class _AdminAppearanceSettingsScreenState
             fontSize: 12,
             isSelected: currentSize == FontSizeOption.small,
             onTap: () {
-              context
-                  .read<ThemeBloc>()
-                  .add(const SetFontSizeEvent(FontSizeOption.small));
+              context.read<ThemeBloc>().add(
+                const SetFontSizeEvent(FontSizeOption.small),
+              );
             },
           ),
           _buildFontSizeOption(
@@ -321,9 +333,9 @@ class _AdminAppearanceSettingsScreenState
             fontSize: 14,
             isSelected: currentSize == FontSizeOption.medium,
             onTap: () {
-              context
-                  .read<ThemeBloc>()
-                  .add(const SetFontSizeEvent(FontSizeOption.medium));
+              context.read<ThemeBloc>().add(
+                const SetFontSizeEvent(FontSizeOption.medium),
+              );
             },
           ),
           _buildFontSizeOption(
@@ -332,9 +344,9 @@ class _AdminAppearanceSettingsScreenState
             fontSize: 16,
             isSelected: currentSize == FontSizeOption.large,
             onTap: () {
-              context
-                  .read<ThemeBloc>()
-                  .add(const SetFontSizeEvent(FontSizeOption.large));
+              context.read<ThemeBloc>().add(
+                const SetFontSizeEvent(FontSizeOption.large),
+              );
             },
           ),
         ],
@@ -359,8 +371,7 @@ class _AdminAppearanceSettingsScreenState
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color:
-                isSelected ? AdminColors.primary : Colors.transparent,
+            color: isSelected ? AdminColors.primary : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Center(

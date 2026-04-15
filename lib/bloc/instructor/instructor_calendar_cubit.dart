@@ -14,15 +14,14 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     final savedEvents = await _loadEventsFromStorage();
 
     if (savedEvents.isNotEmpty) {
-      emit(state.copyWith(
-        events: savedEvents,
-        reminders: _getMockReminders(),
-      ));
+      emit(state.copyWith(events: savedEvents, reminders: _getMockReminders()));
     } else {
-      emit(state.copyWith(
-        events: _getMockEvents(),
-        reminders: _getMockReminders(),
-      ));
+      emit(
+        state.copyWith(
+          events: _getMockEvents(),
+          reminders: _getMockReminders(),
+        ),
+      );
       await _saveEventsToStorage(_getMockEvents());
     }
   }
@@ -43,11 +42,14 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     }
   }
 
-  Future<void> _saveEventsToStorage(List<InstructorCalendarEvent> events) async {
+  Future<void> _saveEventsToStorage(
+    List<InstructorCalendarEvent> events,
+  ) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final eventsJson =
-          json.encode(events.map((e) => _eventToJson(e)).toList());
+      final eventsJson = json.encode(
+        events.map((e) => _eventToJson(e)).toList(),
+      );
       await prefs.setString(_eventsStorageKey, eventsJson);
     } catch (e) {
       // Handle error silently
@@ -95,29 +97,31 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
 
   // Date selection
   void selectDate(DateTime date) {
-    emit(state.copyWith(
-        selectedDate: date, clearError: true, clearSuccess: true));
+    emit(
+      state.copyWith(selectedDate: date, clearError: true, clearSuccess: true),
+    );
   }
 
   // Month navigation
   void nextMonth() {
-    final newMonth =
-        DateTime(state.focusedMonth.year, state.focusedMonth.month + 1);
+    final newMonth = DateTime(
+      state.focusedMonth.year,
+      state.focusedMonth.month + 1,
+    );
     emit(state.copyWith(focusedMonth: newMonth));
   }
 
   void previousMonth() {
-    final newMonth =
-        DateTime(state.focusedMonth.year, state.focusedMonth.month - 1);
+    final newMonth = DateTime(
+      state.focusedMonth.year,
+      state.focusedMonth.month - 1,
+    );
     emit(state.copyWith(focusedMonth: newMonth));
   }
 
   void goToToday() {
     final now = DateTime.now();
-    emit(state.copyWith(
-      selectedDate: now,
-      focusedMonth: now,
-    ));
+    emit(state.copyWith(selectedDate: now, focusedMonth: now));
   }
 
   // Filter management
@@ -137,8 +141,9 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
         newFilter = currentFilter.copyWith(labs: !currentFilter.labs);
         break;
       case InstructorEventType.officeHours:
-        newFilter =
-            currentFilter.copyWith(officeHours: !currentFilter.officeHours);
+        newFilter = currentFilter.copyWith(
+          officeHours: !currentFilter.officeHours,
+        );
         break;
       case InstructorEventType.meeting:
         newFilter = currentFilter.copyWith(meetings: !currentFilter.meetings);
@@ -164,10 +169,12 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
   // Event management
   Future<void> addEvent(InstructorCalendarEvent event) async {
     final updatedEvents = [...state.events, event];
-    emit(state.copyWith(
-      events: updatedEvents,
-      successMessage: 'Event added successfully',
-    ));
+    emit(
+      state.copyWith(
+        events: updatedEvents,
+        successMessage: 'Event added successfully',
+      ),
+    );
     await _saveEventsToStorage(updatedEvents);
     // Clear success message after delay
     await Future.delayed(const Duration(seconds: 2));
@@ -180,22 +187,25 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
       return e;
     }).toList();
 
-    emit(state.copyWith(
-      events: updatedEvents,
-      successMessage: 'Event updated successfully',
-    ));
+    emit(
+      state.copyWith(
+        events: updatedEvents,
+        successMessage: 'Event updated successfully',
+      ),
+    );
     await _saveEventsToStorage(updatedEvents);
     await Future.delayed(const Duration(seconds: 2));
     emit(state.copyWith(clearSuccess: true));
   }
 
   Future<void> deleteEvent(String eventId) async {
-    final updatedEvents =
-        state.events.where((e) => e.id != eventId).toList();
-    emit(state.copyWith(
-      events: updatedEvents,
-      successMessage: 'Event deleted successfully',
-    ));
+    final updatedEvents = state.events.where((e) => e.id != eventId).toList();
+    emit(
+      state.copyWith(
+        events: updatedEvents,
+        successMessage: 'Event deleted successfully',
+      ),
+    );
     await _saveEventsToStorage(updatedEvents);
     await Future.delayed(const Duration(seconds: 2));
     emit(state.copyWith(clearSuccess: true));
@@ -216,16 +226,18 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
   // Reminder management
   void dismissReminder(String reminderId) {
     final updatedReminders = state.reminders
-        .map((r) => r.id == reminderId
-            ? InstructorReminder(
-                id: r.id,
-                title: r.title,
-                message: r.message,
-                type: r.type,
-                createdAt: r.createdAt,
-                isDismissed: true,
-              )
-            : r)
+        .map(
+          (r) => r.id == reminderId
+              ? InstructorReminder(
+                  id: r.id,
+                  title: r.title,
+                  message: r.message,
+                  type: r.type,
+                  createdAt: r.createdAt,
+                  isDismissed: true,
+                )
+              : r,
+        )
         .toList();
     emit(state.copyWith(reminders: updatedReminders));
   }

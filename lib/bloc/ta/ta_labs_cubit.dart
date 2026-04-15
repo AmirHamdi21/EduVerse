@@ -8,10 +8,9 @@ import 'ta_labs_state.dart';
 /// All mutations (delete, grade) flow through this cubit — no direct
 /// service calls from the widget layer (Constitution Principle I).
 class TALabsCubit extends Cubit<TALabsState> {
-  TALabsCubit({
-    required LabService labService,
-  })  : _labService = labService,
-        super(const TALabsInitial());
+  TALabsCubit({required LabService labService})
+    : _labService = labService,
+      super(const TALabsInitial());
 
   final LabService _labService;
 
@@ -41,9 +40,7 @@ class TALabsCubit extends Cubit<TALabsState> {
       if (currentState is TALabsLoaded && currentState.labs.isNotEmpty) {
         emit(TALabsLoaded(currentState.labs));
       } else {
-        emit(TALabsError(
-          result.error?.message ?? 'Failed to load labs',
-        ));
+        emit(TALabsError(result.error?.message ?? 'Failed to load labs'));
       }
       return;
     }
@@ -64,20 +61,22 @@ class TALabsCubit extends Cubit<TALabsState> {
     try {
       final labResult = await _labService.getById(labId);
       if (!labResult.isSuccess || labResult.data == null) {
-        emit(TALabDetailError(
-          labResult.error?.message ?? 'Failed to load lab',
-        ));
+        emit(
+          TALabDetailError(labResult.error?.message ?? 'Failed to load lab'),
+        );
         return;
       }
 
       final subsResult = await _labService.getSubmissions(labId);
       final attendanceResult = await _labService.getAttendance(labId);
 
-      emit(TALabDetailLoaded(
-        lab: labResult.data!,
-        submissions: subsResult.data ?? const [],
-        attendance: attendanceResult.data ?? const [],
-      ));
+      emit(
+        TALabDetailLoaded(
+          lab: labResult.data!,
+          submissions: subsResult.data ?? const [],
+          attendance: attendanceResult.data ?? const [],
+        ),
+      );
     } catch (e) {
       emit(TALabDetailError('Failed to load lab detail: $e'));
     }
@@ -104,11 +103,13 @@ class TALabsCubit extends Cubit<TALabsState> {
     final current = state;
     if (current is! TALabDetailLoaded) return;
 
-    emit(TALabAttendanceRefreshing(
-      lab: current.lab,
-      submissions: current.submissions,
-      attendance: current.attendance,
-    ));
+    emit(
+      TALabAttendanceRefreshing(
+        lab: current.lab,
+        submissions: current.submissions,
+        attendance: current.attendance,
+      ),
+    );
 
     final attendanceResult = await _labService.getAttendance(labId);
 
@@ -127,9 +128,7 @@ class TALabsCubit extends Cubit<TALabsState> {
     final result = await _labService.delete(labId);
 
     if (!result.isSuccess) {
-      emit(TALabsError(
-        result.error?.message ?? 'Failed to delete lab',
-      ));
+      emit(TALabsError(result.error?.message ?? 'Failed to delete lab'));
       return;
     }
 
@@ -164,9 +163,11 @@ class TALabsCubit extends Cubit<TALabsState> {
     );
 
     if (!result.isSuccess) {
-      emit(TALabGradeError(
-        result.error?.message ?? 'Failed to grade lab submission',
-      ));
+      emit(
+        TALabGradeError(
+          result.error?.message ?? 'Failed to grade lab submission',
+        ),
+      );
       return;
     }
 

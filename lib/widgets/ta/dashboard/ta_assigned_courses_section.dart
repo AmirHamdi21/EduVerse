@@ -96,7 +96,10 @@ class TAAssignedCoursesSection extends StatelessWidget {
                     height: 48,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [course.color, course.color.withValues(alpha: 0.7)],
+                        colors: [
+                          course.color,
+                          course.color.withValues(alpha: 0.7),
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
@@ -167,7 +170,8 @@ class TAAssignedCoursesSection extends StatelessWidget {
                   const SizedBox(width: 12),
                   Expanded(
                     child: _buildActionButton(
-                      label: '${l10n.taTasks} ${course.pendingTasks > 0 ? "(${course.pendingTasks})" : ""}',
+                      label:
+                          '${l10n.taTasks} ${course.pendingTasks > 0 ? "(${course.pendingTasks})" : ""}',
                       icon: Icons.task_alt_rounded,
                       isPrimary: true,
                       onTap: () => onViewTasks?.call(course),
@@ -183,10 +187,7 @@ class TAAssignedCoursesSection extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoChip({
-    required IconData icon,
-    required String label,
-  }) {
+  Widget _buildInfoChip({required IconData icon, required String label}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -196,11 +197,7 @@ class TAAssignedCoursesSection extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            size: 14,
-            color: TAColors.textSecondaryColor(isDark),
-          ),
+          Icon(icon, size: 14, color: TAColors.textSecondaryColor(isDark)),
           const SizedBox(width: 6),
           Text(
             label,
@@ -233,14 +230,12 @@ class TAAssignedCoursesSection extends StatelessWidget {
             color: isPrimary
                 ? TAColors.primary
                 : (isDark
-                    ? TAColors.darkSurface
-                    : TAColors.surfaceColor(isDark)),
+                      ? TAColors.darkSurface
+                      : TAColors.surfaceColor(isDark)),
             borderRadius: BorderRadius.circular(10),
             border: isPrimary
                 ? null
-                : Border.all(
-                    color: TAColors.borderColor(isDark),
-                  ),
+                : Border.all(color: TAColors.borderColor(isDark)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,

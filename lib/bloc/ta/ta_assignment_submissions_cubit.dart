@@ -53,10 +53,9 @@ final class TASubsGradeError extends TASubsState {
 class TAAssignmentSubmissionsCubit extends Cubit<TASubsState> {
   final AssignmentService _assignmentService;
 
-  TAAssignmentSubmissionsCubit({
-    required AssignmentService assignmentService,
-  })  : _assignmentService = assignmentService,
-        super(const TASubsInitial());
+  TAAssignmentSubmissionsCubit({required AssignmentService assignmentService})
+    : _assignmentService = assignmentService,
+      super(const TASubsInitial());
 
   Future<void> fetchSubmissions(int assignmentId) async {
     emit(const TASubsLoading());
@@ -65,7 +64,9 @@ class TAAssignmentSubmissionsCubit extends Cubit<TASubsState> {
       if (result.isSuccess && result.data != null) {
         emit(TASubsLoaded(result.data!));
       } else {
-        emit(TASubsError(result.error?.toString() ?? 'Failed to load submissions'));
+        emit(
+          TASubsError(result.error?.toString() ?? 'Failed to load submissions'),
+        );
       }
     } catch (e) {
       emit(TASubsError(e.toString()));
@@ -91,7 +92,11 @@ class TAAssignmentSubmissionsCubit extends Cubit<TASubsState> {
         emit(const TASubsGradeSuccess());
         await fetchSubmissions(assignmentId);
       } else {
-        emit(TASubsGradeError(result.error?.toString() ?? 'Failed to grade submission'));
+        emit(
+          TASubsGradeError(
+            result.error?.toString() ?? 'Failed to grade submission',
+          ),
+        );
       }
     } catch (e) {
       emit(TASubsGradeError(e.toString()));

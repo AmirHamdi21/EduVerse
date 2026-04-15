@@ -49,11 +49,11 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
         // Theme & UI Customization
         _buildThemeSection(),
         const SizedBox(height: 16),
-        
+
         // Recent Activity
         _buildRecentActivitySection(),
         const SizedBox(height: 16),
-        
+
         // Danger Zone
         _buildDangerZoneSection(),
       ],
@@ -73,11 +73,7 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.palette_rounded,
-                size: 18,
-                color: ITColors.primary,
-              ),
+              Icon(Icons.palette_rounded, size: 18, color: ITColors.primary),
               const SizedBox(width: 8),
               Text(
                 'Theme & UI Customization',
@@ -90,7 +86,7 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Theme Mode
           Text(
             'Theme Mode',
@@ -106,8 +102,7 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
               final isSelected = _prefs.themeMode == mode;
               return Expanded(
                 child: GestureDetector(
-                  onTap: () =>
-                      _updatePrefs(_prefs.copyWith(themeMode: mode)),
+                  onTap: () => _updatePrefs(_prefs.copyWith(themeMode: mode)),
                   child: Container(
                     margin: EdgeInsets.only(
                       right: mode != ThemeModeOption.auto ? 8 : 0,
@@ -117,15 +112,15 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
                       color: isSelected
                           ? ITColors.primary.withValues(alpha: 0.15)
                           : (widget.isDark
-                              ? Colors.white.withValues(alpha: 0.05)
-                              : Colors.grey.withValues(alpha: 0.08)),
+                                ? Colors.white.withValues(alpha: 0.05)
+                                : Colors.grey.withValues(alpha: 0.08)),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: isSelected
                             ? ITColors.primary
                             : (widget.isDark
-                                ? Colors.white.withValues(alpha: 0.1)
-                                : Colors.grey.withValues(alpha: 0.2)),
+                                  ? Colors.white.withValues(alpha: 0.1)
+                                  : Colors.grey.withValues(alpha: 0.2)),
                       ),
                     ),
                     child: Column(
@@ -158,7 +153,7 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
             }).toList(),
           ),
           const SizedBox(height: 20),
-          
+
           // Accent Color
           Text(
             'Accent Color',
@@ -185,15 +180,15 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
                       color: isSelected
                           ? _getAccentColorValue(color).withValues(alpha: 0.15)
                           : (widget.isDark
-                              ? Colors.white.withValues(alpha: 0.05)
-                              : Colors.grey.withValues(alpha: 0.08)),
+                                ? Colors.white.withValues(alpha: 0.05)
+                                : Colors.grey.withValues(alpha: 0.08)),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: isSelected
                             ? _getAccentColorValue(color)
                             : (widget.isDark
-                                ? Colors.white.withValues(alpha: 0.1)
-                                : Colors.grey.withValues(alpha: 0.2)),
+                                  ? Colors.white.withValues(alpha: 0.1)
+                                  : Colors.grey.withValues(alpha: 0.2)),
                         width: isSelected ? 2 : 1,
                       ),
                     ),
@@ -229,7 +224,7 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
             }).toList(),
           ),
           const SizedBox(height: 20),
-          
+
           // UI Density
           Row(
             children: [
@@ -268,7 +263,9 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
                                 d,
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: ITColors.textPrimaryColor(widget.isDark),
+                                  color: ITColors.textPrimaryColor(
+                                    widget.isDark,
+                                  ),
                                 ),
                               ),
                             );
@@ -290,7 +287,7 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Advanced Metrics toggle
           Row(
             children: [
@@ -343,11 +340,7 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.history_rounded,
-                size: 18,
-                color: ITColors.primary,
-              ),
+              Icon(Icons.history_rounded, size: 18, color: ITColors.primary),
               const SizedBox(width: 8),
               Text(
                 'Recent Activity',
@@ -360,7 +353,7 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
             ],
           ),
           const SizedBox(height: 12),
-          
+
           // Activity table header
           Container(
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -422,8 +415,10 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
             ),
           ),
           const SizedBox(height: 4),
-          
-          ...widget.activityLog.take(5).map((entry) => _buildActivityRow(entry)),
+
+          ...widget.activityLog
+              .take(5)
+              .map((entry) => _buildActivityRow(entry)),
         ],
       ),
     );
@@ -469,7 +464,9 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
-                  color: _getSeverityColor(entry.severity).withValues(alpha: 0.15),
+                  color: _getSeverityColor(
+                    entry.severity,
+                  ).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
@@ -508,20 +505,14 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
       decoration: BoxDecoration(
         color: ITColors.error.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: ITColors.error.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: ITColors.error.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.warning_rounded,
-                size: 18,
-                color: ITColors.error,
-              ),
+              Icon(Icons.warning_rounded, size: 18, color: ITColors.error),
               const SizedBox(width: 8),
               Text(
                 'Danger Zone',
@@ -534,7 +525,7 @@ class _ITProfilePreferencesTabState extends State<ITProfilePreferencesTab> {
             ],
           ),
           const SizedBox(height: 12),
-          
+
           _buildDangerAction(
             icon: Icons.key_off_rounded,
             title: 'Revoke API Keys',

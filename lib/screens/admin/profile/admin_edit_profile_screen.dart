@@ -58,7 +58,8 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
     _emailController.text = 'ahmed.hassan@eduverse.com';
     _phoneController.text = '+20 100 123 4567';
     _departmentController.text = 'IT Administration';
-    _bioController.text = 'System administrator with 5+ years of experience in educational platforms.';
+    _bioController.text =
+        'System administrator with 5+ years of experience in educational platforms.';
     _employeeIdController.text = 'ADM-001';
     _roleController.text = 'Super Administrator';
     _timezoneController.text = 'Africa/Cairo (UTC+2)';
@@ -87,26 +88,28 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
 
   Future<void> _saveProfile() async {
     setState(() => _isSaving = true);
-    
+
     // Simulate API call
     await Future.delayed(const Duration(seconds: 1));
-    
+
     if (mounted) {
       setState(() {
         _isSaving = false;
         _hasChanges = false;
       });
-      
+
       final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(l10n.profileUpdated),
           backgroundColor: AdminColors.success,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
-      
+
       context.pop();
     }
   }
@@ -131,9 +134,7 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
         ),
         content: Text(
           l10n.discardChangesMessage,
-          style: TextStyle(
-            color: AdminColors.getTextSecondaryColor(isDark),
-          ),
+          style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
         ),
         actions: [
           TextButton(
@@ -253,7 +254,11 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
                           const SizedBox(height: 20),
 
                           // Personal Information Section
-                          _buildSectionTitle(l10n.personalInformation, Icons.person_outline_rounded, isDark),
+                          _buildSectionTitle(
+                            l10n.personalInformation,
+                            Icons.person_outline_rounded,
+                            isDark,
+                          ),
                           const SizedBox(height: 12),
                           _buildCard(isDark, [
                             _buildTextField(
@@ -294,7 +299,11 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
                           const SizedBox(height: 24),
 
                           // Work Information Section
-                          _buildSectionTitle(l10n.workInformation, Icons.work_outline_rounded, isDark),
+                          _buildSectionTitle(
+                            l10n.workInformation,
+                            Icons.work_outline_rounded,
+                            isDark,
+                          ),
                           const SizedBox(height: 12),
                           _buildCard(isDark, [
                             _buildTextField(
@@ -322,7 +331,11 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
                           const SizedBox(height: 24),
 
                           // Preferences Section
-                          _buildSectionTitle(l10n.preferences, Icons.tune_rounded, isDark),
+                          _buildSectionTitle(
+                            l10n.preferences,
+                            Icons.tune_rounded,
+                            isDark,
+                          ),
                           const SizedBox(height: 12),
                           _buildCard(isDark, [
                             _buildLanguageSelector(isDark, l10n),
@@ -340,12 +353,17 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: _hasChanges && !_isSaving ? _saveProfile : null,
+                              onPressed: _hasChanges && !_isSaving
+                                  ? _saveProfile
+                                  : null,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AdminColors.primary,
                                 foregroundColor: Colors.white,
-                                disabledBackgroundColor: AdminColors.primary.withValues(alpha: 0.3),
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                disabledBackgroundColor: AdminColors.primary
+                                    .withValues(alpha: 0.3),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -459,11 +477,7 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
             color: AdminColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            icon,
-            color: AdminColors.primary,
-            size: 18,
-          ),
+          child: Icon(icon, color: AdminColors.primary, size: 18),
         ),
         const SizedBox(width: 12),
         Text(
@@ -484,9 +498,7 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
         boxShadow: [
           if (!isDark)
             BoxShadow(
@@ -496,9 +508,7 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
             ),
         ],
       ),
-      child: Column(
-        children: children,
-      ),
+      child: Column(children: children),
     );
   }
 
@@ -520,8 +530,8 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
         enabled: enabled,
         onChanged: (_) => _markChanged(),
         style: TextStyle(
-          color: enabled 
-              ? AdminColors.getTextColor(isDark) 
+          color: enabled
+              ? AdminColors.getTextColor(isDark)
               : AdminColors.getTextTertiaryColor(isDark),
         ),
         decoration: InputDecoration(
@@ -531,15 +541,17 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
           ),
           prefixIcon: Icon(
             icon,
-            color: enabled 
-                ? AdminColors.primary 
+            color: enabled
+                ? AdminColors.primary
                 : AdminColors.getTextTertiaryColor(isDark),
             size: 20,
           ),
           filled: true,
           fillColor: enabled
               ? (isDark ? AdminColors.darkSurface : const Color(0xFFF8FAFC))
-              : (isDark ? AdminColors.darkBackground.withValues(alpha: 0.5) : const Color(0xFFF1F5F9)),
+              : (isDark
+                    ? AdminColors.darkBackground.withValues(alpha: 0.5)
+                    : const Color(0xFFF1F5F9)),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
@@ -554,15 +566,14 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: AdminColors.primary,
-              width: 2,
-            ),
+            borderSide: BorderSide(color: AdminColors.primary, width: 2),
           ),
           disabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-              color: AdminColors.getCardBorderColor(isDark).withValues(alpha: 0.5),
+              color: AdminColors.getCardBorderColor(
+                isDark,
+              ).withValues(alpha: 0.5),
             ),
           ),
         ),
@@ -625,13 +636,13 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
         decoration: BoxDecoration(
-          color: isSelected 
+          color: isSelected
               ? AdminColors.primary.withValues(alpha: 0.1)
               : (isDark ? AdminColors.darkSurface : const Color(0xFFF8FAFC)),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected 
-                ? AdminColors.primary 
+            color: isSelected
+                ? AdminColors.primary
                 : AdminColors.getCardBorderColor(isDark),
             width: isSelected ? 2 : 1,
           ),
@@ -641,8 +652,8 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
           children: [
             Icon(
               isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-              color: isSelected 
-                  ? AdminColors.primary 
+              color: isSelected
+                  ? AdminColors.primary
                   : AdminColors.getTextSecondaryColor(isDark),
               size: 20,
             ),
@@ -650,8 +661,8 @@ class _AdminEditProfileScreenState extends State<AdminEditProfileScreen>
             Text(
               label,
               style: TextStyle(
-                color: isSelected 
-                    ? AdminColors.primary 
+                color: isSelected
+                    ? AdminColors.primary
                     : AdminColors.getTextColor(isDark),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),

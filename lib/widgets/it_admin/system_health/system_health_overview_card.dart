@@ -20,15 +20,12 @@ class SystemHealthOverviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final statusColor = ITColors.getStatusColor(overallStatus);
-    
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            ITColors.primary,
-            ITColors.primaryLight,
-          ],
+          colors: [ITColors.primary, ITColors.primaryLight],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -52,10 +49,7 @@ class SystemHealthOverviewCard extends StatelessWidget {
                 children: [
                   const Text(
                     'System Health',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -143,10 +137,7 @@ class SystemHealthOverviewCard extends StatelessWidget {
             ),
             Text(
               label,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 12,
-              ),
+              style: const TextStyle(color: Colors.white70, fontSize: 12),
             ),
           ],
         ),

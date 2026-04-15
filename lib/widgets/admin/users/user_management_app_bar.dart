@@ -26,7 +26,9 @@ class UserManagementAppBar extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.8),
         border: Border(
           bottom: BorderSide(
-            color: isDark ? AdminColors.darkDivider : AdminColors.lightCardBorder,
+            color: isDark
+                ? AdminColors.darkDivider
+                : AdminColors.lightCardBorder,
           ),
         ),
       ),

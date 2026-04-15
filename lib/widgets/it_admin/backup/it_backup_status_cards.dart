@@ -76,13 +76,9 @@ class ITBackupStatusCards extends StatelessWidget {
         // Third row - Storage and Recovery
         Row(
           children: [
-            Expanded(
-              child: _buildStorageCard(),
-            ),
+            Expanded(child: _buildStorageCard()),
             const SizedBox(width: 12),
-            Expanded(
-              child: _buildRecoveryScoreCard(),
-            ),
+            Expanded(child: _buildRecoveryScoreCard()),
           ],
         ),
       ],
@@ -108,8 +104,8 @@ class ITBackupStatusCards extends StatelessWidget {
           color: isWarning
               ? ITColors.error.withValues(alpha: 0.3)
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.1)
-                  : ITColors.border),
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : ITColors.border),
         ),
         boxShadow: ITColors.lightCardShadow(isDark),
       ),
@@ -174,12 +170,13 @@ class ITBackupStatusCards extends StatelessWidget {
   }
 
   Widget _buildStorageCard() {
-    final usagePercent = (stats.storageUsedGB / stats.storageTotalGB * 100).clamp(0, 100);
+    final usagePercent = (stats.storageUsedGB / stats.storageTotalGB * 100)
+        .clamp(0, 100);
     final color = usagePercent > 90
         ? ITColors.error
         : usagePercent > 75
-            ? ITColors.warning
-            : ITColors.success;
+        ? ITColors.warning
+        : ITColors.success;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -187,9 +184,7 @@ class ITBackupStatusCards extends StatelessWidget {
         color: isDark ? ITColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
         boxShadow: ITColors.lightCardShadow(isDark),
       ),
@@ -204,7 +199,11 @@ class ITBackupStatusCards extends StatelessWidget {
                   color: ITColors.purple.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.storage_rounded, color: ITColors.purple, size: 18),
+                child: Icon(
+                  Icons.storage_rounded,
+                  color: ITColors.purple,
+                  size: 18,
+                ),
               ),
             ],
           ),
@@ -263,8 +262,8 @@ class ITBackupStatusCards extends StatelessWidget {
     final color = score >= 95
         ? ITColors.success
         : score >= 80
-            ? ITColors.warning
-            : ITColors.error;
+        ? ITColors.warning
+        : ITColors.error;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -272,9 +271,7 @@ class ITBackupStatusCards extends StatelessWidget {
         color: isDark ? ITColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
         boxShadow: ITColors.lightCardShadow(isDark),
       ),
@@ -301,7 +298,11 @@ class ITBackupStatusCards extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.auto_awesome_rounded, color: ITColors.success, size: 12),
+                    Icon(
+                      Icons.auto_awesome_rounded,
+                      color: ITColors.success,
+                      size: 12,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       'AI Generated',

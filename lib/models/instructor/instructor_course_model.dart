@@ -241,8 +241,9 @@ class SectionStudentModel {
       enrollmentDate: json['enrollmentDate'] != null
           ? DateTime.tryParse(json['enrollmentDate'].toString())
           : null,
-      sectionId: int.tryParse(sectionData?['id']?.toString() ?? '')
-          ?? int.tryParse(json['sectionId']?.toString() ?? ''),
+      sectionId:
+          int.tryParse(sectionData?['id']?.toString() ?? '') ??
+          int.tryParse(json['sectionId']?.toString() ?? ''),
       courseCode: courseData?['code']?.toString(),
       courseName: courseData?['name']?.toString(),
     );

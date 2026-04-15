@@ -53,7 +53,9 @@ class ITIncidentDetailSheet extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: _getSeverityColor(incident.severity).withValues(alpha: 0.1),
+                        color: _getSeverityColor(
+                          incident.severity,
+                        ).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -118,7 +120,10 @@ class ITIncidentDetailSheet extends StatelessWidget {
                 if (incident.status == IncidentStatus.resolved)
                   Container(
                     margin: const EdgeInsets.only(top: 8),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: ITColors.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -126,7 +131,11 @@ class ITIncidentDetailSheet extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.check_circle_rounded, size: 14, color: ITColors.success),
+                        Icon(
+                          Icons.check_circle_rounded,
+                          size: 14,
+                          color: ITColors.success,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'Resolved',
@@ -184,7 +193,8 @@ class ITIncidentDetailSheet extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    incident.investigationNotes ?? 'Add notes about investigation and response...',
+                    incident.investigationNotes ??
+                        'Add notes about investigation and response...',
                     style: TextStyle(
                       color: incident.investigationNotes != null
                           ? ITColors.textSecondaryColor(isDark)
@@ -209,7 +219,10 @@ class ITIncidentDetailSheet extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: ITColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),

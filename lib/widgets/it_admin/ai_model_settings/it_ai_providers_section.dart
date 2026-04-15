@@ -25,7 +25,11 @@ class ITAIProvidersSection extends StatelessWidget {
       case AIProvider.gemini:
         return [AIModel.geminiPro, AIModel.gemini15Pro];
       case AIProvider.claude:
-        return [AIModel.claude35Sonnet, AIModel.claude3Sonnet, AIModel.claude3Opus];
+        return [
+          AIModel.claude35Sonnet,
+          AIModel.claude3Sonnet,
+          AIModel.claude3Opus,
+        ];
     }
   }
 
@@ -113,7 +117,7 @@ class ITAIProvidersSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Provider Selection
           Text(
             'Select Provider',
@@ -126,7 +130,7 @@ class ITAIProvidersSection extends StatelessWidget {
           const SizedBox(height: 12),
           _buildProviderToggle(),
           const SizedBox(height: 20),
-          
+
           // Model Selection
           Text(
             'Select Model',
@@ -160,7 +164,10 @@ class ITAIProvidersSection extends StatelessWidget {
               onTap: () => onProviderChanged(provider),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 8,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? _getProviderColor(provider)
@@ -169,7 +176,9 @@ class ITAIProvidersSection extends StatelessWidget {
                   boxShadow: isSelected
                       ? [
                           BoxShadow(
-                            color: _getProviderColor(provider).withValues(alpha: 0.3),
+                            color: _getProviderColor(
+                              provider,
+                            ).withValues(alpha: 0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 2),
                           ),
@@ -243,7 +252,9 @@ class ITAIProvidersSection extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(6),
                     decoration: BoxDecoration(
-                      color: _getProviderColor(selectedProvider).withValues(alpha: 0.1),
+                      color: _getProviderColor(
+                        selectedProvider,
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(

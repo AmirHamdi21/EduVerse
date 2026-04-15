@@ -31,23 +31,21 @@ class SummarizerCubit extends Cubit<SummarizerState> {
   Future<void> _loadSummaries() async {
     final prefs = await SharedPreferences.getInstance();
     final summariesJson = prefs.getString(_summariesKey);
-    
+
     List<Summary> summaries = [];
     if (summariesJson != null) {
       final List<dynamic> decoded = jsonDecode(summariesJson);
       summaries = decoded.map((e) => Summary.fromJson(e)).toList();
     }
 
-    emit(state.copyWith(
-      summaries: summaries,
-      isLoading: false,
-    ));
+    emit(state.copyWith(summaries: summaries, isLoading: false));
   }
 
   Future<void> _saveSummaries() async {
     final prefs = await SharedPreferences.getInstance();
-    final summariesJson =
-        jsonEncode(state.summaries.map((e) => e.toJson()).toList());
+    final summariesJson = jsonEncode(
+      state.summaries.map((e) => e.toJson()).toList(),
+    );
     await prefs.setString(_summariesKey, summariesJson);
   }
 
@@ -57,9 +55,11 @@ class SummarizerCubit extends Cubit<SummarizerState> {
     if (state.searchQuery.isNotEmpty) {
       final query = state.searchQuery.toLowerCase();
       filtered = filtered
-          .where((s) =>
-              s.title.toLowerCase().contains(query) ||
-              s.content.toLowerCase().contains(query))
+          .where(
+            (s) =>
+                s.title.toLowerCase().contains(query) ||
+                s.content.toLowerCase().contains(query),
+          )
           .toList();
     }
 
@@ -96,10 +96,12 @@ class SummarizerCubit extends Cubit<SummarizerState> {
 
   Future<void> uploadFile() async {
     try {
-      emit(state.copyWith(
-        uploadProgress: const UploadProgress(fileName: ''),
-        status: SummaryStatus.uploading,
-      ));
+      emit(
+        state.copyWith(
+          uploadProgress: const UploadProgress(fileName: ''),
+          status: SummaryStatus.uploading,
+        ),
+      );
 
       final result = await picker.FilePicker.platform.pickFiles(
         type: picker.FileType.custom,
@@ -108,20 +110,21 @@ class SummarizerCubit extends Cubit<SummarizerState> {
       );
 
       if (result == null || result.files.isEmpty) {
-        emit(state.copyWith(
-          clearUploadProgress: true,
-          status: SummaryStatus.idle,
-        ));
+        emit(
+          state.copyWith(clearUploadProgress: true, status: SummaryStatus.idle),
+        );
         return;
       }
 
       final platformFile = result.files.first;
       if (platformFile.path == null) {
-        emit(state.copyWith(
-          errorMessage: 'Failed to get file path',
-          status: SummaryStatus.error,
-          clearUploadProgress: true,
-        ));
+        emit(
+          state.copyWith(
+            errorMessage: 'Failed to get file path',
+            status: SummaryStatus.error,
+            clearUploadProgress: true,
+          ),
+        );
         return;
       }
 
@@ -139,12 +142,14 @@ class SummarizerCubit extends Cubit<SummarizerState> {
       // Simulate upload progress
       for (int i = 0; i <= 100; i += 10) {
         await Future.delayed(const Duration(milliseconds: 50));
-        emit(state.copyWith(
-          uploadProgress: UploadProgress(
-            fileName: platformFile.name,
-            progress: i / 100,
+        emit(
+          state.copyWith(
+            uploadProgress: UploadProgress(
+              fileName: platformFile.name,
+              progress: i / 100,
+            ),
           ),
-        ));
+        );
       }
 
       // Copy file to app storage
@@ -158,29 +163,30 @@ class SummarizerCubit extends Cubit<SummarizerState> {
         uploadedAt: DateTime.now(),
       );
 
-      emit(state.copyWith(
-        uploadedFile: uploadedFile,
-        uploadProgress: UploadProgress(
-          fileName: platformFile.name,
-          progress: 1.0,
-          isCompleted: true,
+      emit(
+        state.copyWith(
+          uploadedFile: uploadedFile,
+          uploadProgress: UploadProgress(
+            fileName: platformFile.name,
+            progress: 1.0,
+            isCompleted: true,
+          ),
+          status: SummaryStatus.idle,
+          activeInputSource: InputSource.file,
         ),
-        status: SummaryStatus.idle,
-        activeInputSource: InputSource.file,
-      ));
+      );
 
       // Clear upload progress after delay
       await Future.delayed(const Duration(seconds: 1));
       emit(state.copyWith(clearUploadProgress: true));
     } catch (e) {
-      emit(state.copyWith(
-        uploadProgress: UploadProgress(
-          fileName: '',
-          error: e.toString(),
+      emit(
+        state.copyWith(
+          uploadProgress: UploadProgress(fileName: '', error: e.toString()),
+          status: SummaryStatus.error,
+          errorMessage: e.toString(),
         ),
-        status: SummaryStatus.error,
-        errorMessage: e.toString(),
-      ));
+      );
 
       await Future.delayed(const Duration(seconds: 2));
       emit(state.copyWith(clearUploadProgress: true));
@@ -191,13 +197,12 @@ class SummarizerCubit extends Cubit<SummarizerState> {
     if (!state.canGenerate) return;
 
     try {
-      emit(state.copyWith(
-        status: SummaryStatus.processing,
-        clearError: true,
-      ));
+      emit(state.copyWith(status: SummaryStatus.processing, clearError: true));
 
       // Simulate AI processing time
-      await Future.delayed(Duration(milliseconds: 1500 + _random.nextInt(1000)));
+      await Future.delayed(
+        Duration(milliseconds: 1500 + _random.nextInt(1000)),
+      );
 
       // Generate mock summary based on type
       final summaryContent = _generateMockSummary();
@@ -232,21 +237,22 @@ class SummarizerCubit extends Cubit<SummarizerState> {
 
       final updatedSummaries = [summary, ...state.summaries];
 
-      emit(state.copyWith(
-        summaries: updatedSummaries,
-        currentSummary: summary,
-        status: SummaryStatus.completed,
-        clearUploadedFile: true,
-        textInput: '',
-      ));
+      emit(
+        state.copyWith(
+          summaries: updatedSummaries,
+          currentSummary: summary,
+          status: SummaryStatus.completed,
+          clearUploadedFile: true,
+          textInput: '',
+        ),
+      );
 
       await _saveSummaries();
       _applyFilters();
     } catch (e) {
-      emit(state.copyWith(
-        status: SummaryStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(status: SummaryStatus.error, errorMessage: e.toString()),
+      );
     }
   }
 
@@ -373,30 +379,37 @@ Central Topic
       );
     }
 
-    emit(state.copyWith(
-      summaries: updatedSummaries,
-      currentSummary: updatedCurrentSummary,
-    ));
+    emit(
+      state.copyWith(
+        summaries: updatedSummaries,
+        currentSummary: updatedCurrentSummary,
+      ),
+    );
     await _saveSummaries();
     _applyFilters();
   }
 
   Future<void> deleteSummary(String summaryId) async {
-    final updatedSummaries =
-        state.summaries.where((s) => s.id != summaryId).toList();
-    emit(state.copyWith(summaries: updatedSummaries, clearSelectedSummary: true));
+    final updatedSummaries = state.summaries
+        .where((s) => s.id != summaryId)
+        .toList();
+    emit(
+      state.copyWith(summaries: updatedSummaries, clearSelectedSummary: true),
+    );
     await _saveSummaries();
     _applyFilters();
   }
 
   void reset() {
-    emit(state.copyWith(
-      clearUploadedFile: true,
-      textInput: '',
-      status: SummaryStatus.idle,
-      clearError: true,
-      clearCurrentSummary: true,
-    ));
+    emit(
+      state.copyWith(
+        clearUploadedFile: true,
+        textInput: '',
+        status: SummaryStatus.idle,
+        clearError: true,
+        clearCurrentSummary: true,
+      ),
+    );
   }
 
   void refresh() {

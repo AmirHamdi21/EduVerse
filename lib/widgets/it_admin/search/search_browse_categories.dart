@@ -47,7 +47,9 @@ class ITSearchBrowseCategories extends StatelessWidget {
             decoration: BoxDecoration(
               color: ITColors.cardColor(isDark),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: ITColors.borderColor(isDark).withValues(alpha: 0.5)),
+              border: Border.all(
+                color: ITColors.borderColor(isDark).withValues(alpha: 0.5),
+              ),
             ),
             child: Row(
               children: [
@@ -74,7 +76,10 @@ class ITSearchBrowseCategories extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: ITColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),

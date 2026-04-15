@@ -81,7 +81,9 @@ class AdminAIQuickActions extends StatelessWidget {
         color: isDark ? AdminColors.darkCard : AdminColors.lightCard,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
       ),
       child: Column(
@@ -109,7 +111,9 @@ class AdminAIQuickActions extends StatelessWidget {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: _actions.map((action) => _buildActionChip(action)).toList(),
+            children: _actions
+                .map((action) => _buildActionChip(action))
+                .toList(),
           ),
         ],
       ),

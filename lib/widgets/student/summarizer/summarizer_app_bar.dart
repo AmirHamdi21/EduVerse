@@ -9,10 +9,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class SummarizerAppBar extends StatelessWidget {
   final bool isDark;
 
-  const SummarizerAppBar({
-    super.key,
-    required this.isDark,
-  });
+  const SummarizerAppBar({super.key, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +49,9 @@ class SummarizerAppBar extends StatelessWidget {
                 Text(
                   l10n.summarizerTitle,
                   style: TextStyle(
-                    color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                    color: isDark
+                        ? const Color(0xFFF3F4F6)
+                        : const Color(0xFF101828),
                     fontSize: 24,
                     fontWeight: FontWeight.w700,
                     letterSpacing: -0.5,
@@ -62,7 +61,9 @@ class SummarizerAppBar extends StatelessWidget {
                 Text(
                   l10n.summarizerSubtitle,
                   style: TextStyle(
-                    color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                    color: isDark
+                        ? const Color(0xFF99A1AF)
+                        : const Color(0xFF4A5565),
                     fontSize: 15,
                     height: 1.4,
                   ),
@@ -77,7 +78,7 @@ class SummarizerAppBar extends StatelessWidget {
 
   Widget _buildBackButton(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -91,13 +92,17 @@ class SummarizerAppBar extends StatelessWidget {
               Icon(
                 Icons.arrow_back_ios_rounded,
                 size: 18,
-                color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                color: isDark
+                    ? const Color(0xFF99A1AF)
+                    : const Color(0xFF4A5565),
               ),
               const SizedBox(width: 4),
               Text(
                 l10n.back,
                 style: TextStyle(
-                  color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                  color: isDark
+                      ? const Color(0xFF99A1AF)
+                      : const Color(0xFF4A5565),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -125,12 +130,14 @@ class SummarizerAppBar extends StatelessWidget {
     return BlocBuilder<LanguageCubit, Locale>(
       builder: (context, locale) {
         final isArabic = locale.languageCode == 'ar';
-        
+
         return Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
-              context.read<LanguageCubit>().changeLanguage(isArabic ? 'en' : 'ar');
+              context.read<LanguageCubit>().changeLanguage(
+                isArabic ? 'en' : 'ar',
+              );
             },
             borderRadius: BorderRadius.circular(22),
             child: Container(
@@ -142,7 +149,9 @@ class SummarizerAppBar extends StatelessWidget {
                     : Colors.white.withValues(alpha: 0.8),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isDark ? const Color(0xFF364153) : const Color(0xFFE5E7EB),
+                  color: isDark
+                      ? const Color(0xFF364153)
+                      : const Color(0xFFE5E7EB),
                 ),
                 boxShadow: [
                   BoxShadow(
@@ -156,7 +165,9 @@ class SummarizerAppBar extends StatelessWidget {
                 child: Text(
                   isArabic ? 'EN' : 'AR',
                   style: TextStyle(
-                    color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                    color: isDark
+                        ? const Color(0xFFF3F4F6)
+                        : const Color(0xFF101828),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),

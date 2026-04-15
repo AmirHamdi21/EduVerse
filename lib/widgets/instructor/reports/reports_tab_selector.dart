@@ -25,9 +25,7 @@ class ReportsTabSelector extends StatelessWidget {
             ? ReportsColors.darkCard.withValues(alpha: 0.5)
             : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: ReportsColors.borderColor(isDark),
-        ),
+        border: Border.all(color: ReportsColors.borderColor(isDark)),
         boxShadow: isDark
             ? null
             : [
@@ -80,7 +78,9 @@ class ReportsTabSelector extends StatelessWidget {
                             ? Colors.white
                             : ReportsColors.textSecondaryColor(isDark),
                         fontSize: 13,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w500,
                       ),
                     ),
                   ],
@@ -115,4 +115,3 @@ class ReportsTabSelector extends StatelessWidget {
     }
   }
 }
-

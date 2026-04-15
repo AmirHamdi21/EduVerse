@@ -9,10 +9,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class InstructorCalendarAppBar extends StatelessWidget {
   final VoidCallback onAddEvent;
 
-  const InstructorCalendarAppBar({
-    super.key,
-    required this.onAddEvent,
-  });
+  const InstructorCalendarAppBar({super.key, required this.onAddEvent});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +38,10 @@ class InstructorCalendarAppBar extends StatelessWidget {
   }
 
   Widget _buildBackButton(
-      BuildContext context, AppLocalizations l10n, bool isDark) {
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return GestureDetector(
       onTap: () => context.pop(),
       child: Container(
@@ -66,8 +66,9 @@ class InstructorCalendarAppBar extends StatelessWidget {
               l10n.back,
               style: TextStyle(
                 fontSize: 14,
-                color:
-                    isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                color: isDark
+                    ? const Color(0xFF99A1AF)
+                    : const Color(0xFF4A5565),
               ),
             ),
           ],
@@ -77,7 +78,10 @@ class InstructorCalendarAppBar extends StatelessWidget {
   }
 
   Widget _buildAddEventButton(
-      BuildContext context, AppLocalizations l10n, bool isDark) {
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return GestureDetector(
       onTap: onAddEvent,
       child: Container(
@@ -98,11 +102,7 @@ class InstructorCalendarAppBar extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.add_rounded,
-              size: 18,
-              color: Colors.white,
-            ),
+            const Icon(Icons.add_rounded, size: 18, color: Colors.white),
             const SizedBox(width: 6),
             Text(
               l10n.addEvent,
@@ -123,8 +123,7 @@ class InstructorCalendarAppBar extends StatelessWidget {
       builder: (context, locale) {
         return GestureDetector(
           onTap: () {
-            final newLocale =
-                locale.languageCode == 'en' ? 'ar' : 'en';
+            final newLocale = locale.languageCode == 'en' ? 'ar' : 'en';
             context.read<LanguageCubit>().changeLanguage(newLocale);
           },
           child: Container(
@@ -133,8 +132,9 @@ class InstructorCalendarAppBar extends StatelessWidget {
               color: isDark ? const Color(0xFF1E2939) : Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color:
-                    isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                color: isDark
+                    ? const Color(0xFF374151)
+                    : const Color(0xFFE5E7EB),
               ),
             ),
             child: Text(
@@ -142,8 +142,9 @@ class InstructorCalendarAppBar extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color:
-                    isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                color: isDark
+                    ? const Color(0xFF99A1AF)
+                    : const Color(0xFF4A5565),
               ),
             ),
           ),

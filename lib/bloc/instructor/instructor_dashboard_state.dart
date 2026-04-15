@@ -36,9 +36,13 @@ class InstructorDashboardState extends Equatable {
     // Apply search filter
     if (searchQuery.isNotEmpty) {
       final query = searchQuery.toLowerCase();
-      result = result.where((c) =>
-          c.name.toLowerCase().contains(query) ||
-          c.code.toLowerCase().contains(query)).toList();
+      result = result
+          .where(
+            (c) =>
+                c.name.toLowerCase().contains(query) ||
+                c.code.toLowerCase().contains(query),
+          )
+          .toList();
     }
 
     // Apply status filter
@@ -85,15 +89,15 @@ class InstructorDashboardState extends Equatable {
 
   @override
   List<Object?> get props => [
-        courses,
-        filter,
-        searchQuery,
-        isLoading,
-        errorMessage,
-        totalStudents,
-        pendingAssignments,
-        pendingQuizzes,
-        unreadMessages,
-        overallProgress,
-      ];
+    courses,
+    filter,
+    searchQuery,
+    isLoading,
+    errorMessage,
+    totalStudents,
+    pendingAssignments,
+    pendingQuizzes,
+    unreadMessages,
+    overallProgress,
+  ];
 }

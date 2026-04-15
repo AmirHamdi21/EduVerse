@@ -8,10 +8,7 @@ import 'package:edu_verse/generated_l10n/app_localizations.dart';
 class CalendarAppBar extends StatelessWidget {
   final VoidCallback onAddEvent;
 
-  const CalendarAppBar({
-    super.key,
-    required this.onAddEvent,
-  });
+  const CalendarAppBar({super.key, required this.onAddEvent});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +36,11 @@ class CalendarAppBar extends StatelessWidget {
     );
   }
 
-  Widget _buildBackButton(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildBackButton(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return GestureDetector(
       onTap: () => Navigator.pop(context),
       child: Container(
@@ -64,7 +65,9 @@ class CalendarAppBar extends StatelessWidget {
               l10n.back,
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                color: isDark
+                    ? const Color(0xFF99A1AF)
+                    : const Color(0xFF4A5565),
               ),
             ),
           ],
@@ -73,7 +76,11 @@ class CalendarAppBar extends StatelessWidget {
     );
   }
 
-  Widget _buildAddEventButton(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildAddEventButton(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return GestureDetector(
       onTap: onAddEvent,
       child: Container(
@@ -96,11 +103,7 @@ class CalendarAppBar extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.add_rounded,
-              size: 18,
-              color: Colors.white,
-            ),
+            const Icon(Icons.add_rounded, size: 18, color: Colors.white),
             const SizedBox(width: 6),
             Text(
               l10n.addEvent,
@@ -128,12 +131,14 @@ class CalendarAppBar extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: isDark 
+              color: isDark
                   ? const Color(0xFF1E2939).withValues(alpha: 0.8)
                   : Colors.white.withValues(alpha: 0.8),
               shape: BoxShape.circle,
               border: Border.all(
-                color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                color: isDark
+                    ? const Color(0xFF374151)
+                    : const Color(0xFFE5E7EB),
               ),
             ),
             child: Center(
@@ -159,7 +164,7 @@ class CalendarAppBar extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isDark 
+          color: isDark
               ? const Color(0xFF1E2939).withValues(alpha: 0.8)
               : Colors.white.withValues(alpha: 0.8),
           shape: BoxShape.circle,

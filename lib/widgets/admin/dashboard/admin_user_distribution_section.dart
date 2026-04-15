@@ -100,13 +100,28 @@ class AdminUserDistributionSection extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              _buildLegendItem(isDark, AdminColors.chartBlue, l10n.students, '10,234'),
+              _buildLegendItem(
+                isDark,
+                AdminColors.chartBlue,
+                l10n.students,
+                '10,234',
+              ),
               const SizedBox(height: 8),
-              _buildLegendItem(isDark, AdminColors.chartPurple, l10n.instructors, '1,876'),
+              _buildLegendItem(
+                isDark,
+                AdminColors.chartPurple,
+                l10n.instructors,
+                '1,876',
+              ),
               const SizedBox(height: 8),
               _buildLegendItem(isDark, AdminColors.chartPink, l10n.tas, '687'),
               const SizedBox(height: 8),
-              _buildLegendItem(isDark, AdminColors.chartCyan, l10n.admins, '50'),
+              _buildLegendItem(
+                isDark,
+                AdminColors.chartCyan,
+                l10n.admins,
+                '50',
+              ),
             ],
           ),
         );
@@ -114,7 +129,12 @@ class AdminUserDistributionSection extends StatelessWidget {
     );
   }
 
-  Widget _buildLegendItem(bool isDark, Color color, String label, String value) {
+  Widget _buildLegendItem(
+    bool isDark,
+    Color color,
+    String label,
+    String value,
+  ) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -123,10 +143,7 @@ class AdminUserDistributionSection extends StatelessWidget {
             Container(
               width: 12,
               height: 12,
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
-              ),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
             const SizedBox(width: 8),
             Text(

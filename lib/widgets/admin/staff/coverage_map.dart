@@ -30,7 +30,9 @@ class CoverageMap extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
         boxShadow: isDark
             ? null
@@ -126,7 +128,10 @@ class CoverageMap extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: AdminColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
@@ -166,9 +171,7 @@ class CoverageMap extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(
-                child: _buildInstructorSection(course, l10n),
-              ),
+              Expanded(child: _buildInstructorSection(course, l10n)),
               const SizedBox(width: 12),
               _buildTASection(course, l10n),
             ],
@@ -178,7 +181,10 @@ class CoverageMap extends StatelessWidget {
     );
   }
 
-  Widget _buildInstructorSection(CourseAssignment course, AppLocalizations l10n) {
+  Widget _buildInstructorSection(
+    CourseAssignment course,
+    AppLocalizations l10n,
+  ) {
     final hasInstructor = course.instructorName != null;
 
     return InkWell(

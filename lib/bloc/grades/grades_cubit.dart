@@ -20,19 +20,23 @@ class GradesCubit extends Cubit<GradesState> {
       final statistics = _calculateStatistics(courses);
       final gradeTrend = _generateGradeTrend();
 
-      emit(state.copyWith(
-        courses: courses,
-        semesters: semesters,
-        selectedSemesterId: semesters.firstWhere((s) => s.isCurrent).id,
-        statistics: statistics,
-        gradeTrend: gradeTrend,
-        isLoading: false,
-      ));
+      emit(
+        state.copyWith(
+          courses: courses,
+          semesters: semesters,
+          selectedSemesterId: semesters.firstWhere((s) => s.isCurrent).id,
+          statistics: statistics,
+          gradeTrend: gradeTrend,
+          isLoading: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Failed to load grades: $e',
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'Failed to load grades: $e',
+        ),
+      );
     }
   }
 
@@ -48,10 +52,12 @@ class GradesCubit extends Cubit<GradesState> {
 
   /// Set selected semester
   void setSelectedSemester(String? semesterId) {
-    emit(state.copyWith(
-      selectedSemesterId: semesterId,
-      clearSemester: semesterId == null,
-    ));
+    emit(
+      state.copyWith(
+        selectedSemesterId: semesterId,
+        clearSemester: semesterId == null,
+      ),
+    );
   }
 
   /// Set search query
@@ -90,12 +96,14 @@ class GradesCubit extends Cubit<GradesState> {
 
   /// Reset filters
   void resetFilters() {
-    emit(state.copyWith(
-      filter: GradesFilter.all,
-      sortBy: GradesSortBy.name,
-      sortAscending: true,
-      searchQuery: '',
-    ));
+    emit(
+      state.copyWith(
+        filter: GradesFilter.all,
+        sortBy: GradesSortBy.name,
+        sortAscending: true,
+        searchQuery: '',
+      ),
+    );
   }
 
   /// Get course by ID
@@ -554,19 +562,19 @@ class GradesCubit extends Cubit<GradesState> {
         final grade = course.currentGrade;
         totalGpaPoints += grade.gpa * course.creditHours;
         totalCredits += course.creditHours;
-        
+
         if (course.pendingCount == 0) {
           completedCredits += course.creditHours;
         }
-        
+
         if (course.currentPercentage >= 60) {
           passedCourses++;
         }
-        
+
         totalPercentage += course.currentPercentage;
-        
+
         distribution[grade] = (distribution[grade] ?? 0) + 1;
-        
+
         if (highest == null || grade.gpa > highest.gpa) {
           highest = grade;
         }
@@ -585,18 +593,40 @@ class GradesCubit extends Cubit<GradesState> {
       passedCourses: passedCourses,
       highestGrade: highest ?? GradeLetter.pending,
       lowestGrade: lowest ?? GradeLetter.pending,
-      averagePercentage: courses.isNotEmpty ? totalPercentage / courses.length : 0,
+      averagePercentage: courses.isNotEmpty
+          ? totalPercentage / courses.length
+          : 0,
       gradeDistribution: distribution,
     );
   }
 
   List<GradeTrendPoint> _generateGradeTrend() {
     return [
-      const GradeTrendPoint(semesterName: 'Fall \'23', gpa: 3.2, creditHours: 15),
-      const GradeTrendPoint(semesterName: 'Spring \'24', gpa: 3.4, creditHours: 16),
-      const GradeTrendPoint(semesterName: 'Fall \'24', gpa: 3.5, creditHours: 17),
-      const GradeTrendPoint(semesterName: 'Spring \'25', gpa: 3.6, creditHours: 15),
-      const GradeTrendPoint(semesterName: 'Fall \'25', gpa: 3.55, creditHours: 17),
+      const GradeTrendPoint(
+        semesterName: 'Fall \'23',
+        gpa: 3.2,
+        creditHours: 15,
+      ),
+      const GradeTrendPoint(
+        semesterName: 'Spring \'24',
+        gpa: 3.4,
+        creditHours: 16,
+      ),
+      const GradeTrendPoint(
+        semesterName: 'Fall \'24',
+        gpa: 3.5,
+        creditHours: 17,
+      ),
+      const GradeTrendPoint(
+        semesterName: 'Spring \'25',
+        gpa: 3.6,
+        creditHours: 15,
+      ),
+      const GradeTrendPoint(
+        semesterName: 'Fall \'25',
+        gpa: 3.55,
+        creditHours: 17,
+      ),
     ];
   }
 }

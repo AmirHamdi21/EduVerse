@@ -15,19 +15,23 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
       final schedule = _generateMockSchedule();
       final insight = _generateMockInsight();
 
-      emit(state.copyWith(
-        topics: topics,
-        filteredTopics: topics,
-        availableCourses: courses,
-        weekSchedule: schedule,
-        aiInsight: insight,
-        isLoading: false,
-      ));
+      emit(
+        state.copyWith(
+          topics: topics,
+          filteredTopics: topics,
+          availableCourses: courses,
+          weekSchedule: schedule,
+          aiInsight: insight,
+          isLoading: false,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        isLoading: false,
-        errorMessage: 'Failed to load study plan. Please try again.',
-      ));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'Failed to load study plan. Please try again.',
+        ),
+      );
     }
   }
 
@@ -36,10 +40,7 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
   }
 
   void filterByCourse(String? course) {
-    emit(state.copyWith(
-      selectedCourse: course,
-      clearCourse: course == null,
-    ));
+    emit(state.copyWith(selectedCourse: course, clearCourse: course == null));
     _applyFilters();
   }
 
@@ -57,15 +58,21 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
     var filtered = List<StudyTopic>.from(state.topics);
 
     if (state.selectedCourse != null) {
-      filtered = filtered.where((t) => t.courseName == state.selectedCourse).toList();
+      filtered = filtered
+          .where((t) => t.courseName == state.selectedCourse)
+          .toList();
     }
 
     if (state.selectedDifficulty != TopicDifficulty.all) {
-      filtered = filtered.where((t) => t.difficulty == state.selectedDifficulty).toList();
+      filtered = filtered
+          .where((t) => t.difficulty == state.selectedDifficulty)
+          .toList();
     }
 
     if (state.selectedUrgency != TopicUrgency.all) {
-      filtered = filtered.where((t) => t.urgency == state.selectedUrgency).toList();
+      filtered = filtered
+          .where((t) => t.urgency == state.selectedUrgency)
+          .toList();
     }
 
     emit(state.copyWith(filteredTopics: filtered));
@@ -81,20 +88,24 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
       final schedule = _generateMockSchedule(shuffle: true);
       final insight = _generateMockInsight();
 
-      emit(state.copyWith(
-        topics: topics,
-        filteredTopics: topics,
-        weekSchedule: schedule,
-        aiInsight: insight,
-        isRegenerating: false,
-      ));
+      emit(
+        state.copyWith(
+          topics: topics,
+          filteredTopics: topics,
+          weekSchedule: schedule,
+          aiInsight: insight,
+          isRegenerating: false,
+        ),
+      );
 
       _applyFilters();
     } catch (e) {
-      emit(state.copyWith(
-        isRegenerating: false,
-        errorMessage: 'Failed to regenerate plan. Please try again.',
-      ));
+      emit(
+        state.copyWith(
+          isRegenerating: false,
+          errorMessage: 'Failed to regenerate plan. Please try again.',
+        ),
+      );
     }
   }
 
@@ -106,15 +117,14 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
 
       final schedule = _generateMockSchedule(optimized: true);
 
-      emit(state.copyWith(
-        weekSchedule: schedule,
-        isOptimizing: false,
-      ));
+      emit(state.copyWith(weekSchedule: schedule, isOptimizing: false));
     } catch (e) {
-      emit(state.copyWith(
-        isOptimizing: false,
-        errorMessage: 'Failed to optimize schedule. Please try again.',
-      ));
+      emit(
+        state.copyWith(
+          isOptimizing: false,
+          errorMessage: 'Failed to optimize schedule. Please try again.',
+        ),
+      );
     }
   }
 
@@ -224,7 +234,10 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
     return topics;
   }
 
-  List<DaySchedule> _generateMockSchedule({bool shuffle = false, bool optimized = false}) {
+  List<DaySchedule> _generateMockSchedule({
+    bool shuffle = false,
+    bool optimized = false,
+  }) {
     final now = DateTime.now();
     final monday = now.subtract(Duration(days: now.weekday - 1));
 
@@ -257,16 +270,40 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
             id: 't3',
             title: 'Machine Learning Flashcards',
             type: TaskType.flashcards,
-            startTime: DateTime(monday.year, monday.month, monday.day + 1, 17, 0),
-            endTime: DateTime(monday.year, monday.month, monday.day + 1, 17, 30),
+            startTime: DateTime(
+              monday.year,
+              monday.month,
+              monday.day + 1,
+              17,
+              0,
+            ),
+            endTime: DateTime(
+              monday.year,
+              monday.month,
+              monday.day + 1,
+              17,
+              30,
+            ),
             courseName: 'ML Fundamentals',
           ),
           ScheduleTask(
             id: 't4',
             title: 'Algorithm Optimization Lab',
             type: TaskType.lab,
-            startTime: DateTime(monday.year, monday.month, monday.day + 1, 18, 0),
-            endTime: DateTime(monday.year, monday.month, monday.day + 1, 19, 30),
+            startTime: DateTime(
+              monday.year,
+              monday.month,
+              monday.day + 1,
+              18,
+              0,
+            ),
+            endTime: DateTime(
+              monday.year,
+              monday.month,
+              monday.day + 1,
+              19,
+              30,
+            ),
             courseName: 'Algorithms',
             isCompleted: true,
           ),
@@ -279,7 +316,13 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
             id: 't5',
             title: 'Review Sorting Algorithms',
             type: TaskType.review,
-            startTime: DateTime(monday.year, monday.month, monday.day + 2, 16, 0),
+            startTime: DateTime(
+              monday.year,
+              monday.month,
+              monday.day + 2,
+              16,
+              0,
+            ),
             endTime: DateTime(monday.year, monday.month, monday.day + 2, 17, 0),
             courseName: 'Data Structures',
           ),
@@ -292,8 +335,20 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
             id: 't6',
             title: 'Database Normalization Practice',
             type: TaskType.practice,
-            startTime: DateTime(monday.year, monday.month, monday.day + 3, 15, 0),
-            endTime: DateTime(monday.year, monday.month, monday.day + 3, 16, 30),
+            startTime: DateTime(
+              monday.year,
+              monday.month,
+              monday.day + 3,
+              15,
+              0,
+            ),
+            endTime: DateTime(
+              monday.year,
+              monday.month,
+              monday.day + 3,
+              16,
+              30,
+            ),
             courseName: 'Database Systems',
           ),
         ],
@@ -305,15 +360,33 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
             id: 't7',
             title: 'Web Development Quiz',
             type: TaskType.quiz,
-            startTime: DateTime(monday.year, monday.month, monday.day + 4, 14, 0),
-            endTime: DateTime(monday.year, monday.month, monday.day + 4, 14, 30),
+            startTime: DateTime(
+              monday.year,
+              monday.month,
+              monday.day + 4,
+              14,
+              0,
+            ),
+            endTime: DateTime(
+              monday.year,
+              monday.month,
+              monday.day + 4,
+              14,
+              30,
+            ),
             courseName: 'Web Technologies',
           ),
           ScheduleTask(
             id: 't8',
             title: 'Neural Networks Lab',
             type: TaskType.lab,
-            startTime: DateTime(monday.year, monday.month, monday.day + 4, 16, 0),
+            startTime: DateTime(
+              monday.year,
+              monday.month,
+              monday.day + 4,
+              16,
+              0,
+            ),
             endTime: DateTime(monday.year, monday.month, monday.day + 4, 18, 0),
             courseName: 'Deep Learning',
           ),
@@ -366,17 +439,19 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
 
   void toggleInsightBookmark() {
     if (state.aiInsight == null) return;
-    
+
     final updatedInsight = state.aiInsight!.copyWith(
       isBookmarked: !state.aiInsight!.isBookmarked,
     );
-    
-    emit(state.copyWith(
-      aiInsight: updatedInsight,
-      successMessage: updatedInsight.isBookmarked 
-          ? 'Insight bookmarked successfully' 
-          : 'Bookmark removed',
-    ));
+
+    emit(
+      state.copyWith(
+        aiInsight: updatedInsight,
+        successMessage: updatedInsight.isBookmarked
+            ? 'Insight bookmarked successfully'
+            : 'Bookmark removed',
+      ),
+    );
 
     // Clear success message after delay
     Future.delayed(const Duration(seconds: 2), () {
@@ -388,15 +463,17 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
 
   Future<void> exportSchedulePdf() async {
     emit(state.copyWith(isExporting: true, clearError: true));
-    
+
     try {
       // Simulate PDF generation
       await Future.delayed(const Duration(seconds: 2));
-      
-      emit(state.copyWith(
-        isExporting: false,
-        successMessage: 'Schedule exported successfully',
-      ));
+
+      emit(
+        state.copyWith(
+          isExporting: false,
+          successMessage: 'Schedule exported successfully',
+        ),
+      );
 
       Future.delayed(const Duration(seconds: 2), () {
         if (!isClosed) {
@@ -404,24 +481,28 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
         }
       });
     } catch (e) {
-      emit(state.copyWith(
-        isExporting: false,
-        errorMessage: 'Failed to export schedule. Please try again.',
-      ));
+      emit(
+        state.copyWith(
+          isExporting: false,
+          errorMessage: 'Failed to export schedule. Please try again.',
+        ),
+      );
     }
   }
 
   Future<void> syncWithCalendar() async {
     emit(state.copyWith(isSyncing: true, clearError: true));
-    
+
     try {
       // Simulate calendar sync
       await Future.delayed(const Duration(seconds: 2));
-      
-      emit(state.copyWith(
-        isSyncing: false,
-        successMessage: 'Schedule synced with calendar successfully',
-      ));
+
+      emit(
+        state.copyWith(
+          isSyncing: false,
+          successMessage: 'Schedule synced with calendar successfully',
+        ),
+      );
 
       Future.delayed(const Duration(seconds: 2), () {
         if (!isClosed) {
@@ -429,10 +510,12 @@ class SmartStudyCubit extends Cubit<SmartStudyState> {
         }
       });
     } catch (e) {
-      emit(state.copyWith(
-        isSyncing: false,
-        errorMessage: 'Failed to sync with calendar. Please try again.',
-      ));
+      emit(
+        state.copyWith(
+          isSyncing: false,
+          errorMessage: 'Failed to sync with calendar. Please try again.',
+        ),
+      );
     }
   }
 

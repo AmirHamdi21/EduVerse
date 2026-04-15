@@ -84,7 +84,10 @@ class AttendanceRecordsList extends StatelessWidget {
   }
 
   Widget _buildFilterChips(
-      BuildContext context, AttendanceState state, bool isDark) {
+    BuildContext context,
+    AttendanceState state,
+    bool isDark,
+  ) {
     final l10n = AppLocalizations.of(context);
 
     return SingleChildScrollView(
@@ -164,7 +167,8 @@ class AttendanceRecordsList extends StatelessWidget {
   }
 
   Map<String, List<AttendanceRecord>> _groupRecordsByDate(
-      List<AttendanceRecord> records) {
+    List<AttendanceRecord> records,
+  ) {
     final Map<String, List<AttendanceRecord>> grouped = {};
 
     for (var record in records) {
@@ -198,7 +202,7 @@ class AttendanceRecordsList extends StatelessWidget {
         'Sep',
         'Oct',
         'Nov',
-        'Dec'
+        'Dec',
       ];
       return '${months[date.month - 1]} ${date.day}, ${date.year}';
     }
@@ -232,22 +236,23 @@ class _FilterChip extends StatelessWidget {
           color: isSelected
               ? (color ?? const Color(0xFF3B82F6))
               : isDark
-                  ? const Color(0xFF1E293B)
-                  : Colors.white,
+              ? const Color(0xFF1E293B)
+              : Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
                 ? Colors.transparent
                 : color?.withValues(alpha: 0.5) ??
-                    (isDark
-                        ? const Color(0xFF334155)
-                        : const Color(0xFFE2E8F0)),
+                      (isDark
+                          ? const Color(0xFF334155)
+                          : const Color(0xFFE2E8F0)),
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: (color ?? const Color(0xFF3B82F6))
-                        .withValues(alpha: 0.3),
+                    color: (color ?? const Color(0xFF3B82F6)).withValues(
+                      alpha: 0.3,
+                    ),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -273,10 +278,7 @@ class _AttendanceRecordCard extends StatelessWidget {
   final AttendanceRecord record;
   final bool isDark;
 
-  const _AttendanceRecordCard({
-    required this.record,
-    required this.isDark,
-  });
+  const _AttendanceRecordCard({required this.record, required this.isDark});
 
   @override
   Widget build(BuildContext context) {

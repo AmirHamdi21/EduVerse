@@ -20,7 +20,7 @@ class _ITBackupScreenState extends State<ITBackupScreen>
   String? _errorMessage;
   late TabController _tabController;
   BackupType? _selectedJobFilter;
-  
+
   // Data
   List<BackupJob> _backupJobs = [];
   List<RestorePoint> _restorePoints = [];
@@ -502,7 +502,7 @@ class _ITBackupScreenState extends State<ITBackupScreen>
 
   void _handleRestore(RestorePoint point) {
     final isDark = context.read<ThemeBloc>().state.isDark;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -516,7 +516,11 @@ class _ITBackupScreenState extends State<ITBackupScreen>
                 color: ITColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.restore_rounded, color: ITColors.warning, size: 24),
+              child: Icon(
+                Icons.restore_rounded,
+                color: ITColors.warning,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -665,7 +669,10 @@ class _ITBackupScreenState extends State<ITBackupScreen>
             icon: const Icon(Icons.backup_rounded, color: Colors.white),
             label: Text(
               l10n.itCreateBackup,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         );
@@ -675,9 +682,7 @@ class _ITBackupScreenState extends State<ITBackupScreen>
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: ITColors.primary),
-      );
+      return Center(child: CircularProgressIndicator(color: ITColors.primary));
     }
 
     if (_errorMessage != null) {
@@ -760,7 +765,9 @@ class _ITBackupScreenState extends State<ITBackupScreen>
             return ITBackupJobsSection(
               isDark: isDark,
               jobs: _filteredBackupJobs,
-              selectedFilter: _selectedJobFilter == null ? 'All' : _getFilterName(_selectedJobFilter!),
+              selectedFilter: _selectedJobFilter == null
+                  ? 'All'
+                  : _getFilterName(_selectedJobFilter!),
               onFilterChanged: (filter) {
                 if (filter == 'All') {
                   _handleJobFilterChange(null);

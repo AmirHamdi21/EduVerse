@@ -28,8 +28,7 @@ class InstructorMonthViewCalendar extends StatelessWidget {
             color: isDark ? const Color(0xFF1E2939) : Colors.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color:
-                  isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+              color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
             ),
             boxShadow: [
               BoxShadow(
@@ -56,10 +55,23 @@ class InstructorMonthViewCalendar extends StatelessWidget {
   }
 
   Widget _buildMonthHeader(
-      BuildContext context, InstructorCalendarState state, bool isDark) {
+    BuildContext context,
+    InstructorCalendarState state,
+    bool isDark,
+  ) {
     final monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
 
     return Row(
@@ -107,7 +119,11 @@ class InstructorMonthViewCalendar extends StatelessWidget {
   }
 
   Widget _buildNavButton(
-      BuildContext context, IconData icon, bool isDark, VoidCallback onTap) {
+    BuildContext context,
+    IconData icon,
+    bool isDark,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -139,8 +155,7 @@ class InstructorMonthViewCalendar extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color:
-                  isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
           ),
         );
@@ -149,11 +164,20 @@ class InstructorMonthViewCalendar extends StatelessWidget {
   }
 
   Widget _buildCalendarGrid(
-      BuildContext context, InstructorCalendarState state, bool isDark) {
-    final firstDayOfMonth =
-        DateTime(state.focusedMonth.year, state.focusedMonth.month, 1);
-    final lastDayOfMonth =
-        DateTime(state.focusedMonth.year, state.focusedMonth.month + 1, 0);
+    BuildContext context,
+    InstructorCalendarState state,
+    bool isDark,
+  ) {
+    final firstDayOfMonth = DateTime(
+      state.focusedMonth.year,
+      state.focusedMonth.month,
+      1,
+    );
+    final lastDayOfMonth = DateTime(
+      state.focusedMonth.year,
+      state.focusedMonth.month + 1,
+      0,
+    );
     final daysInMonth = lastDayOfMonth.day;
     final startingWeekday = firstDayOfMonth.weekday % 7;
 
@@ -167,12 +191,17 @@ class InstructorMonthViewCalendar extends StatelessWidget {
 
     // Day cells
     for (int day = 1; day <= daysInMonth; day++) {
-      final date =
-          DateTime(state.focusedMonth.year, state.focusedMonth.month, day);
-      final isToday = date.year == today.year &&
+      final date = DateTime(
+        state.focusedMonth.year,
+        state.focusedMonth.month,
+        day,
+      );
+      final isToday =
+          date.year == today.year &&
           date.month == today.month &&
           date.day == today.day;
-      final isSelected = date.year == state.selectedDate.year &&
+      final isSelected =
+          date.year == state.selectedDate.year &&
           date.month == state.selectedDate.month &&
           date.day == state.selectedDate.day;
       final hasEvents = state.hasEventsOnDate(date);
@@ -188,8 +217,8 @@ class InstructorMonthViewCalendar extends StatelessWidget {
               color: isSelected
                   ? const Color(0xFF155CFB)
                   : (isToday
-                      ? const Color(0xFF155CFB).withValues(alpha: 0.1)
-                      : Colors.transparent),
+                        ? const Color(0xFF155CFB).withValues(alpha: 0.1)
+                        : Colors.transparent),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Stack(
@@ -199,15 +228,16 @@ class InstructorMonthViewCalendar extends StatelessWidget {
                   '$day',
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight:
-                        isToday || isSelected ? FontWeight.w700 : FontWeight.w500,
+                    fontWeight: isToday || isSelected
+                        ? FontWeight.w700
+                        : FontWeight.w500,
                     color: isSelected
                         ? Colors.white
                         : (isToday
-                            ? const Color(0xFF155CFB)
-                            : (isDark
-                                ? const Color(0xFFE2E8F0)
-                                : const Color(0xFF334155))),
+                              ? const Color(0xFF155CFB)
+                              : (isDark
+                                    ? const Color(0xFFE2E8F0)
+                                    : const Color(0xFF334155))),
                   ),
                 ),
                 if (hasEvents && !isSelected)
@@ -220,8 +250,8 @@ class InstructorMonthViewCalendar extends StatelessWidget {
                         color: isToday
                             ? const Color(0xFF155CFB)
                             : (isDark
-                                ? const Color(0xFF94A3B8)
-                                : const Color(0xFF64748B)),
+                                  ? const Color(0xFF94A3B8)
+                                  : const Color(0xFF64748B)),
                         shape: BoxShape.circle,
                       ),
                     ),

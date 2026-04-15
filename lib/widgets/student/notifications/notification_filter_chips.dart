@@ -117,22 +117,20 @@ class _FilterChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           gradient: isSelected
-              ? LinearGradient(
-                  colors: [color, color.withValues(alpha: 0.8)],
-                )
+              ? LinearGradient(colors: [color, color.withValues(alpha: 0.8)])
               : null,
           color: isSelected
               ? null
               : (isDarkMode
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.grey.withValues(alpha: 0.08)),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.grey.withValues(alpha: 0.08)),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isSelected
                 ? color
                 : (isDarkMode
-                    ? Colors.white.withValues(alpha: 0.12)
-                    : Colors.grey.withValues(alpha: 0.2)),
+                      ? Colors.white.withValues(alpha: 0.12)
+                      : Colors.grey.withValues(alpha: 0.2)),
             width: isSelected ? 0 : 1,
           ),
           boxShadow: isSelected
@@ -154,8 +152,8 @@ class _FilterChip extends StatelessWidget {
               color: isSelected
                   ? Colors.white
                   : (isDarkMode
-                      ? AppTheme.darkTextSecondary
-                      : AppTheme.textLight),
+                        ? AppTheme.darkTextSecondary
+                        : AppTheme.textLight),
             ),
             const SizedBox(width: 8),
             Text(
@@ -166,8 +164,8 @@ class _FilterChip extends StatelessWidget {
                 color: isSelected
                     ? Colors.white
                     : (isDarkMode
-                        ? AppTheme.darkTextPrimary
-                        : AppTheme.textDark),
+                          ? AppTheme.darkTextPrimary
+                          : AppTheme.textDark),
               ),
             ),
           ],

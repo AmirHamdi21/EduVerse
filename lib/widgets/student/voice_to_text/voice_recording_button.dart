@@ -91,19 +91,19 @@ class _VoiceRecordingButtonState extends State<VoiceRecordingButton>
                     color: isRecording
                         ? Colors.red.withOpacity(isDark ? 0.3 : 0.15)
                         : isPaused
-                            ? Colors.orange.withOpacity(isDark ? 0.3 : 0.15)
-                            : (isDark
-                                ? Colors.white.withOpacity(0.1)
-                                : Colors.white.withOpacity(0.9)),
+                        ? Colors.orange.withOpacity(isDark ? 0.3 : 0.15)
+                        : (isDark
+                              ? Colors.white.withOpacity(0.1)
+                              : Colors.white.withOpacity(0.9)),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: isRecording
                           ? Colors.red.withOpacity(0.5)
                           : isPaused
-                              ? Colors.orange.withOpacity(0.5)
-                              : (isDark
-                                  ? Colors.white.withOpacity(0.2)
-                                  : const Color(0xFFBEDBFF)),
+                          ? Colors.orange.withOpacity(0.5)
+                          : (isDark
+                                ? Colors.white.withOpacity(0.2)
+                                : const Color(0xFFBEDBFF)),
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -140,16 +140,18 @@ class _VoiceRecordingButtonState extends State<VoiceRecordingButton>
                         isRecording
                             ? '🎙️ Listening...'
                             : isPaused
-                                ? '⏸️ Paused'
-                                : '🎤 Tap to Record',
+                            ? '⏸️ Paused'
+                            : '🎤 Tap to Record',
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: isRecording
                               ? Colors.red
                               : isPaused
-                                  ? Colors.orange
-                                  : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                              ? Colors.orange
+                              : (isDark
+                                    ? Colors.white
+                                    : const Color(0xFF1E293B)),
                         ),
                       ),
                     ],
@@ -158,7 +160,9 @@ class _VoiceRecordingButtonState extends State<VoiceRecordingButton>
                 const SizedBox(height: 24),
 
                 // Recording Duration
-                if (isRecording || isPaused || state.recordingDuration.inSeconds > 0)
+                if (isRecording ||
+                    isPaused ||
+                    state.recordingDuration.inSeconds > 0)
                   Column(
                     children: [
                       Text(
@@ -166,13 +170,19 @@ class _VoiceRecordingButtonState extends State<VoiceRecordingButton>
                         style: TextStyle(
                           fontSize: 48,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : const Color(0xFF1E293B),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF1E293B),
                           fontFeatures: const [FontFeature.tabularFigures()],
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        isRecording ? 'Recording...' : isPaused ? 'Paused' : 'Duration',
+                        isRecording
+                            ? 'Recording...'
+                            : isPaused
+                            ? 'Paused'
+                            : 'Duration',
                         style: TextStyle(
                           fontSize: 14,
                           color: isDark
@@ -297,7 +307,9 @@ class _VoiceRecordingButtonState extends State<VoiceRecordingButton>
                                     BoxShadow(
                                       color: isRecording
                                           ? Colors.red.withOpacity(0.4)
-                                          : const Color(0xFF155DFC).withOpacity(0.4),
+                                          : const Color(
+                                              0xFF155DFC,
+                                            ).withOpacity(0.4),
                                       blurRadius: 25,
                                       spreadRadius: 5,
                                       offset: const Offset(0, 10),
@@ -305,7 +317,9 @@ class _VoiceRecordingButtonState extends State<VoiceRecordingButton>
                                   ],
                                 ),
                                 child: Icon(
-                                  isRecording ? Icons.stop_rounded : Icons.mic_rounded,
+                                  isRecording
+                                      ? Icons.stop_rounded
+                                      : Icons.mic_rounded,
                                   color: Colors.white,
                                   size: 64,
                                 ),
@@ -327,7 +341,9 @@ class _VoiceRecordingButtonState extends State<VoiceRecordingButton>
                       children: [
                         // Pause/Resume Button
                         _buildControlButton(
-                          icon: isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+                          icon: isPaused
+                              ? Icons.play_arrow_rounded
+                              : Icons.pause_rounded,
                           label: isPaused ? 'Resume' : 'Pause',
                           color: const Color(0xFF155DFC),
                           isDark: isDark,
@@ -348,7 +364,9 @@ class _VoiceRecordingButtonState extends State<VoiceRecordingButton>
                           color: Colors.red,
                           isDark: isDark,
                           onTap: () {
-                            context.read<VoiceToTextBloc>().add(const CancelRecording());
+                            context.read<VoiceToTextBloc>().add(
+                              const CancelRecording(),
+                            );
                           },
                         ),
                       ],
@@ -388,9 +406,7 @@ class _VoiceRecordingButtonState extends State<VoiceRecordingButton>
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 24),
-          ],
+          children: [Icon(icon, color: color, size: 24)],
         ),
       ),
     );

@@ -84,20 +84,10 @@ class StudentReportData {
 }
 
 /// Performance trend direction
-enum StudentPerformanceTrend {
-  improving,
-  stable,
-  declining,
-}
+enum StudentPerformanceTrend { improving, stable, declining }
 
 /// Grade categories for coloring
-enum GradeCategory {
-  excellent,
-  good,
-  satisfactory,
-  needsImprovement,
-  failing,
-}
+enum GradeCategory { excellent, good, satisfactory, needsImprovement, failing }
 
 /// Course statistics summary
 class CourseStatistics {
@@ -186,19 +176,10 @@ class AttendanceBreakdown {
 }
 
 /// Report tab types
-enum ReportTabType {
-  performance,
-  attendance,
-  analytics,
-}
+enum ReportTabType { performance, attendance, analytics }
 
 /// Filter options for reports
-enum ReportFilterType {
-  all,
-  atRisk,
-  excellent,
-  needsImprovement,
-}
+enum ReportFilterType { all, atRisk, excellent, needsImprovement }
 
 /// Sort options for student list
 enum ReportSortType {
@@ -211,8 +192,4 @@ enum ReportSortType {
 }
 
 /// Export format options
-enum ExportFormat {
-  pdf,
-  csv,
-  excel,
-}
+enum ExportFormat { pdf, csv, excel }

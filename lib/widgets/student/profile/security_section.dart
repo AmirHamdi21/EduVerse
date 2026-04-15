@@ -36,7 +36,9 @@ class SecuritySection extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                  color: isDark
+                      ? const Color(0xFF0F172A)
+                      : const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -93,7 +95,9 @@ class SecuritySection extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                      color: isDark
+                          ? const Color(0xFF0F172A)
+                          : const Color(0xFFF1F5F9),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -164,10 +168,7 @@ class SecuritySection extends StatelessWidget {
   }
 
   Widget _buildDivider() {
-    return Divider(
-      color: isDark ? Colors.white12 : Colors.black12,
-      height: 1,
-    );
+    return Divider(color: isDark ? Colors.white12 : Colors.black12, height: 1);
   }
 
   Widget _buildActionRow(
@@ -190,7 +191,9 @@ class SecuritySection extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isDanger
                     ? Colors.red.withValues(alpha: 0.1)
-                    : (isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9)),
+                    : (isDark
+                          ? const Color(0xFF0F172A)
+                          : const Color(0xFFF1F5F9)),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -330,9 +333,7 @@ class SecuritySection extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF1E293B)
-                  : const Color(0xFFE2E8F0),
+              color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
@@ -441,18 +442,14 @@ class SecuritySection extends StatelessWidget {
         ),
         content: Text(
           l10n.downloadDataConfirmation,
-          style: TextStyle(
-            color: isDark ? Colors.white70 : Colors.black54,
-          ),
+          style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
               l10n.cancel,
-              style: TextStyle(
-                color: isDark ? Colors.white70 : Colors.black54,
-              ),
+              style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
             ),
           ),
           ElevatedButton(
@@ -513,12 +510,14 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
 
     _confirmController.addListener(() {
@@ -544,8 +543,12 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog>
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: AlertDialog(
-          backgroundColor: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          backgroundColor: widget.isDark
+              ? const Color(0xFF1E293B)
+              : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           contentPadding: EdgeInsets.zero,
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -637,7 +640,9 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog>
                       decoration: InputDecoration(
                         hintText: 'DELETE',
                         hintStyle: TextStyle(
-                          color: widget.isDark ? Colors.white38 : Colors.black26,
+                          color: widget.isDark
+                              ? Colors.white38
+                              : Colors.black26,
                         ),
                         filled: true,
                         fillColor: widget.isDark
@@ -664,7 +669,9 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog>
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           side: BorderSide(
-                            color: widget.isDark ? Colors.white24 : Colors.black12,
+                            color: widget.isDark
+                                ? Colors.white24
+                                : Colors.black12,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -673,7 +680,9 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog>
                         child: Text(
                           l10n.cancel,
                           style: TextStyle(
-                            color: widget.isDark ? Colors.white70 : Colors.black54,
+                            color: widget.isDark
+                                ? Colors.white70
+                                : Colors.black54,
                           ),
                         ),
                       ),

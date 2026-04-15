@@ -314,14 +314,18 @@ class _TasksScreenState extends State<TasksScreen>
                                   style: TextStyle(
                                     fontSize: responsive.fontSize24,
                                     fontWeight: FontWeight.bold,
-                                    color: isDark ? Colors.white : Colors.black87,
+                                    color: isDark
+                                        ? Colors.white
+                                        : Colors.black87,
                                   ),
                                 ),
                                 Text(
                                   'Track assignments, labs, quizzes, and study tasks',
                                   style: TextStyle(
                                     fontSize: responsive.fontSize12,
-                                    color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                                    color: isDark
+                                        ? const Color(0xFF99A1AF)
+                                        : const Color(0xFF4A5565),
                                   ),
                                 ),
                               ],
@@ -347,8 +351,8 @@ class _TasksScreenState extends State<TasksScreen>
     return Container(
       padding: EdgeInsets.all(responsive.p12),
       decoration: BoxDecoration(
-        color: isDark 
-            ? const Color(0xFF162456).withOpacity(0.2) 
+        color: isDark
+            ? const Color(0xFF162456).withOpacity(0.2)
             : const Color(0xFFEFF6FF),
         borderRadius: BorderRadius.circular(responsive.radius12),
         border: Border.all(
@@ -368,7 +372,9 @@ class _TasksScreenState extends State<TasksScreen>
               text: TextSpan(
                 style: TextStyle(
                   fontSize: responsive.fontSize14,
-                  color: isDark ? const Color(0xFFBEDBFF) : const Color(0xFF193CB8),
+                  color: isDark
+                      ? const Color(0xFFBEDBFF)
+                      : const Color(0xFF193CB8),
                 ),
                 children: [
                   TextSpan(
@@ -376,7 +382,8 @@ class _TasksScreenState extends State<TasksScreen>
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const TextSpan(
-                    text: 'are automatically added based on your upcoming deadlines and weak areas.',
+                    text:
+                        'are automatically added based on your upcoming deadlines and weak areas.',
                   ),
                 ],
               ),
@@ -714,7 +721,7 @@ class _TasksScreenState extends State<TasksScreen>
               },
             );
           }
-          
+
           // AI Tip Card
           if (index == 1) {
             return BlocBuilder<TasksCubit, TasksState>(
@@ -801,12 +808,14 @@ class _TasksScreenState extends State<TasksScreen>
     final completedTasks = state.completedTasks.length;
     final progress = totalTasks > 0 ? completedTasks / totalTasks : 0.0;
     final progressPercent = (progress * 100).round();
-    final todayRemaining = state.todayTasks.where((t) => t.status != TaskStatus.completed).length;
-    
+    final todayRemaining = state.todayTasks
+        .where((t) => t.status != TaskStatus.completed)
+        .length;
+
     // Check if ahead or behind schedule
     final overdueCount = state.overdueTasks.length;
     final isAhead = overdueCount == 0 && completedTasks > 0;
-    
+
     return Padding(
       padding: EdgeInsets.only(bottom: responsive.p12),
       child: Container(
@@ -821,11 +830,14 @@ class _TasksScreenState extends State<TasksScreen>
           ),
           borderRadius: BorderRadius.circular(responsive.radius16),
           border: Border.all(
-            color: isDark ? const Color(0xFF3B82F6).withOpacity(0.3) : const Color(0xFFBEDBFF),
+            color: isDark
+                ? const Color(0xFF3B82F6).withOpacity(0.3)
+                : const Color(0xFFBEDBFF),
           ),
           boxShadow: [
             BoxShadow(
-              color: (isDark ? Colors.black : const Color(0xFF3B82F6)).withOpacity(0.1),
+              color: (isDark ? Colors.black : const Color(0xFF3B82F6))
+                  .withOpacity(0.1),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -843,11 +855,13 @@ class _TasksScreenState extends State<TasksScreen>
                   child: CircularProgressIndicator(
                     value: progress,
                     strokeWidth: 6,
-                    backgroundColor: isDark 
-                        ? Colors.white.withOpacity(0.1) 
+                    backgroundColor: isDark
+                        ? Colors.white.withOpacity(0.1)
                         : const Color(0xFF3B82F6).withOpacity(0.15),
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isDark ? const Color(0xFF60A5FA) : const Color(0xFF3B82F6),
+                      isDark
+                          ? const Color(0xFF60A5FA)
+                          : const Color(0xFF3B82F6),
                     ),
                     strokeCap: StrokeCap.round,
                   ),
@@ -867,7 +881,9 @@ class _TasksScreenState extends State<TasksScreen>
                       'Done',
                       style: TextStyle(
                         fontSize: 10,
-                        color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF3B82F6),
+                        color: isDark
+                            ? const Color(0xFF93C5FD)
+                            : const Color(0xFF3B82F6),
                       ),
                     ),
                   ],
@@ -893,7 +909,9 @@ class _TasksScreenState extends State<TasksScreen>
                     '$todayRemaining Tasks Remaining for Today',
                     style: TextStyle(
                       fontSize: responsive.fontSize14,
-                      color: isDark ? const Color(0xFF93C5FD) : const Color(0xFF3B82F6),
+                      color: isDark
+                          ? const Color(0xFF93C5FD)
+                          : const Color(0xFF3B82F6),
                     ),
                   ),
                   SizedBox(height: responsive.p8),
@@ -904,45 +922,45 @@ class _TasksScreenState extends State<TasksScreen>
                       vertical: responsive.p4,
                     ),
                     decoration: BoxDecoration(
-                      color: isAhead 
+                      color: isAhead
                           ? const Color(0xFF10B981).withOpacity(0.15)
-                          : overdueCount > 0 
-                              ? const Color(0xFFEF4444).withOpacity(0.15)
-                              : const Color(0xFFF59E0B).withOpacity(0.15),
+                          : overdueCount > 0
+                          ? const Color(0xFFEF4444).withOpacity(0.15)
+                          : const Color(0xFFF59E0B).withOpacity(0.15),
                       borderRadius: BorderRadius.circular(responsive.radius8),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
-                          isAhead 
+                          isAhead
                               ? Icons.check_circle_outline_rounded
-                              : overdueCount > 0 
-                                  ? Icons.warning_amber_rounded
-                                  : Icons.schedule_rounded,
+                              : overdueCount > 0
+                              ? Icons.warning_amber_rounded
+                              : Icons.schedule_rounded,
                           size: 14,
-                          color: isAhead 
+                          color: isAhead
                               ? const Color(0xFF10B981)
-                              : overdueCount > 0 
-                                  ? const Color(0xFFEF4444)
-                                  : const Color(0xFFF59E0B),
+                              : overdueCount > 0
+                              ? const Color(0xFFEF4444)
+                              : const Color(0xFFF59E0B),
                         ),
                         SizedBox(width: responsive.p4),
                         Flexible(
                           child: Text(
-                            isAhead 
+                            isAhead
                                 ? 'Great job! You\'re ahead of schedule'
-                                : overdueCount > 0 
-                                    ? '$overdueCount tasks overdue'
-                                    : 'Keep up the momentum!',
+                                : overdueCount > 0
+                                ? '$overdueCount tasks overdue'
+                                : 'Keep up the momentum!',
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
-                              color: isAhead 
+                              color: isAhead
                                   ? const Color(0xFF10B981)
-                                  : overdueCount > 0 
-                                      ? const Color(0xFFEF4444)
-                                      : const Color(0xFFF59E0B),
+                                  : overdueCount > 0
+                                  ? const Color(0xFFEF4444)
+                                  : const Color(0xFFF59E0B),
                             ),
                           ),
                         ),
@@ -967,21 +985,28 @@ class _TasksScreenState extends State<TasksScreen>
     // Generate AI tip based on task state
     String aiTip;
     IconData tipIcon;
-    
-    final pendingLabs = state.pendingTasks.where((t) => 
-        t.category == TaskCategory.lab || 
-        t.title.toLowerCase().contains('lab')
-    ).toList();
-    
-    final pendingAssignments = state.pendingTasks.where((t) => 
-        t.category == TaskCategory.assignment || 
-        t.title.toLowerCase().contains('assignment')
-    ).toList();
-    
+
+    final pendingLabs = state.pendingTasks
+        .where(
+          (t) =>
+              t.category == TaskCategory.lab ||
+              t.title.toLowerCase().contains('lab'),
+        )
+        .toList();
+
+    final pendingAssignments = state.pendingTasks
+        .where(
+          (t) =>
+              t.category == TaskCategory.assignment ||
+              t.title.toLowerCase().contains('assignment'),
+        )
+        .toList();
+
     final overdueCount = state.overdueTasks.length;
-    
+
     if (overdueCount > 0) {
-      aiTip = 'Focus on your $overdueCount overdue tasks first to avoid grade penalties.';
+      aiTip =
+          'Focus on your $overdueCount overdue tasks first to avoid grade penalties.';
       tipIcon = Icons.priority_high_rounded;
     } else if (pendingLabs.isNotEmpty) {
       aiTip = 'Finish your Lab first for maximum grade impact.';
@@ -996,7 +1021,7 @@ class _TasksScreenState extends State<TasksScreen>
       aiTip = 'Stay consistent with your study schedule for best results.';
       tipIcon = Icons.tips_and_updates_rounded;
     }
-    
+
     return Padding(
       padding: EdgeInsets.only(bottom: responsive.p16),
       child: Container(
@@ -1006,12 +1031,17 @@ class _TasksScreenState extends State<TasksScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isDark
-                ? [const Color(0xFF4C1D95).withOpacity(0.3), const Color(0xFF7C3AED).withOpacity(0.2)]
+                ? [
+                    const Color(0xFF4C1D95).withOpacity(0.3),
+                    const Color(0xFF7C3AED).withOpacity(0.2),
+                  ]
                 : [const Color(0xFFF5F3FF), const Color(0xFFEDE9FE)],
           ),
           borderRadius: BorderRadius.circular(responsive.radius12),
           border: Border.all(
-            color: isDark ? const Color(0xFF7C3AED).withOpacity(0.4) : const Color(0xFFDDD6FE),
+            color: isDark
+                ? const Color(0xFF7C3AED).withOpacity(0.4)
+                : const Color(0xFFDDD6FE),
           ),
         ),
         child: Row(
@@ -1019,7 +1049,7 @@ class _TasksScreenState extends State<TasksScreen>
             Container(
               padding: EdgeInsets.all(responsive.p8),
               decoration: BoxDecoration(
-                color: isDark 
+                color: isDark
                     ? const Color(0xFF7C3AED).withOpacity(0.3)
                     : const Color(0xFF7C3AED).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(responsive.radius8),
@@ -1027,7 +1057,9 @@ class _TasksScreenState extends State<TasksScreen>
               child: Icon(
                 tipIcon,
                 size: 20,
-                color: isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
+                color: isDark
+                    ? const Color(0xFFA78BFA)
+                    : const Color(0xFF7C3AED),
               ),
             ),
             SizedBox(width: responsive.p12),
@@ -1040,7 +1072,9 @@ class _TasksScreenState extends State<TasksScreen>
                       Icon(
                         Icons.auto_awesome_rounded,
                         size: 14,
-                        color: isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
+                        color: isDark
+                            ? const Color(0xFFA78BFA)
+                            : const Color(0xFF7C3AED),
                       ),
                       SizedBox(width: responsive.p4),
                       Text(
@@ -1048,7 +1082,9 @@ class _TasksScreenState extends State<TasksScreen>
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
+                          color: isDark
+                              ? const Color(0xFFA78BFA)
+                              : const Color(0xFF7C3AED),
                         ),
                       ),
                     ],
@@ -1058,7 +1094,9 @@ class _TasksScreenState extends State<TasksScreen>
                     aiTip,
                     style: TextStyle(
                       fontSize: responsive.fontSize14,
-                      color: isDark ? const Color(0xFFE9D5FF) : const Color(0xFF5B21B6),
+                      color: isDark
+                          ? const Color(0xFFE9D5FF)
+                          : const Color(0xFF5B21B6),
                     ),
                   ),
                 ],
@@ -1639,8 +1677,10 @@ class _TaskCard extends StatelessWidget {
               color: isOverdue
                   ? const Color(0xFFEF4444).withValues(alpha: 0.5)
                   : isAiSuggested
-                      ? (isDark ? const Color(0xFF7C3AED).withOpacity(0.4) : const Color(0xFFDDD6FE))
-                      : Colors.transparent,
+                  ? (isDark
+                        ? const Color(0xFF7C3AED).withOpacity(0.4)
+                        : const Color(0xFFDDD6FE))
+                  : Colors.transparent,
               width: (isOverdue || isAiSuggested) ? 2 : 0,
             ),
             boxShadow: [
@@ -1744,7 +1784,9 @@ class _TaskCard extends StatelessWidget {
                               const Color(0xFFA855F7),
                             ],
                           ),
-                          borderRadius: BorderRadius.circular(responsive.radius8),
+                          borderRadius: BorderRadius.circular(
+                            responsive.radius8,
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -1777,7 +1819,9 @@ class _TaskCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFEF4444).withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(responsive.radius8),
+                          borderRadius: BorderRadius.circular(
+                            responsive.radius8,
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,

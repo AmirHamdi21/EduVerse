@@ -7,10 +7,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class SummarizerGenerateButton extends StatefulWidget {
   final bool isDark;
 
-  const SummarizerGenerateButton({
-    super.key,
-    required this.isDark,
-  });
+  const SummarizerGenerateButton({super.key, required this.isDark});
 
   @override
   State<SummarizerGenerateButton> createState() =>
@@ -56,7 +53,8 @@ class _SummarizerGenerateButtonState extends State<SummarizerGenerateButton>
             _pulseController.reset();
           }
 
-          if (state.status == SummaryStatus.error && state.errorMessage != null) {
+          if (state.status == SummaryStatus.error &&
+              state.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.errorMessage!),
@@ -123,11 +121,7 @@ class _SummarizerGenerateButtonState extends State<SummarizerGenerateButton>
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(
-          Icons.auto_awesome_rounded,
-          color: Colors.white,
-          size: 20,
-        ),
+        const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 20),
         const SizedBox(width: 10),
         Text(
           l10n.summarizerGenerate,

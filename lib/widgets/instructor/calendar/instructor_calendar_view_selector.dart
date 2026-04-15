@@ -29,24 +29,9 @@ class InstructorCalendarViewSelector extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildViewButton(
-            context,
-            l10n.month,
-            CalendarViewType.month,
-            isDark,
-          ),
-          _buildViewButton(
-            context,
-            l10n.week,
-            CalendarViewType.week,
-            isDark,
-          ),
-          _buildViewButton(
-            context,
-            l10n.day,
-            CalendarViewType.day,
-            isDark,
-          ),
+          _buildViewButton(context, l10n.month, CalendarViewType.month, isDark),
+          _buildViewButton(context, l10n.week, CalendarViewType.week, isDark),
+          _buildViewButton(context, l10n.day, CalendarViewType.day, isDark),
         ],
       ),
     );
@@ -92,8 +77,8 @@ class InstructorCalendarViewSelector extends StatelessWidget {
               color: isSelected
                   ? (isDark ? Colors.white : const Color(0xFF155CFB))
                   : (isDark
-                      ? const Color(0xFF94A3B8)
-                      : const Color(0xFF64748B)),
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF64748B)),
             ),
           ),
         ),

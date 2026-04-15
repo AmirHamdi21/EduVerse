@@ -49,7 +49,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    
+
     // T030: Resolve LabService — try provider tree, fallback to local instance
     try {
       _labService = context.read<LabService>();
@@ -57,14 +57,12 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
       final coreApiClient = CoreApiClient(storageService: StorageService());
       _labService = LabService(coreApiClient: coreApiClient);
     }
-    
+
     // T030: Fetch via cubit — loads lab info + submissions + attendance
     context.read<TALabsCubit>().fetchLabDetail(widget.labId);
-    
+
     // T045: Local LabDetailCubit for InstructionManager reuse
-    _instructionCubit = LabDetailCubit(
-      labService: _labService,
-    );
+    _instructionCubit = LabDetailCubit(labService: _labService);
     _instructionCubit.loadLabDetail(widget.labId);
   }
 
@@ -119,20 +117,28 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                   backgroundColor: TAColors.scaffoldColor(isDark),
                   leading: IconButton(
                     onPressed: () => context.pop(),
-                    icon: Icon(Icons.arrow_back_rounded,
-                        color: TAColors.textPrimaryColor(isDark)),
+                    icon: Icon(
+                      Icons.arrow_back_rounded,
+                      color: TAColors.textPrimaryColor(isDark),
+                    ),
                   ),
                 ),
                 body: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.error_outline_rounded,
-                          size: 48, color: TAColors.error),
+                      Icon(
+                        Icons.error_outline_rounded,
+                        size: 48,
+                        color: TAColors.error,
+                      ),
                       const SizedBox(height: 16),
-                      Text(state.message,
-                          style: TextStyle(
-                              color: TAColors.textSecondaryColor(isDark))),
+                      Text(
+                        state.message,
+                        style: TextStyle(
+                          color: TAColors.textSecondaryColor(isDark),
+                        ),
+                      ),
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
                         onPressed: () => context
@@ -147,7 +153,8 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
               );
             }
 
-            if (state is TALabDetailLoaded || state is TALabAttendanceRefreshing) {
+            if (state is TALabDetailLoaded ||
+                state is TALabAttendanceRefreshing) {
               final lab = state is TALabDetailLoaded
                   ? state.lab
                   : (state as TALabAttendanceRefreshing).lab;
@@ -159,7 +166,12 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                   : (state as TALabAttendanceRefreshing).attendance;
 
               return _buildDetailScaffold(
-                  isDark, l10n, lab, submissions, attendance);
+                isDark,
+                l10n,
+                lab,
+                submissions,
+                attendance,
+              );
             }
 
             return Scaffold(
@@ -189,7 +201,9 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
             return [
               _buildSliverAppBar(isDark, l10n, lab, innerBoxIsScrolled),
               SliverToBoxAdapter(child: _buildLabHeader(isDark, lab)),
-              SliverToBoxAdapter(child: _buildStatsRow(isDark, lab, submissions)),
+              SliverToBoxAdapter(
+                child: _buildStatsRow(isDark, lab, submissions),
+              ),
               SliverPersistentHeader(
                 pinned: true,
                 delegate: _SliverTabBarDelegate(
@@ -224,8 +238,10 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
         onPressed: () => context.pop(),
-        icon: Icon(Icons.arrow_back_rounded,
-            color: TAColors.textPrimaryColor(isDark)),
+        icon: Icon(
+          Icons.arrow_back_rounded,
+          color: TAColors.textPrimaryColor(isDark),
+        ),
       ),
       title: AnimatedOpacity(
         opacity: innerBoxIsScrolled ? 1.0 : 0.0,
@@ -250,8 +266,10 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
         ),
         // T033: Delete action
         PopupMenuButton<String>(
-          icon: Icon(Icons.more_vert_rounded,
-              color: TAColors.textSecondaryColor(isDark)),
+          icon: Icon(
+            Icons.more_vert_rounded,
+            color: TAColors.textSecondaryColor(isDark),
+          ),
           onSelected: (value) {
             if (value == 'edit') {
               _openEditLabForm(isDark, lab);
@@ -264,8 +282,11 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
               value: 'edit',
               child: Row(
                 children: [
-                  Icon(Icons.edit_rounded,
-                      size: 20, color: TAColors.textPrimaryColor(isDark)),
+                  Icon(
+                    Icons.edit_rounded,
+                    size: 20,
+                    color: TAColors.textPrimaryColor(isDark),
+                  ),
                   const SizedBox(width: 10),
                   const Text('Edit Lab'),
                 ],
@@ -275,11 +296,9 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
               value: 'delete',
               child: Row(
                 children: [
-                  Icon(Icons.delete_rounded,
-                      size: 20, color: TAColors.error),
+                  Icon(Icons.delete_rounded, size: 20, color: TAColors.error),
                   const SizedBox(width: 10),
-                  Text('Delete Lab',
-                      style: TextStyle(color: TAColors.error)),
+                  Text('Delete Lab', style: TextStyle(color: TAColors.error)),
                 ],
               ),
             ),
@@ -301,11 +320,12 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
           Row(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
-                  color: TAColors.primary
-                      .withValues(alpha: isDark ? 0.2 : 0.1),
+                  color: TAColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -363,14 +383,29 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          _buildStatCard(isDark, lab.status.toJson().toUpperCase(), 'Status',
-              Icons.info_rounded, TAColors.info),
+          _buildStatCard(
+            isDark,
+            lab.status.toJson().toUpperCase(),
+            'Status',
+            Icons.info_rounded,
+            TAColors.info,
+          ),
           const SizedBox(width: 8),
-          _buildStatCard(isDark, '${submissions.length}', 'Submissions',
-              Icons.assignment_rounded, TAColors.warning),
+          _buildStatCard(
+            isDark,
+            '${submissions.length}',
+            'Submissions',
+            Icons.assignment_rounded,
+            TAColors.warning,
+          ),
           const SizedBox(width: 8),
-          _buildStatCard(isDark, lab.formattedDueDate, 'Due',
-              Icons.calendar_today_rounded, TAColors.error),
+          _buildStatCard(
+            isDark,
+            lab.formattedDueDate,
+            'Due',
+            Icons.calendar_today_rounded,
+            TAColors.error,
+          ),
         ],
       ),
     );
@@ -389,8 +424,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
         decoration: BoxDecoration(
           color: color.withValues(alpha: isDark ? 0.15 : 0.08),
           borderRadius: BorderRadius.circular(12),
-          border:
-              Border.all(color: color.withValues(alpha: 0.2)),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
         ),
         child: Column(
           children: [
@@ -428,8 +462,10 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
       indicatorColor: TAColors.primary,
       indicatorWeight: 3,
       labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-      unselectedLabelStyle:
-          const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+      unselectedLabelStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
       tabs: [
         Tab(text: l10n.taLabOverview),
         Tab(text: l10n.taLabSubmissionsTab),
@@ -449,30 +485,48 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
         children: [
           _sectionTitle(isDark, 'Lab Information'),
           const SizedBox(height: 8),
-          _buildInfoCard(isDark, 'Max Score', '${lab.maxScore}',
-              Icons.stars_rounded, TAColors.warning),
-          if (lab.weight > 0)
-            _buildInfoCard(isDark, 'Weight', '${lab.weight}%',
-                Icons.balance_rounded, TAColors.info),
           _buildInfoCard(
+            isDark,
+            'Max Score',
+            '${lab.maxScore}',
+            Icons.stars_rounded,
+            TAColors.warning,
+          ),
+          if (lab.weight > 0)
+            _buildInfoCard(
               isDark,
-              'Status',
-              lab.status.toJson().toUpperCase(),
-              Icons.flag_rounded,
-              TAColors.success),
-          _buildInfoCard(isDark, 'Due Date', lab.formattedDueDate,
-              Icons.calendar_today_rounded, TAColors.error),
+              'Weight',
+              '${lab.weight}%',
+              Icons.balance_rounded,
+              TAColors.info,
+            ),
+          _buildInfoCard(
+            isDark,
+            'Status',
+            lab.status.toJson().toUpperCase(),
+            Icons.flag_rounded,
+            TAColors.success,
+          ),
+          _buildInfoCard(
+            isDark,
+            'Due Date',
+            lab.formattedDueDate,
+            Icons.calendar_today_rounded,
+            TAColors.error,
+          ),
           if (lab.instructions.isNotEmpty) ...[
             const SizedBox(height: 16),
             _sectionTitle(isDark, 'Instructions'),
             const SizedBox(height: 8),
-            ...lab.instructions.map((instr) => _buildInfoCard(
-                  isDark,
-                  'Instruction #${instr.orderIndex + 1}',
-                  instr.instructionText ?? 'File attachment',
-                  Icons.description_rounded,
-                  TAColors.primary,
-                )),
+            ...lab.instructions.map(
+              (instr) => _buildInfoCard(
+                isDark,
+                'Instruction #${instr.orderIndex + 1}',
+                instr.instructionText ?? 'File attachment',
+                Icons.description_rounded,
+                TAColors.primary,
+              ),
+            ),
           ],
         ],
       ),
@@ -504,7 +558,8 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
         color: TAColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: TAColors.borderColor(isDark).withValues(alpha: 0.5)),
+          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
+        ),
       ),
       child: Row(
         children: [
@@ -522,19 +577,23 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: TextStyle(
-                      color: TAColors.textSecondaryColor(isDark),
-                      fontSize: 11,
-                    )),
-                Text(value,
-                    style: TextStyle(
-                      color: TAColors.textPrimaryColor(isDark),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis),
+                Text(
+                  title,
+                  style: TextStyle(
+                    color: TAColors.textSecondaryColor(isDark),
+                    fontSize: 11,
+                  ),
+                ),
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: TAColors.textPrimaryColor(isDark),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ),
@@ -551,8 +610,11 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
     List<LabSubmissionModel> submissions,
   ) {
     if (submissions.isEmpty) {
-      return _buildEmptyTab(isDark, 'No submissions found for this lab',
-          Icons.inbox_rounded);
+      return _buildEmptyTab(
+        isDark,
+        'No submissions found for this lab',
+        Icons.inbox_rounded,
+      );
     }
 
     return ListView.builder(
@@ -578,7 +640,8 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
         color: TAColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: TAColors.borderColor(isDark).withValues(alpha: 0.5)),
+          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -631,18 +694,21 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                             const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 1),
+                                horizontal: 6,
+                                vertical: 1,
+                              ),
                               decoration: BoxDecoration(
-                                color:
-                                    TAColors.error.withValues(alpha: 0.1),
+                                color: TAColors.error.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: Text('LATE',
-                                  style: TextStyle(
-                                    color: TAColors.error,
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w700,
-                                  )),
+                              child: Text(
+                                'LATE',
+                                style: TextStyle(
+                                  color: TAColors.error,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ),
                           ],
                         ],
@@ -652,8 +718,10 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                 ),
                 if (isGraded && sub.score != null)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: TAColors.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -681,9 +749,11 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                     style: OutlinedButton.styleFrom(
                       foregroundColor: TAColors.primary,
                       side: BorderSide(
-                          color: TAColors.primary.withValues(alpha: 0.3)),
+                        color: TAColors.primary.withValues(alpha: 0.3),
+                      ),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
                 ),
@@ -699,9 +769,11 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                     style: OutlinedButton.styleFrom(
                       foregroundColor: TAColors.primary,
                       side: BorderSide(
-                          color: TAColors.primary.withValues(alpha: 0.3)),
+                        color: TAColors.primary.withValues(alpha: 0.3),
+                      ),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
                 ),
@@ -728,12 +800,12 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
       onGrade: (score, feedback) async {
         // Grade from submission viewer
         context.read<TALabsCubit>().gradeLabSubmission(
-              lab.id,
-              sub.id,
-              score,
-              feedback,
-              'graded',
-            );
+          lab.id,
+          sub.id,
+          score,
+          feedback,
+          'graded',
+        );
       },
     );
   }
@@ -747,11 +819,11 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
       builder: (ctx) {
         return Container(
           padding: EdgeInsets.only(
-              bottom: MediaQuery.of(ctx).viewInsets.bottom),
+            bottom: MediaQuery.of(ctx).viewInsets.bottom,
+          ),
           decoration: BoxDecoration(
             color: TAColors.cardColor(isDark),
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -763,12 +835,12 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                 Navigator.of(ctx).pop();
                 // Principle I: route through cubit
                 context.read<TALabsCubit>().gradeLabSubmission(
-                      lab.id,
-                      sub.id,
-                      score,
-                      feedback,
-                      'graded',
-                    );
+                  lab.id,
+                  sub.id,
+                  score,
+                  feedback,
+                  'graded',
+                );
               },
             ),
           ),
@@ -782,26 +854,27 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
   Widget _buildAttendanceTab(bool isDark, List<LabAttendanceModel> attendance) {
     if (attendance.isEmpty) {
       return _buildEmptyTab(
-          isDark, 'No attendance records for this lab', Icons.people_rounded);
+        isDark,
+        'No attendance records for this lab',
+        Icons.people_rounded,
+      );
     }
 
     return AttendanceSheet(
       records: attendance,
       canManage: true,
-      onMarkAttendance: (int userId, lab_enums.LabAttendanceStatus status) async {
-        // T042: Mark attendance via LabService then refresh cubit
-        await _labService.markAttendance(
-          widget.labId,
-          <String, dynamic>{
-            'userId': userId,
-            'attendanceStatus': status.toJson(),
+      onMarkAttendance:
+          (int userId, lab_enums.LabAttendanceStatus status) async {
+            // T042: Mark attendance via LabService then refresh cubit
+            await _labService.markAttendance(widget.labId, <String, dynamic>{
+              'userId': userId,
+              'attendanceStatus': status.toJson(),
+            });
+            // Principle I: refresh through cubit
+            if (mounted) {
+              context.read<TALabsCubit>().refreshLabAttendance(widget.labId);
+            }
           },
-        );
-        // Principle I: refresh through cubit
-        if (mounted) {
-          context.read<TALabsCubit>().refreshLabAttendance(widget.labId);
-        }
-      },
     );
   }
 
@@ -919,8 +992,8 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
   // T033: Delete lab confirmation with submission check
   void _confirmDeleteLab(LabModel lab) {
     final state = context.read<TALabsCubit>().state;
-    final hasSubmissions = state is TALabDetailLoaded &&
-        state.submissions.isNotEmpty;
+    final hasSubmissions =
+        state is TALabDetailLoaded && state.submissions.isNotEmpty;
 
     showDialog(
       context: context,
@@ -953,8 +1026,11 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
   // T032: Open Edit Lab form
   void _openEditLabForm(bool isDark, LabModel lab) {
     final coursesState = context.read<TACoursesCubit>().state;
-    final courses = coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>
-        ? (coursesState.coursesStatus as TASubTabLoaded<List<TeachingCourseModel>>).data
+    final courses =
+        coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>
+        ? (coursesState.coursesStatus
+                  as TASubTabLoaded<List<TeachingCourseModel>>)
+              .data
         : <TeachingCourseModel>[];
 
     showModalBottomSheet(
@@ -1008,10 +1084,7 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar tabBar;
   final Color backgroundColor;
 
-  _SliverTabBarDelegate({
-    required this.tabBar,
-    required this.backgroundColor,
-  });
+  _SliverTabBarDelegate({required this.tabBar, required this.backgroundColor});
 
   @override
   double get minExtent => tabBar.preferredSize.height;
@@ -1019,7 +1092,11 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(color: backgroundColor, child: tabBar);
   }
 

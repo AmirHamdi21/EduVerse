@@ -18,7 +18,7 @@ class AdminAuditScreen extends StatefulWidget {
 class _AdminAuditScreenState extends State<AdminAuditScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  
+
   // Filter state
   String? _selectedSeverity;
   String? _selectedAction;
@@ -181,7 +181,9 @@ class _AdminAuditScreenState extends State<AdminAuditScreen>
       }
       if (_dateRange != null) {
         if (log.timestamp.isBefore(_dateRange!.start) ||
-            log.timestamp.isAfter(_dateRange!.end.add(const Duration(days: 1)))) {
+            log.timestamp.isAfter(
+              _dateRange!.end.add(const Duration(days: 1)),
+            )) {
           return false;
         }
       }
@@ -241,8 +243,9 @@ class _AdminAuditScreenState extends State<AdminAuditScreen>
                       bottom: TabBar(
                         controller: _tabController,
                         labelColor: AdminColors.primary,
-                        unselectedLabelColor:
-                            AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        unselectedLabelColor: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                         indicatorColor: AdminColors.primary,
                         indicatorSize: TabBarIndicatorSize.label,
                         labelStyle: const TextStyle(
@@ -274,9 +277,17 @@ class _AdminAuditScreenState extends State<AdminAuditScreen>
     );
   }
 
-  Widget _buildOverviewTab(bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
-    final criticalCount = _auditLogs.where((l) => l.severity == 'critical').length;
-    final warningCount = _auditLogs.where((l) => l.severity == 'warning').length;
+  Widget _buildOverviewTab(
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
+    final criticalCount = _auditLogs
+        .where((l) => l.severity == 'critical')
+        .length;
+    final warningCount = _auditLogs
+        .where((l) => l.severity == 'warning')
+        .length;
     final todayCount = _auditLogs.where((l) {
       final today = DateTime.now();
       return l.timestamp.year == today.year &&
@@ -284,11 +295,13 @@ class _AdminAuditScreenState extends State<AdminAuditScreen>
           l.timestamp.day == today.day;
     }).length;
 
-    final compliantCount = _complianceItems.where((i) => i.status == 'compliant').length;
+    final compliantCount = _complianceItems
+        .where((i) => i.status == 'compliant')
+        .length;
     final complianceScore = _complianceItems.isEmpty
         ? 0.0
         : _complianceItems.map((i) => i.score).reduce((a, b) => a + b) /
-            _complianceItems.length;
+              _complianceItems.length;
 
     return ListView(
       padding: responsive.contentPadding,
@@ -323,7 +336,11 @@ class _AdminAuditScreenState extends State<AdminAuditScreen>
     );
   }
 
-  Widget _buildAuditLogsTab(bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+  Widget _buildAuditLogsTab(
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return ListView(
       padding: responsive.contentPadding,
       physics: const BouncingScrollPhysics(),
@@ -367,7 +384,11 @@ class _AdminAuditScreenState extends State<AdminAuditScreen>
     );
   }
 
-  Widget _buildComplianceTab(bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+  Widget _buildComplianceTab(
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return ListView(
       padding: responsive.contentPadding,
       physics: const BouncingScrollPhysics(),
@@ -414,10 +435,7 @@ class _AdminAuditScreenState extends State<AdminAuditScreen>
           children: [
             Text(
               l10n.logDetails,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             _buildDetailRow(l10n.action, log.action),

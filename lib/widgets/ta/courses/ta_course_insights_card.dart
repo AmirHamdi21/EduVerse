@@ -83,9 +83,7 @@ class TACourseInsightsCard extends StatelessWidget {
               ),
               child: Text(
                 l10n.taCourseOpenInsights,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: const TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -229,9 +227,7 @@ class TAFullInsightsSheet extends StatelessWidget {
             ? TAColors.error.withValues(alpha: 0.1)
             : TAColors.errorLight,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: TAColors.error.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: TAColors.error.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -291,7 +287,10 @@ class TAFullInsightsSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionsSection(AppLocalizations l10n, BuildContext context) {
+  Widget _buildQuickActionsSection(
+    AppLocalizations l10n,
+    BuildContext context,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -299,20 +298,14 @@ class TAFullInsightsSheet extends StatelessWidget {
             ? TAColors.primary.withValues(alpha: 0.1)
             : TAColors.primarySurface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: TAColors.primary.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: TAColors.primary.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.bolt_rounded,
-                color: TAColors.primary,
-                size: 20,
-              ),
+              Icon(Icons.bolt_rounded, color: TAColors.primary, size: 20),
               const SizedBox(width: 8),
               Text(
                 l10n.taQuickActions,
@@ -325,7 +318,9 @@ class TAFullInsightsSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          ...quickActions.map((action) => _buildQuickActionItem(action, context)),
+          ...quickActions.map(
+            (action) => _buildQuickActionItem(action, context),
+          ),
         ],
       ),
     );
@@ -347,9 +342,7 @@ class TAFullInsightsSheet extends StatelessWidget {
             decoration: BoxDecoration(
               color: TAColors.cardColor(isDark),
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: TAColors.borderColor(isDark),
-              ),
+              border: Border.all(color: TAColors.borderColor(isDark)),
             ),
             child: Row(
               children: [
@@ -388,9 +381,5 @@ class TAQuickAction {
   final String label;
   final VoidCallback? onTap;
 
-  TAQuickAction({
-    required this.icon,
-    required this.label,
-    this.onTap,
-  });
+  TAQuickAction({required this.icon, required this.label, this.onTap});
 }

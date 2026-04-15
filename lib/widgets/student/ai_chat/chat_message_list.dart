@@ -35,10 +35,10 @@ class ChatMessageList extends StatelessWidget {
         if (index == messages.length && isTyping) {
           return _buildTypingIndicator(isDark);
         }
-        
+
         final message = messages[index];
         final showTimestamp = _shouldShowTimestamp(index);
-        
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -50,7 +50,11 @@ class ChatMessageList extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, AppLocalizations l10n, bool isDark) {
+  Widget _buildEmptyState(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(32),
@@ -96,7 +100,9 @@ class ChatMessageList extends StatelessWidget {
               l10n.aiChatWelcomeSubtitle,
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                color: isDark
+                    ? const Color(0xFF99A1AF)
+                    : const Color(0xFF6B7280),
               ),
               textAlign: TextAlign.center,
             ),
@@ -147,7 +153,9 @@ class ChatMessageList extends StatelessWidget {
                   suggestion['text'] as String,
                   style: TextStyle(
                     fontSize: 14,
-                    color: isDark ? const Color(0xFFD1D5DC) : const Color(0xFF4B5563),
+                    color: isDark
+                        ? const Color(0xFFD1D5DC)
+                        : const Color(0xFF4B5563),
                   ),
                 ),
               ),
@@ -160,10 +168,10 @@ class ChatMessageList extends StatelessWidget {
 
   bool _shouldShowTimestamp(int index) {
     if (index == 0) return true;
-    
+
     final currentMessage = messages[index];
     final previousMessage = messages[index - 1];
-    
+
     final currentDate = DateTime(
       currentMessage.timestamp.year,
       currentMessage.timestamp.month,
@@ -174,15 +182,19 @@ class ChatMessageList extends StatelessWidget {
       previousMessage.timestamp.month,
       previousMessage.timestamp.day,
     );
-    
+
     return currentDate != previousDate;
   }
 
   Widget _buildTimestampHeader(DateTime timestamp, bool isDark) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final messageDate = DateTime(timestamp.year, timestamp.month, timestamp.day);
-    
+    final messageDate = DateTime(
+      timestamp.year,
+      timestamp.month,
+      timestamp.day,
+    );
+
     String dateText;
     if (messageDate == today) {
       dateText = 'Today';
@@ -198,7 +210,7 @@ class ChatMessageList extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
-            color: isDark 
+            color: isDark
                 ? const Color(0xFF1E2939).withValues(alpha: 0.8)
                 : const Color(0xFFF3F4F6),
             borderRadius: BorderRadius.circular(20),
@@ -216,14 +228,20 @@ class ChatMessageList extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageBubble(BuildContext context, ChatMessage message, bool isDark) {
+  Widget _buildMessageBubble(
+    BuildContext context,
+    ChatMessage message,
+    bool isDark,
+  ) {
     final isUser = message.isUser;
     final timeFormat = DateFormat('h:mm a');
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
-        mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isUser) ...[
@@ -232,7 +250,9 @@ class ChatMessageList extends StatelessWidget {
           ],
           Flexible(
             child: Column(
-              crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: isUser
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 Container(
                   constraints: BoxConstraints(
@@ -283,10 +303,13 @@ class ChatMessageList extends StatelessWidget {
                           height: 1.5,
                           color: isUser
                               ? Colors.white
-                              : (isDark ? const Color(0xFFF3F4F6) : const Color(0xFF1F2937)),
+                              : (isDark
+                                    ? const Color(0xFFF3F4F6)
+                                    : const Color(0xFF1F2937)),
                         ),
                       ),
-                      if (message.suggestions != null && message.suggestions!.isNotEmpty) ...[
+                      if (message.suggestions != null &&
+                          message.suggestions!.isNotEmpty) ...[
                         const SizedBox(height: 12),
                         _buildSuggestions(message.suggestions!, isDark),
                       ],
@@ -301,7 +324,9 @@ class ChatMessageList extends StatelessWidget {
                       timeFormat.format(message.timestamp),
                       style: TextStyle(
                         fontSize: 11,
-                        color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                        color: isDark
+                            ? const Color(0xFF6B7280)
+                            : const Color(0xFF9CA3AF),
                       ),
                     ),
                     if (isUser) ...[
@@ -423,7 +448,9 @@ class ChatMessageList extends StatelessWidget {
                 bottomRight: Radius.circular(20),
               ),
               border: Border.all(
-                color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                color: isDark
+                    ? const Color(0xFF374151)
+                    : const Color(0xFFE5E7EB),
               ),
             ),
             child: Row(
@@ -452,7 +479,8 @@ class _TypingDot extends StatefulWidget {
   State<_TypingDot> createState() => _TypingDotState();
 }
 
-class _TypingDotState extends State<_TypingDot> with SingleTickerProviderStateMixin {
+class _TypingDotState extends State<_TypingDot>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -463,9 +491,10 @@ class _TypingDotState extends State<_TypingDot> with SingleTickerProviderStateMi
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _animation = Tween<double>(begin: 0.3, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: 0.3,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     Future.delayed(Duration(milliseconds: widget.delay), () {
       if (mounted) {

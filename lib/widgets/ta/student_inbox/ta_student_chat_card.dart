@@ -100,7 +100,9 @@ class TAStudentChatCard extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          chat.unreadCount > 9 ? '9+' : chat.unreadCount.toString(),
+                          chat.unreadCount > 9
+                              ? '9+'
+                              : chat.unreadCount.toString(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 9,
@@ -126,7 +128,8 @@ class TAStudentChatCard extends StatelessWidget {
                           style: TextStyle(
                             color: TAColors.textPrimaryColor(isDark),
                             fontSize: 15,
-                            fontWeight: chat.status == TAStudentChatStatus.unread
+                            fontWeight:
+                                chat.status == TAStudentChatStatus.unread
                                 ? FontWeight.w700
                                 : FontWeight.w600,
                           ),

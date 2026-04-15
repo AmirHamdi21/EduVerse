@@ -39,16 +39,18 @@ class ITServiceConfigSection extends StatelessWidget {
         children: [
           _buildHeader(),
           const SizedBox(height: 16),
-          ...services.map((service) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: ITServiceCard(
-                  isDark: isDark,
-                  service: service,
-                  onView: () => onViewService(service),
-                  onEdit: () => onEditService(service),
-                  onMore: () => onMoreOptions(service),
-                ),
-              )),
+          ...services.map(
+            (service) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: ITServiceCard(
+                isDark: isDark,
+                service: service,
+                onView: () => onViewService(service),
+                onEdit: () => onEditService(service),
+                onMore: () => onMoreOptions(service),
+              ),
+            ),
+          ),
           if (onAddService != null) ...[
             const SizedBox(height: 8),
             _buildAddButton(),
@@ -67,11 +69,7 @@ class ITServiceConfigSection extends StatelessWidget {
             color: ITColors.secondary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            Icons.dns_rounded,
-            color: ITColors.secondary,
-            size: 20,
-          ),
+          child: Icon(Icons.dns_rounded, color: ITColors.secondary, size: 20),
         ),
         const SizedBox(width: 12),
         Expanded(
@@ -109,11 +107,7 @@ class ITServiceConfigSection extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.add_rounded,
-                color: ITColors.primary,
-                size: 20,
-              ),
+              Icon(Icons.add_rounded, color: ITColors.primary, size: 20),
               const SizedBox(width: 8),
               Text(
                 'Add New Service',

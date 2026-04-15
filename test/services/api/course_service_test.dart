@@ -46,10 +46,14 @@ class _MockAdapter implements HttpClientAdapter {
       final valueStr = value is String
           ? '"$value"'
           : value is Map
-              ? _encodeMap(value)
-              : value is List
-                  ? '[${value.map((v) => v is String ? '"$v"' : v is Map ? _encodeMap(v) : v).join(',')}]'
-                  : '$value';
+          ? _encodeMap(value)
+          : value is List
+          ? '[${value.map((v) => v is String
+                ? '"$v"'
+                : v is Map
+                ? _encodeMap(v)
+                : v).join(',')}]'
+          : '$value';
       return '"${e.key}":$valueStr';
     });
     return '{${entries.join(',')}}';
@@ -80,7 +84,7 @@ void main() {
               'courseCode': 'CS101',
               'courseName': 'Intro',
               'credits': 3,
-            }
+            },
           ],
         };
       });
@@ -125,10 +129,7 @@ void main() {
       coreApiClient = CoreApiClient.test();
       coreApiClient.dio.httpClientAdapter = _MockAdapter((options) {
         capturedPath = options.path;
-        return {
-          'statusCode': 200,
-          'data': <Map<String, dynamic>>[],
-        };
+        return {'statusCode': 200, 'data': <Map<String, dynamic>>[]};
       });
 
       courseService = CourseService(coreApiClient: coreApiClient);
@@ -176,10 +177,7 @@ void main() {
       coreApiClient = CoreApiClient.test();
       coreApiClient.dio.httpClientAdapter = _MockAdapter((options) {
         capturedPath = options.path;
-        return {
-          'statusCode': 200,
-          'data': <Map<String, dynamic>>[],
-        };
+        return {'statusCode': 200, 'data': <Map<String, dynamic>>[]};
       });
 
       courseService = CourseService(coreApiClient: coreApiClient);

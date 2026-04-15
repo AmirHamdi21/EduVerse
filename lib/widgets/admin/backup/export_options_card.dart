@@ -106,7 +106,9 @@ class ExportOptionsCard extends StatelessWidget {
                       l10n.selectDataToExport,
                       style: TextStyle(
                         fontSize: 13,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -148,7 +150,9 @@ class ExportOptionsCard extends StatelessWidget {
                 ),
                 backgroundColor: AdminColors.accent,
                 foregroundColor: Colors.white,
-                disabledBackgroundColor: AdminColors.accent.withValues(alpha: 0.3),
+                disabledBackgroundColor: AdminColors.accent.withValues(
+                  alpha: 0.3,
+                ),
               ),
               child: isExporting
                   ? const SizedBox(
@@ -190,15 +194,15 @@ class ExportOptionsCard extends StatelessWidget {
           color: option.isSelected
               ? AdminColors.accent.withValues(alpha: 0.1)
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.05)
-                  : Colors.black.withValues(alpha: 0.03)),
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.black.withValues(alpha: 0.03)),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: option.isSelected
                 ? AdminColors.accent.withValues(alpha: 0.5)
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.black.withValues(alpha: 0.05)),
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.05)),
           ),
         ),
         child: Row(
@@ -209,8 +213,8 @@ class ExportOptionsCard extends StatelessWidget {
                 color: option.isSelected
                     ? AdminColors.accent.withValues(alpha: 0.2)
                     : (isDark
-                        ? Colors.white.withValues(alpha: 0.08)
-                        : Colors.black.withValues(alpha: 0.05)),
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : Colors.black.withValues(alpha: 0.05)),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
@@ -239,7 +243,9 @@ class ExportOptionsCard extends StatelessWidget {
                     option.description,
                     style: TextStyle(
                       fontSize: 12,
-                      color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                      color: AdminColors.getTextColor(
+                        isDark,
+                      ).withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -253,8 +259,8 @@ class ExportOptionsCard extends StatelessWidget {
                 color: option.isSelected
                     ? AdminColors.accent
                     : (isDark
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : Colors.black.withValues(alpha: 0.05)),
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : Colors.black.withValues(alpha: 0.05)),
                 borderRadius: BorderRadius.circular(6),
                 border: option.isSelected
                     ? null
@@ -290,8 +296,8 @@ class ExportOptionsCard extends StatelessWidget {
           color: isSelected
               ? null
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.05)),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.05)),
           borderRadius: BorderRadius.circular(12),
           border: isSelected
               ? null

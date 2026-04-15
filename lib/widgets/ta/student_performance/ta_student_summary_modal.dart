@@ -199,20 +199,14 @@ class TAStudentSummaryModal extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: TAColors.warning.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: TAColors.warning.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.auto_awesome,
-                size: 18,
-                color: TAColors.warning,
-              ),
+              Icon(Icons.auto_awesome, size: 18, color: TAColors.warning),
               const SizedBox(width: 8),
               Text(
                 l10n.taPerformanceAINotes,
@@ -275,10 +269,7 @@ class TAStudentSummaryModal extends StatelessWidget {
           ...student.labScores.asMap().entries.map((entry) {
             final index = entry.key;
             final score = entry.value;
-            return _buildLabScoreItem(
-              label: 'Lab ${index + 1}',
-              score: score,
-            );
+            return _buildLabScoreItem(label: 'Lab ${index + 1}', score: score);
           }),
         ],
       ),
@@ -289,8 +280,8 @@ class TAStudentSummaryModal extends StatelessWidget {
     final color = score >= 85
         ? TAColors.success
         : score >= 70
-            ? TAColors.warning
-            : TAColors.error;
+        ? TAColors.warning
+        : TAColors.error;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
@@ -426,7 +417,11 @@ class TAStudentSummaryModal extends StatelessWidget {
         Expanded(
           child: OutlinedButton.icon(
             onPressed: onSendFeedback,
-            icon: Icon(Icons.mail_outline_rounded, size: 18, color: TAColors.primary),
+            icon: Icon(
+              Icons.mail_outline_rounded,
+              size: 18,
+              color: TAColors.primary,
+            ),
             label: Text(l10n.taPerformanceSendFeedback),
             style: OutlinedButton.styleFrom(
               foregroundColor: TAColors.textPrimaryColor(isDark),
@@ -442,7 +437,11 @@ class TAStudentSummaryModal extends StatelessWidget {
         Expanded(
           child: OutlinedButton.icon(
             onPressed: onNotifyInstructor,
-            icon: Icon(Icons.notifications_outlined, size: 18, color: TAColors.warning),
+            icon: Icon(
+              Icons.notifications_outlined,
+              size: 18,
+              color: TAColors.warning,
+            ),
             label: Text(l10n.taPerformanceNotifyInstructor),
             style: OutlinedButton.styleFrom(
               foregroundColor: TAColors.textPrimaryColor(isDark),

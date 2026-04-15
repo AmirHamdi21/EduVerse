@@ -122,10 +122,7 @@ class AdminAttendanceStatsCard extends StatelessWidget {
                     children: [
                       const Text(
                         'Overall Attendance Rate',
-                        style: TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                        ),
+                        style: TextStyle(color: Colors.white70, fontSize: 12),
                       ),
                       const SizedBox(height: 4),
                       Text(

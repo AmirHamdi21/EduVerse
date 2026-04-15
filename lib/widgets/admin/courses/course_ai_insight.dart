@@ -32,9 +32,7 @@ class CourseAIInsight extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.secondary.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AdminColors.secondary.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [

@@ -37,11 +37,15 @@ class AppearanceSection extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                      color: isDark
+                          ? const Color(0xFF0F172A)
+                          : const Color(0xFFF1F5F9),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
-                      isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                      isDark
+                          ? Icons.dark_mode_rounded
+                          : Icons.light_mode_rounded,
                       size: 20,
                       color: isDark ? Colors.white70 : Colors.black54,
                     ),
@@ -63,7 +67,9 @@ class AppearanceSection extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                  color: isDark
+                      ? const Color(0xFF0F172A)
+                      : const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -74,7 +80,9 @@ class AppearanceSection extends StatelessWidget {
                       label: l10n.light,
                       isSelected: !isDark,
                       onTap: () {
-                        context.read<ThemeBloc>().add(const SetThemeEvent(false));
+                        context.read<ThemeBloc>().add(
+                          const SetThemeEvent(false),
+                        );
                       },
                     ),
                     _buildThemeOption(
@@ -83,7 +91,9 @@ class AppearanceSection extends StatelessWidget {
                       label: l10n.dark,
                       isSelected: isDark,
                       onTap: () {
-                        context.read<ThemeBloc>().add(const SetThemeEvent(true));
+                        context.read<ThemeBloc>().add(
+                          const SetThemeEvent(true),
+                        );
                       },
                     ),
                   ],
@@ -106,7 +116,9 @@ class AppearanceSection extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF1F5F9),
+                      color: isDark
+                          ? const Color(0xFF0F172A)
+                          : const Color(0xFFF1F5F9),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -135,7 +147,8 @@ class AppearanceSection extends StatelessWidget {
                 children: AccentColor.values.map((color) {
                   final isSelected = settings.accentColor == color;
                   return GestureDetector(
-                    onTap: () => context.read<ProfileCubit>().setAccentColor(color),
+                    onTap: () =>
+                        context.read<ProfileCubit>().setAccentColor(color),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 200),
                       width: 40,

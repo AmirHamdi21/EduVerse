@@ -35,7 +35,7 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
   void _initializeAnswers() {
     selectedAnswers = List.filled(widget.question.options.length, false);
     singleSelectedAnswer = widget.question.userAnswer;
-    
+
     // Initialize short answer controller with saved answer
     if (widget.question.type == QuizType.shortAnswer) {
       _shortAnswerController.text = widget.question.userAnswer ?? '';
@@ -68,12 +68,14 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
         color: cardColor,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: widget.question.isSkipped 
-              ? const Color(0xFFF59E0B) 
-              : (widget.question.isAnswered 
-                  ? const Color(0xFF10B981) 
-                  : Colors.transparent),
-          width: widget.question.isSkipped || widget.question.isAnswered ? 2 : 0,
+          color: widget.question.isSkipped
+              ? const Color(0xFFF59E0B)
+              : (widget.question.isAnswered
+                    ? const Color(0xFF10B981)
+                    : Colors.transparent),
+          width: widget.question.isSkipped || widget.question.isAnswered
+              ? 2
+              : 0,
         ),
         boxShadow: [
           BoxShadow(
@@ -97,7 +99,7 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Question text
           Text(
             widget.question.question,
@@ -110,7 +112,7 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // Options based on type
           if (widget.question.type == QuizType.shortAnswer)
             _buildShortAnswerInput(context, responsive)
@@ -127,7 +129,7 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
     IconData icon;
     String label;
     Color color;
-    
+
     switch (widget.question.type) {
       case QuizType.shortAnswer:
         icon = Icons.edit_note;
@@ -144,13 +146,11 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
         label = 'Multiple Choice';
         color = const Color(0xFF3B82F6);
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [color, color.withOpacity(0.8)],
-        ),
+        gradient: LinearGradient(colors: [color, color.withOpacity(0.8)]),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -216,7 +216,7 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: widget.isDark 
+        color: widget.isDark
             ? const Color(0xFF1A1A2E).withOpacity(0.5)
             : const Color(0xFFF8F9FA),
         borderRadius: BorderRadius.circular(16),
@@ -284,15 +284,14 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
     );
   }
 
-  Widget _buildMCQOptions(
-    BuildContext context,
-    ResponsiveUtil responsive,
-  ) {
+  Widget _buildMCQOptions(BuildContext context, ResponsiveUtil responsive) {
     return Column(
       children: List.generate(
         widget.question.options.length,
         (index) => Padding(
-          padding: EdgeInsets.only(bottom: index < widget.question.options.length - 1 ? 12 : 0),
+          padding: EdgeInsets.only(
+            bottom: index < widget.question.options.length - 1 ? 12 : 0,
+          ),
           child: _buildModernOption(
             context,
             widget.question.options[index],
@@ -331,15 +330,17 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
                   colors: [optionColor, optionColor.withOpacity(0.8)],
                 )
               : null,
-          color: isSelected ? null : (widget.isDark 
-              ? const Color(0xFF1A1A2E).withOpacity(0.5)
-              : const Color(0xFFF8F9FA)),
+          color: isSelected
+              ? null
+              : (widget.isDark
+                    ? const Color(0xFF1A1A2E).withOpacity(0.5)
+                    : const Color(0xFFF8F9FA)),
           border: Border.all(
             color: isSelected
                 ? Colors.transparent
                 : (widget.isDark
-                    ? const Color(0xFF3A4456)
-                    : const Color(0xFFE5E7EB)),
+                      ? const Color(0xFF3A4456)
+                      : const Color(0xFFE5E7EB)),
             width: 2,
           ),
           boxShadow: isSelected
@@ -361,9 +362,7 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
               decoration: BoxDecoration(
                 color: isSelected
                     ? Colors.white.withOpacity(0.25)
-                    : (widget.isDark
-                        ? const Color(0xFF3A4456)
-                        : Colors.white),
+                    : (widget.isDark ? const Color(0xFF3A4456) : Colors.white),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
@@ -380,7 +379,9 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
                           fontWeight: FontWeight.bold,
                           color: isSelected
                               ? Colors.white
-                              : (widget.isDark ? Colors.white : const Color(0xFF6B7280)),
+                              : (widget.isDark
+                                    ? Colors.white
+                                    : const Color(0xFF6B7280)),
                           fontFamily: 'Arimo',
                         ),
                       ),
@@ -395,7 +396,9 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   color: isSelected
                       ? Colors.white
-                      : (widget.isDark ? Colors.white : const Color(0xFF101828)),
+                      : (widget.isDark
+                            ? Colors.white
+                            : const Color(0xFF101828)),
                   fontFamily: 'Arimo',
                 ),
               ),
@@ -407,11 +410,7 @@ class _QuizQuestionCardState extends State<QuizQuestionCard> {
                   color: Colors.white.withOpacity(0.25),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 16,
-                ),
+                child: const Icon(Icons.check, color: Colors.white, size: 16),
               ),
           ],
         ),

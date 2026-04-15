@@ -21,7 +21,7 @@ class _AdminPushNotificationsScreenState
   String _selectedProvider = 'Firebase';
   final _serverKeyController = TextEditingController();
   final _senderIdController = TextEditingController();
-  
+
   // Notification types
   bool _newEnrollments = true;
   bool _courseUpdates = true;
@@ -54,7 +54,9 @@ class _AdminPushNotificationsScreenState
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -107,12 +109,15 @@ class _AdminPushNotificationsScreenState
       decoration: BoxDecoration(
         gradient: _enabled
             ? AdminColors.primaryGradient
-            : LinearGradient(colors: [Colors.grey.shade600, Colors.grey.shade700]),
+            : LinearGradient(
+                colors: [Colors.grey.shade600, Colors.grey.shade700],
+              ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: (_enabled ? AdminColors.primary : Colors.grey)
-                .withValues(alpha: 0.3),
+            color: (_enabled ? AdminColors.primary : Colors.grey).withValues(
+              alpha: 0.3,
+            ),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -226,7 +231,11 @@ class _AdminPushNotificationsScreenState
 
   Widget _buildProviderSection(bool isDark, AppLocalizations l10n) {
     final providers = [
-      ('Firebase', Icons.local_fire_department_rounded, const Color(0xFFFFCA28)),
+      (
+        'Firebase',
+        Icons.local_fire_department_rounded,
+        const Color(0xFFFFCA28),
+      ),
       ('OneSignal', Icons.notifications_rounded, const Color(0xFFE54B4D)),
       ('AWS SNS', Icons.cloud_rounded, const Color(0xFFFF9900)),
       ('Pusher', Icons.rocket_launch_rounded, const Color(0xFF300D4F)),
@@ -247,8 +256,10 @@ class _AdminPushNotificationsScreenState
                 onTap: () => setState(() => _selectedProvider = provider.$1),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? provider.$3.withValues(alpha: 0.15)
@@ -276,8 +287,9 @@ class _AdminPushNotificationsScreenState
                         provider.$1,
                         style: TextStyle(
                           fontSize: 14,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.w500,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
                           color: isSelected
                               ? provider.$3
                               : AdminColors.getTextColor(isDark),
@@ -511,8 +523,9 @@ class _AdminPushNotificationsScreenState
           style: TextStyle(color: AdminColors.getTextColor(isDark)),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle:
-                TextStyle(color: AdminColors.getTextTertiaryColor(isDark)),
+            hintStyle: TextStyle(
+              color: AdminColors.getTextTertiaryColor(isDark),
+            ),
             prefixIcon: Icon(
               prefixIcon,
               color: AdminColors.getTextTertiaryColor(isDark),
@@ -526,8 +539,9 @@ class _AdminPushNotificationsScreenState
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide:
-                  BorderSide(color: AdminColors.getDividerColor(isDark)),
+              borderSide: BorderSide(
+                color: AdminColors.getDividerColor(isDark),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -646,10 +660,7 @@ class _AdminPushNotificationsScreenState
   }
 
   Widget _buildDivider(bool isDark) {
-    return Divider(
-      height: 1,
-      color: AdminColors.getDividerColor(isDark),
-    );
+    return Divider(height: 1, color: AdminColors.getDividerColor(isDark));
   }
 
   Widget _buildSaveButton(bool isDark, AppLocalizations l10n) {
@@ -660,8 +671,9 @@ class _AdminPushNotificationsScreenState
             content: Text(l10n.pushNotificationsSaved),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AdminColors.success,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       },

@@ -3129,6 +3129,29 @@
   "aiInsights": "رؤى الذكاء الاصطناعي",
   "noInstructorAssigned": "لم يتم تعيين مدرس بعد",
   "noTAAssigned": "فكر في تعيين معيدين لدعم أفضل للطلاب",
+  "sectionLabel": "الشعبة {sectionNumber}",
+  "@sectionLabel": {
+    "placeholders": {
+      "sectionNumber": {}
+    }
+  },
+  "sectionScheduleLabel": "الشعبة {sectionNumber} - {day}",
+  "@sectionScheduleLabel": {
+    "placeholders": {
+      "sectionNumber": {},
+      "day": {}
+    }
+  },
+  "studentUserIdHint": "معرف الطالب",
+  "idValue": "معرف {id}",
+  "@idValue": {
+    "placeholders": {
+      "id": {}
+    }
+  },
+  "rolePrimary": "المدرس الأساسي",
+  "roleCoInstructor": "مدرس مشارك",
+  "roleGuestInstructor": "مدرس زائر",
   "recommendMoreTAs": "فكر في إضافة معيدين للفصول الكبيرة",
   "largeClassSuggestion": "فكر في إضافة معامل لتفاعل أفضل",
   "labCapacityWarning": "سعة المعمل قد لا تستوعب جميع الطلاب",

@@ -9,7 +9,13 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
 
   ThemeBloc({required StorageService storageService})
     : _storageService = storageService,
-      super(ThemeInitial(isDark: false, themeMode: AppThemeMode.light, fontSize: FontSizeOption.medium)) {
+      super(
+        ThemeInitial(
+          isDark: false,
+          themeMode: AppThemeMode.light,
+          fontSize: FontSizeOption.medium,
+        ),
+      ) {
     on<InitThemeEvent>(_onInitTheme);
     on<ToggleThemeEvent>(_onToggleTheme);
     on<SetThemeEvent>(_onSetTheme);
@@ -24,7 +30,13 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     final isDark = await _storageService.getDarkMode();
     final fontSizeIndex = await _storageService.getFontSize();
     final fontSize = FontSizeOption.values[fontSizeIndex.clamp(0, 2)];
-    emit(ThemeInitial(isDark: isDark, themeMode: isDark ? AppThemeMode.dark : AppThemeMode.light, fontSize: fontSize));
+    emit(
+      ThemeInitial(
+        isDark: isDark,
+        themeMode: isDark ? AppThemeMode.dark : AppThemeMode.light,
+        fontSize: fontSize,
+      ),
+    );
   }
 
   Future<void> _onToggleTheme(
@@ -33,7 +45,13 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
   ) async {
     final newIsDark = !state.isDark;
     await _storageService.setDarkMode(newIsDark);
-    emit(ThemeChanged(isDark: newIsDark, themeMode: newIsDark ? AppThemeMode.dark : AppThemeMode.light, fontSize: state.fontSize));
+    emit(
+      ThemeChanged(
+        isDark: newIsDark,
+        themeMode: newIsDark ? AppThemeMode.dark : AppThemeMode.light,
+        fontSize: state.fontSize,
+      ),
+    );
   }
 
   Future<void> _onSetTheme(
@@ -41,7 +59,13 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     Emitter<ThemeState> emit,
   ) async {
     await _storageService.setDarkMode(event.isDark);
-    emit(ThemeChanged(isDark: event.isDark, themeMode: event.isDark ? AppThemeMode.dark : AppThemeMode.light, fontSize: state.fontSize));
+    emit(
+      ThemeChanged(
+        isDark: event.isDark,
+        themeMode: event.isDark ? AppThemeMode.dark : AppThemeMode.light,
+        fontSize: state.fontSize,
+      ),
+    );
   }
 
   Future<void> _onSetThemeMode(
@@ -57,7 +81,13 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
       isDark = event.mode == AppThemeMode.dark;
     }
     await _storageService.setDarkMode(isDark);
-    emit(ThemeChanged(isDark: isDark, themeMode: event.mode, fontSize: state.fontSize));
+    emit(
+      ThemeChanged(
+        isDark: isDark,
+        themeMode: event.mode,
+        fontSize: state.fontSize,
+      ),
+    );
   }
 
   Future<void> _onSetFontSize(
@@ -65,7 +95,13 @@ class ThemeBloc extends Bloc<ThemeEvent, ThemeState> {
     Emitter<ThemeState> emit,
   ) async {
     await _storageService.setFontSize(event.fontSize.index);
-    emit(ThemeChanged(isDark: state.isDark, themeMode: state.themeMode, fontSize: event.fontSize));
+    emit(
+      ThemeChanged(
+        isDark: state.isDark,
+        themeMode: state.themeMode,
+        fontSize: event.fontSize,
+      ),
+    );
   }
 
   Future<void> initTheme() async {

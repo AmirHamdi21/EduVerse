@@ -24,11 +24,7 @@ class TAAIInsightsCard extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(0xFF8B5CF6),
-            Color(0xFF7C3AED),
-            Color(0xFF6D28D9),
-          ],
+          colors: [Color(0xFF8B5CF6), Color(0xFF7C3AED), Color(0xFF6D28D9)],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
@@ -145,11 +141,7 @@ class TAAIInsightsCard extends StatelessWidget {
               color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 18,
-            ),
+            child: Icon(icon, color: Colors.white, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(

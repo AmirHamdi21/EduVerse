@@ -37,9 +37,5 @@ class Course {
   final String name;
   final String icon;
 
-  Course({
-    required this.id,
-    required this.name,
-    required this.icon,
-  });
+  Course({required this.id, required this.name, required this.icon});
 }

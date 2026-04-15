@@ -20,7 +20,7 @@ class DateEventsSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.6,
@@ -39,7 +39,9 @@ class DateEventsSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                color: isDark
+                    ? const Color(0xFF374151)
+                    : const Color(0xFFE5E7EB),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -70,7 +72,9 @@ class DateEventsSheet extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : const Color(0xFF1F2937),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF1F2937),
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -78,7 +82,9 @@ class DateEventsSheet extends StatelessWidget {
                         '${events.length} event${events.length > 1 ? 's' : ''}',
                         style: TextStyle(
                           fontSize: 14,
-                          color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                          color: isDark
+                              ? const Color(0xFF99A1AF)
+                              : const Color(0xFF6B7280),
                         ),
                       ),
                     ],
@@ -89,13 +95,17 @@ class DateEventsSheet extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6),
+                      color: isDark
+                          ? const Color(0xFF1E2939)
+                          : const Color(0xFFF3F4F6),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.close_rounded,
                       size: 20,
-                      color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                      color: isDark
+                          ? const Color(0xFF99A1AF)
+                          : const Color(0xFF6B7280),
                     ),
                   ),
                 ),
@@ -122,7 +132,11 @@ class DateEventsSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildEventItem(BuildContext context, CalendarEvent event, AppLocalizations l10n) {
+  Widget _buildEventItem(
+    BuildContext context,
+    CalendarEvent event,
+    AppLocalizations l10n,
+  ) {
     return GestureDetector(
       onTap: () {
         Navigator.pop(context);
@@ -166,7 +180,9 @@ class DateEventsSheet extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
-                            color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                            color: isDark
+                                ? const Color(0xFFF3F4F6)
+                                : const Color(0xFF101828),
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -181,14 +197,18 @@ class DateEventsSheet extends StatelessWidget {
                         Icon(
                           Icons.access_time_rounded,
                           size: 14,
-                          color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                          color: isDark
+                              ? const Color(0xFF6B7280)
+                              : const Color(0xFF9CA3AF),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           event.time!,
                           style: TextStyle(
                             fontSize: 13,
-                            color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                            color: isDark
+                                ? const Color(0xFF99A1AF)
+                                : const Color(0xFF6B7280),
                           ),
                         ),
                       ],
@@ -197,7 +217,9 @@ class DateEventsSheet extends StatelessWidget {
                         Icon(
                           Icons.location_on_outlined,
                           size: 14,
-                          color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                          color: isDark
+                              ? const Color(0xFF6B7280)
+                              : const Color(0xFF9CA3AF),
                         ),
                         const SizedBox(width: 4),
                         Expanded(
@@ -205,7 +227,9 @@ class DateEventsSheet extends StatelessWidget {
                             event.location!,
                             style: TextStyle(
                               fontSize: 13,
-                              color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                              color: isDark
+                                  ? const Color(0xFF99A1AF)
+                                  : const Color(0xFF6B7280),
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,

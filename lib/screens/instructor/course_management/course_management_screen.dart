@@ -853,9 +853,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     // with firstName, lastName, email for all students across all sections.
     if (_requestedStudentsCourseId != courseId) {
       _requestedStudentsCourseId = courseId;
-      context.read<InstructorCoursesBloc>().add(
-        LoadCourseStudents(courseId),
-      );
+      context.read<InstructorCoursesBloc>().add(LoadCourseStudents(courseId));
     }
 
     if (_requestedMetricsCourseId != courseId) {

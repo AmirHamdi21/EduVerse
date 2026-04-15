@@ -29,9 +29,7 @@ class AdminProfileActionsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
         boxShadow: [
           if (!isDark)
             BoxShadow(
@@ -111,10 +109,7 @@ class AdminProfileActionsCard extends StatelessWidget {
   }
 
   Widget _buildDivider() {
-    return Divider(
-      height: 1,
-      color: AdminColors.getDividerColor(isDark),
-    );
+    return Divider(height: 1, color: AdminColors.getDividerColor(isDark));
   }
 
   Widget _buildActionItem({
@@ -139,19 +134,15 @@ class AdminProfileActionsCard extends StatelessWidget {
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  icon,
-                  color: color,
-                  size: 18,
-                ),
+                child: Icon(icon, color: color, size: 18),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
                   label,
                   style: TextStyle(
-                    color: isDestructive 
-                        ? color 
+                    color: isDestructive
+                        ? color
                         : AdminColors.getTextColor(isDark),
                     fontSize: 14,
                     fontWeight: FontWeight.w500,

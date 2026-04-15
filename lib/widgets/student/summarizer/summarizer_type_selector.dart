@@ -7,10 +7,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class SummarizerTypeSelector extends StatelessWidget {
   final bool isDark;
 
-  const SummarizerTypeSelector({
-    super.key,
-    required this.isDark,
-  });
+  const SummarizerTypeSelector({super.key, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +44,8 @@ class SummarizerTypeSelector extends StatelessWidget {
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
-                    onTap: () => _showTypePicker(context, state.selectedType, l10n),
+                    onTap: () =>
+                        _showTypePicker(context, state.selectedType, l10n),
                     borderRadius: BorderRadius.circular(16),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -237,19 +235,19 @@ class _TypePickerSheet extends StatelessWidget {
             child: Text(
               l10n.summarizerSelectType,
               style: TextStyle(
-                color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                color: isDark
+                    ? const Color(0xFFF3F4F6)
+                    : const Color(0xFF101828),
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
           // Options
-          ...SummarizationType.values.map((type) => _buildTypeOption(
-                context,
-                type,
-                type == currentType,
-                l10n,
-              )),
+          ...SummarizationType.values.map(
+            (type) =>
+                _buildTypeOption(context, type, type == currentType, l10n),
+          ),
           const SizedBox(height: 20),
         ],
       ),
@@ -271,9 +269,7 @@ class _TypePickerSheet extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           decoration: BoxDecoration(
             color: isSelected
-                ? (isDark
-                    ? const Color(0xFF1E2939)
-                    : const Color(0xFFF0F9FF))
+                ? (isDark ? const Color(0xFF1E2939) : const Color(0xFFF0F9FF))
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(14),
             border: isSelected
@@ -286,23 +282,19 @@ class _TypePickerSheet extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: _getTypeGradient(type),
-                  ),
+                  gradient: LinearGradient(colors: _getTypeGradient(type)),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: _getTypeGradient(type).first.withValues(alpha: 0.3),
+                      color: _getTypeGradient(
+                        type,
+                      ).first.withValues(alpha: 0.3),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: Icon(
-                  _getTypeIcon(type),
-                  color: Colors.white,
-                  size: 22,
-                ),
+                child: Icon(_getTypeIcon(type), color: Colors.white, size: 22),
               ),
               const SizedBox(width: 14),
               Expanded(

@@ -63,15 +63,40 @@ class GradeDistributionCard extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           // Distribution bars
-          _buildGradeBar('A (90-100%)', distribution.gradeA, ReportsColors.gradeA, isDark),
+          _buildGradeBar(
+            'A (90-100%)',
+            distribution.gradeA,
+            ReportsColors.gradeA,
+            isDark,
+          ),
           const SizedBox(height: 16),
-          _buildGradeBar('B (80-89%)', distribution.gradeB, ReportsColors.gradeB, isDark),
+          _buildGradeBar(
+            'B (80-89%)',
+            distribution.gradeB,
+            ReportsColors.gradeB,
+            isDark,
+          ),
           const SizedBox(height: 16),
-          _buildGradeBar('C (70-79%)', distribution.gradeC, ReportsColors.gradeC, isDark),
+          _buildGradeBar(
+            'C (70-79%)',
+            distribution.gradeC,
+            ReportsColors.gradeC,
+            isDark,
+          ),
           const SizedBox(height: 16),
-          _buildGradeBar('D (60-69%)', distribution.gradeD, ReportsColors.gradeD, isDark),
+          _buildGradeBar(
+            'D (60-69%)',
+            distribution.gradeD,
+            ReportsColors.gradeD,
+            isDark,
+          ),
           const SizedBox(height: 16),
-          _buildGradeBar('F (Below 60%)', distribution.gradeF, ReportsColors.gradeF, isDark),
+          _buildGradeBar(
+            'F (Below 60%)',
+            distribution.gradeF,
+            ReportsColors.gradeF,
+            isDark,
+          ),
         ],
       ),
     );
@@ -85,7 +110,7 @@ class GradeDistributionCard extends StatelessWidget {
       distribution.gradeD,
       distribution.gradeF,
     ].reduce((a, b) => a > b ? a : b);
-    
+
     final percentage = maxCount > 0 ? count / maxCount : 0.0;
 
     return Column(
@@ -134,4 +159,3 @@ class GradeDistributionCard extends StatelessWidget {
     );
   }
 }
-

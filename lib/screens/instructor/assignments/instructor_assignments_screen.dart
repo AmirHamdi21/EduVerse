@@ -206,21 +206,20 @@ class _InstructorAssignmentsViewState
                   _TypeFilterChip(
                     label: 'Assignments',
                     selected: _typeFilter == AssignmentType.document,
-                    onTap: () => setState(
-                      () => _typeFilter = AssignmentType.document,
-                    ),
+                    onTap: () =>
+                        setState(() => _typeFilter = AssignmentType.document),
                   ),
                   _TypeFilterChip(
                     label: 'Labs',
                     selected: _typeFilter == AssignmentType.lab,
-                    onTap: () => setState(() => _typeFilter = AssignmentType.lab),
+                    onTap: () =>
+                        setState(() => _typeFilter = AssignmentType.lab),
                   ),
                   _TypeFilterChip(
                     label: 'Projects',
                     selected: _typeFilter == AssignmentType.project,
-                    onTap: () => setState(
-                      () => _typeFilter = AssignmentType.project,
-                    ),
+                    onTap: () =>
+                        setState(() => _typeFilter = AssignmentType.project),
                   ),
                 ],
               ),
@@ -428,8 +427,7 @@ class _InstructorAssignmentsViewState
           'maxScore': assignment.maxGrade,
           'assignmentDueDate': assignment.dueDate,
           'latePenaltyPercent': assignment.latePenaltyPercent,
-          'isArchived':
-              assignment.apiStatus == api.AssignmentStatus.archived,
+          'isArchived': assignment.apiStatus == api.AssignmentStatus.archived,
         },
       ),
       onEdit: widget.canManage
@@ -445,11 +443,7 @@ class _InstructorAssignmentsViewState
                 return;
               }
               if (result == true) {
-                await cubit.loadAssignments(
-                  page: 1,
-                  limit: 20,
-                  refresh: true,
-                );
+                await cubit.loadAssignments(page: 1, limit: 20, refresh: true);
               }
             }
           : null,

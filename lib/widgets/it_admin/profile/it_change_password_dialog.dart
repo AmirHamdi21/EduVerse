@@ -20,11 +20,11 @@ class _ITChangePasswordDialogState extends State<ITChangePasswordDialog> {
   final _currentPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   bool _showCurrentPassword = false;
   bool _showNewPassword = false;
   bool _showConfirmPassword = false;
-  
+
   bool _hasMinLength = false;
   bool _hasUppercase = false;
   bool _hasLowercase = false;
@@ -96,10 +96,7 @@ class _ITChangePasswordDialogState extends State<ITChangePasswordDialog> {
                       color: ITColors.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
-                      Icons.lock_rounded,
-                      color: ITColors.primary,
-                    ),
+                    child: Icon(Icons.lock_rounded, color: ITColors.primary),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -134,14 +131,15 @@ class _ITChangePasswordDialogState extends State<ITChangePasswordDialog> {
                 ],
               ),
               const SizedBox(height: 24),
-              
+
               // Current password
               _buildPasswordField(
                 controller: _currentPasswordController,
                 label: 'Current Password',
                 showPassword: _showCurrentPassword,
-                onToggleVisibility: () =>
-                    setState(() => _showCurrentPassword = !_showCurrentPassword),
+                onToggleVisibility: () => setState(
+                  () => _showCurrentPassword = !_showCurrentPassword,
+                ),
                 validator: (val) {
                   if (val == null || val.isEmpty) {
                     return 'Please enter your current password';
@@ -150,7 +148,7 @@ class _ITChangePasswordDialogState extends State<ITChangePasswordDialog> {
                 },
               ),
               const SizedBox(height: 16),
-              
+
               // New password
               _buildPasswordField(
                 controller: _newPasswordController,
@@ -169,7 +167,7 @@ class _ITChangePasswordDialogState extends State<ITChangePasswordDialog> {
                 },
               ),
               const SizedBox(height: 12),
-              
+
               // Password requirements
               _buildRequirement('At least 12 characters', _hasMinLength),
               _buildRequirement('One uppercase letter', _hasUppercase),
@@ -177,14 +175,15 @@ class _ITChangePasswordDialogState extends State<ITChangePasswordDialog> {
               _buildRequirement('One number', _hasNumber),
               _buildRequirement('One special character', _hasSpecialChar),
               const SizedBox(height: 16),
-              
+
               // Confirm password
               _buildPasswordField(
                 controller: _confirmPasswordController,
                 label: 'Confirm New Password',
                 showPassword: _showConfirmPassword,
-                onToggleVisibility: () =>
-                    setState(() => _showConfirmPassword = !_showConfirmPassword),
+                onToggleVisibility: () => setState(
+                  () => _showConfirmPassword = !_showConfirmPassword,
+                ),
                 validator: (val) {
                   if (val == null || val.isEmpty) {
                     return 'Please confirm your new password';
@@ -196,7 +195,7 @@ class _ITChangePasswordDialogState extends State<ITChangePasswordDialog> {
                 },
               ),
               const SizedBox(height: 24),
-              
+
               // Buttons
               Row(
                 children: [
@@ -204,7 +203,9 @@ class _ITChangePasswordDialogState extends State<ITChangePasswordDialog> {
                     child: OutlinedButton(
                       onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: ITColors.textSecondaryColor(widget.isDark),
+                        foregroundColor: ITColors.textSecondaryColor(
+                          widget.isDark,
+                        ),
                         side: BorderSide(
                           color: widget.isDark
                               ? Colors.white.withValues(alpha: 0.2)
@@ -327,7 +328,9 @@ class _ITChangePasswordDialogState extends State<ITChangePasswordDialog> {
           Icon(
             isMet ? Icons.check_circle_rounded : Icons.circle_outlined,
             size: 14,
-            color: isMet ? ITColors.success : ITColors.textSecondaryColor(widget.isDark),
+            color: isMet
+                ? ITColors.success
+                : ITColors.textSecondaryColor(widget.isDark),
           ),
           const SizedBox(width: 8),
           Text(

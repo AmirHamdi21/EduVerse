@@ -146,7 +146,9 @@ class SummarizerUploadOverlay extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFEF4444).withValues(alpha: 0.1),
+                              color: const Color(
+                                0xFFEF4444,
+                              ).withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(

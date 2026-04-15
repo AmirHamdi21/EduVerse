@@ -30,7 +30,8 @@ class PreferencesSection extends StatelessWidget {
           title: l10n.pushNotifications,
           subtitle: l10n.pushNotificationsDesc,
           value: settings.pushNotifications,
-          onChanged: (value) => context.read<ProfileCubit>().togglePushNotifications(value),
+          onChanged: (value) =>
+              context.read<ProfileCubit>().togglePushNotifications(value),
         ),
         _buildDivider(),
         _buildToggleRow(
@@ -39,7 +40,8 @@ class PreferencesSection extends StatelessWidget {
           title: l10n.emailAlerts,
           subtitle: l10n.emailAlertsDesc,
           value: settings.emailAlerts,
-          onChanged: (value) => context.read<ProfileCubit>().toggleEmailAlerts(value),
+          onChanged: (value) =>
+              context.read<ProfileCubit>().toggleEmailAlerts(value),
         ),
         _buildDivider(),
         _buildToggleRow(
@@ -48,7 +50,8 @@ class PreferencesSection extends StatelessWidget {
           title: l10n.aiSuggestions,
           subtitle: l10n.aiSuggestionsDesc,
           value: settings.aiSuggestions,
-          onChanged: (value) => context.read<ProfileCubit>().toggleAiSuggestions(value),
+          onChanged: (value) =>
+              context.read<ProfileCubit>().toggleAiSuggestions(value),
         ),
         _buildDivider(),
         _buildToggleRow(
@@ -57,7 +60,8 @@ class PreferencesSection extends StatelessWidget {
           title: l10n.autoDarkMode,
           subtitle: l10n.autoDarkModeDesc,
           value: settings.autoDarkMode,
-          onChanged: (value) => context.read<ProfileCubit>().toggleAutoDarkMode(value),
+          onChanged: (value) =>
+              context.read<ProfileCubit>().toggleAutoDarkMode(value),
         ),
         _buildDivider(),
         _buildToggleRow(
@@ -66,7 +70,9 @@ class PreferencesSection extends StatelessWidget {
           title: l10n.weeklyPerformanceSummary,
           subtitle: l10n.weeklyPerformanceSummaryDesc,
           value: settings.weeklyPerformanceSummary,
-          onChanged: (value) => context.read<ProfileCubit>().toggleWeeklyPerformanceSummary(value),
+          onChanged: (value) => context
+              .read<ProfileCubit>()
+              .toggleWeeklyPerformanceSummary(value),
         ),
       ],
     );
@@ -131,9 +137,6 @@ class PreferencesSection extends StatelessWidget {
   }
 
   Widget _buildDivider() {
-    return Divider(
-      color: isDark ? Colors.white12 : Colors.black12,
-      height: 1,
-    );
+    return Divider(color: isDark ? Colors.white12 : Colors.black12, height: 1);
   }
 }

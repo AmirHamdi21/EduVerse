@@ -36,7 +36,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     super.initState();
     // Always fetch - cubit now handles caching properly to prevent infinite loading
     context.read<TALabsCubit>().fetchTALabs();
-    
+
     // T029: Ensure courses are loaded for Create Lab form dropdown (T031)
     final coursesState = context.read<TACoursesCubit>().state;
     if (coursesState.coursesStatus is TASubTabInitial) {
@@ -54,10 +54,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         return Scaffold(
           key: _scaffoldKey,
           backgroundColor: TAColors.scaffoldColor(isDark),
-          drawer: TADrawer(
-            currentRoute: '/ta/labs',
-            isDark: isDark,
-          ),
+          drawer: TADrawer(currentRoute: '/ta/labs', isDark: isDark),
           // T031: Create Lab FAB
           floatingActionButton: FloatingActionButton.extended(
             onPressed: () => _openCreateLabForm(isDark),
@@ -173,13 +170,17 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
             color: isSelected ? TAColors.primary : TAColors.cardColor(isDark),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isSelected ? TAColors.primary : TAColors.borderColor(isDark),
+              color: isSelected
+                  ? TAColors.primary
+                  : TAColors.borderColor(isDark),
             ),
           ),
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? Colors.white : TAColors.textPrimaryColor(isDark),
+              color: isSelected
+                  ? Colors.white
+                  : TAColors.textPrimaryColor(isDark),
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),
@@ -195,11 +196,17 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
       builder: (context, coursesState) {
         // Get TA's assigned course IDs and models
         List<TeachingCourseModel> assignedCourses = [];
-        if (coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>) {
-          assignedCourses = (coursesState.coursesStatus as TASubTabLoaded<List<TeachingCourseModel>>).data;
+        if (coursesState.coursesStatus
+            is TASubTabLoaded<List<TeachingCourseModel>>) {
+          assignedCourses =
+              (coursesState.coursesStatus
+                      as TASubTabLoaded<List<TeachingCourseModel>>)
+                  .data;
         }
-        final assignedCourseIds = assignedCourses.map((c) => c.courseId).toSet();
-        
+        final assignedCourseIds = assignedCourses
+            .map((c) => c.courseId)
+            .toSet();
+
         // Handle full loading (no cache) - only on initial load
         if (state is TALabsLoading) {
           return SliverFillRemaining(
@@ -218,11 +225,16 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         // Handle loading with cache - show existing labs with refresh indicator
         if (state is TALabsLoadingWithCache) {
           final filteredLabs = state.cachedLabs.where((lab) {
-            return assignedCourseIds.isEmpty || assignedCourseIds.contains(lab.courseId);
+            return assignedCourseIds.isEmpty ||
+                assignedCourseIds.contains(lab.courseId);
           }).toList();
-          
+
           return _buildLabsList(
-            isDark, l10n, filteredLabs, assignedCourses, assignedCourseIds,
+            isDark,
+            l10n,
+            filteredLabs,
+            assignedCourses,
+            assignedCourseIds,
             showRefreshIndicator: true,
           );
         }
@@ -230,11 +242,16 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         if (state is TALabsLoaded) {
           // Filter labs to only show those from TA's assigned courses
           final filteredLabs = state.labs.where((lab) {
-            return assignedCourseIds.isEmpty || assignedCourseIds.contains(lab.courseId);
+            return assignedCourseIds.isEmpty ||
+                assignedCourseIds.contains(lab.courseId);
           }).toList();
-          
+
           return _buildLabsList(
-            isDark, l10n, filteredLabs, assignedCourses, assignedCourseIds,
+            isDark,
+            l10n,
+            filteredLabs,
+            assignedCourses,
+            assignedCourseIds,
             showRefreshIndicator: false,
           );
         }
@@ -259,35 +276,36 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     required bool showRefreshIndicator,
   }) {
     final filteredLabs = _applyFilter(labs);
-    
+
     // Group labs by courseId
     final grouped = <int, List<LabModel>>{};
     for (final lab in filteredLabs) {
       grouped.putIfAbsent(lab.courseId, () => []).add(lab);
     }
-    
+
     // Show all assigned courses, even those without labs
-    final courseIds = assignedCourseIds.isNotEmpty 
+    final courseIds = assignedCourseIds.isNotEmpty
         ? assignedCourseIds.toList()
         : grouped.keys.toList();
 
     if (courseIds.isEmpty) {
-      return SliverFillRemaining(
-        child: _buildEmptyState(isDark, l10n),
-      );
+      return SliverFillRemaining(child: _buildEmptyState(isDark, l10n));
     }
 
     return SliverPadding(
       padding: const EdgeInsets.all(16),
       sliver: SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final courseId = courseIds[index];
-            final courseLabs = grouped[courseId] ?? [];
-            return _buildCourseLabsCard(courseId, courseLabs, isDark, l10n, assignedCourses);
-          },
-          childCount: courseIds.length,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final courseId = courseIds[index];
+          final courseLabs = grouped[courseId] ?? [];
+          return _buildCourseLabsCard(
+            courseId,
+            courseLabs,
+            isDark,
+            l10n,
+            assignedCourses,
+          );
+        }, childCount: courseIds.length),
       ),
     );
   }
@@ -298,7 +316,9 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
       return labs.where((lab) => lab.status.toJson() == 'published').toList();
     }
     if (_selectedFilter == 'pending') {
-      return labs.where((lab) => lab.status.toJson() == 'published' && !lab.isPastDue).toList();
+      return labs
+          .where((lab) => lab.status.toJson() == 'published' && !lab.isPastDue)
+          .toList();
     }
     return labs;
   }
@@ -383,10 +403,12 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     // Find the course model from assigned courses
     final courseModel = assignedCourses.firstWhere(
       (c) => c.courseId == courseId,
-      orElse: () => assignedCourses.isNotEmpty ? assignedCourses.first : throw Exception('Course not found'),
+      orElse: () => assignedCourses.isNotEmpty
+          ? assignedCourses.first
+          : throw Exception('Course not found'),
     );
-    
-    final courseName = labs.isNotEmpty 
+
+    final courseName = labs.isNotEmpty
         ? (labs.first.course?.name ?? courseModel.course.courseName)
         : courseModel.course.courseName;
     final courseCode = labs.isNotEmpty
@@ -476,7 +498,10 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
@@ -531,7 +556,9 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(statusStr).withValues(alpha: isDark ? 0.2 : 0.1),
+                  color: _getStatusColor(
+                    statusStr,
+                  ).withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -576,9 +603,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  _buildStatusBadge(statusStr, l10n),
-                ],
+                children: [_buildStatusBadge(statusStr, l10n)],
               ),
               const SizedBox(width: 4),
               PopupMenuButton<String>(
@@ -599,7 +624,11 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                     value: 'delete',
                     child: Row(
                       children: [
-                        Icon(Icons.delete_rounded, size: 18, color: TAColors.error),
+                        Icon(
+                          Icons.delete_rounded,
+                          size: 18,
+                          color: TAColors.error,
+                        ),
                         const SizedBox(width: 8),
                         Text('Delete', style: TextStyle(color: TAColors.error)),
                       ],
@@ -680,8 +709,11 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   // T031: Open Create Lab form
   void _openCreateLabForm(bool isDark) {
     final coursesState = context.read<TACoursesCubit>().state;
-    final courses = coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>
-        ? (coursesState.coursesStatus as TASubTabLoaded<List<TeachingCourseModel>>).data
+    final courses =
+        coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>
+        ? (coursesState.coursesStatus
+                  as TASubTabLoaded<List<TeachingCourseModel>>)
+              .data
         : <TeachingCourseModel>[];
 
     if (courses.isEmpty) {
@@ -720,10 +752,12 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                   try {
                     labService = context.read<LabService>();
                   } catch (_) {
-                    final coreApiClient = CoreApiClient(storageService: StorageService());
+                    final coreApiClient = CoreApiClient(
+                      storageService: StorageService(),
+                    );
                     labService = LabService(coreApiClient: coreApiClient);
                   }
-                  
+
                   await labService.create(data);
                   if (mounted) {
                     context.read<TALabsCubit>().fetchTALabs();

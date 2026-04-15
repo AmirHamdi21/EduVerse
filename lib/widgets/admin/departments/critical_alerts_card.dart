@@ -39,9 +39,7 @@ class CriticalAlertsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.error.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AdminColors.error.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,13 +74,9 @@ class CriticalAlertsCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: isDark
-            ? AdminColors.darkSurface
-            : AdminColors.lightBackground,
+        color: isDark ? AdminColors.darkSurface : AdminColors.lightBackground,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AdminColors.getDividerColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getDividerColor(isDark)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

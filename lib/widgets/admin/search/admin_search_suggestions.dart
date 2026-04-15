@@ -12,12 +12,36 @@ class AdminSearchSuggestions extends StatelessWidget {
   });
 
   static const List<Map<String, dynamic>> _suggestions = [
-    {'icon': Icons.people_rounded, 'text': 'All students', 'color': Color(0xFF155DFC)},
-    {'icon': Icons.school_rounded, 'text': 'Active courses', 'color': Color(0xFF00C950)},
-    {'icon': Icons.warning_rounded, 'text': 'Low attendance', 'color': Color(0xFFF0B100)},
-    {'icon': Icons.security_rounded, 'text': 'Security logs', 'color': Color(0xFFFB2C36)},
-    {'icon': Icons.payment_rounded, 'text': 'Payment issues', 'color': Color(0xFF8B5CF6)},
-    {'icon': Icons.assessment_rounded, 'text': 'Recent reports', 'color': Color(0xFF00B8DB)},
+    {
+      'icon': Icons.people_rounded,
+      'text': 'All students',
+      'color': Color(0xFF155DFC),
+    },
+    {
+      'icon': Icons.school_rounded,
+      'text': 'Active courses',
+      'color': Color(0xFF00C950),
+    },
+    {
+      'icon': Icons.warning_rounded,
+      'text': 'Low attendance',
+      'color': Color(0xFFF0B100),
+    },
+    {
+      'icon': Icons.security_rounded,
+      'text': 'Security logs',
+      'color': Color(0xFFFB2C36),
+    },
+    {
+      'icon': Icons.payment_rounded,
+      'text': 'Payment issues',
+      'color': Color(0xFF8B5CF6),
+    },
+    {
+      'icon': Icons.assessment_rounded,
+      'text': 'Recent reports',
+      'color': Color(0xFF00B8DB),
+    },
   ];
 
   @override
@@ -97,10 +121,26 @@ class AdminQuickActions extends StatelessWidget {
   });
 
   static const List<Map<String, dynamic>> _actions = [
-    {'icon': Icons.person_add_rounded, 'text': 'Add User', 'route': '/admin/users/add'},
-    {'icon': Icons.add_circle_rounded, 'text': 'Create Course', 'route': '/admin/courses/add'},
-    {'icon': Icons.send_rounded, 'text': 'Send Announcement', 'route': '/admin/notifications'},
-    {'icon': Icons.assessment_rounded, 'text': 'Generate Report', 'route': '/admin/analytics'},
+    {
+      'icon': Icons.person_add_rounded,
+      'text': 'Add User',
+      'route': '/admin/users/add',
+    },
+    {
+      'icon': Icons.add_circle_rounded,
+      'text': 'Create Course',
+      'route': '/admin/courses/add',
+    },
+    {
+      'icon': Icons.send_rounded,
+      'text': 'Send Announcement',
+      'route': '/admin/notifications',
+    },
+    {
+      'icon': Icons.assessment_rounded,
+      'text': 'Generate Report',
+      'route': '/admin/analytics',
+    },
   ];
 
   @override
@@ -166,7 +206,9 @@ class AdminQuickActions extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
-                    color: isDark ? AdminColors.darkText : AdminColors.lightText,
+                    color: isDark
+                        ? AdminColors.darkText
+                        : AdminColors.lightText,
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 1,

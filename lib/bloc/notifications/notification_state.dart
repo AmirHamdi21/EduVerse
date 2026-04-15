@@ -88,8 +88,11 @@ class NotificationState extends Equatable {
     final startOfDay = DateTime(now.year, now.month, now.day);
     final startOfWeek = startOfDay.subtract(const Duration(days: 7));
     return filteredNotifications
-        .where((n) =>
-            n.createdAt.isBefore(startOfDay) && n.createdAt.isAfter(startOfWeek))
+        .where(
+          (n) =>
+              n.createdAt.isBefore(startOfDay) &&
+              n.createdAt.isAfter(startOfWeek),
+        )
         .toList();
   }
 
@@ -127,14 +130,14 @@ class NotificationState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        notifications,
-        aiInsights,
-        systemAlerts,
-        unreadCount,
-        errorMessage,
-        selectedCategory,
-        searchQuery,
-        isSearching,
-      ];
+    status,
+    notifications,
+    aiInsights,
+    systemAlerts,
+    unreadCount,
+    errorMessage,
+    selectedCategory,
+    searchQuery,
+    isSearching,
+  ];
 }

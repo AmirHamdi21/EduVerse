@@ -7,10 +7,7 @@ import '../../../bloc/instructor/instructor_calendar_state.dart';
 class InstructorDayViewCalendar extends StatelessWidget {
   final Function(InstructorCalendarEvent) onEventTap;
 
-  const InstructorDayViewCalendar({
-    super.key,
-    required this.onEventTap,
-  });
+  const InstructorDayViewCalendar({super.key, required this.onEventTap});
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +22,7 @@ class InstructorDayViewCalendar extends StatelessWidget {
             color: isDark ? const Color(0xFF1E2939) : Colors.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color:
-                  isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+              color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
             ),
             boxShadow: [
               BoxShadow(
@@ -51,15 +47,33 @@ class InstructorDayViewCalendar extends StatelessWidget {
   }
 
   Widget _buildDayHeader(
-      BuildContext context, InstructorCalendarState state, bool isDark) {
+    BuildContext context,
+    InstructorCalendarState state,
+    bool isDark,
+  ) {
     final date = state.selectedDate;
     final dayNames = [
-      'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-      'Thursday', 'Friday', 'Saturday'
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
     ];
     final monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
 
     return Padding(
@@ -69,8 +83,9 @@ class InstructorDayViewCalendar extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () {
-              final newDate =
-                  state.selectedDate.subtract(const Duration(days: 1));
+              final newDate = state.selectedDate.subtract(
+                const Duration(days: 1),
+              );
               context.read<InstructorCalendarCubit>().selectDate(newDate);
             },
             icon: Icon(
@@ -117,7 +132,10 @@ class InstructorDayViewCalendar extends StatelessWidget {
   }
 
   Widget _buildTimelineView(
-      BuildContext context, InstructorCalendarState state, bool isDark) {
+    BuildContext context,
+    InstructorCalendarState state,
+    bool isDark,
+  ) {
     final events = state.selectedDateEvents;
     final hours = List.generate(14, (i) => i + 7); // 7 AM to 8 PM
 
@@ -166,8 +184,10 @@ class InstructorDayViewCalendar extends StatelessWidget {
                     child: hourEvents.isEmpty
                         ? const SizedBox()
                         : Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: hourEvents.map((event) {
@@ -176,7 +196,9 @@ class InstructorDayViewCalendar extends StatelessWidget {
                                   child: Container(
                                     margin: const EdgeInsets.only(bottom: 4),
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 8),
+                                      horizontal: 12,
+                                      vertical: 8,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: _getEventColor(event.type),
                                       borderRadius: BorderRadius.circular(8),
@@ -199,7 +221,9 @@ class InstructorDayViewCalendar extends StatelessWidget {
                                           Icon(
                                             Icons.location_on_outlined,
                                             size: 14,
-                                            color: Colors.white.withValues(alpha: 0.8),
+                                            color: Colors.white.withValues(
+                                              alpha: 0.8,
+                                            ),
                                           ),
                                         ],
                                       ],

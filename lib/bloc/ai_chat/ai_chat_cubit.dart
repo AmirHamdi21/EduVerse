@@ -7,29 +7,31 @@ class AiChatCubit extends Cubit<AiChatState> {
   }
 
   void _initialize() {
-    emit(state.copyWith(
-      quickActions: _getQuickActions(),
-      availableCourses: [
-        'Machine Learning',
-        'Data Structures',
-        'Computer Networks',
-        'Database Systems',
-        'Software Engineering',
-      ],
-      messages: [
-        ChatMessage(
-          id: 'welcome_1',
-          content: 'Hello! How can I help you with your studies today?',
-          isUser: false,
-          timestamp: DateTime.now().subtract(const Duration(minutes: 1)),
-          suggestions: [
-            'Summarize a topic',
-            'Generate quiz questions',
-            'Explain a concept',
-          ],
-        ),
-      ],
-    ));
+    emit(
+      state.copyWith(
+        quickActions: _getQuickActions(),
+        availableCourses: [
+          'Machine Learning',
+          'Data Structures',
+          'Computer Networks',
+          'Database Systems',
+          'Software Engineering',
+        ],
+        messages: [
+          ChatMessage(
+            id: 'welcome_1',
+            content: 'Hello! How can I help you with your studies today?',
+            isUser: false,
+            timestamp: DateTime.now().subtract(const Duration(minutes: 1)),
+            suggestions: [
+              'Summarize a topic',
+              'Generate quiz questions',
+              'Explain a concept',
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   List<QuickAction> _getQuickActions() {
@@ -63,20 +65,25 @@ class AiChatCubit extends Cubit<AiChatState> {
 
   void setChatMode(ChatMode mode) {
     emit(state.copyWith(chatMode: mode));
-    
+
     // Add a system message about mode change
     final modeMessage = switch (mode) {
-      ChatMode.generalHelp => "Switched to General Help mode. I can assist you with any study-related questions.",
-      ChatMode.courseSpecific => "Switched to Course-Specific mode. Select a course to get targeted help.",
-      ChatMode.aiTutor => "Switched to AI Tutor mode. I'll guide you through concepts step by step with interactive learning.",
+      ChatMode.generalHelp =>
+        "Switched to General Help mode. I can assist you with any study-related questions.",
+      ChatMode.courseSpecific =>
+        "Switched to Course-Specific mode. Select a course to get targeted help.",
+      ChatMode.aiTutor =>
+        "Switched to AI Tutor mode. I'll guide you through concepts step by step with interactive learning.",
     };
-    
+
     _addAiMessage(modeMessage);
   }
 
   void selectCourse(String course) {
     emit(state.copyWith(selectedCourse: course));
-    _addAiMessage("Now focusing on $course. Ask me anything about this course!");
+    _addAiMessage(
+      "Now focusing on $course. Ask me anything about this course!",
+    );
   }
 
   Future<void> sendMessage(String content) async {
@@ -90,9 +97,7 @@ class AiChatCubit extends Cubit<AiChatState> {
       status: MessageStatus.sending,
     );
 
-    emit(state.copyWith(
-      messages: [...state.messages, userMessage],
-    ));
+    emit(state.copyWith(messages: [...state.messages, userMessage]));
 
     // Update to sent status
     await Future.delayed(const Duration(milliseconds: 300));
@@ -102,7 +107,7 @@ class AiChatCubit extends Cubit<AiChatState> {
       }
       return m;
     }).toList();
-    
+
     emit(state.copyWith(messages: updatedMessages, isAiTyping: true));
 
     // Simulate AI thinking
@@ -110,7 +115,7 @@ class AiChatCubit extends Cubit<AiChatState> {
 
     // Generate AI response based on content
     final response = _generateAiResponse(content);
-    
+
     final aiMessage = ChatMessage(
       id: '${DateTime.now().millisecondsSinceEpoch}_ai',
       content: response,
@@ -119,10 +124,12 @@ class AiChatCubit extends Cubit<AiChatState> {
       suggestions: _getSuggestionsForResponse(content),
     );
 
-    emit(state.copyWith(
-      messages: [...state.messages, aiMessage],
-      isAiTyping: false,
-    ));
+    emit(
+      state.copyWith(
+        messages: [...state.messages, aiMessage],
+        isAiTyping: false,
+      ),
+    );
   }
 
   void sendQuickAction(QuickAction action) {
@@ -137,15 +144,14 @@ class AiChatCubit extends Cubit<AiChatState> {
       timestamp: DateTime.now(),
     );
 
-    emit(state.copyWith(
-      messages: [...state.messages, aiMessage],
-    ));
+    emit(state.copyWith(messages: [...state.messages, aiMessage]));
   }
 
   String _generateAiResponse(String userMessage) {
     final lowerMessage = userMessage.toLowerCase();
-    
-    if (lowerMessage.contains('summarize') || lowerMessage.contains('summary')) {
+
+    if (lowerMessage.contains('summarize') ||
+        lowerMessage.contains('summary')) {
       return "Here's a summary of the key points from your last lecture on Machine Learning:\n\n"
           "📌 **Key Concepts:**\n"
           "1. Supervised vs Unsupervised Learning\n"
@@ -158,7 +164,7 @@ class AiChatCubit extends Cubit<AiChatState> {
           "- Validation helps prevent overfitting\n\n"
           "Would you like me to elaborate on any of these topics?";
     }
-    
+
     if (lowerMessage.contains('quiz') || lowerMessage.contains('question')) {
       return "Here are 5 quiz questions on the current topic:\n\n"
           "**Question 1:** What is the main difference between supervised and unsupervised learning?\n\n"
@@ -168,7 +174,7 @@ class AiChatCubit extends Cubit<AiChatState> {
           "**Question 5:** Explain the concept of feature engineering.\n\n"
           "Would you like me to provide answers or more questions?";
     }
-    
+
     if (lowerMessage.contains('explain') || lowerMessage.contains('what is')) {
       return "Let me explain this concept in simple terms:\n\n"
           "🎓 **Concept Explanation:**\n\n"
@@ -180,8 +186,9 @@ class AiChatCubit extends Cubit<AiChatState> {
           "📝 **Key Point:** The more diverse and quality data you provide, the better the model learns.\n\n"
           "Would you like a more technical explanation?";
     }
-    
-    if (lowerMessage.contains('performance') || lowerMessage.contains('grade')) {
+
+    if (lowerMessage.contains('performance') ||
+        lowerMessage.contains('grade')) {
       return "📊 **Your Performance Summary:**\n\n"
           "**Overall GPA:** 3.7/4.0\n\n"
           "**Course Performance:**\n"
@@ -196,7 +203,7 @@ class AiChatCubit extends Cubit<AiChatState> {
           "📈 Final exam preparation\n\n"
           "Would you like detailed tips for improvement?";
     }
-    
+
     if (lowerMessage.contains('help') || lowerMessage.contains('can you')) {
       return "I can help you with many things! Here's what I can do:\n\n"
           "📚 **Study Assistance:**\n"
@@ -213,7 +220,7 @@ class AiChatCubit extends Cubit<AiChatState> {
           "• Help with assignments\n\n"
           "What would you like to focus on?";
     }
-    
+
     return "I understand you're asking about: \"$userMessage\"\n\n"
         "Let me help you with that. Based on your question, here are some relevant insights:\n\n"
         "1. This topic is commonly covered in your coursework\n"
@@ -227,7 +234,7 @@ class AiChatCubit extends Cubit<AiChatState> {
 
   List<String>? _getSuggestionsForResponse(String userMessage) {
     final lowerMessage = userMessage.toLowerCase();
-    
+
     if (lowerMessage.contains('summarize')) {
       return ['Explain topic 1', 'Generate quiz', 'More details'];
     }
@@ -242,7 +249,7 @@ class AiChatCubit extends Cubit<AiChatState> {
 
   void toggleRecording() {
     emit(state.copyWith(isRecording: !state.isRecording));
-    
+
     if (state.isRecording) {
       // Simulate voice recognition
       Future.delayed(const Duration(seconds: 2), () {
@@ -255,17 +262,19 @@ class AiChatCubit extends Cubit<AiChatState> {
   }
 
   void clearChat() {
-    emit(state.copyWith(
-      messages: [
-        ChatMessage(
-          id: 'welcome_new',
-          content: 'Chat cleared. How can I help you today?',
-          isUser: false,
-          timestamp: DateTime.now(),
-        ),
-      ],
-      successMessage: 'Chat history cleared',
-    ));
+    emit(
+      state.copyWith(
+        messages: [
+          ChatMessage(
+            id: 'welcome_new',
+            content: 'Chat cleared. How can I help you today?',
+            isUser: false,
+            timestamp: DateTime.now(),
+          ),
+        ],
+        successMessage: 'Chat history cleared',
+      ),
+    );
     _clearSuccessMessage();
   }
 
@@ -274,7 +283,7 @@ class AiChatCubit extends Cubit<AiChatState> {
       (m) => m.id == messageId,
       orElse: () => throw Exception('Message not found'),
     );
-    
+
     if (message.status == MessageStatus.error) {
       sendMessage(message.content);
     }

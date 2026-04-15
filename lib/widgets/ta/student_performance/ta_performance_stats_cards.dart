@@ -104,11 +104,7 @@ class TAPerformanceStatsCards extends StatelessWidget {
               color: color.withValues(alpha: isDark ? 0.2 : 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 20,
-            ),
+            child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(

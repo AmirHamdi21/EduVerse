@@ -69,17 +69,25 @@ class ITRecentAlertsSection extends StatelessWidget {
                     Row(
                       children: [
                         _buildAlertCount(
-                          alerts.where((a) => a.severity == AlertSeverity.critical).length,
+                          alerts
+                              .where(
+                                (a) => a.severity == AlertSeverity.critical,
+                              )
+                              .length,
                           ITColors.error,
                         ),
                         const SizedBox(width: 8),
                         _buildAlertCount(
-                          alerts.where((a) => a.severity == AlertSeverity.warning).length,
+                          alerts
+                              .where((a) => a.severity == AlertSeverity.warning)
+                              .length,
                           ITColors.warning,
                         ),
                         const SizedBox(width: 8),
                         _buildAlertCount(
-                          alerts.where((a) => a.severity == AlertSeverity.info).length,
+                          alerts
+                              .where((a) => a.severity == AlertSeverity.info)
+                              .length,
                           ITColors.info,
                         ),
                       ],
@@ -102,10 +110,10 @@ class ITRecentAlertsSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Alerts List
           ...alerts.take(5).map((alert) => _buildAlertCard(alert)),
-          
+
           if (alerts.isEmpty)
             Center(
               child: Padding(
@@ -127,10 +135,7 @@ class ITRecentAlertsSection extends StatelessWidget {
                     ),
                     Text(
                       'System is running smoothly',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: ITColors.success,
-                      ),
+                      style: TextStyle(fontSize: 12, color: ITColors.success),
                     ),
                   ],
                 ),
@@ -184,11 +189,7 @@ class ITRecentAlertsSection extends StatelessWidget {
                 color: alert.severityColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                alert.typeIcon,
-                size: 20,
-                color: alert.severityColor,
-              ),
+              child: Icon(alert.typeIcon, size: 20, color: alert.severityColor),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -210,7 +211,10 @@ class ITRecentAlertsSection extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: alert.severityColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),

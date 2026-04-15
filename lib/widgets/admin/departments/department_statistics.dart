@@ -27,9 +27,7 @@ class DepartmentStatistics extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
       ),
       child: Column(
         children: [
@@ -99,10 +97,7 @@ class DepartmentStatistics extends StatelessWidget {
   }
 
   Widget _buildDivider() {
-    return Divider(
-      height: 1,
-      color: AdminColors.getDividerColor(isDark),
-    );
+    return Divider(height: 1, color: AdminColors.getDividerColor(isDark));
   }
 
   String _formatNumber(int number) {

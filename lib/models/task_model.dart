@@ -260,11 +260,11 @@ class TaskModel {
           : null,
       estimatedMinutes: map['estimatedMinutes'] as int?,
       subtasks: (map['subtasks'] as List<dynamic>?)?.cast<String>(),
-      completedSubtasks:
-          (map['completedSubtasks'] as List<dynamic>?)?.cast<String>(),
+      completedSubtasks: (map['completedSubtasks'] as List<dynamic>?)
+          ?.cast<String>(),
       isBookmarked: map['isBookmarked'] as bool? ?? false,
       attachmentUrl: map['attachmentUrl'] as String?,
-      source: map['source'] != null 
+      source: map['source'] != null
           ? TaskSource.values[map['source'] as int]
           : TaskSource.manual,
     );

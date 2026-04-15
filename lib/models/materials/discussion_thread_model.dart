@@ -64,15 +64,15 @@ class DiscussionThreadModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        forumId,
-        title,
-        content,
-        createdBy,
-        isPinned,
-        isLocked,
-        replyCount,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    forumId,
+    title,
+    content,
+    createdBy,
+    isPinned,
+    isLocked,
+    replyCount,
+    createdAt,
+    updatedAt,
+  ];
 }

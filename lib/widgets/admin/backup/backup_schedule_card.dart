@@ -81,7 +81,9 @@ class BackupScheduleCard extends StatelessWidget {
                       l10n.scheduleAutomaticBackups,
                       style: TextStyle(
                         fontSize: 13,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -165,14 +167,19 @@ class BackupScheduleCard extends StatelessWidget {
                         l10n.keepBackupsFor,
                         style: TextStyle(
                           fontSize: 12,
-                          color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                          color: AdminColors.getTextColor(
+                            isDark,
+                          ).withValues(alpha: 0.6),
                         ),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.08)
@@ -194,10 +201,12 @@ class BackupScheduleCard extends StatelessWidget {
                         color: AdminColors.getTextColor(isDark),
                       ),
                       items: [7, 14, 30, 60, 90]
-                          .map((days) => DropdownMenuItem(
-                                value: days,
-                                child: Text('$days ${l10n.days}'),
-                              ))
+                          .map(
+                            (days) => DropdownMenuItem(
+                              value: days,
+                              child: Text('$days ${l10n.days}'),
+                            ),
+                          )
                           .toList(),
                       onChanged: (value) {
                         if (value != null) onRetentionChanged(value);
@@ -225,8 +234,8 @@ class BackupScheduleCard extends StatelessWidget {
           color: isSelected
               ? null
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.05)),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.05)),
           borderRadius: BorderRadius.circular(12),
           border: isSelected
               ? null

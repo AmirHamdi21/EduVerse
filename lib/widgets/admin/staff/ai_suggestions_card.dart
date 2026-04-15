@@ -29,14 +29,8 @@ class AiSuggestionsCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? [
-                  const Color(0xFF1E1E2E),
-                  const Color(0xFF2D2D44),
-                ]
-              : [
-                  const Color(0xFFFAF5FF),
-                  const Color(0xFFEFF6FF),
-                ],
+              ? [const Color(0xFF1E1E2E), const Color(0xFF2D2D44)]
+              : [const Color(0xFFFAF5FF), const Color(0xFFEFF6FF)],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -91,7 +85,9 @@ class AiSuggestionsCard extends StatelessWidget {
           if (suggestions.isEmpty)
             _buildEmptyState(l10n)
           else
-            ...suggestions.map((suggestion) => _buildSuggestionCard(suggestion, l10n)),
+            ...suggestions.map(
+              (suggestion) => _buildSuggestionCard(suggestion, l10n),
+            ),
         ],
       ),
     );

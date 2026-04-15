@@ -84,7 +84,8 @@ class AdminRecentActivitySection extends StatelessWidget {
                     ],
                   ),
                   GestureDetector(
-                    onTap: () => _showAllActivities(context, isDark, l10n, activities),
+                    onTap: () =>
+                        _showAllActivities(context, isDark, l10n, activities),
                     child: Text(
                       l10n.viewAll,
                       style: TextStyle(
@@ -97,10 +98,14 @@ class AdminRecentActivitySection extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 20),
-              ...activities.take(5).map((activity) => Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: _buildActivityItem(isDark, activity),
-                  )),
+              ...activities
+                  .take(5)
+                  .map(
+                    (activity) => Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: _buildActivityItem(isDark, activity),
+                    ),
+                  ),
             ],
           ),
         );

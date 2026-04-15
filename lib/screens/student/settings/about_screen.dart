@@ -13,11 +13,13 @@ class AboutScreen extends StatelessWidget {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -136,10 +138,7 @@ class AboutScreen extends StatelessWidget {
             ),
             child: const Text(
               'Version 1.0.0',
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.white,
-              ),
+              style: TextStyle(fontSize: 13, color: Colors.white),
             ),
           ),
           const SizedBox(height: 16),
@@ -179,7 +178,11 @@ class AboutScreen extends StatelessWidget {
   ) {
     final links = [
       (Icons.description_rounded, l10n.termsOfService, '/settings/terms'),
-      (Icons.privacy_tip_rounded, l10n.privacyPolicy, '/settings/privacy-policy'),
+      (
+        Icons.privacy_tip_rounded,
+        l10n.privacyPolicy,
+        '/settings/privacy-policy',
+      ),
       (Icons.gavel_rounded, l10n.licenses, ''),
       (Icons.feedback_rounded, l10n.sendFeedback, ''),
       (Icons.star_rounded, l10n.rateApp, ''),
@@ -213,8 +216,10 @@ class AboutScreen extends StatelessWidget {
                 },
                 borderRadius: BorderRadius.circular(16),
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
                   child: Row(
                     children: [
                       Container(
@@ -378,11 +383,7 @@ class AboutScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Center(
-                    child: Icon(
-                      social.$1,
-                      size: 28,
-                      color: social.$3,
-                    ),
+                    child: Icon(social.$1, size: 28, color: social.$3),
                   ),
                 ),
               );

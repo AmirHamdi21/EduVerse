@@ -94,12 +94,12 @@ class ITResourceUtilizationSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Resource bars
           ...resources.map((resource) => _buildResourceBar(resource)),
-          
+
           const SizedBox(height: 16),
-          
+
           // Summary
           _buildSummary(),
         ],
@@ -110,7 +110,11 @@ class ITResourceUtilizationSection extends StatelessWidget {
   Widget _buildResourceBar(ResourceUtilization resource) {
     final isHigh = resource.percentage > 80;
     final isMedium = resource.percentage > 60 && resource.percentage <= 80;
-    final displayColor = isHigh ? ITColors.error : isMedium ? ITColors.warning : resource.color;
+    final displayColor = isHigh
+        ? ITColors.error
+        : isMedium
+        ? ITColors.warning
+        : resource.color;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
@@ -201,7 +205,9 @@ class ITResourceUtilizationSection extends StatelessWidget {
   Widget _buildSummary() {
     final totalUsed = resources.fold<double>(0, (sum, r) => sum + r.used);
     final totalCapacity = resources.fold<double>(0, (sum, r) => sum + r.total);
-    final overallPercentage = totalCapacity > 0 ? (totalUsed / totalCapacity * 100) : 0.0;
+    final overallPercentage = totalCapacity > 0
+        ? (totalUsed / totalCapacity * 100)
+        : 0.0;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -213,9 +219,7 @@ class ITResourceUtilizationSection extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: ITColors.primary.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: ITColors.primary.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [

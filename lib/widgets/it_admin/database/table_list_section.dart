@@ -26,7 +26,14 @@ class TableListSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Tables', style: TextStyle(color: ITColors.textPrimaryColor(isDark), fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            'Tables',
+            style: TextStyle(
+              color: ITColors.textPrimaryColor(isDark),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 12),
           ...tables.map((table) => _buildTableRow(table)),
         ],
@@ -39,15 +46,43 @@ class TableListSection extends StatelessWidget {
       onTap: () => onTableTap(table),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(border: Border(bottom: BorderSide(color: ITColors.borderColor(isDark)))),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(color: ITColors.borderColor(isDark)),
+          ),
+        ),
         child: Row(
           children: [
-            Icon(Icons.table_chart_outlined, color: ITColors.textSecondaryColor(isDark), size: 20),
+            Icon(
+              Icons.table_chart_outlined,
+              color: ITColors.textSecondaryColor(isDark),
+              size: 20,
+            ),
             const SizedBox(width: 12),
-            Expanded(child: Text(table.name, style: TextStyle(color: ITColors.textPrimaryColor(isDark), fontWeight: FontWeight.w500))),
-            Text('${_formatNumber(table.rows)} rows', style: TextStyle(color: ITColors.textSecondaryColor(isDark), fontSize: 12)),
+            Expanded(
+              child: Text(
+                table.name,
+                style: TextStyle(
+                  color: ITColors.textPrimaryColor(isDark),
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+            Text(
+              '${_formatNumber(table.rows)} rows',
+              style: TextStyle(
+                color: ITColors.textSecondaryColor(isDark),
+                fontSize: 12,
+              ),
+            ),
             const SizedBox(width: 12),
-            Text('${table.size.toStringAsFixed(1)} MB', style: TextStyle(color: ITColors.textTertiaryColor(isDark), fontSize: 12)),
+            Text(
+              '${table.size.toStringAsFixed(1)} MB',
+              style: TextStyle(
+                color: ITColors.textTertiaryColor(isDark),
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
       ),

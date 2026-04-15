@@ -25,9 +25,7 @@ class SearchResultCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.05)
-                : Colors.white,
+            color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isDark
@@ -65,11 +63,7 @@ class SearchResultCard extends StatelessWidget {
         color: item.iconColor.withValues(alpha: isDark ? 0.15 : 0.08),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Icon(
-        item.icon,
-        color: item.iconColor,
-        size: 22,
-      ),
+      child: Icon(item.icon, color: item.iconColor, size: 22),
     );
   }
 

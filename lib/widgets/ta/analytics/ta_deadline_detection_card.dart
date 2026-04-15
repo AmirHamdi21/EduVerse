@@ -59,7 +59,10 @@ class TADeadlineDetectionCard extends StatelessWidget {
               const Spacer(),
               if (courseOptions.isNotEmpty)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: TAColors.borderColor(isDark).withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(8),
@@ -117,7 +120,9 @@ class TADeadlineDetectionCard extends StatelessWidget {
               final index = entry.key;
               final deadline = entry.value;
               return Padding(
-                padding: EdgeInsets.only(bottom: index < deadlines.length - 1 ? 10 : 0),
+                padding: EdgeInsets.only(
+                  bottom: index < deadlines.length - 1 ? 10 : 0,
+                ),
                 child: _buildDeadlineItem(deadline),
               );
             }),
@@ -128,7 +133,7 @@ class TADeadlineDetectionCard extends StatelessWidget {
 
   Widget _buildDeadlineItem(UpcomingDeadline deadline) {
     final isUrgent = deadline.daysRemaining <= 2;
-    
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -137,10 +142,14 @@ class TADeadlineDetectionCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: (isUrgent ? TAColors.error : TAColors.warning).withValues(alpha: 0.08),
+            color: (isUrgent ? TAColors.error : TAColors.warning).withValues(
+              alpha: 0.08,
+            ),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: (isUrgent ? TAColors.error : TAColors.warning).withValues(alpha: 0.2),
+              color: (isUrgent ? TAColors.error : TAColors.warning).withValues(
+                alpha: 0.2,
+              ),
             ),
           ),
           child: Row(
@@ -148,7 +157,8 @@ class TADeadlineDetectionCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: (isUrgent ? TAColors.error : TAColors.warning).withValues(alpha: 0.15),
+                  color: (isUrgent ? TAColors.error : TAColors.warning)
+                      .withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -184,7 +194,8 @@ class TADeadlineDetectionCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: (isUrgent ? TAColors.error : TAColors.warning).withValues(alpha: 0.15),
+                  color: (isUrgent ? TAColors.error : TAColors.warning)
+                      .withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(

@@ -91,7 +91,9 @@ class AdminAIChatSection extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+                color: isDark
+                    ? AdminColors.darkTextSecondary
+                    : AdminColors.lightTextSecondary,
               ),
             ),
           ],
@@ -116,7 +118,9 @@ class AdminAIChatSection extends StatelessWidget {
           bottom: 4,
         ),
         child: Column(
-          crossAxisAlignment: message.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: message.isUser
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
             Container(
               padding: const EdgeInsets.all(16),
@@ -134,11 +138,14 @@ class AdminAIChatSection extends StatelessWidget {
                 border: message.isUser
                     ? null
                     : Border.all(
-                        color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+                        color: isDark
+                            ? AdminColors.darkCardBorder
+                            : AdminColors.lightCardBorder,
                       ),
                 boxShadow: [
                   BoxShadow(
-                    color: (message.isUser ? AdminColors.primary : Colors.black).withValues(alpha: 0.1),
+                    color: (message.isUser ? AdminColors.primary : Colors.black)
+                        .withValues(alpha: 0.1),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -157,7 +164,11 @@ class AdminAIChatSection extends StatelessWidget {
                             gradient: AdminColors.purpleGradient,
                             borderRadius: BorderRadius.circular(6),
                           ),
-                          child: const Icon(Icons.auto_awesome_rounded, color: Colors.white, size: 12),
+                          child: const Icon(
+                            Icons.auto_awesome_rounded,
+                            color: Colors.white,
+                            size: 12,
+                          ),
                         ),
                         const SizedBox(width: 8),
                         Text(
@@ -177,13 +188,16 @@ class AdminAIChatSection extends StatelessWidget {
                       fontSize: 15,
                       color: message.isUser
                           ? Colors.white
-                          : (isDark ? AdminColors.darkText : AdminColors.lightText),
+                          : (isDark
+                                ? AdminColors.darkText
+                                : AdminColors.lightText),
                     ),
                   ),
                 ],
               ),
             ),
-            if (message.suggestions != null && message.suggestions!.isNotEmpty) ...[
+            if (message.suggestions != null &&
+                message.suggestions!.isNotEmpty) ...[
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -199,7 +213,9 @@ class AdminAIChatSection extends StatelessWidget {
                 DateFormat('HH:mm').format(message.timestamp),
                 style: TextStyle(
                   fontSize: 11,
-                  color: isDark ? AdminColors.darkTextTertiary : AdminColors.lightTextTertiary,
+                  color: isDark
+                      ? AdminColors.darkTextTertiary
+                      : AdminColors.lightTextTertiary,
                 ),
               ),
             ),
@@ -214,7 +230,9 @@ class AdminAIChatSection extends StatelessWidget {
       color: AdminColors.secondary.withValues(alpha: 0.1),
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        onTap: onSuggestionTap != null ? () => onSuggestionTap!(suggestion) : null,
+        onTap: onSuggestionTap != null
+            ? () => onSuggestionTap!(suggestion)
+            : null,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -241,7 +259,9 @@ class AdminAIChatSection extends StatelessWidget {
           color: isDark ? AdminColors.darkCard : AdminColors.lightCard,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+            color: isDark
+                ? AdminColors.darkCardBorder
+                : AdminColors.lightCardBorder,
           ),
         ),
         child: Row(

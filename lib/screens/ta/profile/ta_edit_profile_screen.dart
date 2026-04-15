@@ -56,10 +56,15 @@ class _TAEditProfileScreenState extends State<TAEditProfileScreen> {
     _emailController = TextEditingController(text: 'ta@eduverse.dev');
     _phoneController = TextEditingController(text: '+1 234 567 8900');
     _bioController = TextEditingController(
-      text: 'Passionate about helping students understand complex programming concepts.',
+      text:
+          'Passionate about helping students understand complex programming concepts.',
     );
-    _officeLocationController = TextEditingController(text: 'Building A, Room 205');
-    _linkedinController = TextEditingController(text: 'linkedin.com/in/ahmedhassan');
+    _officeLocationController = TextEditingController(
+      text: 'Building A, Room 205',
+    );
+    _linkedinController = TextEditingController(
+      text: 'linkedin.com/in/ahmedhassan',
+    );
 
     // Add listeners to track changes
     for (var controller in [
@@ -535,10 +540,7 @@ class _TAEditProfileScreenState extends State<TAEditProfileScreen> {
     return DropdownButtonFormField<String>(
       value: value,
       items: items.map((item) {
-        return DropdownMenuItem(
-          value: item,
-          child: Text(item),
-        );
+        return DropdownMenuItem(value: item, child: Text(item));
       }).toList(),
       onChanged: onChanged,
       decoration: InputDecoration(
@@ -615,7 +617,9 @@ class _TAEditProfileScreenState extends State<TAEditProfileScreen> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: TAColors.scaffoldColor(isDark),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -703,10 +707,7 @@ class _TAEditProfileScreenState extends State<TAEditProfileScreen> {
               const SizedBox(width: 12),
               Text(
                 label,
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(color: color, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -736,9 +737,7 @@ class _TAEditProfileScreenState extends State<TAEditProfileScreen> {
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: TAColors.error,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: TAColors.error),
             child: const Text('Discard', style: TextStyle(color: Colors.white)),
           ),
         ],

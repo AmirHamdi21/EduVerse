@@ -19,9 +19,21 @@ class CloudQuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: _buildActionButton('Add Service', Icons.add_rounded, onAddService)),
+        Expanded(
+          child: _buildActionButton(
+            'Add Service',
+            Icons.add_rounded,
+            onAddService,
+          ),
+        ),
         const SizedBox(width: 12),
-        Expanded(child: _buildActionButton('View Costs', Icons.attach_money_rounded, onViewCosts)),
+        Expanded(
+          child: _buildActionButton(
+            'View Costs',
+            Icons.attach_money_rounded,
+            onViewCosts,
+          ),
+        ),
         const SizedBox(width: 12),
         Expanded(child: _buildActionButton('Sync', Icons.sync_rounded, onSync)),
       ],
@@ -42,7 +54,14 @@ class CloudQuickActions extends StatelessWidget {
           children: [
             Icon(icon, color: ITColors.primary, size: 24),
             const SizedBox(height: 8),
-            Text(label, style: TextStyle(color: ITColors.textPrimaryColor(isDark), fontSize: 12, fontWeight: FontWeight.w500)),
+            Text(
+              label,
+              style: TextStyle(
+                color: ITColors.textPrimaryColor(isDark),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),

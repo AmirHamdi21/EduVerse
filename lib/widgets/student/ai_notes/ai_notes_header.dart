@@ -6,10 +6,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class AiNotesHeader extends StatelessWidget {
   final VoidCallback? onBack;
 
-  const AiNotesHeader({
-    super.key,
-    this.onBack,
-  });
+  const AiNotesHeader({super.key, this.onBack});
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +110,7 @@ class AiNotesHeader extends StatelessWidget {
 
   void _showSettingsDialog(BuildContext context, bool isDark) {
     final l10n = AppLocalizations.of(context);
-    
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -241,7 +238,11 @@ class AiNotesHeader extends StatelessWidget {
     );
   }
 
-  void _showAboutDialog(BuildContext context, bool isDark, AppLocalizations l10n) {
+  void _showAboutDialog(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -257,22 +258,22 @@ class AiNotesHeader extends StatelessWidget {
                 ),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.auto_awesome, color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.auto_awesome,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Text(
               l10n.aboutAiNotes,
-              style: TextStyle(
-                color: isDark ? Colors.white : Colors.black87,
-              ),
+              style: TextStyle(color: isDark ? Colors.white : Colors.black87),
             ),
           ],
         ),
         content: Text(
           l10n.aiNotesAboutDescription,
-          style: TextStyle(
-            color: isDark ? Colors.white70 : Colors.black54,
-          ),
+          style: TextStyle(color: isDark ? Colors.white70 : Colors.black54),
         ),
         actions: [
           TextButton(
@@ -287,4 +288,3 @@ class AiNotesHeader extends StatelessWidget {
     );
   }
 }
-

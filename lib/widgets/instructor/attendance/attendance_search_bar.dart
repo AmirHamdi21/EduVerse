@@ -23,9 +23,7 @@ class AttendanceSearchBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AttendanceColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: AttendanceColors.borderColor(isDark),
-        ),
+        border: Border.all(color: AttendanceColors.borderColor(isDark)),
         boxShadow: isDark
             ? null
             : [

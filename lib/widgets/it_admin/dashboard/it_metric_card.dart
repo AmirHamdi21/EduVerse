@@ -42,10 +42,7 @@ class ITMetricCard extends StatelessWidget {
           color: isDark
               ? Colors.white.withValues(alpha: 0.05)
               : Colors.white.withValues(alpha: 0.8),
-          border: Border.all(
-            color: ITColors.accent,
-            width: 1,
-          ),
+          border: Border.all(color: ITColors.accent, width: 1),
           borderRadius: BorderRadius.circular(24),
           boxShadow: ITColors.cardShadow(isDark),
         ),
@@ -71,10 +68,12 @@ class ITMetricCard extends StatelessWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: badgeColor?.withValues(alpha: 0.1) ??
+                      color:
+                          badgeColor?.withValues(alpha: 0.1) ??
                           Colors.black.withValues(alpha: 0.05),
                       border: Border.all(
-                        color: badgeColor?.withValues(alpha: 0.3) ??
+                        color:
+                            badgeColor?.withValues(alpha: 0.3) ??
                             Colors.black.withValues(alpha: 0.1),
                       ),
                       borderRadius: BorderRadius.circular(8),
@@ -147,10 +146,7 @@ class ITMetricCard extends StatelessWidget {
             ],
 
             // Chart
-            if (chart != null) ...[
-              const SizedBox(height: 12),
-              chart!,
-            ],
+            if (chart != null) ...[const SizedBox(height: 12), chart!],
           ],
         ),
       ),

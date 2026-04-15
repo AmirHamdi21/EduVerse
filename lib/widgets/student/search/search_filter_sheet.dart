@@ -95,7 +95,12 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
               runSpacing: 8,
               children: [
                 _buildChip(l10n.pending, 'pending', _filter.status, isDark),
-                _buildChip(l10n.inProgress, 'inProgress', _filter.status, isDark),
+                _buildChip(
+                  l10n.inProgress,
+                  'inProgress',
+                  _filter.status,
+                  isDark,
+                ),
                 _buildChip(l10n.completed, 'completed', _filter.status, isDark),
                 _buildChip(l10n.overdue, 'overdue', _filter.status, isDark),
               ],
@@ -124,17 +129,9 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
               isDark: isDark,
               child: Row(
                 children: [
-                  _buildDirectionChip(
-                    l10n.searchAscending,
-                    true,
-                    isDark,
-                  ),
+                  _buildDirectionChip(l10n.searchAscending, true, isDark),
                   const SizedBox(width: 8),
-                  _buildDirectionChip(
-                    l10n.searchDescending,
-                    false,
-                    isDark,
-                  ),
+                  _buildDirectionChip(l10n.searchDescending, false, isDark),
                 ],
               ),
             ),
@@ -218,15 +215,15 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
           color: isSelected
               ? const Color(0xFF155DFC).withValues(alpha: 0.1)
               : isDark
-                  ? Colors.white.withValues(alpha: 0.06)
-                  : const Color(0xFFF1F5F9),
+              ? Colors.white.withValues(alpha: 0.06)
+              : const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: isSelected
                 ? const Color(0xFF155DFC)
                 : isDark
-                    ? Colors.white.withValues(alpha: 0.1)
-                    : Colors.transparent,
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.transparent,
           ),
         ),
         child: Text(
@@ -235,8 +232,8 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
             color: isSelected
                 ? const Color(0xFF155DFC)
                 : isDark
-                    ? Colors.white70
-                    : const Color(0xFF475569),
+                ? Colors.white70
+                : const Color(0xFF475569),
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
           ),
@@ -264,15 +261,15 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
           color: isSelected
               ? const Color(0xFF8B5CF6).withValues(alpha: 0.1)
               : isDark
-                  ? Colors.white.withValues(alpha: 0.06)
-                  : const Color(0xFFF1F5F9),
+              ? Colors.white.withValues(alpha: 0.06)
+              : const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: isSelected
                 ? const Color(0xFF8B5CF6)
                 : isDark
-                    ? Colors.white.withValues(alpha: 0.1)
-                    : Colors.transparent,
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.transparent,
           ),
         ),
         child: Text(
@@ -281,8 +278,8 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
             color: isSelected
                 ? const Color(0xFF8B5CF6)
                 : isDark
-                    ? Colors.white70
-                    : const Color(0xFF475569),
+                ? Colors.white70
+                : const Color(0xFF475569),
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
           ),
@@ -306,28 +303,30 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
           color: isSelected
               ? const Color(0xFF10B981).withValues(alpha: 0.1)
               : isDark
-                  ? Colors.white.withValues(alpha: 0.06)
-                  : const Color(0xFFF1F5F9),
+              ? Colors.white.withValues(alpha: 0.06)
+              : const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: isSelected
                 ? const Color(0xFF10B981)
                 : isDark
-                    ? Colors.white.withValues(alpha: 0.1)
-                    : Colors.transparent,
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.transparent,
           ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              ascending ? Icons.arrow_upward_rounded : Icons.arrow_downward_rounded,
+              ascending
+                  ? Icons.arrow_upward_rounded
+                  : Icons.arrow_downward_rounded,
               size: 14,
               color: isSelected
                   ? const Color(0xFF10B981)
                   : isDark
-                      ? Colors.white54
-                      : const Color(0xFF94A3B8),
+                  ? Colors.white54
+                  : const Color(0xFF94A3B8),
             ),
             const SizedBox(width: 4),
             Text(
@@ -336,8 +335,8 @@ class _SearchFilterSheetState extends State<SearchFilterSheet> {
                 color: isSelected
                     ? const Color(0xFF10B981)
                     : isDark
-                        ? Colors.white70
-                        : const Color(0xFF475569),
+                    ? Colors.white70
+                    : const Color(0xFF475569),
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),

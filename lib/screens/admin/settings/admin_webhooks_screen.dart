@@ -66,7 +66,9 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -75,7 +77,9 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                   SizedBox(height: responsive.p24),
                   _buildStatsRow(isDark, l10n),
                   SizedBox(height: responsive.p24),
-                  ..._webhooks.map((w) => _buildWebhookCard(w, isDark, l10n, responsive)),
+                  ..._webhooks.map(
+                    (w) => _buildWebhookCard(w, isDark, l10n, responsive),
+                  ),
                   SizedBox(height: responsive.p80),
                 ],
               ),
@@ -237,7 +241,11 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
   }
 
   Widget _buildWebhookCard(
-      _Webhook webhook, bool isDark, AppLocalizations l10n, ResponsiveUtil responsive) {
+    _Webhook webhook,
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil responsive,
+  ) {
     return Container(
       margin: EdgeInsets.only(bottom: responsive.p12),
       decoration: BoxDecoration(
@@ -257,10 +265,11 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: (webhook.isActive
-                                ? AdminColors.success
-                                : Colors.grey)
-                            .withValues(alpha: 0.1),
+                        color:
+                            (webhook.isActive
+                                    ? AdminColors.success
+                                    : Colors.grey)
+                                .withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Icon(
@@ -289,12 +298,15 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 2),
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: (webhook.isActive
-                                          ? AdminColors.success
-                                          : Colors.grey)
-                                      .withValues(alpha: 0.1),
+                                  color:
+                                      (webhook.isActive
+                                              ? AdminColors.success
+                                              : Colors.grey)
+                                          .withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
@@ -317,7 +329,8 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                                   style: TextStyle(
                                     fontSize: 11,
                                     color: AdminColors.getTextTertiaryColor(
-                                        isDark),
+                                      isDark,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -328,8 +341,7 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                     ),
                     Switch.adaptive(
                       value: webhook.isActive,
-                      onChanged: (v) =>
-                          setState(() => webhook.isActive = v),
+                      onChanged: (v) => setState(() => webhook.isActive = v),
                       activeColor: AdminColors.success,
                     ),
                   ],
@@ -337,8 +349,10 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                 const SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: AdminColors.getBackgroundColor(isDark),
                     borderRadius: BorderRadius.circular(8),
@@ -371,7 +385,8 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                               behavior: SnackBarBehavior.floating,
                               backgroundColor: AdminColors.success,
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10)),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                           );
                         },
@@ -393,7 +408,9 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                   children: webhook.events.map((e) {
                     return Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 6),
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: AdminColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
@@ -419,10 +436,15 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                 child: TextButton.icon(
                   onPressed: () =>
                       _showEditWebhookDialog(context, webhook, isDark, l10n),
-                  icon: Icon(Icons.edit_rounded,
-                      size: 18, color: AdminColors.primary),
-                  label: Text(l10n.edit,
-                      style: TextStyle(color: AdminColors.primary)),
+                  icon: Icon(
+                    Icons.edit_rounded,
+                    size: 18,
+                    color: AdminColors.primary,
+                  ),
+                  label: Text(
+                    l10n.edit,
+                    style: TextStyle(color: AdminColors.primary),
+                  ),
                 ),
               ),
               Container(
@@ -433,10 +455,15 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
               Expanded(
                 child: TextButton.icon(
                   onPressed: () => _testWebhook(webhook, l10n),
-                  icon: Icon(Icons.send_rounded,
-                      size: 18, color: AdminColors.warning),
-                  label: Text(l10n.test,
-                      style: TextStyle(color: AdminColors.warning)),
+                  icon: Icon(
+                    Icons.send_rounded,
+                    size: 18,
+                    color: AdminColors.warning,
+                  ),
+                  label: Text(
+                    l10n.test,
+                    style: TextStyle(color: AdminColors.warning),
+                  ),
                 ),
               ),
               Container(
@@ -447,10 +474,15 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
               Expanded(
                 child: TextButton.icon(
                   onPressed: () => _deleteWebhook(webhook, l10n),
-                  icon: Icon(Icons.delete_outline_rounded,
-                      size: 18, color: AdminColors.error),
-                  label: Text(l10n.delete,
-                      style: TextStyle(color: AdminColors.error)),
+                  icon: Icon(
+                    Icons.delete_outline_rounded,
+                    size: 18,
+                    color: AdminColors.error,
+                  ),
+                  label: Text(
+                    l10n.delete,
+                    style: TextStyle(color: AdminColors.error),
+                  ),
                 ),
               ),
             ],
@@ -472,7 +504,10 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
   }
 
   void _showAddWebhookDialog(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final nameController = TextEditingController();
     final urlController = TextEditingController();
 
@@ -489,7 +524,11 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                 gradient: AdminColors.primaryGradient,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.add_rounded, color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.add_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Text(
@@ -529,22 +568,28 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel,
-                style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark))),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(
+                color: AdminColors.getTextSecondaryColor(isDark),
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
               if (nameController.text.isNotEmpty &&
                   urlController.text.isNotEmpty) {
                 setState(() {
-                  _webhooks.add(_Webhook(
-                    id: DateTime.now().millisecondsSinceEpoch.toString(),
-                    name: nameController.text,
-                    url: urlController.text,
-                    events: [],
-                    isActive: true,
-                    lastTriggered: null,
-                  ));
+                  _webhooks.add(
+                    _Webhook(
+                      id: DateTime.now().millisecondsSinceEpoch.toString(),
+                      name: nameController.text,
+                      url: urlController.text,
+                      events: [],
+                      isActive: true,
+                      lastTriggered: null,
+                    ),
+                  );
                 });
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -553,7 +598,8 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                     behavior: SnackBarBehavior.floating,
                     backgroundColor: AdminColors.success,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 );
               }
@@ -570,7 +616,11 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
   }
 
   void _showEditWebhookDialog(
-      BuildContext context, _Webhook webhook, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    _Webhook webhook,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final nameController = TextEditingController(text: webhook.name);
     final urlController = TextEditingController(text: webhook.url);
 
@@ -587,7 +637,11 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                 gradient: AdminColors.primaryGradient,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.edit_rounded, color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.edit_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 12),
             Text(
@@ -626,8 +680,12 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel,
-                style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark))),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(
+                color: AdminColors.getTextSecondaryColor(isDark),
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -642,7 +700,8 @@ class _AdminWebhooksScreenState extends State<AdminWebhooksScreen> {
                   behavior: SnackBarBehavior.floating,
                   backgroundColor: AdminColors.success,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               );
             },

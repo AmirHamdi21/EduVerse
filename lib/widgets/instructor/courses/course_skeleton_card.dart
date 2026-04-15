@@ -23,9 +23,10 @@ class _CourseSkeletonCardState extends State<CourseSkeletonCard>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat();
-    _animation = Tween<double>(begin: 0.3, end: 0.6).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: 0.3,
+      end: 0.6,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -55,12 +56,12 @@ class _CourseSkeletonCardState extends State<CourseSkeletonCard>
               Container(
                 height: 70,
                 decoration: BoxDecoration(
-                  color: (widget.isDark
-                          ? Colors.white
-                          : InstructorColors.primary)
-                      .withValues(alpha: _animation.value * 0.2),
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(19)),
+                  color:
+                      (widget.isDark ? Colors.white : InstructorColors.primary)
+                          .withValues(alpha: _animation.value * 0.2),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(19),
+                  ),
                 ),
               ),
               Padding(

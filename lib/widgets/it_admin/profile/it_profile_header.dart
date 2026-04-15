@@ -21,14 +21,8 @@ class ITProfileHeader extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? [
-                  const Color(0xFF2A2A4A),
-                  const Color(0xFF1A1A2E),
-                ]
-              : [
-                  ITColors.primary.withValues(alpha: 0.08),
-                  Colors.white,
-                ],
+              ? [const Color(0xFF2A2A4A), const Color(0xFF1A1A2E)]
+              : [ITColors.primary.withValues(alpha: 0.08), Colors.white],
         ),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -89,7 +83,7 @@ class ITProfileHeader extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Name
           Text(
             profile.fullName,
@@ -100,7 +94,7 @@ class ITProfileHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-          
+
           // Role badge
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -132,19 +126,22 @@ class ITProfileHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // Info items
           _buildInfoItem(Icons.email_rounded, profile.email),
           const SizedBox(height: 8),
           _buildInfoItem(Icons.badge_rounded, 'ID: ${profile.employeeId}'),
           const SizedBox(height: 8),
-          
+
           // Status badge
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: ITColors.success.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
@@ -188,11 +185,7 @@ class ITProfileHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          icon,
-          size: 16,
-          color: ITColors.textSecondaryColor(isDark),
-        ),
+        Icon(icon, size: 16, color: ITColors.textSecondaryColor(isDark)),
         const SizedBox(width: 8),
         Text(
           text,

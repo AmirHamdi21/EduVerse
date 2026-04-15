@@ -21,23 +21,53 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
-  
+
   late AnimationController _animationController;
-  
+
   String _selectedMode = 'general';
   String _selectedCourse = 'All Courses';
   bool _isTyping = false;
   bool _isRecording = false;
-  
+
   final List<Map<String, dynamic>> _messages = [];
-  
+
   final List<Map<String, dynamic>> _quickActions = [
-    {'id': 'grade_assist', 'icon': Icons.grading, 'label': 'Grade Assistance', 'prompt': 'Help me grade this student submission'},
-    {'id': 'feedback', 'icon': Icons.rate_review, 'label': 'Generate Feedback', 'prompt': 'Generate constructive feedback for student work'},
-    {'id': 'rubric', 'icon': Icons.checklist, 'label': 'Create Rubric', 'prompt': 'Create a grading rubric for this assignment'},
-    {'id': 'explain', 'icon': Icons.lightbulb, 'label': 'Explain Concept', 'prompt': 'Explain this concept in simple terms'},
-    {'id': 'quiz', 'icon': Icons.quiz, 'label': 'Generate Quiz', 'prompt': 'Generate quiz questions for this topic'},
-    {'id': 'lab_prep', 'icon': Icons.science, 'label': 'Lab Preparation', 'prompt': 'Help me prepare for the upcoming lab session'},
+    {
+      'id': 'grade_assist',
+      'icon': Icons.grading,
+      'label': 'Grade Assistance',
+      'prompt': 'Help me grade this student submission',
+    },
+    {
+      'id': 'feedback',
+      'icon': Icons.rate_review,
+      'label': 'Generate Feedback',
+      'prompt': 'Generate constructive feedback for student work',
+    },
+    {
+      'id': 'rubric',
+      'icon': Icons.checklist,
+      'label': 'Create Rubric',
+      'prompt': 'Create a grading rubric for this assignment',
+    },
+    {
+      'id': 'explain',
+      'icon': Icons.lightbulb,
+      'label': 'Explain Concept',
+      'prompt': 'Explain this concept in simple terms',
+    },
+    {
+      'id': 'quiz',
+      'icon': Icons.quiz,
+      'label': 'Generate Quiz',
+      'prompt': 'Generate quiz questions for this topic',
+    },
+    {
+      'id': 'lab_prep',
+      'icon': Icons.science,
+      'label': 'Lab Preparation',
+      'prompt': 'Help me prepare for the upcoming lab session',
+    },
   ];
 
   final List<Map<String, dynamic>> _modes = [
@@ -60,7 +90,8 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
   void _addWelcomeMessage() {
     _messages.add({
       'id': 'welcome',
-      'content': "Hello! I'm your TA AI Assistant. I can help you with:\n\n"
+      'content':
+          "Hello! I'm your TA AI Assistant. I can help you with:\n\n"
           "📝 **Grading assistance** - Evaluate submissions and provide feedback\n"
           "📊 **Performance analysis** - Understand student trends\n"
           "🔬 **Lab preparation** - Plan and organize lab sessions\n"
@@ -68,7 +99,11 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           "How can I assist you today?",
       'isUser': false,
       'timestamp': DateTime.now(),
-      'suggestions': ['Grade submissions', 'Analyze performance', 'Prepare for lab'],
+      'suggestions': [
+        'Grade submissions',
+        'Analyze performance',
+        'Prepare for lab',
+      ],
     });
   }
 
@@ -114,8 +149,12 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
                       ? _buildEmptyState(isDark, l10n)
                       : _buildMessageList(isDark, l10n),
                 ),
-                if (_messages.isNotEmpty && _messages.last['suggestions'] != null)
-                  _buildSuggestions(isDark, _messages.last['suggestions'] as List<String>),
+                if (_messages.isNotEmpty &&
+                    _messages.last['suggestions'] != null)
+                  _buildSuggestions(
+                    isDark,
+                    _messages.last['suggestions'] as List<String>,
+                  ),
                 _buildQuickActionsBar(isDark, l10n),
                 _buildInputBar(isDark, l10n),
               ],
@@ -149,7 +188,10 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [TAColors.primary, TAColors.primary.withValues(alpha: 0.7)],
+                colors: [
+                  TAColors.primary,
+                  TAColors.primary.withValues(alpha: 0.7),
+                ],
               ),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -181,10 +223,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
                     const SizedBox(width: 6),
                     Text(
                       'Online',
-                      style: TextStyle(
-                        color: TAColors.success,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: TAColors.success, fontSize: 12),
                     ),
                   ],
                 ),
@@ -192,11 +231,17 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
             ),
           ),
           IconButton(
-            icon: Icon(Icons.refresh, color: TAColors.textSecondaryColor(isDark)),
+            icon: Icon(
+              Icons.refresh,
+              color: TAColors.textSecondaryColor(isDark),
+            ),
             onPressed: () => _clearChat(l10n),
           ),
           PopupMenuButton<String>(
-            icon: Icon(Icons.more_vert, color: TAColors.textSecondaryColor(isDark)),
+            icon: Icon(
+              Icons.more_vert,
+              color: TAColors.textSecondaryColor(isDark),
+            ),
             color: TAColors.cardColor(isDark),
             onSelected: (value) => _handleMenuAction(value, isDark, l10n),
             itemBuilder: (context) => [
@@ -257,14 +302,18 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
                 ),
                 label: Text(mode['label'] as String),
                 labelStyle: TextStyle(
-                  color: isSelected ? Colors.white : TAColors.textPrimaryColor(isDark),
+                  color: isSelected
+                      ? Colors.white
+                      : TAColors.textPrimaryColor(isDark),
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   fontSize: 12,
                 ),
                 backgroundColor: TAColors.cardColor(isDark),
                 selectedColor: TAColors.primary,
                 side: BorderSide(
-                  color: isSelected ? TAColors.primary : TAColors.borderColor(isDark),
+                  color: isSelected
+                      ? TAColors.primary
+                      : TAColors.borderColor(isDark),
                 ),
                 onSelected: (selected) {
                   setState(() => _selectedMode = mode['id'] as String);
@@ -382,9 +431,13 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
     );
   }
 
-  Widget _buildMessageBubble(bool isDark, AppLocalizations l10n, Map<String, dynamic> message) {
+  Widget _buildMessageBubble(
+    bool isDark,
+    AppLocalizations l10n,
+    Map<String, dynamic> message,
+  ) {
     final isUser = message['isUser'] as bool;
-    
+
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -393,7 +446,9 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           maxWidth: MediaQuery.of(context).size.width * 0.8,
         ),
         child: Column(
-          crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: isUser
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
             Container(
               padding: const EdgeInsets.all(16),
@@ -405,7 +460,9 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
                   bottomLeft: Radius.circular(isUser ? 16 : 4),
                   bottomRight: Radius.circular(isUser ? 4 : 16),
                 ),
-                border: isUser ? null : Border.all(color: TAColors.borderColor(isDark)),
+                border: isUser
+                    ? null
+                    : Border.all(color: TAColors.borderColor(isDark)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
@@ -462,9 +519,12 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
             line.replaceAll('**', ''),
             style: TextStyle(color: color, fontWeight: FontWeight.bold),
           );
-        } else if (line.startsWith('📝') || line.startsWith('📊') || 
-                   line.startsWith('🔬') || line.startsWith('💡') ||
-                   line.startsWith('✅') || line.startsWith('⚠️')) {
+        } else if (line.startsWith('📝') ||
+            line.startsWith('📊') ||
+            line.startsWith('🔬') ||
+            line.startsWith('💡') ||
+            line.startsWith('✅') ||
+            line.startsWith('⚠️')) {
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 2),
             child: Text(line, style: TextStyle(color: color)),
@@ -491,7 +551,10 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
             children: [
               const Icon(Icons.attach_file, size: 16),
               const SizedBox(width: 6),
-              Text(attachment['name'] as String, style: const TextStyle(fontSize: 12)),
+              Text(
+                attachment['name'] as String,
+                style: const TextStyle(fontSize: 12),
+              ),
             ],
           ),
         );
@@ -499,7 +562,11 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
     );
   }
 
-  Widget _buildMessageActions(bool isDark, AppLocalizations l10n, Map<String, dynamic> message) {
+  Widget _buildMessageActions(
+    bool isDark,
+    AppLocalizations l10n,
+    Map<String, dynamic> message,
+  ) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -508,7 +575,11 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           borderRadius: BorderRadius.circular(4),
           child: Padding(
             padding: const EdgeInsets.all(4),
-            child: Icon(Icons.copy, size: 14, color: TAColors.textTertiaryColor(isDark)),
+            child: Icon(
+              Icons.copy,
+              size: 14,
+              color: TAColors.textTertiaryColor(isDark),
+            ),
           ),
         ),
         const SizedBox(width: 4),
@@ -517,7 +588,11 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           borderRadius: BorderRadius.circular(4),
           child: Padding(
             padding: const EdgeInsets.all(4),
-            child: Icon(Icons.refresh, size: 14, color: TAColors.textTertiaryColor(isDark)),
+            child: Icon(
+              Icons.refresh,
+              size: 14,
+              color: TAColors.textTertiaryColor(isDark),
+            ),
           ),
         ),
         const SizedBox(width: 4),
@@ -526,7 +601,11 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           borderRadius: BorderRadius.circular(4),
           child: Padding(
             padding: const EdgeInsets.all(4),
-            child: Icon(Icons.download, size: 14, color: TAColors.textTertiaryColor(isDark)),
+            child: Icon(
+              Icons.download,
+              size: 14,
+              color: TAColors.textTertiaryColor(isDark),
+            ),
           ),
         ),
       ],
@@ -542,10 +621,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
         children: suggestions.map((suggestion) {
           return ActionChip(
             label: Text(suggestion),
-            labelStyle: TextStyle(
-              color: TAColors.primary,
-              fontSize: 12,
-            ),
+            labelStyle: TextStyle(color: TAColors.primary, fontSize: 12),
             backgroundColor: TAColors.primaryLight,
             side: BorderSide(color: TAColors.primary.withValues(alpha: 0.3)),
             onPressed: () => _sendMessage(suggestion),
@@ -566,7 +642,11 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
             return Padding(
               padding: const EdgeInsets.only(right: 8),
               child: ActionChip(
-                avatar: Icon(action['icon'] as IconData, size: 16, color: TAColors.primary),
+                avatar: Icon(
+                  action['icon'] as IconData,
+                  size: 16,
+                  color: TAColors.primary,
+                ),
                 label: Text(action['label'] as String),
                 labelStyle: TextStyle(
                   color: TAColors.textPrimaryColor(isDark),
@@ -599,7 +679,10 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.attach_file, color: TAColors.textSecondaryColor(isDark)),
+            icon: Icon(
+              Icons.attach_file,
+              color: TAColors.textSecondaryColor(isDark),
+            ),
             onPressed: () => _showAttachmentOptions(isDark, l10n),
           ),
           Expanded(
@@ -619,18 +702,27 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
                       minLines: 1,
                       decoration: InputDecoration(
                         hintText: l10n.typeMessage,
-                        hintStyle: TextStyle(color: TAColors.textTertiaryColor(isDark)),
+                        hintStyle: TextStyle(
+                          color: TAColors.textTertiaryColor(isDark),
+                        ),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
                       ),
-                      style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
+                      style: TextStyle(
+                        color: TAColors.textPrimaryColor(isDark),
+                      ),
                       onSubmitted: (_) => _handleSend(),
                     ),
                   ),
                   IconButton(
                     icon: Icon(
                       _isRecording ? Icons.stop : Icons.mic,
-                      color: _isRecording ? TAColors.error : TAColors.textSecondaryColor(isDark),
+                      color: _isRecording
+                          ? TAColors.error
+                          : TAColors.textSecondaryColor(isDark),
                     ),
                     onPressed: () => _toggleRecording(),
                   ),
@@ -700,7 +792,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
 
   String _generateResponse(String userMessage) {
     final lower = userMessage.toLowerCase();
-    
+
     if (lower.contains('grade') || lower.contains('submission')) {
       return "📝 **Grading Assistance**\n\n"
           "I can help you evaluate submissions efficiently. Here's what I recommend:\n\n"
@@ -715,7 +807,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           "**Suggested grade: 85/100 (B+)**\n\n"
           "Would you like me to generate detailed feedback for the student?";
     }
-    
+
     if (lower.contains('feedback')) {
       return "📣 **Student Feedback Generated**\n\n"
           "Here's constructive feedback for the submission:\n\n"
@@ -727,7 +819,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           "Keep up the excellent work! You're making good progress.\"\n\n"
           "Would you like me to adjust the tone or add specific points?";
     }
-    
+
     if (lower.contains('rubric')) {
       return "📋 **Grading Rubric Created**\n\n"
           "**Assignment: Lab Exercise**\n\n"
@@ -741,7 +833,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           "**Total: 100 points**\n\n"
           "Would you like me to customize this rubric?";
     }
-    
+
     if (lower.contains('quiz') || lower.contains('question')) {
       return "📝 **Generated Quiz Questions**\n\n"
           "**Topic: Data Structures - Arrays**\n\n"
@@ -753,7 +845,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           "   a) O(1)  b) O(n)  c) O(n+m)  d) O(nm)\n\n"
           "Would you like more questions or different difficulty levels?";
     }
-    
+
     if (lower.contains('lab') || lower.contains('prepare')) {
       return "🔬 **Lab Session Preparation**\n\n"
           "**Checklist for upcoming lab:**\n\n"
@@ -772,7 +864,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           "• Prepare extension exercises for fast finishers\n\n"
           "Want me to create specific exercises?";
     }
-    
+
     if (lower.contains('explain') || lower.contains('concept')) {
       return "💡 **Concept Explanation**\n\n"
           "I'll help you explain concepts clearly to students.\n\n"
@@ -784,7 +876,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           "5. **Practice**: Give small exercises to verify understanding\n\n"
           "What specific concept would you like help explaining?";
     }
-    
+
     if (lower.contains('performance') || lower.contains('analysis')) {
       return "📊 **Performance Analysis**\n\n"
           "Based on the current data, here's the class analysis:\n\n"
@@ -800,7 +892,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           "⚠️ **At-Risk Students:** 9 students need attention\n\n"
           "Would you like detailed recommendations?";
     }
-    
+
     return "I understand you're asking about: \"$userMessage\"\n\n"
         "As your TA AI Assistant, I can help with:\n\n"
         "📝 **Grading** - Evaluate and provide feedback on submissions\n"
@@ -813,7 +905,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
 
   List<String> _getSuggestions(String userMessage) {
     final lower = userMessage.toLowerCase();
-    
+
     if (lower.contains('grade')) {
       return ['Generate feedback', 'Create rubric', 'Grade next submission'];
     }
@@ -828,12 +920,16 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
 
   void _handleModeChange(String mode) {
     final modeMessages = {
-      'general': 'Switched to General Help mode. I can assist with any TA-related tasks.',
-      'grading': 'Grading Mode activated. I\'ll focus on helping you evaluate submissions and provide feedback.',
-      'teaching': 'Teaching Mode enabled. I\'ll help you explain concepts and prepare educational content.',
-      'analysis': 'Analysis Mode ready. I\'ll help you understand student performance and identify trends.',
+      'general':
+          'Switched to General Help mode. I can assist with any TA-related tasks.',
+      'grading':
+          'Grading Mode activated. I\'ll focus on helping you evaluate submissions and provide feedback.',
+      'teaching':
+          'Teaching Mode enabled. I\'ll help you explain concepts and prepare educational content.',
+      'analysis':
+          'Analysis Mode ready. I\'ll help you understand student performance and identify trends.',
     };
-    
+
     setState(() {
       _messages.add({
         'id': '${DateTime.now().millisecondsSinceEpoch}_system',
@@ -853,8 +949,13 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           final isDark = state.themeMode == AppThemeMode.dark;
           return AlertDialog(
             backgroundColor: TAColors.cardColor(isDark),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            title: Text(l10n.clearChat, style: TextStyle(color: TAColors.textPrimaryColor(isDark))),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: Text(
+              l10n.clearChat,
+              style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
+            ),
             content: Text(
               'Are you sure you want to clear the conversation?',
               style: TextStyle(color: TAColors.textSecondaryColor(isDark)),
@@ -872,8 +973,13 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
                     _addWelcomeMessage();
                   });
                 },
-                style: ElevatedButton.styleFrom(backgroundColor: TAColors.error),
-                child: Text(l10n.clear, style: const TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: TAColors.error,
+                ),
+                child: Text(
+                  l10n.clear,
+                  style: const TextStyle(color: Colors.white),
+                ),
               ),
             ],
           );
@@ -935,9 +1041,24 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
               ),
             ),
             const SizedBox(height: 16),
-            _buildSettingTile(isDark, 'Response Length', 'Detailed', Icons.text_fields),
-            _buildSettingTile(isDark, 'Tone', 'Professional', Icons.record_voice_over),
-            _buildSettingTile(isDark, 'Auto-suggestions', 'Enabled', Icons.lightbulb),
+            _buildSettingTile(
+              isDark,
+              'Response Length',
+              'Detailed',
+              Icons.text_fields,
+            ),
+            _buildSettingTile(
+              isDark,
+              'Tone',
+              'Professional',
+              Icons.record_voice_over,
+            ),
+            _buildSettingTile(
+              isDark,
+              'Auto-suggestions',
+              'Enabled',
+              Icons.lightbulb,
+            ),
             const SizedBox(height: 10),
           ],
         ),
@@ -945,11 +1066,22 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
     );
   }
 
-  Widget _buildSettingTile(bool isDark, String title, String value, IconData icon) {
+  Widget _buildSettingTile(
+    bool isDark,
+    String title,
+    String value,
+    IconData icon,
+  ) {
     return ListTile(
       leading: Icon(icon, color: TAColors.primary),
-      title: Text(title, style: TextStyle(color: TAColors.textPrimaryColor(isDark))),
-      trailing: Text(value, style: TextStyle(color: TAColors.textSecondaryColor(isDark))),
+      title: Text(
+        title,
+        style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
+      ),
+      trailing: Text(
+        value,
+        style: TextStyle(color: TAColors.textSecondaryColor(isDark)),
+      ),
       onTap: () {},
     );
   }
@@ -985,7 +1117,11 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
               ),
             ),
             const SizedBox(height: 16),
-            _buildHistoryItem(isDark, 'Grading Lab 3 submissions', 'Today, 2:30 PM'),
+            _buildHistoryItem(
+              isDark,
+              'Grading Lab 3 submissions',
+              'Today, 2:30 PM',
+            ),
             _buildHistoryItem(isDark, 'Quiz generation for ML', 'Yesterday'),
             _buildHistoryItem(isDark, 'Performance analysis', 'Feb 8, 2026'),
             const SizedBox(height: 10),
@@ -1003,10 +1139,23 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           color: TAColors.primaryLight,
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Icon(Icons.chat_bubble_outline, color: TAColors.primary, size: 20),
+        child: const Icon(
+          Icons.chat_bubble_outline,
+          color: TAColors.primary,
+          size: 20,
+        ),
       ),
-      title: Text(title, style: TextStyle(color: TAColors.textPrimaryColor(isDark))),
-      subtitle: Text(time, style: TextStyle(color: TAColors.textSecondaryColor(isDark), fontSize: 12)),
+      title: Text(
+        title,
+        style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
+      ),
+      subtitle: Text(
+        time,
+        style: TextStyle(
+          color: TAColors.textSecondaryColor(isDark),
+          fontSize: 12,
+        ),
+      ),
       onTap: () => Navigator.pop(context),
     );
   }
@@ -1045,10 +1194,30 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildAttachOption(isDark, Icons.description, 'Document', () => Navigator.pop(context)),
-                _buildAttachOption(isDark, Icons.image, 'Image', () => Navigator.pop(context)),
-                _buildAttachOption(isDark, Icons.code, 'Code', () => Navigator.pop(context)),
-                _buildAttachOption(isDark, Icons.folder, 'Files', () => Navigator.pop(context)),
+                _buildAttachOption(
+                  isDark,
+                  Icons.description,
+                  'Document',
+                  () => Navigator.pop(context),
+                ),
+                _buildAttachOption(
+                  isDark,
+                  Icons.image,
+                  'Image',
+                  () => Navigator.pop(context),
+                ),
+                _buildAttachOption(
+                  isDark,
+                  Icons.code,
+                  'Code',
+                  () => Navigator.pop(context),
+                ),
+                _buildAttachOption(
+                  isDark,
+                  Icons.folder,
+                  'Files',
+                  () => Navigator.pop(context),
+                ),
               ],
             ),
             const SizedBox(height: 10),
@@ -1058,7 +1227,12 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
     );
   }
 
-  Widget _buildAttachOption(bool isDark, IconData icon, String label, VoidCallback onTap) {
+  Widget _buildAttachOption(
+    bool isDark,
+    IconData icon,
+    String label,
+    VoidCallback onTap,
+  ) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -1090,7 +1264,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
 
   void _toggleRecording() {
     setState(() => _isRecording = !_isRecording);
-    
+
     if (_isRecording) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -1099,7 +1273,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           behavior: SnackBarBehavior.floating,
         ),
       );
-      
+
       Future.delayed(const Duration(seconds: 3), () {
         if (mounted && _isRecording) {
           setState(() => _isRecording = false);
@@ -1130,7 +1304,7 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
           _messages.removeAt(index);
           _isTyping = true;
         });
-        
+
         Future.delayed(const Duration(milliseconds: 1500), () {
           if (mounted) {
             setState(() {
@@ -1140,7 +1314,9 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
                 'content': _generateResponse(userMessage['content'] as String),
                 'isUser': false,
                 'timestamp': DateTime.now(),
-                'suggestions': _getSuggestions(userMessage['content'] as String),
+                'suggestions': _getSuggestions(
+                  userMessage['content'] as String,
+                ),
               });
             });
             _scrollToBottom();
@@ -1150,7 +1326,11 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
     }
   }
 
-  void _showExportOptions(bool isDark, AppLocalizations l10n, Map<String, dynamic> message) {
+  void _showExportOptions(
+    bool isDark,
+    AppLocalizations l10n,
+    Map<String, dynamic> message,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -1183,20 +1363,32 @@ class _TAAIAssistantScreenState extends State<TAAIAssistantScreen>
             const SizedBox(height: 16),
             ListTile(
               leading: const Icon(Icons.copy, color: TAColors.primary),
-              title: Text('Copy to Clipboard', style: TextStyle(color: TAColors.textPrimaryColor(isDark))),
+              title: Text(
+                'Copy to Clipboard',
+                style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
+              ),
               onTap: () {
                 Navigator.pop(context);
                 _copyToClipboard(message['content'] as String, l10n);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.picture_as_pdf, color: TAColors.primary),
-              title: Text('Export as PDF', style: TextStyle(color: TAColors.textPrimaryColor(isDark))),
+              leading: const Icon(
+                Icons.picture_as_pdf,
+                color: TAColors.primary,
+              ),
+              title: Text(
+                'Export as PDF',
+                style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
+              ),
               onTap: () => Navigator.pop(context),
             ),
             ListTile(
               leading: const Icon(Icons.text_snippet, color: TAColors.primary),
-              title: Text('Export as Text', style: TextStyle(color: TAColors.textPrimaryColor(isDark))),
+              title: Text(
+                'Export as Text',
+                style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
+              ),
               onTap: () => Navigator.pop(context),
             ),
             const SizedBox(height: 10),

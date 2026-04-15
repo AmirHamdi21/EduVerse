@@ -30,7 +30,9 @@ class StaffAvailability extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
         boxShadow: isDark
             ? null
@@ -147,7 +149,11 @@ class StaffAvailability extends StatelessWidget {
     );
   }
 
-  Widget _buildStaffCard(StaffMember member, Color accentColor, AppLocalizations l10n) {
+  Widget _buildStaffCard(
+    StaffMember member,
+    Color accentColor,
+    AppLocalizations l10n,
+  ) {
     return Material(
       color: Colors.transparent,
       child: InkWell(

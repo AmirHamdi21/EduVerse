@@ -2,18 +2,9 @@ import 'package:equatable/equatable.dart';
 import '../../models/voice_recording_model.dart';
 import 'voice_to_text_event.dart';
 
-enum RecordingStatus {
-  idle,
-  recording,
-  paused,
-  processing,
-}
+enum RecordingStatus { idle, recording, paused, processing }
 
-enum PlaybackStatus {
-  stopped,
-  playing,
-  paused,
-}
+enum PlaybackStatus { stopped, playing, paused }
 
 class VoiceToTextState extends Equatable {
   final bool isInitialized;
@@ -146,9 +137,12 @@ class VoiceToTextState extends Equatable {
       currentSort: currentSort ?? this.currentSort,
       isLoading: isLoading ?? this.isLoading,
       isSaving: isSaving ?? this.isSaving,
-      errorMessage: clearErrorMessage ? null : errorMessage ?? this.errorMessage,
-      successMessage:
-          clearSuccessMessage ? null : successMessage ?? this.successMessage,
+      errorMessage: clearErrorMessage
+          ? null
+          : errorMessage ?? this.errorMessage,
+      successMessage: clearSuccessMessage
+          ? null
+          : successMessage ?? this.successMessage,
       isEditing: isEditing ?? this.isEditing,
       selectedLanguage: selectedLanguage ?? this.selectedLanguage,
     );
@@ -156,27 +150,27 @@ class VoiceToTextState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isInitialized,
-        speechAvailable,
-        recordingStatus,
-        playbackStatus,
-        currentTranscription,
-        recordingDuration,
-        playbackPosition,
-        playbackDuration,
-        recordings,
-        filteredRecordings,
-        currentPlayingRecording,
-        currentAudioPath,
-        waveformData,
-        searchQuery,
-        currentFilter,
-        currentSort,
-        isLoading,
-        isSaving,
-        errorMessage,
-        successMessage,
-        isEditing,
-        selectedLanguage,
-      ];
+    isInitialized,
+    speechAvailable,
+    recordingStatus,
+    playbackStatus,
+    currentTranscription,
+    recordingDuration,
+    playbackPosition,
+    playbackDuration,
+    recordings,
+    filteredRecordings,
+    currentPlayingRecording,
+    currentAudioPath,
+    waveformData,
+    searchQuery,
+    currentFilter,
+    currentSort,
+    isLoading,
+    isSaving,
+    errorMessage,
+    successMessage,
+    isEditing,
+    selectedLanguage,
+  ];
 }

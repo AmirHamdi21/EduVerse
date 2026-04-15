@@ -43,10 +43,7 @@ class AdminRecentSearches extends StatelessWidget {
                 onPressed: onClearAll,
                 child: Text(
                   'Clear All',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AdminColors.primary,
-                  ),
+                  style: TextStyle(fontSize: 13, color: AdminColors.primary),
                 ),
               ),
             ],
@@ -65,7 +62,9 @@ class AdminRecentSearches extends StatelessWidget {
         color: isDark ? AdminColors.darkCard : AdminColors.lightCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
       ),
       child: Material(
@@ -80,7 +79,9 @@ class AdminRecentSearches extends StatelessWidget {
                 Icon(
                   Icons.history_rounded,
                   size: 20,
-                  color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+                  color: isDark
+                      ? AdminColors.darkTextSecondary
+                      : AdminColors.lightTextSecondary,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -88,7 +89,9 @@ class AdminRecentSearches extends StatelessWidget {
                     search,
                     style: TextStyle(
                       fontSize: 14,
-                      color: isDark ? AdminColors.darkText : AdminColors.lightText,
+                      color: isDark
+                          ? AdminColors.darkText
+                          : AdminColors.lightText,
                     ),
                   ),
                 ),
@@ -96,7 +99,9 @@ class AdminRecentSearches extends StatelessWidget {
                   icon: Icon(
                     Icons.close_rounded,
                     size: 18,
-                    color: isDark ? AdminColors.darkTextTertiary : AdminColors.lightTextTertiary,
+                    color: isDark
+                        ? AdminColors.darkTextTertiary
+                        : AdminColors.lightTextTertiary,
                   ),
                   onPressed: () => onRemove(search),
                   padding: EdgeInsets.zero,

@@ -45,14 +45,8 @@ class CourseAiPreview extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? [
-                  const Color(0xFF1E1E2E),
-                  const Color(0xFF2D2D44),
-                ]
-              : [
-                  const Color(0xFFEFF6FF),
-                  const Color(0xFFFAF5FF),
-                ],
+              ? [const Color(0xFF1E1E2E), const Color(0xFF2D2D44)]
+              : [const Color(0xFFEFF6FF), const Color(0xFFFAF5FF)],
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
@@ -148,7 +142,10 @@ class CourseAiPreview extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: AdminColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
@@ -172,11 +169,7 @@ class CourseAiPreview extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.circle,
-                      size: 8,
-                      color: AdminColors.success,
-                    ),
+                    Icon(Icons.circle, size: 8, color: AdminColors.success),
                     const SizedBox(width: 4),
                     Text(
                       l10n.preview,
@@ -302,11 +295,7 @@ class CourseAiPreview extends StatelessWidget {
   }) {
     return Column(
       children: [
-        Icon(
-          icon,
-          size: 20,
-          color: AdminColors.getTextSecondaryColor(isDark),
-        ),
+        Icon(icon, size: 20, color: AdminColors.getTextSecondaryColor(isDark)),
         const SizedBox(height: 4),
         Text(
           value,
@@ -329,7 +318,7 @@ class CourseAiPreview extends StatelessWidget {
 
   Widget _buildAiInsights(AppLocalizations l10n) {
     final insights = _generateInsights(l10n);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -348,11 +337,7 @@ class CourseAiPreview extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  insight.icon,
-                  size: 16,
-                  color: insight.color,
-                ),
+                Icon(insight.icon, size: 16, color: insight.color),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -375,47 +360,59 @@ class CourseAiPreview extends StatelessWidget {
     final insights = <_Insight>[];
 
     if (instructor == null) {
-      insights.add(_Insight(
-        icon: Icons.warning_rounded,
-        color: AdminColors.warning,
-        text: l10n.noInstructorAssigned,
-      ));
+      insights.add(
+        _Insight(
+          icon: Icons.warning_rounded,
+          color: AdminColors.warning,
+          text: l10n.noInstructorAssigned,
+        ),
+      );
     } else {
-      insights.add(_Insight(
-        icon: Icons.check_circle_rounded,
-        color: AdminColors.success,
-        text: l10n.instructorAssigned,
-      ));
+      insights.add(
+        _Insight(
+          icon: Icons.check_circle_rounded,
+          color: AdminColors.success,
+          text: l10n.instructorAssigned,
+        ),
+      );
     }
 
     if (tas.isEmpty) {
-      insights.add(_Insight(
-        icon: Icons.info_rounded,
-        color: AdminColors.accent,
-        text: l10n.noTAAssigned,
-      ));
+      insights.add(
+        _Insight(
+          icon: Icons.info_rounded,
+          color: AdminColors.accent,
+          text: l10n.noTAAssigned,
+        ),
+      );
     } else if (tas.length < 2 && maxStudents > 50) {
-      insights.add(_Insight(
-        icon: Icons.lightbulb_rounded,
-        color: AdminColors.warning,
-        text: l10n.recommendMoreTAs,
-      ));
+      insights.add(
+        _Insight(
+          icon: Icons.lightbulb_rounded,
+          color: AdminColors.warning,
+          text: l10n.recommendMoreTAs,
+        ),
+      );
     }
 
     if (maxStudents > 100 && !hasLabs) {
-      insights.add(_Insight(
-        icon: Icons.lightbulb_rounded,
-        color: AdminColors.primary,
-        text: l10n.largeClassSuggestion,
-      ));
+      insights.add(
+        _Insight(
+          icon: Icons.lightbulb_rounded,
+          color: AdminColors.primary,
+          text: l10n.largeClassSuggestion,
+        ),
+      );
     }
 
     if (hasLabs && labCount * 25 < maxStudents) {
-      insights.add(_Insight(
-        icon: Icons.info_rounded,
-        color: AdminColors.warning,
-        text: l10n.labCapacityWarning,
-      ));
+      insights.add(
+        _Insight(
+          icon: Icons.info_rounded,
+          color: AdminColors.warning,
+          text: l10n.labCapacityWarning,
+        ),
+      );
     }
 
     return insights;
@@ -463,9 +460,5 @@ class _Insight {
   final Color color;
   final String text;
 
-  _Insight({
-    required this.icon,
-    required this.color,
-    required this.text,
-  });
+  _Insight({required this.icon, required this.color, required this.text});
 }

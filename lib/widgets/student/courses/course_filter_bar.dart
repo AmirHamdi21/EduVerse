@@ -7,10 +7,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class CourseFilterBar extends StatefulWidget {
   final Function(String) onFilterChanged;
 
-  const CourseFilterBar({
-    super.key,
-    required this.onFilterChanged,
-  });
+  const CourseFilterBar({super.key, required this.onFilterChanged});
 
   @override
   State<CourseFilterBar> createState() => _CourseFilterBarState();
@@ -101,7 +98,7 @@ class _CourseFilterBarState extends State<CourseFilterBar> {
                     color: const Color(0xFF155DFC).withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
-                  )
+                  ),
                 ]
               : null,
         ),
@@ -111,8 +108,8 @@ class _CourseFilterBarState extends State<CourseFilterBar> {
             color: isSelected && isGradient
                 ? Colors.white
                 : (isSelected
-                    ? const Color(0xFF155DFC)
-                    : (isDark ? Colors.white70 : const Color(0xFF364153))),
+                      ? const Color(0xFF155DFC)
+                      : (isDark ? Colors.white70 : const Color(0xFF364153))),
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           ),

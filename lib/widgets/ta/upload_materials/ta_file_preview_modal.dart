@@ -87,7 +87,7 @@ class TAFilePreviewModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Container(
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
@@ -117,11 +117,7 @@ class TAFilePreviewModal extends StatelessWidget {
                     color: _getTypeColor().withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    _getTypeIcon(),
-                    color: _getTypeColor(),
-                    size: 20,
-                  ),
+                  child: Icon(_getTypeIcon(), color: _getTypeColor(), size: 20),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -215,11 +211,7 @@ class TAFilePreviewModal extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(
-                      Icons.auto_awesome,
-                      size: 16,
-                      color: TAColors.primary,
-                    ),
+                    Icon(Icons.auto_awesome, size: 16, color: TAColors.primary),
                     const SizedBox(width: 6),
                     Text(
                       l10n.taUploadAIEnhancementTools,
@@ -327,9 +319,7 @@ class TAFilePreviewModal extends StatelessWidget {
           decoration: BoxDecoration(
             color: TAColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: TAColors.primary.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: TAColors.primary.withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,

@@ -26,7 +26,7 @@ class _TAUploadAreaState extends State<TAUploadArea> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     return Container(
       margin: const EdgeInsets.all(16),
       child: Column(
@@ -45,7 +45,9 @@ class _TAUploadAreaState extends State<TAUploadArea> {
                 border: Border.all(
                   color: _isDragOver
                       ? TAColors.primary
-                      : TAColors.borderColor(widget.isDark).withValues(alpha: 0.5),
+                      : TAColors.borderColor(
+                          widget.isDark,
+                        ).withValues(alpha: 0.5),
                   width: _isDragOver ? 2 : 1,
                   style: _isDragOver ? BorderStyle.solid : BorderStyle.solid,
                 ),
@@ -126,7 +128,11 @@ class _TAUploadAreaState extends State<TAUploadArea> {
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: widget.onAIGenerateTap,
-                  icon: Icon(Icons.auto_awesome, size: 18, color: TAColors.primary),
+                  icon: Icon(
+                    Icons.auto_awesome,
+                    size: 18,
+                    color: TAColors.primary,
+                  ),
                   label: Text(l10n.taUploadAIGenerate),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: TAColors.primary,

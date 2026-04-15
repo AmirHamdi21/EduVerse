@@ -57,7 +57,8 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
       IntegrationProvider(
         id: '1',
         name: 'Canvas LMS',
-        description: 'Learning management system integration for course management and student tracking',
+        description:
+            'Learning management system integration for course management and student tracking',
         category: 'LMS',
         status: IntegrationStatus.connected,
         icon: Icons.school_rounded,
@@ -73,7 +74,12 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
         errorRate: 0.12,
         version: '2.4.1',
         isPopular: true,
-        features: ['Course Sync', 'Grade Export', 'User Provisioning', 'Assignment Sync'],
+        features: [
+          'Course Sync',
+          'Grade Export',
+          'User Provisioning',
+          'Assignment Sync',
+        ],
         connectionSettings: ConnectionSettings(
           apiEndpoint: 'https://canvas.example.edu/api/v1',
           autoSync: true,
@@ -92,7 +98,8 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
       IntegrationProvider(
         id: '2',
         name: 'Moodle',
-        description: 'Open-source learning platform integration for virtual classrooms',
+        description:
+            'Open-source learning platform integration for virtual classrooms',
         category: 'LMS',
         status: IntegrationStatus.connected,
         icon: Icons.menu_book_rounded,
@@ -113,7 +120,8 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
       IntegrationProvider(
         id: '3',
         name: 'OpenAI GPT',
-        description: 'AI-powered learning assistant for personalized tutoring and content generation',
+        description:
+            'AI-powered learning assistant for personalized tutoring and content generation',
         category: 'AI',
         status: IntegrationStatus.connected,
         icon: Icons.psychology_rounded,
@@ -169,7 +177,8 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
       IntegrationProvider(
         id: '5',
         name: 'AWS S3 Storage',
-        description: 'Cloud storage for course materials, assignments, and media files',
+        description:
+            'Cloud storage for course materials, assignments, and media files',
         category: 'Storage',
         status: IntegrationStatus.connected,
         icon: Icons.cloud_rounded,
@@ -239,7 +248,8 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
       IntegrationProvider(
         id: '8',
         name: 'Microsoft 365',
-        description: 'Office suite integration for documents, spreadsheets, and collaboration',
+        description:
+            'Office suite integration for documents, spreadsheets, and collaboration',
         category: 'Productivity',
         status: IntegrationStatus.connected,
         icon: Icons.grid_view_rounded,
@@ -260,7 +270,8 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
       IntegrationProvider(
         id: '9',
         name: 'Google Workspace',
-        description: 'Google productivity suite for education with Drive, Docs, and Meet',
+        description:
+            'Google productivity suite for education with Drive, Docs, and Meet',
         category: 'Productivity',
         status: IntegrationStatus.connected,
         icon: Icons.work_rounded,
@@ -281,7 +292,8 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
       IntegrationProvider(
         id: '10',
         name: 'Notion',
-        description: 'All-in-one workspace for notes, docs, and project management',
+        description:
+            'All-in-one workspace for notes, docs, and project management',
         category: 'Productivity',
         status: IntegrationStatus.disconnected,
         icon: Icons.note_alt_rounded,
@@ -297,7 +309,8 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
       IntegrationProvider(
         id: '11',
         name: 'Slack',
-        description: 'Team communication platform for instant messaging and collaboration',
+        description:
+            'Team communication platform for instant messaging and collaboration',
         category: 'Communication',
         status: IntegrationStatus.connected,
         icon: Icons.tag_rounded,
@@ -338,7 +351,8 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
       IntegrationProvider(
         id: '13',
         name: 'Discord',
-        description: 'Community platform for student engagement and study groups',
+        description:
+            'Community platform for student engagement and study groups',
         category: 'Communication',
         status: IntegrationStatus.disconnected,
         icon: Icons.headset_mic_rounded,
@@ -460,7 +474,8 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
       IntegrationProvider(
         id: '19',
         name: 'Stripe Payments',
-        description: 'Payment processing for course purchases and subscriptions',
+        description:
+            'Payment processing for course purchases and subscriptions',
         category: 'Productivity',
         status: IntegrationStatus.connected,
         icon: Icons.payment_rounded,
@@ -541,8 +556,9 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
     return filtered;
   }
 
-  int get _connectedCount =>
-      _integrations.where((i) => i.status == IntegrationStatus.connected).length;
+  int get _connectedCount => _integrations
+      .where((i) => i.status == IntegrationStatus.connected)
+      .length;
 
   int get _totalApiCalls =>
       _integrations.fold(0, (sum, i) => sum + (i.requestCount ?? 0));
@@ -577,7 +593,7 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
 
   void _showIntegrationDetail(IntegrationProvider integration) {
     final isDark = context.read<ThemeBloc>().state.isDark;
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -593,8 +609,10 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
           onSync: () => _handleSync(integration),
           onDisconnect: () => _handleDisconnect(integration),
           onConnect: () => _handleConnect(integration),
-          onViewLogs: () => _showSnackBar('Opening logs for ${integration.name}...'),
-          onViewDocs: () => _showSnackBar('Opening documentation for ${integration.name}...'),
+          onViewLogs: () =>
+              _showSnackBar('Opening logs for ${integration.name}...'),
+          onViewDocs: () =>
+              _showSnackBar('Opening documentation for ${integration.name}...'),
         ),
       ),
     );
@@ -602,7 +620,7 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
 
   void _showConfigDialog(IntegrationProvider integration) {
     final isDark = context.read<ThemeBloc>().state.isDark;
-    
+
     showDialog(
       context: context,
       builder: (context) => ITIntegrationConfigDialog(
@@ -610,7 +628,9 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
         integration: integration,
         onSave: (settings) {
           setState(() {
-            final index = _integrations.indexWhere((i) => i.id == integration.id);
+            final index = _integrations.indexWhere(
+              (i) => i.id == integration.id,
+            );
             if (index != -1) {
               _integrations[index] = integration.copyWith(
                 connectionSettings: settings,
@@ -627,9 +647,7 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
     setState(() {
       final index = _integrations.indexWhere((i) => i.id == integration.id);
       if (index != -1) {
-        _integrations[index] = integration.copyWith(
-          lastSync: 'Just now',
-        );
+        _integrations[index] = integration.copyWith(lastSync: 'Just now');
       }
     });
     _showSnackBar('Syncing ${integration.name}...');
@@ -650,7 +668,7 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
 
   void _handleDisconnect(IntegrationProvider integration) {
     final isDark = context.read<ThemeBloc>().state.isDark;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -664,7 +682,11 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
                 color: ITColors.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.power_off_rounded, color: ITColors.error, size: 24),
+              child: Icon(
+                Icons.power_off_rounded,
+                color: ITColors.error,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -701,7 +723,9 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
             onPressed: () {
               Navigator.pop(context);
               setState(() {
-                final index = _integrations.indexWhere((i) => i.id == integration.id);
+                final index = _integrations.indexWhere(
+                  (i) => i.id == integration.id,
+                );
                 if (index != -1) {
                   _integrations[index] = integration.copyWith(
                     status: IntegrationStatus.disconnected,
@@ -740,7 +764,10 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
           backgroundColor: isDark
               ? const Color(0xFF1A1A2E)
               : const Color(0xFFFAFAFA),
-          drawer: ITDrawer(currentRoute: '/it-admin/integrations', isDark: isDark),
+          drawer: ITDrawer(
+            currentRoute: '/it-admin/integrations',
+            isDark: isDark,
+          ),
           body: SafeArea(
             child: Container(
               decoration: isDark
@@ -766,9 +793,7 @@ class _ITIntegrationScreenState extends State<ITIntegrationScreen> {
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: ITColors.primary),
-      );
+      return Center(child: CircularProgressIndicator(color: ITColors.primary));
     }
 
     if (_errorMessage != null) {

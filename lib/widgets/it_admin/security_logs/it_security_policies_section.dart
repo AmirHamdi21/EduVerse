@@ -85,7 +85,10 @@ class ITSecurityPoliciesSection extends StatelessWidget {
                 if (policy.value != null) ...[
                   const SizedBox(height: 6),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: ITColors.info.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
@@ -112,7 +115,10 @@ class ITSecurityPoliciesSection extends StatelessWidget {
               ),
               child: Text(
                 policy.configureAction!,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             )
           else

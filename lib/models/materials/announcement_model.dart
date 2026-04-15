@@ -64,15 +64,15 @@ class AnnouncementModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        courseId,
-        title,
-        content,
-        createdBy,
-        priority,
-        publishedAt,
-        expiresAt,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    courseId,
+    title,
+    content,
+    createdBy,
+    priority,
+    publishedAt,
+    expiresAt,
+    createdAt,
+    updatedAt,
+  ];
 }

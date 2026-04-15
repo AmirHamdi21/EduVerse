@@ -79,11 +79,7 @@ class TAMaterialCard extends StatelessWidget {
             child: Stack(
               children: [
                 Center(
-                  child: Icon(
-                    _getTypeIcon(),
-                    color: _getTypeColor(),
-                    size: 24,
-                  ),
+                  child: Icon(_getTypeIcon(), color: _getTypeColor(), size: 24),
                 ),
                 if (material.isAIGenerated)
                   Positioned(
@@ -128,7 +124,10 @@ class TAMaterialCard extends StatelessWidget {
                     if (material.isAIGenerated)
                       Container(
                         margin: const EdgeInsets.only(left: 6),
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: TAColors.primary.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(4),
@@ -262,11 +261,7 @@ class _ActionButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: Container(
             padding: const EdgeInsets.all(6),
-            child: Icon(
-              icon,
-              color: color,
-              size: 18,
-            ),
+            child: Icon(icon, color: color, size: 18),
           ),
         ),
       ),

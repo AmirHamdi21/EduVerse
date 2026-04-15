@@ -39,9 +39,7 @@ class LoginActivityChart extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -79,10 +77,7 @@ class LoginActivityChart extends StatelessWidget {
                   onPressed: onViewDetails,
                   child: Text(
                     l10n.viewDetails,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AdminColors.primary,
-                    ),
+                    style: TextStyle(fontSize: 13, color: AdminColors.primary),
                   ),
                 ),
             ],
@@ -96,10 +91,7 @@ class LoginActivityChart extends StatelessWidget {
                 label: l10n.successful,
               ),
               const SizedBox(width: 20),
-              _buildLegendItem(
-                color: AdminColors.error,
-                label: l10n.failed,
-              ),
+              _buildLegendItem(color: AdminColors.error, label: l10n.failed),
             ],
           ),
           const SizedBox(height: 20),
@@ -176,10 +168,7 @@ class LoginActivityChart extends StatelessWidget {
     );
   }
 
-  Widget _buildLegendItem({
-    required Color color,
-    required String label,
-  }) {
+  Widget _buildLegendItem({required Color color, required String label}) {
     return Row(
       children: [
         Container(

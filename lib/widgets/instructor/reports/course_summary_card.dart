@@ -92,7 +92,9 @@ class CourseSummaryCard extends StatelessWidget {
                       child: _buildStatItem(
                         'At Risk',
                         studentsAtRisk.toString(),
-                        studentsAtRisk > 0 ? ReportsColors.atRisk : ReportsColors.gradeA,
+                        studentsAtRisk > 0
+                            ? ReportsColors.atRisk
+                            : ReportsColors.gradeA,
                       ),
                     ),
                   ],
@@ -165,4 +167,3 @@ class CourseSummaryCard extends StatelessWidget {
     );
   }
 }
-

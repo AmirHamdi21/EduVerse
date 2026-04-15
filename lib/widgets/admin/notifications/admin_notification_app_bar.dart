@@ -126,11 +126,7 @@ class AdminNotificationAppBar extends StatelessWidget {
               : Colors.grey.withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(
-          icon,
-          size: 20,
-          color: AdminColors.getTextColor(isDark),
-        ),
+        child: Icon(icon, size: 20, color: AdminColors.getTextColor(isDark)),
       ),
     );
   }

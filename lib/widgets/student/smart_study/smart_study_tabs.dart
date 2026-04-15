@@ -7,10 +7,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class SmartStudyTabs extends StatelessWidget {
   final bool isDark;
 
-  const SmartStudyTabs({
-    super.key,
-    required this.isDark,
-  });
+  const SmartStudyTabs({super.key, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +32,11 @@ class SmartStudyTabs extends StatelessWidget {
                   child: _buildTab(
                     context: context,
                     title: l10n.smartStudyTopicsToReview,
-                    isSelected: state.currentTab == SmartStudyTab.topicsToReview,
-                    onTap: () => context
-                        .read<SmartStudyCubit>()
-                        .changeTab(SmartStudyTab.topicsToReview),
+                    isSelected:
+                        state.currentTab == SmartStudyTab.topicsToReview,
+                    onTap: () => context.read<SmartStudyCubit>().changeTab(
+                      SmartStudyTab.topicsToReview,
+                    ),
                   ),
                 ),
                 Expanded(
@@ -46,9 +44,9 @@ class SmartStudyTabs extends StatelessWidget {
                     context: context,
                     title: l10n.smartStudySchedule,
                     isSelected: state.currentTab == SmartStudyTab.studySchedule,
-                    onTap: () => context
-                        .read<SmartStudyCubit>()
-                        .changeTab(SmartStudyTab.studySchedule),
+                    onTap: () => context.read<SmartStudyCubit>().changeTab(
+                      SmartStudyTab.studySchedule,
+                    ),
                   ),
                 ),
               ],
@@ -91,7 +89,9 @@ class SmartStudyTabs extends StatelessWidget {
             style: TextStyle(
               color: isSelected
                   ? Colors.white
-                  : (isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565)),
+                  : (isDark
+                        ? const Color(0xFF99A1AF)
+                        : const Color(0xFF4A5565)),
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),

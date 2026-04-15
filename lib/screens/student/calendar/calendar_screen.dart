@@ -38,7 +38,9 @@ class _CalendarView extends StatelessWidget {
     final isDark = themeState.isDark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF030712) : const Color(0xFFF9FAFB),
+      backgroundColor: isDark
+          ? const Color(0xFF030712)
+          : const Color(0xFFF9FAFB),
       body: BlocConsumer<CalendarCubit, CalendarState>(
         listener: (context, state) {
           if (state.successMessage != null) {
@@ -77,7 +79,8 @@ class _CalendarView extends StatelessWidget {
                 child: Column(
                   children: [
                     CalendarAppBar(
-                      onAddEvent: () => _showAddEventSheet(context, isDark, l10n),
+                      onAddEvent: () =>
+                          _showAddEventSheet(context, isDark, l10n),
                     ),
                     Expanded(
                       child: SingleChildScrollView(
@@ -89,14 +92,19 @@ class _CalendarView extends StatelessWidget {
                             CalendarFilterDropdown(
                               filter: state.filter,
                               isVisible: state.isFilterVisible,
-                              onToggle: () => context.read<CalendarCubit>().toggleFilterVisibility(),
-                              onFilterChanged: (type) => context.read<CalendarCubit>().toggleFilterType(type),
+                              onToggle: () => context
+                                  .read<CalendarCubit>()
+                                  .toggleFilterVisibility(),
+                              onFilterChanged: (type) => context
+                                  .read<CalendarCubit>()
+                                  .toggleFilterType(type),
                             ),
                             const SizedBox(height: 16),
                             _buildCalendarCard(context, state, isDark),
                             const SizedBox(height: 24),
                             UpcomingEventsSection(
-                              onEventTap: (event) => _showEventDetails(context, event, isDark),
+                              onEventTap: (event) =>
+                                  _showEventDetails(context, event, isDark),
                             ),
                             const SizedBox(height: 100),
                           ],
@@ -133,7 +141,9 @@ class _CalendarView extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF2B7FFF).withValues(alpha: isDark ? 0.1 : 0.15),
+                  const Color(
+                    0xFF2B7FFF,
+                  ).withValues(alpha: isDark ? 0.1 : 0.15),
                   Colors.transparent,
                 ],
               ),
@@ -150,7 +160,9 @@ class _CalendarView extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  const Color(0xFF00B8DB).withValues(alpha: isDark ? 0.08 : 0.12),
+                  const Color(
+                    0xFF00B8DB,
+                  ).withValues(alpha: isDark ? 0.08 : 0.12),
                   Colors.transparent,
                 ],
               ),
@@ -161,7 +173,11 @@ class _CalendarView extends StatelessWidget {
     );
   }
 
-  Widget _buildCalendarCard(BuildContext context, CalendarState state, bool isDark) {
+  Widget _buildCalendarCard(
+    BuildContext context,
+    CalendarState state,
+    bool isDark,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
@@ -183,7 +199,8 @@ class _CalendarView extends StatelessWidget {
           children: [
             CalendarViewSelector(
               currentView: state.viewType,
-              onViewChanged: (view) => context.read<CalendarCubit>().setViewType(view),
+              onViewChanged: (view) =>
+                  context.read<CalendarCubit>().setViewType(view),
             ),
             _buildCalendarView(context, state, isDark),
           ],
@@ -192,7 +209,11 @@ class _CalendarView extends StatelessWidget {
     );
   }
 
-  Widget _buildCalendarView(BuildContext context, CalendarState state, bool isDark) {
+  Widget _buildCalendarView(
+    BuildContext context,
+    CalendarState state,
+    bool isDark,
+  ) {
     switch (state.viewType) {
       case CalendarViewType.month:
         return MonthViewCalendar(
@@ -242,18 +263,18 @@ class _CalendarView extends StatelessWidget {
             ),
           ],
         ),
-        child: const Icon(
-          Icons.add_rounded,
-          color: Colors.white,
-          size: 28,
-        ),
+        child: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
       ),
     );
   }
 
-  void _showAddEventSheet(BuildContext context, bool isDark, AppLocalizations l10n) {
+  void _showAddEventSheet(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final cubit = context.read<CalendarCubit>();
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -265,9 +286,13 @@ class _CalendarView extends StatelessWidget {
     );
   }
 
-  void _showEventDetails(BuildContext context, CalendarEvent event, bool isDark) {
+  void _showEventDetails(
+    BuildContext context,
+    CalendarEvent event,
+    bool isDark,
+  ) {
     final cubit = context.read<CalendarCubit>();
-    
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -279,7 +304,12 @@ class _CalendarView extends StatelessWidget {
     );
   }
 
-  void _showDateEvents(BuildContext context, DateTime date, List<CalendarEvent> events, bool isDark) {
+  void _showDateEvents(
+    BuildContext context,
+    DateTime date,
+    List<CalendarEvent> events,
+    bool isDark,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

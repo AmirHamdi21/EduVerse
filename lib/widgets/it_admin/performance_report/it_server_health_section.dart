@@ -46,11 +46,7 @@ class ITServerHealthSection extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  Icons.dns_rounded,
-                  color: ITColors.teal,
-                  size: 22,
-                ),
+                child: Icon(Icons.dns_rounded, color: ITColors.teal, size: 22),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -91,10 +87,10 @@ class ITServerHealthSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Server List
           ...servers.map((server) => _buildServerCard(server)),
-          
+
           if (servers.isEmpty)
             Center(
               child: Padding(
@@ -181,7 +177,10 @@ class ITServerHealthSection extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: server.statusColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
@@ -230,7 +229,11 @@ class ITServerHealthSection extends StatelessWidget {
   Widget _buildMiniMetric(String label, double value, Color color) {
     final isHigh = value > 80;
     final isMedium = value > 60 && value <= 80;
-    final displayColor = isHigh ? ITColors.error : isMedium ? ITColors.warning : color;
+    final displayColor = isHigh
+        ? ITColors.error
+        : isMedium
+        ? ITColors.warning
+        : color;
 
     return Expanded(
       child: Column(

@@ -30,7 +30,8 @@ class NotificationTile extends StatefulWidget {
   State<NotificationTile> createState() => _NotificationTileState();
 }
 
-class _NotificationTileState extends State<NotificationTile> with WidgetsBindingObserver {
+class _NotificationTileState extends State<NotificationTile>
+    with WidgetsBindingObserver {
   NotificationSwipeSettings _swipeSettings = const NotificationSwipeSettings();
 
   @override
@@ -63,7 +64,8 @@ class _NotificationTileState extends State<NotificationTile> with WidgetsBinding
   Future<void> _loadSwipeSettings() async {
     // Clear cache to get fresh settings
     NotificationSwipeSettingsService.instance.clearCache();
-    final settings = await NotificationSwipeSettingsService.instance.getSwipeSettings();
+    final settings = await NotificationSwipeSettingsService.instance
+        .getSwipeSettings();
     if (mounted) {
       setState(() {
         _swipeSettings = settings;
@@ -141,8 +143,8 @@ class _NotificationTileState extends State<NotificationTile> with WidgetsBinding
       case SwipeAction.delete:
         return Icons.delete_outline_rounded;
       case SwipeAction.markRead:
-        return widget.notification.isRead 
-            ? Icons.mark_email_unread_outlined 
+        return widget.notification.isRead
+            ? Icons.mark_email_unread_outlined
             : Icons.mark_email_read_outlined;
       case SwipeAction.markUnread:
         return Icons.mark_email_unread_outlined;
@@ -160,10 +162,10 @@ class _NotificationTileState extends State<NotificationTile> with WidgetsBinding
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    
+
     final leftAction = _swipeSettings.leftAction;
     final rightAction = _swipeSettings.rightAction;
-    
+
     // Determine dismiss direction based on settings
     DismissDirection direction;
     if (leftAction == SwipeAction.none && rightAction == SwipeAction.none) {
@@ -185,16 +187,16 @@ class _NotificationTileState extends State<NotificationTile> with WidgetsBinding
       },
       confirmDismiss: (dir) async {
         HapticFeedback.lightImpact();
-        
+
         SwipeAction action;
         if (dir == DismissDirection.endToStart) {
           action = leftAction;
         } else {
           action = rightAction;
         }
-        
+
         if (action == SwipeAction.none) return false;
-        
+
         final confirmed = await _confirmAction(context, action);
         if (confirmed) {
           _executeAction(action);
@@ -277,18 +279,18 @@ class _NotificationTileState extends State<NotificationTile> with WidgetsBinding
         decoration: BoxDecoration(
           color: widget.isDarkMode
               ? (widget.notification.isRead
-                  ? AppTheme.darkCardColor
-                  : AppTheme.darkCardColor.withValues(alpha: 0.9))
-              : (widget.notification.isRead
-                  ? Colors.white
-                  : Colors.white),
+                    ? AppTheme.darkCardColor
+                    : AppTheme.darkCardColor.withValues(alpha: 0.9))
+              : (widget.notification.isRead ? Colors.white : Colors.white),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: widget.notification.isRead
                 ? (widget.isDarkMode
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.grey.withValues(alpha: 0.15))
-                : _getPriorityColor(widget.notification.priority).withValues(alpha: 0.4),
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.grey.withValues(alpha: 0.15))
+                : _getPriorityColor(
+                    widget.notification.priority,
+                  ).withValues(alpha: 0.4),
             width: widget.notification.isRead ? 1 : 1.5,
           ),
           boxShadow: widget.isDarkMode
@@ -320,8 +322,9 @@ class _NotificationTileState extends State<NotificationTile> with WidgetsBinding
                           widget.notification.title,
                           style: TextStyle(
                             fontSize: 15,
-                            fontWeight:
-                                widget.notification.isRead ? FontWeight.w500 : FontWeight.w600,
+                            fontWeight: widget.notification.isRead
+                                ? FontWeight.w500
+                                : FontWeight.w600,
                             color: widget.isDarkMode
                                 ? AppTheme.darkTextPrimary
                                 : AppTheme.textDark,
@@ -345,8 +348,8 @@ class _NotificationTileState extends State<NotificationTile> with WidgetsBinding
                           color: widget.notification.isBookmarked
                               ? AppTheme.primaryColor
                               : (widget.isDarkMode
-                                  ? AppTheme.darkTextSecondary
-                                  : AppTheme.textLight),
+                                    ? AppTheme.darkTextSecondary
+                                    : AppTheme.textLight),
                         ),
                       ),
                       if (!widget.notification.isRead) ...[
@@ -355,7 +358,9 @@ class _NotificationTileState extends State<NotificationTile> with WidgetsBinding
                           width: 8,
                           height: 8,
                           decoration: BoxDecoration(
-                            color: _getPriorityColor(widget.notification.priority),
+                            color: _getPriorityColor(
+                              widget.notification.priority,
+                            ),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -476,21 +481,30 @@ class _NotificationTileState extends State<NotificationTile> with WidgetsBinding
         ],
         // Tags
         if (widget.notification.tags != null)
-          ...widget.notification.tags!.keys.take(2).map((tag) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: _getTypeColor(widget.notification.type).withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(
-                  tag,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: _getTypeColor(widget.notification.type),
+          ...widget.notification.tags!.keys
+              .take(2)
+              .map(
+                (tag) => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _getTypeColor(
+                      widget.notification.type,
+                    ).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    tag,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: _getTypeColor(widget.notification.type),
+                    ),
                   ),
                 ),
-              )),
+              ),
       ],
     );
   }
@@ -593,7 +607,8 @@ class _DeleteNotificationDialog extends StatefulWidget {
   });
 
   @override
-  State<_DeleteNotificationDialog> createState() => _DeleteNotificationDialogState();
+  State<_DeleteNotificationDialog> createState() =>
+      _DeleteNotificationDialogState();
 }
 
 class _DeleteNotificationDialogState extends State<_DeleteNotificationDialog>
@@ -609,12 +624,14 @@ class _DeleteNotificationDialogState extends State<_DeleteNotificationDialog>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -679,14 +696,19 @@ class _DeleteNotificationDialogState extends State<_DeleteNotificationDialog>
                               height: 88,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                                  colors: [
+                                    Color(0xFFEF4444),
+                                    Color(0xFFDC2626),
+                                  ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+                                    color: const Color(
+                                      0xFFEF4444,
+                                    ).withValues(alpha: 0.4),
                                     blurRadius: 24,
                                     offset: const Offset(0, 8),
                                   ),
@@ -707,7 +729,9 @@ class _DeleteNotificationDialogState extends State<_DeleteNotificationDialog>
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: widget.isDark ? Colors.white : const Color(0xFF1A1A2E),
+                          color: widget.isDark
+                              ? Colors.white
+                              : const Color(0xFF1A1A2E),
                         ),
                       ),
                     ],
@@ -727,7 +751,9 @@ class _DeleteNotificationDialogState extends State<_DeleteNotificationDialog>
                               : const Color(0xFFFEF2F2),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: const Color(0xFFEF4444).withValues(alpha: 0.3),
+                            color: const Color(
+                              0xFFEF4444,
+                            ).withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -735,7 +761,9 @@ class _DeleteNotificationDialogState extends State<_DeleteNotificationDialog>
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFEF4444).withValues(alpha: 0.2),
+                                color: const Color(
+                                  0xFFEF4444,
+                                ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(
@@ -769,7 +797,9 @@ class _DeleteNotificationDialogState extends State<_DeleteNotificationDialog>
                             child: GestureDetector(
                               onTap: widget.onCancel,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   color: widget.isDark
                                       ? const Color(0xFF252D48)
@@ -814,15 +844,22 @@ class _DeleteNotificationDialogState extends State<_DeleteNotificationDialog>
                             child: GestureDetector(
                               onTap: widget.onDelete,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFFEF4444), Color(0xFFDC2626)],
+                                    colors: [
+                                      Color(0xFFEF4444),
+                                      Color(0xFFDC2626),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFEF4444).withValues(alpha: 0.4),
+                                      color: const Color(
+                                        0xFFEF4444,
+                                      ).withValues(alpha: 0.4),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),
@@ -879,7 +916,8 @@ class _ArchiveNotificationDialog extends StatefulWidget {
   });
 
   @override
-  State<_ArchiveNotificationDialog> createState() => _ArchiveNotificationDialogState();
+  State<_ArchiveNotificationDialog> createState() =>
+      _ArchiveNotificationDialogState();
 }
 
 class _ArchiveNotificationDialogState extends State<_ArchiveNotificationDialog>
@@ -895,12 +933,14 @@ class _ArchiveNotificationDialogState extends State<_ArchiveNotificationDialog>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -965,14 +1005,19 @@ class _ArchiveNotificationDialogState extends State<_ArchiveNotificationDialog>
                               height: 88,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                                  colors: [
+                                    Color(0xFFF59E0B),
+                                    Color(0xFFD97706),
+                                  ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+                                    color: const Color(
+                                      0xFFF59E0B,
+                                    ).withValues(alpha: 0.4),
                                     blurRadius: 24,
                                     offset: const Offset(0, 8),
                                   ),
@@ -993,7 +1038,9 @@ class _ArchiveNotificationDialogState extends State<_ArchiveNotificationDialog>
                         style: TextStyle(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: widget.isDark ? Colors.white : const Color(0xFF1A1A2E),
+                          color: widget.isDark
+                              ? Colors.white
+                              : const Color(0xFF1A1A2E),
                         ),
                       ),
                     ],
@@ -1013,7 +1060,9 @@ class _ArchiveNotificationDialogState extends State<_ArchiveNotificationDialog>
                               : const Color(0xFFFFFBEB),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: const Color(0xFFF59E0B).withValues(alpha: 0.3),
+                            color: const Color(
+                              0xFFF59E0B,
+                            ).withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -1021,7 +1070,9 @@ class _ArchiveNotificationDialogState extends State<_ArchiveNotificationDialog>
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFF59E0B).withValues(alpha: 0.2),
+                                color: const Color(
+                                  0xFFF59E0B,
+                                ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(
@@ -1055,7 +1106,9 @@ class _ArchiveNotificationDialogState extends State<_ArchiveNotificationDialog>
                             child: GestureDetector(
                               onTap: widget.onCancel,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   color: widget.isDark
                                       ? const Color(0xFF252D48)
@@ -1100,15 +1153,22 @@ class _ArchiveNotificationDialogState extends State<_ArchiveNotificationDialog>
                             child: GestureDetector(
                               onTap: widget.onArchive,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFFF59E0B), Color(0xFFD97706)],
+                                    colors: [
+                                      Color(0xFFF59E0B),
+                                      Color(0xFFD97706),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFFF59E0B).withValues(alpha: 0.4),
+                                      color: const Color(
+                                        0xFFF59E0B,
+                                      ).withValues(alpha: 0.4),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),

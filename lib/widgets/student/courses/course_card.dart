@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -76,13 +75,13 @@ class _CourseCardState extends State<CourseCard>
 
   /// Deterministic gradient colors for the course icon placeholder.
   List<Color> get _gradientColors => CourseUiUtils.gradientForCourseId(
-      widget.enrollment.course?.courseId ?? widget.enrollment.courseId);
+    widget.enrollment.course?.courseId ?? widget.enrollment.courseId,
+  );
 
   /// Initials for the gradient avatar.
   String get _initials => CourseUiUtils.initialsFromCourseName(
-      widget.enrollment.course?.courseName ?? '');
-
-
+    widget.enrollment.course?.courseName ?? '',
+  );
 
   /// Status badge color.
   Color get _statusColor {
@@ -223,8 +222,7 @@ class _CourseCardState extends State<CourseCard>
                   Text(
                     _departmentOrInstructor,
                     style: TextStyle(
-                      color:
-                          isDark ? Colors.white54 : const Color(0xFF6A7282),
+                      color: isDark ? Colors.white54 : const Color(0xFF6A7282),
                       fontSize: 12,
                       height: 1.33,
                     ),
@@ -297,7 +295,11 @@ class _CourseCardState extends State<CourseCard>
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 14, color: isDark ? Colors.white54 : const Color(0xFF6A7282)),
+            Icon(
+              icon,
+              size: 14,
+              color: isDark ? Colors.white54 : const Color(0xFF6A7282),
+            ),
             const SizedBox(width: 4),
             Flexible(
               child: Text(
@@ -351,10 +353,7 @@ class _CourseCardState extends State<CourseCard>
               ),
               child: const Text(
                 'Continue',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -369,7 +368,9 @@ class _CourseCardState extends State<CourseCard>
               elevation: 0,
               padding: const EdgeInsets.symmetric(vertical: 12),
               side: BorderSide(
-                color: isDark ? const Color(0xff8EC5FF) : const Color(0xFF155DFC),
+                color: isDark
+                    ? const Color(0xff8EC5FF)
+                    : const Color(0xFF155DFC),
                 width: 1.5,
               ),
               shape: RoundedRectangleBorder(
@@ -381,7 +382,9 @@ class _CourseCardState extends State<CourseCard>
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: isDark ? const Color(0xff8EC5FF) : const Color(0xFF155DFC),
+                color: isDark
+                    ? const Color(0xff8EC5FF)
+                    : const Color(0xFF155DFC),
               ),
             ),
           ),

@@ -177,6 +177,7 @@ import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
 import '../screens/auth/forgot_password_screen.dart';
 import '../models/core/enrollment_model.dart';
+import '../models/core/course_model.dart' as core_models;
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -906,10 +907,12 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
           // Parse strings to ints safely (go_router may serialize extras)
-          final sectionId = int.tryParse(extra?['sectionId']?.toString() ?? '') ?? 0;
+          final sectionId =
+              int.tryParse(extra?['sectionId']?.toString() ?? '') ?? 0;
           final sectionName = extra?['sectionName'] as String? ?? 'Section';
-          final courseId = int.tryParse(extra?['courseId']?.toString() ?? '') ?? 0;
-          
+          final courseId =
+              int.tryParse(extra?['courseId']?.toString() ?? '') ?? 0;
+
           return TASectionMaterialsScreen(
             sectionId: sectionId,
             sectionName: sectionName,
@@ -1011,7 +1014,11 @@ class AppRouter {
       ),
       GoRoute(
         path: '/admin/courses/add',
-        builder: (context, state) => const AdminAddCourseScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          final initialCourse = extra is core_models.CourseModel ? extra : null;
+          return AdminAddCourseScreen(initialCourse: initialCourse);
+        },
       ),
       GoRoute(
         path: '/admin/staff',

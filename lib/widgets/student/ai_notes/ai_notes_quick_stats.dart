@@ -7,10 +7,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class AiNotesQuickStats extends StatelessWidget {
   final NotesQuickStats stats;
 
-  const AiNotesQuickStats({
-    super.key,
-    required this.stats,
-  });
+  const AiNotesQuickStats({super.key, required this.stats});
 
   @override
   Widget build(BuildContext context) {
@@ -138,11 +135,7 @@ class AiNotesQuickStats extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: color,
-          ),
+          Icon(icon, size: 20, color: color),
           const SizedBox(height: 8),
           Text(
             value,
@@ -169,4 +162,3 @@ class AiNotesQuickStats extends StatelessWidget {
     );
   }
 }
-

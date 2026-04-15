@@ -133,7 +133,9 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
                     Text(
                       widget.course.courseName,
                       style: TextStyle(
-                        color: widget.isDark ? Colors.white : const Color(0xFF1E293B),
+                        color: widget.isDark
+                            ? Colors.white
+                            : const Color(0xFF1E293B),
                         fontSize: responsive.fontSize18,
                         fontWeight: FontWeight.w700,
                       ),
@@ -147,8 +149,12 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
                             vertical: responsive.p2,
                           ),
                           decoration: BoxDecoration(
-                            color: widget.course.courseColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(responsive.radius6),
+                            color: widget.course.courseColor.withValues(
+                              alpha: 0.1,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              responsive.radius6,
+                            ),
                           ),
                           child: Text(
                             widget.course.courseCode,
@@ -186,7 +192,9 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
                   ),
                   child: Icon(
                     Icons.close_rounded,
-                    color: widget.isDark ? Colors.white : const Color(0xFF1E293B),
+                    color: widget.isDark
+                        ? Colors.white
+                        : const Color(0xFF1E293B),
                     size: 20,
                   ),
                 ),
@@ -351,7 +359,10 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
     );
   }
 
-  Widget _buildAssessmentsTab(ResponsiveUtil responsive, AppLocalizations l10n) {
+  Widget _buildAssessmentsTab(
+    ResponsiveUtil responsive,
+    AppLocalizations l10n,
+  ) {
     final assessments = widget.course.assessments;
 
     return ListView.builder(
@@ -364,7 +375,10 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
     );
   }
 
-  Widget _buildAssessmentCard(ResponsiveUtil responsive, AssessmentGrade assessment) {
+  Widget _buildAssessmentCard(
+    ResponsiveUtil responsive,
+    AssessmentGrade assessment,
+  ) {
     return Container(
       margin: EdgeInsets.only(bottom: responsive.p12),
       decoration: BoxDecoration(
@@ -433,8 +447,12 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
                               vertical: responsive.p2,
                             ),
                             decoration: BoxDecoration(
-                              color: assessment.type.color.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(responsive.radius4),
+                              color: assessment.type.color.withValues(
+                                alpha: 0.1,
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                responsive.radius4,
+                              ),
                             ),
                             child: Text(
                               assessment.type.label,
@@ -473,10 +491,14 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
                           gradient: LinearGradient(
                             colors: [
                               assessment.gradeLetter.color,
-                              assessment.gradeLetter.color.withValues(alpha: 0.8),
+                              assessment.gradeLetter.color.withValues(
+                                alpha: 0.8,
+                              ),
                             ],
                           ),
-                          borderRadius: BorderRadius.circular(responsive.radius8),
+                          borderRadius: BorderRadius.circular(
+                            responsive.radius8,
+                          ),
                         ),
                         child: Text(
                           assessment.gradeLetter.label,
@@ -537,12 +559,18 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
     );
   }
 
-  Widget _buildGradeBreakdownTab(ResponsiveUtil responsive, AppLocalizations l10n) {
+  Widget _buildGradeBreakdownTab(
+    ResponsiveUtil responsive,
+    AppLocalizations l10n,
+  ) {
     final assessments = widget.course.assessments;
     final typeGroups = <AssessmentType, List<AssessmentGrade>>{};
 
     for (final assessment in assessments) {
-      typeGroups[assessment.type] = [...(typeGroups[assessment.type] ?? []), assessment];
+      typeGroups[assessment.type] = [
+        ...(typeGroups[assessment.type] ?? []),
+        assessment,
+      ];
     }
 
     return ListView(
@@ -551,7 +579,7 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
         // Weight distribution
         _buildWeightDistribution(responsive, l10n),
         SizedBox(height: responsive.p20),
-        
+
         // By category
         Text(
           l10n.byCategory,
@@ -562,16 +590,21 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
           ),
         ),
         SizedBox(height: responsive.p12),
-        ...typeGroups.entries.map((entry) => _buildCategoryBreakdown(
-          responsive,
-          type: entry.key,
-          assessments: entry.value,
-        )),
+        ...typeGroups.entries.map(
+          (entry) => _buildCategoryBreakdown(
+            responsive,
+            type: entry.key,
+            assessments: entry.value,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildWeightDistribution(ResponsiveUtil responsive, AppLocalizations l10n) {
+  Widget _buildWeightDistribution(
+    ResponsiveUtil responsive,
+    AppLocalizations l10n,
+  ) {
     final assessments = widget.course.assessments;
     final typeWeights = <AssessmentType, double>{};
 
@@ -623,76 +656,78 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
           ),
           SizedBox(height: responsive.p16),
           // Progress bars for each type
-          ...typeWeights.entries.map((entry) => Padding(
-            padding: EdgeInsets.only(bottom: responsive.p12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          entry.key.icon,
-                          size: 16,
-                          color: entry.key.color,
-                        ),
-                        SizedBox(width: responsive.p8),
-                        Text(
-                          entry.key.label,
-                          style: TextStyle(
-                            color: widget.isDark
-                                ? const Color(0xFF94A3B8)
-                                : const Color(0xFF64748B),
-                            fontSize: responsive.fontSize13,
-                            fontWeight: FontWeight.w500,
+          ...typeWeights.entries.map(
+            (entry) => Padding(
+              padding: EdgeInsets.only(bottom: responsive.p12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            entry.key.icon,
+                            size: 16,
+                            color: entry.key.color,
                           ),
+                          SizedBox(width: responsive.p8),
+                          Text(
+                            entry.key.label,
+                            style: TextStyle(
+                              color: widget.isDark
+                                  ? const Color(0xFF94A3B8)
+                                  : const Color(0xFF64748B),
+                              fontSize: responsive.fontSize13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        '${entry.value.toInt()}%',
+                        style: TextStyle(
+                          color: entry.key.color,
+                          fontSize: responsive.fontSize13,
+                          fontWeight: FontWeight.w700,
                         ),
-                      ],
-                    ),
-                    Text(
-                      '${entry.value.toInt()}%',
-                      style: TextStyle(
-                        color: entry.key.color,
-                        fontSize: responsive.fontSize13,
-                        fontWeight: FontWeight.w700,
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: responsive.p6),
-                Stack(
-                  children: [
-                    Container(
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: widget.isDark
-                            ? Colors.white.withValues(alpha: 0.1)
-                            : const Color(0xFFE2E8F0),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
-                    FractionallySizedBox(
-                      widthFactor: (entry.value / 100).clamp(0.0, 1.0),
-                      child: Container(
+                    ],
+                  ),
+                  SizedBox(height: responsive.p6),
+                  Stack(
+                    children: [
+                      Container(
                         height: 8,
                         decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              entry.key.color,
-                              entry.key.color.withValues(alpha: 0.7),
-                            ],
-                          ),
+                          color: widget.isDark
+                              ? Colors.white.withValues(alpha: 0.1)
+                              : const Color(0xFFE2E8F0),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      FractionallySizedBox(
+                        widthFactor: (entry.value / 100).clamp(0.0, 1.0),
+                        child: Container(
+                          height: 8,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                entry.key.color,
+                                entry.key.color.withValues(alpha: 0.7),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
@@ -706,7 +741,7 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
     final gradedAssessments = assessments.where((a) => a.isGraded).toList();
     final averageScore = gradedAssessments.isNotEmpty
         ? gradedAssessments.map((a) => a.percentage).reduce((a, b) => a + b) /
-            gradedAssessments.length
+              gradedAssessments.length
         : 0.0;
 
     return Container(
@@ -717,9 +752,7 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
             ? Colors.white.withValues(alpha: 0.05)
             : type.color.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(responsive.radius14),
-        border: Border.all(
-          color: type.color.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: type.color.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [
@@ -740,7 +773,9 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
                 Text(
                   type.label,
                   style: TextStyle(
-                    color: widget.isDark ? Colors.white : const Color(0xFF1E293B),
+                    color: widget.isDark
+                        ? Colors.white
+                        : const Color(0xFF1E293B),
                     fontSize: responsive.fontSize14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -797,7 +832,10 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
     );
   }
 
-  Widget _buildPerformanceTrend(ResponsiveUtil responsive, AppLocalizations l10n) {
+  Widget _buildPerformanceTrend(
+    ResponsiveUtil responsive,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: EdgeInsets.all(responsive.p16),
       decoration: BoxDecoration(
@@ -850,37 +888,41 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
                   .where((a) => a.isGraded)
                   .take(5)
                   .map((assessment) {
-                final height = (assessment.percentage / 100) * 80;
-                return Tooltip(
-                  message: '${assessment.name}: ${assessment.percentage.toStringAsFixed(0)}%',
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        width: 30,
-                        height: height.clamp(10.0, 80.0),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              assessment.type.color.withValues(alpha: 0.8),
-                              assessment.type.color,
-                            ],
+                    final height = (assessment.percentage / 100) * 80;
+                    return Tooltip(
+                      message:
+                          '${assessment.name}: ${assessment.percentage.toStringAsFixed(0)}%',
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Container(
+                            width: 30,
+                            height: height.clamp(10.0, 80.0),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  assessment.type.color.withValues(alpha: 0.8),
+                                  assessment.type.color,
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(
+                                responsive.radius6,
+                              ),
+                            ),
                           ),
-                          borderRadius: BorderRadius.circular(responsive.radius6),
-                        ),
+                          SizedBox(height: responsive.p4),
+                          Icon(
+                            assessment.type.icon,
+                            size: 14,
+                            color: assessment.type.color,
+                          ),
+                        ],
                       ),
-                      SizedBox(height: responsive.p4),
-                      Icon(
-                        assessment.type.icon,
-                        size: 14,
-                        color: assessment.type.color,
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
+                    );
+                  })
+                  .toList(),
             ),
           ),
         ],
@@ -888,8 +930,13 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
     );
   }
 
-  Widget _buildStrengthsWeaknesses(ResponsiveUtil responsive, AppLocalizations l10n) {
-    final gradedAssessments = widget.course.assessments.where((a) => a.isGraded).toList();
+  Widget _buildStrengthsWeaknesses(
+    ResponsiveUtil responsive,
+    AppLocalizations l10n,
+  ) {
+    final gradedAssessments = widget.course.assessments
+        .where((a) => a.isGraded)
+        .toList();
     if (gradedAssessments.isEmpty) return const SizedBox.shrink();
 
     gradedAssessments.sort((a, b) => b.percentage.compareTo(a.percentage));
@@ -952,41 +999,45 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
             ],
           ),
           SizedBox(height: responsive.p12),
-          ...items.map((item) => Padding(
-            padding: EdgeInsets.only(bottom: responsive.p8),
-            child: Row(
-              children: [
-                Icon(item.type.icon, size: 16, color: item.type.color),
-                SizedBox(width: responsive.p8),
-                Expanded(
-                  child: Text(
-                    item.name,
-                    style: TextStyle(
-                      color: widget.isDark
-                          ? Colors.white
-                          : const Color(0xFF1E293B),
-                      fontSize: responsive.fontSize13,
+          ...items.map(
+            (item) => Padding(
+              padding: EdgeInsets.only(bottom: responsive.p8),
+              child: Row(
+                children: [
+                  Icon(item.type.icon, size: 16, color: item.type.color),
+                  SizedBox(width: responsive.p8),
+                  Expanded(
+                    child: Text(
+                      item.name,
+                      style: TextStyle(
+                        color: widget.isDark
+                            ? Colors.white
+                            : const Color(0xFF1E293B),
+                        fontSize: responsive.fontSize13,
+                      ),
                     ),
                   ),
-                ),
-                Text(
-                  '${item.percentage.toStringAsFixed(0)}%',
-                  style: TextStyle(
-                    color: color,
-                    fontSize: responsive.fontSize13,
-                    fontWeight: FontWeight.w600,
+                  Text(
+                    '${item.percentage.toStringAsFixed(0)}%',
+                    style: TextStyle(
+                      color: color,
+                      fontSize: responsive.fontSize13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildProjections(ResponsiveUtil responsive, AppLocalizations l10n) {
-    final pending = widget.course.assessments.where((a) => !a.isGraded).toList();
+    final pending = widget.course.assessments
+        .where((a) => !a.isGraded)
+        .toList();
     if (pending.isEmpty) return const SizedBox.shrink();
 
     final currentScore = widget.course.totalScore;
@@ -1044,7 +1095,10 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
           ...gradeTargets.map((target) {
             final neededTotal = target.$2;
             final neededRemaining = remainingWeight > 0
-                ? ((neededTotal - currentScore) / remainingWeight * 100).clamp(0, 100)
+                ? ((neededTotal - currentScore) / remainingWeight * 100).clamp(
+                    0,
+                    100,
+                  )
                 : 0;
             final isPossible = neededRemaining <= 100;
 
@@ -1127,7 +1181,9 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
                   height: 48,
                   decoration: BoxDecoration(
                     color: assessment.type.color.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(context.responsive.radius14),
+                    borderRadius: BorderRadius.circular(
+                      context.responsive.radius14,
+                    ),
                   ),
                   child: Icon(
                     assessment.type.icon,
@@ -1211,7 +1267,9 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
                   color: widget.isDark
                       ? Colors.white.withValues(alpha: 0.05)
                       : const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(context.responsive.radius10),
+                  borderRadius: BorderRadius.circular(
+                    context.responsive.radius10,
+                  ),
                 ),
                 child: Text(
                   assessment.feedback!,
@@ -1231,7 +1289,11 @@ class _GradeDetailsSheetState extends State<GradeDetailsSheet>
     );
   }
 
-  Widget _buildDetailRow(ResponsiveUtil responsive, String label, String value) {
+  Widget _buildDetailRow(
+    ResponsiveUtil responsive,
+    String label,
+    String value,
+  ) {
     return Padding(
       padding: EdgeInsets.only(bottom: responsive.p10),
       child: Row(

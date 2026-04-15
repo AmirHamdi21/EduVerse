@@ -73,7 +73,9 @@ class AdminSearchResults extends StatelessWidget {
           Text(
             'Searching...',
             style: TextStyle(
-              color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+              color: isDark
+                  ? AdminColors.darkTextSecondary
+                  : AdminColors.lightTextSecondary,
             ),
           ),
         ],
@@ -91,7 +93,9 @@ class AdminSearchResults extends StatelessWidget {
             Icon(
               Icons.search_off_rounded,
               size: 64,
-              color: isDark ? AdminColors.darkTextTertiary : AdminColors.lightTextTertiary,
+              color: isDark
+                  ? AdminColors.darkTextTertiary
+                  : AdminColors.lightTextTertiary,
             ),
             const SizedBox(height: 16),
             Text(
@@ -107,7 +111,9 @@ class AdminSearchResults extends StatelessWidget {
               'Try different keywords or check spelling',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+                color: isDark
+                    ? AdminColors.darkTextSecondary
+                    : AdminColors.lightTextSecondary,
               ),
             ),
           ],
@@ -118,12 +124,14 @@ class AdminSearchResults extends StatelessWidget {
 
   List<_ResultGroup> _groupResults() {
     final Map<SearchResultType, List<SearchResult>> grouped = {};
-    
+
     for (final result in results) {
       grouped.putIfAbsent(result.type, () => []).add(result);
     }
 
-    return grouped.entries.map((e) => _ResultGroup(type: e.key, results: e.value)).toList();
+    return grouped.entries
+        .map((e) => _ResultGroup(type: e.key, results: e.value))
+        .toList();
   }
 
   Widget _buildResultGroup(_ResultGroup group) {
@@ -153,7 +161,9 @@ class AdminSearchResults extends StatelessWidget {
                 '${group.results.length} found',
                 style: TextStyle(
                   fontSize: 12,
-                  color: isDark ? AdminColors.darkTextTertiary : AdminColors.lightTextTertiary,
+                  color: isDark
+                      ? AdminColors.darkTextTertiary
+                      : AdminColors.lightTextTertiary,
                 ),
               ),
             ],
@@ -172,7 +182,9 @@ class AdminSearchResults extends StatelessWidget {
         color: isDark ? AdminColors.darkCard : AdminColors.lightCard,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
       ),
       child: Material(
@@ -206,7 +218,9 @@ class AdminSearchResults extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color: isDark ? AdminColors.darkText : AdminColors.lightText,
+                          color: isDark
+                              ? AdminColors.darkText
+                              : AdminColors.lightText,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -214,7 +228,9 @@ class AdminSearchResults extends StatelessWidget {
                         result.subtitle,
                         style: TextStyle(
                           fontSize: 13,
-                          color: isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary,
+                          color: isDark
+                              ? AdminColors.darkTextSecondary
+                              : AdminColors.lightTextSecondary,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -224,7 +240,9 @@ class AdminSearchResults extends StatelessWidget {
                 ),
                 Icon(
                   Icons.chevron_right_rounded,
-                  color: isDark ? AdminColors.darkTextTertiary : AdminColors.lightTextTertiary,
+                  color: isDark
+                      ? AdminColors.darkTextTertiary
+                      : AdminColors.lightTextTertiary,
                 ),
               ],
             ),

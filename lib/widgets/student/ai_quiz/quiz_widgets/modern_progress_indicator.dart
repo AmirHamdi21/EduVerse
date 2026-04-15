@@ -102,8 +102,10 @@ class ModernProgressIndicator extends StatelessWidget {
                             duration: const Duration(milliseconds: 300),
                             curve: Curves.easeOutCubic,
                             height: 10,
-                            width: MediaQuery.of(context).size.width * 
-                                progress * 0.75,
+                            width:
+                                MediaQuery.of(context).size.width *
+                                progress *
+                                0.75,
                             decoration: const BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
@@ -119,7 +121,7 @@ class ModernProgressIndicator extends StatelessWidget {
             ],
           ),
           SizedBox(height: responsive.p16),
-          
+
           // Stats row
           Row(
             children: [
@@ -204,9 +206,7 @@ class ModernProgressIndicator extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 10,
-            color: isDark
-                ? const Color(0xFF9CA3AF)
-                : const Color(0xFF6B7280),
+            color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
             fontFamily: 'Arimo',
           ),
         ),

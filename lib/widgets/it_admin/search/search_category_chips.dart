@@ -37,7 +37,9 @@ class ITSearchCategoryChips extends StatelessWidget {
                   Icon(
                     category['icon'] as IconData,
                     size: 16,
-                    color: isSelected ? Colors.white : ITColors.textSecondaryColor(isDark),
+                    color: isSelected
+                        ? Colors.white
+                        : ITColors.textSecondaryColor(isDark),
                   ),
                   const SizedBox(width: 6),
                   Text(category['label'] as String),
@@ -48,12 +50,16 @@ class ITSearchCategoryChips extends StatelessWidget {
               selectedColor: ITColors.primary,
               checkmarkColor: Colors.white,
               labelStyle: TextStyle(
-                color: isSelected ? Colors.white : ITColors.textSecondaryColor(isDark),
+                color: isSelected
+                    ? Colors.white
+                    : ITColors.textSecondaryColor(isDark),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
               backgroundColor: ITColors.cardColor(isDark),
               side: BorderSide(
-                color: isSelected ? ITColors.primary : ITColors.borderColor(isDark),
+                color: isSelected
+                    ? ITColors.primary
+                    : ITColors.borderColor(isDark),
               ),
               showCheckmark: false,
             ),

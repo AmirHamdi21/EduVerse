@@ -15,7 +15,9 @@ class CourseInstructorInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textColor = isDark ? Colors.white : const Color(0xFF101828);
-    final secondaryTextColor = isDark ? const Color(0xFFB0B0B0) : const Color(0xFF4A5565);
+    final secondaryTextColor = isDark
+        ? const Color(0xFFB0B0B0)
+        : const Color(0xFF4A5565);
 
     return Row(
       children: [
@@ -32,16 +34,9 @@ class CourseInstructorInfo extends StatelessWidget {
           ),
           child: instructorImage != null
               ? ClipOval(
-                  child: Image.network(
-                    instructorImage!,
-                    fit: BoxFit.cover,
-                  ),
+                  child: Image.network(instructorImage!, fit: BoxFit.cover),
                 )
-              : const Icon(
-                  Icons.person,
-                  size: 32,
-                  color: Color(0xFF155DFC),
-                ),
+              : const Icon(Icons.person, size: 32, color: Color(0xFF155DFC)),
         ),
         const SizedBox(width: 16),
         Column(

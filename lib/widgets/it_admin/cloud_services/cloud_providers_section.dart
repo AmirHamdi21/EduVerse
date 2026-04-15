@@ -22,8 +22,18 @@ class CloudProvidersSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Cloud Providers', style: TextStyle(color: ITColors.textPrimaryColor(isDark), fontSize: 18, fontWeight: FontWeight.bold)),
-            Text('${providers.length} providers', style: TextStyle(color: ITColors.textSecondaryColor(isDark))),
+            Text(
+              'Cloud Providers',
+              style: TextStyle(
+                color: ITColors.textPrimaryColor(isDark),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              '${providers.length} providers',
+              style: TextStyle(color: ITColors.textSecondaryColor(isDark)),
+            ),
           ],
         ),
         const SizedBox(height: 16),
@@ -49,21 +59,47 @@ class CloudProvidersSection extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(color: providerColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
-              child: Icon(_getProviderIcon(provider.logo), color: providerColor, size: 24),
+              decoration: BoxDecoration(
+                color: providerColor.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                _getProviderIcon(provider.logo),
+                color: providerColor,
+                size: 24,
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(provider.name, style: TextStyle(color: ITColors.textPrimaryColor(isDark), fontWeight: FontWeight.w600, fontSize: 16)),
-                  Text('${provider.services} services', style: TextStyle(color: ITColors.textSecondaryColor(isDark), fontSize: 12)),
+                  Text(
+                    provider.name,
+                    style: TextStyle(
+                      color: ITColors.textPrimaryColor(isDark),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Text(
+                    '${provider.services} services',
+                    style: TextStyle(
+                      color: ITColors.textSecondaryColor(isDark),
+                      fontSize: 12,
+                    ),
+                  ),
                 ],
               ),
             ),
-            Text('\$${provider.cost.toStringAsFixed(2)}', 
-              style: TextStyle(color: ITColors.textPrimaryColor(isDark), fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(
+              '\$${provider.cost.toStringAsFixed(2)}',
+              style: TextStyle(
+                color: ITColors.textPrimaryColor(isDark),
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
       ),
@@ -72,19 +108,27 @@ class CloudProvidersSection extends StatelessWidget {
 
   IconData _getProviderIcon(String logo) {
     switch (logo.toLowerCase()) {
-      case 'aws': return Icons.cloud_rounded;
-      case 'azure': return Icons.cloud_circle_rounded;
-      case 'gcp': return Icons.cloud_queue_rounded;
-      default: return Icons.cloud_rounded;
+      case 'aws':
+        return Icons.cloud_rounded;
+      case 'azure':
+        return Icons.cloud_circle_rounded;
+      case 'gcp':
+        return Icons.cloud_queue_rounded;
+      default:
+        return Icons.cloud_rounded;
     }
   }
 
   Color _getProviderColor(String logo) {
     switch (logo.toLowerCase()) {
-      case 'aws': return const Color(0xFFFF9900);
-      case 'azure': return const Color(0xFF0078D4);
-      case 'gcp': return const Color(0xFF4285F4);
-      default: return ITColors.primary;
+      case 'aws':
+        return const Color(0xFFFF9900);
+      case 'azure':
+        return const Color(0xFF0078D4);
+      case 'gcp':
+        return const Color(0xFF4285F4);
+      default:
+        return ITColors.primary;
     }
   }
 }

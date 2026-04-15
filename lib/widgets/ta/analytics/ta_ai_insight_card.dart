@@ -82,7 +82,10 @@ class TAAIInsightCard extends StatelessWidget {
                   onTap: onAction,
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: TAColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
@@ -161,9 +164,4 @@ class TAAIInsightCard extends StatelessWidget {
   }
 }
 
-enum InsightSeverity {
-  critical,
-  warning,
-  info,
-  success,
-}
+enum InsightSeverity { critical, warning, info, success }

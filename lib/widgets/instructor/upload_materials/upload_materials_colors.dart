@@ -114,10 +114,4 @@ class UploadMaterialsColors {
   }
 }
 
-enum UploadStatusType {
-  pending,
-  uploading,
-  processing,
-  completed,
-  failed,
-}
+enum UploadStatusType { pending, uploading, processing, completed, failed }

@@ -37,9 +37,14 @@ class TALabSubmissionsTab extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
-                  color: TAColors.primary.withValues(alpha: isDark ? 0.15 : 0.1),
+                  color: TAColors.primary.withValues(
+                    alpha: isDark ? 0.15 : 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -60,7 +65,10 @@ class TALabSubmissionsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildSubmissionCard(TALabSubmission submission, AppLocalizations l10n) {
+  Widget _buildSubmissionCard(
+    TALabSubmission submission,
+    AppLocalizations l10n,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -91,7 +99,9 @@ class TALabSubmissionsTab extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: TAColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                        color: TAColors.primary.withValues(
+                          alpha: isDark ? 0.2 : 0.1,
+                        ),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Center(
@@ -201,11 +211,7 @@ class TALabSubmissionsTab extends StatelessWidget {
           if (hasAIScore && !hasFinalScore) ...[
             Row(
               children: [
-                Icon(
-                  Icons.auto_awesome,
-                  size: 14,
-                  color: TAColors.primary,
-                ),
+                Icon(Icons.auto_awesome, size: 14, color: TAColors.primary),
                 const SizedBox(width: 6),
                 Text(
                   l10n.taLabAIScore,

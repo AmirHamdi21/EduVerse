@@ -106,15 +106,15 @@ class VoiceRecordingModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        transcription,
-        summary,
-        audioFilePath,
-        duration,
-        createdAt,
-        updatedAt,
-        tags,
-        isFavorite,
-      ];
+    id,
+    title,
+    transcription,
+    summary,
+    audioFilePath,
+    duration,
+    createdAt,
+    updatedAt,
+    tags,
+    isFavorite,
+  ];
 }

@@ -127,7 +127,9 @@ class EnrollmentService {
     dynamic sectionId,
   ) {
     return RetryHelper.execute<List<SectionStudentModel>>(() async {
-      final response = await _client.dio.get('/enrollments/section/$sectionId/students');
+      final response = await _client.dio.get(
+        '/enrollments/section/$sectionId/students',
+      );
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
           .map(SectionStudentModel.fromJson)
@@ -136,9 +138,7 @@ class EnrollmentService {
   }
 
   /// GET /api/enrollments/section/{sectionId}/students/count
-  Future<ServiceResult<int>> getSectionStudentsCount(
-    dynamic sectionId,
-  ) {
+  Future<ServiceResult<int>> getSectionStudentsCount(dynamic sectionId) {
     return RetryHelper.execute<int>(() async {
       final response = await _client.dio.get(
         '/enrollments/section/$sectionId/students/count',
@@ -153,7 +153,9 @@ class EnrollmentService {
     dynamic courseId,
   ) {
     return RetryHelper.execute<List<SectionStudentModel>>(() async {
-      final response = await _client.dio.get('/enrollments/course/$courseId/enrolled-students');
+      final response = await _client.dio.get(
+        '/enrollments/course/$courseId/enrolled-students',
+      );
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
           .map(SectionStudentModel.fromJson)
@@ -221,6 +223,26 @@ class EnrollmentService {
     }, fallbackMessage: 'Failed to register enrollment');
   }
 
+  /// POST /api/enrollments/register (admin workflow)
+  Future<ServiceResult<CourseEnrollmentModel>> adminRegisterStudent({
+    required dynamic sectionId,
+    required int userId,
+    bool force = false,
+  }) {
+    return RetryHelper.execute<CourseEnrollmentModel>(() async {
+      final body = <String, dynamic>{'sectionId': sectionId, 'userId': userId};
+      if (force) {
+        body['force'] = true;
+      }
+
+      final response = await _client.dio.post(
+        '/enrollments/register',
+        data: body,
+      );
+      return CourseEnrollmentModel.fromJson(_extractMap(response.data));
+    }, fallbackMessage: 'Failed to enroll student');
+  }
+
   /// DELETE /api/enrollments/:id
   Future<ServiceResult<void>> dropEnrollment(dynamic id) {
     return RetryHelper.executeVoid(() async {
@@ -228,12 +250,52 @@ class EnrollmentService {
     }, fallbackMessage: 'Failed to drop enrollment');
   }
 
+  /// DELETE /api/enrollments/:id (admin workflow)
+  Future<ServiceResult<void>> adminDropEnrollment({
+    required dynamic enrollmentId,
+    String? reason,
+    bool force = false,
+  }) {
+    return RetryHelper.executeVoid(() async {
+      final body = <String, dynamic>{};
+      if (reason != null && reason.trim().isNotEmpty) {
+        body['reason'] = reason.trim();
+      }
+      if (force) {
+        body['force'] = true;
+      }
+
+      await _client.dio.delete(
+        '/enrollments/$enrollmentId',
+        data: body.isEmpty ? null : body,
+      );
+    }, fallbackMessage: 'Failed to drop enrollment');
+  }
+
   /// POST /api/enrollments/sections/:id/instructors
   Future<ServiceResult<void>> assignInstructor(dynamic sectionId, int userId) {
+    return assignInstructorWithDetails(sectionId, userId);
+  }
+
+  /// POST /api/enrollments/sections/:id/instructors
+  Future<ServiceResult<void>> assignInstructorWithDetails(
+    dynamic sectionId,
+    int userId, {
+    String? role,
+    String? responsibilities,
+  }) {
     return RetryHelper.executeVoid(() async {
+      final body = <String, dynamic>{'userId': userId};
+      if (role != null && role.trim().isNotEmpty) {
+        body['role'] = role.trim();
+      }
+      if (responsibilities != null && responsibilities.trim().isNotEmpty) {
+        body['responsibilities'] = responsibilities.trim();
+      }
+
       await _client.dio.post(
         '/enrollments/sections/$sectionId/instructors',
-        data: <String, dynamic>{'userId': userId},
+        data: body,
       );
     }, fallbackMessage: 'Failed to assign instructor');
   }
@@ -252,10 +314,24 @@ class EnrollmentService {
 
   /// POST /api/enrollments/sections/:id/tas
   Future<ServiceResult<void>> assignTA(dynamic sectionId, int userId) {
+    return assignTAWithDetails(sectionId, userId);
+  }
+
+  /// POST /api/enrollments/sections/:id/tas
+  Future<ServiceResult<void>> assignTAWithDetails(
+    dynamic sectionId,
+    int userId, {
+    String? responsibilities,
+  }) {
     return RetryHelper.executeVoid(() async {
+      final body = <String, dynamic>{'userId': userId};
+      if (responsibilities != null && responsibilities.trim().isNotEmpty) {
+        body['responsibilities'] = responsibilities.trim();
+      }
+
       await _client.dio.post(
         '/enrollments/sections/$sectionId/tas',
-        data: <String, dynamic>{'userId': userId},
+        data: body,
       );
     }, fallbackMessage: 'Failed to assign TA');
   }

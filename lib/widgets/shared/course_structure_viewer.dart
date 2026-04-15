@@ -31,8 +31,8 @@ class _CourseStructureViewerState extends State<CourseStructureViewer> {
     super.initState();
     // Dispatch the fetch event to load structure from API (or cache)
     context.read<CoursesBloc>().add(
-          CourseStructureFetched(courseId: widget.courseId),
-        );
+      CourseStructureFetched(courseId: widget.courseId),
+    );
   }
 
   @override
@@ -137,8 +137,10 @@ class _CourseStructureViewerState extends State<CourseStructureViewer> {
             child: Row(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF155DFC).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
@@ -158,7 +160,9 @@ class _CourseStructureViewerState extends State<CourseStructureViewer> {
                 Text(
                   '${items.length} item${items.length != 1 ? 's' : ''}',
                   style: TextStyle(
-                    color: widget.isDark ? Colors.white54 : const Color(0xFF667085),
+                    color: widget.isDark
+                        ? Colors.white54
+                        : const Color(0xFF667085),
                     fontSize: 12,
                   ),
                 ),
@@ -267,14 +271,18 @@ class _CourseStructureViewerState extends State<CourseStructureViewer> {
 
     // If YouTube video, construct URL
     if (urlToLaunch == null && material.youtubeVideoId != null) {
-      urlToLaunch = 'https://www.youtube.com/watch?v=${material.youtubeVideoId}';
+      urlToLaunch =
+          'https://www.youtube.com/watch?v=${material.youtubeVideoId}';
     }
 
     if (urlToLaunch != null && urlToLaunch.isNotEmpty) {
       final uri = Uri.tryParse(urlToLaunch);
       if (uri != null) {
         try {
-          final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+          final launched = await launchUrl(
+            uri,
+            mode: LaunchMode.externalApplication,
+          );
           if (!launched && mounted) {
             _showErrorSnackbar('Could not open this resource');
           }
@@ -329,7 +337,9 @@ class _CourseStructureViewerState extends State<CourseStructureViewer> {
           Icon(
             Icons.error_outline_rounded,
             size: 48,
-            color: widget.isDark ? const Color(0xFFFC8181) : const Color(0xFFE53E3E),
+            color: widget.isDark
+                ? const Color(0xFFFC8181)
+                : const Color(0xFFE53E3E),
           ),
           const SizedBox(height: 12),
           Text(
@@ -344,8 +354,8 @@ class _CourseStructureViewerState extends State<CourseStructureViewer> {
           TextButton.icon(
             onPressed: () {
               context.read<CoursesBloc>().add(
-                    CourseStructureFetched(courseId: widget.courseId),
-                  );
+                CourseStructureFetched(courseId: widget.courseId),
+              );
             },
             icon: const Icon(Icons.refresh_rounded, size: 18),
             label: const Text('Retry'),

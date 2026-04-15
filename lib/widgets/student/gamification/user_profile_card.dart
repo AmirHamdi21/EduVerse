@@ -65,7 +65,9 @@ class UserProfileCard extends StatelessWidget {
                 profile.levelTitle,
                 style: TextStyle(
                   fontSize: 14,
-                  color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2B7FFF),
+                  color: isDark
+                      ? const Color(0xFF60A5FA)
+                      : const Color(0xFF2B7FFF),
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -181,7 +183,7 @@ class UserProfileCard extends StatelessWidget {
 
   Widget _buildProgressBar(AppLocalizations l10n, bool isDark) {
     final percentage = (profile.progressToNextRank * 100).toInt();
-    
+
     return Column(
       children: [
         Row(
@@ -199,7 +201,9 @@ class UserProfileCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: isDark ? const Color(0xFF60A5FA) : const Color(0xFF2B7FFF),
+                color: isDark
+                    ? const Color(0xFF60A5FA)
+                    : const Color(0xFF2B7FFF),
               ),
             ),
           ],
@@ -212,7 +216,9 @@ class UserProfileCard extends StatelessWidget {
               Container(
                 height: 8,
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                  color: isDark
+                      ? const Color(0xFF374151)
+                      : const Color(0xFFE5E7EB),
                   borderRadius: BorderRadius.circular(4),
                 ),
               ),

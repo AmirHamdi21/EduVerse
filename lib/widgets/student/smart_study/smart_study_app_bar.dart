@@ -11,10 +11,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class SmartStudyAppBar extends StatelessWidget {
   final bool isDark;
 
-  const SmartStudyAppBar({
-    super.key,
-    required this.isDark,
-  });
+  const SmartStudyAppBar({super.key, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +76,9 @@ class SmartStudyAppBar extends StatelessWidget {
                       Text(
                         l10n.smartStudyTitle,
                         style: TextStyle(
-                          color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                          color: isDark
+                              ? const Color(0xFFF3F4F6)
+                              : const Color(0xFF101828),
                           fontSize: 22,
                           fontWeight: FontWeight.w700,
                           letterSpacing: -0.5,
@@ -89,7 +88,9 @@ class SmartStudyAppBar extends StatelessWidget {
                       Text(
                         l10n.smartStudySubtitle,
                         style: TextStyle(
-                          color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                          color: isDark
+                              ? const Color(0xFF99A1AF)
+                              : const Color(0xFF4A5565),
                           fontSize: 13,
                           height: 1.3,
                         ),
@@ -119,13 +120,17 @@ class SmartStudyAppBar extends StatelessWidget {
               Icon(
                 Icons.arrow_back_ios_rounded,
                 size: 18,
-                color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                color: isDark
+                    ? const Color(0xFF99A1AF)
+                    : const Color(0xFF4A5565),
               ),
               const SizedBox(width: 4),
               Text(
                 l10n.back,
                 style: TextStyle(
-                  color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
+                  color: isDark
+                      ? const Color(0xFF99A1AF)
+                      : const Color(0xFF4A5565),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -187,7 +192,9 @@ class SmartStudyAppBar extends StatelessWidget {
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     valueColor: AlwaysStoppedAnimation<Color>(
-                      isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                      isDark
+                          ? const Color(0xFFF3F4F6)
+                          : const Color(0xFF101828),
                     ),
                   ),
                 )
@@ -195,13 +202,17 @@ class SmartStudyAppBar extends StatelessWidget {
                 Icon(
                   Icons.refresh_rounded,
                   size: 16,
-                  color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                  color: isDark
+                      ? const Color(0xFFF3F4F6)
+                      : const Color(0xFF101828),
                 ),
               const SizedBox(width: 6),
               Text(
                 l10n.smartStudyRegenerate,
                 style: TextStyle(
-                  color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                  color: isDark
+                      ? const Color(0xFFF3F4F6)
+                      : const Color(0xFF101828),
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
@@ -222,7 +233,9 @@ class SmartStudyAppBar extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: () {
-              context.read<LanguageCubit>().changeLanguage(isArabic ? 'en' : 'ar');
+              context.read<LanguageCubit>().changeLanguage(
+                isArabic ? 'en' : 'ar',
+              );
             },
             borderRadius: BorderRadius.circular(20),
             child: Container(
@@ -234,14 +247,18 @@ class SmartStudyAppBar extends StatelessWidget {
                     : Colors.white.withValues(alpha: 0.8),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: isDark ? const Color(0xFF364153) : const Color(0xFFE5E7EB),
+                  color: isDark
+                      ? const Color(0xFF364153)
+                      : const Color(0xFFE5E7EB),
                 ),
               ),
               child: Center(
                 child: Text(
                   isArabic ? 'EN' : 'AR',
                   style: TextStyle(
-                    color: isDark ? const Color(0xFFF3F4F6) : const Color(0xFF101828),
+                    color: isDark
+                        ? const Color(0xFFF3F4F6)
+                        : const Color(0xFF101828),
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),

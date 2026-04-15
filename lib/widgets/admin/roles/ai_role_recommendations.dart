@@ -27,7 +27,9 @@ class AIRoleRecommendations extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
         boxShadow: isDark
             ? null
@@ -99,8 +101,8 @@ class AIRoleRecommendations extends StatelessWidget {
           color: rec.priority == _Priority.high
               ? AdminColors.warning.withValues(alpha: 0.5)
               : (isDark
-                  ? AdminColors.darkCardBorder
-                  : AdminColors.lightDivider),
+                    ? AdminColors.darkCardBorder
+                    : AdminColors.lightDivider),
         ),
       ),
       child: Column(
@@ -129,7 +131,10 @@ class AIRoleRecommendations extends StatelessWidget {
               ),
               if (rec.priority == _Priority.high)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AdminColors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -190,10 +195,7 @@ class AIRoleRecommendations extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text(
-                    l10n.apply,
-                    style: const TextStyle(fontSize: 12),
-                  ),
+                  child: Text(l10n.apply, style: const TextStyle(fontSize: 12)),
                 ),
               ),
             ],
@@ -203,7 +205,10 @@ class AIRoleRecommendations extends StatelessWidget {
     );
   }
 
-  List<_Recommendation> _getRecommendations(String role, AppLocalizations l10n) {
+  List<_Recommendation> _getRecommendations(
+    String role,
+    AppLocalizations l10n,
+  ) {
     switch (role) {
       case 'student':
         return [

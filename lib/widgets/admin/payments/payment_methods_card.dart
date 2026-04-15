@@ -104,7 +104,9 @@ class PaymentMethodsCard extends StatelessWidget {
                       l10n.configurePaymentGateways,
                       style: TextStyle(
                         fontSize: 13,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -160,8 +162,8 @@ class PaymentMethodsCard extends StatelessWidget {
           color: method.isEnabled
               ? AdminColors.success.withValues(alpha: 0.3)
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.05)),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.05)),
         ),
       ),
       child: Row(
@@ -198,7 +200,9 @@ class PaymentMethodsCard extends StatelessWidget {
                       '${method.fees}% ${l10n.fee}',
                       style: TextStyle(
                         fontSize: 11,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.5),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -206,7 +210,9 @@ class PaymentMethodsCard extends StatelessWidget {
                       '${method.transactionCount} ${l10n.transactions}',
                       style: TextStyle(
                         fontSize: 11,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.5),
                       ),
                     ),
                   ],

@@ -158,10 +158,7 @@ abstract class SearchState {
 }
 
 class SearchInitial extends SearchState {
-  const SearchInitial({
-    super.recentSearches,
-    super.filter,
-  });
+  const SearchInitial({super.recentSearches, super.filter});
 }
 
 class SearchLoading extends SearchState {
@@ -202,11 +199,7 @@ class SearchLoaded extends SearchState {
 }
 
 class SearchEmpty extends SearchState {
-  const SearchEmpty({
-    required super.query,
-    super.filter,
-    super.recentSearches,
-  });
+  const SearchEmpty({required super.query, super.filter, super.recentSearches});
 }
 
 class SearchError extends SearchState {

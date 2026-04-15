@@ -116,12 +116,24 @@ class _GradingSettingsSheetState extends State<GradingSettingsSheet> {
                 Wrap(
                   spacing: 8,
                   children: [
-                    _buildScaleChip(isDark, 'Percentage', _defaultScale == 'percentage',
-                        () => setState(() => _defaultScale = 'percentage')),
-                    _buildScaleChip(isDark, 'Letter Grade', _defaultScale == 'letter',
-                        () => setState(() => _defaultScale = 'letter')),
-                    _buildScaleChip(isDark, 'Points', _defaultScale == 'points',
-                        () => setState(() => _defaultScale = 'points')),
+                    _buildScaleChip(
+                      isDark,
+                      'Percentage',
+                      _defaultScale == 'percentage',
+                      () => setState(() => _defaultScale = 'percentage'),
+                    ),
+                    _buildScaleChip(
+                      isDark,
+                      'Letter Grade',
+                      _defaultScale == 'letter',
+                      () => setState(() => _defaultScale = 'letter'),
+                    ),
+                    _buildScaleChip(
+                      isDark,
+                      'Points',
+                      _defaultScale == 'points',
+                      () => setState(() => _defaultScale = 'points'),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -211,7 +223,11 @@ class _GradingSettingsSheetState extends State<GradingSettingsSheet> {
   }
 
   Widget _buildScaleChip(
-      bool isDark, String label, bool isSelected, VoidCallback onTap) {
+    bool isDark,
+    String label,
+    bool isSelected,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(

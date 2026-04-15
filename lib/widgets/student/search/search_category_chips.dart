@@ -54,8 +54,8 @@ class SearchCategoryChips extends StatelessWidget {
                 color: isSelected
                     ? null
                     : isDark
-                        ? Colors.white.withValues(alpha: 0.08)
-                        : Colors.black.withValues(alpha: 0.04),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(20),
                 border: isSelected
                     ? null
@@ -72,8 +72,8 @@ class SearchCategoryChips extends StatelessWidget {
                     color: isSelected
                         ? Colors.white
                         : isDark
-                            ? Colors.white70
-                            : const Color(0xFF64748B),
+                        ? Colors.white70
+                        : const Color(0xFF64748B),
                     fontSize: 13,
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                   ),

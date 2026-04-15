@@ -1,15 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// Available swipe actions for chat conversations
-enum ChatSwipeAction {
-  delete,
-  archive,
-  pin,
-  mute,
-  markRead,
-  markUnread,
-  none,
-}
+enum ChatSwipeAction { delete, archive, pin, mute, markRead, markUnread, none }
 
 /// Extension to provide UI properties for chat swipe actions
 extension ChatSwipeActionExtension on ChatSwipeAction {

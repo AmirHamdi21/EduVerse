@@ -42,7 +42,9 @@ class _AdminDeveloperOptionsScreenState
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -319,8 +321,7 @@ class _AdminDeveloperOptionsScreenState
             max: 5000,
             divisions: 10,
             onChanged: (v) => setState(() => _apiDelay = v.round()),
-            displayValue:
-                _apiDelay == 0 ? l10n.disabled : '${_apiDelay}ms',
+            displayValue: _apiDelay == 0 ? l10n.disabled : '${_apiDelay}ms',
           ),
         ],
       ),
@@ -506,11 +507,7 @@ class _AdminDeveloperOptionsScreenState
                 color: AdminColors.getBackgroundColor(isDark),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(
-                icon,
-                color: AdminColors.primary,
-                size: 22,
-              ),
+              child: Icon(icon, color: AdminColors.primary, size: 22),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -573,8 +570,10 @@ class _AdminDeveloperOptionsScreenState
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: AdminColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -613,14 +612,15 @@ class _AdminDeveloperOptionsScreenState
   }
 
   Widget _buildDivider(bool isDark) {
-    return Divider(
-      height: 1,
-      color: AdminColors.getDividerColor(isDark),
-    );
+    return Divider(height: 1, color: AdminColors.getDividerColor(isDark));
   }
 
   void _showConfirmDialog(
-      bool isDark, String title, String message, AppLocalizations l10n) {
+    bool isDark,
+    String title,
+    String message,
+    AppLocalizations l10n,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -640,9 +640,12 @@ class _AdminDeveloperOptionsScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(l10n.cancel,
-                style:
-                    TextStyle(color: AdminColors.getTextSecondaryColor(isDark))),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(
+                color: AdminColors.getTextSecondaryColor(isDark),
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -653,7 +656,8 @@ class _AdminDeveloperOptionsScreenState
                   behavior: SnackBarBehavior.floating,
                   backgroundColor: AdminColors.success,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               );
             },

@@ -29,10 +29,28 @@ class _ITCreateRuleDialogState extends State<ITCreateRuleDialog> {
   String _selectedOperator = '>';
   String _selectedTeam = 'Select team';
 
-  final List<String> _services = ['Database', 'API', 'Web Server', 'Cache', 'All Services'];
-  final List<String> _metrics = ['cpu_usage', 'memory_usage', 'disk_usage', 'api_latency', 'error_rate', 'request_count'];
+  final List<String> _services = [
+    'Database',
+    'API',
+    'Web Server',
+    'Cache',
+    'All Services',
+  ];
+  final List<String> _metrics = [
+    'cpu_usage',
+    'memory_usage',
+    'disk_usage',
+    'api_latency',
+    'error_rate',
+    'request_count',
+  ];
   final List<String> _operators = ['>', '<', '>=', '<=', '==', '!='];
-  final List<String> _teams = ['DevOps Team', 'Backend Team', 'Frontend Team', 'Security Team'];
+  final List<String> _teams = [
+    'DevOps Team',
+    'Backend Team',
+    'Frontend Team',
+    'Security Team',
+  ];
 
   @override
   void dispose() {
@@ -93,14 +111,15 @@ class _ITCreateRuleDialogState extends State<ITCreateRuleDialog> {
                               value: _selectedService,
                               items: _services,
                               onChanged: (value) {
-                                setState(() => _selectedService = value ?? _selectedService);
+                                setState(
+                                  () => _selectedService =
+                                      value ?? _selectedService,
+                                );
                               },
                             ),
                           ),
                           const SizedBox(width: 12),
-                          Expanded(
-                            child: _buildSeveritySelector(),
-                          ),
+                          Expanded(child: _buildSeveritySelector()),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -109,7 +128,9 @@ class _ITCreateRuleDialogState extends State<ITCreateRuleDialog> {
                         value: _selectedMetric,
                         items: _metrics,
                         onChanged: (value) {
-                          setState(() => _selectedMetric = value ?? _selectedMetric);
+                          setState(
+                            () => _selectedMetric = value ?? _selectedMetric,
+                          );
                         },
                       ),
                       const SizedBox(height: 16),
@@ -121,7 +142,10 @@ class _ITCreateRuleDialogState extends State<ITCreateRuleDialog> {
                               value: _selectedOperator,
                               items: _operators,
                               onChanged: (value) {
-                                setState(() => _selectedOperator = value ?? _selectedOperator);
+                                setState(
+                                  () => _selectedOperator =
+                                      value ?? _selectedOperator,
+                                );
                               },
                             ),
                           ),
@@ -152,7 +176,9 @@ class _ITCreateRuleDialogState extends State<ITCreateRuleDialog> {
                         value: _selectedTeam,
                         items: _teams,
                         onChanged: (value) {
-                          setState(() => _selectedTeam = value ?? _selectedTeam);
+                          setState(
+                            () => _selectedTeam = value ?? _selectedTeam,
+                          );
                         },
                       ),
                     ],
@@ -281,7 +307,10 @@ class _ITCreateRuleDialogState extends State<ITCreateRuleDialog> {
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: ITColors.primary, width: 1.5),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
           ),
         ),
       ],
@@ -379,8 +408,8 @@ class _ITCreateRuleDialogState extends State<ITCreateRuleDialog> {
                     color: isSelected
                         ? color.withValues(alpha: 0.2)
                         : widget.isDark
-                            ? Colors.white.withValues(alpha: 0.08)
-                            : Colors.grey.withValues(alpha: 0.1),
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.grey.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                     border: isSelected
                         ? Border.all(color: color, width: 1.5)

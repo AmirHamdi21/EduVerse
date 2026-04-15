@@ -19,7 +19,7 @@ class QuizQuestionNavigator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
-    
+
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.of(context).size.height * 0.7,
@@ -37,13 +37,11 @@ class QuizQuestionNavigator extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: isDark 
-                  ? const Color(0xFF3A4456) 
-                  : const Color(0xFFE5E7EB),
+              color: isDark ? const Color(0xFF3A4456) : const Color(0xFFE5E7EB),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
-          
+
           // Title
           Padding(
             padding: EdgeInsets.all(responsive.p16),
@@ -63,15 +61,13 @@ class QuizQuestionNavigator extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Divider
           Divider(
-            color: isDark 
-                ? const Color(0xFF2D2D44) 
-                : const Color(0xFFF3F4F6),
+            color: isDark ? const Color(0xFF2D2D44) : const Color(0xFFF3F4F6),
             height: 1,
           ),
-          
+
           // Question grid
           Flexible(
             child: SingleChildScrollView(
@@ -81,16 +77,12 @@ class QuizQuestionNavigator extends StatelessWidget {
                 runSpacing: 10,
                 children: List.generate(
                   questions.length,
-                  (index) => _buildQuestionItem(
-                    context,
-                    index,
-                    responsive,
-                  ),
+                  (index) => _buildQuestionItem(context, index, responsive),
                 ),
               ),
             ),
           ),
-          
+
           // Summary
           _buildSummary(context, responsive),
         ],
@@ -128,19 +120,14 @@ class QuizQuestionNavigator extends StatelessWidget {
         Container(
           width: 8,
           height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 4),
         Text(
           label,
           style: TextStyle(
             fontSize: 10,
-            color: isDark 
-                ? const Color(0xFF9CA3AF) 
-                : const Color(0xFF6B7280),
+            color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
             fontFamily: 'Arimo',
           ),
         ),
@@ -175,12 +162,8 @@ class QuizQuestionNavigator extends StatelessWidget {
       borderColor = const Color(0xFFF59E0B);
       textColor = const Color(0xFFF59E0B);
     } else {
-      bgColor = isDark 
-          ? const Color(0xFF2D2D44) 
-          : const Color(0xFFF3F4F6);
-      borderColor = isDark 
-          ? const Color(0xFF3A4456) 
-          : const Color(0xFFE5E7EB);
+      bgColor = isDark ? const Color(0xFF2D2D44) : const Color(0xFFF3F4F6);
+      borderColor = isDark ? const Color(0xFF3A4456) : const Color(0xFFE5E7EB);
       textColor = isDark ? Colors.white : const Color(0xFF6B7280);
     }
 
@@ -230,14 +213,10 @@ class QuizQuestionNavigator extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(responsive.p16),
       decoration: BoxDecoration(
-        color: isDark 
-            ? const Color(0xFF252D48) 
-            : const Color(0xFFF9FAFB),
+        color: isDark ? const Color(0xFF252D48) : const Color(0xFFF9FAFB),
         border: Border(
           top: BorderSide(
-            color: isDark 
-                ? const Color(0xFF2D2D44) 
-                : const Color(0xFFF3F4F6),
+            color: isDark ? const Color(0xFF2D2D44) : const Color(0xFFF3F4F6),
           ),
         ),
       ),
@@ -292,9 +271,7 @@ class QuizQuestionNavigator extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: responsive.fontSize12,
-            color: isDark 
-                ? const Color(0xFF9CA3AF) 
-                : const Color(0xFF6B7280),
+            color: isDark ? const Color(0xFF9CA3AF) : const Color(0xFF6B7280),
             fontFamily: 'Arimo',
           ),
         ),

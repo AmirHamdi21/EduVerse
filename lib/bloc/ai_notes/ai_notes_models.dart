@@ -81,13 +81,7 @@ class AINote {
 }
 
 /// Source of the note
-enum NoteSource {
-  lecture,
-  textbook,
-  video,
-  article,
-  manual,
-}
+enum NoteSource { lecture, textbook, video, article, manual }
 
 extension NoteSourceExtension on NoteSource {
   String get displayName {
@@ -209,21 +203,10 @@ extension RecommendationTypeExtension on RecommendationType {
 }
 
 /// Filter options for notes
-enum NotesFilter {
-  all,
-  byCourse,
-  byDate,
-  favorites,
-}
+enum NotesFilter { all, byCourse, byDate, favorites }
 
 /// Sort options for notes
-enum NotesSort {
-  dateNewest,
-  dateOldest,
-  titleAZ,
-  titleZA,
-  courseAZ,
-}
+enum NotesSort { dateNewest, dateOldest, titleAZ, titleZA, courseAZ }
 
 extension NotesSortExtension on NotesSort {
   String get displayName {

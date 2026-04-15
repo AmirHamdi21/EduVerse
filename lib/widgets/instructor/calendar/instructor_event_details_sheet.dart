@@ -8,10 +8,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class InstructorEventDetailsSheet extends StatelessWidget {
   final InstructorCalendarEvent event;
 
-  const InstructorEventDetailsSheet({
-    super.key,
-    required this.event,
-  });
+  const InstructorEventDetailsSheet({super.key, required this.event});
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +85,10 @@ class InstructorEventDetailsSheet extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: _getEventColor(event.type).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
@@ -181,9 +181,7 @@ class InstructorEventDetailsSheet extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: isDark
-                ? const Color(0xFF1E2939)
-                : Colors.white,
+            color: isDark ? const Color(0xFF1E2939) : Colors.white,
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -222,7 +220,11 @@ class InstructorEventDetailsSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildActionButtons(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Row(
       children: [
         Expanded(
@@ -247,13 +249,13 @@ class InstructorEventDetailsSheet extends StatelessWidget {
         Expanded(
           child: TextButton.icon(
             onPressed: () {
-              context.read<InstructorCalendarCubit>().toggleEventCompletion(event.id);
+              context.read<InstructorCalendarCubit>().toggleEventCompletion(
+                event.id,
+              );
               Navigator.pop(context);
             },
             icon: Icon(
-              event.isCompleted
-                  ? Icons.refresh_rounded
-                  : Icons.check_rounded,
+              event.isCompleted ? Icons.refresh_rounded : Icons.check_rounded,
               size: 18,
             ),
             label: Text(event.isCompleted ? 'Reopen' : 'Complete'),
@@ -293,12 +295,27 @@ class InstructorEventDetailsSheet extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     final monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     final dayNames = [
-      'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-      'Thursday', 'Friday', 'Saturday'
+      'Sunday',
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
     ];
     return '${dayNames[date.weekday % 7]}, ${monthNames[date.month - 1]} ${date.day}, ${date.year}';
   }

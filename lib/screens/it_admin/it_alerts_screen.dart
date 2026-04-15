@@ -17,12 +17,12 @@ class ITAlertsScreen extends StatefulWidget {
 class _ITAlertsScreenState extends State<ITAlertsScreen> {
   bool _isLoading = true;
   String? _errorMessage;
-  
+
   // State
   AlertTab _selectedTab = AlertTab.rules;
   String _searchQuery = '';
   AlertSeverity? _selectedSeverity;
-  
+
   // Data
   AlertStats _stats = const AlertStats(
     activeAlerts: 0,
@@ -162,10 +162,7 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
         name: 'Critical Alerts Slack',
         type: ChannelType.slack,
         description: 'Slack channel for critical alerts',
-        config: {
-          'Alerts-critical': 'sms-call',
-          'Webhook': '#ops-alerts',
-        },
+        config: {'Alerts-critical': 'sms-call', 'Webhook': '#ops-alerts'},
         isEnabled: true,
         isVerified: true,
       ),
@@ -174,10 +171,7 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
         name: 'IT Team Email',
         type: ChannelType.email,
         description: 'Email distribution for IT team',
-        config: {
-          'it-team@EduVerse.edu': 'main',
-          'ops@EduVerse.edu': 'cc',
-        },
+        config: {'it-team@EduVerse.edu': 'main', 'ops@EduVerse.edu': 'cc'},
         isEnabled: true,
         isVerified: true,
       ),
@@ -186,9 +180,7 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
         name: 'PagerDuty On-Call',
         type: ChannelType.pagerDuty,
         description: 'PagerDuty escalation service',
-        config: {
-          'On-Call Engineers': 'primary',
-        },
+        config: {'On-Call Engineers': 'primary'},
         isEnabled: true,
         isVerified: true,
       ),
@@ -197,10 +189,7 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
         name: 'SMS Emergency',
         type: ChannelType.sms,
         description: 'Emergency SMS notifications',
-        config: {
-          '+1 (555) 123-4567': 'primary',
-          '+1 (555) 234-5678': 'backup',
-        },
+        config: {'+1 (555) 123-4567': 'primary', '+1 (555) 234-5678': 'backup'},
         isEnabled: true,
         isVerified: false,
       ),
@@ -214,8 +203,20 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
         id: 'sw1',
         name: 'Weekly Maintenance Window',
         description: 'Regular weekly maintenance period',
-        startTime: DateTime(now.year, now.month, now.day + (7 - now.weekday), 2, 0),
-        endTime: DateTime(now.year, now.month, now.day + (7 - now.weekday), 6, 0),
+        startTime: DateTime(
+          now.year,
+          now.month,
+          now.day + (7 - now.weekday),
+          2,
+          0,
+        ),
+        endTime: DateTime(
+          now.year,
+          now.month,
+          now.day + (7 - now.weekday),
+          6,
+          0,
+        ),
         affectedServices: ['All Services'],
         isRecurring: true,
         recurringPattern: 'Weekly',
@@ -318,7 +319,8 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
         id: 's1',
         type: 'threshold',
         title: 'Threshold Suggestion',
-        description: 'DB lag threshold should be 3s (not 5s) based on 30d history',
+        description:
+            'DB lag threshold should be 3s (not 5s) based on 30d history',
         confidence: 92,
         actionLabel: 'Apply Suggestion',
       ),
@@ -326,7 +328,8 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
         id: 's2',
         type: 'noise',
         title: 'Noise Reduction',
-        description: 'Group 3 correlated API latency alerts into single notification',
+        description:
+            'Group 3 correlated API latency alerts into single notification',
         confidence: 87,
         actionLabel: 'Review Grouping',
       ),
@@ -406,7 +409,9 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
         _channels[index] = channel.copyWith(isEnabled: !channel.isEnabled);
       }
     });
-    _showSnackBar('${channel.name} ${channel.isEnabled ? 'disabled' : 'enabled'}');
+    _showSnackBar(
+      '${channel.name} ${channel.isEnabled ? 'disabled' : 'enabled'}',
+    );
   }
 
   void _handleTestChannel(NotificationChannel channel) {
@@ -489,9 +494,7 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
     if (_isLoading) {
-      return Center(
-        child: CircularProgressIndicator(color: ITColors.primary),
-      );
+      return Center(child: CircularProgressIndicator(color: ITColors.primary));
     }
 
     if (_errorMessage != null) {
@@ -517,8 +520,10 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
                 ITAlertsStatsCards(
                   isDark: isDark,
                   stats: _stats,
-                  onViewHistory: () => setState(() => _selectedTab = AlertTab.history),
-                  onManageWindows: () => setState(() => _selectedTab = AlertTab.suppress),
+                  onViewHistory: () =>
+                      setState(() => _selectedTab = AlertTab.history),
+                  onManageWindows: () =>
+                      setState(() => _selectedTab = AlertTab.suppress),
                 ),
                 const SizedBox(height: 20),
 
@@ -567,7 +572,8 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
           searchQuery: _searchQuery,
           selectedSeverity: _selectedSeverity,
           onSearchChanged: (query) => setState(() => _searchQuery = query),
-          onSeverityChanged: (severity) => setState(() => _selectedSeverity = severity),
+          onSeverityChanged: (severity) =>
+              setState(() => _selectedSeverity = severity),
           onRuleTap: _handleRuleTap,
           onRuleToggle: _handleRuleToggle,
           onCreateRule: _handleCreateRule,
@@ -636,7 +642,10 @@ class _ITAlertsScreenState extends State<ITAlertsScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: ITColors.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),

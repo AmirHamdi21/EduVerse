@@ -47,9 +47,7 @@ class SecurityAlertsCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.error.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AdminColors.error.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -94,10 +92,7 @@ class SecurityAlertsCard extends StatelessWidget {
                   onPressed: onViewAll,
                   child: Text(
                     l10n.viewAll,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AdminColors.primary,
-                    ),
+                    style: TextStyle(fontSize: 13, color: AdminColors.primary),
                   ),
                 ),
             ],
@@ -140,7 +135,7 @@ class SecurityAlertsCard extends StatelessWidget {
 
   Widget _buildAlertItem(BuildContext context, SecurityAlert alert) {
     final l10n = AppLocalizations.of(context);
-    
+
     return InkWell(
       onTap: () => onAlertTap(alert),
       borderRadius: BorderRadius.circular(12),

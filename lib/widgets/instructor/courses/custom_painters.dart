@@ -16,11 +16,7 @@ class PatternPainter extends CustomPainter {
 
     const spacing = 24.0;
     for (var i = 0.0; i < size.width + size.height; i += spacing) {
-      canvas.drawLine(
-        Offset(i, 0),
-        Offset(0, i),
-        paint,
-      );
+      canvas.drawLine(Offset(i, 0), Offset(0, i), paint);
     }
   }
 
@@ -47,10 +43,7 @@ class TrendChartPainter extends CustomPainter {
 
     final fillPaint = Paint()
       ..shader = LinearGradient(
-        colors: [
-          color.withValues(alpha: 0.3),
-          color.withValues(alpha: 0.0),
-        ],
+        colors: [color.withValues(alpha: 0.3), color.withValues(alpha: 0.0)],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height))
@@ -67,8 +60,8 @@ class TrendChartPainter extends CustomPainter {
       final x = i * stepX;
       final y = range > 0
           ? size.height -
-              ((data[i] - minY) / range * size.height * 0.8) -
-              size.height * 0.1
+                ((data[i] - minY) / range * size.height * 0.8) -
+                size.height * 0.1
           : size.height / 2;
 
       if (i == 0) {

@@ -5,7 +5,7 @@ class StudentTodoItem extends StatefulWidget {
   final String dueDate;
   final bool isDark;
   final VoidCallback? onTap;
-  
+
   const StudentTodoItem({
     super.key,
     required this.title,
@@ -51,20 +51,20 @@ class _StudentTodoItemState extends State<StudentTodoItem> {
                 height: 24,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isChecked ? const Color(0xFF155CFB) : Colors.transparent,
+                  color: isChecked
+                      ? const Color(0xFF155CFB)
+                      : Colors.transparent,
                   border: Border.all(
-                    color: isChecked 
-                        ? const Color(0xFF155CFB) 
-                        : (widget.isDark ? Colors.white38 : const Color(0xFFD1D5DB)),
+                    color: isChecked
+                        ? const Color(0xFF155CFB)
+                        : (widget.isDark
+                              ? Colors.white38
+                              : const Color(0xFFD1D5DB)),
                     width: 2,
                   ),
                 ),
                 child: isChecked
-                    ? const Icon(
-                        Icons.check,
-                        size: 16,
-                        color: Colors.white,
-                      )
+                    ? const Icon(Icons.check, size: 16, color: Colors.white)
                     : null,
               ),
             ),
@@ -82,7 +82,9 @@ class _StudentTodoItemState extends State<StudentTodoItem> {
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       decoration: isChecked ? TextDecoration.lineThrough : null,
-                      decorationColor: widget.isDark ? Colors.white54 : Colors.black38,
+                      decorationColor: widget.isDark
+                          ? Colors.white54
+                          : Colors.black38,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -99,7 +101,7 @@ class _StudentTodoItemState extends State<StudentTodoItem> {
               ),
             ),
             Icon(
-              Icons.chevron_right, 
+              Icons.chevron_right,
               color: widget.isDark ? Colors.white54 : const Color(0xFF155CFB),
             ),
           ],

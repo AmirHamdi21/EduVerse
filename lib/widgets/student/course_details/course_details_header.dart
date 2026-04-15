@@ -36,9 +36,7 @@ class CourseDetailsHeader extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-            ),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
             child: IconButton(
               onPressed: onBackPressed ?? () => Navigator.pop(context),
               icon: Icon(

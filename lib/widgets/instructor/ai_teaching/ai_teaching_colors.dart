@@ -72,21 +72,13 @@ class AITeachingColors {
   static const LinearGradient lightBgGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [
-      Color(0xFFEEF5FF),
-      Color(0xFFF5F3FF),
-      Color(0xFFECFEFF),
-    ],
+    colors: [Color(0xFFEEF5FF), Color(0xFFF5F3FF), Color(0xFFECFEFF)],
   );
 
   static const LinearGradient darkBgGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [
-      Color(0xFF0F172A),
-      Color(0xFF1E293B),
-      Color(0xFF0F172A),
-    ],
+    colors: [Color(0xFF0F172A), Color(0xFF1E293B), Color(0xFF0F172A)],
   );
 
   static const LinearGradient sendButtonGradient = LinearGradient(
@@ -97,22 +89,25 @@ class AITeachingColors {
 
   // Quick action gradient
   static LinearGradient quickActionGradient(bool isDark) => LinearGradient(
-    colors: isDark
-        ? [darkCard, darkCard]
-        : [Colors.white, Colors.white],
+    colors: isDark ? [darkCard, darkCard] : [Colors.white, Colors.white],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
   // Theme-aware color getters
-  static Color backgroundColor(bool isDark) => isDark ? darkBg : lightBackground;
+  static Color backgroundColor(bool isDark) =>
+      isDark ? darkBg : lightBackground;
   static Color cardColor(bool isDark) => isDark ? darkCard : card;
   static Color surfaceColor(bool isDark) => isDark ? darkSurface : surface;
   static Color borderColor(bool isDark) => isDark ? darkBorder : border;
-  static Color textPrimaryColor(bool isDark) => isDark ? darkTextPrimary : textPrimary;
-  static Color textSecondaryColor(bool isDark) => isDark ? darkTextSecondary : textSecondary;
-  static Color textTertiaryColor(bool isDark) => isDark ? darkTextTertiary : textTertiary;
-  static Color messageBubbleColor(bool isDark) => isDark ? aiBubbleDark : aiBubbleLight;
+  static Color textPrimaryColor(bool isDark) =>
+      isDark ? darkTextPrimary : textPrimary;
+  static Color textSecondaryColor(bool isDark) =>
+      isDark ? darkTextSecondary : textSecondary;
+  static Color textTertiaryColor(bool isDark) =>
+      isDark ? darkTextTertiary : textTertiary;
+  static Color messageBubbleColor(bool isDark) =>
+      isDark ? aiBubbleDark : aiBubbleLight;
 
   // Get mode color
   static Color getModeColor(int index) {

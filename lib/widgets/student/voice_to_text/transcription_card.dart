@@ -16,7 +16,8 @@ class TranscriptionCard extends StatefulWidget {
 
 class _TranscriptionCardState extends State<TranscriptionCard> {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _transcriptionController = TextEditingController();
+  final TextEditingController _transcriptionController =
+      TextEditingController();
   bool _isEditing = false;
 
   @override
@@ -77,7 +78,10 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFF155DFC), Color(0xFF0092B8)],
+                                  colors: [
+                                    Color(0xFF155DFC),
+                                    Color(0xFF0092B8),
+                                  ],
                                 ),
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -168,7 +172,8 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
                             child: SingleChildScrollView(
                               child: state.currentTranscription.isEmpty
                                   ? Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         if (state.isRecording)
                                           SizedBox(
@@ -176,11 +181,16 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
                                             height: 20,
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2,
-                                              valueColor: AlwaysStoppedAnimation(
-                                                isDark
-                                                    ? const Color(0xFF51A2FF)
-                                                    : const Color(0xFF155DFC),
-                                              ),
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                    isDark
+                                                        ? const Color(
+                                                            0xFF51A2FF,
+                                                          )
+                                                        : const Color(
+                                                            0xFF155DFC,
+                                                          ),
+                                                  ),
                                             ),
                                           ),
                                         const SizedBox(width: 12),
@@ -188,8 +198,8 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
                                           child: Text(
                                             state.isRecording
                                                 ? (state.speechAvailable
-                                                    ? l10n.voiceToTextListening
-                                                    : 'Recording audio only...')
+                                                      ? l10n.voiceToTextListening
+                                                      : 'Recording audio only...')
                                                 : l10n.voiceToTextStartSpeaking,
                                             style: TextStyle(
                                               fontSize: 16,
@@ -318,7 +328,9 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
                               ),
                             ),
                             style: TextStyle(
-                              color: isDark ? Colors.white : const Color(0xFF101828),
+                              color: isDark
+                                  ? Colors.white
+                                  : const Color(0xFF101828),
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -327,17 +339,21 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
                               Expanded(
                                 child: OutlinedButton.icon(
                                   onPressed: () {
-                                    context
-                                        .read<VoiceToTextBloc>()
-                                        .add(const ClearCurrentTranscription());
+                                    context.read<VoiceToTextBloc>().add(
+                                      const ClearCurrentTranscription(),
+                                    );
                                     _titleController.clear();
                                   },
-                                  icon: const Icon(Icons.delete_outline_rounded),
+                                  icon: const Icon(
+                                    Icons.delete_outline_rounded,
+                                  ),
                                   label: Text(l10n.voiceToTextDiscard),
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: Colors.red,
                                     side: const BorderSide(color: Colors.red),
-                                    padding: const EdgeInsets.symmetric(vertical: 14),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -350,12 +366,17 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     gradient: const LinearGradient(
-                                      colors: [Color(0xFF155DFC), Color(0xFF0092B8)],
+                                      colors: [
+                                        Color(0xFF155DFC),
+                                        Color(0xFF0092B8),
+                                      ],
                                     ),
                                     borderRadius: BorderRadius.circular(12),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: const Color(0xFF155DFC).withOpacity(0.3),
+                                        color: const Color(
+                                          0xFF155DFC,
+                                        ).withOpacity(0.3),
                                         blurRadius: 8,
                                         offset: const Offset(0, 4),
                                       ),
@@ -366,10 +387,10 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
                                         ? null
                                         : () {
                                             context.read<VoiceToTextBloc>().add(
-                                                  SaveRecording(
-                                                    title: _titleController.text,
-                                                  ),
-                                                );
+                                              SaveRecording(
+                                                title: _titleController.text,
+                                              ),
+                                            );
                                             _titleController.clear();
                                           },
                                     icon: state.isSaving
@@ -378,7 +399,10 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
                                             height: 20,
                                             child: CircularProgressIndicator(
                                               strokeWidth: 2,
-                                              valueColor: AlwaysStoppedAnimation(Colors.white),
+                                              valueColor:
+                                                  AlwaysStoppedAnimation(
+                                                    Colors.white,
+                                                  ),
                                             ),
                                           )
                                         : const Icon(Icons.save_rounded),
@@ -391,7 +415,9 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
                                       backgroundColor: Colors.transparent,
                                       foregroundColor: Colors.white,
                                       elevation: 0,
-                                      padding: const EdgeInsets.symmetric(vertical: 14),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
                                       ),
@@ -430,8 +456,8 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
             isDark: isDark,
             onTap: () {
               context.read<VoiceToTextBloc>().add(
-                    CopyTranscription(state.currentTranscription),
-                  );
+                CopyTranscription(state.currentTranscription),
+              );
             },
           ),
 
@@ -445,8 +471,8 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
             onTap: () {
               if (_isEditing) {
                 context.read<VoiceToTextBloc>().add(
-                      UpdateTranscription(_transcriptionController.text),
-                    );
+                  UpdateTranscription(_transcriptionController.text),
+                );
               }
               setState(() {
                 _isEditing = !_isEditing;
@@ -497,11 +523,7 @@ class _TranscriptionCardState extends State<TranscriptionCard> {
               color: color.withOpacity(isDark ? 0.2 : 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 18,
-            ),
+            child: Icon(icon, color: color, size: 18),
           ),
         ),
       ),

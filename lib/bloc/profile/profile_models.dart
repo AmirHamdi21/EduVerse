@@ -184,7 +184,8 @@ class AppSettings {
       emailAlerts: emailAlerts ?? this.emailAlerts,
       aiSuggestions: aiSuggestions ?? this.aiSuggestions,
       autoDarkMode: autoDarkMode ?? this.autoDarkMode,
-      weeklyPerformanceSummary: weeklyPerformanceSummary ?? this.weeklyPerformanceSummary,
+      weeklyPerformanceSummary:
+          weeklyPerformanceSummary ?? this.weeklyPerformanceSummary,
       themeMode: themeMode ?? this.themeMode,
       accentColor: accentColor ?? this.accentColor,
       twoFactorAuth: twoFactorAuth ?? this.twoFactorAuth,
@@ -194,14 +195,7 @@ class AppSettings {
 }
 
 /// Accent color options
-enum AccentColor {
-  blue,
-  purple,
-  green,
-  orange,
-  pink,
-  teal,
-}
+enum AccentColor { blue, purple, green, orange, pink, teal }
 
 extension AccentColorExtension on AccentColor {
   Color get color {

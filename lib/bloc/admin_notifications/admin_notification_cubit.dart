@@ -12,20 +12,24 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
 
     try {
       await Future.delayed(const Duration(milliseconds: 500));
-      
+
       final notifications = _generateMockNotifications();
       final announcements = _generateMockAnnouncements();
 
-      emit(state.copyWith(
-        status: AdminNotificationLoadingStatus.loaded,
-        notifications: notifications,
-        announcements: announcements,
-      ));
+      emit(
+        state.copyWith(
+          status: AdminNotificationLoadingStatus.loaded,
+          notifications: notifications,
+          announcements: announcements,
+        ),
+      );
     } catch (e) {
-      emit(state.copyWith(
-        status: AdminNotificationLoadingStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          status: AdminNotificationLoadingStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -38,10 +42,12 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
   }
 
   void toggleSearchMode() {
-    emit(state.copyWith(
-      isSearching: !state.isSearching,
-      searchQuery: state.isSearching ? '' : state.searchQuery,
-    ));
+    emit(
+      state.copyWith(
+        isSearching: !state.isSearching,
+        searchQuery: state.isSearching ? '' : state.searchQuery,
+      ),
+    );
   }
 
   void setCurrentTab(int tab) {
@@ -104,8 +110,7 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
   }
 
   void deleteNotification(String id) {
-    final notifications =
-        state.notifications.where((n) => n.id != id).toList();
+    final notifications = state.notifications.where((n) => n.id != id).toList();
 
     emit(state.copyWith(notifications: notifications));
   }
@@ -119,8 +124,7 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
   }
 
   void clearReadNotifications() {
-    final notifications =
-        state.notifications.where((n) => !n.isRead).toList();
+    final notifications = state.notifications.where((n) => !n.isRead).toList();
 
     emit(state.copyWith(notifications: notifications));
   }
@@ -130,8 +134,7 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
   }
 
   void deleteAnnouncement(String id) {
-    final announcements =
-        state.announcements.where((a) => a.id != id).toList();
+    final announcements = state.announcements.where((a) => a.id != id).toList();
 
     emit(state.copyWith(announcements: announcements));
   }
@@ -179,7 +182,8 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
       AdminNotificationModel(
         id: '3',
         title: 'Course Approval Required',
-        message: 'New course "Advanced AI" submitted by Dr. Sarah needs approval',
+        message:
+            'New course "Advanced AI" submitted by Dr. Sarah needs approval',
         type: AdminNotificationType.approval,
         priority: AdminNotificationPriority.high,
         category: AdminNotificationCategory.courses,
@@ -191,7 +195,8 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
       AdminNotificationModel(
         id: '4',
         title: 'Security Alert',
-        message: 'Multiple failed login attempts detected for user john.doe@edu.com',
+        message:
+            'Multiple failed login attempts detected for user john.doe@edu.com',
         type: AdminNotificationType.security,
         priority: AdminNotificationPriority.urgent,
         category: AdminNotificationCategory.security,
@@ -269,7 +274,8 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
       AdminAnnouncementModel(
         id: 'a1',
         title: 'Welcome to Spring Semester 2025',
-        content: 'Dear Students and Faculty,\n\nWe are excited to welcome you to the Spring Semester 2025. Classes begin on January 15th. Please ensure all course registrations are completed by January 10th.\n\nBest regards,\nAdministration',
+        content:
+            'Dear Students and Faculty,\n\nWe are excited to welcome you to the Spring Semester 2025. Classes begin on January 15th. Please ensure all course registrations are completed by January 10th.\n\nBest regards,\nAdministration',
         target: AnnouncementTarget.all,
         priority: AdminNotificationPriority.high,
         createdAt: now.subtract(const Duration(days: 1)),
@@ -280,7 +286,8 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
       AdminAnnouncementModel(
         id: 'a2',
         title: 'System Maintenance Notice',
-        content: 'The EduVerse platform will undergo scheduled maintenance on Saturday, January 20th from 2:00 AM to 4:00 AM EST. During this time, the system will be unavailable.',
+        content:
+            'The EduVerse platform will undergo scheduled maintenance on Saturday, January 20th from 2:00 AM to 4:00 AM EST. During this time, the system will be unavailable.',
         target: AnnouncementTarget.all,
         priority: AdminNotificationPriority.urgent,
         createdAt: now.subtract(const Duration(days: 2)),
@@ -290,7 +297,8 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
       AdminAnnouncementModel(
         id: 'a3',
         title: 'New Grading Policy Update',
-        content: 'Please review the updated grading policy effective Spring 2025. All instructors must adhere to the new guidelines.',
+        content:
+            'Please review the updated grading policy effective Spring 2025. All instructors must adhere to the new guidelines.',
         target: AnnouncementTarget.instructors,
         priority: AdminNotificationPriority.high,
         createdAt: now.subtract(const Duration(days: 3)),
@@ -300,7 +308,8 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
       AdminAnnouncementModel(
         id: 'a4',
         title: 'TA Training Workshop',
-        content: 'Mandatory training workshop for all Teaching Assistants on January 12th at 10:00 AM in Room 301.',
+        content:
+            'Mandatory training workshop for all Teaching Assistants on January 12th at 10:00 AM in Room 301.',
         target: AnnouncementTarget.teachingAssistants,
         priority: AdminNotificationPriority.normal,
         createdAt: now.subtract(const Duration(days: 5)),
@@ -310,7 +319,8 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
       AdminAnnouncementModel(
         id: 'a5',
         title: 'Student Resources Update',
-        content: 'New study resources and AI tutoring features are now available in the student portal.',
+        content:
+            'New study resources and AI tutoring features are now available in the student portal.',
         target: AnnouncementTarget.students,
         priority: AdminNotificationPriority.normal,
         createdAt: now.subtract(const Duration(days: 7)),

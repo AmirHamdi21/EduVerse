@@ -70,9 +70,11 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         _filteredFaqItems = _allFaqItems;
       } else {
         _filteredFaqItems = _allFaqItems
-            .where((item) =>
-                item.question.toLowerCase().contains(query.toLowerCase()) ||
-                item.answer.toLowerCase().contains(query.toLowerCase()))
+            .where(
+              (item) =>
+                  item.question.toLowerCase().contains(query.toLowerCase()) ||
+                  item.answer.toLowerCase().contains(query.toLowerCase()),
+            )
             .toList();
       }
     });
@@ -85,8 +87,9 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
       if (category == 'all') {
         _filteredFaqItems = _allFaqItems;
       } else {
-        _filteredFaqItems =
-            _allFaqItems.where((item) => item.category == category).toList();
+        _filteredFaqItems = _allFaqItems
+            .where((item) => item.category == category)
+            .toList();
       }
     });
   }
@@ -97,11 +100,13 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -140,10 +145,12 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           if (_filteredFaqItems.isEmpty)
             _buildNoResults(isDark, l10n)
           else
-            ..._filteredFaqItems.map((item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: _buildFAQItem(isDark, item),
-                )),
+            ..._filteredFaqItems.map(
+              (item) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _buildFAQItem(isDark, item),
+              ),
+            ),
           const SizedBox(height: 24),
 
           // Contact Support
@@ -239,15 +246,9 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
               onChanged: _filterFAQs,
               decoration: InputDecoration(
                 hintText: l10n.searchHelp,
-                hintStyle: TextStyle(
-                  color: Colors.grey[400],
-                  fontSize: 15,
-                ),
+                hintStyle: TextStyle(color: Colors.grey[400], fontSize: 15),
                 border: InputBorder.none,
-                icon: Icon(
-                  Icons.search_rounded,
-                  color: Colors.grey[400],
-                ),
+                icon: Icon(Icons.search_rounded, color: Colors.grey[400]),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? IconButton(
                         icon: const Icon(Icons.clear),
@@ -282,10 +283,30 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
 
   Widget _buildQuickHelpGrid(bool isDark, AppLocalizations l10n) {
     final items = [
-      (Icons.book_rounded, l10n.gettingStarted, const Color(0xFF3B82F6), 'getting_started'),
-      (Icons.account_circle_rounded, l10n.accountHelp, const Color(0xFF8B5CF6), 'account'),
-      (Icons.school_rounded, l10n.coursesHelp, const Color(0xFF10B981), 'courses'),
-      (Icons.payment_rounded, l10n.billingHelp, const Color(0xFFF59E0B), 'billing'),
+      (
+        Icons.book_rounded,
+        l10n.gettingStarted,
+        const Color(0xFF3B82F6),
+        'getting_started',
+      ),
+      (
+        Icons.account_circle_rounded,
+        l10n.accountHelp,
+        const Color(0xFF8B5CF6),
+        'account',
+      ),
+      (
+        Icons.school_rounded,
+        l10n.coursesHelp,
+        const Color(0xFF10B981),
+        'courses',
+      ),
+      (
+        Icons.payment_rounded,
+        l10n.billingHelp,
+        const Color(0xFFF59E0B),
+        'billing',
+      ),
     ];
 
     return GridView.count(
@@ -332,11 +353,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                     color: item.$3.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    item.$1,
-                    size: 24,
-                    color: item.$3,
-                  ),
+                  child: Icon(item.$1, size: 24, color: item.$3),
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -426,10 +443,14 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                   label: l10n.emailUs,
                   color: const Color(0xFF8B5CF6),
                   onTap: () {
-                    Clipboard.setData(const ClipboardData(text: 'support@eduverse.com'));
+                    Clipboard.setData(
+                      const ClipboardData(text: 'support@eduverse.com'),
+                    );
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('${l10n.emailCopied}: support@eduverse.com'),
+                        content: Text(
+                          '${l10n.emailCopied}: support@eduverse.com',
+                        ),
                         behavior: SnackBarBehavior.floating,
                         backgroundColor: const Color(0xFF8B5CF6),
                       ),
@@ -470,10 +491,7 @@ class _ExpandableFAQCard extends StatefulWidget {
   final bool isDark;
   final _FAQItem item;
 
-  const _ExpandableFAQCard({
-    required this.isDark,
-    required this.item,
-  });
+  const _ExpandableFAQCard({required this.isDark, required this.item});
 
   @override
   State<_ExpandableFAQCard> createState() => _ExpandableFAQCardState();
@@ -490,8 +508,7 @@ class _ExpandableFAQCardState extends State<_ExpandableFAQCard> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color:
-                Colors.black.withValues(alpha: widget.isDark ? 0.2 : 0.05),
+            color: Colors.black.withValues(alpha: widget.isDark ? 0.2 : 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -517,8 +534,7 @@ class _ExpandableFAQCardState extends State<_ExpandableFAQCard> {
                     child: Icon(
                       widget.item.icon,
                       size: 20,
-                      color:
-                          widget.isDark ? Colors.white54 : Colors.black45,
+                      color: widget.isDark ? Colors.white54 : Colors.black45,
                     ),
                   ),
                   const SizedBox(width: 14),
@@ -537,8 +553,7 @@ class _ExpandableFAQCardState extends State<_ExpandableFAQCard> {
                     duration: const Duration(milliseconds: 200),
                     child: Icon(
                       Icons.keyboard_arrow_down_rounded,
-                      color:
-                          widget.isDark ? Colors.white38 : Colors.black26,
+                      color: widget.isDark ? Colors.white38 : Colors.black26,
                     ),
                   ),
                 ],
@@ -562,8 +577,7 @@ class _ExpandableFAQCardState extends State<_ExpandableFAQCard> {
                   widget.item.answer,
                   style: TextStyle(
                     fontSize: 14,
-                    color:
-                        widget.isDark ? Colors.white70 : Colors.black54,
+                    color: widget.isDark ? Colors.white70 : Colors.black54,
                     height: 1.5,
                   ),
                 ),
@@ -608,11 +622,7 @@ class _ContactButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 18,
-              color: color,
-            ),
+            Icon(icon, size: 18, color: color),
             const SizedBox(width: 8),
             Text(
               label,
@@ -633,10 +643,7 @@ class _LiveChatDialog extends StatefulWidget {
   final bool isDark;
   final AppLocalizations l10n;
 
-  const _LiveChatDialog({
-    required this.isDark,
-    required this.l10n,
-  });
+  const _LiveChatDialog({required this.isDark, required this.l10n});
 
   @override
   State<_LiveChatDialog> createState() => _LiveChatDialogState();
@@ -657,9 +664,10 @@ class _LiveChatDialogState extends State<_LiveChatDialog>
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
     _controller.forward();
 
     // Simulate connecting to support
@@ -667,11 +675,13 @@ class _LiveChatDialogState extends State<_LiveChatDialog>
       if (mounted) {
         setState(() {
           _isConnecting = false;
-          _messages.add(_ChatMessage(
-            message: widget.l10n.supportGreeting,
-            isUser: false,
-            time: DateTime.now(),
-          ));
+          _messages.add(
+            _ChatMessage(
+              message: widget.l10n.supportGreeting,
+              isUser: false,
+              time: DateTime.now(),
+            ),
+          );
         });
       }
     });
@@ -688,11 +698,13 @@ class _LiveChatDialogState extends State<_LiveChatDialog>
     if (_messageController.text.trim().isEmpty) return;
 
     setState(() {
-      _messages.add(_ChatMessage(
-        message: _messageController.text,
-        isUser: true,
-        time: DateTime.now(),
-      ));
+      _messages.add(
+        _ChatMessage(
+          message: _messageController.text,
+          isUser: true,
+          time: DateTime.now(),
+        ),
+      );
     });
     _messageController.clear();
 
@@ -700,11 +712,13 @@ class _LiveChatDialogState extends State<_LiveChatDialog>
     Future.delayed(const Duration(seconds: 1), () {
       if (mounted) {
         setState(() {
-          _messages.add(_ChatMessage(
-            message: widget.l10n.supportAutoReply,
-            isUser: false,
-            time: DateTime.now(),
-          ));
+          _messages.add(
+            _ChatMessage(
+              message: widget.l10n.supportAutoReply,
+              isUser: false,
+              time: DateTime.now(),
+            ),
+          );
         });
       }
     });
@@ -725,9 +739,7 @@ class _LiveChatDialogState extends State<_LiveChatDialog>
               maxWidth: 400,
             ),
             decoration: BoxDecoration(
-              color: widget.isDark
-                  ? const Color(0xFF1E293B)
-                  : Colors.white,
+              color: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
@@ -881,8 +893,9 @@ class _LiveChatDialogState extends State<_LiveChatDialog>
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
-        mainAxisAlignment:
-            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: message.isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: [
           if (!message.isUser) ...[
             Container(
@@ -909,8 +922,8 @@ class _LiveChatDialogState extends State<_LiveChatDialog>
               color: message.isUser
                   ? const Color(0xFF3B82F6)
                   : (widget.isDark
-                      ? const Color(0xFF0F172A)
-                      : const Color(0xFFF1F5F9)),
+                        ? const Color(0xFF0F172A)
+                        : const Color(0xFFF1F5F9)),
               borderRadius: BorderRadius.circular(16).copyWith(
                 bottomRight: message.isUser ? const Radius.circular(4) : null,
                 bottomLeft: !message.isUser ? const Radius.circular(4) : null,

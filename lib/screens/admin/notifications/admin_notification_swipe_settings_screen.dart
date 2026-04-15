@@ -69,13 +69,15 @@ class _AdminNotificationSwipeSettingsScreenState
   Future<void> _updateConfirmation(bool confirm) async {
     HapticFeedback.selectionClick();
     setState(
-        () => _settings = _settings.copyWith(confirmBeforeAction: confirm));
+      () => _settings = _settings.copyWith(confirmBeforeAction: confirm),
+    );
     await _settingsService.setConfirmBeforeAction(confirm);
   }
 
   Future<void> _updateSensitivity(double sensitivity) async {
     setState(
-        () => _settings = _settings.copyWith(swipeSensitivity: sensitivity));
+      () => _settings = _settings.copyWith(swipeSensitivity: sensitivity),
+    );
     await _settingsService.setSwipeSensitivity(sensitivity);
   }
 
@@ -359,11 +361,7 @@ class _AdminNotificationSwipeSettingsScreenState
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  Icons.swipe_rounded,
-                  size: 18,
-                  color: AdminColors.primary,
-                ),
+                Icon(Icons.swipe_rounded, size: 18, color: AdminColors.primary),
                 const SizedBox(width: 8),
                 Text(
                   l10n.swipeToPreview,
@@ -398,11 +396,7 @@ class _AdminNotificationSwipeSettingsScreenState
         ),
         const SizedBox(width: 6),
       ],
-      Icon(
-        icon,
-        size: 16,
-        color: action.color,
-      ),
+      Icon(icon, size: 16, color: action.color),
       if (isLeft) ...[
         const SizedBox(width: 6),
         Text(
@@ -482,8 +476,9 @@ class _AdminNotificationSwipeSettingsScreenState
                           : Colors.transparent,
                       borderRadius: BorderRadius.vertical(
                         top: isFirst ? const Radius.circular(20) : Radius.zero,
-                        bottom:
-                            isLast ? const Radius.circular(20) : Radius.zero,
+                        bottom: isLast
+                            ? const Radius.circular(20)
+                            : Radius.zero,
                       ),
                     ),
                     child: Row(
@@ -496,8 +491,8 @@ class _AdminNotificationSwipeSettingsScreenState
                             color: isSelected
                                 ? action.color.withOpacity(0.15)
                                 : (isDark
-                                    ? Colors.white.withOpacity(0.05)
-                                    : Colors.grey.shade100),
+                                      ? Colors.white.withOpacity(0.05)
+                                      : Colors.grey.shade100),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
@@ -530,8 +525,9 @@ class _AdminNotificationSwipeSettingsScreenState
                                 _getActionDescription(action, l10n),
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color:
-                                      AdminColors.getTextTertiaryColor(isDark),
+                                  color: AdminColors.getTextTertiaryColor(
+                                    isDark,
+                                  ),
                                 ),
                               ),
                             ],
@@ -542,7 +538,9 @@ class _AdminNotificationSwipeSettingsScreenState
                           width: 26,
                           height: 26,
                           decoration: BoxDecoration(
-                            color: isSelected ? action.color : Colors.transparent,
+                            color: isSelected
+                                ? action.color
+                                : Colors.transparent,
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: isSelected
@@ -617,8 +615,9 @@ class _AdminNotificationSwipeSettingsScreenState
             height: 1,
             indent: 74,
             endIndent: 18,
-            color:
-                isDark ? Colors.white.withOpacity(0.06) : Colors.grey.shade200,
+            color: isDark
+                ? Colors.white.withOpacity(0.06)
+                : Colors.grey.shade200,
           ),
           _buildSensitivitySlider(isDark, l10n),
         ],
@@ -746,8 +745,9 @@ class _AdminNotificationSwipeSettingsScreenState
                     thumbColor: AdminColors.secondary,
                     overlayColor: AdminColors.secondary.withOpacity(0.2),
                     trackHeight: 4,
-                    thumbShape:
-                        const RoundSliderThumbShape(enabledThumbRadius: 8),
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 8,
+                    ),
                   ),
                   child: Slider(
                     value: _settings.swipeSensitivity,

@@ -6,14 +6,16 @@ class ConnectivityService {
   Future<bool> hasInternetConnection() async {
     try {
       // Try DNS lookup with timeout
-      final result = await InternetAddress.lookup('google.com')
-          .timeout(const Duration(seconds: 5));
+      final result = await InternetAddress.lookup(
+        'google.com',
+      ).timeout(const Duration(seconds: 5));
       return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
     } on TimeoutException {
       // If google.com times out, try cloudflare DNS
       try {
-        final result = await InternetAddress.lookup('1.1.1.1')
-            .timeout(const Duration(seconds: 5));
+        final result = await InternetAddress.lookup(
+          '1.1.1.1',
+        ).timeout(const Duration(seconds: 5));
         return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
       } on SocketException {
         return false;

@@ -24,9 +24,7 @@ class ITStorageDistributionSection extends StatelessWidget {
         color: isDark ? ITColors.darkCard : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.1)
-              : ITColors.border,
+          color: isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border,
         ),
         boxShadow: ITColors.lightCardShadow(isDark),
       ),
@@ -46,7 +44,10 @@ class ITStorageDistributionSection extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: ITColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -74,9 +75,7 @@ class ITStorageDistributionSection extends StatelessWidget {
                   final percentage = item.sizeGB / totalCapacityGB;
                   return Expanded(
                     flex: (percentage * 100).toInt().clamp(1, 100),
-                    child: Container(
-                      color: item.color,
-                    ),
+                    child: Container(color: item.color),
                   );
                 }).toList(),
               ),

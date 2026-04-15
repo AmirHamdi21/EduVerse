@@ -143,7 +143,10 @@ class _TACalendarScreenState extends State<TACalendarScreen>
             icon: const Icon(Icons.add_rounded, color: Colors.white),
             label: Text(
               l10n.taCalendarAddEvent,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         );
@@ -216,7 +219,9 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: TAColors.borderColor(isDark).withValues(alpha: 0.5)),
+        border: Border.all(
+          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
+        ),
       ),
       child: Row(
         children: [
@@ -244,7 +249,9 @@ class _TACalendarScreenState extends State<TACalendarScreen>
             child: Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.white : TAColors.textSecondaryColor(isDark),
+                color: isSelected
+                    ? Colors.white
+                    : TAColors.textSecondaryColor(isDark),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 fontSize: 14,
               ),
@@ -258,8 +265,16 @@ class _TACalendarScreenState extends State<TACalendarScreen>
   Widget _buildFilterChips(bool isDark, AppLocalizations l10n) {
     final filters = [
       {'id': 'lab', 'label': l10n.taLabs, 'color': TAColors.info},
-      {'id': 'grading', 'label': l10n.pendingGrading, 'color': TAColors.warning},
-      {'id': 'office_hours', 'label': l10n.taOfficeHoursTitle, 'color': TAColors.success},
+      {
+        'id': 'grading',
+        'label': l10n.pendingGrading,
+        'color': TAColors.warning,
+      },
+      {
+        'id': 'office_hours',
+        'label': l10n.taOfficeHoursTitle,
+        'color': TAColors.success,
+      },
       {'id': 'meetings', 'label': l10n.meetings, 'color': TAColors.primary},
     ];
 
@@ -335,7 +350,10 @@ class _TACalendarScreenState extends State<TACalendarScreen>
         IconButton(
           onPressed: () {
             setState(() {
-              _focusedMonth = DateTime(_focusedMonth.year, _focusedMonth.month - 1);
+              _focusedMonth = DateTime(
+                _focusedMonth.year,
+                _focusedMonth.month - 1,
+              );
             });
           },
           icon: Icon(
@@ -354,7 +372,10 @@ class _TACalendarScreenState extends State<TACalendarScreen>
         IconButton(
           onPressed: () {
             setState(() {
-              _focusedMonth = DateTime(_focusedMonth.year, _focusedMonth.month + 1);
+              _focusedMonth = DateTime(
+                _focusedMonth.year,
+                _focusedMonth.month + 1,
+              );
             });
           },
           icon: Icon(
@@ -370,30 +391,42 @@ class _TACalendarScreenState extends State<TACalendarScreen>
     final weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: weekDays.map((day) => SizedBox(
-        width: 40,
-        child: Center(
-          child: Text(
-            day,
-            style: TextStyle(
-              color: TAColors.textTertiaryColor(isDark),
-              fontWeight: FontWeight.w600,
-              fontSize: 12,
+      children: weekDays
+          .map(
+            (day) => SizedBox(
+              width: 40,
+              child: Center(
+                child: Text(
+                  day,
+                  style: TextStyle(
+                    color: TAColors.textTertiaryColor(isDark),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      )).toList(),
+          )
+          .toList(),
     );
   }
 
   Widget _buildCalendarDays(bool isDark) {
-    final firstDayOfMonth = DateTime(_focusedMonth.year, _focusedMonth.month, 1);
-    final lastDayOfMonth = DateTime(_focusedMonth.year, _focusedMonth.month + 1, 0);
+    final firstDayOfMonth = DateTime(
+      _focusedMonth.year,
+      _focusedMonth.month,
+      1,
+    );
+    final lastDayOfMonth = DateTime(
+      _focusedMonth.year,
+      _focusedMonth.month + 1,
+      0,
+    );
     final firstWeekday = firstDayOfMonth.weekday % 7;
     final daysInMonth = lastDayOfMonth.day;
 
     List<Widget> dayWidgets = [];
-    
+
     // Empty slots before first day
     for (int i = 0; i < firstWeekday; i++) {
       dayWidgets.add(const SizedBox(width: 40, height: 40));
@@ -416,8 +449,8 @@ class _TACalendarScreenState extends State<TACalendarScreen>
               color: isSelected
                   ? TAColors.primary
                   : isToday
-                      ? TAColors.primary.withValues(alpha: 0.1)
-                      : Colors.transparent,
+                  ? TAColors.primary.withValues(alpha: 0.1)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               border: isToday && !isSelected
                   ? Border.all(color: TAColors.primary, width: 1.5)
@@ -432,8 +465,8 @@ class _TACalendarScreenState extends State<TACalendarScreen>
                     color: isSelected
                         ? Colors.white
                         : isToday
-                            ? TAColors.primary
-                            : TAColors.textPrimaryColor(isDark),
+                        ? TAColors.primary
+                        : TAColors.textPrimaryColor(isDark),
                     fontWeight: isSelected || isToday
                         ? FontWeight.w600
                         : FontWeight.w500,
@@ -520,7 +553,9 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: TAColors.borderColor(isDark).withValues(alpha: 0.5)),
+        border: Border.all(
+          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
+        ),
       ),
       child: Center(
         child: Column(
@@ -558,9 +593,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border(
-          left: BorderSide(color: color, width: 4),
-        ),
+        border: Border(left: BorderSide(color: color, width: 4)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -584,11 +617,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
                     color: color.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    _getEventIcon(type),
-                    color: color,
-                    size: 24,
-                  ),
+                  child: Icon(_getEventIcon(type), color: color, size: 24),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -676,7 +705,9 @@ class _TACalendarScreenState extends State<TACalendarScreen>
           ),
         ),
         const SizedBox(height: 12),
-        ...upcomingEvents.map((event) => _buildUpcomingEventTile(event, isDark)),
+        ...upcomingEvents.map(
+          (event) => _buildUpcomingEventTile(event, isDark),
+        ),
       ],
     );
   }
@@ -692,7 +723,9 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: TAColors.borderColor(isDark).withValues(alpha: 0.5)),
+        border: Border.all(
+          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
+        ),
       ),
       child: Row(
         children: [
@@ -888,11 +921,17 @@ class _TACalendarScreenState extends State<TACalendarScreen>
                   onChanged: (value) => title = value,
                   decoration: InputDecoration(
                     labelText: 'Event Title',
-                    labelStyle: TextStyle(color: TAColors.textSecondaryColor(isDark)),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    labelStyle: TextStyle(
+                      color: TAColors.textSecondaryColor(isDark),
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: TAColors.borderColor(isDark)),
+                      borderSide: BorderSide(
+                        color: TAColors.borderColor(isDark),
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -916,15 +955,29 @@ class _TACalendarScreenState extends State<TACalendarScreen>
                     _buildTypeChip('lab', 'Lab', selectedType, isDark, (type) {
                       setSheetState(() => selectedType = type);
                     }),
-                    _buildTypeChip('grading', 'Grading', selectedType, isDark, (type) {
+                    _buildTypeChip('grading', 'Grading', selectedType, isDark, (
+                      type,
+                    ) {
                       setSheetState(() => selectedType = type);
                     }),
-                    _buildTypeChip('office_hours', 'Office Hours', selectedType, isDark, (type) {
-                      setSheetState(() => selectedType = type);
-                    }),
-                    _buildTypeChip('meetings', 'Meeting', selectedType, isDark, (type) {
-                      setSheetState(() => selectedType = type);
-                    }),
+                    _buildTypeChip(
+                      'office_hours',
+                      'Office Hours',
+                      selectedType,
+                      isDark,
+                      (type) {
+                        setSheetState(() => selectedType = type);
+                      },
+                    ),
+                    _buildTypeChip(
+                      'meetings',
+                      'Meeting',
+                      selectedType,
+                      isDark,
+                      (type) {
+                        setSheetState(() => selectedType = type);
+                      },
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -932,15 +985,21 @@ class _TACalendarScreenState extends State<TACalendarScreen>
                   onChanged: (value) => location = value,
                   decoration: InputDecoration(
                     labelText: 'Location',
-                    labelStyle: TextStyle(color: TAColors.textSecondaryColor(isDark)),
+                    labelStyle: TextStyle(
+                      color: TAColors.textSecondaryColor(isDark),
+                    ),
                     prefixIcon: Icon(
                       Icons.location_on_outlined,
                       color: TAColors.textSecondaryColor(isDark),
                     ),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: TAColors.borderColor(isDark)),
+                      borderSide: BorderSide(
+                        color: TAColors.borderColor(isDark),
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -1067,13 +1126,23 @@ class _TACalendarScreenState extends State<TACalendarScreen>
               ],
             ),
             const SizedBox(height: 20),
-            _buildDetailRow(Icons.access_time_rounded, 
-              '${event['startTime']}${event['endTime'].isNotEmpty ? ' - ${event['endTime']}' : ''}', 
-              isDark),
+            _buildDetailRow(
+              Icons.access_time_rounded,
+              '${event['startTime']}${event['endTime'].isNotEmpty ? ' - ${event['endTime']}' : ''}',
+              isDark,
+            ),
             if (event['location'] != null)
-              _buildDetailRow(Icons.location_on_outlined, event['location'], isDark),
+              _buildDetailRow(
+                Icons.location_on_outlined,
+                event['location'],
+                isDark,
+              ),
             if (event['description'] != null)
-              _buildDetailRow(Icons.description_outlined, event['description'], isDark),
+              _buildDetailRow(
+                Icons.description_outlined,
+                event['description'],
+                isDark,
+              ),
             const SizedBox(height: 20),
             Row(
               children: [
@@ -1102,8 +1171,14 @@ class _TACalendarScreenState extends State<TACalendarScreen>
                       });
                       _showSnackBar('Event deleted', isDark);
                     },
-                    icon: const Icon(Icons.delete_outline_rounded, color: Colors.white),
-                    label: const Text('Delete', style: TextStyle(color: Colors.white)),
+                    icon: const Icon(
+                      Icons.delete_outline_rounded,
+                      color: Colors.white,
+                    ),
+                    label: const Text(
+                      'Delete',
+                      style: TextStyle(color: Colors.white),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: TAColors.error,
                       padding: const EdgeInsets.symmetric(vertical: 12),

@@ -41,17 +41,9 @@ class ChatMessage {
   }
 }
 
-enum MessageStatus {
-  sending,
-  sent,
-  error,
-}
+enum MessageStatus { sending, sent, error }
 
-enum ChatMode {
-  generalHelp,
-  courseSpecific,
-  aiTutor,
-}
+enum ChatMode { generalHelp, courseSpecific, aiTutor }
 
 class QuickAction {
   final String id;
@@ -116,22 +108,24 @@ class AiChatState extends Equatable {
       selectedCourse: selectedCourse ?? this.selectedCourse,
       availableCourses: availableCourses ?? this.availableCourses,
       isRecording: isRecording ?? this.isRecording,
-      successMessage: clearSuccess ? null : (successMessage ?? this.successMessage),
+      successMessage: clearSuccess
+          ? null
+          : (successMessage ?? this.successMessage),
       quickActions: quickActions ?? this.quickActions,
     );
   }
 
   @override
   List<Object?> get props => [
-        isLoading,
-        error,
-        messages,
-        chatMode,
-        isAiTyping,
-        selectedCourse,
-        availableCourses,
-        isRecording,
-        successMessage,
-        quickActions,
-      ];
+    isLoading,
+    error,
+    messages,
+    chatMode,
+    isAiTyping,
+    selectedCourse,
+    availableCourses,
+    isRecording,
+    successMessage,
+    quickActions,
+  ];
 }

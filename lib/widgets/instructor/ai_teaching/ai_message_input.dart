@@ -60,9 +60,7 @@ class _AIMessageInputState extends State<AIMessageInput> {
       decoration: BoxDecoration(
         color: widget.isDark ? AITeachingColors.darkCard : Colors.white,
         border: Border(
-          top: BorderSide(
-            color: AITeachingColors.borderColor(widget.isDark),
-          ),
+          top: BorderSide(color: AITeachingColors.borderColor(widget.isDark)),
         ),
         boxShadow: widget.isDark
             ? null
@@ -142,10 +140,7 @@ class _AIMessageInputState extends State<AIMessageInput> {
     );
   }
 
-  Widget _buildIconButton({
-    required IconData icon,
-    VoidCallback? onTap,
-  }) {
+  Widget _buildIconButton({required IconData icon, VoidCallback? onTap}) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -207,11 +202,7 @@ class _AIMessageInputState extends State<AIMessageInput> {
                     color: Colors.white,
                   ),
                 )
-              : const Icon(
-                  Icons.send_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
+              : const Icon(Icons.send_rounded, color: Colors.white, size: 20),
         ),
       ),
     );

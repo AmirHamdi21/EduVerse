@@ -81,11 +81,11 @@ class ITAIRequestLogsSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Stats Grid
           _buildStatsGrid(),
           const SizedBox(height: 20),
-          
+
           // Recent Requests Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -101,7 +101,10 @@ class ITAIRequestLogsSection extends StatelessWidget {
               TextButton(
                 onPressed: onViewFullLogs,
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                 ),
                 child: Text(
                   'View Full Logs',
@@ -115,10 +118,10 @@ class ITAIRequestLogsSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          
+
           // Log Entries
           ...logs.take(5).map((log) => _buildLogEntry(log)),
-          
+
           if (logs.isEmpty)
             Center(
               child: Padding(
@@ -142,9 +145,9 @@ class ITAIRequestLogsSection extends StatelessWidget {
                 ),
               ),
             ),
-          
+
           const SizedBox(height: 16),
-          
+
           // Download Button
           SizedBox(
             width: double.infinity,
@@ -154,7 +157,9 @@ class ITAIRequestLogsSection extends StatelessWidget {
               label: const Text('Download Logs'),
               style: OutlinedButton.styleFrom(
                 foregroundColor: ITColors.primary,
-                side: BorderSide(color: ITColors.primary.withValues(alpha: 0.5)),
+                side: BorderSide(
+                  color: ITColors.primary.withValues(alpha: 0.5),
+                ),
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -209,9 +214,7 @@ class ITAIRequestLogsSection extends StatelessWidget {
           ],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,9 +300,14 @@ class ITAIRequestLogsSection extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
-                        color: _getProviderColor(log.provider).withValues(alpha: 0.1),
+                        color: _getProviderColor(
+                          log.provider,
+                        ).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(

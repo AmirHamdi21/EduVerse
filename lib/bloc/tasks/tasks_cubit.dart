@@ -7,120 +7,138 @@ class TasksCubit extends Cubit<TasksState> {
 
   void loadTasks() {
     try {
-      emit(TasksLoading(
-        tasks: state.tasks,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+      emit(
+        TasksLoading(
+          tasks: state.tasks,
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
 
       // Simulated tasks data for demo
       final tasks = _generateDemoTasks();
 
-      emit(TasksLoaded(
-        tasks: tasks,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+      emit(
+        TasksLoaded(
+          tasks: tasks,
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     } catch (e) {
-      emit(TasksError(
-        message: 'Failed to load tasks: ${e.toString()}',
-        tasks: state.tasks,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+      emit(
+        TasksError(
+          message: 'Failed to load tasks: ${e.toString()}',
+          tasks: state.tasks,
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     }
   }
 
   void setFilter(TasksFilter filter) {
     if (state is TasksLoaded || state is TasksError) {
       final currentTasks = state.tasks;
-      emit(TasksLoaded(
-        tasks: currentTasks,
-        filter: filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+      emit(
+        TasksLoaded(
+          tasks: currentTasks,
+          filter: filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     }
   }
 
   void clearFilters() {
     if (state is TasksLoaded || state is TasksError) {
       final currentTasks = state.tasks;
-      emit(TasksLoaded(
-        tasks: currentTasks,
-        filter: const TasksFilter(),
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+      emit(
+        TasksLoaded(
+          tasks: currentTasks,
+          filter: const TasksFilter(),
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     }
   }
 
   void setSort(TasksSortBy sortBy, {bool? ascending}) {
     if (state is TasksLoaded || state is TasksError) {
       final currentTasks = state.tasks;
-      emit(TasksLoaded(
-        tasks: currentTasks,
-        filter: state.filter,
-        sortBy: sortBy,
-        sortAscending: ascending ?? state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+      emit(
+        TasksLoaded(
+          tasks: currentTasks,
+          filter: state.filter,
+          sortBy: sortBy,
+          sortAscending: ascending ?? state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     }
   }
 
   void toggleSortOrder() {
     if (state is TasksLoaded || state is TasksError) {
       final currentTasks = state.tasks;
-      emit(TasksLoaded(
-        tasks: currentTasks,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: !state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+      emit(
+        TasksLoaded(
+          tasks: currentTasks,
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: !state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     }
   }
 
   void setViewMode(TasksViewMode mode) {
     if (state is TasksLoaded || state is TasksError) {
       final currentTasks = state.tasks;
-      emit(TasksLoaded(
-        tasks: currentTasks,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: mode,
-        searchQuery: state.searchQuery,
-      ));
+      emit(
+        TasksLoaded(
+          tasks: currentTasks,
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: mode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     }
   }
 
   void setSearchQuery(String query) {
     if (state is TasksLoaded || state is TasksError) {
       final currentTasks = state.tasks;
-      emit(TasksLoaded(
-        tasks: currentTasks,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: query,
-      ));
+      emit(
+        TasksLoaded(
+          tasks: currentTasks,
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: query,
+        ),
+      );
     }
   }
 
@@ -129,21 +147,23 @@ class TasksCubit extends Cubit<TasksState> {
       if (task.title.trim().isEmpty) {
         throw ArgumentError('Task title cannot be empty');
       }
-      
+
       final currentTasks = state.tasks;
       // Check for duplicate IDs
       if (currentTasks.any((t) => t.id == task.id)) {
         throw ArgumentError('Task with this ID already exists');
       }
-      
-      emit(TasksLoaded(
-        tasks: [...currentTasks, task],
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+
+      emit(
+        TasksLoaded(
+          tasks: [...currentTasks, task],
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     } catch (e) {
       rethrow;
     }
@@ -154,26 +174,28 @@ class TasksCubit extends Cubit<TasksState> {
       if (updatedTask.title.trim().isEmpty) {
         throw ArgumentError('Task title cannot be empty');
       }
-      
+
       final currentTasks = state.tasks;
       final taskExists = currentTasks.any((t) => t.id == updatedTask.id);
-      
+
       if (!taskExists) {
         throw ArgumentError('Task not found');
       }
-      
+
       final updatedTasks = currentTasks.map((task) {
         return task.id == updatedTask.id ? updatedTask : task;
       }).toList();
-      
-      emit(TasksLoaded(
-        tasks: updatedTasks,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+
+      emit(
+        TasksLoaded(
+          tasks: updatedTasks,
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     } catch (e) {
       rethrow;
     }
@@ -184,24 +206,28 @@ class TasksCubit extends Cubit<TasksState> {
       if (taskId.isEmpty) {
         throw ArgumentError('Task ID cannot be empty');
       }
-      
+
       final currentTasks = state.tasks;
       final taskExists = currentTasks.any((t) => t.id == taskId);
-      
+
       if (!taskExists) {
         throw ArgumentError('Task not found');
       }
-      
-      final updatedTasks = currentTasks.where((task) => task.id != taskId).toList();
-      
-      emit(TasksLoaded(
-        tasks: updatedTasks,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+
+      final updatedTasks = currentTasks
+          .where((task) => task.id != taskId)
+          .toList();
+
+      emit(
+        TasksLoaded(
+          tasks: updatedTasks,
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     } catch (e) {
       rethrow;
     }
@@ -212,14 +238,14 @@ class TasksCubit extends Cubit<TasksState> {
       if (taskId.isEmpty) {
         throw ArgumentError('Task ID cannot be empty');
       }
-      
+
       final currentTasks = state.tasks;
       final taskExists = currentTasks.any((t) => t.id == taskId);
-      
+
       if (!taskExists) {
         throw ArgumentError('Task not found');
       }
-      
+
       final updatedTasks = currentTasks.map((task) {
         if (task.id == taskId) {
           if (task.status == TaskStatus.completed) {
@@ -236,15 +262,17 @@ class TasksCubit extends Cubit<TasksState> {
         }
         return task;
       }).toList();
-      
-      emit(TasksLoaded(
-        tasks: updatedTasks,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+
+      emit(
+        TasksLoaded(
+          tasks: updatedTasks,
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     } catch (e) {
       rethrow;
     }
@@ -255,29 +283,31 @@ class TasksCubit extends Cubit<TasksState> {
       if (taskId.isEmpty) {
         throw ArgumentError('Task ID cannot be empty');
       }
-      
+
       final currentTasks = state.tasks;
       final taskExists = currentTasks.any((t) => t.id == taskId);
-      
+
       if (!taskExists) {
         throw ArgumentError('Task not found');
       }
-      
+
       final updatedTasks = currentTasks.map((task) {
         if (task.id == taskId) {
           return task.copyWith(isBookmarked: !task.isBookmarked);
         }
         return task;
       }).toList();
-      
-      emit(TasksLoaded(
-        tasks: updatedTasks,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+
+      emit(
+        TasksLoaded(
+          tasks: updatedTasks,
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     } catch (e) {
       rethrow;
     }
@@ -288,14 +318,14 @@ class TasksCubit extends Cubit<TasksState> {
       if (taskId.isEmpty) {
         throw ArgumentError('Task ID cannot be empty');
       }
-      
+
       final currentTasks = state.tasks;
       final taskExists = currentTasks.any((t) => t.id == taskId);
-      
+
       if (!taskExists) {
         throw ArgumentError('Task not found');
       }
-      
+
       final updatedTasks = currentTasks.map((task) {
         if (task.id == taskId) {
           if (newStatus == TaskStatus.completed) {
@@ -304,23 +334,22 @@ class TasksCubit extends Cubit<TasksState> {
               completedAt: DateTime.now(),
             );
           } else {
-            return task.copyWith(
-              status: newStatus,
-              clearCompletedAt: true,
-            );
+            return task.copyWith(status: newStatus, clearCompletedAt: true);
           }
         }
         return task;
       }).toList();
-      
-      emit(TasksLoaded(
-        tasks: updatedTasks,
-        filter: state.filter,
-        sortBy: state.sortBy,
-        sortAscending: state.sortAscending,
-        viewMode: state.viewMode,
-        searchQuery: state.searchQuery,
-      ));
+
+      emit(
+        TasksLoaded(
+          tasks: updatedTasks,
+          filter: state.filter,
+          sortBy: state.sortBy,
+          sortAscending: state.sortAscending,
+          viewMode: state.viewMode,
+          searchQuery: state.searchQuery,
+        ),
+      );
     } catch (e) {
       rethrow;
     }
@@ -400,7 +429,7 @@ class TasksCubit extends Cubit<TasksState> {
           'Research',
           'Draft slides',
           'Add visuals',
-          'Practice presentation'
+          'Practice presentation',
         ],
         completedSubtasks: ['Research', 'Draft slides'],
         isBookmarked: true,

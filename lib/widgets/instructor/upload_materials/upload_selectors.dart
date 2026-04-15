@@ -169,7 +169,9 @@ class _WeekNumberSelectorState extends State<WeekNumberSelector> {
   @override
   Widget build(BuildContext context) {
     final textColor = UploadMaterialsColors.textPrimaryColor(widget.isDark);
-    final secondaryColor = UploadMaterialsColors.textSecondaryColor(widget.isDark);
+    final secondaryColor = UploadMaterialsColors.textSecondaryColor(
+      widget.isDark,
+    );
 
     return Opacity(
       opacity: widget.enabled ? 1.0 : 0.5,
@@ -178,7 +180,9 @@ class _WeekNumberSelectorState extends State<WeekNumberSelector> {
         decoration: BoxDecoration(
           color: widget.isDark ? UploadMaterialsColors.darkCard : Colors.white,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: UploadMaterialsColors.borderColor(widget.isDark)),
+          border: Border.all(
+            color: UploadMaterialsColors.borderColor(widget.isDark),
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,16 +202,16 @@ class _WeekNumberSelectorState extends State<WeekNumberSelector> {
                   TextButton(
                     onPressed: widget.enabled ? _clear : null,
                     style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: Text(
                       'None',
-                      style: TextStyle(
-                        color: secondaryColor,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: secondaryColor, fontSize: 12),
                     ),
                   ),
               ],
@@ -259,7 +263,9 @@ class _WeekNumberSelectorState extends State<WeekNumberSelector> {
                             : Colors.grey.shade50,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: UploadMaterialsColors.borderColor(widget.isDark),
+                          color: UploadMaterialsColors.borderColor(
+                            widget.isDark,
+                          ),
                         ),
                       ),
                       child: widget.weekNumber == null
@@ -404,10 +410,7 @@ class _WeekNumberDialogState extends State<_WeekNumberDialog> {
           },
           child: const Text('None'),
         ),
-        FilledButton(
-          onPressed: _confirm,
-          child: const Text('Confirm'),
-        ),
+        FilledButton(onPressed: _confirm, child: const Text('Confirm')),
       ],
     );
   }

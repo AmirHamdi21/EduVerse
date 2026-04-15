@@ -198,15 +198,13 @@ class AIModesBottomSheet extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             gradient: isSelected
-                ? LinearGradient(
-                    colors: [color, color.withValues(alpha: 0.8)],
-                  )
+                ? LinearGradient(colors: [color, color.withValues(alpha: 0.8)])
                 : null,
             color: isSelected
                 ? null
                 : (isDark
-                    ? AITeachingColors.darkSurface
-                    : AITeachingColors.surface),
+                      ? AITeachingColors.darkSurface
+                      : AITeachingColors.surface),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: isSelected

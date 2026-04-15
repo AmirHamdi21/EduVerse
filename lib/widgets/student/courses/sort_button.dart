@@ -47,7 +47,9 @@ class SortButton extends StatelessWidget {
                   color: selectedSort != null && selectedSort != 'title_asc'
                       ? const Color(0xFF155DFC)
                       : (isDark ? Colors.white10 : const Color(0xFFD1D5DC)),
-                  width: selectedSort != null && selectedSort != 'title_asc' ? 1.5 : 1,
+                  width: selectedSort != null && selectedSort != 'title_asc'
+                      ? 1.5
+                      : 1,
                 ),
               ),
               child: Row(
@@ -65,11 +67,15 @@ class SortButton extends StatelessWidget {
                     child: Text(
                       _getSortLabel(selectedSort, l10n),
                       style: TextStyle(
-                        color: selectedSort != null && selectedSort != 'title_asc'
+                        color:
+                            selectedSort != null && selectedSort != 'title_asc'
                             ? const Color(0xFF155DFC)
-                            : (isDark ? Colors.white70 : const Color(0xFF364153)),
+                            : (isDark
+                                  ? Colors.white70
+                                  : const Color(0xFF364153)),
                         fontSize: 14,
-                        fontWeight: selectedSort != null && selectedSort != 'title_asc'
+                        fontWeight:
+                            selectedSort != null && selectedSort != 'title_asc'
                             ? FontWeight.w600
                             : FontWeight.w500,
                       ),
@@ -113,18 +119,8 @@ class SortButton extends StatelessWidget {
             const SizedBox(height: 20),
             _buildSortOption(context, 'title_asc', 'Title (A-Z)', isDark),
             _buildSortOption(context, 'title_desc', 'Title (Z-A)', isDark),
-            _buildSortOption(
-              context,
-              'credits_desc',
-              'Most Credits',
-              isDark,
-            ),
-            _buildSortOption(
-              context,
-              'credits_asc',
-              'Least Credits',
-              isDark,
-            ),
+            _buildSortOption(context, 'credits_desc', 'Most Credits', isDark),
+            _buildSortOption(context, 'credits_asc', 'Least Credits', isDark),
             _buildSortOption(context, 'date', 'Enrollment Date', isDark),
           ],
         ),

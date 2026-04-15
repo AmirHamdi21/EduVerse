@@ -83,7 +83,9 @@ class AdminAIModeSelector extends StatelessWidget {
                     border: Border.all(
                       color: isSelected
                           ? AdminColors.secondary
-                          : (isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder),
+                          : (isDark
+                                ? AdminColors.darkCardBorder
+                                : AdminColors.lightCardBorder),
                     ),
                   ),
                   child: Row(
@@ -94,17 +96,23 @@ class AdminAIModeSelector extends StatelessWidget {
                         size: 18,
                         color: isSelected
                             ? Colors.white
-                            : (isDark ? AdminColors.darkTextSecondary : AdminColors.lightTextSecondary),
+                            : (isDark
+                                  ? AdminColors.darkTextSecondary
+                                  : AdminColors.lightTextSecondary),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         mode.label,
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                           color: isSelected
                               ? Colors.white
-                              : (isDark ? AdminColors.darkText : AdminColors.lightText),
+                              : (isDark
+                                    ? AdminColors.darkText
+                                    : AdminColors.lightText),
                         ),
                       ),
                     ],

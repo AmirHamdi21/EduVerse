@@ -32,11 +32,12 @@ class SystemHealthServicesSection extends StatelessWidget {
             ),
             TextButton.icon(
               onPressed: () {},
-              icon: Icon(Icons.refresh_rounded, size: 18, color: ITColors.primary),
-              label: Text(
-                'Refresh',
-                style: TextStyle(color: ITColors.primary),
+              icon: Icon(
+                Icons.refresh_rounded,
+                size: 18,
+                color: ITColors.primary,
               ),
+              label: Text('Refresh', style: TextStyle(color: ITColors.primary)),
             ),
           ],
         ),
@@ -97,7 +98,10 @@ class SystemHealthServicesSection extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),

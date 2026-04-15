@@ -132,7 +132,7 @@ class _ITProfilePersonalTabState extends State<ITProfilePersonalTab> {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Full Name
           _buildTextField(
             controller: _nameController,
@@ -140,7 +140,7 @@ class _ITProfilePersonalTabState extends State<ITProfilePersonalTab> {
             icon: Icons.person_rounded,
           ),
           const SizedBox(height: 14),
-          
+
           // Email
           _buildTextField(
             controller: _emailController,
@@ -149,7 +149,7 @@ class _ITProfilePersonalTabState extends State<ITProfilePersonalTab> {
             keyboardType: TextInputType.emailAddress,
           ),
           const SizedBox(height: 14),
-          
+
           // Phone
           _buildTextField(
             controller: _phoneController,
@@ -158,7 +158,7 @@ class _ITProfilePersonalTabState extends State<ITProfilePersonalTab> {
             keyboardType: TextInputType.phone,
           ),
           const SizedBox(height: 14),
-          
+
           // Department dropdown
           _buildDropdownField(
             label: 'Department',
@@ -168,7 +168,7 @@ class _ITProfilePersonalTabState extends State<ITProfilePersonalTab> {
             onChanged: (val) => setState(() => _department = val!),
           ),
           const SizedBox(height: 14),
-          
+
           // Timezone dropdown
           _buildDropdownField(
             label: 'Timezone',
@@ -178,7 +178,7 @@ class _ITProfilePersonalTabState extends State<ITProfilePersonalTab> {
             onChanged: (val) => setState(() => _timezone = val!),
           ),
           const SizedBox(height: 14),
-          
+
           // Language dropdown
           _buildDropdownField(
             label: 'Preferred Language',
@@ -188,7 +188,7 @@ class _ITProfilePersonalTabState extends State<ITProfilePersonalTab> {
             onChanged: (val) => setState(() => _language = val!),
           ),
           const SizedBox(height: 24),
-          
+
           // Buttons
           Row(
             children: [
@@ -347,8 +347,7 @@ class _ITProfilePersonalTabState extends State<ITProfilePersonalTab> {
               isExpanded: true,
               padding: const EdgeInsets.symmetric(horizontal: 14),
               borderRadius: BorderRadius.circular(12),
-              dropdownColor:
-                  widget.isDark ? ITColors.darkCard : Colors.white,
+              dropdownColor: widget.isDark ? ITColors.darkCard : Colors.white,
             ),
           ),
         ),

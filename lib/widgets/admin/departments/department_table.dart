@@ -60,9 +60,7 @@ class DepartmentTable extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -80,7 +78,9 @@ class DepartmentTable extends StatelessWidget {
               color: isDark
                   ? AdminColors.darkSurface
                   : AdminColors.lightBackground,
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
             ),
             child: Row(
               children: [
@@ -127,7 +127,11 @@ class DepartmentTable extends StatelessWidget {
     );
   }
 
-  Widget _buildTableRow(BuildContext context, Department dept, AppLocalizations? l10n) {
+  Widget _buildTableRow(
+    BuildContext context,
+    Department dept,
+    AppLocalizations? l10n,
+  ) {
     return InkWell(
       onTap: () => onViewDetails(dept),
       child: Container(
@@ -154,11 +158,7 @@ class DepartmentTable extends StatelessWidget {
                       color: dept.iconColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
-                      dept.icon,
-                      color: dept.iconColor,
-                      size: 22,
-                    ),
+                    child: Icon(dept.icon, color: dept.iconColor, size: 22),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -210,7 +210,10 @@ class DepartmentTable extends StatelessWidget {
                 runSpacing: 4,
                 children: dept.programs.map((program) {
                   return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: _getProgramColor(program).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),

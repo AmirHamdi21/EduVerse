@@ -16,11 +16,18 @@ class OnboardingHeader extends StatelessWidget {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
-        final textColor = isDark ? AppTheme.darkTextPrimary : AppTheme.onBoardingtextDark;
-        final skipColor = isDark ? AppTheme.onBoardingcyan : AppTheme.onBoardingprimary;
+        final textColor = isDark
+            ? AppTheme.darkTextPrimary
+            : AppTheme.onBoardingtextDark;
+        final skipColor = isDark
+            ? AppTheme.onBoardingcyan
+            : AppTheme.onBoardingprimary;
 
         return Padding(
-          padding: EdgeInsets.symmetric(horizontal: responsive.p24, vertical: responsive.p20),
+          padding: EdgeInsets.symmetric(
+            horizontal: responsive.p24,
+            vertical: responsive.p20,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -40,7 +47,11 @@ class OnboardingHeader extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Icon(Icons.school, color: Colors.white, size: responsive.iconMedium),
+                    child: Icon(
+                      Icons.school,
+                      color: Colors.white,
+                      size: responsive.iconMedium,
+                    ),
                   ),
                   SizedBox(width: responsive.p12),
                   Text(
@@ -59,7 +70,10 @@ class OnboardingHeader extends StatelessWidget {
                 },
                 child: Text(
                   AppLocalizations.of(context)!.skip,
-                  style: TextStyle(fontSize: responsive.fontSize16, color: skipColor),
+                  style: TextStyle(
+                    fontSize: responsive.fontSize16,
+                    color: skipColor,
+                  ),
                 ),
               ),
             ],

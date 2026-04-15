@@ -64,11 +64,7 @@ class CardActionButtons extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              color: textColor,
-              size: 20,
-            ),
+            Icon(icon, color: textColor, size: 20),
             const SizedBox(height: 8),
             Text(
               label,

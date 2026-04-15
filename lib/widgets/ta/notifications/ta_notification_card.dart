@@ -119,11 +119,7 @@ class TANotificationCard extends StatelessWidget {
                       color: typeColor.withValues(alpha: isDark ? 0.2 : 0.1),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Icon(
-                      typeIcon,
-                      color: typeColor,
-                      size: 20,
-                    ),
+                    child: Icon(typeIcon, color: typeColor, size: 20),
                   ),
                   const SizedBox(width: 12),
                   // Content
@@ -148,10 +144,13 @@ class TANotificationCard extends StatelessWidget {
                             if (notification.badge != null)
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 3),
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: typeColor
-                                      .withValues(alpha: isDark ? 0.2 : 0.1),
+                                  color: typeColor.withValues(
+                                    alpha: isDark ? 0.2 : 0.1,
+                                  ),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
@@ -182,8 +181,7 @@ class TANotificationCard extends StatelessWidget {
                             height: 1.4,
                           ),
                           maxLines: isExpanded ? null : 2,
-                          overflow:
-                              isExpanded ? null : TextOverflow.ellipsis,
+                          overflow: isExpanded ? null : TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -249,7 +247,9 @@ class TANotificationCard extends StatelessWidget {
                         : TAColors.surfaceColor(isDark),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: TAColors.borderColor(isDark).withValues(alpha: 0.3),
+                      color: TAColors.borderColor(
+                        isDark,
+                      ).withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(
@@ -294,7 +294,11 @@ class TANotificationCard extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: onReply,
-                        icon: Icon(Icons.reply_rounded, size: 18, color: TAColors.primary),
+                        icon: Icon(
+                          Icons.reply_rounded,
+                          size: 18,
+                          color: TAColors.primary,
+                        ),
                         label: Text(l10n.taNotifReply),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: TAColors.textPrimaryColor(isDark),
@@ -310,7 +314,11 @@ class TANotificationCard extends StatelessWidget {
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: onResolve,
-                        icon: Icon(Icons.check_circle_outline_rounded, size: 18, color: TAColors.success),
+                        icon: Icon(
+                          Icons.check_circle_outline_rounded,
+                          size: 18,
+                          color: TAColors.success,
+                        ),
                         label: Text(l10n.taNotifResolve),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: TAColors.textPrimaryColor(isDark),

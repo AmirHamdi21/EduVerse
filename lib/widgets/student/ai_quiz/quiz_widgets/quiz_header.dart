@@ -22,7 +22,7 @@ class QuizHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final responsive = context.responsive;
-    
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: responsive.p16,
@@ -49,7 +49,7 @@ class QuizHeader extends StatelessWidget {
               isDark: isDark,
             ),
             SizedBox(width: responsive.p12),
-            
+
             // Course info
             Expanded(
               child: Column(
@@ -72,8 +72,8 @@ class QuizHeader extends StatelessWidget {
                     'Question $currentQuestion of $totalQuestions',
                     style: TextStyle(
                       fontSize: responsive.fontSize12,
-                      color: isDark 
-                          ? const Color(0xFF9CA3AF) 
+                      color: isDark
+                          ? const Color(0xFF9CA3AF)
                           : const Color(0xFF6B7280),
                       fontFamily: 'Arimo',
                     ),
@@ -81,7 +81,7 @@ class QuizHeader extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Question navigator button
             _buildNavigatorButton(context, responsive),
           ],
@@ -101,9 +101,7 @@ class QuizHeader extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isDark 
-              ? const Color(0xFF2D2D44) 
-              : const Color(0xFFF3F4F6),
+          color: isDark ? const Color(0xFF2D2D44) : const Color(0xFFF3F4F6),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
@@ -115,7 +113,10 @@ class QuizHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildNavigatorButton(BuildContext context, ResponsiveUtil responsive) {
+  Widget _buildNavigatorButton(
+    BuildContext context,
+    ResponsiveUtil responsive,
+  ) {
     return GestureDetector(
       onTap: onQuestionNavigator,
       child: Container(
@@ -139,11 +140,7 @@ class QuizHeader extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
-              Icons.grid_view_rounded,
-              color: Colors.white,
-              size: 16,
-            ),
+            const Icon(Icons.grid_view_rounded, color: Colors.white, size: 16),
             const SizedBox(width: 6),
             Text(
               '$currentQuestion/$totalQuestions',

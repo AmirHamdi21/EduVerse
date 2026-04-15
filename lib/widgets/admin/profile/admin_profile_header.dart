@@ -266,9 +266,7 @@ class AdminProfileHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.success.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AdminColors.success.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AdminColors.success.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

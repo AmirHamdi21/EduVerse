@@ -51,7 +51,11 @@ class SystemHealthAlertsSection extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.check_circle_rounded, color: ITColors.success, size: 24),
+                Icon(
+                  Icons.check_circle_rounded,
+                  color: ITColors.success,
+                  size: 24,
+                ),
                 const SizedBox(width: 12),
                 Text(
                   'No active alerts - System running smoothly',

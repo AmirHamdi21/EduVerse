@@ -47,7 +47,9 @@ class FilterButton extends StatelessWidget {
                   color: selectedFilter != null && selectedFilter != 'all'
                       ? const Color(0xFF155DFC)
                       : (isDark ? Colors.white10 : const Color(0xFFD1D5DC)),
-                  width: selectedFilter != null && selectedFilter != 'all' ? 1.5 : 1,
+                  width: selectedFilter != null && selectedFilter != 'all'
+                      ? 1.5
+                      : 1,
                 ),
               ),
               child: Row(
@@ -67,9 +69,12 @@ class FilterButton extends StatelessWidget {
                       style: TextStyle(
                         color: selectedFilter != null && selectedFilter != 'all'
                             ? const Color(0xFF155DFC)
-                            : (isDark ? Colors.white70 : const Color(0xFF364153)),
+                            : (isDark
+                                  ? Colors.white70
+                                  : const Color(0xFF364153)),
                         fontSize: 14,
-                        fontWeight: selectedFilter != null && selectedFilter != 'all'
+                        fontWeight:
+                            selectedFilter != null && selectedFilter != 'all'
                             ? FontWeight.w600
                             : FontWeight.w500,
                       ),
@@ -86,7 +91,11 @@ class FilterButton extends StatelessWidget {
     );
   }
 
-  void _showFilterMenu(BuildContext context, bool isDark, AppLocalizations l10n) {
+  void _showFilterMenu(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     showModalBottomSheet(
       context: context,
       backgroundColor: isDark ? const Color(0xFF16213E) : Colors.white,
@@ -111,30 +120,10 @@ class FilterButton extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            _buildFilterOption(
-              context,
-              'all',
-              l10n.all,
-              isDark,
-            ),
-            _buildFilterOption(
-              context,
-              'active',
-              'Active',
-              isDark,
-            ),
-            _buildFilterOption(
-              context,
-              'completed',
-              l10n.completed,
-              isDark,
-            ),
-            _buildFilterOption(
-              context,
-              'dropped',
-              'Dropped',
-              isDark,
-            ),
+            _buildFilterOption(context, 'all', l10n.all, isDark),
+            _buildFilterOption(context, 'active', 'Active', isDark),
+            _buildFilterOption(context, 'completed', l10n.completed, isDark),
+            _buildFilterOption(context, 'dropped', 'Dropped', isDark),
           ],
         ),
       ),
@@ -156,10 +145,7 @@ class FilterButton extends StatelessWidget {
         ),
       ),
       trailing: selectedFilter == value
-          ? Icon(
-              Icons.check,
-              color: const Color(0xFF155DFC),
-            )
+          ? Icon(Icons.check, color: const Color(0xFF155DFC))
           : null,
       onTap: () {
         onFilterChanged(value);

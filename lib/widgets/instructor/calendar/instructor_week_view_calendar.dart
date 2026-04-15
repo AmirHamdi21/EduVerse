@@ -30,8 +30,7 @@ class InstructorWeekViewCalendar extends StatelessWidget {
             color: isDark ? const Color(0xFF1E2939) : Colors.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color:
-                  isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+              color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
             ),
             boxShadow: [
               BoxShadow(
@@ -63,11 +62,24 @@ class InstructorWeekViewCalendar extends StatelessWidget {
   }
 
   Widget _buildWeekHeader(
-      BuildContext context, InstructorCalendarState state, bool isDark) {
+    BuildContext context,
+    InstructorCalendarState state,
+    bool isDark,
+  ) {
     final weekDates = _getWeekDates(state.selectedDate);
     final monthNames = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
 
     return Row(
@@ -75,8 +87,9 @@ class InstructorWeekViewCalendar extends StatelessWidget {
       children: [
         IconButton(
           onPressed: () {
-            final newDate =
-                state.selectedDate.subtract(const Duration(days: 7));
+            final newDate = state.selectedDate.subtract(
+              const Duration(days: 7),
+            );
             context.read<InstructorCalendarCubit>().selectDate(newDate);
           },
           icon: Icon(
@@ -138,10 +151,12 @@ class InstructorWeekViewCalendar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: weekDates.asMap().entries.map((entry) {
         final date = entry.value;
-        final isSelected = date.year == state.selectedDate.year &&
+        final isSelected =
+            date.year == state.selectedDate.year &&
             date.month == state.selectedDate.month &&
             date.day == state.selectedDate.day;
-        final isToday = date.year == today.year &&
+        final isToday =
+            date.year == today.year &&
             date.month == today.month &&
             date.day == today.day;
         final hasEvents = state.hasEventsOnDate(date);
@@ -168,8 +183,8 @@ class InstructorWeekViewCalendar extends StatelessWidget {
                   color: isSelected
                       ? const Color(0xFF155CFB)
                       : (isToday
-                          ? const Color(0xFF155CFB).withValues(alpha: 0.1)
-                          : Colors.transparent),
+                            ? const Color(0xFF155CFB).withValues(alpha: 0.1)
+                            : Colors.transparent),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Center(
@@ -183,10 +198,10 @@ class InstructorWeekViewCalendar extends StatelessWidget {
                       color: isSelected
                           ? Colors.white
                           : (isToday
-                              ? const Color(0xFF155CFB)
-                              : (isDark
-                                  ? const Color(0xFFE2E8F0)
-                                  : const Color(0xFF334155))),
+                                ? const Color(0xFF155CFB)
+                                : (isDark
+                                      ? const Color(0xFFE2E8F0)
+                                      : const Color(0xFF334155))),
                     ),
                   ),
                 ),
@@ -200,8 +215,8 @@ class InstructorWeekViewCalendar extends StatelessWidget {
                     color: isSelected
                         ? const Color(0xFF155CFB)
                         : (isDark
-                            ? const Color(0xFF94A3B8)
-                            : const Color(0xFF64748B)),
+                              ? const Color(0xFF94A3B8)
+                              : const Color(0xFF64748B)),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -213,7 +228,10 @@ class InstructorWeekViewCalendar extends StatelessWidget {
   }
 
   Widget _buildTimeSlots(
-      BuildContext context, InstructorCalendarState state, bool isDark) {
+    BuildContext context,
+    InstructorCalendarState state,
+    bool isDark,
+  ) {
     final events = state.selectedDateEvents;
 
     if (events.isEmpty) {
@@ -224,8 +242,7 @@ class InstructorWeekViewCalendar extends StatelessWidget {
             Icon(
               Icons.event_available_rounded,
               size: 48,
-              color:
-                  isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+              color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
             ),
             const SizedBox(height: 12),
             Text(

@@ -22,7 +22,8 @@ class AiNotesScreen extends StatefulWidget {
   State<AiNotesScreen> createState() => _AiNotesScreenState();
 }
 
-class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateMixin {
+class _AiNotesScreenState extends State<AiNotesScreen>
+    with TickerProviderStateMixin {
   final ScrollController _scrollController = ScrollController();
   late AnimationController _fabAnimationController;
   bool _showFab = true;
@@ -31,7 +32,7 @@ class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateM
   void initState() {
     super.initState();
     context.read<AINoteCubit>().loadNotes();
-    
+
     _fabAnimationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 200),
@@ -47,7 +48,8 @@ class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateM
         setState(() => _showFab = true);
         _fabAnimationController.forward();
       }
-    } else if (_scrollController.position.userScrollDirection.name == 'reverse') {
+    } else if (_scrollController.position.userScrollDirection.name ==
+        'reverse') {
       if (_showFab) {
         setState(() => _showFab = false);
         _fabAnimationController.reverse();
@@ -68,7 +70,9 @@ class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateM
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0A0A0B) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0A0A0B)
+          : const Color(0xFFF8FAFC),
       body: SafeArea(
         child: BlocConsumer<AINoteCubit, AINotesState>(
           listener: (context, state) {
@@ -121,7 +125,10 @@ class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateM
                 icon: const Icon(Icons.auto_awesome, color: Colors.white),
                 label: Text(
                   l10n.generateNotes,
-                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             );
@@ -205,8 +212,13 @@ class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateM
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF8B5CF6),
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               icon: const Icon(Icons.refresh),
               label: Text(l10n.retry),
@@ -217,7 +229,12 @@ class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateM
     );
   }
 
-  Widget _buildContent(BuildContext context, bool isDark, AppLocalizations l10n, AINotesLoaded state) {
+  Widget _buildContent(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+    AINotesLoaded state,
+  ) {
     return RefreshIndicator(
       onRefresh: () => context.read<AINoteCubit>().loadNotes(),
       color: const Color(0xFF8B5CF6),
@@ -229,14 +246,13 @@ class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateM
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AiNotesHeader(
-                  onBack: () => context.pop(),
-                ),
+                AiNotesHeader(onBack: () => context.pop()),
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: AiNotesSearchBar(
-                    onSearch: (query) => context.read<AINoteCubit>().searchNotes(query),
+                    onSearch: (query) =>
+                        context.read<AINoteCubit>().searchNotes(query),
                   ),
                 ),
                 const SizedBox(height: 16),
@@ -249,14 +265,16 @@ class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateM
                           currentFilter: state.currentFilter,
                           categories: state.categories,
                           selectedCategoryId: state.selectedCategoryId,
-                          onFilterSelected: (filter, categoryId) =>
-                              context.read<AINoteCubit>().applyFilter(filter, categoryId: categoryId),
+                          onFilterSelected: (filter, categoryId) => context
+                              .read<AINoteCubit>()
+                              .applyFilter(filter, categoryId: categoryId),
                         ),
                       ),
                       const SizedBox(width: 12),
                       AiNotesSortDropdown(
                         currentSort: state.currentSort,
-                        onSortSelected: (sort) => context.read<AINoteCubit>().applySort(sort),
+                        onSortSelected: (sort) =>
+                            context.read<AINoteCubit>().applySort(sort),
                       ),
                     ],
                   ),
@@ -283,7 +301,9 @@ class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateM
                     },
                     onGenerateFlashcards: () {
                       if (state.notes.isNotEmpty) {
-                        context.read<AINoteCubit>().generateFlashcards(state.notes.first.id);
+                        context.read<AINoteCubit>().generateFlashcards(
+                          state.notes.first.id,
+                        );
                       }
                     },
                   ),
@@ -333,22 +353,23 @@ class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateM
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
               sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final note = state.filteredNotes[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: AiNoteCard(
-                        note: note,
-                        onTap: () => context.read<AINoteCubit>().selectNote(note),
-                        onFavoriteToggle: () => context.read<AINoteCubit>().toggleFavorite(note.id),
-                        onExpandToggle: () => context.read<AINoteCubit>().toggleNoteExpanded(note.id),
-                        onDelete: () => context.read<AINoteCubit>().deleteNote(note.id),
-                      ),
-                    );
-                  },
-                  childCount: state.filteredNotes.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final note = state.filteredNotes[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: AiNoteCard(
+                      note: note,
+                      onTap: () => context.read<AINoteCubit>().selectNote(note),
+                      onFavoriteToggle: () =>
+                          context.read<AINoteCubit>().toggleFavorite(note.id),
+                      onExpandToggle: () => context
+                          .read<AINoteCubit>()
+                          .toggleNoteExpanded(note.id),
+                      onDelete: () =>
+                          context.read<AINoteCubit>().deleteNote(note.id),
+                    ),
+                  );
+                }, childCount: state.filteredNotes.length),
               ),
             ),
         ],
@@ -356,7 +377,11 @@ class _AiNotesScreenState extends State<AiNotesScreen> with TickerProviderStateM
     );
   }
 
-  void _showCreateNoteDialog(BuildContext context, bool isDark, AppLocalizations l10n) {
+  void _showCreateNoteDialog(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -410,7 +435,11 @@ class _CreateNoteBottomSheet extends StatelessWidget {
                     ),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.auto_awesome, color: Colors.white, size: 24),
+                  child: const Icon(
+                    Icons.auto_awesome,
+                    color: Colors.white,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -547,4 +576,3 @@ class _CreateNoteBottomSheet extends StatelessWidget {
     );
   }
 }
-

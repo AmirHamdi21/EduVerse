@@ -7,11 +7,7 @@ class QuizOption {
   final String text;
   final bool isCorrect;
 
-  QuizOption({
-    required this.id,
-    required this.text,
-    required this.isCorrect,
-  });
+  QuizOption({required this.id, required this.text, required this.isCorrect});
 }
 
 class QuizQuestion {
@@ -40,7 +36,8 @@ class QuizQuestion {
     if (type == QuizType.shortAnswer) {
       return userAnswer != null && userAnswer!.trim().isNotEmpty;
     }
-    return userAnswer != null || (userAnswers != null && userAnswers!.isNotEmpty);
+    return userAnswer != null ||
+        (userAnswers != null && userAnswers!.isNotEmpty);
   }
 
   bool get isCorrect {
@@ -96,7 +93,8 @@ class QuizSession {
 
   int get correctCount => questions.where((q) => q.isCorrect).length;
 
-  double get score => questions.isEmpty ? 0 : (correctCount / questions.length) * 100;
+  double get score =>
+      questions.isEmpty ? 0 : (correctCount / questions.length) * 100;
 
   void nextQuestion() {
     if (canGoNext) {

@@ -13,18 +13,20 @@ class CourseSettings extends StatelessWidget {
   final ValueChanged<int> onLabCountChanged;
   final ValueChanged<int> onMaxStudentsChanged;
   final ValueChanged<bool> onIsActiveChanged;
+  final VoidCallback? onDeleteCourse;
 
   const CourseSettings({
     super.key,
     required this.isDark,
     this.hasLabs = false,
-    this.labCount = 1,
+    this.labCount = 0,
     this.maxStudents = 30,
     this.isActive = true,
     required this.onHasLabsChanged,
     required this.onLabCountChanged,
     required this.onMaxStudentsChanged,
     required this.onIsActiveChanged,
+    this.onDeleteCourse,
   });
 
   @override
@@ -40,7 +42,9 @@ class CourseSettings extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
         boxShadow: isDark
             ? null
@@ -86,6 +90,32 @@ class CourseSettings extends StatelessWidget {
           _buildLabSettings(l10n),
           const SizedBox(height: 20),
           _buildStatusToggle(l10n),
+          if (onDeleteCourse != null) ...[
+            const SizedBox(height: 20),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: OutlinedButton.icon(
+                onPressed: onDeleteCourse,
+                icon: Icon(
+                  Icons.delete_outline_rounded,
+                  color: AdminColors.error,
+                ),
+                label: Text(
+                  l10n.delete,
+                  style: TextStyle(color: AdminColors.error),
+                ),
+                style: OutlinedButton.styleFrom(
+                  side: BorderSide(
+                    color: AdminColors.error.withValues(alpha: 0.5),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -222,26 +252,63 @@ class CourseSettings extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    _buildLabCountButton(
-                      value: 1,
-                      isSelected: labCount == 1,
+                    _buildAdjustButton(
+                      icon: Icons.remove_rounded,
+                      onTap: () {
+                        if (labCount > 0) {
+                          onLabCountChanged(labCount - 1);
+                        }
+                      },
                     ),
-                    const SizedBox(width: 8),
-                    _buildLabCountButton(
-                      value: 2,
-                      isSelected: labCount == 2,
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        margin: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? AdminColors.darkSurface.withValues(alpha: 0.5)
+                              : const Color(0xFFF3F3F5),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '$labCount',
+                            style: TextStyle(
+                              color: AdminColors.getTextColor(isDark),
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: 8),
-                    _buildLabCountButton(
-                      value: 3,
-                      isSelected: labCount == 3,
-                    ),
-                    const SizedBox(width: 8),
-                    _buildLabCountButton(
-                      value: 4,
-                      isSelected: labCount == 4,
+                    _buildAdjustButton(
+                      icon: Icons.add_rounded,
+                      onTap: () {
+                        if (labCount < 20) {
+                          onLabCountChanged(labCount + 1);
+                        }
+                      },
                     ),
                   ],
+                ),
+                const SizedBox(height: 8),
+                SliderTheme(
+                  data: SliderThemeData(
+                    activeTrackColor: AdminColors.accent,
+                    inactiveTrackColor: AdminColors.accent.withValues(
+                      alpha: 0.2,
+                    ),
+                    thumbColor: AdminColors.accent,
+                    overlayColor: AdminColors.accent.withValues(alpha: 0.2),
+                  ),
+                  child: Slider(
+                    value: labCount.toDouble(),
+                    min: 0,
+                    max: 20,
+                    divisions: 20,
+                    onChanged: (value) => onLabCountChanged(value.toInt()),
+                  ),
                 ),
               ],
             ),
@@ -256,7 +323,9 @@ class CourseSettings extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: isActive ? AdminColors.greenGradient : null,
-        color: isActive ? null : (isDark ? AdminColors.darkSurface : Colors.grey[200]),
+        color: isActive
+            ? null
+            : (isDark ? AdminColors.darkSurface : Colors.grey[200]),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -265,8 +334,12 @@ class CourseSettings extends StatelessWidget {
           Row(
             children: [
               Icon(
-                isActive ? Icons.check_circle_rounded : Icons.pause_circle_rounded,
-                color: isActive ? Colors.white : AdminColors.getTextSecondaryColor(isDark),
+                isActive
+                    ? Icons.check_circle_rounded
+                    : Icons.pause_circle_rounded,
+                color: isActive
+                    ? Colors.white
+                    : AdminColors.getTextSecondaryColor(isDark),
                 size: 24,
               ),
               const SizedBox(width: 12),
@@ -276,7 +349,9 @@ class CourseSettings extends StatelessWidget {
                   Text(
                     isActive ? l10n.courseActive : l10n.courseInactive,
                     style: TextStyle(
-                      color: isActive ? Colors.white : AdminColors.getTextColor(isDark),
+                      color: isActive
+                          ? Colors.white
+                          : AdminColors.getTextColor(isDark),
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                     ),
@@ -322,50 +397,7 @@ class CourseSettings extends StatelessWidget {
             color: AdminColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Icon(
-            icon,
-            color: AdminColors.primary,
-            size: 20,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLabCountButton({
-    required int value,
-    required bool isSelected,
-  }) {
-    return Expanded(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => onLabCountChanged(value),
-          borderRadius: BorderRadius.circular(8),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? AdminColors.accent
-                  : (isDark
-                      ? AdminColors.darkSurface.withValues(alpha: 0.5)
-                      : Colors.white),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: isSelected ? AdminColors.accent : Colors.transparent,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                '$value',
-                style: TextStyle(
-                  color: isSelected ? Colors.white : AdminColors.getTextColor(isDark),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
+          child: Icon(icon, color: AdminColors.primary, size: 20),
         ),
       ),
     );

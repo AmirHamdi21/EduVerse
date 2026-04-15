@@ -59,7 +59,16 @@ class AdminStatsSection extends StatelessWidget {
                     badge: l10n.excellent,
                     badgeColor: AdminColors.success,
                     icon: Icons.shield_rounded,
-                    chartValues: [0.9, 0.92, 0.91, 0.95, 0.94, 0.97, 0.96, 0.98],
+                    chartValues: [
+                      0.9,
+                      0.92,
+                      0.91,
+                      0.95,
+                      0.94,
+                      0.97,
+                      0.96,
+                      0.98,
+                    ],
                   ),
                 ),
               ],
@@ -106,7 +115,9 @@ class AdminStatsSection extends StatelessWidget {
                     value: '68%',
                     badge: '2.1TB / 3TB',
                     badgeColor: AdminColors.getTextTertiaryColor(isDark),
-                    badgeBgColor: isDark ? const Color(0xFF334155) : const Color(0xFFECEEF2),
+                    badgeBgColor: isDark
+                        ? const Color(0xFF334155)
+                        : const Color(0xFFECEEF2),
                     badgeTextColor: AdminColors.getTextColor(isDark),
                     icon: Icons.cloud_rounded,
                     chartValues: [0.5, 0.52, 0.54, 0.58, 0.6, 0.63, 0.65, 0.68],
@@ -173,7 +184,10 @@ class AdminStatsSection extends StatelessWidget {
                 child: Icon(icon, color: Colors.white, size: 24),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: badgeBgColor ?? badgeColor.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(8),
@@ -218,25 +232,27 @@ class AdminStatsSection extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: chartValues
-                  .map((v) => Expanded(
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 2),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [
-                                AdminColors.primaryLight,
-                                AdminColors.accent,
-                              ],
-                            ),
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(4),
-                            ),
+                  .map(
+                    (v) => Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              AdminColors.primaryLight,
+                              AdminColors.accent,
+                            ],
                           ),
-                          height: 32 * v,
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(4),
+                          ),
                         ),
-                      ))
+                        height: 32 * v,
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
           ),

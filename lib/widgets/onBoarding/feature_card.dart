@@ -36,11 +36,21 @@ class FeatureCard extends StatelessWidget {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
-        final titleColor = isDark ? AppTheme.darkTextPrimary : AppTheme.onBoardingtextDark;
-        final featureTextColor = isDark ? AppTheme.darkTextSecondary : AppTheme.onBoardingtextMedium;
-        final iconBackgroundColor = isDark ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.5);
-        final iconBorderColor = isDark ? Colors.white.withOpacity(0.2) : Colors.white;
-        final dividerColor = isDark ? Colors.white.withOpacity(0.1) : AppTheme.onBoardingdivider;
+        final titleColor = isDark
+            ? AppTheme.darkTextPrimary
+            : AppTheme.onBoardingtextDark;
+        final featureTextColor = isDark
+            ? AppTheme.darkTextSecondary
+            : AppTheme.onBoardingtextMedium;
+        final iconBackgroundColor = isDark
+            ? Colors.white.withOpacity(0.1)
+            : Colors.white.withOpacity(0.5);
+        final iconBorderColor = isDark
+            ? Colors.white.withOpacity(0.2)
+            : Colors.white;
+        final dividerColor = isDark
+            ? Colors.white.withOpacity(0.1)
+            : AppTheme.onBoardingdivider;
 
         return _buildCard(
           context,
@@ -130,7 +140,9 @@ class FeatureCard extends StatelessWidget {
                       height: responsive.aspectRatioHeight(64),
                       decoration: BoxDecoration(
                         color: iconBackgroundColor,
-                        borderRadius: BorderRadius.circular(responsive.radius12),
+                        borderRadius: BorderRadius.circular(
+                          responsive.radius12,
+                        ),
                         border: Border.all(color: iconBorderColor),
                         boxShadow: const [
                           BoxShadow(
@@ -171,7 +183,10 @@ class FeatureCard extends StatelessWidget {
                               AppLocalizations.of(
                                 context,
                               )!.poweredByIntelligence2,
-                              style: TextStyle(fontSize: responsive.fontSize12, color: badgeColor),
+                              style: TextStyle(
+                                fontSize: responsive.fontSize12,
+                                color: badgeColor,
+                              ),
                             ),
                           ],
                         ),
@@ -186,7 +201,10 @@ class FeatureCard extends StatelessWidget {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(f.emoji, style: TextStyle(fontSize: responsive.fontSize16)),
+                        Text(
+                          f.emoji,
+                          style: TextStyle(fontSize: responsive.fontSize16),
+                        ),
                         SizedBox(width: responsive.p8),
                         Expanded(
                           child: Text(

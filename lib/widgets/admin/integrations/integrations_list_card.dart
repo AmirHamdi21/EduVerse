@@ -47,9 +47,17 @@ class IntegrationsListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final categories = ['all', 'lms', 'payment', 'communication', 'storage', 'analytics'];
-    
-    final filteredIntegrations = selectedCategory == null || selectedCategory == 'all'
+    final categories = [
+      'all',
+      'lms',
+      'payment',
+      'communication',
+      'storage',
+      'analytics',
+    ];
+
+    final filteredIntegrations =
+        selectedCategory == null || selectedCategory == 'all'
         ? integrations
         : integrations.where((i) => i.category == selectedCategory).toList();
 
@@ -58,20 +66,14 @@ class IntegrationsListCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                Icons.apps_rounded,
-                color: AdminColors.primary,
-                size: 20,
-              ),
+              Icon(Icons.apps_rounded, color: AdminColors.primary, size: 20),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -104,19 +106,20 @@ class IntegrationsListCard extends StatelessWidget {
                   child: FilterChip(
                     label: Text(_getCategoryLabel(category, l10n)),
                     selected: isSelected,
-                    onSelected: (_) => onCategoryChanged(category == 'all' ? null : category),
+                    onSelected: (_) =>
+                        onCategoryChanged(category == 'all' ? null : category),
                     backgroundColor: AdminColors.getCardColor(isDark),
                     selectedColor: AdminColors.primary.withValues(alpha: 0.2),
                     checkmarkColor: AdminColors.primary,
                     labelStyle: TextStyle(
-                      color: isSelected 
-                          ? AdminColors.primary 
+                      color: isSelected
+                          ? AdminColors.primary
                           : AdminColors.getTextSecondaryColor(isDark),
                       fontSize: 12,
                     ),
                     side: BorderSide(
-                      color: isSelected 
-                          ? AdminColors.primary 
+                      color: isSelected
+                          ? AdminColors.primary
                           : AdminColors.getCardBorderColor(isDark),
                     ),
                   ),
@@ -126,11 +129,9 @@ class IntegrationsListCard extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           // Integrations list
-          ...filteredIntegrations.map((integration) => _buildIntegrationItem(
-            context,
-            integration,
-            l10n,
-          )),
+          ...filteredIntegrations.map(
+            (integration) => _buildIntegrationItem(context, integration, l10n),
+          ),
           if (filteredIntegrations.isEmpty)
             Center(
               child: Padding(
@@ -178,12 +179,16 @@ class IntegrationsListCard extends StatelessWidget {
     }
   }
 
-  Widget _buildIntegrationItem(BuildContext context, Integration integration, AppLocalizations l10n) {
+  Widget _buildIntegrationItem(
+    BuildContext context,
+    Integration integration,
+    AppLocalizations l10n,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDark 
-            ? Colors.white.withValues(alpha: 0.05) 
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.05)
             : Colors.grey.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
@@ -265,7 +270,8 @@ class IntegrationsListCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Switch(
                       value: integration.isConnected,
-                      onChanged: (value) => onToggleConnection(integration, value),
+                      onChanged: (value) =>
+                          onToggleConnection(integration, value),
                       activeColor: AdminColors.success,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
@@ -326,7 +332,7 @@ class IntegrationsListCard extends StatelessWidget {
   String _formatTime(DateTime time) {
     final now = DateTime.now();
     final diff = now.difference(time);
-    
+
     if (diff.inMinutes < 1) {
       return 'Just now';
     } else if (diff.inHours < 1) {

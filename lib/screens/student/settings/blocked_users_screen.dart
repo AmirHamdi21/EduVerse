@@ -36,11 +36,13 @@ class _BlockedUsersScreenState extends State<BlockedUsersScreen> {
     final isDark = context.watch<ThemeBloc>().state.isDark;
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -70,10 +72,12 @@ class _BlockedUsersScreenState extends State<BlockedUsersScreen> {
                 const SizedBox(height: 24),
 
                 // Blocked Users List
-                ..._blockedUsers.map((user) => Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: _buildUserCard(isDark, user, l10n),
-                    )),
+                ..._blockedUsers.map(
+                  (user) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _buildUserCard(isDark, user, l10n),
+                  ),
+                ),
                 const SizedBox(height: 16),
               ],
             ),
@@ -184,8 +188,9 @@ class _BlockedUsersScreenState extends State<BlockedUsersScreen> {
           CircleAvatar(
             radius: 24,
             backgroundColor: const Color(0xFFEF4444).withValues(alpha: 0.1),
-            backgroundImage:
-                user.avatar != null ? NetworkImage(user.avatar!) : null,
+            backgroundImage: user.avatar != null
+                ? NetworkImage(user.avatar!)
+                : null,
             child: user.avatar == null
                 ? Text(
                     user.name[0].toUpperCase(),
@@ -236,9 +241,7 @@ class _BlockedUsersScreenState extends State<BlockedUsersScreen> {
             ),
             child: Text(
               l10n.unblock,
-              style: const TextStyle(
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -250,7 +253,11 @@ class _BlockedUsersScreenState extends State<BlockedUsersScreen> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  void _showUnblockDialog(bool isDark, _BlockedUser user, AppLocalizations l10n) {
+  void _showUnblockDialog(
+    bool isDark,
+    _BlockedUser user,
+    AppLocalizations l10n,
+  ) {
     showDialog(
       context: context,
       builder: (context) => _UnblockDialog(
@@ -416,7 +423,9 @@ class _UnblockDialogState extends State<_UnblockDialog>
                           widget.l10n.unblockUserConfirm(widget.user.name),
                           style: TextStyle(
                             fontSize: 13,
-                            color: widget.isDark ? Colors.white70 : Colors.black54,
+                            color: widget.isDark
+                                ? Colors.white70
+                                : Colors.black54,
                             height: 1.4,
                           ),
                         ),
@@ -475,8 +484,9 @@ class _UnblockDialogState extends State<_UnblockDialog>
                             borderRadius: BorderRadius.circular(14),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF3B82F6)
-                                    .withValues(alpha: 0.4),
+                                color: const Color(
+                                  0xFF3B82F6,
+                                ).withValues(alpha: 0.4),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),

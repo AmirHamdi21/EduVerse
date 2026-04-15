@@ -127,10 +127,7 @@ class DaySchedule extends Equatable {
   final DateTime date;
   final List<ScheduleTask> tasks;
 
-  const DaySchedule({
-    required this.date,
-    required this.tasks,
-  });
+  const DaySchedule({required this.date, required this.tasks});
 
   @override
   List<Object?> get props => [date, tasks];
@@ -201,7 +198,9 @@ class SmartStudyState extends Equatable {
       filteredTopics: filteredTopics ?? this.filteredTopics,
       weekSchedule: weekSchedule ?? this.weekSchedule,
       aiInsight: aiInsight ?? this.aiInsight,
-      selectedCourse: clearCourse ? null : (selectedCourse ?? this.selectedCourse),
+      selectedCourse: clearCourse
+          ? null
+          : (selectedCourse ?? this.selectedCourse),
       selectedDifficulty: selectedDifficulty ?? this.selectedDifficulty,
       selectedUrgency: selectedUrgency ?? this.selectedUrgency,
       availableCourses: availableCourses ?? this.availableCourses,
@@ -211,27 +210,29 @@ class SmartStudyState extends Equatable {
       isExporting: isExporting ?? this.isExporting,
       isSyncing: isSyncing ?? this.isSyncing,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-      successMessage: clearSuccess ? null : (successMessage ?? this.successMessage),
+      successMessage: clearSuccess
+          ? null
+          : (successMessage ?? this.successMessage),
     );
   }
 
   @override
   List<Object?> get props => [
-        currentTab,
-        topics,
-        filteredTopics,
-        weekSchedule,
-        aiInsight,
-        selectedCourse,
-        selectedDifficulty,
-        selectedUrgency,
-        availableCourses,
-        isLoading,
-        isRegenerating,
-        isOptimizing,
-        isExporting,
-        isSyncing,
-        errorMessage,
-        successMessage,
-      ];
+    currentTab,
+    topics,
+    filteredTopics,
+    weekSchedule,
+    aiInsight,
+    selectedCourse,
+    selectedDifficulty,
+    selectedUrgency,
+    availableCourses,
+    isLoading,
+    isRegenerating,
+    isOptimizing,
+    isExporting,
+    isSyncing,
+    errorMessage,
+    successMessage,
+  ];
 }

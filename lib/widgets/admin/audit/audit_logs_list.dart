@@ -103,7 +103,9 @@ class AuditLogsList extends StatelessWidget {
                       '${logs.length} ${l10n.entriesFound}',
                       style: TextStyle(
                         fontSize: 13,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -121,13 +123,17 @@ class AuditLogsList extends StatelessWidget {
                     Icon(
                       Icons.search_off_rounded,
                       size: 48,
-                      color: AdminColors.getTextColor(isDark).withValues(alpha: 0.3),
+                      color: AdminColors.getTextColor(
+                        isDark,
+                      ).withValues(alpha: 0.3),
                     ),
                     const SizedBox(height: 12),
                     Text(
                       l10n.noLogsFound,
                       style: TextStyle(
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -156,7 +162,11 @@ class AuditLogsList extends StatelessWidget {
     );
   }
 
-  Widget _buildLogItem(BuildContext context, AuditLog log, AppLocalizations l10n) {
+  Widget _buildLogItem(
+    BuildContext context,
+    AuditLog log,
+    AppLocalizations l10n,
+  ) {
     final severityColor = _getSeverityColor(log.severity);
     final severityIcon = _getSeverityIcon(log.severity);
 
@@ -174,8 +184,8 @@ class AuditLogsList extends StatelessWidget {
             color: log.severity == 'critical'
                 ? AdminColors.error.withValues(alpha: 0.3)
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : Colors.black.withValues(alpha: 0.05)),
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.05)),
           ),
         ),
         child: Row(
@@ -207,7 +217,10 @@ class AuditLogsList extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: severityColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(8),
@@ -229,14 +242,18 @@ class AuditLogsList extends StatelessWidget {
                       Icon(
                         Icons.person_outline_rounded,
                         size: 14,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.5),
                       ),
                       const SizedBox(width: 4),
                       Text(
                         '${log.user} (${log.userRole})',
                         style: TextStyle(
                           fontSize: 12,
-                          color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                          color: AdminColors.getTextColor(
+                            isDark,
+                          ).withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -250,21 +267,27 @@ class AuditLogsList extends StatelessWidget {
                             Icon(
                               Icons.language_rounded,
                               size: 14,
-                              color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                              color: AdminColors.getTextColor(
+                                isDark,
+                              ).withValues(alpha: 0.5),
                             ),
                             const SizedBox(width: 4),
                             Text(
                               log.ipAddress,
                               style: TextStyle(
                                 fontSize: 11,
-                                color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                                color: AdminColors.getTextColor(
+                                  isDark,
+                                ).withValues(alpha: 0.5),
                               ),
                             ),
                             const SizedBox(width: 12),
                             Icon(
                               Icons.folder_outlined,
                               size: 14,
-                              color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                              color: AdminColors.getTextColor(
+                                isDark,
+                              ).withValues(alpha: 0.5),
                             ),
                             const SizedBox(width: 4),
                             Expanded(
@@ -272,7 +295,9 @@ class AuditLogsList extends StatelessWidget {
                                 log.resource,
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                                  color: AdminColors.getTextColor(
+                                    isDark,
+                                  ).withValues(alpha: 0.5),
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -284,7 +309,9 @@ class AuditLogsList extends StatelessWidget {
                         _formatTime(log.timestamp),
                         style: TextStyle(
                           fontSize: 11,
-                          color: AdminColors.getTextColor(isDark).withValues(alpha: 0.5),
+                          color: AdminColors.getTextColor(
+                            isDark,
+                          ).withValues(alpha: 0.5),
                         ),
                       ),
                     ],

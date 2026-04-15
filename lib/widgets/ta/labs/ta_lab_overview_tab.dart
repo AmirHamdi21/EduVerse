@@ -176,9 +176,7 @@ class TALabOverviewTab extends StatelessWidget {
           decoration: BoxDecoration(
             color: color.withValues(alpha: isDark ? 0.15 : 0.1),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: color.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: color.withValues(alpha: 0.3)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -234,7 +232,10 @@ class TALabOverviewTab extends StatelessWidget {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: unresolvedCount > 0
                       ? TAColors.warning.withValues(alpha: 0.1)
@@ -244,7 +245,9 @@ class TALabOverviewTab extends StatelessWidget {
                 child: Text(
                   '$unresolvedCount ${l10n.taLabUnresolved}',
                   style: TextStyle(
-                    color: unresolvedCount > 0 ? TAColors.warning : TAColors.success,
+                    color: unresolvedCount > 0
+                        ? TAColors.warning
+                        : TAColors.success,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
@@ -322,7 +325,10 @@ class TALabOverviewTab extends StatelessWidget {
               ),
               if (question.isResolved)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: TAColors.success.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -365,18 +371,12 @@ class TALabOverviewTab extends StatelessWidget {
               decoration: BoxDecoration(
                 color: TAColors.info.withValues(alpha: isDark ? 0.15 : 0.08),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: TAColors.info.withValues(alpha: 0.2),
-                ),
+                border: Border.all(color: TAColors.info.withValues(alpha: 0.2)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Icons.auto_awesome,
-                    size: 14,
-                    color: TAColors.info,
-                  ),
+                  Icon(Icons.auto_awesome, size: 14, color: TAColors.info),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -437,9 +437,7 @@ class TALabOverviewTab extends StatelessWidget {
           decoration: BoxDecoration(
             color: TAColors.cardColor(isDark),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: TAColors.borderColor(isDark),
-            ),
+            border: Border.all(color: TAColors.borderColor(isDark)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -525,11 +523,7 @@ class TALabOverviewTab extends StatelessWidget {
               color: activity.color.withValues(alpha: isDark ? 0.2 : 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(
-              activity.icon,
-              color: activity.color,
-              size: 18,
-            ),
+            child: Icon(activity.icon, color: activity.color, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(

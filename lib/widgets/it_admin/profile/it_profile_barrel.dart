@@ -119,7 +119,8 @@ class NotificationPreferences {
       securityAlerts: securityAlerts ?? this.securityAlerts,
       systemOutageUpdates: systemOutageUpdates ?? this.systemOutageUpdates,
       integrationWarnings: integrationWarnings ?? this.integrationWarnings,
-      aiAnomalyNotifications: aiAnomalyNotifications ?? this.aiAnomalyNotifications,
+      aiAnomalyNotifications:
+          aiAnomalyNotifications ?? this.aiAnomalyNotifications,
       emailDelivery: emailDelivery ?? this.emailDelivery,
       smsDelivery: smsDelivery ?? this.smsDelivery,
       inAppDelivery: inAppDelivery ?? this.inAppDelivery,

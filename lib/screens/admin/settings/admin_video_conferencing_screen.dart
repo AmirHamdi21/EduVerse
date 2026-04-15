@@ -21,7 +21,7 @@ class _AdminVideoConferencingScreenState
   bool _enabled = true;
   final _apiKeyController = TextEditingController();
   final _apiSecretController = TextEditingController();
-  
+
   // Settings
   bool _enableWaitingRoom = true;
   bool _enableRecording = false;
@@ -77,7 +77,9 @@ class _AdminVideoConferencingScreenState
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: ListView(
                 padding: responsive.contentPadding,
                 physics: const BouncingScrollPhysics(),
@@ -132,12 +134,15 @@ class _AdminVideoConferencingScreenState
       decoration: BoxDecoration(
         gradient: _enabled
             ? AdminColors.primaryGradient
-            : LinearGradient(colors: [Colors.grey.shade600, Colors.grey.shade700]),
+            : LinearGradient(
+                colors: [Colors.grey.shade600, Colors.grey.shade700],
+              ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: (_enabled ? AdminColors.primary : Colors.grey)
-                .withValues(alpha: 0.3),
+            color: (_enabled ? AdminColors.primary : Colors.grey).withValues(
+              alpha: 0.3,
+            ),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -304,7 +309,9 @@ class _AdminVideoConferencingScreenState
                     provider.name,
                     style: TextStyle(
                       fontSize: 14,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
                       color: isSelected
                           ? provider.color
                           : AdminColors.getTextColor(isDark),
@@ -506,8 +513,9 @@ class _AdminVideoConferencingScreenState
           style: TextStyle(color: AdminColors.getTextColor(isDark)),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle:
-                TextStyle(color: AdminColors.getTextTertiaryColor(isDark)),
+            hintStyle: TextStyle(
+              color: AdminColors.getTextTertiaryColor(isDark),
+            ),
             prefixIcon: Icon(
               prefixIcon,
               color: AdminColors.getTextTertiaryColor(isDark),
@@ -521,8 +529,9 @@ class _AdminVideoConferencingScreenState
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide:
-                  BorderSide(color: AdminColors.getDividerColor(isDark)),
+              borderSide: BorderSide(
+                color: AdminColors.getDividerColor(isDark),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
@@ -659,10 +668,7 @@ class _AdminVideoConferencingScreenState
   }
 
   Widget _buildDivider(bool isDark) {
-    return Divider(
-      height: 1,
-      color: AdminColors.getDividerColor(isDark),
-    );
+    return Divider(height: 1, color: AdminColors.getDividerColor(isDark));
   }
 
   Widget _buildSaveButton(bool isDark, AppLocalizations l10n) {
@@ -673,8 +679,9 @@ class _AdminVideoConferencingScreenState
             content: Text(l10n.videoConferencingSaved),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AdminColors.success,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
         );
       },
@@ -697,9 +704,5 @@ class _VideoProvider {
   final IconData icon;
   final Color color;
 
-  _VideoProvider({
-    required this.name,
-    required this.icon,
-    required this.color,
-  });
+  _VideoProvider({required this.name, required this.icon, required this.color});
 }

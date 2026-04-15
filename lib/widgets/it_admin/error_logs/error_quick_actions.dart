@@ -19,11 +19,25 @@ class ErrorQuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: _buildActionButton('Export', Icons.download_rounded, onExport)),
+        Expanded(
+          child: _buildActionButton('Export', Icons.download_rounded, onExport),
+        ),
         const SizedBox(width: 12),
-        Expanded(child: _buildActionButton('Clear Resolved', Icons.cleaning_services_rounded, onClearResolved)),
+        Expanded(
+          child: _buildActionButton(
+            'Clear Resolved',
+            Icons.cleaning_services_rounded,
+            onClearResolved,
+          ),
+        ),
         const SizedBox(width: 12),
-        Expanded(child: _buildActionButton('Refresh', Icons.refresh_rounded, onRefresh)),
+        Expanded(
+          child: _buildActionButton(
+            'Refresh',
+            Icons.refresh_rounded,
+            onRefresh,
+          ),
+        ),
       ],
     );
   }
@@ -42,7 +56,15 @@ class ErrorQuickActions extends StatelessWidget {
           children: [
             Icon(icon, color: ITColors.primary, size: 24),
             const SizedBox(height: 8),
-            Text(label, style: TextStyle(color: ITColors.textPrimaryColor(isDark), fontSize: 11, fontWeight: FontWeight.w500), textAlign: TextAlign.center),
+            Text(
+              label,
+              style: TextStyle(
+                color: ITColors.textPrimaryColor(isDark),
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),

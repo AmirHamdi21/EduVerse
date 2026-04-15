@@ -16,14 +16,54 @@ class SearchQuickActions extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     final actions = [
-      _QuickAction(l10n.courses, Icons.school_rounded, const Color(0xFF155DFC), '/courses'),
-      _QuickAction(l10n.tasks, Icons.task_alt_rounded, const Color(0xFF10B981), '/tasks'),
-      _QuickAction(l10n.assignments, Icons.assignment_rounded, const Color(0xFFF59E0B), '/assignments'),
-      _QuickAction(l10n.grades, Icons.grade_rounded, const Color(0xFF8B5CF6), '/grades'),
-      _QuickAction(l10n.labs, Icons.science_rounded, const Color(0xFF06B6D4), '/labs'),
-      _QuickAction(l10n.aiAssistant, Icons.smart_toy_rounded, const Color(0xFFEC4899), '/ai-chat'),
-      _QuickAction(l10n.flashcards, Icons.style_rounded, const Color(0xFFEF4444), '/flashcards'),
-      _QuickAction(l10n.calendar, Icons.calendar_month_rounded, const Color(0xFF14B8A6), '/calendar'),
+      _QuickAction(
+        l10n.courses,
+        Icons.school_rounded,
+        const Color(0xFF155DFC),
+        '/courses',
+      ),
+      _QuickAction(
+        l10n.tasks,
+        Icons.task_alt_rounded,
+        const Color(0xFF10B981),
+        '/tasks',
+      ),
+      _QuickAction(
+        l10n.assignments,
+        Icons.assignment_rounded,
+        const Color(0xFFF59E0B),
+        '/assignments',
+      ),
+      _QuickAction(
+        l10n.grades,
+        Icons.grade_rounded,
+        const Color(0xFF8B5CF6),
+        '/grades',
+      ),
+      _QuickAction(
+        l10n.labs,
+        Icons.science_rounded,
+        const Color(0xFF06B6D4),
+        '/labs',
+      ),
+      _QuickAction(
+        l10n.aiAssistant,
+        Icons.smart_toy_rounded,
+        const Color(0xFFEC4899),
+        '/ai-chat',
+      ),
+      _QuickAction(
+        l10n.flashcards,
+        Icons.style_rounded,
+        const Color(0xFFEF4444),
+        '/flashcards',
+      ),
+      _QuickAction(
+        l10n.calendar,
+        Icons.calendar_month_rounded,
+        const Color(0xFF14B8A6),
+        '/calendar',
+      ),
     ];
 
     return Column(
@@ -116,11 +156,7 @@ class _QuickActionCard extends StatelessWidget {
                 color: action.color.withValues(alpha: isDark ? 0.25 : 0.15),
               ),
             ),
-            child: Icon(
-              action.icon,
-              color: action.color,
-              size: 24,
-            ),
+            child: Icon(action.icon, color: action.color, size: 24),
           ),
           const SizedBox(height: 6),
           Text(

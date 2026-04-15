@@ -71,10 +71,16 @@ class ITAlertsSuppressTab extends StatelessWidget {
               GestureDetector(
                 onTap: onCreateWindow,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [ITColors.purple, ITColors.purple.withValues(alpha: 0.8)],
+                      colors: [
+                        ITColors.purple,
+                        ITColors.purple.withValues(alpha: 0.8),
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -110,7 +116,8 @@ class ITAlertsSuppressTab extends StatelessWidget {
   }
 
   Widget _buildWindowCard(SuppressionWindow window) {
-    final isCurrentlyActive = window.isActive &&
+    final isCurrentlyActive =
+        window.isActive &&
         DateTime.now().isAfter(window.startTime) &&
         DateTime.now().isBefore(window.endTime);
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
@@ -216,7 +223,7 @@ class ITAlertsSuppressTab extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 14),
-            
+
             // Time details
             Container(
               padding: const EdgeInsets.all(12),
@@ -267,14 +274,17 @@ class ITAlertsSuppressTab extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            
+
             // Affected services
             Wrap(
               spacing: 6,
               runSpacing: 6,
               children: window.affectedServices.map((service) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.08)

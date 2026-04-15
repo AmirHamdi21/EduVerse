@@ -42,6 +42,17 @@ class ScheduleService {
     }, fallbackMessage: 'Failed to create schedule');
   }
 
+  Future<ServiceResult<ScheduleModel>> update(
+    dynamic id,
+    Map<String, dynamic> data,
+  ) {
+    return RetryHelper.execute<ScheduleModel>(() async {
+      final response = await _client.dio.put('/schedules/$id', data: data);
+      final payload = _extractMap(response.data);
+      return ScheduleModel.fromJson(payload);
+    }, fallbackMessage: 'Failed to update schedule');
+  }
+
   Future<ServiceResult<void>> delete(dynamic id) {
     return RetryHelper.executeVoid(() async {
       await _client.dio.delete('/schedules/$id');

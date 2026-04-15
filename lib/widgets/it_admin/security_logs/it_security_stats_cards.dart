@@ -106,7 +106,9 @@ class ITSecurityStatsCards extends StatelessWidget {
         border: Border.all(
           color: isWarning
               ? ITColors.orange.withValues(alpha: 0.3)
-              : (isDark ? Colors.white.withValues(alpha: 0.1) : ITColors.border),
+              : (isDark
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : ITColors.border),
         ),
         boxShadow: ITColors.lightCardShadow(isDark),
       ),
@@ -126,7 +128,10 @@ class ITSecurityStatsCards extends StatelessWidget {
               const Spacer(),
               if (trend != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: (trend >= 0 ? ITColors.success : ITColors.error)
                         .withValues(alpha: 0.1),

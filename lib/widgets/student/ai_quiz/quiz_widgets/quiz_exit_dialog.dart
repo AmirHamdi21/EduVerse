@@ -30,12 +30,14 @@ class _QuizExitDialogState extends State<QuizExitDialog>
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
-    );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.8,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _controller.forward();
   }
 
@@ -103,14 +105,19 @@ class _QuizExitDialogState extends State<QuizExitDialog>
                               height: 88,
                               decoration: BoxDecoration(
                                 gradient: const LinearGradient(
-                                  colors: [Color(0xFFFF6B6B), Color(0xFFFF8E53)],
+                                  colors: [
+                                    Color(0xFFFF6B6B),
+                                    Color(0xFFFF8E53),
+                                  ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFFF6B6B).withValues(alpha: 0.4),
+                                    color: const Color(
+                                      0xFFFF6B6B,
+                                    ).withValues(alpha: 0.4),
                                     blurRadius: 24,
                                     offset: const Offset(0, 8),
                                   ),
@@ -131,7 +138,9 @@ class _QuizExitDialogState extends State<QuizExitDialog>
                         style: TextStyle(
                           fontSize: responsive.fontSize24,
                           fontWeight: FontWeight.bold,
-                          color: widget.isDark ? Colors.white : const Color(0xFF1A1A2E),
+                          color: widget.isDark
+                              ? Colors.white
+                              : const Color(0xFF1A1A2E),
                           fontFamily: 'Arimo',
                         ),
                       ),
@@ -153,7 +162,9 @@ class _QuizExitDialogState extends State<QuizExitDialog>
                               : const Color(0xFFFFF4E5),
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
-                            color: const Color(0xFFFFB347).withValues(alpha: 0.3),
+                            color: const Color(
+                              0xFFFFB347,
+                            ).withValues(alpha: 0.3),
                           ),
                         ),
                         child: Row(
@@ -161,7 +172,9 @@ class _QuizExitDialogState extends State<QuizExitDialog>
                             Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFFFB347).withValues(alpha: 0.2),
+                                color: const Color(
+                                  0xFFFFB347,
+                                ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(
@@ -214,14 +227,18 @@ class _QuizExitDialogState extends State<QuizExitDialog>
                             child: GestureDetector(
                               onTap: widget.onExit,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   color: widget.isDark
                                       ? const Color(0xFF252D48)
                                       : const Color(0xFFF3F4F6),
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
-                                    color: const Color(0xFFFF6B6B).withValues(alpha: 0.3),
+                                    color: const Color(
+                                      0xFFFF6B6B,
+                                    ).withValues(alpha: 0.3),
                                   ),
                                 ),
                                 child: Row(
@@ -254,15 +271,22 @@ class _QuizExitDialogState extends State<QuizExitDialog>
                             child: GestureDetector(
                               onTap: widget.onCancel,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+                                    colors: [
+                                      Color(0xFF6366F1),
+                                      Color(0xFF8B5CF6),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF6366F1).withValues(alpha: 0.4),
+                                      color: const Color(
+                                        0xFF6366F1,
+                                      ).withValues(alpha: 0.4),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),

@@ -81,7 +81,9 @@ class AuditExportCard extends StatelessWidget {
                       l10n.exportAuditData,
                       style: TextStyle(
                         fontSize: 13,
-                        color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                        color: AdminColors.getTextColor(
+                          isDark,
+                        ).withValues(alpha: 0.6),
                       ),
                     ),
                   ],
@@ -137,7 +139,9 @@ class AuditExportCard extends StatelessWidget {
                         l10n.includeIpUserAgent,
                         style: TextStyle(
                           fontSize: 12,
-                          color: AdminColors.getTextColor(isDark).withValues(alpha: 0.6),
+                          color: AdminColors.getTextColor(
+                            isDark,
+                          ).withValues(alpha: 0.6),
                         ),
                       ),
                     ],
@@ -163,7 +167,9 @@ class AuditExportCard extends StatelessWidget {
                           height: 18,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : const Icon(Icons.download_rounded, size: 18),
@@ -213,8 +219,8 @@ class AuditExportCard extends StatelessWidget {
           color: isSelected
               ? null
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.black.withValues(alpha: 0.05)),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.05)),
           borderRadius: BorderRadius.circular(12),
           border: isSelected
               ? null
@@ -230,7 +236,9 @@ class AuditExportCard extends StatelessWidget {
             Icon(
               icon,
               size: 18,
-              color: isSelected ? Colors.white : AdminColors.getTextColor(isDark),
+              color: isSelected
+                  ? Colors.white
+                  : AdminColors.getTextColor(isDark),
             ),
             const SizedBox(width: 8),
             Text(
@@ -238,7 +246,9 @@ class AuditExportCard extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : AdminColors.getTextColor(isDark),
+                color: isSelected
+                    ? Colors.white
+                    : AdminColors.getTextColor(isDark),
               ),
             ),
           ],

@@ -21,7 +21,9 @@ class AIUserAlerts extends StatelessWidget {
             : Colors.white.withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? AdminColors.darkCardBorder : AdminColors.lightCardBorder,
+          color: isDark
+              ? AdminColors.darkCardBorder
+              : AdminColors.lightCardBorder,
         ),
         boxShadow: isDark
             ? null
@@ -150,18 +152,16 @@ class AIUserAlerts extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: AdminColors.getTextColor(isDark),
                 side: BorderSide(
-                  color:
-                      isDark ? AdminColors.darkCardBorder : AdminColors.lightDivider,
+                  color: isDark
+                      ? AdminColors.darkCardBorder
+                      : AdminColors.lightDivider,
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text(
-                actionLabel,
-                style: const TextStyle(fontSize: 12),
-              ),
+              child: Text(actionLabel, style: const TextStyle(fontSize: 12)),
             ),
           ),
         ],

@@ -62,18 +62,15 @@ class AdminPlatformConfigCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: (iconColor ?? AdminColors.primary)
-                            .withValues(alpha: 0.3),
+                        color: (iconColor ?? AdminColors.primary).withValues(
+                          alpha: 0.3,
+                        ),
                         blurRadius: 8,
                         offset: const Offset(0, 2),
                       ),
                     ],
                   ),
-                  child: Icon(
-                    icon,
-                    size: 22,
-                    color: Colors.white,
-                  ),
+                  child: Icon(icon, size: 22, color: Colors.white),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -137,44 +134,43 @@ class AdminPlatformConfigCard extends StatelessWidget {
             ),
             if (items != null && items!.isNotEmpty) ...[
               const SizedBox(height: 16),
-              Divider(
-                color: AdminColors.getDividerColor(isDark),
-                height: 1,
-              ),
+              Divider(color: AdminColors.getDividerColor(isDark), height: 1),
               const SizedBox(height: 12),
-              ...items!.map((item) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            color: item.statusColor ?? AdminColors.primary,
-                            shape: BoxShape.circle,
-                          ),
+              ...items!.map(
+                (item) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: item.statusColor ?? AdminColors.primary,
+                          shape: BoxShape.circle,
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            item.label,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: AdminColors.getTextSecondaryColor(isDark),
-                            ),
-                          ),
-                        ),
-                        Text(
-                          item.value,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          item.label,
                           style: TextStyle(
                             fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: AdminColors.getTextColor(isDark),
+                            color: AdminColors.getTextSecondaryColor(isDark),
                           ),
                         ),
-                      ],
-                    ),
-                  )),
+                      ),
+                      Text(
+                        item.value,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AdminColors.getTextColor(isDark),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ],
         ),

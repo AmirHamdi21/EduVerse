@@ -13,7 +13,16 @@ export 'it_integration_stats_card.dart';
 
 enum IntegrationStatus { connected, disconnected, pending, error }
 
-enum IntegrationCategory { all, lms, ai, storage, productivity, communication, analytics, security }
+enum IntegrationCategory {
+  all,
+  lms,
+  ai,
+  storage,
+  productivity,
+  communication,
+  analytics,
+  security,
+}
 
 class IntegrationProvider {
   final String id;
@@ -152,9 +161,8 @@ class PerformanceMetrics {
     this.lastErrorMessage,
   });
 
-  double get successRate => totalRequests > 0 
-      ? (successfulRequests / totalRequests) * 100 
-      : 0;
+  double get successRate =>
+      totalRequests > 0 ? (successfulRequests / totalRequests) * 100 : 0;
 }
 
 class IntegrationActivity {

@@ -35,11 +35,7 @@ class ITSystemMetricsGrid extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(
-              Icons.analytics_rounded,
-              color: ITColors.primary,
-              size: 20,
-            ),
+            Icon(Icons.analytics_rounded, color: ITColors.primary, size: 20),
             const SizedBox(width: 8),
             Text(
               l10n.itSystemMetrics,
@@ -116,7 +112,9 @@ class ITSystemMetricsGrid extends StatelessWidget {
                 title: l10n.itIncidents,
                 value: activeIncidents.toString(),
                 icon: Icons.warning_rounded,
-                color: activeIncidents > 0 ? ITColors.warning : ITColors.success,
+                color: activeIncidents > 0
+                    ? ITColors.warning
+                    : ITColors.success,
               ),
             ),
             const SizedBox(width: 12),
@@ -153,10 +151,7 @@ class ITSystemMetricsGrid extends StatelessWidget {
         color: isDark
             ? Colors.white.withValues(alpha: 0.05)
             : Colors.white.withValues(alpha: 0.8),
-        border: Border.all(
-          color: ITColors.accent,
-          width: 1,
-        ),
+        border: Border.all(color: ITColors.accent, width: 1),
         borderRadius: BorderRadius.circular(20),
         boxShadow: ITColors.cardShadow(isDark),
       ),
@@ -240,7 +235,7 @@ class ITSystemMetricsGrid extends StatelessWidget {
 
   Widget _buildProgressBar(Color color, double progress) {
     final clampedProgress = progress.clamp(0.0, 1.0);
-    
+
     return Container(
       height: 6,
       decoration: BoxDecoration(
@@ -273,9 +268,7 @@ class ITSystemMetricsGrid extends StatelessWidget {
         color: isDark
             ? Colors.white.withValues(alpha: 0.03)
             : color.withValues(alpha: 0.08),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(

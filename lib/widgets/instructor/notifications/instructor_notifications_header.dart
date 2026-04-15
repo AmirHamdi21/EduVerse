@@ -133,15 +133,15 @@ class InstructorNotificationsHeader extends StatelessWidget {
           color: isActive
               ? AppTheme.primaryColor.withValues(alpha: 0.15)
               : (isDarkMode
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : Colors.white),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.white),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isActive
                 ? AppTheme.primaryColor.withValues(alpha: 0.3)
                 : (isDarkMode
-                    ? Colors.white.withValues(alpha: 0.1)
-                    : Colors.grey.withValues(alpha: 0.15)),
+                      ? Colors.white.withValues(alpha: 0.1)
+                      : Colors.grey.withValues(alpha: 0.15)),
           ),
         ),
         child: Icon(

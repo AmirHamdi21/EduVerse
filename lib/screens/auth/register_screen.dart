@@ -22,7 +22,8 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStateMixin {
+class _RegisterScreenState extends State<RegisterScreen>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
@@ -75,15 +76,16 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
   @override
   void initState() {
     super.initState();
-    
+
     // Logo animation
     _logoController = AnimationController(
       duration: const Duration(milliseconds: 700),
       vsync: this,
     );
-    _logoFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.easeOut),
-    );
+    _logoFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _logoController, curve: Curves.easeOut));
     _logoScaleAnimation = Tween<double>(begin: 0.7, end: 1.0).animate(
       CurvedAnimation(parent: _logoController, curve: Curves.easeOutBack),
     );
@@ -93,13 +95,14 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _titleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _titleController, curve: Curves.easeOut),
-    );
-    _titleSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _titleController, curve: Curves.easeOutCubic));
+    _titleFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _titleController, curve: Curves.easeOut));
+    _titleSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _titleController, curve: Curves.easeOutCubic),
+        );
 
     // First name field animation
     _firstNameController_anim = AnimationController(
@@ -109,10 +112,13 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     _firstNameFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _firstNameController_anim, curve: Curves.easeOut),
     );
-    _firstNameSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _firstNameController_anim, curve: Curves.easeOutCubic));
+    _firstNameSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _firstNameController_anim,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     // Last name field animation
     _lastNameController_anim = AnimationController(
@@ -122,10 +128,13 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     _lastNameFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _lastNameController_anim, curve: Curves.easeOut),
     );
-    _lastNameSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _lastNameController_anim, curve: Curves.easeOutCubic));
+    _lastNameSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _lastNameController_anim,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     // Email field animation
     _emailFieldController = AnimationController(
@@ -135,10 +144,13 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     _emailFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _emailFieldController, curve: Curves.easeOut),
     );
-    _emailSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _emailFieldController, curve: Curves.easeOutCubic));
+    _emailSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _emailFieldController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     // Phone field animation
     _phoneFieldController = AnimationController(
@@ -148,10 +160,13 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     _phoneFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _phoneFieldController, curve: Curves.easeOut),
     );
-    _phoneSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _phoneFieldController, curve: Curves.easeOutCubic));
+    _phoneSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _phoneFieldController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     // Role field animation
     _roleFieldController = AnimationController(
@@ -161,10 +176,13 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     _roleFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _roleFieldController, curve: Curves.easeOut),
     );
-    _roleSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _roleFieldController, curve: Curves.easeOutCubic));
+    _roleSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _roleFieldController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     // Password field animation
     _passwordFieldController = AnimationController(
@@ -174,10 +192,13 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     _passwordFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _passwordFieldController, curve: Curves.easeOut),
     );
-    _passwordSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _passwordFieldController, curve: Curves.easeOutCubic));
+    _passwordSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _passwordFieldController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     // Confirm password field animation
     _confirmPasswordController_anim = AnimationController(
@@ -185,25 +206,32 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
       vsync: this,
     );
     _confirmPasswordFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _confirmPasswordController_anim, curve: Curves.easeOut),
+      CurvedAnimation(
+        parent: _confirmPasswordController_anim,
+        curve: Curves.easeOut,
+      ),
     );
-    _confirmPasswordSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _confirmPasswordController_anim, curve: Curves.easeOutCubic));
+    _confirmPasswordSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _confirmPasswordController_anim,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     // Terms checkbox animation
     _termsController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _termsFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _termsController, curve: Curves.easeOut),
-    );
-    _termsSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _termsController, curve: Curves.easeOutCubic));
+    _termsFadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _termsController, curve: Curves.easeOut));
+    _termsSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(parent: _termsController, curve: Curves.easeOutCubic),
+        );
 
     // Register button animation
     _registerButtonController = AnimationController(
@@ -213,50 +241,53 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     _registerButtonFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _registerButtonController, curve: Curves.easeOut),
     );
-    _registerButtonSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _registerButtonController, curve: Curves.easeOutCubic));
+    _registerButtonSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _registerButtonController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     // Start cascading animations
     _logoController.forward();
-    
+
     Future.delayed(const Duration(milliseconds: 150), () {
       if (mounted) _titleController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) _firstNameController_anim.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 450), () {
       if (mounted) _lastNameController_anim.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 600), () {
       if (mounted) _emailFieldController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 750), () {
       if (mounted) _phoneFieldController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 900), () {
       if (mounted) _roleFieldController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 1050), () {
       if (mounted) _passwordFieldController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 1200), () {
       if (mounted) _confirmPasswordController_anim.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 1350), () {
       if (mounted) _termsController.forward();
     });
-    
+
     Future.delayed(const Duration(milliseconds: 1500), () {
       if (mounted) _registerButtonController.forward();
     });
@@ -314,7 +345,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
     try {
       final apiService = ApiService();
       await apiService.registerAndCheckEmail(request);
-      
+
       if (!mounted) return;
 
       // If registration succeeds, proceed with BLoC
@@ -324,9 +355,9 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       final errorMsg = e.toString();
-      
+
       if (errorMsg.contains('Email already registered')) {
         _showErrorDialog(l.emailAlreadyRegistered);
       } else {
@@ -551,7 +582,9 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
                                       scale: _logoScaleAnimation,
                                       child: Container(
                                         width: responsive.aspectRatioWidth(100),
-                                        height: responsive.aspectRatioHeight(100),
+                                        height: responsive.aspectRatioHeight(
+                                          100,
+                                        ),
                                         clipBehavior: Clip.antiAlias,
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(
@@ -559,7 +592,9 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withOpacity(0.1),
+                                              color: Colors.black.withOpacity(
+                                                0.1,
+                                              ),
                                               blurRadius: 15,
                                             ),
                                           ],
@@ -686,7 +721,12 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
                                     opacity: _roleFadeAnimation,
                                     child: SlideTransition(
                                       position: _roleSlideAnimation,
-                                      child: _buildRoleDropdown(isDark, textColor, textSecondaryColor, l),
+                                      child: _buildRoleDropdown(
+                                        isDark,
+                                        textColor,
+                                        textSecondaryColor,
+                                        l,
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: responsive.p16),
@@ -712,7 +752,8 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
                                           ),
                                           onPressed: () {
                                             setState(() {
-                                              _obscurePassword = !_obscurePassword;
+                                              _obscurePassword =
+                                                  !_obscurePassword;
                                             });
                                           },
                                         ),
@@ -772,27 +813,29 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
                                     child: SlideTransition(
                                       position: _termsSlideAnimation,
                                       child: Row(
-                                    children: [
-                                      Checkbox(
-                                        value: _agreeToTerms,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _agreeToTerms = value ?? false;
-                                          });
-                                        },
-                                        activeColor: const Color(0xFF2B7FFF),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          l.termsOfService,
-                                          style: TextStyle(
-                                            color: textColor,
-                                            fontSize: responsive.fontSize14,
+                                        children: [
+                                          Checkbox(
+                                            value: _agreeToTerms,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                _agreeToTerms = value ?? false;
+                                              });
+                                            },
+                                            activeColor: const Color(
+                                              0xFF2B7FFF,
+                                            ),
                                           ),
-                                        ),
+                                          Expanded(
+                                            child: Text(
+                                              l.termsOfService,
+                                              style: TextStyle(
+                                                color: textColor,
+                                                fontSize: responsive.fontSize14,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
                                     ),
                                   ),
                                   SizedBox(height: responsive.p24),
@@ -802,70 +845,73 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
                                     child: SlideTransition(
                                       position: _registerButtonSlideAnimation,
                                       child: BlocBuilder<AuthBloc, AuthState>(
-                                    builder: (context, state) {
-                                      final isLoading = state is AuthLoading;
-                                      return SizedBox(
-                                        width: double.infinity,
-                                        height: responsive.buttonHeight,
-                                        child: ElevatedButton(
-                                          onPressed: isLoading
-                                              ? null
-                                              : _handleRegister,
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.transparent,
-                                            shadowColor: Colors.transparent,
-                                            padding: EdgeInsets.zero,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    responsive.radius12,
-                                                  ),
-                                            ),
-                                          ),
-                                          child: Ink(
-                                            decoration: BoxDecoration(
-                                              gradient: const LinearGradient(
-                                                colors: [
-                                                  Color(0xFF00D2F2),
-                                                  Color(0xFF2B7FFF),
-                                                  Color(0xFF1347E5),
-                                                ],
+                                        builder: (context, state) {
+                                          final isLoading =
+                                              state is AuthLoading;
+                                          return SizedBox(
+                                            width: double.infinity,
+                                            height: responsive.buttonHeight,
+                                            child: ElevatedButton(
+                                              onPressed: isLoading
+                                                  ? null
+                                                  : _handleRegister,
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                shadowColor: Colors.transparent,
+                                                padding: EdgeInsets.zero,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        responsive.radius12,
+                                                      ),
+                                                ),
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                    responsive.radius12,
-                                                  ),
-                                            ),
-                                            child: Center(
-                                              child: isLoading
-                                                  ? SizedBox(
-                                                      height:
-                                                          responsive.iconSmall,
-                                                      width:
-                                                          responsive.iconSmall,
-                                                      child: const CircularProgressIndicator(
-                                                        strokeWidth: 2,
-                                                        valueColor:
-                                                            AlwaysStoppedAnimation<
-                                                              Color
-                                                            >(Colors.white),
+                                              child: Ink(
+                                                decoration: BoxDecoration(
+                                                  gradient:
+                                                      const LinearGradient(
+                                                        colors: [
+                                                          Color(0xFF00D2F2),
+                                                          Color(0xFF2B7FFF),
+                                                          Color(0xFF1347E5),
+                                                        ],
                                                       ),
-                                                    )
-                                                  : Text(
-                                                      l.signupButton,
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: responsive
-                                                            .fontSize16,
-                                                        fontWeight:
-                                                            FontWeight.w600,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        responsive.radius12,
                                                       ),
-                                                    ),
+                                                ),
+                                                child: Center(
+                                                  child: isLoading
+                                                      ? SizedBox(
+                                                          height: responsive
+                                                              .iconSmall,
+                                                          width: responsive
+                                                              .iconSmall,
+                                                          child: const CircularProgressIndicator(
+                                                            strokeWidth: 2,
+                                                            valueColor:
+                                                                AlwaysStoppedAnimation<
+                                                                  Color
+                                                                >(Colors.white),
+                                                          ),
+                                                        )
+                                                      : Text(
+                                                          l.signupButton,
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: responsive
+                                                                .fontSize16,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                      );
-                                    },
+                                          );
+                                        },
                                       ),
                                     ),
                                   ),

@@ -41,9 +41,7 @@ class ITTimePeriodSelector extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? ITColors.primary
-                      : Colors.transparent,
+                  color: isSelected ? ITColors.primary : Colors.transparent,
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: isSelected
                       ? [

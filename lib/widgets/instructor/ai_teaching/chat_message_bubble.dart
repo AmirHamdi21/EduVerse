@@ -28,8 +28,9 @@ class ChatMessageBubble extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
-        mainAxisAlignment:
-            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: message.isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!message.isUser) _buildAvatar(),
@@ -61,11 +62,7 @@ class ChatMessageBubble extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: const Center(
-        child: Icon(
-          Icons.psychology_rounded,
-          color: Colors.white,
-          size: 20,
-        ),
+        child: Icon(Icons.psychology_rounded, color: Colors.white, size: 20),
       ),
     );
   }
@@ -155,13 +152,9 @@ class ChatMessageBubble extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: isDark
-              ? AITeachingColors.darkSurface
-              : Colors.white,
+          color: isDark ? AITeachingColors.darkSurface : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: AITeachingColors.borderColor(isDark),
-          ),
+          border: Border.all(color: AITeachingColors.borderColor(isDark)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

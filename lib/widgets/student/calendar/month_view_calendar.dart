@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 
 class MonthViewCalendar extends StatelessWidget {
   final void Function(DateTime date, List<CalendarEvent> events)? onDateTap;
-  
+
   const MonthViewCalendar({super.key, this.onDateTap});
 
   @override
@@ -50,12 +50,16 @@ class MonthViewCalendar extends StatelessWidget {
               width: 36,
               height: 36,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6),
+                color: isDark
+                    ? const Color(0xFF1E2939)
+                    : const Color(0xFFF3F4F6),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
                 Icons.chevron_left_rounded,
-                color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                color: isDark
+                    ? const Color(0xFF99A1AF)
+                    : const Color(0xFF6B7280),
               ),
             ),
           ),
@@ -77,12 +81,16 @@ class MonthViewCalendar extends StatelessWidget {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6),
+                    color: isDark
+                        ? const Color(0xFF1E2939)
+                        : const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     Icons.chevron_right_rounded,
-                    color: isDark ? const Color(0xFF99A1AF) : const Color(0xFF6B7280),
+                    color: isDark
+                        ? const Color(0xFF99A1AF)
+                        : const Color(0xFF6B7280),
                   ),
                 ),
               ),
@@ -90,12 +98,19 @@ class MonthViewCalendar extends StatelessWidget {
               GestureDetector(
                 onTap: () => context.read<CalendarCubit>().goToToday(),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6),
+                    color: isDark
+                        ? const Color(0xFF1E2939)
+                        : const Color(0xFFF3F4F6),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+                      color: isDark
+                          ? const Color(0xFF374151)
+                          : const Color(0xFFE5E7EB),
                     ),
                   ),
                   child: Text(
@@ -103,7 +118,9 @@ class MonthViewCalendar extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
-                      color: isDark ? const Color(0xFFD1D5DC) : const Color(0xFF374151),
+                      color: isDark
+                          ? const Color(0xFFD1D5DC)
+                          : const Color(0xFF374151),
                     ),
                   ),
                 ),
@@ -129,7 +146,9 @@ class MonthViewCalendar extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? const Color(0xFF6B7280) : const Color(0xFF9CA3AF),
+                  color: isDark
+                      ? const Color(0xFF6B7280)
+                      : const Color(0xFF9CA3AF),
                 ),
               ),
             ),
@@ -139,61 +158,64 @@ class MonthViewCalendar extends StatelessWidget {
     );
   }
 
-  Widget _buildCalendarGrid(BuildContext context, CalendarState state, bool isDark) {
+  Widget _buildCalendarGrid(
+    BuildContext context,
+    CalendarState state,
+    bool isDark,
+  ) {
     final daysInMonth = _getDaysInMonth(state.focusedMonth);
     final today = DateTime.now();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Column(
-        children: List.generate(
-          (daysInMonth.length / 7).ceil(),
-          (weekIndex) {
-            final weekStart = weekIndex * 7;
-            final weekEnd = (weekStart + 7).clamp(0, daysInMonth.length);
-            final weekDays = daysInMonth.sublist(weekStart, weekEnd);
+        children: List.generate((daysInMonth.length / 7).ceil(), (weekIndex) {
+          final weekStart = weekIndex * 7;
+          final weekEnd = (weekStart + 7).clamp(0, daysInMonth.length);
+          final weekDays = daysInMonth.sublist(weekStart, weekEnd);
 
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                children: weekDays.map((date) {
-                  if (date == null) {
-                    return const Expanded(child: SizedBox(height: 40));
-                  }
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Row(
+              children: weekDays.map((date) {
+                if (date == null) {
+                  return const Expanded(child: SizedBox(height: 40));
+                }
 
-                  final isToday = date.year == today.year &&
-                      date.month == today.month &&
-                      date.day == today.day;
-                  final isSelected = date.year == state.selectedDate.year &&
-                      date.month == state.selectedDate.month &&
-                      date.day == state.selectedDate.day;
-                  final isCurrentMonth = date.month == state.focusedMonth.month;
-                  final hasEvents = state.hasEventsOnDate(date);
-                  final eventsOnDate = state.getEventsForDate(date);
+                final isToday =
+                    date.year == today.year &&
+                    date.month == today.month &&
+                    date.day == today.day;
+                final isSelected =
+                    date.year == state.selectedDate.year &&
+                    date.month == state.selectedDate.month &&
+                    date.day == state.selectedDate.day;
+                final isCurrentMonth = date.month == state.focusedMonth.month;
+                final hasEvents = state.hasEventsOnDate(date);
+                final eventsOnDate = state.getEventsForDate(date);
 
-                  return Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        context.read<CalendarCubit>().selectDate(date);
-                        if (eventsOnDate.isNotEmpty && onDateTap != null) {
-                          onDateTap!(date, eventsOnDate);
-                        }
-                      },
-                      child: _buildDayCell(
-                        date,
-                        isToday: isToday,
-                        isSelected: isSelected,
-                        isCurrentMonth: isCurrentMonth,
-                        hasEvents: hasEvents,
-                        isDark: isDark,
-                      ),
+                return Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      context.read<CalendarCubit>().selectDate(date);
+                      if (eventsOnDate.isNotEmpty && onDateTap != null) {
+                        onDateTap!(date, eventsOnDate);
+                      }
+                    },
+                    child: _buildDayCell(
+                      date,
+                      isToday: isToday,
+                      isSelected: isSelected,
+                      isCurrentMonth: isCurrentMonth,
+                      hasEvents: hasEvents,
+                      isDark: isDark,
                     ),
-                  );
-                }).toList(),
-              ),
-            );
-          },
-        ),
+                  ),
+                );
+              }).toList(),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -239,7 +261,9 @@ class MonthViewCalendar extends StatelessWidget {
             '${date.day}',
             style: TextStyle(
               fontSize: 14,
-              fontWeight: isToday || isSelected ? FontWeight.w600 : FontWeight.w500,
+              fontWeight: isToday || isSelected
+                  ? FontWeight.w600
+                  : FontWeight.w500,
               color: textColor,
             ),
           ),
@@ -250,7 +274,9 @@ class MonthViewCalendar extends StatelessWidget {
                 width: 5,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: isToday ? const Color(0xFF2B7FFF) : const Color(0xFFF59E0B),
+                  color: isToday
+                      ? const Color(0xFF2B7FFF)
+                      : const Color(0xFFF59E0B),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -269,7 +295,9 @@ class MonthViewCalendar extends StatelessWidget {
 
     // Add previous month's trailing days
     for (var i = 0; i < firstWeekday; i++) {
-      final prevDay = firstDayOfMonth.subtract(Duration(days: firstWeekday - i));
+      final prevDay = firstDayOfMonth.subtract(
+        Duration(days: firstWeekday - i),
+      );
       days.add(prevDay);
     }
 

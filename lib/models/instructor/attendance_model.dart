@@ -1,12 +1,6 @@
 // Model for instructor attendance management
 
-enum AttendanceStatus {
-  present,
-  absent,
-  late,
-  excused,
-  unmarked,
-}
+enum AttendanceStatus { present, absent, late, excused, unmarked }
 
 extension AttendanceStatusExtension on AttendanceStatus {
   String get displayName {
@@ -83,7 +77,8 @@ class StudentAttendance {
       studentName: studentName ?? this.studentName,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       status: status ?? this.status,
-      overallAttendanceRate: overallAttendanceRate ?? this.overallAttendanceRate,
+      overallAttendanceRate:
+          overallAttendanceRate ?? this.overallAttendanceRate,
       lastAttended: lastAttended ?? this.lastAttended,
       note: note ?? this.note,
       totalClasses: totalClasses ?? this.totalClasses,
@@ -115,14 +110,20 @@ class AttendanceSession {
     this.isSaved = false,
   });
 
-  int get presentCount => students.where((s) => s.status == AttendanceStatus.present).length;
-  int get absentCount => students.where((s) => s.status == AttendanceStatus.absent).length;
-  int get lateCount => students.where((s) => s.status == AttendanceStatus.late).length;
-  int get excusedCount => students.where((s) => s.status == AttendanceStatus.excused).length;
-  int get unmarkedCount => students.where((s) => s.status == AttendanceStatus.unmarked).length;
+  int get presentCount =>
+      students.where((s) => s.status == AttendanceStatus.present).length;
+  int get absentCount =>
+      students.where((s) => s.status == AttendanceStatus.absent).length;
+  int get lateCount =>
+      students.where((s) => s.status == AttendanceStatus.late).length;
+  int get excusedCount =>
+      students.where((s) => s.status == AttendanceStatus.excused).length;
+  int get unmarkedCount =>
+      students.where((s) => s.status == AttendanceStatus.unmarked).length;
   int get markedCount => students.length - unmarkedCount;
-  
-  double get progressRate => students.isEmpty ? 0 : markedCount / students.length;
+
+  double get progressRate =>
+      students.isEmpty ? 0 : markedCount / students.length;
 
   AttendanceSession copyWith({
     String? id,

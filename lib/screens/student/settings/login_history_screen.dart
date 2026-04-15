@@ -58,11 +58,13 @@ class LoginHistoryScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor:
-          isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF0F172A)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor:
-            isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        backgroundColor: isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -92,10 +94,12 @@ class LoginHistoryScreen extends StatelessWidget {
           // Recent Activity
           _buildSectionTitle(l10n.recentActivity, isDark),
           const SizedBox(height: 12),
-          ...loginHistory.map((entry) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _buildLoginEntryCard(isDark, entry, l10n),
-              )),
+          ...loginHistory.map(
+            (entry) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _buildLoginEntryCard(isDark, entry, l10n),
+            ),
+          ),
           const SizedBox(height: 32),
         ],
       ),
@@ -283,10 +287,7 @@ class LoginHistoryScreen extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: entry.status != 'success'
-            ? Border.all(
-                color: statusColor.withValues(alpha: 0.3),
-                width: 1,
-              )
+            ? Border.all(color: statusColor.withValues(alpha: 0.3), width: 1)
             : null,
         boxShadow: [
           BoxShadow(
@@ -306,11 +307,7 @@ class LoginHistoryScreen extends StatelessWidget {
                 color: statusColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                statusIcon,
-                size: 24,
-                color: statusColor,
-              ),
+              child: Icon(statusIcon, size: 24, color: statusColor),
             ),
             const SizedBox(width: 14),
             Expanded(

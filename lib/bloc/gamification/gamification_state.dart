@@ -97,14 +97,7 @@ class AchievementBadge {
   }
 }
 
-enum BadgeCategory {
-  consistency,
-  quiz,
-  learning,
-  performance,
-  social,
-  ai,
-}
+enum BadgeCategory { consistency, quiz, learning, performance, social, ai }
 
 class LeaderboardEntry {
   final String id;
@@ -186,24 +179,11 @@ class Reward {
   }
 }
 
-enum RewardCategory {
-  avatar,
-  theme,
-  badge,
-  feature,
-}
+enum RewardCategory { avatar, theme, badge, feature }
 
-enum TimeFilter {
-  weekly,
-  monthly,
-  allTime,
-}
+enum TimeFilter { weekly, monthly, allTime }
 
-enum LeaderboardFilter {
-  global,
-  perCourse,
-  friends,
-}
+enum LeaderboardFilter { global, perCourse, friends }
 
 // State
 class GamificationState extends Equatable {
@@ -272,7 +252,9 @@ class GamificationState extends Equatable {
       timeFilter: timeFilter ?? this.timeFilter,
       leaderboardFilter: leaderboardFilter ?? this.leaderboardFilter,
       searchQuery: searchQuery ?? this.searchQuery,
-      successMessage: clearSuccess ? null : (successMessage ?? this.successMessage),
+      successMessage: clearSuccess
+          ? null
+          : (successMessage ?? this.successMessage),
       isComparing: isComparing ?? this.isComparing,
       compareUsers: compareUsers ?? this.compareUsers,
       userCoins: userCoins ?? this.userCoins,
@@ -281,20 +263,20 @@ class GamificationState extends Equatable {
 
   @override
   List<Object?> get props => [
-        isLoading,
-        error,
-        userProfile,
-        badges,
-        filteredBadges,
-        leaderboard,
-        filteredLeaderboard,
-        rewards,
-        timeFilter,
-        leaderboardFilter,
-        searchQuery,
-        successMessage,
-        isComparing,
-        compareUsers,
-        userCoins,
-      ];
+    isLoading,
+    error,
+    userProfile,
+    badges,
+    filteredBadges,
+    leaderboard,
+    filteredLeaderboard,
+    rewards,
+    timeFilter,
+    leaderboardFilter,
+    searchQuery,
+    successMessage,
+    isComparing,
+    compareUsers,
+    userCoins,
+  ];
 }

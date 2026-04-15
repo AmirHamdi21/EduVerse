@@ -49,7 +49,7 @@ class ITProfilePermissionsSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 14),
-          
+
           // Role card
           Container(
             padding: const EdgeInsets.all(14),
@@ -77,7 +77,10 @@ class ITProfilePermissionsSection extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: ITColors.primary.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(6),
@@ -95,12 +98,14 @@ class ITProfilePermissionsSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          
+
           // Permissions list
-          ...permissions.take(5).map((permission) => _buildPermissionItem(permission)),
-          
+          ...permissions
+              .take(5)
+              .map((permission) => _buildPermissionItem(permission)),
+
           const SizedBox(height: 12),
-          
+
           // View full permissions
           GestureDetector(
             onTap: onViewFullPermissions,
@@ -134,11 +139,7 @@ class ITProfilePermissionsSection extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          Icon(
-            Icons.check_circle_rounded,
-            size: 16,
-            color: ITColors.success,
-          ),
+          Icon(Icons.check_circle_rounded, size: 16, color: ITColors.success),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

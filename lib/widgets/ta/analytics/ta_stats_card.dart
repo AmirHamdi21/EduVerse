@@ -64,10 +64,16 @@ class TAStatsCard extends StatelessWidget {
                   const Spacer(),
                   if (trend != null)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
-                        color: (isPositiveTrend ? TAColors.success : TAColors.error)
-                            .withValues(alpha: 0.12),
+                        color:
+                            (isPositiveTrend
+                                    ? TAColors.success
+                                    : TAColors.error)
+                                .withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -78,13 +84,17 @@ class TAStatsCard extends StatelessWidget {
                                 ? Icons.trending_up_rounded
                                 : Icons.trending_down_rounded,
                             size: 12,
-                            color: isPositiveTrend ? TAColors.success : TAColors.error,
+                            color: isPositiveTrend
+                                ? TAColors.success
+                                : TAColors.error,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             trend!,
                             style: TextStyle(
-                              color: isPositiveTrend ? TAColors.success : TAColors.error,
+                              color: isPositiveTrend
+                                  ? TAColors.success
+                                  : TAColors.error,
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                             ),

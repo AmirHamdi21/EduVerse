@@ -28,10 +28,7 @@ class TACourseOverviewTab extends StatelessWidget {
       children: [
         // T010: Course Structure Viewer (Materials drill-down)
         if (courseId != null)
-          CourseStructureViewer(
-            courseId: courseId,
-            isDark: isDark,
-          ),
+          CourseStructureViewer(courseId: courseId, isDark: isDark),
         if (courseId != null) const SizedBox(height: 24),
         _buildUpcomingTasksSection(l10n),
         const SizedBox(height: 24),
@@ -214,11 +211,7 @@ class TACourseOverviewTab extends StatelessWidget {
               color: activity.color.withValues(alpha: isDark ? 0.2 : 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(
-              activity.icon,
-              color: activity.color,
-              size: 18,
-            ),
+            child: Icon(activity.icon, color: activity.color, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(

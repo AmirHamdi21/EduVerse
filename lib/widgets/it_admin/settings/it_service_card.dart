@@ -122,11 +122,7 @@ class ITServiceCard extends StatelessWidget {
   Widget _buildDetailRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(
-          icon,
-          size: 14,
-          color: ITColors.textSecondaryColor(isDark),
-        ),
+        Icon(icon, size: 14, color: ITColors.textSecondaryColor(isDark)),
         const SizedBox(width: 8),
         Text(
           text,
@@ -221,11 +217,7 @@ class ITServiceCard extends StatelessWidget {
                   : Colors.black.withValues(alpha: 0.1),
             ),
           ),
-          child: Icon(
-            icon,
-            size: 16,
-            color: ITColors.textPrimaryColor(isDark),
-          ),
+          child: Icon(icon, size: 16, color: ITColors.textPrimaryColor(isDark)),
         ),
       ),
     );

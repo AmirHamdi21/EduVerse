@@ -20,7 +20,11 @@ import '../../../widgets/shared/submission_detail_viewer.dart';
 /// TA Grading Center — displays all submissions across TA's assigned courses.
 /// Mirrors instructor's GradingCenterScreen but adapted for TA role.
 class TAGradingCenterScreen extends StatefulWidget {
-  const TAGradingCenterScreen({super.key, this.courseId, this.embedded = false});
+  const TAGradingCenterScreen({
+    super.key,
+    this.courseId,
+    this.embedded = false,
+  });
 
   final int? courseId;
   final bool embedded;
@@ -85,7 +89,8 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen>
     try {
       // Get TA courses from cubit
       final cubit = context.read<TACoursesCubit>();
-      if (cubit.state.coursesStatus is! TASubTabLoaded<List<TeachingCourseModel>>) {
+      if (cubit.state.coursesStatus
+          is! TASubTabLoaded<List<TeachingCourseModel>>) {
         await cubit.fetchTACourses();
       }
 
@@ -363,10 +368,13 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen>
                   ),
                   actions: [
                     IconButton(
-                      onPressed: () =>
-                          context.read<ThemeBloc>().add(const ToggleThemeEvent()),
+                      onPressed: () => context.read<ThemeBloc>().add(
+                        const ToggleThemeEvent(),
+                      ),
                       icon: Icon(
-                        isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                        isDark
+                            ? Icons.light_mode_rounded
+                            : Icons.dark_mode_rounded,
                         color: TAColors.textSecondaryColor(isDark),
                       ),
                     ),
@@ -374,7 +382,9 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen>
                   ],
                 ),
           body: _isLoading
-              ? Center(child: CircularProgressIndicator(color: TAColors.primary))
+              ? Center(
+                  child: CircularProgressIndicator(color: TAColors.primary),
+                )
               : Column(
                   children: [
                     _buildStatsBar(isDark),
@@ -408,10 +418,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen>
           decoration: BoxDecoration(
             color: TAColors.cardColor(isDark),
             border: Border(
-              bottom: BorderSide(
-                color: TAColors.borderColor(isDark),
-                width: 1,
-              ),
+              bottom: BorderSide(color: TAColors.borderColor(isDark), width: 1),
             ),
           ),
           child: Row(
@@ -484,10 +491,7 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen>
         decoration: BoxDecoration(
           color: TAColors.cardColor(isDark),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: TAColors.borderColor(isDark),
-            width: 1,
-          ),
+          border: Border.all(color: TAColors.borderColor(isDark), width: 1),
         ),
         padding: const EdgeInsets.all(4),
         child: TabBar(
@@ -519,14 +523,20 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen>
         style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
         decoration: InputDecoration(
           hintText: 'Search submissions...',
-          prefixIcon: Icon(Icons.search, color: TAColors.textSecondaryColor(isDark)),
+          prefixIcon: Icon(
+            Icons.search,
+            color: TAColors.textSecondaryColor(isDark),
+          ),
           filled: true,
           fillColor: TAColors.cardColor(isDark),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
+          ),
         ),
       ),
     );
@@ -625,18 +635,15 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen>
     final statusColor = isGraded
         ? TAColors.success
         : entry.submission.isLate
-            ? TAColors.error
-            : TAColors.warning;
+        ? TAColors.error
+        : TAColors.warning;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: TAColors.borderColor(isDark),
-          width: 1,
-        ),
+        border: Border.all(color: TAColors.borderColor(isDark), width: 1),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -655,8 +662,8 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen>
                     isGraded
                         ? Icons.check_circle_rounded
                         : entry.submission.isLate
-                            ? Icons.warning_amber_rounded
-                            : Icons.pending_rounded,
+                        ? Icons.warning_amber_rounded
+                        : Icons.pending_rounded,
                     color: statusColor,
                     size: 20,
                   ),

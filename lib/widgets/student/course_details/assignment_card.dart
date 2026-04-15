@@ -213,10 +213,9 @@ class _AssignmentCardState extends State<AssignmentCard>
                   Container(
                     height: 8,
                     decoration: BoxDecoration(
-                      color:
-                          widget.isDark
-                              ? const Color(0xFF3D3D54)
-                              : const Color(0xFFE5E7EB),
+                      color: widget.isDark
+                          ? const Color(0xFF3D3D54)
+                          : const Color(0xFFE5E7EB),
                       borderRadius: BorderRadius.circular(100),
                     ),
                     child: Stack(
@@ -225,10 +224,9 @@ class _AssignmentCardState extends State<AssignmentCard>
                           height: 8,
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color:
-                                widget.isDark
-                                    ? const Color(0xFF3D3D54)
-                                    : const Color(0xFFE5E7EB),
+                            color: widget.isDark
+                                ? const Color(0xFF3D3D54)
+                                : const Color(0xFFE5E7EB),
                             borderRadius: BorderRadius.circular(100),
                           ),
                         ),
@@ -240,10 +238,7 @@ class _AssignmentCardState extends State<AssignmentCard>
                               gradient: const LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xFF2B7FFF),
-                                  Color(0xFF155DFC),
-                                ],
+                                colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
                               ),
                               borderRadius: BorderRadius.circular(100),
                             ),
@@ -317,7 +312,8 @@ class _AssignmentCardState extends State<AssignmentCard>
                         ),
                       ),
                       const SizedBox(width: 8),
-                      if (widget.assignment.status == AssignmentStatus.completed)
+                      if (widget.assignment.status ==
+                          AssignmentStatus.completed)
                         Expanded(
                           child: Container(
                             height: 40,
@@ -366,16 +362,14 @@ class _AssignmentCardState extends State<AssignmentCard>
                               gradient: const LinearGradient(
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
-                                colors: [
-                                  Color(0xFF2B7FFF),
-                                  Color(0xFF155DFC),
-                                ],
+                                colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
                               ),
                               borderRadius: BorderRadius.circular(14),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF155DFC)
-                                      .withOpacity(0.3),
+                                  color: const Color(
+                                    0xFF155DFC,
+                                  ).withOpacity(0.3),
                                   blurRadius: 8,
                                   offset: const Offset(0, 2),
                                 ),

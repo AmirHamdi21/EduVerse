@@ -1,25 +1,10 @@
 import 'dart:typed_data';
 
-enum SummarizationType {
-  keyPoints,
-  brief,
-  detailed,
-  bulletPoints,
-  mindMap,
-}
+enum SummarizationType { keyPoints, brief, detailed, bulletPoints, mindMap }
 
-enum SummaryStatus {
-  idle,
-  uploading,
-  processing,
-  completed,
-  error,
-}
+enum SummaryStatus { idle, uploading, processing, completed, error }
 
-enum InputSource {
-  file,
-  text,
-}
+enum InputSource { file, text }
 
 class UploadedFile {
   final String id;
@@ -144,7 +129,8 @@ class Summary {
       sourceFileName: json['sourceFileName'] as String?,
       source: InputSource.values[json['source'] as int],
       isFavorite: json['isFavorite'] as bool? ?? false,
-      keyPoints: (json['keyPoints'] as List<dynamic>?)
+      keyPoints:
+          (json['keyPoints'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
@@ -237,14 +223,16 @@ class SummarizerState {
     return SummarizerState(
       summaries: summaries ?? this.summaries,
       filteredSummaries: filteredSummaries ?? this.filteredSummaries,
-      uploadedFile:
-          clearUploadedFile ? null : (uploadedFile ?? this.uploadedFile),
+      uploadedFile: clearUploadedFile
+          ? null
+          : (uploadedFile ?? this.uploadedFile),
       textInput: textInput ?? this.textInput,
       selectedType: selectedType ?? this.selectedType,
       status: status ?? this.status,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
-      currentSummary:
-          clearCurrentSummary ? null : (currentSummary ?? this.currentSummary),
+      currentSummary: clearCurrentSummary
+          ? null
+          : (currentSummary ?? this.currentSummary),
       uploadProgress: clearUploadProgress
           ? null
           : (uploadProgress ?? this.uploadProgress),

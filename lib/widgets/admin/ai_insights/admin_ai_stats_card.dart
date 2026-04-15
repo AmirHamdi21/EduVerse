@@ -67,16 +67,16 @@ class AdminAIStatsCard extends StatelessWidget {
                     ),
                     Text(
                       'This month\'s performance',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: Colors.white70, fontSize: 12),
                     ),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
@@ -84,7 +84,11 @@ class AdminAIStatsCard extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.trending_up_rounded, color: Colors.white, size: 16),
+                    const Icon(
+                      Icons.trending_up_rounded,
+                      color: Colors.white,
+                      size: 16,
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       '${(satisfactionRate * 100).toStringAsFixed(0)}%',
@@ -171,10 +175,7 @@ class AdminAIStatsCard extends StatelessWidget {
               ),
               Text(
                 label,
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 11,
-                ),
+                style: const TextStyle(color: Colors.white70, fontSize: 11),
               ),
             ],
           ),

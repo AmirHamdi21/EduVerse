@@ -51,15 +51,15 @@ class AssignmentModel extends Equatable {
       latePenalty: json['latePenalty'] is num
           ? json['latePenalty'] as num
           : json['latePenalty'] != null
-              ? num.tryParse(json['latePenalty'].toString())
-              : null,
+          ? num.tryParse(json['latePenalty'].toString())
+          : null,
       course: json['course'] != null
           ? CourseModel.fromJson(json['course'] as Map<String, dynamic>)
           : null,
-      createdAt: DateTime.tryParse(json['createdAt'].toString()) ??
-          DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updatedAt'].toString()) ??
-          DateTime.now(),
+      createdAt:
+          DateTime.tryParse(json['createdAt'].toString()) ?? DateTime.now(),
+      updatedAt:
+          DateTime.tryParse(json['updatedAt'].toString()) ?? DateTime.now(),
     );
   }
 
@@ -83,18 +83,18 @@ class AssignmentModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        courseId,
-        title,
-        description,
-        dueDate,
-        maxScore,
-        weight,
-        status,
-        submissionType,
-        latePenalty,
-        course,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    courseId,
+    title,
+    description,
+    dueDate,
+    maxScore,
+    weight,
+    status,
+    submissionType,
+    latePenalty,
+    course,
+    createdAt,
+    updatedAt,
+  ];
 }

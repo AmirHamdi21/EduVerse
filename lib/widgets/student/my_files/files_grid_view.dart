@@ -68,7 +68,8 @@ class _FileGridItem extends StatelessWidget {
       builder: (context, state) {
         final isMultiSelect = state.isMultiSelectMode;
         final isSelected = state.selectedFileIds.contains(file.id);
-        final currentFile = state.files.where((f) => f.id == file.id).firstOrNull ?? file;
+        final currentFile =
+            state.files.where((f) => f.id == file.id).firstOrNull ?? file;
 
         return GestureDetector(
           onTap: () {
@@ -369,23 +370,23 @@ class _FileGridItem extends StatelessWidget {
 
   String _truncateFileName(String name, int maxLength) {
     if (name.length <= maxLength) return name;
-    
+
     // Find the extension
     final lastDot = name.lastIndexOf('.');
     if (lastDot == -1 || lastDot == 0) {
       // No extension, just truncate
       return '${name.substring(0, maxLength - 3)}...';
     }
-    
+
     final extension = name.substring(lastDot);
     final baseName = name.substring(0, lastDot);
-    
+
     // Reserve space for extension and "..."
     final availableLength = maxLength - extension.length - 3;
     if (availableLength <= 0) {
       return '${name.substring(0, maxLength - 3)}...';
     }
-    
+
     return '${baseName.substring(0, availableLength)}...$extension';
   }
 }

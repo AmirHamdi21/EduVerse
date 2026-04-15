@@ -82,11 +82,7 @@ class AIChatMessage {
 }
 
 /// Message status
-enum MessageStatus {
-  sending,
-  sent,
-  error,
-}
+enum MessageStatus { sending, sent, error }
 
 /// Quick action model
 class QuickAction {

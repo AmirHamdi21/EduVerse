@@ -41,22 +41,24 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
           content: const Text('Please enter a 6-digit code'),
           backgroundColor: ITColors.error,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
       return;
     }
 
     setState(() => _isVerifying = true);
-    
+
     // Simulate verification
     await Future.delayed(const Duration(seconds: 1));
-    
+
     if (!mounted) return;
-    
+
     Navigator.pop(context);
     widget.onComplete();
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('MFA enabled successfully'),
@@ -88,10 +90,7 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
                     color: ITColors.success.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(
-                    Icons.security_rounded,
-                    color: ITColors.success,
-                  ),
+                  child: Icon(Icons.security_rounded, color: ITColors.success),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -126,7 +125,7 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // Step indicators
             Row(
               children: List.generate(3, (index) {
@@ -141,8 +140,8 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
                             color: isActive
                                 ? ITColors.success
                                 : (widget.isDark
-                                    ? Colors.white.withValues(alpha: 0.1)
-                                    : Colors.grey.withValues(alpha: 0.2)),
+                                      ? Colors.white.withValues(alpha: 0.1)
+                                      : Colors.grey.withValues(alpha: 0.2)),
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -154,14 +153,14 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
               }),
             ),
             const SizedBox(height: 24),
-            
+
             // Step content
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
               child: _buildStepContent(),
             ),
             const SizedBox(height: 24),
-            
+
             // Buttons
             Row(
               children: [
@@ -170,7 +169,9 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
                     child: OutlinedButton(
                       onPressed: () => setState(() => _currentStep--),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: ITColors.textSecondaryColor(widget.isDark),
+                        foregroundColor: ITColors.textSecondaryColor(
+                          widget.isDark,
+                        ),
                         side: BorderSide(
                           color: widget.isDark
                               ? Colors.white.withValues(alpha: 0.2)
@@ -205,7 +206,9 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
                               color: Colors.white,
                             ),
                           )
-                        : Text(_currentStep == 2 ? 'Verify & Enable' : 'Continue'),
+                        : Text(
+                            _currentStep == 2 ? 'Verify & Enable' : 'Continue',
+                          ),
                   ),
                 ),
               ],
@@ -344,7 +347,7 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
           ),
         ),
         const SizedBox(height: 20),
-        
+
         // QR Code placeholder
         Container(
           width: 180,
@@ -366,7 +369,7 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Manual entry
         Container(
           padding: const EdgeInsets.all(12),
@@ -425,7 +428,7 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
           ),
         ),
         const SizedBox(height: 24),
-        
+
         // Code input
         TextField(
           controller: _codeController,
@@ -445,7 +448,9 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
               fontSize: 28,
               fontWeight: FontWeight.bold,
               letterSpacing: 12,
-              color: ITColors.textSecondaryColor(widget.isDark).withValues(alpha: 0.5),
+              color: ITColors.textSecondaryColor(
+                widget.isDark,
+              ).withValues(alpha: 0.5),
             ),
             filled: true,
             fillColor: widget.isDark
@@ -474,32 +479,23 @@ class _ITSetupMfaDialogState extends State<ITSetupMfaDialog> {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Recovery codes info
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: ITColors.warning.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: ITColors.warning.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: ITColors.warning.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
-              Icon(
-                Icons.info_rounded,
-                size: 18,
-                color: ITColors.warning,
-              ),
+              Icon(Icons.info_rounded, size: 18, color: ITColors.warning),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   'Save your recovery codes securely. You\'ll need them if you lose access to your authenticator app.',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: ITColors.warning,
-                  ),
+                  style: TextStyle(fontSize: 11, color: ITColors.warning),
                 ),
               ),
             ],
@@ -518,30 +514,30 @@ class _QRCodePainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final cellSize = size.width / 21;
-    
+
     // Simple QR code pattern (placeholder)
     final pattern = [
-      [1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1],
-      [1,0,0,0,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,0,1],
-      [1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1],
-      [1,0,1,1,1,0,1,0,0,1,0,1,0,0,1,0,1,1,1,0,1],
-      [1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,0,1],
-      [1,0,0,0,0,0,1,0,0,1,0,1,0,0,1,0,0,0,0,0,1],
-      [1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1],
-      [0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0],
-      [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-      [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
-      [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-      [0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0],
-      [1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-      [0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0],
-      [1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-      [1,0,0,0,0,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0],
-      [1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-      [1,0,1,1,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0],
-      [1,0,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
-      [1,0,0,0,0,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1,0],
-      [1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1],
+      [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+      [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
+      [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+      [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+      [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+      [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+      [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+      [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+      [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+      [1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+      [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
+      [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+      [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1],
     ];
 
     for (int i = 0; i < pattern.length; i++) {

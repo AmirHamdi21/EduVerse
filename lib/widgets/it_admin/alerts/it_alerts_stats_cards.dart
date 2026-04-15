@@ -65,9 +65,7 @@ class ITAlertsStatsCards extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Expanded(
-              child: _buildNoiseScoreCard(stats.noiseScore),
-            ),
+            Expanded(child: _buildNoiseScoreCard(stats.noiseScore)),
           ],
         ),
       ],
@@ -109,7 +107,10 @@ class ITAlertsStatsCards extends StatelessWidget {
               const Spacer(),
               if (badge != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: badgeColor?.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
@@ -216,10 +217,18 @@ class ITAlertsStatsCards extends StatelessWidget {
                   color: ITColors.info.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(Icons.auto_graph_rounded, color: ITColors.info, size: 20),
+                child: Icon(
+                  Icons.auto_graph_rounded,
+                  color: ITColors.info,
+                  size: 20,
+                ),
               ),
               const Spacer(),
-              Icon(Icons.tune_rounded, size: 18, color: ITColors.textSecondaryColor(isDark)),
+              Icon(
+                Icons.tune_rounded,
+                size: 18,
+                color: ITColors.textSecondaryColor(isDark),
+              ),
             ],
           ),
           const SizedBox(height: 14),
@@ -238,7 +247,10 @@ class ITAlertsStatsCards extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: scoreColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(6),

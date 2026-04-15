@@ -71,7 +71,10 @@ class AttendanceStatsCard extends StatelessWidget {
   }
 
   Widget _buildHeader(
-      BuildContext context, bool isDark, AttendanceStatistics stats) {
+    BuildContext context,
+    bool isDark,
+    AttendanceStatistics stats,
+  ) {
     final l10n = AppLocalizations.of(context);
 
     return Row(
@@ -107,8 +110,8 @@ class AttendanceStatsCard extends StatelessWidget {
               colors: stats.overallPercentage >= 75
                   ? [const Color(0xFF10B981), const Color(0xFF059669)]
                   : stats.overallPercentage >= 50
-                      ? [const Color(0xFFF59E0B), const Color(0xFFD97706)]
-                      : [const Color(0xFFEF4444), const Color(0xFFDC2626)],
+                  ? [const Color(0xFFF59E0B), const Color(0xFFD97706)]
+                  : [const Color(0xFFEF4444), const Color(0xFFDC2626)],
             ),
             borderRadius: BorderRadius.circular(12),
           ),
@@ -126,7 +129,10 @@ class AttendanceStatsCard extends StatelessWidget {
   }
 
   Widget _buildCircularProgress(
-      BuildContext context, bool isDark, AttendanceStatistics stats) {
+    BuildContext context,
+    bool isDark,
+    AttendanceStatistics stats,
+  ) {
     final l10n = AppLocalizations.of(context);
 
     return Row(
@@ -202,7 +208,10 @@ class AttendanceStatsCard extends StatelessWidget {
   }
 
   Widget _buildStatsBars(
-      BuildContext context, bool isDark, AttendanceStatistics stats) {
+    BuildContext context,
+    bool isDark,
+    AttendanceStatistics stats,
+  ) {
     final l10n = AppLocalizations.of(context);
     final total = stats.totalClasses > 0 ? stats.totalClasses : 1;
 

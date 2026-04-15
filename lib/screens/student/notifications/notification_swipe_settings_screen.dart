@@ -68,13 +68,15 @@ class _NotificationSwipeSettingsScreenState
   Future<void> _updateConfirmation(bool confirm) async {
     HapticFeedback.selectionClick();
     setState(
-        () => _settings = _settings.copyWith(confirmBeforeAction: confirm));
+      () => _settings = _settings.copyWith(confirmBeforeAction: confirm),
+    );
     await _settingsService.setConfirmBeforeAction(confirm);
   }
 
   Future<void> _updateSensitivity(double sensitivity) async {
     setState(
-        () => _settings = _settings.copyWith(swipeSensitivity: sensitivity));
+      () => _settings = _settings.copyWith(swipeSensitivity: sensitivity),
+    );
     await _settingsService.setSwipeSensitivity(sensitivity);
   }
 
@@ -356,8 +358,9 @@ class _NotificationSwipeSettingsScreenState
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
-                          color:
-                              isDark ? Colors.white : const Color(0xFF1E293B),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF1E293B),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -426,11 +429,7 @@ class _NotificationSwipeSettingsScreenState
         ),
         const SizedBox(width: 6),
       ],
-      Icon(
-        icon,
-        size: 16,
-        color: action.color,
-      ),
+      Icon(icon, size: 16, color: action.color),
       if (isLeft) ...[
         const SizedBox(width: 6),
         Text(
@@ -501,15 +500,18 @@ class _NotificationSwipeSettingsScreenState
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 18, vertical: 14),
+                      horizontal: 18,
+                      vertical: 14,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? action.color.withOpacity(0.08)
                           : Colors.transparent,
                       borderRadius: BorderRadius.vertical(
                         top: isFirst ? const Radius.circular(20) : Radius.zero,
-                        bottom:
-                            isLast ? const Radius.circular(20) : Radius.zero,
+                        bottom: isLast
+                            ? const Radius.circular(20)
+                            : Radius.zero,
                       ),
                     ),
                     child: Row(
@@ -523,8 +525,8 @@ class _NotificationSwipeSettingsScreenState
                             color: isSelected
                                 ? action.color.withOpacity(0.15)
                                 : (isDark
-                                    ? Colors.white.withOpacity(0.05)
-                                    : Colors.grey.shade100),
+                                      ? Colors.white.withOpacity(0.05)
+                                      : Colors.grey.shade100),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
@@ -532,8 +534,8 @@ class _NotificationSwipeSettingsScreenState
                             color: isSelected
                                 ? action.color
                                 : (isDark
-                                    ? const Color(0xFF94A3B8)
-                                    : const Color(0xFF64748B)),
+                                      ? const Color(0xFF94A3B8)
+                                      : const Color(0xFF64748B)),
                             size: 20,
                           ),
                         ),
@@ -553,8 +555,8 @@ class _NotificationSwipeSettingsScreenState
                                   color: isSelected
                                       ? action.color
                                       : (isDark
-                                          ? Colors.white
-                                          : const Color(0xFF1E293B)),
+                                            ? Colors.white
+                                            : const Color(0xFF1E293B)),
                                 ),
                               ),
                               const SizedBox(height: 2),
@@ -584,8 +586,8 @@ class _NotificationSwipeSettingsScreenState
                               color: isSelected
                                   ? action.color
                                   : (isDark
-                                      ? Colors.white.withOpacity(0.2)
-                                      : Colors.grey.shade300),
+                                        ? Colors.white.withOpacity(0.2)
+                                        : Colors.grey.shade300),
                               width: 2,
                             ),
                           ),
@@ -650,10 +652,12 @@ class _NotificationSwipeSettingsScreenState
               onChanged: _updateConfirmation,
               activeColor: const Color(0xFF3B82F6),
               activeTrackColor: const Color(0xFF3B82F6).withOpacity(0.3),
-              inactiveThumbColor:
-                  isDark ? Colors.grey.shade600 : Colors.grey.shade400,
-              inactiveTrackColor:
-                  isDark ? Colors.grey.shade800 : Colors.grey.shade300,
+              inactiveThumbColor: isDark
+                  ? Colors.grey.shade600
+                  : Colors.grey.shade400,
+              inactiveTrackColor: isDark
+                  ? Colors.grey.shade800
+                  : Colors.grey.shade300,
             ),
             isFirst: true,
           ),
@@ -661,8 +665,9 @@ class _NotificationSwipeSettingsScreenState
             height: 1,
             indent: 74,
             endIndent: 18,
-            color:
-                isDark ? Colors.white.withOpacity(0.06) : Colors.grey.shade200,
+            color: isDark
+                ? Colors.white.withOpacity(0.06)
+                : Colors.grey.shade200,
           ),
           // Sensitivity slider
           _buildSensitivitySlider(isDark, l10n),
@@ -691,11 +696,7 @@ class _NotificationSwipeSettingsScreenState
               color: iconColor.withOpacity(0.12),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
-              icon,
-              color: iconColor,
-              size: 22,
-            ),
+            child: Icon(icon, color: iconColor, size: 22),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -801,8 +802,9 @@ class _NotificationSwipeSettingsScreenState
                     thumbColor: const Color(0xFF8B5CF6),
                     overlayColor: const Color(0xFF8B5CF6).withOpacity(0.2),
                     trackHeight: 4,
-                    thumbShape:
-                        const RoundSliderThumbShape(enabledThumbRadius: 8),
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 8,
+                    ),
                   ),
                   child: Slider(
                     value: _settings.swipeSensitivity,

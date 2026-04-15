@@ -70,10 +70,16 @@ class ITAlertsEscalationTab extends StatelessWidget {
               GestureDetector(
                 onTap: onCreatePolicy,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [ITColors.teal, ITColors.teal.withValues(alpha: 0.8)],
+                      colors: [
+                        ITColors.teal,
+                        ITColors.teal.withValues(alpha: 0.8),
+                      ],
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
@@ -161,11 +167,16 @@ class ITAlertsEscalationTab extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: policy.isEnabled
                         ? ITColors.success.withValues(alpha: 0.15)
-                        : ITColors.textSecondaryColor(isDark).withValues(alpha: 0.15),
+                        : ITColors.textSecondaryColor(
+                            isDark,
+                          ).withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -182,7 +193,7 @@ class ITAlertsEscalationTab extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Steps info
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -212,9 +223,11 @@ class ITAlertsEscalationTab extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 14),
-            
+
             // Steps visualization
-            ...policy.steps.map((step) => _buildStepItem(step, policy.steps.length)),
+            ...policy.steps.map(
+              (step) => _buildStepItem(step, policy.steps.length),
+            ),
           ],
         ),
       ),
@@ -305,7 +318,10 @@ class ITAlertsEscalationTab extends StatelessWidget {
                 ),
                 if (!isLast)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: ITColors.warning.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(6),

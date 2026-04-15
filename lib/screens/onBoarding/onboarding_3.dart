@@ -25,64 +25,68 @@ class Onboarding3 extends StatefulWidget {
   State<Onboarding3> createState() => _Onboarding3State();
 }
 
-class _Onboarding3State extends State<Onboarding3> with TickerProviderStateMixin {
+class _Onboarding3State extends State<Onboarding3>
+    with TickerProviderStateMixin {
   late AnimationController _headerController;
   late AnimationController _card1Controller;
   late AnimationController _card2Controller;
   late AnimationController _card3Controller;
   late AnimationController _summaryController;
-  
+
   late Animation<double> _headerFadeAnimation;
   late Animation<Offset> _headerSlideAnimation;
-  
+
   final ScrollController _scrollController = ScrollController();
   bool _card1Visible = false;
   bool _card2Visible = false;
   bool _card3Visible = false;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // Header animations
     _headerController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _headerFadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _headerController, curve: Curves.easeOut),
     );
-    
-    _headerSlideAnimation = Tween<Offset>(
-      begin: const Offset(0, -0.5),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _headerController, curve: Curves.easeOutCubic));
-    
+
+    _headerSlideAnimation =
+        Tween<Offset>(begin: const Offset(0, -0.5), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _headerController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
+
     // Card controllers
     _card1Controller = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _card2Controller = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _card3Controller = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _summaryController = AnimationController(
       duration: const Duration(milliseconds: 700),
       vsync: this,
     );
-    
+
     // Start header animation
     _headerController.forward();
-    
+
     // Start first two cards immediately with staggered delay
     Future.delayed(const Duration(milliseconds: 400), () {
       if (mounted) {
@@ -90,41 +94,41 @@ class _Onboarding3State extends State<Onboarding3> with TickerProviderStateMixin
         _card1Controller.forward();
       }
     });
-    
+
     Future.delayed(const Duration(milliseconds: 600), () {
       if (mounted) {
         setState(() => _card2Visible = true);
         _card2Controller.forward();
       }
     });
-    
+
     // Scroll listener for remaining card animations
     _scrollController.addListener(_onScroll);
-    
+
     // Trigger initial check after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _onScroll();
     });
   }
-  
+
   void _onScroll() {
     if (!mounted) return;
-    
+
     final scrollOffset = _scrollController.offset;
     final screenHeight = MediaQuery.of(context).size.height;
-    
+
     // Trigger animations based on scroll position for remaining cards
     if (scrollOffset > screenHeight * 0.2 && !_card3Visible) {
       setState(() => _card3Visible = true);
       _card3Controller.forward();
     }
-    
+
     // Summary card appears after scrolling
     if (scrollOffset > screenHeight * 0.35) {
       _summaryController.forward();
     }
   }
-  
+
   @override
   void dispose() {
     _headerController.dispose();
@@ -207,173 +211,191 @@ class _Onboarding3State extends State<Onboarding3> with TickerProviderStateMixin
                                     controller: _card1Controller,
                                     delay: 0,
                                     child: FeatureCard(
-                                    title: AppLocalizations.of(
-                                      context,
-                                    )!.aiForStudents,
-                                    badgeColor: AppTheme.onBoardingcyanLight,
-                                    borderColor: isDark
-                                        ? AppTheme.onBoardingcyan
-                                        : AppTheme.onBoardingborderCyan,
-                                    gradientColors: isDark
-                                        ? [
-                                            AppTheme.onBoardingCardCyanDark,
-                                            AppTheme.onBoardingCardCyanDark
-                                                .withOpacity(0.6),
-                                          ]
-                                        : [
-                                            AppTheme.onBoardingbackgroundCyan,
-                                            AppTheme.onBoardingbackgroundLight,
-                                          ],
-                                    decorGradient: [
-                                      Color(0xFF00B8DA),
-                                      AppTheme.onBoardingprimary,
-                                    ],
-                                    features: [
-                                      RoleFeature(
-                                        emoji: '🧠',
-                                        text: AppLocalizations.of(
-                                          context,
-                                        )!.studentSummaries,
-                                      ),
-                                      RoleFeature(
-                                        emoji: '📊',
-                                        text: AppLocalizations.of(
-                                          context,
-                                        )!.studentAnalytics,
-                                      ),
-                                      RoleFeature(
-                                        emoji: '🎯',
-                                        text: AppLocalizations.of(
-                                          context,
-                                        )!.studentPlans,
-                                      ),
-                                    ],
-                                    tagline: AppLocalizations.of(
-                                      context,
-                                    )!.studentAssistant,
-                                    taglineColor: AppTheme.onBoardingcyanLight,
-                                  ),
+                                      title: AppLocalizations.of(
+                                        context,
+                                      )!.aiForStudents,
+                                      badgeColor: AppTheme.onBoardingcyanLight,
+                                      borderColor: isDark
+                                          ? AppTheme.onBoardingcyan
+                                          : AppTheme.onBoardingborderCyan,
+                                      gradientColors: isDark
+                                          ? [
+                                              AppTheme.onBoardingCardCyanDark,
+                                              AppTheme.onBoardingCardCyanDark
+                                                  .withOpacity(0.6),
+                                            ]
+                                          : [
+                                              AppTheme.onBoardingbackgroundCyan,
+                                              AppTheme
+                                                  .onBoardingbackgroundLight,
+                                            ],
+                                      decorGradient: [
+                                        Color(0xFF00B8DA),
+                                        AppTheme.onBoardingprimary,
+                                      ],
+                                      features: [
+                                        RoleFeature(
+                                          emoji: '🧠',
+                                          text: AppLocalizations.of(
+                                            context,
+                                          )!.studentSummaries,
+                                        ),
+                                        RoleFeature(
+                                          emoji: '📊',
+                                          text: AppLocalizations.of(
+                                            context,
+                                          )!.studentAnalytics,
+                                        ),
+                                        RoleFeature(
+                                          emoji: '🎯',
+                                          text: AppLocalizations.of(
+                                            context,
+                                          )!.studentPlans,
+                                        ),
+                                      ],
+                                      tagline: AppLocalizations.of(
+                                        context,
+                                      )!.studentAssistant,
+                                      taglineColor:
+                                          AppTheme.onBoardingcyanLight,
+                                    ),
                                   ),
                                   const SizedBox(height: 20),
                                   _buildAnimatedCard(
                                     controller: _card2Controller,
                                     delay: 150,
                                     child: FeatureCard(
-                                    title: AppLocalizations.of(
-                                      context,
-                                    )!.aiForInstructors,
-                                    badgeColor: AppTheme.onBoardingprimary,
-                                    borderColor: isDark
-                                        ? AppTheme.onBoardingprimary
-                                        : AppTheme.onBoardingborderBlue,
-                                    gradientColors: isDark
-                                        ? [
-                                            AppTheme.onBoardingCardBlueDark,
-                                            AppTheme.onBoardingCardBlueDark
-                                                .withOpacity(0.6),
-                                          ]
-                                        : const [
-                                            AppTheme.onBoardingbackgroundLight,
-                                            Color(0xFFEEF2FF),
-                                          ],
-                                    decorGradient: [
-                                      AppTheme.onBoardingprimaryLight,
-                                      AppTheme.onBoardingpurple,
-                                    ],
-                                    features: [
-                                      RoleFeature(
-                                        emoji: '📄',
-                                        text: AppLocalizations.of(
-                                          context,
-                                        )!.instructorAssignment,
-                                      ),
-                                      RoleFeature(
-                                        emoji: '💬',
-                                        text: AppLocalizations.of(
-                                          context,
-                                        )!.instructorInsights,
-                                      ),
-                                      RoleFeature(
-                                        emoji: '📘',
-                                        text: AppLocalizations.of(
-                                          context,
-                                        )!.instructorRecommendations,
-                                      ),
-                                    ],
-                                    tagline: AppLocalizations.of(
-                                      context,
-                                    )!.instructorGrading,
-                                    taglineColor: AppTheme.onBoardingprimary,
-                                  ),
+                                      title: AppLocalizations.of(
+                                        context,
+                                      )!.aiForInstructors,
+                                      badgeColor: AppTheme.onBoardingprimary,
+                                      borderColor: isDark
+                                          ? AppTheme.onBoardingprimary
+                                          : AppTheme.onBoardingborderBlue,
+                                      gradientColors: isDark
+                                          ? [
+                                              AppTheme.onBoardingCardBlueDark,
+                                              AppTheme.onBoardingCardBlueDark
+                                                  .withOpacity(0.6),
+                                            ]
+                                          : const [
+                                              AppTheme
+                                                  .onBoardingbackgroundLight,
+                                              Color(0xFFEEF2FF),
+                                            ],
+                                      decorGradient: [
+                                        AppTheme.onBoardingprimaryLight,
+                                        AppTheme.onBoardingpurple,
+                                      ],
+                                      features: [
+                                        RoleFeature(
+                                          emoji: '📄',
+                                          text: AppLocalizations.of(
+                                            context,
+                                          )!.instructorAssignment,
+                                        ),
+                                        RoleFeature(
+                                          emoji: '💬',
+                                          text: AppLocalizations.of(
+                                            context,
+                                          )!.instructorInsights,
+                                        ),
+                                        RoleFeature(
+                                          emoji: '📘',
+                                          text: AppLocalizations.of(
+                                            context,
+                                          )!.instructorRecommendations,
+                                        ),
+                                      ],
+                                      tagline: AppLocalizations.of(
+                                        context,
+                                      )!.instructorGrading,
+                                      taglineColor: AppTheme.onBoardingprimary,
+                                    ),
                                   ),
                                   const SizedBox(height: 20),
                                   _buildAnimatedCard(
                                     controller: _card3Controller,
                                     delay: 300,
                                     child: FeatureCard(
-                                    title: AppLocalizations.of(
-                                      context,
-                                    )!.aiForAdmins,
-                                    badgeColor: AppTheme.onBoardingpurple,
-                                    borderColor: isDark
-                                        ? AppTheme.onBoardingpurple
-                                        : AppTheme.onBoardingborderPurple,
-                                    gradientColors: isDark
-                                        ? [
-                                            AppTheme.onBoardingCardPurpleDark,
-                                            AppTheme.onBoardingCardPurpleDark
-                                                .withOpacity(0.6),
-                                          ]
-                                        : const [
-                                            AppTheme.onBoardingbackgroundLight,
-                                            Color(0xFFF3EFFF),
-                                          ],
-                                    decorGradient: [
-                                      AppTheme.onBoardingprimaryLight,
-                                      AppTheme.onBoardingpurple,
-                                    ],
-                                    features: [
-                                      RoleFeature(
-                                        emoji: '📊',
-                                        text: AppLocalizations.of(
-                                          context,
-                                        )!.adminAnalytics,
-                                      ),
-                                      RoleFeature(
-                                        emoji: '🔔',
-                                        text: AppLocalizations.of(
-                                          context,
-                                        )!.adminAttendance,
-                                      ),
-                                      RoleFeature(
-                                        emoji: '🔒',
-                                        text: AppLocalizations.of(
-                                          context,
-                                        )!.adminMonitoring,
-                                      ),
-                                    ],
-                                    tagline: AppLocalizations.of(
-                                      context,
-                                    )!.adminManagement,
-                                    taglineColor: AppTheme.onBoardingpurple,
-                                  ),
+                                      title: AppLocalizations.of(
+                                        context,
+                                      )!.aiForAdmins,
+                                      badgeColor: AppTheme.onBoardingpurple,
+                                      borderColor: isDark
+                                          ? AppTheme.onBoardingpurple
+                                          : AppTheme.onBoardingborderPurple,
+                                      gradientColors: isDark
+                                          ? [
+                                              AppTheme.onBoardingCardPurpleDark,
+                                              AppTheme.onBoardingCardPurpleDark
+                                                  .withOpacity(0.6),
+                                            ]
+                                          : const [
+                                              AppTheme
+                                                  .onBoardingbackgroundLight,
+                                              Color(0xFFF3EFFF),
+                                            ],
+                                      decorGradient: [
+                                        AppTheme.onBoardingprimaryLight,
+                                        AppTheme.onBoardingpurple,
+                                      ],
+                                      features: [
+                                        RoleFeature(
+                                          emoji: '📊',
+                                          text: AppLocalizations.of(
+                                            context,
+                                          )!.adminAnalytics,
+                                        ),
+                                        RoleFeature(
+                                          emoji: '🔔',
+                                          text: AppLocalizations.of(
+                                            context,
+                                          )!.adminAttendance,
+                                        ),
+                                        RoleFeature(
+                                          emoji: '🔒',
+                                          text: AppLocalizations.of(
+                                            context,
+                                          )!.adminMonitoring,
+                                        ),
+                                      ],
+                                      tagline: AppLocalizations.of(
+                                        context,
+                                      )!.adminManagement,
+                                      taglineColor: AppTheme.onBoardingpurple,
+                                    ),
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 24),
                               FadeTransition(
-                                opacity: Tween<double>(begin: 0.0, end: 1.0).animate(
-                                  CurvedAnimation(parent: _summaryController, curve: Curves.easeOut),
-                                ),
-                                child: SlideTransition(
-                                  position: Tween<Offset>(
-                                    begin: const Offset(0, 0.2),
-                                    end: Offset.zero,
-                                  ).animate(CurvedAnimation(parent: _summaryController, curve: Curves.easeOutCubic)),
-                                  child: ScaleTransition(
-                                    scale: Tween<double>(begin: 0.9, end: 1.0).animate(
-                                      CurvedAnimation(parent: _summaryController, curve: Curves.easeOutBack),
+                                opacity: Tween<double>(begin: 0.0, end: 1.0)
+                                    .animate(
+                                      CurvedAnimation(
+                                        parent: _summaryController,
+                                        curve: Curves.easeOut,
+                                      ),
                                     ),
+                                child: SlideTransition(
+                                  position:
+                                      Tween<Offset>(
+                                        begin: const Offset(0, 0.2),
+                                        end: Offset.zero,
+                                      ).animate(
+                                        CurvedAnimation(
+                                          parent: _summaryController,
+                                          curve: Curves.easeOutCubic,
+                                        ),
+                                      ),
+                                  child: ScaleTransition(
+                                    scale: Tween<double>(begin: 0.9, end: 1.0)
+                                        .animate(
+                                          CurvedAnimation(
+                                            parent: _summaryController,
+                                            curve: Curves.easeOutBack,
+                                          ),
+                                        ),
                                     child: SummaryCard(),
                                   ),
                                 ),
@@ -441,27 +463,26 @@ class _Onboarding3State extends State<Onboarding3> with TickerProviderStateMixin
     required int delay,
     required Widget child,
   }) {
-    final fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: controller, curve: Curves.easeOut),
-    );
-    
+    final fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeOut));
+
     final slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: controller, curve: Curves.easeOutCubic));
-    
-    final scaleAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
-      CurvedAnimation(parent: controller, curve: Curves.easeOutBack),
-    );
-    
+
+    final scaleAnimation = Tween<double>(
+      begin: 0.85,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: controller, curve: Curves.easeOutBack));
+
     return FadeTransition(
       opacity: fadeAnimation,
       child: SlideTransition(
         position: slideAnimation,
-        child: ScaleTransition(
-          scale: scaleAnimation,
-          child: child,
-        ),
+        child: ScaleTransition(scale: scaleAnimation, child: child),
       ),
     );
   }
@@ -508,7 +529,11 @@ class _Onboarding3State extends State<Onboarding3> with TickerProviderStateMixin
         RichText(
           textAlign: TextAlign.center,
           text: TextSpan(
-            style: TextStyle(fontSize: responsive.fontSize24, color: textColor, height: 1.25),
+            style: TextStyle(
+              fontSize: responsive.fontSize24,
+              color: textColor,
+              height: 1.25,
+            ),
             children: [
               TextSpan(
                 text: AppLocalizations.of(context)!.poweredByIntelligence,

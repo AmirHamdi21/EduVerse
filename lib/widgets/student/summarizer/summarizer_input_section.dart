@@ -7,10 +7,7 @@ import '../../../generated_l10n/app_localizations.dart';
 class SummarizerInputSection extends StatefulWidget {
   final bool isDark;
 
-  const SummarizerInputSection({
-    super.key,
-    required this.isDark,
-  });
+  const SummarizerInputSection({super.key, required this.isDark});
 
   @override
   State<SummarizerInputSection> createState() => _SummarizerInputSectionState();
@@ -80,7 +77,9 @@ class _SummarizerInputSectionState extends State<SummarizerInputSection>
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: widget.isDark ? const Color(0xFF1E2939) : const Color(0xFFF3F4F6),
+        color: widget.isDark
+            ? const Color(0xFF1E2939)
+            : const Color(0xFFF3F4F6),
         borderRadius: BorderRadius.circular(14),
       ),
       padding: const EdgeInsets.all(4),
@@ -102,12 +101,10 @@ class _SummarizerInputSectionState extends State<SummarizerInputSection>
         dividerColor: Colors.transparent,
         indicatorSize: TabBarIndicatorSize.tab,
         labelColor: Colors.white,
-        unselectedLabelColor:
-            widget.isDark ? const Color(0xFF99A1AF) : const Color(0xFF4A5565),
-        labelStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
+        unselectedLabelColor: widget.isDark
+            ? const Color(0xFF99A1AF)
+            : const Color(0xFF4A5565),
+        labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         unselectedLabelStyle: const TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w500,
@@ -157,7 +154,9 @@ class _SummarizerInputSectionState extends State<SummarizerInputSection>
         color: widget.isDark ? const Color(0xFF101828) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: widget.isDark ? const Color(0xFF364153) : const Color(0xFFD1D5DC),
+          color: widget.isDark
+              ? const Color(0xFF364153)
+              : const Color(0xFFD1D5DC),
           width: 1.5,
         ),
       ),
@@ -344,7 +343,8 @@ class _SummarizerInputSectionState extends State<SummarizerInputSection>
           ),
           // Remove button
           IconButton(
-            onPressed: () => context.read<SummarizerCubit>().clearUploadedFile(),
+            onPressed: () =>
+                context.read<SummarizerCubit>().clearUploadedFile(),
             icon: Icon(
               Icons.close_rounded,
               color: widget.isDark
@@ -368,7 +368,9 @@ class _SummarizerInputSectionState extends State<SummarizerInputSection>
         color: widget.isDark ? const Color(0xFF101828) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: widget.isDark ? const Color(0xFF1E2939) : const Color(0xFFE5E7EB),
+          color: widget.isDark
+              ? const Color(0xFF1E2939)
+              : const Color(0xFFE5E7EB),
           width: 1.5,
         ),
       ),

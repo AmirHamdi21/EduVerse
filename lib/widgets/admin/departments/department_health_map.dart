@@ -24,9 +24,7 @@ class DepartmentHealthMap extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -64,13 +62,9 @@ class DepartmentHealthMap extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark
-              ? AdminColors.darkSurface
-              : AdminColors.lightBackground,
+          color: isDark ? AdminColors.darkSurface : AdminColors.lightBackground,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: AdminColors.getDividerColor(isDark),
-          ),
+          border: Border.all(color: AdminColors.getDividerColor(isDark)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,11 +78,7 @@ class DepartmentHealthMap extends StatelessWidget {
                     color: dept.iconColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    dept.icon,
-                    color: dept.iconColor,
-                    size: 20,
-                  ),
+                  child: Icon(dept.icon, color: dept.iconColor, size: 20),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -114,7 +104,10 @@ class DepartmentHealthMap extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: healthColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),

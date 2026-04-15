@@ -38,9 +38,7 @@ class UserActivityChart extends StatelessWidget {
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AdminColors.getCardBorderColor(isDark),
-        ),
+        border: Border.all(color: AdminColors.getCardBorderColor(isDark)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -78,10 +76,7 @@ class UserActivityChart extends StatelessWidget {
                   onPressed: onViewMore,
                   child: Text(
                     l10n.viewMore,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AdminColors.primary,
-                    ),
+                    style: TextStyle(fontSize: 13, color: AdminColors.primary),
                   ),
                 ),
             ],
@@ -96,7 +91,7 @@ class UserActivityChart extends StatelessWidget {
                 final item = entry.value;
                 final barHeight = (item.value / maxValue) * 160;
                 final color = item.color ?? _getBarColor(index);
-                
+
                 return Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -123,10 +118,7 @@ class UserActivityChart extends StatelessWidget {
                             gradient: LinearGradient(
                               begin: Alignment.bottomCenter,
                               end: Alignment.topCenter,
-                              colors: [
-                                color,
-                                color.withValues(alpha: 0.7),
-                              ],
+                              colors: [color, color.withValues(alpha: 0.7)],
                             ),
                             borderRadius: const BorderRadius.vertical(
                               top: Radius.circular(6),

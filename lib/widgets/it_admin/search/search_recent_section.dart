@@ -37,10 +37,7 @@ class ITSearchRecentSection extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            TextButton(
-              onPressed: onClearAll,
-              child: Text(clearAllLabel),
-            ),
+            TextButton(onPressed: onClearAll, child: Text(clearAllLabel)),
           ],
         ),
         const SizedBox(height: 12),
@@ -57,9 +54,7 @@ class ITSearchRecentSection extends StatelessWidget {
               label: Text(search),
               onPressed: () => onSearchTap(search),
               backgroundColor: ITColors.cardColor(isDark),
-              labelStyle: TextStyle(
-                color: ITColors.textPrimaryColor(isDark),
-              ),
+              labelStyle: TextStyle(color: ITColors.textPrimaryColor(isDark)),
               side: BorderSide(color: ITColors.borderColor(isDark)),
             );
           }).toList(),

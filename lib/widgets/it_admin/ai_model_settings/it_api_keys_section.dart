@@ -70,11 +70,7 @@ class _ITAPIKeysSectionState extends State<ITAPIKeysSection> {
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
-                  Icons.key_rounded,
-                  color: ITColors.teal,
-                  size: 22,
-                ),
+                child: Icon(Icons.key_rounded, color: ITColors.teal, size: 22),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -103,11 +99,11 @@ class _ITAPIKeysSectionState extends State<ITAPIKeysSection> {
             ],
           ),
           const SizedBox(height: 20),
-          
+
           // Tab selector
           _buildTabSelector(),
           const SizedBox(height: 16),
-          
+
           if (_selectedTab == 0) ...[
             // Main Key section
             _buildKeyDisplay(),
@@ -222,7 +218,9 @@ class _ITAPIKeysSectionState extends State<ITAPIKeysSection> {
           const SizedBox(width: 8),
           IconButton(
             icon: Icon(
-              _isKeyVisible ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+              _isKeyVisible
+                  ? Icons.visibility_off_rounded
+                  : Icons.visibility_rounded,
               size: 20,
               color: ITColors.textSecondaryColor(widget.isDark),
             ),
@@ -230,11 +228,7 @@ class _ITAPIKeysSectionState extends State<ITAPIKeysSection> {
             tooltip: _isKeyVisible ? 'Hide key' : 'Show key',
           ),
           IconButton(
-            icon: Icon(
-              Icons.copy_rounded,
-              size: 20,
-              color: ITColors.primary,
-            ),
+            icon: Icon(Icons.copy_rounded, size: 20, color: ITColors.primary),
             onPressed: () {
               if (widget.apiKey != null) {
                 Clipboard.setData(ClipboardData(text: widget.apiKey!));
@@ -267,11 +261,7 @@ class _ITAPIKeysSectionState extends State<ITAPIKeysSection> {
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.schedule_rounded,
-            size: 20,
-            color: ITColors.primary,
-          ),
+          Icon(Icons.schedule_rounded, size: 20, color: ITColors.primary),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -314,9 +304,7 @@ class _ITAPIKeysSectionState extends State<ITAPIKeysSection> {
           decoration: BoxDecoration(
             color: ITColors.warning.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: ITColors.warning.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: ITColors.warning.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [

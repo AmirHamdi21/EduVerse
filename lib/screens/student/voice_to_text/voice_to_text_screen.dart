@@ -17,7 +17,8 @@ class VoiceToTextScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => VoiceToTextBloc()..add(const InitializeVoiceToText()),
+      create: (context) =>
+          VoiceToTextBloc()..add(const InitializeVoiceToText()),
       child: const _VoiceToTextScreenContent(),
     );
   }
@@ -63,7 +64,10 @@ class _VoiceToTextScreenContent extends StatelessWidget {
                 SnackBar(
                   content: Row(
                     children: [
-                      const Icon(Icons.check_circle_outline, color: Colors.white),
+                      const Icon(
+                        Icons.check_circle_outline,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(child: Text(state.successMessage!)),
                     ],
@@ -204,10 +208,7 @@ class _VoiceToTextScreenContent extends StatelessWidget {
         // Apply blur to the circles
         Positioned.fill(
           child: BackdropFilter(
-            filter: ColorFilter.mode(
-              Colors.transparent,
-              BlendMode.srcOver,
-            ),
+            filter: ColorFilter.mode(Colors.transparent, BlendMode.srcOver),
             child: Container(color: Colors.transparent),
           ),
         ),
@@ -215,7 +216,11 @@ class _VoiceToTextScreenContent extends StatelessWidget {
     );
   }
 
-  Widget _buildAppBar(BuildContext context, bool isDark, AppLocalizations l10n) {
+  Widget _buildAppBar(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
       decoration: BoxDecoration(
@@ -362,7 +367,10 @@ class _VoiceToTextScreenContent extends StatelessWidget {
               title: l10n.voiceToTextLanguage,
               subtitle: l10n.voiceToTextLanguageDesc,
               trailing: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: const Color(0xFF155DFC).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -424,16 +432,10 @@ class _VoiceToTextScreenContent extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: isDark
-                ? const Color(0xFF1E2939)
-                : const Color(0xFFF1F5F9),
+            color: isDark ? const Color(0xFF1E2939) : const Color(0xFFF1F5F9),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            icon,
-            color: const Color(0xFF155DFC),
-            size: 24,
-          ),
+          child: Icon(icon, color: const Color(0xFF155DFC), size: 24),
         ),
         const SizedBox(width: 16),
         Expanded(
