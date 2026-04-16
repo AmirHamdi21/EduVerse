@@ -625,9 +625,14 @@ class _AdminCourseManagementScreenState
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: crossAxisCount,
-                  childAspectRatio: maxWidth >= 700 ? 0.95 : 0.88,
+                  childAspectRatio: maxWidth >= 1100
+                      ? 0.76
+                      : maxWidth >= 700
+                      ? 0.72
+                      : 0.66,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
+                  mainAxisExtent: 550,
                 ),
                 itemBuilder: (context, index) {
                   final course = courses[index];
@@ -878,6 +883,19 @@ class _AdminCourseManagementScreenState
     bool isDark,
     AppLocalizations l10n,
   ) {
+    final statusColor = _statusColor(course.status);
+    final hasSection = course.sectionId != null;
+    final scheduleText = hasSection
+        ? '${course.scheduleDay} ${course.startTime}-${course.endTime}'
+        : 'Not configured';
+    final taSummary = course.taNames.isEmpty
+        ? 'None'
+        : course.taNames.join(', ');
+    final prerequisitesSummary = course.prerequisites.isEmpty
+        ? 'None'
+        : course.prerequisites.join(', ');
+    final timeline = _courseTimeline(course);
+
     return Container(
       decoration: BoxDecoration(
         color: AdminColors.getCardColor(isDark),
@@ -933,23 +951,36 @@ class _AdminCourseManagementScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AdminColors.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      course.code,
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        color: AdminColors.primary,
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      _metaChip(
+                        label: course.code,
+                        textColor: AdminColors.primary,
+                        background: AdminColors.primary.withValues(alpha: 0.12),
                       ),
-                    ),
+                      _metaChip(
+                        label: course.status,
+                        textColor: statusColor,
+                        background: statusColor.withValues(alpha: 0.14),
+                      ),
+                      _metaChip(
+                        label: course.level,
+                        textColor: const Color(0xFF0F766E),
+                        background: const Color(
+                          0xFF14B8A6,
+                        ).withValues(alpha: 0.15),
+                      ),
+                      if (hasSection)
+                        _metaChip(
+                          label: 'Section ${course.sectionNumber}',
+                          textColor: const Color(0xFF7C2D12),
+                          background: const Color(
+                            0xFFF97316,
+                          ).withValues(alpha: 0.14),
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -962,6 +993,17 @@ class _AdminCourseManagementScreenState
                       fontSize: 14,
                     ),
                   ),
+                  const SizedBox(height: 6),
+                  Text(
+                    course.description,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: AdminColors.getTextSecondaryColor(isDark),
+                      fontSize: 11.5,
+                      height: 1.25,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   _miniStat(
                     isDark,
@@ -971,15 +1013,62 @@ class _AdminCourseManagementScreenState
                   const SizedBox(height: 4),
                   _miniStat(
                     isDark,
-                    icon: Icons.person_rounded,
-                    text: course.instructorName,
+                    icon: Icons.apartment_rounded,
+                    text: '${course.department} • ${course.semester}',
                   ),
                   const SizedBox(height: 4),
                   _miniStat(
                     isDark,
-                    icon: Icons.apartment_rounded,
-                    text: course.department,
+                    icon: Icons.school_rounded,
+                    text: '${course.credits} credit hours',
                   ),
+                  const SizedBox(height: 4),
+                  _miniStat(
+                    isDark,
+                    icon: Icons.person_rounded,
+                    text: 'Instructor: ${course.instructorName}',
+                  ),
+                  const SizedBox(height: 4),
+                  _miniStat(
+                    isDark,
+                    icon: Icons.groups_2_rounded,
+                    text: 'TAs: $taSummary',
+                  ),
+                  const SizedBox(height: 4),
+                  _miniStat(
+                    isDark,
+                    icon: Icons.schedule_rounded,
+                    text: scheduleText,
+                  ),
+                  const SizedBox(height: 4),
+                  _miniStat(
+                    isDark,
+                    icon: Icons.location_on_outlined,
+                    text:
+                        'Location: ${hasSection ? course.location : 'Not set'}',
+                  ),
+                  const SizedBox(height: 4),
+                  _miniStat(
+                    isDark,
+                    icon: Icons.rule_rounded,
+                    text: 'Prerequisites: $prerequisitesSummary',
+                  ),
+                  const SizedBox(height: 4),
+                  _miniStat(
+                    isDark,
+                    icon: Icons.link_rounded,
+                    text: course.syllabusUrl == null
+                        ? 'Syllabus: Not provided'
+                        : 'Syllabus: Available',
+                  ),
+                  if (timeline.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    _miniStat(
+                      isDark,
+                      icon: Icons.history_rounded,
+                      text: timeline,
+                    ),
+                  ],
                   const Spacer(),
                   Text(
                     'Enrollment ${course.enrollmentPercent.toStringAsFixed(0)}%',
@@ -1090,6 +1179,7 @@ class _AdminCourseManagementScreenState
                   key: ValueKey(
                     'department-$safeDepartment-${departments.length}',
                   ),
+                  isExpanded: true,
                   initialValue: safeDepartment,
                   decoration: InputDecoration(
                     labelText: l10n.department,
@@ -1124,6 +1214,7 @@ class _AdminCourseManagementScreenState
                 child: DropdownButtonFormField<String>(
                   key: ValueKey('status-$safeStatus'),
                   initialValue: safeStatus,
+                  isExpanded: true,
                   decoration: InputDecoration(
                     labelText: l10n.status,
                     border: OutlineInputBorder(
@@ -1228,7 +1319,6 @@ class _AdminCourseManagementScreenState
       initialValue: course?.instructorId,
       available: _instructors,
     );
-
     var selectedTaIds = (course?.taIds ?? const <int>[])
         .where((id) => _tas.any((item) => item.id == id))
         .toList();
@@ -1963,6 +2053,28 @@ class _AdminCourseManagementScreenState
     );
   }
 
+  Widget _metaChip({
+    required String label,
+    required Color textColor,
+    required Color background,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w800,
+          color: textColor,
+        ),
+      ),
+    );
+  }
+
   Widget _stepChip(bool active, String label) {
     return Expanded(
       child: Container(
@@ -2109,7 +2221,7 @@ class _AdminCourseManagementScreenState
         Expanded(
           child: Text(
             text,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: AdminColors.getTextSecondaryColor(isDark),
@@ -2226,6 +2338,34 @@ class _AdminCourseManagementScreenState
   }
 
   String _twoDigits(int value) => value.toString().padLeft(2, '0');
+
+  Color _statusColor(String status) {
+    switch (status.toUpperCase()) {
+      case 'ACTIVE':
+        return AdminColors.success;
+      case 'INACTIVE':
+        return AdminColors.warning;
+      case 'ARCHIVED':
+        return AdminColors.error;
+      default:
+        return AdminColors.primary;
+    }
+  }
+
+  String _formatDate(DateTime value) {
+    return '${value.year}-${_twoDigits(value.month)}-${_twoDigits(value.day)}';
+  }
+
+  String _courseTimeline(AdminManagedCourse course) {
+    final parts = <String>[];
+    if (course.createdAt != null) {
+      parts.add('Created ${_formatDate(course.createdAt!)}');
+    }
+    if (course.updatedAt != null) {
+      parts.add('Updated ${_formatDate(course.updatedAt!)}');
+    }
+    return parts.join(' • ');
+  }
 
   void _showSnackBar(String message, {bool isError = false}) {
     if (!mounted) {

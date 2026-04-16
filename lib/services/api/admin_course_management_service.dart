@@ -447,6 +447,11 @@ class AdminCourseManagementService {
 
     final baseCode = _asString(raw['code'] ?? raw['courseCode']);
     final baseName = _asString(raw['name'] ?? raw['courseName']);
+    final baseDescription = _asString(
+      raw['description'],
+      fallback: 'No description provided.',
+    );
+    final baseSyllabusUrl = _nullableString(raw['syllabusUrl']);
     final baseCredits = _asInt(raw['credits'], fallback: 3);
     final baseStatus = _normalizeStatus(
       _asString(raw['status'], fallback: 'ACTIVE'),
@@ -454,6 +459,8 @@ class AdminCourseManagementService {
     final baseLevel = _normalizeLevel(
       _asString(raw['level'], fallback: 'FRESHMAN'),
     );
+    final baseCreatedAt = _parseDateTime(raw['createdAt']);
+    final baseUpdatedAt = _parseDateTime(raw['updatedAt']);
 
     final basePrerequisites = _extractPrerequisites(raw['prerequisites']);
 
@@ -596,6 +603,8 @@ class AdminCourseManagementService {
       departmentId: baseDepartmentId,
       code: baseCode,
       name: baseName,
+      description: baseDescription,
+      syllabusUrl: baseSyllabusUrl,
       department: baseDepartmentName,
       semester: semesterName,
       credits: baseCredits,
@@ -615,6 +624,8 @@ class AdminCourseManagementService {
       scheduleDay: scheduleDay,
       startTime: startTime,
       endTime: endTime,
+      createdAt: baseCreatedAt,
+      updatedAt: baseUpdatedAt,
     );
   }
 
@@ -754,6 +765,27 @@ class AdminCourseManagementService {
     }
     final text = value.toString().trim();
     return text.isEmpty ? fallback : text;
+  }
+
+  String? _nullableString(dynamic value) {
+    final text = _asString(value);
+    if (text.isEmpty) {
+      return null;
+    }
+    return text;
+  }
+
+  DateTime? _parseDateTime(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    if (value is DateTime) {
+      return value;
+    }
+    if (value is String) {
+      return DateTime.tryParse(value);
+    }
+    return null;
   }
 
   List<int> _extractIntList(dynamic value) {

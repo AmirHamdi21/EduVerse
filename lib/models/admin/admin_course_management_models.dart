@@ -3,6 +3,8 @@ class AdminManagedCourse {
   final int departmentId;
   final String code;
   final String name;
+  final String description;
+  final String? syllabusUrl;
   final String department;
   final String semester;
   final int credits;
@@ -22,12 +24,16 @@ class AdminManagedCourse {
   final String scheduleDay;
   final String startTime;
   final String endTime;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   const AdminManagedCourse({
     required this.id,
     required this.departmentId,
     required this.code,
     required this.name,
+    required this.description,
+    required this.syllabusUrl,
     required this.department,
     required this.semester,
     required this.credits,
@@ -47,6 +53,8 @@ class AdminManagedCourse {
     required this.scheduleDay,
     required this.startTime,
     required this.endTime,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   AdminManagedCourse copyWith({
@@ -54,6 +62,9 @@ class AdminManagedCourse {
     int? departmentId,
     String? code,
     String? name,
+    String? description,
+    String? syllabusUrl,
+    bool clearSyllabusUrl = false,
     String? department,
     String? semester,
     int? credits,
@@ -74,12 +85,16 @@ class AdminManagedCourse {
     String? scheduleDay,
     String? startTime,
     String? endTime,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return AdminManagedCourse(
       id: id ?? this.id,
       departmentId: departmentId ?? this.departmentId,
       code: code ?? this.code,
       name: name ?? this.name,
+      description: description ?? this.description,
+      syllabusUrl: clearSyllabusUrl ? null : (syllabusUrl ?? this.syllabusUrl),
       department: department ?? this.department,
       semester: semester ?? this.semester,
       credits: credits ?? this.credits,
@@ -99,6 +114,8 @@ class AdminManagedCourse {
       scheduleDay: scheduleDay ?? this.scheduleDay,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
