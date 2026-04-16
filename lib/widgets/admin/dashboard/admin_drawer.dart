@@ -95,7 +95,7 @@ class _AdminDrawerState extends State<AdminDrawer>
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: AdminColors.primary.withOpacity(0.3),
+                        color: AdminColors.primary.withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -148,7 +148,7 @@ class _AdminDrawerState extends State<AdminDrawer>
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: AdminColors.primary.withOpacity(0.1),
+                    color: AdminColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -175,8 +175,8 @@ class _AdminDrawerState extends State<AdminDrawer>
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? Colors.white.withOpacity(0.05)
-                      : Colors.black.withOpacity(0.03),
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -197,8 +197,8 @@ class _AdminDrawerState extends State<AdminDrawer>
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? Colors.white.withOpacity(0.05)
-                      : Colors.black.withOpacity(0.03),
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -229,8 +229,8 @@ class _AdminDrawerState extends State<AdminDrawer>
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.black.withOpacity(0.03),
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.03),
         ),
       ),
       child: Row(
@@ -281,8 +281,8 @@ class _AdminDrawerState extends State<AdminDrawer>
       width: 1,
       height: 36,
       color: isDark
-          ? Colors.white.withOpacity(0.1)
-          : Colors.black.withOpacity(0.06),
+          ? Colors.white.withValues(alpha: 0.1)
+          : Colors.black.withValues(alpha: 0.06),
     );
   }
 
@@ -314,6 +314,34 @@ class _AdminDrawerState extends State<AdminDrawer>
         activeIcon: Icons.school_rounded,
         title: l10n.courseManagement,
         route: '/admin/courses',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.calendar_month_outlined,
+        activeIcon: Icons.calendar_month_rounded,
+        title: l10n.adminEnrollmentPeriods,
+        route: '/admin/enrollment-periods',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.event_outlined,
+        activeIcon: Icons.event_rounded,
+        title: l10n.adminCampusEvents,
+        route: '/admin/campus-events',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.view_week_outlined,
+        activeIcon: Icons.view_week_rounded,
+        title: l10n.adminScheduleTemplates,
+        route: '/admin/schedule-templates',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.schedule_outlined,
+        activeIcon: Icons.schedule_rounded,
+        title: l10n.officeHours,
+        route: '/admin/office-hours',
         category: 'main',
       ),
       _MenuItem(
@@ -436,6 +464,7 @@ class _AdminDrawerState extends State<AdminDrawer>
   }
 
   Widget _buildNavigationMenu(bool isDark, List<_MenuItem> items) {
+    final l10n = AppLocalizations.of(context);
     final mainItems = items.where((i) => i.category == 'main').toList();
     final aiItems = items.where((i) => i.category == 'ai').toList();
     final communicationItems = items
@@ -447,22 +476,22 @@ class _AdminDrawerState extends State<AdminDrawer>
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       physics: const BouncingScrollPhysics(),
       children: [
-        _buildSectionLabel(isDark, 'MAIN MENU'),
+        _buildSectionLabel(isDark, l10n.mainMenu.toUpperCase()),
         ...mainItems.asMap().entries.map(
           (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
         ),
         const SizedBox(height: 16),
-        _buildSectionLabel(isDark, 'AI & SYSTEM'),
+        _buildSectionLabel(isDark, l10n.adminAiAndSystemSection.toUpperCase()),
         ...aiItems.asMap().entries.map(
           (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
         ),
         const SizedBox(height: 16),
-        _buildSectionLabel(isDark, 'COMMUNICATION'),
+        _buildSectionLabel(isDark, l10n.communication.toUpperCase()),
         ...communicationItems.asMap().entries.map(
           (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
         ),
         const SizedBox(height: 16),
-        _buildSectionLabel(isDark, 'ACCOUNT'),
+        _buildSectionLabel(isDark, l10n.account.toUpperCase()),
         ...accountItems.asMap().entries.map(
           (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
         ),
@@ -517,14 +546,16 @@ class _AdminDrawerState extends State<AdminDrawer>
                   : item.isHighlighted
                   ? LinearGradient(
                       colors: [
-                        AdminColors.secondary.withOpacity(0.1),
-                        AdminColors.primary.withOpacity(0.05),
+                        AdminColors.secondary.withValues(alpha: 0.1),
+                        AdminColors.primary.withValues(alpha: 0.05),
                       ],
                     )
                   : null,
               borderRadius: BorderRadius.circular(14),
               border: item.isHighlighted && !isSelected
-                  ? Border.all(color: AdminColors.secondary.withOpacity(0.3))
+                  ? Border.all(
+                      color: AdminColors.secondary.withValues(alpha: 0.3),
+                    )
                   : null,
             ),
             child: Row(
@@ -535,11 +566,11 @@ class _AdminDrawerState extends State<AdminDrawer>
                   decoration: BoxDecoration(
                     color: isSelected
                         ? (item.isHighlighted
-                              ? Colors.white.withOpacity(0.2)
-                              : AdminColors.primary.withOpacity(0.1))
+                              ? Colors.white.withValues(alpha: 0.2)
+                              : AdminColors.primary.withValues(alpha: 0.1))
                         : (isDark
-                              ? Colors.white.withOpacity(0.05)
-                              : Colors.black.withOpacity(0.03)),
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.03)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -581,7 +612,7 @@ class _AdminDrawerState extends State<AdminDrawer>
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? Colors.white.withOpacity(0.2)
+                          ? Colors.white.withValues(alpha: 0.2)
                           : AdminColors.error,
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -634,8 +665,8 @@ class _AdminDrawerState extends State<AdminDrawer>
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withOpacity(0.05)
-                  : Colors.black.withOpacity(0.03),
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.black.withValues(alpha: 0.03),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
@@ -682,7 +713,9 @@ class _AdminDrawerState extends State<AdminDrawer>
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
-                  border: Border.all(color: AdminColors.error.withOpacity(0.3)),
+                  border: Border.all(
+                    color: AdminColors.error.withValues(alpha: 0.3),
+                  ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Row(
@@ -733,7 +766,7 @@ class _AdminDrawerState extends State<AdminDrawer>
               ? [
                   BoxShadow(
                     color: (isDark ? AdminColors.primary : Colors.black)
-                        .withOpacity(0.1),
+                        .withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

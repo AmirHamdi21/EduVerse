@@ -4716,5 +4716,286 @@
   "itAllBackups": "All Backups",
   "itSearch": "Search",
   "itChat": "Chat",
-  "itChatSubtitle": "Messages and communications"
+  "itChatSubtitle": "Messages and communications",
+
+  "adminAddOfficeHour": "Add Office Hour",
+  "adminAddOfficeHourSlot": "Add Office Hour Slot",
+  "adminAiAndSystemSection": "AI & System",
+  "adminAllDays": "All Days",
+  "adminAllStaff": "All Staff",
+  "adminApplyTemplateTitle": "Apply {templateName}",
+  "@adminApplyTemplateTitle": {
+    "placeholders": {
+      "templateName": {}
+    }
+  },
+  "adminAppointmentsRatio": "Appointments: {current}/{maximum}",
+  "@adminAppointmentsRatio": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "maximum": {
+        "type": "int"
+      }
+    }
+  },
+  "adminAtLeastOneSectionRequired": "Provide at least one valid section ID.",
+  "adminBuildingOptional": "Building (optional)",
+  "adminBulkApply": "Bulk Apply",
+  "adminBulkApplyFailed": "Bulk apply failed.",
+  "adminBulkApplyResult": "Bulk apply done. Success: {successful}, Failed: {failed}",
+  "@adminBulkApplyResult": {
+    "placeholders": {
+      "successful": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBulkApplyTemplateTitle": "Bulk Apply {templateName}",
+  "@adminBulkApplyTemplateTitle": {
+    "placeholders": {
+      "templateName": {}
+    }
+  },
+  "adminCampusEventCreated": "Event created successfully.",
+  "adminCampusEventDeleted": "Event deleted successfully.",
+  "adminCampusEventDeleteFailed": "Failed to delete event.",
+  "adminCampusEvents": "Campus Events",
+  "adminCampusEventSaveFailed": "Failed to save campus event.",
+  "adminCampusEventsEmptyState": "No events matched your current filters.",
+  "adminCampusEventsLoadErrorTitle": "Campus Events Failed To Load",
+  "adminCampusEventsLoadFailed": "Failed to load campus events.",
+  "adminCampusEventUpdated": "Event updated successfully.",
+  "adminCapacityUsed": "Capacity: {current}/{maximum}",
+  "@adminCapacityUsed": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "maximum": {
+        "type": "int"
+      }
+    }
+  },
+  "adminCreateCampusEvent": "Create Campus Event",
+  "adminCreateEvent": "Create Event",
+  "adminCreateScheduleTemplate": "Create Schedule Template",
+  "adminCreateTemplate": "Create Template",
+  "adminDateRange": "{start} to {end}",
+  "@adminDateRange": {
+    "placeholders": {
+      "start": {},
+      "end": {}
+    }
+  },
+  "adminDayFriday": "Friday",
+  "adminDayMonday": "Monday",
+  "adminDayOfWeek": "Day Of Week",
+  "adminDaySaturday": "Saturday",
+  "adminDaySunday": "Sunday",
+  "adminDayThursday": "Thursday",
+  "adminDayTuesday": "Tuesday",
+  "adminDayWednesday": "Wednesday",
+  "adminDeleteCampusEventConfirmation": "Delete \"{title}\" permanently?",
+  "@adminDeleteCampusEventConfirmation": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "adminDeleteCampusEventTitle": "Delete Campus Event",
+  "adminDeleteEventTooltip": "Delete Event",
+  "adminDeleteOfficeHourSlotConfirmation": "Delete slot on {day} {start}-{end}?",
+  "@adminDeleteOfficeHourSlotConfirmation": {
+    "placeholders": {
+      "day": {},
+      "start": {},
+      "end": {}
+    }
+  },
+  "adminDeleteOfficeHourSlotTitle": "Delete Office Hour Slot",
+  "adminDeleteTemplateConfirmation": "Delete \"{name}\" permanently?",
+  "@adminDeleteTemplateConfirmation": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "adminDeleteTemplateTitle": "Delete Template",
+  "adminEditCampusEvent": "Edit Campus Event",
+  "adminEditEventTooltip": "Edit Event",
+  "adminEditOfficeHourSlot": "Edit Office Hour Slot",
+  "adminEditScheduleTemplate": "Edit Schedule Template",
+  "adminEnd": "End",
+  "adminEndDateMustBeAfterStartDate": "End date/time must be after start date/time.",
+  "adminEndsAt": "Ends: {dateTime}",
+  "@adminEndsAt": {
+    "placeholders": {
+      "dateTime": {}
+    }
+  },
+  "adminEndTimeHint": "End Time (HH:mm)",
+  "adminEnrollmentPeriods": "Enrollment Periods",
+  "adminEnrollmentPeriodsControlCenter": "Periods Control Center",
+  "adminEnrollmentPeriodsEmptyState": "No enrollment periods available for this filter.",
+  "adminEnrollmentPeriodsLiveDataHint": "Live data from /semesters with auto status derivation.",
+  "adminEnrollmentPeriodsLoadErrorTitle": "Could not load enrollment periods",
+  "adminEnrollmentPeriodsLoadFailed": "Failed to load enrollment periods.",
+  "adminEnrollmentRegistered": "{registered}/{total} registered",
+  "@adminEnrollmentRegistered": {
+    "placeholders": {
+      "registered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "adminEventTitleRequired": "Event title is required.",
+  "adminEventTypeGeneral": "General",
+  "adminEventTypeMeeting": "Meeting",
+  "adminEventTypeSeminar": "Seminar",
+  "adminEventTypeWorkshop": "Workshop",
+  "adminFilterByDay": "Filter By Day",
+  "adminFilterByInstructor": "Filter By Instructor/TA",
+  "adminFilterByMode": "Filter By Mode",
+  "adminFilterByRole": "Filter By Role",
+  "adminHideAppointments": "Hide Appointments",
+  "adminInstructorOrTa": "Instructor or TA",
+  "adminLocationRequired": "Location is required.",
+  "adminMandatory": "Mandatory",
+  "adminMaxAppointments": "Max Appointments",
+  "adminMaxAttendees": "Max Attendees",
+  "adminMode": "Mode",
+  "adminModeInPerson": "In Person",
+  "adminMoreSlots": "+{count} more slots",
+  "@adminMoreSlots": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminNoAppointmentsForSlot": "No appointments found for this slot.",
+  "adminNoRegistrationsYet": "No registrations for this event yet.",
+  "adminNotesOptional": "Notes (optional)",
+  "adminOfficeHourDeleteFailed": "Failed to delete office hour slot.",
+  "adminOfficeHourSaveFailed": "Failed to save office hour.",
+  "adminOfficeHoursEmptyState": "No office hour slots matched your current filters.",
+  "adminOfficeHoursLoadErrorTitle": "Office Hours Failed To Load",
+  "adminOfficeHoursLoadFailed": "Failed to load office hours.",
+  "adminOfficeHourSlotCreated": "Office hour slot created.",
+  "adminOfficeHourSlotDeleted": "Office hour slot deleted.",
+  "adminOfficeHourSlotUpdated": "Office hour slot updated.",
+  "adminRegistrationCount": "{count} registrations",
+  "@adminRegistrationCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminRegistrationCountWithCapacity": "{count}/{maximum} registrations",
+  "@adminRegistrationCountWithCapacity": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "maximum": {
+        "type": "int"
+      }
+    }
+  },
+  "adminRegistrationRequired": "Registration Required",
+  "adminRegistrations": "Registrations",
+  "adminRegistrationsForEvent": "{eventTitle} Registrations",
+  "@adminRegistrationsForEvent": {
+    "placeholders": {
+      "eventTitle": {}
+    }
+  },
+  "adminRegistrationsLoadFailed": "Failed to load registrations.",
+  "adminRoomOptional": "Room (optional)",
+  "adminScheduleTemplates": "Schedule Templates",
+  "adminScheduleTemplatesLoadErrorTitle": "Schedule Templates Failed To Load",
+  "adminScheduleTemplatesLoadFailed": "Failed to load schedule templates.",
+  "adminScheduleType": "Schedule Type",
+  "adminScheduleTypeLab": "Lab",
+  "adminScheduleTypeLecture": "Lecture",
+  "adminScheduleTypeTutorial": "Tutorial",
+  "adminSearchEvents": "Search events",
+  "adminSearchOfficeHours": "Search by instructor, day, or location",
+  "adminSearchTemplates": "Search templates",
+  "adminSectionId": "Section ID",
+  "adminSectionIdMustBeNumber": "Section ID must be a valid number.",
+  "adminSectionIdsCommaSeparated": "Section IDs (comma separated)",
+  "adminSelectInstructorFirst": "Select an instructor or TA first.",
+  "adminShowAppointments": "Show Appointments",
+  "adminSlotIsActive": "Slot Is Active",
+  "adminSpotsRemaining": "{count} spots remaining",
+  "@adminSpotsRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminStart": "Start",
+  "adminStartTimeHint": "Start Time (HH:mm)",
+  "adminStatusCancelled": "Cancelled",
+  "adminStatusClosed": "Closed",
+  "adminStatusConfirmed": "Confirmed",
+  "adminStatusPublished": "Published",
+  "adminStatusRegistered": "Registered",
+  "adminTbd": "TBD",
+  "adminTemplateAppliedWithCount": "Template applied successfully. Schedules created: {count}",
+  "@adminTemplateAppliedWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminTemplateApplyFailed": "Failed to apply template.",
+  "adminTemplateCreated": "Template created successfully.",
+  "adminTemplateDeleted": "Template deleted successfully.",
+  "adminTemplateDeleteFailed": "Failed to delete template.",
+  "adminTemplateIsActive": "Template Is Active",
+  "adminTemplateName": "Template Name",
+  "adminTemplateNameRequired": "Template name is required.",
+  "adminTemplateSaveFailed": "Failed to save template.",
+  "adminTemplatesEmptyState": "No templates found for the selected filters.",
+  "adminTemplateSlotLine": "{day}: {start}-{end} • {location}",
+  "@adminTemplateSlotLine": {
+    "placeholders": {
+      "day": {},
+      "start": {},
+      "end": {},
+      "location": {}
+    }
+  },
+  "adminTemplateSlotsCreator": "Slots: {slotCount} • Creator: {creatorName}",
+  "@adminTemplateSlotsCreator": {
+    "placeholders": {
+      "slotCount": {
+        "type": "int"
+      },
+      "creatorName": {}
+    }
+  },
+  "adminTemplateSlotsPreview": "Slots Preview",
+  "adminTemplateUpdated": "Template updated successfully.",
+  "adminType": "Type",
+  "adminUnknownUserWithId": "User #{userId}",
+  "@adminUnknownUserWithId": {
+    "placeholders": {
+      "userId": {
+        "type": "int"
+      }
+    }
+  },
+  "adminUseTimeFormat": "Use HH:mm format for times."
 }

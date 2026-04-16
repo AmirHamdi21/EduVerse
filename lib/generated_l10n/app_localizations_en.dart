@@ -12089,4 +12089,474 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get itChatSubtitle => 'Messages and communications';
+
+  @override
+  String get adminAddOfficeHour => 'Add Office Hour';
+
+  @override
+  String get adminAddOfficeHourSlot => 'Add Office Hour Slot';
+
+  @override
+  String get adminAiAndSystemSection => 'AI & System';
+
+  @override
+  String get adminAllDays => 'All Days';
+
+  @override
+  String get adminAllStaff => 'All Staff';
+
+  @override
+  String adminApplyTemplateTitle(Object templateName) {
+    return 'Apply $templateName';
+  }
+
+  @override
+  String adminAppointmentsRatio(int current, int maximum) {
+    return 'Appointments: $current/$maximum';
+  }
+
+  @override
+  String get adminAtLeastOneSectionRequired =>
+      'Provide at least one valid section ID.';
+
+  @override
+  String get adminBuildingOptional => 'Building (optional)';
+
+  @override
+  String get adminBulkApply => 'Bulk Apply';
+
+  @override
+  String get adminBulkApplyFailed => 'Bulk apply failed.';
+
+  @override
+  String adminBulkApplyResult(int successful, int failed) {
+    return 'Bulk apply done. Success: $successful, Failed: $failed';
+  }
+
+  @override
+  String adminBulkApplyTemplateTitle(Object templateName) {
+    return 'Bulk Apply $templateName';
+  }
+
+  @override
+  String get adminCampusEventCreated => 'Event created successfully.';
+
+  @override
+  String get adminCampusEventDeleted => 'Event deleted successfully.';
+
+  @override
+  String get adminCampusEventDeleteFailed => 'Failed to delete event.';
+
+  @override
+  String get adminCampusEvents => 'Campus Events';
+
+  @override
+  String get adminCampusEventSaveFailed => 'Failed to save campus event.';
+
+  @override
+  String get adminCampusEventsEmptyState =>
+      'No events matched your current filters.';
+
+  @override
+  String get adminCampusEventsLoadErrorTitle => 'Campus Events Failed To Load';
+
+  @override
+  String get adminCampusEventsLoadFailed => 'Failed to load campus events.';
+
+  @override
+  String get adminCampusEventUpdated => 'Event updated successfully.';
+
+  @override
+  String adminCapacityUsed(int current, int maximum) {
+    return 'Capacity: $current/$maximum';
+  }
+
+  @override
+  String get adminCreateCampusEvent => 'Create Campus Event';
+
+  @override
+  String get adminCreateEvent => 'Create Event';
+
+  @override
+  String get adminCreateScheduleTemplate => 'Create Schedule Template';
+
+  @override
+  String get adminCreateTemplate => 'Create Template';
+
+  @override
+  String adminDateRange(Object start, Object end) {
+    return '$start to $end';
+  }
+
+  @override
+  String get adminDayFriday => 'Friday';
+
+  @override
+  String get adminDayMonday => 'Monday';
+
+  @override
+  String get adminDayOfWeek => 'Day Of Week';
+
+  @override
+  String get adminDaySaturday => 'Saturday';
+
+  @override
+  String get adminDaySunday => 'Sunday';
+
+  @override
+  String get adminDayThursday => 'Thursday';
+
+  @override
+  String get adminDayTuesday => 'Tuesday';
+
+  @override
+  String get adminDayWednesday => 'Wednesday';
+
+  @override
+  String adminDeleteCampusEventConfirmation(Object title) {
+    return 'Delete \"$title\" permanently?';
+  }
+
+  @override
+  String get adminDeleteCampusEventTitle => 'Delete Campus Event';
+
+  @override
+  String get adminDeleteEventTooltip => 'Delete Event';
+
+  @override
+  String adminDeleteOfficeHourSlotConfirmation(
+    Object day,
+    Object start,
+    Object end,
+  ) {
+    return 'Delete slot on $day $start-$end?';
+  }
+
+  @override
+  String get adminDeleteOfficeHourSlotTitle => 'Delete Office Hour Slot';
+
+  @override
+  String adminDeleteTemplateConfirmation(Object name) {
+    return 'Delete \"$name\" permanently?';
+  }
+
+  @override
+  String get adminDeleteTemplateTitle => 'Delete Template';
+
+  @override
+  String get adminEditCampusEvent => 'Edit Campus Event';
+
+  @override
+  String get adminEditEventTooltip => 'Edit Event';
+
+  @override
+  String get adminEditOfficeHourSlot => 'Edit Office Hour Slot';
+
+  @override
+  String get adminEditScheduleTemplate => 'Edit Schedule Template';
+
+  @override
+  String get adminEnd => 'End';
+
+  @override
+  String get adminEndDateMustBeAfterStartDate =>
+      'End date/time must be after start date/time.';
+
+  @override
+  String adminEndsAt(Object dateTime) {
+    return 'Ends: $dateTime';
+  }
+
+  @override
+  String get adminEndTimeHint => 'End Time (HH:mm)';
+
+  @override
+  String get adminEnrollmentPeriods => 'Enrollment Periods';
+
+  @override
+  String get adminEnrollmentPeriodsControlCenter => 'Periods Control Center';
+
+  @override
+  String get adminEnrollmentPeriodsEmptyState =>
+      'No enrollment periods available for this filter.';
+
+  @override
+  String get adminEnrollmentPeriodsLiveDataHint =>
+      'Live data from /semesters with auto status derivation.';
+
+  @override
+  String get adminEnrollmentPeriodsLoadErrorTitle =>
+      'Could not load enrollment periods';
+
+  @override
+  String get adminEnrollmentPeriodsLoadFailed =>
+      'Failed to load enrollment periods.';
+
+  @override
+  String adminEnrollmentRegistered(int registered, int total) {
+    return '$registered/$total registered';
+  }
+
+  @override
+  String get adminEventTitleRequired => 'Event title is required.';
+
+  @override
+  String get adminEventTypeGeneral => 'General';
+
+  @override
+  String get adminEventTypeMeeting => 'Meeting';
+
+  @override
+  String get adminEventTypeSeminar => 'Seminar';
+
+  @override
+  String get adminEventTypeWorkshop => 'Workshop';
+
+  @override
+  String get adminFilterByDay => 'Filter By Day';
+
+  @override
+  String get adminFilterByInstructor => 'Filter By Instructor/TA';
+
+  @override
+  String get adminFilterByMode => 'Filter By Mode';
+
+  @override
+  String get adminFilterByRole => 'Filter By Role';
+
+  @override
+  String get adminHideAppointments => 'Hide Appointments';
+
+  @override
+  String get adminInstructorOrTa => 'Instructor or TA';
+
+  @override
+  String get adminLocationRequired => 'Location is required.';
+
+  @override
+  String get adminMandatory => 'Mandatory';
+
+  @override
+  String get adminMaxAppointments => 'Max Appointments';
+
+  @override
+  String get adminMaxAttendees => 'Max Attendees';
+
+  @override
+  String get adminMode => 'Mode';
+
+  @override
+  String get adminModeInPerson => 'In Person';
+
+  @override
+  String adminMoreSlots(int count) {
+    return '+$count more slots';
+  }
+
+  @override
+  String get adminNoAppointmentsForSlot =>
+      'No appointments found for this slot.';
+
+  @override
+  String get adminNoRegistrationsYet => 'No registrations for this event yet.';
+
+  @override
+  String get adminNotesOptional => 'Notes (optional)';
+
+  @override
+  String get adminOfficeHourDeleteFailed =>
+      'Failed to delete office hour slot.';
+
+  @override
+  String get adminOfficeHourSaveFailed => 'Failed to save office hour.';
+
+  @override
+  String get adminOfficeHoursEmptyState =>
+      'No office hour slots matched your current filters.';
+
+  @override
+  String get adminOfficeHoursLoadErrorTitle => 'Office Hours Failed To Load';
+
+  @override
+  String get adminOfficeHoursLoadFailed => 'Failed to load office hours.';
+
+  @override
+  String get adminOfficeHourSlotCreated => 'Office hour slot created.';
+
+  @override
+  String get adminOfficeHourSlotDeleted => 'Office hour slot deleted.';
+
+  @override
+  String get adminOfficeHourSlotUpdated => 'Office hour slot updated.';
+
+  @override
+  String adminRegistrationCount(int count) {
+    return '$count registrations';
+  }
+
+  @override
+  String adminRegistrationCountWithCapacity(int count, int maximum) {
+    return '$count/$maximum registrations';
+  }
+
+  @override
+  String get adminRegistrationRequired => 'Registration Required';
+
+  @override
+  String get adminRegistrations => 'Registrations';
+
+  @override
+  String adminRegistrationsForEvent(Object eventTitle) {
+    return '$eventTitle Registrations';
+  }
+
+  @override
+  String get adminRegistrationsLoadFailed => 'Failed to load registrations.';
+
+  @override
+  String get adminRoomOptional => 'Room (optional)';
+
+  @override
+  String get adminScheduleTemplates => 'Schedule Templates';
+
+  @override
+  String get adminScheduleTemplatesLoadErrorTitle =>
+      'Schedule Templates Failed To Load';
+
+  @override
+  String get adminScheduleTemplatesLoadFailed =>
+      'Failed to load schedule templates.';
+
+  @override
+  String get adminScheduleType => 'Schedule Type';
+
+  @override
+  String get adminScheduleTypeLab => 'Lab';
+
+  @override
+  String get adminScheduleTypeLecture => 'Lecture';
+
+  @override
+  String get adminScheduleTypeTutorial => 'Tutorial';
+
+  @override
+  String get adminSearchEvents => 'Search events';
+
+  @override
+  String get adminSearchOfficeHours => 'Search by instructor, day, or location';
+
+  @override
+  String get adminSearchTemplates => 'Search templates';
+
+  @override
+  String get adminSectionId => 'Section ID';
+
+  @override
+  String get adminSectionIdMustBeNumber => 'Section ID must be a valid number.';
+
+  @override
+  String get adminSectionIdsCommaSeparated => 'Section IDs (comma separated)';
+
+  @override
+  String get adminSelectInstructorFirst => 'Select an instructor or TA first.';
+
+  @override
+  String get adminShowAppointments => 'Show Appointments';
+
+  @override
+  String get adminSlotIsActive => 'Slot Is Active';
+
+  @override
+  String adminSpotsRemaining(int count) {
+    return '$count spots remaining';
+  }
+
+  @override
+  String get adminStart => 'Start';
+
+  @override
+  String get adminStartTimeHint => 'Start Time (HH:mm)';
+
+  @override
+  String get adminStatusCancelled => 'Cancelled';
+
+  @override
+  String get adminStatusClosed => 'Closed';
+
+  @override
+  String get adminStatusConfirmed => 'Confirmed';
+
+  @override
+  String get adminStatusPublished => 'Published';
+
+  @override
+  String get adminStatusRegistered => 'Registered';
+
+  @override
+  String get adminTbd => 'TBD';
+
+  @override
+  String adminTemplateAppliedWithCount(int count) {
+    return 'Template applied successfully. Schedules created: $count';
+  }
+
+  @override
+  String get adminTemplateApplyFailed => 'Failed to apply template.';
+
+  @override
+  String get adminTemplateCreated => 'Template created successfully.';
+
+  @override
+  String get adminTemplateDeleted => 'Template deleted successfully.';
+
+  @override
+  String get adminTemplateDeleteFailed => 'Failed to delete template.';
+
+  @override
+  String get adminTemplateIsActive => 'Template Is Active';
+
+  @override
+  String get adminTemplateName => 'Template Name';
+
+  @override
+  String get adminTemplateNameRequired => 'Template name is required.';
+
+  @override
+  String get adminTemplateSaveFailed => 'Failed to save template.';
+
+  @override
+  String get adminTemplatesEmptyState =>
+      'No templates found for the selected filters.';
+
+  @override
+  String adminTemplateSlotLine(
+    Object day,
+    Object start,
+    Object end,
+    Object location,
+  ) {
+    return '$day: $start-$end • $location';
+  }
+
+  @override
+  String adminTemplateSlotsCreator(int slotCount, Object creatorName) {
+    return 'Slots: $slotCount • Creator: $creatorName';
+  }
+
+  @override
+  String get adminTemplateSlotsPreview => 'Slots Preview';
+
+  @override
+  String get adminTemplateUpdated => 'Template updated successfully.';
+
+  @override
+  String get adminType => 'Type';
+
+  @override
+  String adminUnknownUserWithId(int userId) {
+    return 'User #$userId';
+  }
+
+  @override
+  String get adminUseTimeFormat => 'Use HH:mm format for times.';
 }

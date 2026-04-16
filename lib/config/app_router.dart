@@ -109,6 +109,10 @@ import 'package:edu_verse/screens/admin/users/admin_add_new_user_screen.dart';
 import 'package:edu_verse/screens/admin/roles/admin_roles_screen.dart';
 import 'package:edu_verse/screens/admin/courses/admin_course_management_screen.dart';
 import 'package:edu_verse/screens/admin/courses/admin_add_course_screen.dart';
+import 'package:edu_verse/screens/admin/periods/admin_enrollment_periods_screen.dart';
+import 'package:edu_verse/screens/admin/events/admin_campus_events_screen.dart';
+import 'package:edu_verse/screens/admin/templates/admin_schedule_templates_screen.dart';
+import 'package:edu_verse/screens/admin/office_hours/admin_office_hours_screen.dart';
 import 'package:edu_verse/screens/admin/staff/admin_assign_staff_screen.dart';
 import 'package:edu_verse/screens/admin/departments/admin_departments_screen.dart';
 import 'package:edu_verse/screens/admin/analytics/admin_analytics_screen.dart';
@@ -1011,6 +1015,22 @@ class AppRouter {
       GoRoute(
         path: '/admin/courses',
         builder: (context, state) => const AdminCourseManagementScreen(),
+      ),
+      GoRoute(
+        path: '/admin/enrollment-periods',
+        builder: (context, state) => const AdminEnrollmentPeriodsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/campus-events',
+        builder: (context, state) => const AdminCampusEventsScreen(),
+      ),
+      GoRoute(
+        path: '/admin/schedule-templates',
+        builder: (context, state) => const AdminScheduleTemplatesScreen(),
+      ),
+      GoRoute(
+        path: '/admin/office-hours',
+        builder: (context, state) => const AdminOfficeHoursScreen(),
       ),
       GoRoute(
         path: '/admin/courses/add',

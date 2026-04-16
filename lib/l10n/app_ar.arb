@@ -4713,5 +4713,286 @@
   "itAllBackups": "جميع النسخ الاحتياطية",
   "itSearch": "بحث",
   "itChat": "الدردشة",
-  "itChatSubtitle": "الرسائل والاتصالات"
+  "itChatSubtitle": "الرسائل والاتصالات",
+
+  "adminAddOfficeHour": "إضافة ساعة مكتبية",
+  "adminAddOfficeHourSlot": "إضافة فترة ساعة مكتبية",
+  "adminAiAndSystemSection": "الذكاء الاصطناعي والنظام",
+  "adminAllDays": "كل الأيام",
+  "adminAllStaff": "كل الطاقم",
+  "adminApplyTemplateTitle": "تطبيق {templateName}",
+  "@adminApplyTemplateTitle": {
+    "placeholders": {
+      "templateName": {}
+    }
+  },
+  "adminAppointmentsRatio": "المواعيد: {current}/{maximum}",
+  "@adminAppointmentsRatio": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "maximum": {
+        "type": "int"
+      }
+    }
+  },
+  "adminAtLeastOneSectionRequired": "أدخل معرف شعبة صالح واحد على الأقل.",
+  "adminBuildingOptional": "المبنى (اختياري)",
+  "adminBulkApply": "تطبيق جماعي",
+  "adminBulkApplyFailed": "فشل التطبيق الجماعي.",
+  "adminBulkApplyResult": "اكتمل التطبيق الجماعي. نجح: {successful}، فشل: {failed}",
+  "@adminBulkApplyResult": {
+    "placeholders": {
+      "successful": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBulkApplyTemplateTitle": "تطبيق جماعي {templateName}",
+  "@adminBulkApplyTemplateTitle": {
+    "placeholders": {
+      "templateName": {}
+    }
+  },
+  "adminCampusEventCreated": "تم إنشاء الفعالية بنجاح.",
+  "adminCampusEventDeleted": "تم حذف الفعالية بنجاح.",
+  "adminCampusEventDeleteFailed": "فشل حذف الفعالية.",
+  "adminCampusEvents": "فعاليات الحرم الجامعي",
+  "adminCampusEventSaveFailed": "فشل حفظ الفعالية.",
+  "adminCampusEventsEmptyState": "لا توجد فعاليات تطابق الفلاتر الحالية.",
+  "adminCampusEventsLoadErrorTitle": "تعذر تحميل فعاليات الحرم الجامعي",
+  "adminCampusEventsLoadFailed": "فشل تحميل فعاليات الحرم الجامعي.",
+  "adminCampusEventUpdated": "تم تحديث الفعالية بنجاح.",
+  "adminCapacityUsed": "السعة: {current}/{maximum}",
+  "@adminCapacityUsed": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "maximum": {
+        "type": "int"
+      }
+    }
+  },
+  "adminCreateCampusEvent": "إنشاء فعالية",
+  "adminCreateEvent": "إنشاء فعالية",
+  "adminCreateScheduleTemplate": "إنشاء قالب جدول",
+  "adminCreateTemplate": "إنشاء قالب",
+  "adminDateRange": "{start} إلى {end}",
+  "@adminDateRange": {
+    "placeholders": {
+      "start": {},
+      "end": {}
+    }
+  },
+  "adminDayFriday": "الجمعة",
+  "adminDayMonday": "الاثنين",
+  "adminDayOfWeek": "اليوم من الأسبوع",
+  "adminDaySaturday": "السبت",
+  "adminDaySunday": "الأحد",
+  "adminDayThursday": "الخميس",
+  "adminDayTuesday": "الثلاثاء",
+  "adminDayWednesday": "الأربعاء",
+  "adminDeleteCampusEventConfirmation": "حذف \"{title}\" نهائيا؟",
+  "@adminDeleteCampusEventConfirmation": {
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "adminDeleteCampusEventTitle": "حذف فعالية الحرم",
+  "adminDeleteEventTooltip": "حذف الفعالية",
+  "adminDeleteOfficeHourSlotConfirmation": "حذف الفترة يوم {day} من {start} إلى {end}؟",
+  "@adminDeleteOfficeHourSlotConfirmation": {
+    "placeholders": {
+      "day": {},
+      "start": {},
+      "end": {}
+    }
+  },
+  "adminDeleteOfficeHourSlotTitle": "حذف فترة ساعة مكتبية",
+  "adminDeleteTemplateConfirmation": "حذف \"{name}\" نهائيا؟",
+  "@adminDeleteTemplateConfirmation": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "adminDeleteTemplateTitle": "حذف القالب",
+  "adminEditCampusEvent": "تعديل فعالية الحرم",
+  "adminEditEventTooltip": "تعديل الفعالية",
+  "adminEditOfficeHourSlot": "تعديل فترة ساعة مكتبية",
+  "adminEditScheduleTemplate": "تعديل قالب الجدول",
+  "adminEnd": "النهاية",
+  "adminEndDateMustBeAfterStartDate": "يجب أن يكون وقت/تاريخ النهاية بعد وقت/تاريخ البداية.",
+  "adminEndsAt": "ينتهي: {dateTime}",
+  "@adminEndsAt": {
+    "placeholders": {
+      "dateTime": {}
+    }
+  },
+  "adminEndTimeHint": "وقت النهاية (HH:mm)",
+  "adminEnrollmentPeriods": "فترات التسجيل",
+  "adminEnrollmentPeriodsControlCenter": "مركز التحكم في فترات التسجيل",
+  "adminEnrollmentPeriodsEmptyState": "لا توجد فترات تسجيل متاحة لهذا الفلتر.",
+  "adminEnrollmentPeriodsLiveDataHint": "بيانات مباشرة من /semesters مع اشتقاق تلقائي للحالة.",
+  "adminEnrollmentPeriodsLoadErrorTitle": "تعذر تحميل فترات التسجيل",
+  "adminEnrollmentPeriodsLoadFailed": "فشل تحميل فترات التسجيل.",
+  "adminEnrollmentRegistered": "{registered}/{total} مسجل",
+  "@adminEnrollmentRegistered": {
+    "placeholders": {
+      "registered": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "adminEventTitleRequired": "عنوان الفعالية مطلوب.",
+  "adminEventTypeGeneral": "عام",
+  "adminEventTypeMeeting": "اجتماع",
+  "adminEventTypeSeminar": "ندوة",
+  "adminEventTypeWorkshop": "ورشة",
+  "adminFilterByDay": "تصفية حسب اليوم",
+  "adminFilterByInstructor": "تصفية حسب المدرس/المعيد",
+  "adminFilterByMode": "تصفية حسب النمط",
+  "adminFilterByRole": "تصفية حسب الدور",
+  "adminHideAppointments": "إخفاء المواعيد",
+  "adminInstructorOrTa": "المدرس أو المعيد",
+  "adminLocationRequired": "الموقع مطلوب.",
+  "adminMandatory": "إلزامي",
+  "adminMaxAppointments": "الحد الأقصى للمواعيد",
+  "adminMaxAttendees": "الحد الأقصى للحضور",
+  "adminMode": "النمط",
+  "adminModeInPerson": "حضوري",
+  "adminMoreSlots": "+{count} فترات إضافية",
+  "@adminMoreSlots": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminNoAppointmentsForSlot": "لا توجد مواعيد لهذه الفترة.",
+  "adminNoRegistrationsYet": "لا توجد تسجيلات لهذه الفعالية بعد.",
+  "adminNotesOptional": "ملاحظات (اختياري)",
+  "adminOfficeHourDeleteFailed": "فشل حذف فترة الساعة المكتبية.",
+  "adminOfficeHourSaveFailed": "فشل حفظ الساعة المكتبية.",
+  "adminOfficeHoursEmptyState": "لا توجد فترات ساعات مكتبية تطابق الفلاتر الحالية.",
+  "adminOfficeHoursLoadErrorTitle": "فشل تحميل الساعات المكتبية",
+  "adminOfficeHoursLoadFailed": "فشل تحميل الساعات المكتبية.",
+  "adminOfficeHourSlotCreated": "تم إنشاء فترة ساعة مكتبية.",
+  "adminOfficeHourSlotDeleted": "تم حذف فترة الساعة المكتبية.",
+  "adminOfficeHourSlotUpdated": "تم تحديث فترة الساعة المكتبية.",
+  "adminRegistrationCount": "{count} تسجيلات",
+  "@adminRegistrationCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminRegistrationCountWithCapacity": "{count}/{maximum} تسجيلات",
+  "@adminRegistrationCountWithCapacity": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "maximum": {
+        "type": "int"
+      }
+    }
+  },
+  "adminRegistrationRequired": "يتطلب تسجيل",
+  "adminRegistrations": "التسجيلات",
+  "adminRegistrationsForEvent": "تسجيلات {eventTitle}",
+  "@adminRegistrationsForEvent": {
+    "placeholders": {
+      "eventTitle": {}
+    }
+  },
+  "adminRegistrationsLoadFailed": "فشل تحميل التسجيلات.",
+  "adminRoomOptional": "القاعة (اختياري)",
+  "adminScheduleTemplates": "قوالب الجداول",
+  "adminScheduleTemplatesLoadErrorTitle": "فشل تحميل قوالب الجداول",
+  "adminScheduleTemplatesLoadFailed": "فشل تحميل قوالب الجداول.",
+  "adminScheduleType": "نوع الجدول",
+  "adminScheduleTypeLab": "معمل",
+  "adminScheduleTypeLecture": "محاضرة",
+  "adminScheduleTypeTutorial": "تمرين",
+  "adminSearchEvents": "البحث في الفعاليات",
+  "adminSearchOfficeHours": "ابحث باسم المدرس أو اليوم أو الموقع",
+  "adminSearchTemplates": "البحث في القوالب",
+  "adminSectionId": "معرف الشعبة",
+  "adminSectionIdMustBeNumber": "يجب أن يكون معرف الشعبة رقما صالحا.",
+  "adminSectionIdsCommaSeparated": "معرفات الشعب (مفصولة بفواصل)",
+  "adminSelectInstructorFirst": "اختر مدرسا أو معيدا أولا.",
+  "adminShowAppointments": "عرض المواعيد",
+  "adminSlotIsActive": "الفترة نشطة",
+  "adminSpotsRemaining": "المقاعد المتبقية: {count}",
+  "@adminSpotsRemaining": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminStart": "البداية",
+  "adminStartTimeHint": "وقت البداية (HH:mm)",
+  "adminStatusCancelled": "ملغى",
+  "adminStatusClosed": "مغلق",
+  "adminStatusConfirmed": "مؤكد",
+  "adminStatusPublished": "منشور",
+  "adminStatusRegistered": "مسجل",
+  "adminTbd": "لاحقا",
+  "adminTemplateAppliedWithCount": "تم تطبيق القالب بنجاح. الجداول المنشأة: {count}",
+  "@adminTemplateAppliedWithCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminTemplateApplyFailed": "فشل تطبيق القالب.",
+  "adminTemplateCreated": "تم إنشاء القالب بنجاح.",
+  "adminTemplateDeleted": "تم حذف القالب بنجاح.",
+  "adminTemplateDeleteFailed": "فشل حذف القالب.",
+  "adminTemplateIsActive": "القالب نشط",
+  "adminTemplateName": "اسم القالب",
+  "adminTemplateNameRequired": "اسم القالب مطلوب.",
+  "adminTemplateSaveFailed": "فشل حفظ القالب.",
+  "adminTemplatesEmptyState": "لم يتم العثور على قوالب للفلاتر المحددة.",
+  "adminTemplateSlotLine": "{day}: {start}-{end} • {location}",
+  "@adminTemplateSlotLine": {
+    "placeholders": {
+      "day": {},
+      "start": {},
+      "end": {},
+      "location": {}
+    }
+  },
+  "adminTemplateSlotsCreator": "الفترات: {slotCount} • المنشئ: {creatorName}",
+  "@adminTemplateSlotsCreator": {
+    "placeholders": {
+      "slotCount": {
+        "type": "int"
+      },
+      "creatorName": {}
+    }
+  },
+  "adminTemplateSlotsPreview": "معاينة الفترات",
+  "adminTemplateUpdated": "تم تحديث القالب بنجاح.",
+  "adminType": "النوع",
+  "adminUnknownUserWithId": "مستخدم #{userId}",
+  "@adminUnknownUserWithId": {
+    "placeholders": {
+      "userId": {
+        "type": "int"
+      }
+    }
+  },
+  "adminUseTimeFormat": "استخدم تنسيق HH:mm للأوقات."
 }

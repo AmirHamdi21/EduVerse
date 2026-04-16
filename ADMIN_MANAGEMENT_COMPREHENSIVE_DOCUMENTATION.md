@@ -1473,4 +1473,130 @@ interface EnrollmentPeriod {
 
 ---
 
+## 13. Phase Gate Evidence Update (2026-04-16) - Periods and Scheduling (Mobile)
+
+This section records the next-phase hardening gate output for the four newly integrated admin screens:
+
+- `lib/screens/admin/periods/admin_enrollment_periods_screen.dart`
+- `lib/screens/admin/events/admin_campus_events_screen.dart`
+- `lib/screens/admin/templates/admin_schedule_templates_screen.dart`
+- `lib/screens/admin/office_hours/admin_office_hours_screen.dart`
+
+Validation artifacts used in this phase:
+
+- Service contract source: `lib/services/api/admin_periods_service.dart`
+- Response mapping source: `lib/models/admin/admin_periods_models.dart`
+- Focused widget suites:
+  - `test/widgets/admin/periods/admin_enrollment_periods_screen_test.dart`
+  - `test/widgets/admin/events/admin_campus_events_screen_test.dart`
+  - `test/widgets/admin/templates/admin_schedule_templates_screen_test.dart`
+  - `test/widgets/admin/office_hours/admin_office_hours_screen_test.dart`
+
+### 13.1 Manual Flow Checklist (Current Gate Snapshot)
+
+Status legend:
+
+- Code-path: verified by source review and bound callbacks/state.
+- Widget-test: verified by targeted widget tests in this phase.
+- Manual-run: physical/emulator clickthrough in this session.
+
+#### 13.1.1 Enrollment Periods
+
+| Flow | Code-path | Widget-test | Manual-run |
+|---|---|---|---|
+| Open screen from route `/admin/enrollment-periods` | Yes | N/A | Pending |
+| Pull-to-refresh calls live reload | Yes | N/A | Pending |
+| Status chips (`all/active/upcoming/closed`) filter rendered cards | Yes | N/A | Pending |
+| Error state shows retry action | Yes | N/A | Pending |
+| Empty state renders for no matching periods | Yes | N/A | Pending |
+| Period cards show semester, department, date range, progress, registered ratio | Yes | Yes | Pending |
+
+#### 13.1.2 Campus Events
+
+| Flow | Code-path | Widget-test | Manual-run |
+|---|---|---|---|
+| Open screen from route `/admin/campus-events` | Yes | N/A | Pending |
+| Search and status filter trigger list fetch | Yes | N/A | Pending |
+| Create modal validation (`title` required, end after start) | Yes | N/A | Pending |
+| Create/Edit submit to API and show success/failure snackbar | Yes | N/A | Pending |
+| Delete confirmation and delete action | Yes | N/A | Pending |
+| Registrations bottom sheet loads and renders attendee rows | Yes | N/A | Pending |
+| Pagination previous/next updates current page | Yes | N/A | Pending |
+| Event parity chips/counters (mandatory, registration required, capacity, spots) render | Yes | Yes | Pending |
+
+#### 13.1.3 Schedule Templates
+
+| Flow | Code-path | Widget-test | Manual-run |
+|---|---|---|---|
+| Open screen from route `/admin/schedule-templates` | Yes | N/A | Pending |
+| Search and schedule-type filter trigger list fetch | Yes | N/A | Pending |
+| Create/Edit template validation (`name` required) | Yes | N/A | Pending |
+| Update payload carries existing slots (hardening parity) | Yes | N/A | Pending |
+| Delete confirmation and delete action | Yes | N/A | Pending |
+| Apply dialog validates section ID and surfaces result | Yes | N/A | Pending |
+| Bulk apply dialog parses section IDs and surfaces success/failure counts | Yes | N/A | Pending |
+| Slot preview line and `+N more slots` indicator render | Yes | Yes | Pending |
+| Pagination previous/next updates current page | Yes | N/A | Pending |
+
+#### 13.1.4 Office Hours
+
+| Flow | Code-path | Widget-test | Manual-run |
+|---|---|---|---|
+| Open screen from route `/admin/office-hours` | Yes | N/A | Pending |
+| Initial load fetches staff and slot pages | Yes | N/A | Pending |
+| Instructor/day filters apply server query; mode/role/search apply local filtering | Yes | N/A | Pending |
+| Create/Edit validation (`instructor`, `location`, `HH:mm`) | Yes | N/A | Pending |
+| Delete confirmation and delete action | Yes | N/A | Pending |
+| Expand appointments fetches and renders appointment cards | Yes | N/A | Pending |
+| Pagination previous/next updates current page | Yes | N/A | Pending |
+| Slot summary labels (mode, ratio) render localized values | Yes | Yes | Pending |
+
+### 13.2 Endpoint-to-UI Evidence Update (Four-Screen Scope)
+
+#### 13.2.1 Enrollment Periods
+
+| Endpoint | Request fields | Response fields consumed | UI binding evidence |
+|---|---|---|---|
+| `GET /semesters` | none | `id/semesterId`, `semester/semesterName/name`, `departmentName/department`, `registrationStart/startDate`, `registrationEnd/endDate`, `totalStudents/capacity/total`, `registeredStudents/enrolledStudents/registrationCount`, `description/notes`, `status` (or date-derived fallback) | `AdminPeriodsService.getEnrollmentPeriods` -> `EnrollmentPeriodModel.fromSemesterJson` -> cards/metrics in `AdminEnrollmentPeriodsScreen` (`_buildHeroCard`, `_buildPeriodCard`) |
+
+#### 13.2.2 Campus Events
+
+| Endpoint | Request fields | Response fields consumed | UI binding evidence |
+|---|---|---|---|
+| `GET /campus-events` | `page`, `limit`, optional `search`, `status` | list fields: `eventId`, `title`, `description`, `eventType`, `startDateTime`, `endDateTime`, `location/building/room`, `isMandatory`, `registrationRequired`, `maxAttendees`, `registrationCount`, `spotsRemaining`, `status`, `tags`; meta: `totalPages` | `AdminPeriodsService.getCampusEvents` -> `CampusEventModel.fromJson` -> list cards/pagination in `AdminCampusEventsScreen` |
+| `POST /campus-events` | `title`, `eventType`, `status`, `startDatetime`, `endDatetime`, `isMandatory`, `registrationRequired`, `color`, optional `description`, optional `location`, optional `maxAttendees` | created event payload parsed into `CampusEventModel` and reflected after reload | submit flow in `_openEventForm` (`event == null`) |
+| `PUT /campus-events/{id}` | same payload as create | updated event payload parsed into `CampusEventModel` and reflected after reload | submit flow in `_openEventForm` (`event != null`) |
+| `DELETE /campus-events/{id}` | path param `id` | success/failure only | `_confirmDelete` action and snackbar feedback |
+| `GET /campus-events/{id}/registrations` | path param `id` | `registrationId/id`, `attendeeName` or `user.firstName+lastName`, `attendeeEmail` or `user.email`, `status` | `_showRegistrations` -> `_loadRegistrations` -> ListTile rows |
+
+#### 13.2.3 Schedule Templates
+
+| Endpoint | Request fields | Response fields consumed | UI binding evidence |
+|---|---|---|---|
+| `GET /schedule-templates` | `page`, `limit`, optional `search`, optional `scheduleType` | list fields: `templateId`, `name`, `description`, `departmentName`, `scheduleType`, `isActive`, `creatorName`, `slotCount`, `slots[]`; meta: `totalPages` | `AdminPeriodsService.getScheduleTemplates` -> `ScheduleTemplateModel.fromJson` -> template cards/pagination in `AdminScheduleTemplatesScreen` |
+| `POST /schedule-templates` | `name`, `scheduleType`, `isActive`, optional `description`, `slots` | created template parsed and visible after list refresh | `_openTemplateForm` create branch |
+| `PUT /schedule-templates/{id}` | `name`, `scheduleType`, `isActive`, optional `description`, `slots` (existing slots included in hardening pass) | updated template parsed and visible after list refresh | `_openTemplateForm` edit branch |
+| `DELETE /schedule-templates/{id}` | path param `id` | success/failure only | `_confirmDelete` action and snackbar feedback |
+| `POST /schedule-templates/apply` | `templateId`, `sectionId`, optional `building`, optional `room` | `schedulesCreated` consumed in success snackbar | `_openApplyDialog` |
+| `POST /schedule-templates/apply/bulk` | `templateId`, `sectionIds[]`, optional `building`, optional `room` | `successful`, `failed` consumed in result snackbar | `_openBulkApplyDialog` |
+
+#### 13.2.4 Office Hours
+
+| Endpoint | Request fields | Response fields consumed | UI binding evidence |
+|---|---|---|---|
+| `GET /admin/users` (staff lookup) | `page=1`, `size=100`, `role` in `{instructor, teaching_assistant}`, `status=active` | `userId/id`, `firstName`, `lastName`, `email`, `role/roles` -> `AdminStaffSummaryModel` | `AdminPeriodsService.getStaffMembers` -> staff dropdown/name lookups in `AdminOfficeHoursScreen` |
+| `GET /office-hours` (fallback `/office-hours/slots`) | `page`, `limit`, optional `instructorId`, optional `dayOfWeek` | slot fields: `slotId/id`, `instructorId`, `dayOfWeek`, `startTime`, `endTime`, `location`, `mode`, `maxAppointments`, `currentAppointments`, `isActive`, `notes`; meta: `totalPages` | `AdminPeriodsService.getOfficeHours` -> `OfficeHourSlotModel.fromJson` -> slot cards/pagination/filters |
+| `POST /office-hours` (fallback `/office-hours/slots`) | `instructorId`, `dayOfWeek`, `startTime`, `endTime`, `location`, `mode`, `isActive`, optional `maxAppointments`, optional `notes` | created slot parsed and visible after reload | `_openSlotForm` create branch |
+| `PUT /office-hours/{id}` (fallback `/office-hours/slots/{id}`) | same payload as create | updated slot parsed and visible after reload | `_openSlotForm` edit branch |
+| `DELETE /office-hours/{id}` (fallback `/office-hours/slots/{id}`) | path param `id` | success/failure only | `_confirmDelete` action and snackbar feedback |
+| `GET /office-hours/appointments` | `slotId`, `page`, `limit` | `appointmentId/id`, `studentName/student`, `topic`, `appointmentDate/scheduledAt/date`, `status` | `_toggleAppointments` -> appointment rows in expanded slot view |
+
+### 13.3 Phase Gate Command Evidence
+
+- Analyzer gate on touched scope: passed (`No issues found`).
+- Focused widget gate for four screens: passed (`+4: All tests passed`).
+- Localization generation/check gate: passed (`flutter gen-l10n` and post-check `MISSING=0`).
+
+---
+
 End of document.

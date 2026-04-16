@@ -12042,4 +12042,471 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get itChatSubtitle => 'الرسائل والاتصالات';
+
+  @override
+  String get adminAddOfficeHour => 'إضافة ساعة مكتبية';
+
+  @override
+  String get adminAddOfficeHourSlot => 'إضافة فترة ساعة مكتبية';
+
+  @override
+  String get adminAiAndSystemSection => 'الذكاء الاصطناعي والنظام';
+
+  @override
+  String get adminAllDays => 'كل الأيام';
+
+  @override
+  String get adminAllStaff => 'كل الطاقم';
+
+  @override
+  String adminApplyTemplateTitle(Object templateName) {
+    return 'تطبيق $templateName';
+  }
+
+  @override
+  String adminAppointmentsRatio(int current, int maximum) {
+    return 'المواعيد: $current/$maximum';
+  }
+
+  @override
+  String get adminAtLeastOneSectionRequired =>
+      'أدخل معرف شعبة صالح واحد على الأقل.';
+
+  @override
+  String get adminBuildingOptional => 'المبنى (اختياري)';
+
+  @override
+  String get adminBulkApply => 'تطبيق جماعي';
+
+  @override
+  String get adminBulkApplyFailed => 'فشل التطبيق الجماعي.';
+
+  @override
+  String adminBulkApplyResult(int successful, int failed) {
+    return 'اكتمل التطبيق الجماعي. نجح: $successful، فشل: $failed';
+  }
+
+  @override
+  String adminBulkApplyTemplateTitle(Object templateName) {
+    return 'تطبيق جماعي $templateName';
+  }
+
+  @override
+  String get adminCampusEventCreated => 'تم إنشاء الفعالية بنجاح.';
+
+  @override
+  String get adminCampusEventDeleted => 'تم حذف الفعالية بنجاح.';
+
+  @override
+  String get adminCampusEventDeleteFailed => 'فشل حذف الفعالية.';
+
+  @override
+  String get adminCampusEvents => 'فعاليات الحرم الجامعي';
+
+  @override
+  String get adminCampusEventSaveFailed => 'فشل حفظ الفعالية.';
+
+  @override
+  String get adminCampusEventsEmptyState =>
+      'لا توجد فعاليات تطابق الفلاتر الحالية.';
+
+  @override
+  String get adminCampusEventsLoadErrorTitle =>
+      'تعذر تحميل فعاليات الحرم الجامعي';
+
+  @override
+  String get adminCampusEventsLoadFailed => 'فشل تحميل فعاليات الحرم الجامعي.';
+
+  @override
+  String get adminCampusEventUpdated => 'تم تحديث الفعالية بنجاح.';
+
+  @override
+  String adminCapacityUsed(int current, int maximum) {
+    return 'السعة: $current/$maximum';
+  }
+
+  @override
+  String get adminCreateCampusEvent => 'إنشاء فعالية';
+
+  @override
+  String get adminCreateEvent => 'إنشاء فعالية';
+
+  @override
+  String get adminCreateScheduleTemplate => 'إنشاء قالب جدول';
+
+  @override
+  String get adminCreateTemplate => 'إنشاء قالب';
+
+  @override
+  String adminDateRange(Object start, Object end) {
+    return '$start إلى $end';
+  }
+
+  @override
+  String get adminDayFriday => 'الجمعة';
+
+  @override
+  String get adminDayMonday => 'الاثنين';
+
+  @override
+  String get adminDayOfWeek => 'اليوم من الأسبوع';
+
+  @override
+  String get adminDaySaturday => 'السبت';
+
+  @override
+  String get adminDaySunday => 'الأحد';
+
+  @override
+  String get adminDayThursday => 'الخميس';
+
+  @override
+  String get adminDayTuesday => 'الثلاثاء';
+
+  @override
+  String get adminDayWednesday => 'الأربعاء';
+
+  @override
+  String adminDeleteCampusEventConfirmation(Object title) {
+    return 'حذف \"$title\" نهائيا؟';
+  }
+
+  @override
+  String get adminDeleteCampusEventTitle => 'حذف فعالية الحرم';
+
+  @override
+  String get adminDeleteEventTooltip => 'حذف الفعالية';
+
+  @override
+  String adminDeleteOfficeHourSlotConfirmation(
+    Object day,
+    Object start,
+    Object end,
+  ) {
+    return 'حذف الفترة يوم $day من $start إلى $end؟';
+  }
+
+  @override
+  String get adminDeleteOfficeHourSlotTitle => 'حذف فترة ساعة مكتبية';
+
+  @override
+  String adminDeleteTemplateConfirmation(Object name) {
+    return 'حذف \"$name\" نهائيا؟';
+  }
+
+  @override
+  String get adminDeleteTemplateTitle => 'حذف القالب';
+
+  @override
+  String get adminEditCampusEvent => 'تعديل فعالية الحرم';
+
+  @override
+  String get adminEditEventTooltip => 'تعديل الفعالية';
+
+  @override
+  String get adminEditOfficeHourSlot => 'تعديل فترة ساعة مكتبية';
+
+  @override
+  String get adminEditScheduleTemplate => 'تعديل قالب الجدول';
+
+  @override
+  String get adminEnd => 'النهاية';
+
+  @override
+  String get adminEndDateMustBeAfterStartDate =>
+      'يجب أن يكون وقت/تاريخ النهاية بعد وقت/تاريخ البداية.';
+
+  @override
+  String adminEndsAt(Object dateTime) {
+    return 'ينتهي: $dateTime';
+  }
+
+  @override
+  String get adminEndTimeHint => 'وقت النهاية (HH:mm)';
+
+  @override
+  String get adminEnrollmentPeriods => 'فترات التسجيل';
+
+  @override
+  String get adminEnrollmentPeriodsControlCenter =>
+      'مركز التحكم في فترات التسجيل';
+
+  @override
+  String get adminEnrollmentPeriodsEmptyState =>
+      'لا توجد فترات تسجيل متاحة لهذا الفلتر.';
+
+  @override
+  String get adminEnrollmentPeriodsLiveDataHint =>
+      'بيانات مباشرة من /semesters مع اشتقاق تلقائي للحالة.';
+
+  @override
+  String get adminEnrollmentPeriodsLoadErrorTitle => 'تعذر تحميل فترات التسجيل';
+
+  @override
+  String get adminEnrollmentPeriodsLoadFailed => 'فشل تحميل فترات التسجيل.';
+
+  @override
+  String adminEnrollmentRegistered(int registered, int total) {
+    return '$registered/$total مسجل';
+  }
+
+  @override
+  String get adminEventTitleRequired => 'عنوان الفعالية مطلوب.';
+
+  @override
+  String get adminEventTypeGeneral => 'عام';
+
+  @override
+  String get adminEventTypeMeeting => 'اجتماع';
+
+  @override
+  String get adminEventTypeSeminar => 'ندوة';
+
+  @override
+  String get adminEventTypeWorkshop => 'ورشة';
+
+  @override
+  String get adminFilterByDay => 'تصفية حسب اليوم';
+
+  @override
+  String get adminFilterByInstructor => 'تصفية حسب المدرس/المعيد';
+
+  @override
+  String get adminFilterByMode => 'تصفية حسب النمط';
+
+  @override
+  String get adminFilterByRole => 'تصفية حسب الدور';
+
+  @override
+  String get adminHideAppointments => 'إخفاء المواعيد';
+
+  @override
+  String get adminInstructorOrTa => 'المدرس أو المعيد';
+
+  @override
+  String get adminLocationRequired => 'الموقع مطلوب.';
+
+  @override
+  String get adminMandatory => 'إلزامي';
+
+  @override
+  String get adminMaxAppointments => 'الحد الأقصى للمواعيد';
+
+  @override
+  String get adminMaxAttendees => 'الحد الأقصى للحضور';
+
+  @override
+  String get adminMode => 'النمط';
+
+  @override
+  String get adminModeInPerson => 'حضوري';
+
+  @override
+  String adminMoreSlots(int count) {
+    return '+$count فترات إضافية';
+  }
+
+  @override
+  String get adminNoAppointmentsForSlot => 'لا توجد مواعيد لهذه الفترة.';
+
+  @override
+  String get adminNoRegistrationsYet => 'لا توجد تسجيلات لهذه الفعالية بعد.';
+
+  @override
+  String get adminNotesOptional => 'ملاحظات (اختياري)';
+
+  @override
+  String get adminOfficeHourDeleteFailed => 'فشل حذف فترة الساعة المكتبية.';
+
+  @override
+  String get adminOfficeHourSaveFailed => 'فشل حفظ الساعة المكتبية.';
+
+  @override
+  String get adminOfficeHoursEmptyState =>
+      'لا توجد فترات ساعات مكتبية تطابق الفلاتر الحالية.';
+
+  @override
+  String get adminOfficeHoursLoadErrorTitle => 'فشل تحميل الساعات المكتبية';
+
+  @override
+  String get adminOfficeHoursLoadFailed => 'فشل تحميل الساعات المكتبية.';
+
+  @override
+  String get adminOfficeHourSlotCreated => 'تم إنشاء فترة ساعة مكتبية.';
+
+  @override
+  String get adminOfficeHourSlotDeleted => 'تم حذف فترة الساعة المكتبية.';
+
+  @override
+  String get adminOfficeHourSlotUpdated => 'تم تحديث فترة الساعة المكتبية.';
+
+  @override
+  String adminRegistrationCount(int count) {
+    return '$count تسجيلات';
+  }
+
+  @override
+  String adminRegistrationCountWithCapacity(int count, int maximum) {
+    return '$count/$maximum تسجيلات';
+  }
+
+  @override
+  String get adminRegistrationRequired => 'يتطلب تسجيل';
+
+  @override
+  String get adminRegistrations => 'التسجيلات';
+
+  @override
+  String adminRegistrationsForEvent(Object eventTitle) {
+    return 'تسجيلات $eventTitle';
+  }
+
+  @override
+  String get adminRegistrationsLoadFailed => 'فشل تحميل التسجيلات.';
+
+  @override
+  String get adminRoomOptional => 'القاعة (اختياري)';
+
+  @override
+  String get adminScheduleTemplates => 'قوالب الجداول';
+
+  @override
+  String get adminScheduleTemplatesLoadErrorTitle => 'فشل تحميل قوالب الجداول';
+
+  @override
+  String get adminScheduleTemplatesLoadFailed => 'فشل تحميل قوالب الجداول.';
+
+  @override
+  String get adminScheduleType => 'نوع الجدول';
+
+  @override
+  String get adminScheduleTypeLab => 'معمل';
+
+  @override
+  String get adminScheduleTypeLecture => 'محاضرة';
+
+  @override
+  String get adminScheduleTypeTutorial => 'تمرين';
+
+  @override
+  String get adminSearchEvents => 'البحث في الفعاليات';
+
+  @override
+  String get adminSearchOfficeHours => 'ابحث باسم المدرس أو اليوم أو الموقع';
+
+  @override
+  String get adminSearchTemplates => 'البحث في القوالب';
+
+  @override
+  String get adminSectionId => 'معرف الشعبة';
+
+  @override
+  String get adminSectionIdMustBeNumber =>
+      'يجب أن يكون معرف الشعبة رقما صالحا.';
+
+  @override
+  String get adminSectionIdsCommaSeparated => 'معرفات الشعب (مفصولة بفواصل)';
+
+  @override
+  String get adminSelectInstructorFirst => 'اختر مدرسا أو معيدا أولا.';
+
+  @override
+  String get adminShowAppointments => 'عرض المواعيد';
+
+  @override
+  String get adminSlotIsActive => 'الفترة نشطة';
+
+  @override
+  String adminSpotsRemaining(int count) {
+    return 'المقاعد المتبقية: $count';
+  }
+
+  @override
+  String get adminStart => 'البداية';
+
+  @override
+  String get adminStartTimeHint => 'وقت البداية (HH:mm)';
+
+  @override
+  String get adminStatusCancelled => 'ملغى';
+
+  @override
+  String get adminStatusClosed => 'مغلق';
+
+  @override
+  String get adminStatusConfirmed => 'مؤكد';
+
+  @override
+  String get adminStatusPublished => 'منشور';
+
+  @override
+  String get adminStatusRegistered => 'مسجل';
+
+  @override
+  String get adminTbd => 'لاحقا';
+
+  @override
+  String adminTemplateAppliedWithCount(int count) {
+    return 'تم تطبيق القالب بنجاح. الجداول المنشأة: $count';
+  }
+
+  @override
+  String get adminTemplateApplyFailed => 'فشل تطبيق القالب.';
+
+  @override
+  String get adminTemplateCreated => 'تم إنشاء القالب بنجاح.';
+
+  @override
+  String get adminTemplateDeleted => 'تم حذف القالب بنجاح.';
+
+  @override
+  String get adminTemplateDeleteFailed => 'فشل حذف القالب.';
+
+  @override
+  String get adminTemplateIsActive => 'القالب نشط';
+
+  @override
+  String get adminTemplateName => 'اسم القالب';
+
+  @override
+  String get adminTemplateNameRequired => 'اسم القالب مطلوب.';
+
+  @override
+  String get adminTemplateSaveFailed => 'فشل حفظ القالب.';
+
+  @override
+  String get adminTemplatesEmptyState =>
+      'لم يتم العثور على قوالب للفلاتر المحددة.';
+
+  @override
+  String adminTemplateSlotLine(
+    Object day,
+    Object start,
+    Object end,
+    Object location,
+  ) {
+    return '$day: $start-$end • $location';
+  }
+
+  @override
+  String adminTemplateSlotsCreator(int slotCount, Object creatorName) {
+    return 'الفترات: $slotCount • المنشئ: $creatorName';
+  }
+
+  @override
+  String get adminTemplateSlotsPreview => 'معاينة الفترات';
+
+  @override
+  String get adminTemplateUpdated => 'تم تحديث القالب بنجاح.';
+
+  @override
+  String get adminType => 'النوع';
+
+  @override
+  String adminUnknownUserWithId(int userId) {
+    return 'مستخدم #$userId';
+  }
+
+  @override
+  String get adminUseTimeFormat => 'استخدم تنسيق HH:mm للأوقات.';
 }

@@ -23677,6 +23677,831 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Messages and communications'**
   String get itChatSubtitle;
+
+  /// No description provided for @adminAddOfficeHour.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Office Hour'**
+  String get adminAddOfficeHour;
+
+  /// No description provided for @adminAddOfficeHourSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Office Hour Slot'**
+  String get adminAddOfficeHourSlot;
+
+  /// No description provided for @adminAiAndSystemSection.
+  ///
+  /// In en, this message translates to:
+  /// **'AI & System'**
+  String get adminAiAndSystemSection;
+
+  /// No description provided for @adminAllDays.
+  ///
+  /// In en, this message translates to:
+  /// **'All Days'**
+  String get adminAllDays;
+
+  /// No description provided for @adminAllStaff.
+  ///
+  /// In en, this message translates to:
+  /// **'All Staff'**
+  String get adminAllStaff;
+
+  /// No description provided for @adminApplyTemplateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply {templateName}'**
+  String adminApplyTemplateTitle(Object templateName);
+
+  /// No description provided for @adminAppointmentsRatio.
+  ///
+  /// In en, this message translates to:
+  /// **'Appointments: {current}/{maximum}'**
+  String adminAppointmentsRatio(int current, int maximum);
+
+  /// No description provided for @adminAtLeastOneSectionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Provide at least one valid section ID.'**
+  String get adminAtLeastOneSectionRequired;
+
+  /// No description provided for @adminBuildingOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Building (optional)'**
+  String get adminBuildingOptional;
+
+  /// No description provided for @adminBulkApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk Apply'**
+  String get adminBulkApply;
+
+  /// No description provided for @adminBulkApplyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk apply failed.'**
+  String get adminBulkApplyFailed;
+
+  /// No description provided for @adminBulkApplyResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk apply done. Success: {successful}, Failed: {failed}'**
+  String adminBulkApplyResult(int successful, int failed);
+
+  /// No description provided for @adminBulkApplyTemplateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk Apply {templateName}'**
+  String adminBulkApplyTemplateTitle(Object templateName);
+
+  /// No description provided for @adminCampusEventCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Event created successfully.'**
+  String get adminCampusEventCreated;
+
+  /// No description provided for @adminCampusEventDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Event deleted successfully.'**
+  String get adminCampusEventDeleted;
+
+  /// No description provided for @adminCampusEventDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete event.'**
+  String get adminCampusEventDeleteFailed;
+
+  /// No description provided for @adminCampusEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus Events'**
+  String get adminCampusEvents;
+
+  /// No description provided for @adminCampusEventSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save campus event.'**
+  String get adminCampusEventSaveFailed;
+
+  /// No description provided for @adminCampusEventsEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'No events matched your current filters.'**
+  String get adminCampusEventsEmptyState;
+
+  /// No description provided for @adminCampusEventsLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus Events Failed To Load'**
+  String get adminCampusEventsLoadErrorTitle;
+
+  /// No description provided for @adminCampusEventsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load campus events.'**
+  String get adminCampusEventsLoadFailed;
+
+  /// No description provided for @adminCampusEventUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Event updated successfully.'**
+  String get adminCampusEventUpdated;
+
+  /// No description provided for @adminCapacityUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Capacity: {current}/{maximum}'**
+  String adminCapacityUsed(int current, int maximum);
+
+  /// No description provided for @adminCreateCampusEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Campus Event'**
+  String get adminCreateCampusEvent;
+
+  /// No description provided for @adminCreateEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Event'**
+  String get adminCreateEvent;
+
+  /// No description provided for @adminCreateScheduleTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Schedule Template'**
+  String get adminCreateScheduleTemplate;
+
+  /// No description provided for @adminCreateTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Template'**
+  String get adminCreateTemplate;
+
+  /// No description provided for @adminDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{start} to {end}'**
+  String adminDateRange(Object start, Object end);
+
+  /// No description provided for @adminDayFriday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get adminDayFriday;
+
+  /// No description provided for @adminDayMonday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get adminDayMonday;
+
+  /// No description provided for @adminDayOfWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Day Of Week'**
+  String get adminDayOfWeek;
+
+  /// No description provided for @adminDaySaturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get adminDaySaturday;
+
+  /// No description provided for @adminDaySunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get adminDaySunday;
+
+  /// No description provided for @adminDayThursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get adminDayThursday;
+
+  /// No description provided for @adminDayTuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get adminDayTuesday;
+
+  /// No description provided for @adminDayWednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get adminDayWednesday;
+
+  /// No description provided for @adminDeleteCampusEventConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{title}\" permanently?'**
+  String adminDeleteCampusEventConfirmation(Object title);
+
+  /// No description provided for @adminDeleteCampusEventTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Campus Event'**
+  String get adminDeleteCampusEventTitle;
+
+  /// No description provided for @adminDeleteEventTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Event'**
+  String get adminDeleteEventTooltip;
+
+  /// No description provided for @adminDeleteOfficeHourSlotConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete slot on {day} {start}-{end}?'**
+  String adminDeleteOfficeHourSlotConfirmation(
+    Object day,
+    Object start,
+    Object end,
+  );
+
+  /// No description provided for @adminDeleteOfficeHourSlotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Office Hour Slot'**
+  String get adminDeleteOfficeHourSlotTitle;
+
+  /// No description provided for @adminDeleteTemplateConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete \"{name}\" permanently?'**
+  String adminDeleteTemplateConfirmation(Object name);
+
+  /// No description provided for @adminDeleteTemplateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Template'**
+  String get adminDeleteTemplateTitle;
+
+  /// No description provided for @adminEditCampusEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Campus Event'**
+  String get adminEditCampusEvent;
+
+  /// No description provided for @adminEditEventTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Event'**
+  String get adminEditEventTooltip;
+
+  /// No description provided for @adminEditOfficeHourSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Office Hour Slot'**
+  String get adminEditOfficeHourSlot;
+
+  /// No description provided for @adminEditScheduleTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Schedule Template'**
+  String get adminEditScheduleTemplate;
+
+  /// No description provided for @adminEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'End'**
+  String get adminEnd;
+
+  /// No description provided for @adminEndDateMustBeAfterStartDate.
+  ///
+  /// In en, this message translates to:
+  /// **'End date/time must be after start date/time.'**
+  String get adminEndDateMustBeAfterStartDate;
+
+  /// No description provided for @adminEndsAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends: {dateTime}'**
+  String adminEndsAt(Object dateTime);
+
+  /// No description provided for @adminEndTimeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'End Time (HH:mm)'**
+  String get adminEndTimeHint;
+
+  /// No description provided for @adminEnrollmentPeriods.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrollment Periods'**
+  String get adminEnrollmentPeriods;
+
+  /// No description provided for @adminEnrollmentPeriodsControlCenter.
+  ///
+  /// In en, this message translates to:
+  /// **'Periods Control Center'**
+  String get adminEnrollmentPeriodsControlCenter;
+
+  /// No description provided for @adminEnrollmentPeriodsEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'No enrollment periods available for this filter.'**
+  String get adminEnrollmentPeriodsEmptyState;
+
+  /// No description provided for @adminEnrollmentPeriodsLiveDataHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Live data from /semesters with auto status derivation.'**
+  String get adminEnrollmentPeriodsLiveDataHint;
+
+  /// No description provided for @adminEnrollmentPeriodsLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load enrollment periods'**
+  String get adminEnrollmentPeriodsLoadErrorTitle;
+
+  /// No description provided for @adminEnrollmentPeriodsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load enrollment periods.'**
+  String get adminEnrollmentPeriodsLoadFailed;
+
+  /// No description provided for @adminEnrollmentRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'{registered}/{total} registered'**
+  String adminEnrollmentRegistered(int registered, int total);
+
+  /// No description provided for @adminEventTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Event title is required.'**
+  String get adminEventTitleRequired;
+
+  /// No description provided for @adminEventTypeGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get adminEventTypeGeneral;
+
+  /// No description provided for @adminEventTypeMeeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting'**
+  String get adminEventTypeMeeting;
+
+  /// No description provided for @adminEventTypeSeminar.
+  ///
+  /// In en, this message translates to:
+  /// **'Seminar'**
+  String get adminEventTypeSeminar;
+
+  /// No description provided for @adminEventTypeWorkshop.
+  ///
+  /// In en, this message translates to:
+  /// **'Workshop'**
+  String get adminEventTypeWorkshop;
+
+  /// No description provided for @adminFilterByDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter By Day'**
+  String get adminFilterByDay;
+
+  /// No description provided for @adminFilterByInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter By Instructor/TA'**
+  String get adminFilterByInstructor;
+
+  /// No description provided for @adminFilterByMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter By Mode'**
+  String get adminFilterByMode;
+
+  /// No description provided for @adminFilterByRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter By Role'**
+  String get adminFilterByRole;
+
+  /// No description provided for @adminHideAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Appointments'**
+  String get adminHideAppointments;
+
+  /// No description provided for @adminInstructorOrTa.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor or TA'**
+  String get adminInstructorOrTa;
+
+  /// No description provided for @adminLocationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Location is required.'**
+  String get adminLocationRequired;
+
+  /// No description provided for @adminMandatory.
+  ///
+  /// In en, this message translates to:
+  /// **'Mandatory'**
+  String get adminMandatory;
+
+  /// No description provided for @adminMaxAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Appointments'**
+  String get adminMaxAppointments;
+
+  /// No description provided for @adminMaxAttendees.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Attendees'**
+  String get adminMaxAttendees;
+
+  /// No description provided for @adminMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Mode'**
+  String get adminMode;
+
+  /// No description provided for @adminModeInPerson.
+  ///
+  /// In en, this message translates to:
+  /// **'In Person'**
+  String get adminModeInPerson;
+
+  /// No description provided for @adminMoreSlots.
+  ///
+  /// In en, this message translates to:
+  /// **'+{count} more slots'**
+  String adminMoreSlots(int count);
+
+  /// No description provided for @adminNoAppointmentsForSlot.
+  ///
+  /// In en, this message translates to:
+  /// **'No appointments found for this slot.'**
+  String get adminNoAppointmentsForSlot;
+
+  /// No description provided for @adminNoRegistrationsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No registrations for this event yet.'**
+  String get adminNoRegistrationsYet;
+
+  /// No description provided for @adminNotesOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (optional)'**
+  String get adminNotesOptional;
+
+  /// No description provided for @adminOfficeHourDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete office hour slot.'**
+  String get adminOfficeHourDeleteFailed;
+
+  /// No description provided for @adminOfficeHourSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save office hour.'**
+  String get adminOfficeHourSaveFailed;
+
+  /// No description provided for @adminOfficeHoursEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'No office hour slots matched your current filters.'**
+  String get adminOfficeHoursEmptyState;
+
+  /// No description provided for @adminOfficeHoursLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Office Hours Failed To Load'**
+  String get adminOfficeHoursLoadErrorTitle;
+
+  /// No description provided for @adminOfficeHoursLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load office hours.'**
+  String get adminOfficeHoursLoadFailed;
+
+  /// No description provided for @adminOfficeHourSlotCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Office hour slot created.'**
+  String get adminOfficeHourSlotCreated;
+
+  /// No description provided for @adminOfficeHourSlotDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Office hour slot deleted.'**
+  String get adminOfficeHourSlotDeleted;
+
+  /// No description provided for @adminOfficeHourSlotUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Office hour slot updated.'**
+  String get adminOfficeHourSlotUpdated;
+
+  /// No description provided for @adminRegistrationCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} registrations'**
+  String adminRegistrationCount(int count);
+
+  /// No description provided for @adminRegistrationCountWithCapacity.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}/{maximum} registrations'**
+  String adminRegistrationCountWithCapacity(int count, int maximum);
+
+  /// No description provided for @adminRegistrationRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration Required'**
+  String get adminRegistrationRequired;
+
+  /// No description provided for @adminRegistrations.
+  ///
+  /// In en, this message translates to:
+  /// **'Registrations'**
+  String get adminRegistrations;
+
+  /// No description provided for @adminRegistrationsForEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'{eventTitle} Registrations'**
+  String adminRegistrationsForEvent(Object eventTitle);
+
+  /// No description provided for @adminRegistrationsLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load registrations.'**
+  String get adminRegistrationsLoadFailed;
+
+  /// No description provided for @adminRoomOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'Room (optional)'**
+  String get adminRoomOptional;
+
+  /// No description provided for @adminScheduleTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule Templates'**
+  String get adminScheduleTemplates;
+
+  /// No description provided for @adminScheduleTemplatesLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule Templates Failed To Load'**
+  String get adminScheduleTemplatesLoadErrorTitle;
+
+  /// No description provided for @adminScheduleTemplatesLoadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load schedule templates.'**
+  String get adminScheduleTemplatesLoadFailed;
+
+  /// No description provided for @adminScheduleType.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule Type'**
+  String get adminScheduleType;
+
+  /// No description provided for @adminScheduleTypeLab.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab'**
+  String get adminScheduleTypeLab;
+
+  /// No description provided for @adminScheduleTypeLecture.
+  ///
+  /// In en, this message translates to:
+  /// **'Lecture'**
+  String get adminScheduleTypeLecture;
+
+  /// No description provided for @adminScheduleTypeTutorial.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutorial'**
+  String get adminScheduleTypeTutorial;
+
+  /// No description provided for @adminSearchEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Search events'**
+  String get adminSearchEvents;
+
+  /// No description provided for @adminSearchOfficeHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by instructor, day, or location'**
+  String get adminSearchOfficeHours;
+
+  /// No description provided for @adminSearchTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Search templates'**
+  String get adminSearchTemplates;
+
+  /// No description provided for @adminSectionId.
+  ///
+  /// In en, this message translates to:
+  /// **'Section ID'**
+  String get adminSectionId;
+
+  /// No description provided for @adminSectionIdMustBeNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Section ID must be a valid number.'**
+  String get adminSectionIdMustBeNumber;
+
+  /// No description provided for @adminSectionIdsCommaSeparated.
+  ///
+  /// In en, this message translates to:
+  /// **'Section IDs (comma separated)'**
+  String get adminSectionIdsCommaSeparated;
+
+  /// No description provided for @adminSelectInstructorFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an instructor or TA first.'**
+  String get adminSelectInstructorFirst;
+
+  /// No description provided for @adminShowAppointments.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Appointments'**
+  String get adminShowAppointments;
+
+  /// No description provided for @adminSlotIsActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot Is Active'**
+  String get adminSlotIsActive;
+
+  /// No description provided for @adminSpotsRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} spots remaining'**
+  String adminSpotsRemaining(int count);
+
+  /// No description provided for @adminStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get adminStart;
+
+  /// No description provided for @adminStartTimeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Time (HH:mm)'**
+  String get adminStartTimeHint;
+
+  /// No description provided for @adminStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get adminStatusCancelled;
+
+  /// No description provided for @adminStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get adminStatusClosed;
+
+  /// No description provided for @adminStatusConfirmed.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get adminStatusConfirmed;
+
+  /// No description provided for @adminStatusPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get adminStatusPublished;
+
+  /// No description provided for @adminStatusRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'Registered'**
+  String get adminStatusRegistered;
+
+  /// No description provided for @adminTbd.
+  ///
+  /// In en, this message translates to:
+  /// **'TBD'**
+  String get adminTbd;
+
+  /// No description provided for @adminTemplateAppliedWithCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Template applied successfully. Schedules created: {count}'**
+  String adminTemplateAppliedWithCount(int count);
+
+  /// No description provided for @adminTemplateApplyFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to apply template.'**
+  String get adminTemplateApplyFailed;
+
+  /// No description provided for @adminTemplateCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Template created successfully.'**
+  String get adminTemplateCreated;
+
+  /// No description provided for @adminTemplateDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Template deleted successfully.'**
+  String get adminTemplateDeleted;
+
+  /// No description provided for @adminTemplateDeleteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete template.'**
+  String get adminTemplateDeleteFailed;
+
+  /// No description provided for @adminTemplateIsActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Template Is Active'**
+  String get adminTemplateIsActive;
+
+  /// No description provided for @adminTemplateName.
+  ///
+  /// In en, this message translates to:
+  /// **'Template Name'**
+  String get adminTemplateName;
+
+  /// No description provided for @adminTemplateNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Template name is required.'**
+  String get adminTemplateNameRequired;
+
+  /// No description provided for @adminTemplateSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save template.'**
+  String get adminTemplateSaveFailed;
+
+  /// No description provided for @adminTemplatesEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'No templates found for the selected filters.'**
+  String get adminTemplatesEmptyState;
+
+  /// No description provided for @adminTemplateSlotLine.
+  ///
+  /// In en, this message translates to:
+  /// **'{day}: {start}-{end} • {location}'**
+  String adminTemplateSlotLine(
+    Object day,
+    Object start,
+    Object end,
+    Object location,
+  );
+
+  /// No description provided for @adminTemplateSlotsCreator.
+  ///
+  /// In en, this message translates to:
+  /// **'Slots: {slotCount} • Creator: {creatorName}'**
+  String adminTemplateSlotsCreator(int slotCount, Object creatorName);
+
+  /// No description provided for @adminTemplateSlotsPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Slots Preview'**
+  String get adminTemplateSlotsPreview;
+
+  /// No description provided for @adminTemplateUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Template updated successfully.'**
+  String get adminTemplateUpdated;
+
+  /// No description provided for @adminType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get adminType;
+
+  /// No description provided for @adminUnknownUserWithId.
+  ///
+  /// In en, this message translates to:
+  /// **'User #{userId}'**
+  String adminUnknownUserWithId(int userId);
+
+  /// No description provided for @adminUseTimeFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Use HH:mm format for times.'**
+  String get adminUseTimeFormat;
 }
 
 class _AppLocalizationsDelegate
