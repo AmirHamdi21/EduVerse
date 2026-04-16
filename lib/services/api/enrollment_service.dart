@@ -20,8 +20,12 @@ class EnrollmentService {
     int? semester,
   }) {
     return RetryHelper.execute<List<CourseEnrollmentModel>>(() async {
-      final queryParams = semester != null
-          ? <String, dynamic>{'semester': semester}
+      final int? normalizedSemester = (semester != null && semester > 0)
+          ? semester
+          : null;
+
+      final queryParams = normalizedSemester != null
+          ? <String, dynamic>{'semester': normalizedSemester}
           : null;
 
       final response = await _client.dio.get(
@@ -37,14 +41,10 @@ class EnrollmentService {
   }
 
   /// GET /api/enrollments/my-courses
-  Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses() {
-    return RetryHelper.execute<List<CourseEnrollmentModel>>(() async {
-      final response = await _client.dio.get('/enrollments/my-courses');
-      return _extractList(response.data)
-          .whereType<Map<String, dynamic>>()
-          .map(CourseEnrollmentModel.fromJson)
-          .toList();
-    }, fallbackMessage: 'Failed to load your courses');
+  Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses({
+    int? semester,
+  }) {
+    return getMyEnrollments(semester: semester);
   }
 
   /// GET /api/enrollments/teaching

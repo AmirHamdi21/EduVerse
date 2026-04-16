@@ -40,6 +40,8 @@ class CourseEnrollmentModel extends Equatable {
   final CourseModel? course;
   final SectionModel? section;
   final SemesterModel? semester;
+  final UserLite? instructor;
+  final List<EnrollmentPrerequisite>? prerequisites;
 
   const CourseEnrollmentModel({
     required this.id,
@@ -55,6 +57,8 @@ class CourseEnrollmentModel extends Equatable {
     this.course,
     this.section,
     this.semester,
+    this.instructor,
+    this.prerequisites,
   });
 
   String get status => enrollmentStatus.toJson();
@@ -63,6 +67,9 @@ class CourseEnrollmentModel extends Equatable {
   String get courseId => course?.courseId.toString() ?? '';
 
   factory CourseEnrollmentModel.fromJson(Map<String, dynamic> json) {
+    final dynamic rawInstructor = json['instructor'];
+    final dynamic rawPrerequisites = json['prerequisites'];
+
     return CourseEnrollmentModel(
       id: (json['id'] ?? json['enrollmentId'] ?? '').toString(),
       userId: json['userId'] is int
@@ -95,6 +102,15 @@ class CourseEnrollmentModel extends Equatable {
       semester: json['semester'] != null
           ? SemesterModel.fromJson(json['semester'] as Map<String, dynamic>)
           : null,
+      instructor: rawInstructor is Map<String, dynamic>
+          ? UserLite.fromJson(rawInstructor)
+          : null,
+      prerequisites: rawPrerequisites is List
+          ? rawPrerequisites
+                .whereType<Map<String, dynamic>>()
+                .map(EnrollmentPrerequisite.fromJson)
+                .toList()
+          : null,
     );
   }
 
@@ -123,6 +139,15 @@ class CourseEnrollmentModel extends Equatable {
       'course': course?.toJson(),
       'section': section?.toJson(),
       'semester': semester?.toJson(),
+      'instructor': instructor == null
+          ? null
+          : {
+              'id': instructor!.userId,
+              'firstName': instructor!.firstName,
+              'lastName': instructor!.lastName,
+              'email': instructor!.email,
+            },
+      'prerequisites': prerequisites?.map((e) => e.toJson()).toList(),
     };
   }
 
@@ -141,6 +166,70 @@ class CourseEnrollmentModel extends Equatable {
     course,
     section,
     semester,
+    instructor,
+    prerequisites,
+  ];
+}
+
+class EnrollmentPrerequisite extends Equatable {
+  final int id;
+  final int courseId;
+  final int prerequisiteCourseId;
+  final String courseCode;
+  final String courseName;
+  final bool isMandatory;
+  final bool studentCompleted;
+  final String? studentGrade;
+
+  const EnrollmentPrerequisite({
+    required this.id,
+    required this.courseId,
+    required this.prerequisiteCourseId,
+    required this.courseCode,
+    required this.courseName,
+    required this.isMandatory,
+    required this.studentCompleted,
+    this.studentGrade,
+  });
+
+  factory EnrollmentPrerequisite.fromJson(Map<String, dynamic> json) {
+    return EnrollmentPrerequisite(
+      id: EnrollmentModel._parseInt(json['id']),
+      courseId: EnrollmentModel._parseInt(json['courseId']),
+      prerequisiteCourseId: EnrollmentModel._parseInt(
+        json['prerequisiteCourseId'],
+      ),
+      courseCode: json['courseCode']?.toString() ?? '',
+      courseName: json['courseName']?.toString() ?? '',
+      isMandatory: json['isMandatory'] == true,
+      studentCompleted: json['studentCompleted'] == true,
+      studentGrade: json['studentGrade']?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'id': id,
+      'courseId': courseId,
+      'prerequisiteCourseId': prerequisiteCourseId,
+      'courseCode': courseCode,
+      'courseName': courseName,
+      'isMandatory': isMandatory,
+      'studentCompleted': studentCompleted,
+      'studentGrade': studentGrade,
+    };
+  }
+
+  @override
+  List<Object?> get props => <Object?>[
+    id,
+    courseId,
+    prerequisiteCourseId,
+    courseCode,
+    courseName,
+    isMandatory,
+    studentCompleted,
+    studentGrade,
   ];
 }
 

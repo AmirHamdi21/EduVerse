@@ -10,7 +10,12 @@ abstract class CoursesEvent extends Equatable {
 
 /// Fetch courses for a Student (enrolled courses).
 class StudentCoursesFetched extends CoursesEvent {
-  const StudentCoursesFetched();
+  final int? semester;
+
+  const StudentCoursesFetched({this.semester});
+
+  @override
+  List<Object?> get props => [semester];
 }
 
 /// Fetch courses for an Instructor (teaching assignments).

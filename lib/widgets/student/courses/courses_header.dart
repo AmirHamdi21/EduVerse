@@ -1,5 +1,6 @@
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
+import 'package:edu_verse/common/utils/student_courses_theme.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,12 +23,12 @@ class CoursesHeader extends StatelessWidget {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: isDark
-                  ? [Color(0xFF1E293B), Color(0xFF0F172A)]
-                  : [Color(0xFF2B7FFF), Color(0xFF155DFC)],
+                  ? StudentCoursesTheme.headerGradientDark.colors
+                  : StudentCoursesTheme.primaryGradient.colors,
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: StudentCoursesTheme.shellRadius,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),

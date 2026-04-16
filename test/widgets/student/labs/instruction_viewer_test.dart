@@ -64,7 +64,9 @@ class _FakeEnrollmentService extends EnrollmentService {
   _FakeEnrollmentService() : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses() async {
+  Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses({
+    int? semester,
+  }) async {
     return ServiceResult<List<CourseEnrollmentModel>>.success(
       const <CourseEnrollmentModel>[],
     );

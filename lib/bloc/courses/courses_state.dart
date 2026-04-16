@@ -138,3 +138,14 @@ class CoursesError extends CoursesState {
   @override
   List<Object?> get props => [message];
 }
+
+/// Auth/session specific state emitted for 401/403 backend responses.
+class CoursesAuthSessionRequired extends CoursesState {
+  final String message;
+  final int? statusCode;
+
+  const CoursesAuthSessionRequired({required this.message, this.statusCode});
+
+  @override
+  List<Object?> get props => [message, statusCode];
+}

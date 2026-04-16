@@ -21,7 +21,9 @@ class _FakeEnrollmentService extends EnrollmentService {
   bool called = false;
 
   @override
-  Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses() async {
+  Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses({
+    int? semester,
+  }) async {
     called = true;
     return result;
   }

@@ -37,6 +37,8 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   static const _cacheKeyTeaching = 'courses_cache_teaching';
   static const _cacheKeyStructurePrefix = 'courses_cache_structure_';
 
+  int? _lastRequestedSemester;
+
   CoursesBloc({
     required CourseService courseService,
     required EnrollmentService enrollmentService,
@@ -64,22 +66,61 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     StudentCoursesFetched event,
     Emitter<CoursesState> emit,
   ) async {
+    _lastRequestedSemester = event.semester;
+
     // Load cached data first for offline resilience
     final cached = await _loadCachedEnrollments();
     emit(CoursesLoading(cachedData: cached));
 
     try {
-      final enrollmentsResult = await _enrollmentService.getMyCourses();
-      if (!enrollmentsResult.isSuccess || enrollmentsResult.data == null) {
-        throw Exception(
-          enrollmentsResult.error?.message ?? 'Failed to load courses',
-        );
+      final enrollmentsResult = await _enrollmentService.getMyEnrollments(
+        semester: event.semester,
+      );
+
+      if (enrollmentsResult.isSuccess && enrollmentsResult.data != null) {
+        final enrollments = enrollmentsResult.data!;
+        await _cacheEnrollments(enrollments);
+        emit(CoursesLoaded(enrollments: enrollments));
+        return;
       }
 
-      final enrollments = enrollmentsResult.data!;
-      await _cacheEnrollments(enrollments);
-      emit(CoursesLoaded(enrollments: enrollments));
+      final ServiceError? serviceError = enrollmentsResult.error;
+      if (_isAuthError(serviceError?.statusCode, serviceError?.type)) {
+        emit(
+          CoursesAuthSessionRequired(
+            message: serviceError?.message.isNotEmpty == true
+                ? serviceError!.message
+                : 'Your session has expired. Please sign in again.',
+            statusCode: serviceError?.statusCode,
+          ),
+        );
+        return;
+      }
+
+      if (cached.isNotEmpty) {
+        emit(CoursesLoaded(enrollments: cached));
+        return;
+      }
+
+      emit(
+        CoursesError(
+          message: serviceError?.message.isNotEmpty == true
+              ? serviceError!.message
+              : 'Failed to load courses',
+        ),
+      );
     } catch (e) {
+      final int? statusCode = _extractStatusCode(e);
+      if (_isAuthError(statusCode, null)) {
+        emit(
+          CoursesAuthSessionRequired(
+            message: 'Your session has expired. Please sign in again.',
+            statusCode: statusCode,
+          ),
+        );
+        return;
+      }
+
       if (cached.isNotEmpty) {
         emit(CoursesLoaded(enrollments: cached));
       } else {
@@ -263,7 +304,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   ) async {
     // Re-dispatch the appropriate fetch based on current state type.
     // Default to student courses fetch.
-    add(const StudentCoursesFetched());
+    add(StudentCoursesFetched(semester: _lastRequestedSemester));
   }
 
   // ── SharedPreferences Cache Helpers ────────────────────────────────────
@@ -406,5 +447,22 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
         .replaceAll('DioException ', '')
         .replaceAll(RegExp(r'\[.*?\]'), '')
         .trim();
+  }
+
+  bool _isAuthError(int? statusCode, ServiceErrorType? type) {
+    if (statusCode == 401 || statusCode == 403) {
+      return true;
+    }
+    return type == ServiceErrorType.auth;
+  }
+
+  int? _extractStatusCode(Object error) {
+    if (error is DioException) {
+      return error.response?.statusCode;
+    }
+    if (error is ServiceError) {
+      return error.statusCode;
+    }
+    return null;
   }
 }

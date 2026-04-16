@@ -75,6 +75,39 @@
 - What happens when [boundary condition]?
 - How does system handle [error scenario]?
 
+## Clarification Evidence *(mandatory)*
+
+<!--
+  ACTION REQUIRED: Record clarification output from /speckit.clarify.
+  - Minimum 8 targeted questions for all features.
+  - Minimum 12 targeted questions for Student Courses/Course Details redesign.
+  Questions MUST cover field parity, role behavior, edge cases, deletion scope,
+  API/event coverage, endpoint contracts (required vs optional params),
+  response shape certainty, and function boundaries.
+-->
+
+- **Clarification Count**: [e.g., 8 or 12]
+- **Resolved Questions Summary**:
+  - [Q1 → resolution]
+  - [Q2 → resolution]
+- **Open Questions**: [None or list items requiring follow-up]
+
+## Backend Endpoint Contract Audit *(mandatory for backend-integrated features)*
+
+<!--
+  ACTION REQUIRED for backend-integrated or UI redesign features that consume APIs:
+  enumerate each endpoint used by this feature and verify contracts against backend
+  source and API docs before implementation tasks are finalized.
+-->
+
+| Endpoint | Method | Consumer (Screen/BLoC/Service) | Required Params | Optional Params | Response Shape Notes |
+|----------|--------|--------------------------------|-----------------|-----------------|----------------------|
+| [e.g., /api/enrollments/my-courses] | [GET] | [CoursesBloc/EnrollmentService] | [auth, none] | [semesterId?] | [List<CourseEnrollmentModel> + nested course/section/semester] |
+
+**Audit Source Paths**:
+- [Flutter docs path, e.g., COURSES_ASSIGNMENTS_LABS_BACKEND_API_DOCS.md]
+- [Backend code path, e.g., C:\\Users\\Friends\\Desktop\\Graduation\\Backend\\EduVerse_Backend]
+
 ## Requirements *(mandatory)*
 
 <!--
@@ -89,11 +122,13 @@
 - **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
+- **FR-006**: System MUST remove static/mock/fallback data paths from modified files once backend integration for the scope succeeds.
+- **FR-007**: System MUST implement non-trivial business logic in named, testable functions/services instead of monolithic widget methods.
 
 *Example of marking unclear requirements:*
 
-- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
-- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
+- **FR-008**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
+- **FR-009**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
 
 ### Key Entities *(include if feature involves data)*
 

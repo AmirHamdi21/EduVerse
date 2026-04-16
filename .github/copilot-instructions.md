@@ -1,6 +1,6 @@
 # edu_verse Development Guidelines
 
-Auto-generated from all feature plans. Last updated: 2026-04-15
+Auto-generated from all feature plans. Last updated: 2026-04-16
 
 ## Active Technologies
 - Dart Flutter + socket_io_client, dio (006-chat-core-infra)
@@ -17,6 +17,8 @@ Auto-generated from all feature plans. Last updated: 2026-04-15
 - N/A (In-Memory BLoC `ChatState` with shared preferences minimal caching previously implemented) (012-chat-pro-ux)
 - Dart 3+ / Flutter 3.24+ + flutter_bloc, equatable, dio, go_router (013-discussion-forums)
 - N/A (No offline caching, network required) (013-discussion-forums)
+- Dart 3.9.2 / Flutter stable + flutter_bloc, equatable, dio, shared_preferences, go_router, intl (025-courses-shell-foundation)
+- Backend API + in-memory BLoC state + SharedPreferences cache for course enrollments (025-courses-shell-foundation)
 
 - [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION] + [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION] (006-chat-core-infra)
 
@@ -37,6 +39,7 @@ cd src; pytest; ruff check .
 [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]: Follow standard conventions
 
 ## Recent Changes
+- 025-courses-shell-foundation: Added Dart 3.9.2 / Flutter stable + flutter_bloc, equatable, dio, shared_preferences, go_router, intl
 - 013-discussion-forums: Added Dart 3+ / Flutter 3.24+ + flutter_bloc, equatable, dio, go_router
 - 012-chat-pro-ux: Added Dart 3+ / Flutter 3.24+ + flutter_bloc, equatable, socket_io_client, dio, go_router
 

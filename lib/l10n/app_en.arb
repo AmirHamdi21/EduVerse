@@ -4997,5 +4997,12 @@
       }
     }
   },
+  "coursesShellStatusLabel": "Status",
+  "coursesShellSemesterLabel": "Semester",
+  "coursesShellSessionRequiredTitle": "Session Required",
+  "coursesShellSessionRequiredMessage": "Your session has expired. Please sign in again.",
+  "coursesShellReauthenticate": "Re-authenticate",
+  "coursesShellNoSemesterMatches": "No courses in this semester",
+  "coursesShellSearchSemanticsHint": "Search by course code, title, section, semester, or instructor",
   "adminUseTimeFormat": "Use HH:mm format for times."
 }

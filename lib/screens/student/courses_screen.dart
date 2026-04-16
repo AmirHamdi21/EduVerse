@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../common/utils/student_course_filters.dart';
+import '../../common/utils/student_courses_theme.dart';
 import '../../bloc/courses/courses_bloc.dart';
 import '../../bloc/courses/courses_event.dart';
 import '../../bloc/courses/courses_state.dart';
@@ -27,87 +29,75 @@ class CoursesScreen extends StatefulWidget {
 }
 
 class _CoursesScreenState extends State<CoursesScreen> {
-  // ── Local filter/sort/search state (US2 support) ─────────────────────
+  // ── Local filter/sort/search state ─────────────────────────────────────
   String _selectedFilter = 'all';
   String _selectedSort = 'title_asc';
   String _searchQuery = '';
+  int? _selectedSemesterId;
 
   @override
   void initState() {
     super.initState();
-    // T008: Dispatch the fetch event to load live courses from backend.
-    context.read<CoursesBloc>().add(const StudentCoursesFetched());
+    context.read<CoursesBloc>().add(
+      StudentCoursesFetched(semester: _selectedSemesterId),
+    );
   }
 
-  // ── In-memory filter/sort helpers (T012, T013) ───────────────────────
-
-  List<CourseEnrollmentModel> _applyFilters(
+  List<CourseEnrollmentModel> _applyFiltersAndSort(
     List<CourseEnrollmentModel> enrollments,
   ) {
-    var filtered = enrollments.where((enrollment) {
-      // Search filter
-      final matchesSearch =
-          _searchQuery.isEmpty ||
-          (enrollment.course?.courseName ?? '').toLowerCase().contains(
-            _searchQuery.toLowerCase(),
-          ) ||
-          (enrollment.course?.courseCode ?? '').toLowerCase().contains(
-            _searchQuery.toLowerCase(),
-          ) ||
-          (enrollment.course?.departmentName ?? '').toLowerCase().contains(
-            _searchQuery.toLowerCase(),
-          );
-
-      // Status filter — backend sends 'enrolled' which maps to 'active' in UI
-      final statusLower = enrollment.status.toLowerCase();
-      final matchesFilter =
-          _selectedFilter == 'all' ||
-          (_selectedFilter == 'completed' && statusLower == 'completed') ||
-          (_selectedFilter == 'active' &&
-              (statusLower == 'active' || statusLower == 'enrolled')) ||
-          (_selectedFilter == 'dropped' && statusLower == 'dropped');
-
-      return matchesSearch && matchesFilter;
-    }).toList();
-
-    // Sort
-    _sortEnrollments(filtered);
-
-    return filtered;
+    return StudentCourseFilters.applyCourseFiltersAndSort(
+      enrollments: enrollments,
+      query: _searchQuery,
+      selectedStatus: _selectedFilter,
+      sortKey: _selectedSort,
+      selectedSemesterId: _selectedSemesterId,
+    );
   }
 
-  void _sortEnrollments(List<CourseEnrollmentModel> enrollments) {
-    switch (_selectedSort) {
-      case 'title_asc':
-        enrollments.sort(
-          (a, b) => (a.course?.courseName ?? '').compareTo(
-            b.course?.courseName ?? '',
-          ),
-        );
-        break;
-      case 'title_desc':
-        enrollments.sort(
-          (a, b) => (b.course?.courseName ?? '').compareTo(
-            a.course?.courseName ?? '',
-          ),
-        );
-        break;
-      case 'credits_desc':
-        enrollments.sort(
-          (a, b) => (b.course?.credits ?? 0).compareTo(a.course?.credits ?? 0),
-        );
-        break;
-      case 'credits_asc':
-        enrollments.sort(
-          (a, b) => (a.course?.credits ?? 0).compareTo(b.course?.credits ?? 0),
-        );
-        break;
-      case 'date':
-        enrollments.sort(
-          (a, b) => b.enrollmentDate.compareTo(a.enrollmentDate),
-        );
-        break;
+  List<CourseEnrollmentModel> _enrollmentsFromState(CoursesState state) {
+    if (state is CoursesLoaded) {
+      return state.enrollments;
     }
+    if (state is CoursesLoading) {
+      return state.cachedData.whereType<CourseEnrollmentModel>().toList();
+    }
+    return <CourseEnrollmentModel>[];
+  }
+
+  void _ensureSemesterSelectionIsValid(List<SemesterFilterOption> options) {
+    if (_selectedSemesterId == null) {
+      return;
+    }
+
+    final bool stillExists = options.any(
+      (SemesterFilterOption option) => option.id == _selectedSemesterId,
+    );
+
+    if (!stillExists && mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+          _selectedSemesterId = null;
+        });
+      });
+    }
+  }
+
+  void _retryStudentFetch() {
+    context.read<CoursesBloc>().add(
+      StudentCoursesFetched(semester: _selectedSemesterId),
+    );
+  }
+
+  void _clearAllFilters() {
+    setState(() {
+      _selectedFilter = 'all';
+      _searchQuery = '';
+      _selectedSemesterId = null;
+    });
   }
 
   @override
@@ -119,10 +109,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
         return Scaffold(
           floatingActionButton: const JoinCourseButton(),
-          backgroundColor: isDark
-              ? const Color(0xFF1A1A2E)
-              : const Color(0xFFFAFAFA),
-          // T007: BlocListener for offline Snackbar warnings
+          backgroundColor: StudentCoursesTheme.scaffoldBackground(isDark),
           body: BlocListener<CoursesBloc, CoursesState>(
             listener: (context, state) {
               if (state is CoursesError) {
@@ -155,16 +142,29 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     action: SnackBarAction(
                       label: 'RETRY',
                       textColor: Colors.white,
-                      onPressed: () {
-                        context.read<CoursesBloc>().add(
-                          const StudentCoursesFetched(),
-                        );
-                      },
+                      onPressed: _retryStudentFetch,
                     ),
                   ),
                 );
               }
-              // Show offline-cache Snackbar when loading with cached data
+
+              if (state is CoursesAuthSessionRequired) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      state.message,
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                    backgroundColor: const Color(0xFFB45309),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    duration: const Duration(seconds: 4),
+                  ),
+                );
+              }
+
               if (state is CoursesLoading && state.cachedData.isNotEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -192,9 +192,14 @@ class _CoursesScreenState extends State<CoursesScreen> {
                 );
               }
             },
-            // T004: Wrap content with BlocBuilder<CoursesBloc, CoursesState>
             child: BlocBuilder<CoursesBloc, CoursesState>(
               builder: (context, state) {
+                final List<SemesterFilterOption> semesterOptions =
+                    StudentCourseFilters.deriveSemesterOptions(
+                      _enrollmentsFromState(state),
+                    );
+                _ensureSemesterSelectionIsValid(semesterOptions);
+
                 return SafeArea(
                   child: CustomScrollView(
                     slivers: [
@@ -220,10 +225,18 @@ class _CoursesScreenState extends State<CoursesScreen> {
                               children: [
                                 FilterButton(
                                   selectedFilter: _selectedFilter,
+                                  selectedSemesterId: _selectedSemesterId,
+                                  semesterOptions: semesterOptions,
                                   onFilterChanged: (filter) {
                                     setState(() {
                                       _selectedFilter = filter;
                                     });
+                                  },
+                                  onSemesterChanged: (semesterId) {
+                                    setState(() {
+                                      _selectedSemesterId = semesterId;
+                                    });
+                                    _retryStudentFetch();
                                   },
                                 ),
                                 const SizedBox(width: 12),
@@ -239,14 +252,22 @@ class _CoursesScreenState extends State<CoursesScreen> {
                             ),
                             const SizedBox(height: 16),
                             CourseFilterBar(
+                              selectedFilter: _selectedFilter,
                               onFilterChanged: (filter) {
                                 setState(() {
                                   _selectedFilter = filter;
                                 });
                               },
+                              selectedSemesterId: _selectedSemesterId,
+                              semesterOptions: semesterOptions,
+                              onSemesterChanged: (semesterId) {
+                                setState(() {
+                                  _selectedSemesterId = semesterId;
+                                });
+                                _retryStudentFetch();
+                              },
                             ),
                             const SizedBox(height: 20),
-                            // ── State-driven content ─────────────────
                             _buildContent(state, isDark, l10n),
                             const SizedBox(height: 32),
                             const SizedBox(height: 24),
@@ -264,20 +285,17 @@ class _CoursesScreenState extends State<CoursesScreen> {
     );
   }
 
-  /// Renders content based on the current [CoursesState].
   Widget _buildContent(CoursesState state, bool isDark, AppLocalizations l10n) {
-    // Loading state with no cached data → skeleton
     if (state is CoursesInitial ||
         (state is CoursesLoading && state.cachedData.isEmpty)) {
       return _buildSkeletonLoader(isDark);
     }
 
-    // Loading state WITH cached data → show cached list with subtle indicator
     if (state is CoursesLoading && state.cachedData.isNotEmpty) {
       final cached = state.cachedData
           .whereType<CourseEnrollmentModel>()
           .toList();
-      final filtered = _applyFilters(cached);
+      final filtered = _applyFiltersAndSort(cached);
       return Column(
         children: [
           const LinearProgressIndicator(
@@ -291,26 +309,28 @@ class _CoursesScreenState extends State<CoursesScreen> {
       );
     }
 
-    // Loaded state → show live data
     if (state is CoursesLoaded) {
-      final filtered = _applyFilters(state.enrollments);
+      final filtered = _applyFiltersAndSort(state.enrollments);
+      if (filtered.isEmpty && state.enrollments.isEmpty) {
+        return _buildEmptyState(isDark, l10n);
+      }
       if (filtered.isEmpty && state.enrollments.isNotEmpty) {
-        // Filter produced no results
-        return _buildNoFilterResults(isDark);
+        return _buildNoFilterResults(isDark, l10n);
       }
       return CoursesListView(enrollments: filtered);
     }
 
-    // Error state → show error UI
-    if (state is CoursesError) {
-      return _buildErrorState(isDark);
+    if (state is CoursesAuthSessionRequired) {
+      return _buildAuthSessionRequiredState(isDark, state);
     }
 
-    // Fallback
-    return _buildEmptyState(isDark);
+    if (state is CoursesError) {
+      return _buildErrorState(isDark, l10n);
+    }
+
+    return _buildEmptyState(isDark, l10n);
   }
 
-  /// Skeleton loader cards while initial fetch is in progress.
   Widget _buildSkeletonLoader(bool isDark) {
     return Column(
       children: List.generate(
@@ -320,12 +340,10 @@ class _CoursesScreenState extends State<CoursesScreen> {
           child: Container(
             height: 180,
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF16213E) : Colors.white,
-              borderRadius: BorderRadius.circular(24),
+              color: StudentCoursesTheme.cardBackground(isDark),
+              borderRadius: StudentCoursesTheme.cardRadius,
               border: Border.all(
-                color: isDark
-                    ? Colors.white.withOpacity(0.1)
-                    : const Color(0xFFD1D5DC),
+                color: StudentCoursesTheme.borderColor(isDark),
               ),
             ),
             child: Padding(
@@ -400,8 +418,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
     );
   }
 
-  /// Empty state when there are genuinely no courses.
-  Widget _buildEmptyState(bool isDark) {
+  Widget _buildEmptyState(bool isDark, AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
@@ -427,7 +444,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ),
             const SizedBox(height: 20),
             Text(
-              'No Courses Yet',
+              l10n.noCoursesFound,
               style: TextStyle(
                 color: isDark ? Colors.white : const Color(0xFF101828),
                 fontSize: 18,
@@ -436,11 +453,12 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Enroll in courses to get started',
+              l10n.noCoursesFoundDescription,
               style: TextStyle(
-                color: isDark ? Colors.white54 : const Color(0xFF667085),
+                color: StudentCoursesTheme.mutedText(isDark),
                 fontSize: 14,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -448,8 +466,12 @@ class _CoursesScreenState extends State<CoursesScreen> {
     );
   }
 
-  /// State when filters return no matching results.
-  Widget _buildNoFilterResults(bool isDark) {
+  Widget _buildNoFilterResults(bool isDark, AppLocalizations l10n) {
+    final bool semesterOnly =
+        _selectedSemesterId != null &&
+        _searchQuery.trim().isEmpty &&
+        _selectedFilter == 'all';
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
@@ -463,7 +485,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'No courses match your filters',
+              semesterOnly
+                  ? 'No courses in this semester'
+                  : 'No courses match your filters',
               style: TextStyle(
                 color: isDark ? Colors.white54 : Colors.grey[600],
                 fontSize: 15,
@@ -472,14 +496,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ),
             const SizedBox(height: 8),
             TextButton(
-              onPressed: () {
-                setState(() {
-                  _selectedFilter = 'all';
-                  _searchQuery = '';
-                });
-              },
-              child: const Text(
-                'Clear Filters',
+              onPressed: _clearAllFilters,
+              child: Text(
+                l10n.clearFilters,
                 style: TextStyle(
                   color: Color(0xFF155DFC),
                   fontWeight: FontWeight.w600,
@@ -492,8 +511,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
     );
   }
 
-  /// Error state with retry action.
-  Widget _buildErrorState(bool isDark) {
+  Widget _buildErrorState(bool isDark, AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
@@ -536,11 +554,77 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
-              onPressed: () {
-                context.read<CoursesBloc>().add(const StudentCoursesFetched());
-              },
+              onPressed: _retryStudentFetch,
               icon: const Icon(Icons.refresh, size: 18),
-              label: const Text('Try Again'),
+              label: Text(l10n.tryAgain),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF155DFC),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAuthSessionRequiredState(
+    bool isDark,
+    CoursesAuthSessionRequired state,
+  ) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF3A2A16)
+                    : const Color(0xFFFFF3E0),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.lock_clock_outlined,
+                size: 40,
+                color: isDark
+                    ? const Color(0xFFFCD34D)
+                    : const Color(0xFFB45309),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Session Required',
+              style: TextStyle(
+                color: isDark ? Colors.white : const Color(0xFF101828),
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              state.message,
+              style: TextStyle(
+                color: StudentCoursesTheme.mutedText(isDark),
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton.icon(
+              onPressed: _retryStudentFetch,
+              icon: const Icon(Icons.refresh, size: 18),
+              label: const Text('Re-authenticate'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF155DFC),
                 foregroundColor: Colors.white,

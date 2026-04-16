@@ -131,6 +131,47 @@ void main() {
       },
     );
 
+    test('StudentCoursesFetched forwards optional semester payload', () async {
+      int? observedSemester;
+
+      final bloc = _buildBloc((options) {
+        if (options.path.contains('/enrollments/my-courses')) {
+          observedSemester = options.queryParameters['semester'] as int?;
+          return {
+            'statusCode': 200,
+            'data': [
+              {
+                'id': '11',
+                'userId': 42,
+                'sectionId': 7,
+                'status': 'enrolled',
+                'enrollmentDate': '2026-01-15T00:00:00.000Z',
+                'course': {
+                  'id': 1,
+                  'code': 'CS101',
+                  'name': 'Intro',
+                  'credits': 3,
+                  'level': 'freshman',
+                },
+                'semester': {'id': 3, 'name': 'Fall 2026'},
+              },
+            ],
+          };
+        }
+        return {'data': []};
+      });
+
+      bloc.add(const StudentCoursesFetched(semester: 3));
+
+      await expectLater(
+        bloc.stream,
+        emitsInOrder([isA<CoursesLoading>(), isA<CoursesLoaded>()]),
+      );
+
+      expect(observedSemester, 3);
+      await bloc.close();
+    });
+
     test(
       'AllCoursesFetched emits [CoursesLoading, AllCoursesLoaded] on success',
       () async {
@@ -187,6 +228,36 @@ void main() {
 
         final errorState = bloc.state as CoursesError;
         expect(errorState.message, isNotEmpty);
+
+        await bloc.close();
+      },
+    );
+
+    test(
+      'StudentCoursesFetched emits auth/session state on unauthorized response',
+      () async {
+        final bloc = _buildBloc((options) {
+          if (options.path.contains('/enrollments/my-courses')) {
+            return {
+              'statusCode': 401,
+              'data': {'message': 'Unauthorized'},
+            };
+          }
+          return {'data': []};
+        });
+
+        bloc.add(const StudentCoursesFetched());
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            isA<CoursesLoading>(),
+            isA<CoursesAuthSessionRequired>(),
+          ]),
+        );
+
+        final state = bloc.state as CoursesAuthSessionRequired;
+        expect(state.statusCode, 401);
 
         await bloc.close();
       },

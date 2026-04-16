@@ -5,7 +5,7 @@ import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
 
 class CourseSearchBar extends StatefulWidget {
-  final Function(String) onSearchChanged;
+  final ValueChanged<String> onSearchChanged;
 
   const CourseSearchBar({super.key, required this.onSearchChanged});
 
@@ -52,48 +52,55 @@ class _CourseSearchBarState extends State<CourseSearchBar> {
               ),
             ],
           ),
-          child: TextField(
-            controller: _controller,
-            onChanged: (value) {
-              setState(() {});
-              widget.onSearchChanged(value);
-            },
-            cursorColor: const Color(0xFF155DFC),
-            style: TextStyle(
-              color: isDark ? Colors.white : const Color(0xFF101727),
-              fontSize: 16,
-            ),
-            decoration: InputDecoration(
-              hintText: l10n.searchCourseNameOrInstructor,
-              hintStyle: TextStyle(
-                color: isDark ? Colors.white54 : const Color(0xFF717182),
+          child: Semantics(
+            textField: true,
+            label: l10n.searchCourseNameOrInstructor,
+            hint:
+                'Search by course code, title, section, semester, or instructor',
+            child: TextField(
+              controller: _controller,
+              onChanged: (value) {
+                setState(() {});
+                widget.onSearchChanged(value);
+              },
+              cursorColor: const Color(0xFF155DFC),
+              style: TextStyle(
+                color: isDark ? Colors.white : const Color(0xFF101727),
                 fontSize: 16,
               ),
-              prefixIcon: Icon(
-                Icons.search,
-                color: isDark ? Colors.white54 : const Color(0xFF717182),
-                size: 20,
-              ),
-              suffixIcon: _controller.text.isNotEmpty
-                  ? GestureDetector(
-                      onTap: () {
-                        _controller.clear();
-                        widget.onSearchChanged('');
-                        setState(() {});
-                      },
-                      child: Icon(
-                        Icons.clear,
-                        color: isDark
-                            ? Colors.white54
-                            : const Color(0xFF717182),
-                        size: 20,
-                      ),
-                    )
-                  : null,
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 12,
-                horizontal: 16,
+              decoration: InputDecoration(
+                hintText: l10n.searchCourseNameOrInstructor,
+                hintStyle: TextStyle(
+                  color: isDark ? Colors.white54 : const Color(0xFF717182),
+                  fontSize: 16,
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: isDark ? Colors.white54 : const Color(0xFF717182),
+                  size: 20,
+                ),
+                suffixIcon: _controller.text.isNotEmpty
+                    ? IconButton(
+                        tooltip: 'Clear search',
+                        onPressed: () {
+                          _controller.clear();
+                          widget.onSearchChanged('');
+                          setState(() {});
+                        },
+                        icon: Icon(
+                          Icons.clear,
+                          color: isDark
+                              ? Colors.white54
+                              : const Color(0xFF717182),
+                          size: 20,
+                        ),
+                      )
+                    : null,
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
               ),
             ),
           ),

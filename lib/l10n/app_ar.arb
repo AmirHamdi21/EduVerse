@@ -4994,5 +4994,12 @@
       }
     }
   },
+  "coursesShellStatusLabel": "الحالة",
+  "coursesShellSemesterLabel": "الفصل الدراسي",
+  "coursesShellSessionRequiredTitle": "مطلوب تسجيل الدخول",
+  "coursesShellSessionRequiredMessage": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.",
+  "coursesShellReauthenticate": "إعادة تسجيل الدخول",
+  "coursesShellNoSemesterMatches": "لا توجد مقررات في هذا الفصل الدراسي",
+  "coursesShellSearchSemanticsHint": "ابحث برمز المقرر أو الاسم أو الشعبة أو الفصل الدراسي أو اسم المدرس",
   "adminUseTimeFormat": "استخدم تنسيق HH:mm للأوقات."
 }

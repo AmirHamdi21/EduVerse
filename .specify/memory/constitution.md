@@ -1,4 +1,21 @@
 <!--
+SYNC IMPACT REPORT v6.1.0 (2026-04-16):
+- Version Change: 6.0.2 → 6.1.0 (MINOR — added Student Courses redesign governance requirements and expanded clarify/verification gates)
+- Modified Principles:
+  - V. Testable Architecture — expanded with mandatory function-level logic decomposition and testability requirements for non-trivial transformations.
+  - VII. Static Data Elimination — expanded with explicit post-integration deletion rule for temporary/static fallback code.
+  - VIII. Aggressive Clarification — expanded from minimum 5 questions to minimum 8 globally, and minimum 12 for Student Courses/Course Details redesign.
+- Added Sections:
+  - Student Courses & Course Details Redesign Constraints
+- Removed Sections: None
+- Templates Requiring Updates:
+  - ✅ .specify/templates/plan-template.md
+  - ✅ .specify/templates/spec-template.md
+  - ✅ .specify/templates/tasks-template.md
+  - ⚠ pending .specify/templates/commands/*.md (directory not present in repository)
+- Follow-up TODOs:
+  - TODO(TEMPLATES_COMMANDS_DIRECTORY): Create .specify/templates/commands/ if command-level templates are needed for constitutional gate propagation.
+
 SYNC IMPACT REPORT v6.0.2 (2026-04-14):
 - Version Change: 6.0.1 → 6.0.2 (PATCH — Added missing Delete Assignments and Delete Labs rows to Role-Based UI Enforcement Matrix)
 - Modified Sections:
@@ -61,6 +78,7 @@ SYNC IMPACT REPORT v5.0.0 (2026-04-11):
   - ✅ tasks-template.md — No changes needed (generic structure)
 - Follow-up TODOs: None
 -->
+
 # EduVerse Flutter Backend Integration Constitution
 
 ## Core Principles
@@ -146,6 +164,13 @@ testable. Services MUST accept injected dependencies (e.g., `Dio` instance,
 test-friendly interface that can be driven without a live server. Logic MUST
 be testable independently of the UI and network layers.
 
+Non-trivial business logic (mapping, filtering, sorting, progress/status
+derivation, endpoint response normalization, and permission checks) MUST be
+implemented in named functions/classes with explicit input/output contracts.
+Inline anonymous logic in widget `build()` methods is only allowed for simple
+presentation formatting; otherwise logic MUST be extracted into dedicated
+helpers/use-cases so it can be unit-tested.
+
 ### VI. Real-Time Communication Integrity
 WebSocket connections MUST follow a strict lifecycle protocol:
 - Connect on feature entry with JWT token authentication.
@@ -177,6 +202,9 @@ fully eliminated before a phase is considered complete.
   grade scores, and fake submission data.
 - Static enrollment lists, section data, or semester data that is not
   fetched from the backend API.
+- Temporary fallback/static values introduced during migration MUST be
+  removed immediately after successful endpoint integration and MUST NOT
+  remain behind feature flags, dead branches, or TODO markers.
 
 **Gate rule:** No phase may be marked complete if ANY mock/static data
 remains in the files modified or created during that phase. The
@@ -188,10 +216,14 @@ mock artifacts including but not limited to:
 - `setState(() =>` patterns that bypass BLoC
 - Hardcoded `List<Assignment>`, `List<Lab>`, `List<Course>` literals
 - `TODO: Replace with API` comments (MUST be resolved, not deferred)
+- Conditional "fallback to mock" branches used during migration
 
 ### VIII. Aggressive Clarification
 During the `/speckit.clarify` step, the specification MUST be interrogated
-with a minimum of 5 targeted clarification questions covering:
+with a minimum of 8 targeted clarification questions.
+
+For Student Courses and Course Details redesign work, the minimum is 12
+targeted clarification questions and MUST cover:
 1. **Field parity** — Are all backend response fields mapped to model
    properties? Are any website-only fields missing? Do all enum values
    match exactly between backend, website, and Flutter?
@@ -210,6 +242,14 @@ with a minimum of 5 targeted clarification questions covering:
    `document`)? Are submission upload endpoints distinct from text
    submission endpoints? Is the grading endpoint correctly called with
    `score` and `feedback` parameters?
+6. **Endpoint contracts** — For each redesigned page, what are the exact
+  required vs optional path/query/body parameters, role guards, and
+  validation constraints from backend DTO/controller definitions?
+7. **Response shape certainty** — For each consumed endpoint, what is the
+  exact response JSON shape (types, nullability, nested objects,
+  pagination metadata), and how is it mapped to Flutter models?
+8. **Function boundaries** — Which logic paths are extracted into
+  dedicated functions/services to avoid monolithic widget methods?
 
 This ensures no ambiguity survives into the implementation phase.
 
@@ -372,6 +412,36 @@ For strict alignment, the implementation MUST reference the following:
 - **Admin (Dept Head)** — CRUD courses, manage sections/schedules, assign staff
 - **IT Admin** — No courses/assignments/labs features (system admin only)
 
+## Student Courses & Course Details Redesign Constraints
+
+All redesign and integration work for `CoursesScreen`, `CourseDetailsScreen`,
+and nested student course tabs MUST follow:
+- `Student_Courses_UI_Redesign_Documentation_Plan.md`
+
+For this workspace, backend source inspection MUST be performed against:
+- `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend`
+
+For each redesigned page, completion requires an endpoint contract audit:
+1. Enumerate all related backend endpoints by reading controllers, services,
+  DTOs, and response mappers in the backend source.
+2. Record each endpoint's method/path, auth role guards, required and
+  optional parameters (path/query/body), and validation constraints.
+3. Record the exact response contract (field names, types, nullability,
+  nested objects, arrays, and pagination envelope fields).
+4. Align Flutter service methods and Dart models to that contract before
+  closing the page redesign task.
+5. If UI fields are missing from API responses, the UI MUST adapt to actual
+  backend data; fabricated/static fields are forbidden.
+
+Function-level implementation rule for this redesign scope:
+- Data transforms, status mapping, filtering/sorting, and request payload
+  construction MUST be implemented in dedicated functions/services with clear
+  names. Large inline logic blocks in widgets MUST be refactored.
+
+Static-data completion gate for this redesign scope:
+- After backend integration succeeds for a page, all static fallback data and
+  sample generation paths for that page MUST be deleted in the same phase.
+
 ## Feature Parity Rules
 
 The following rules govern what is added and removed during integration:
@@ -462,12 +532,16 @@ requires:
   receive, reconnect).
 - REST API verification for courses/assignments/labs features (CRUD, submit,
   grade, upload).
+- Endpoint contract verification for each redesigned page (required/optional
+  parameters and exact response shape confirmed against backend source).
 - Role-based UI verification (correct buttons, permissions, filters per
   role per the enforcement matrix above).
 - Mock data elimination audit (zero residual static data).
 - Cross-reference with website frontend to confirm visual and data parity.
 - File upload verification (progress bar, success/error handling, preview
   after upload).
+- Function-boundary verification (non-trivial logic extracted from widgets
+  into testable functions/services).
 
 ## Governance
 
@@ -485,4 +559,13 @@ to the next phase.
 - MINOR version bump for new principle or section addition.
 - PATCH version bump for clarification or typo fixes.
 
-**Version**: 6.0.2 | **Ratified**: 2026-04-05 | **Last Amended**: 2026-04-14
+**Compliance review expectations:**
+- Every PR affecting governed scopes MUST include a completed Constitution
+  Check and explicit evidence links for static-data audit and endpoint
+  contract verification.
+- Reviewers MUST block merge when constitutional MUST-level requirements are
+  not evidenced.
+- `/speckit.clarify` outputs MUST be retained in the active feature spec and
+  MUST show the required minimum question count for the feature scope.
+
+**Version**: 6.1.0 | **Ratified**: 2026-04-05 | **Last Amended**: 2026-04-16

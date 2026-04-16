@@ -35,13 +35,15 @@
 - [ ] Is there **II. Strict Data Layer Separation** — models match backend API + website TypeScript interfaces exactly?
 - [ ] Is **III. Type Safety & Error Handling** fully accounted for — including optimistic updates, WebSocket reconnect fallback, isLate int/bool divergence, and decimal field parsing?
 - [ ] Does the plan enforce **IV. Website Feature Parity** — features added/removed to match website 1:1?
-- [ ] Is **V. Testable Architecture** ensured — services injectable, BLoCs mockable?
+- [ ] Is **V. Testable Architecture** ensured — services injectable, BLoCs mockable, and non-trivial business logic extracted into testable named functions/classes?
 - [ ] Does the plan enforce **VI. Real-Time Communication Integrity** — WebSocket lifecycle, auto-reconnect, event idempotency?
-- [ ] Is **VII. Static Data Elimination** accounted for — mock removal audit included in verification (including hardcoded lists, _generateSample patterns, setState bypasses)?
-- [ ] Was **VIII. Aggressive Clarification** performed — minimum 5 clarification questions on field parity, roles, edge cases, deletions, and API/event coverage?
+- [ ] Is **VII. Static Data Elimination** accounted for — mock removal audit included in verification (including hardcoded lists, _generateSample patterns, setState bypasses, and deletion of temporary fallback/static branches after integration success)?
+- [ ] Was **VIII. Aggressive Clarification** performed — minimum 8 clarification questions (or 12 for Student Courses/Course Details redesign) on field parity, roles, edge cases, deletion scope, API/event coverage, endpoint contracts, and function boundaries?
 - [ ] Does the plan enforce **IX. Role-Based Access Control Enforcement** — UI buttons/forms conditionally rendered per role matrix?
 - [ ] Is **X. File Upload & Google Drive/YouTube Integration** accounted for — correct FormData field names, progress tracking, preview URL logic, client-side validation?
 - [ ] Does the plan follow **XI. Multi-Phase Plan Adherence** — phase gating, completion criteria, dependency order per integration plan?
+- [ ] Does the plan enforce **XII. UI Consistency & Visual Preservation** — visual parity checks and no unintended redesign drift?
+- [ ] If scope includes Student Courses/Course Details redesign, does the plan include page-level backend endpoint contract audits against `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend` (required/optional params, validation rules, and exact response shapes)?
 
 ## Project Structure
 
