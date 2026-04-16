@@ -135,8 +135,8 @@ class _AdminOfficeHoursScreenState extends State<AdminOfficeHoursScreen> {
     final l10n = AppLocalizations.of(context);
 
     int? selectedInstructorId = slot?.instructorId ?? _selectedInstructorId;
-    String selectedDay = slot?.dayOfWeek ?? 'MONDAY';
-    String selectedMode = slot?.mode ?? 'in_person';
+    String selectedDay = (slot?.dayOfWeek ?? 'MONDAY').toUpperCase();
+    String selectedMode = (slot?.mode ?? 'in_person').toLowerCase();
     bool isActive = slot?.isActive ?? true;
 
     final startTimeController = TextEditingController(

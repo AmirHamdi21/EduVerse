@@ -40,8 +40,8 @@ class CourseManagementAppBar extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark
-            ? AdminColors.darkSurface.withValues(alpha: 0.8)
-            : Colors.white.withValues(alpha: 0.8),
+            ? AdminColors.darkSurface.withValues(alpha: 0.88)
+            : Colors.white.withValues(alpha: 0.9),
         border: Border(
           bottom: BorderSide(
             color: isDark
@@ -106,10 +106,112 @@ class CourseManagementAppBar extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 14),
+          _buildFlowHero(l10n),
           const SizedBox(height: 16),
           _buildSearchBar(l10n),
           const SizedBox(height: 12),
           _buildSortRow(l10n),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFlowHero(AppLocalizations l10n) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: <Color>[
+            Color(0xFF06B6D4),
+            Color(0xFF2563EB),
+            Color(0xFFF97316),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: const Color(0xFF2563EB).withValues(alpha: 0.22),
+            blurRadius: 14,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            'Course Control Flow',
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '$totalCourses ${l10n.courses.toLowerCase()} managed with live endpoint orchestration',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.92),
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: <Widget>[
+              _flowStepChip('1', l10n.courses),
+              _flowStepChip('2', l10n.staff),
+              _flowStepChip('3', l10n.schedule),
+              _flowStepChip('4', l10n.exam),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _flowStepChip(String step, String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.18),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Container(
+            width: 18,
+            height: 18,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Text(
+                step,
+                style: const TextStyle(
+                  color: Color(0xFF1D4ED8),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 11,
+            ),
+          ),
         ],
       ),
     );

@@ -9,14 +9,15 @@
 - **Performance Goals**: Smooth UI transitions in 3-step wizard, fast API filtering
 - **Constraints**: 
   - Enforce BLoC and strict data layer separation.
-  - Overall UI must match previous mocked UI by at least 85%.
-  - Eliminate all mock/static data.
+    - Website frontend project at `D:\Graduation\frontend tarek\Eduverse-Frontend` is the visual and flow source of truth.
+    - Eliminate all mock/static data and bind visible actions to live endpoints.
+    - Deliver a modern, colorful, efficient, and responsive mobile adaptation.
 - **Scale/Scope**: Admin persona features targeting course catalog, assignments, and enrollment overrides.
 
 ## Constitution Check
 - [x] Principle 1 (BLoC State Management): Addressed via `CourseWizardBloc`, `CourseListBloc`, and `AdminEnrollmentBloc`.
 - [x] Principle 2 (Strict Data Layer): All data runs through `*Service` files mapping models.
-- [x] Principle 3 (Visual Similarity): Keeping `Stepper` or `PageView` implementations structurally identical to old `admin_add_course_screen.dart`.
+- [x] Principle 3 (Visual/Flow Parity): Mobile UI mirrors website flow structure (tabs, cards, and create/edit/delete modal progression).
 - [x] Principle 4 (Eliminate Static Data): Deleting previous dummy models in favor of real `CourseModel`.
 
 ## Implementation Phases
@@ -38,9 +39,9 @@
 
 1.  **Strip Static Data**:
     - Purge mock classes in `lib/widgets/admin/courses/` and `lib/screens/admin/`.
-2.  **Build 3-Step Wizard**:
-    - Refactor `AddCourseBottomBar` or wizard wrapper to depend on `CourseWizardBloc`.
-    - Apply existing styling to `WizardStep1Details` (Course Info), `WizardStep2Section` (Section/Schedule Info), `WizardStep3Staff` (Multi-Instructor list).
+2.  **Build Website-Parity Modal Flow**:
+    - Refactor into website-structured modal workflow: `Course -> Section/Schedule -> Staff`.
+    - Preserve endpoint behavior while adapting desktop website layout into responsive mobile containers.
 3.  **Implement Multi-Instructor UI**:
     - In `WizardStep3Staff`, expand the existing dropdown to a dynamic `ListView.builder` allowing Admin to add multiple `InstructorAssignmentModel` via `role`.
 4.  **Wire Sub-Tabs**:
@@ -58,6 +59,19 @@
 
 ## Gates & Acceptance Criteria
 - [ ] Wizard accurately creates course, section, schedule, and assigns staff via API.
-- [ ] Quitting at Step 2 properly halts and sets course as INACTIVE.
+- [ ] Quitting at Step 2 properly halts and sets course as INACTIVE (legacy fallback behavior where applicable).
 - [ ] Warn-but-allow conflict prompt displays and functions.
 - [ ] Zero static mockup model references remain in the admin view.
+- [ ] Mobile UI flow, modal behavior, and visual hierarchy align with website source implementation.
+
+## Cross-Feature Website Parity Alignment (Extension)
+
+The same parity protocol used for Course Management must be applied to all active Admin feature screens under implementation:
+
+1. Users (`/admin/users`): website-structured student management flow and responsive modal actions.
+2. Enrollment Periods (`/admin/enrollment-periods`): endpoint-backed cards/forms with website parity.
+3. Campus Events (`/admin/campus-events`): endpoint-backed management dialogs and modern responsive layout.
+4. Schedule Templates (`/admin/schedule-templates`): website-like template workflows and polished mobile dialogs.
+5. Office Hours (`/admin/office-hours`): parity in structure, visual hierarchy, and action dialogs.
+
+Each feature should preserve: endpoint correctness, responsive behavior, and a cohesive modern colorful visual system.

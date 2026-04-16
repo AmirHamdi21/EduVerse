@@ -105,10 +105,8 @@ import 'package:edu_verse/screens/ta/attendance/ta_attendance_screen.dart';
 import 'package:edu_verse/screens/ta/ai_assistant/ta_ai_assistant_screen.dart';
 import 'package:edu_verse/screens/admin/admin_dashboard_screen.dart';
 import 'package:edu_verse/screens/admin/users/admin_user_management_screen.dart';
-import 'package:edu_verse/screens/admin/users/admin_add_new_user_screen.dart';
 import 'package:edu_verse/screens/admin/roles/admin_roles_screen.dart';
 import 'package:edu_verse/screens/admin/courses/admin_course_management_screen.dart';
-import 'package:edu_verse/screens/admin/courses/admin_add_course_screen.dart';
 import 'package:edu_verse/screens/admin/periods/admin_enrollment_periods_screen.dart';
 import 'package:edu_verse/screens/admin/events/admin_campus_events_screen.dart';
 import 'package:edu_verse/screens/admin/templates/admin_schedule_templates_screen.dart';
@@ -999,13 +997,17 @@ class AppRouter {
       ),
       GoRoute(
         path: '/admin/users/add',
-        builder: (context, state) => const AdminAddNewUserScreen(),
+        builder: (context, state) =>
+            const AdminUserManagementScreen(openCreateOnStart: true),
       ),
       GoRoute(
         path: '/admin/users/edit/:id',
         builder: (context, state) {
-          final userId = state.pathParameters['id'] ?? '';
-          return AdminAddNewUserScreen(key: ValueKey(userId));
+          final userId = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
+          return AdminUserManagementScreen(
+            openEditStudentId: userId > 0 ? userId : null,
+            openCreateOnStart: userId <= 0,
+          );
         },
       ),
       GoRoute(
@@ -1037,7 +1039,10 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           final initialCourse = extra is core_models.CourseModel ? extra : null;
-          return AdminAddCourseScreen(initialCourse: initialCourse);
+          return AdminCourseManagementScreen(
+            openAddOnStart: initialCourse == null,
+            openEditCourseId: initialCourse?.id,
+          );
         },
       ),
       GoRoute(
