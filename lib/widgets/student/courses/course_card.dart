@@ -56,6 +56,24 @@ class _CourseCardState extends State<CourseCard>
   /// Credit hours display.
   int get _credits => widget.enrollment.course?.credits ?? 0;
 
+  /// Section display label from audited enrollment payload.
+  String get _sectionLabel {
+    final String? sectionNumber = widget.enrollment.section?.sectionNumber;
+    if (sectionNumber == null || sectionNumber.trim().isEmpty) {
+      return 'Section -';
+    }
+    return 'Section $sectionNumber';
+  }
+
+  /// Semester display label from audited enrollment payload.
+  String get _semesterLabel {
+    final String? semesterName = widget.enrollment.semester?.name;
+    if (semesterName == null || semesterName.trim().isEmpty) {
+      return 'No Semester';
+    }
+    return semesterName;
+  }
+
   /// Enrollment status label.
   String get _statusLabel {
     switch (widget.enrollment.status.toLowerCase()) {
@@ -263,14 +281,14 @@ class _CourseCardState extends State<CourseCard>
         ),
         const SizedBox(width: 12),
         _buildInfoChip(
-          icon: Icons.layers_outlined,
-          label: widget.enrollment.course?.level ?? 'N/A',
+          icon: Icons.class_outlined,
+          label: _sectionLabel,
           isDark: isDark,
         ),
         const SizedBox(width: 12),
         _buildInfoChip(
-          icon: Icons.person_outline,
-          label: widget.enrollment.role,
+          icon: Icons.calendar_month_outlined,
+          label: _semesterLabel,
           isDark: isDark,
         ),
       ],

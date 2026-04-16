@@ -100,6 +100,14 @@ class _CoursesScreenState extends State<CoursesScreen> {
     });
   }
 
+  bool _isAccessRestricted(CoursesState state) {
+    return state is CoursesAuthSessionRequired && state.statusCode == 403;
+  }
+
+  bool _showInteractiveControls(CoursesState state) {
+    return !_isAccessRestricted(state);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
@@ -108,7 +116,14 @@ class _CoursesScreenState extends State<CoursesScreen> {
         final l10n = AppLocalizations.of(context);
 
         return Scaffold(
-          floatingActionButton: const JoinCourseButton(),
+          floatingActionButton: BlocBuilder<CoursesBloc, CoursesState>(
+            builder: (context, state) {
+              if (_isAccessRestricted(state)) {
+                return const SizedBox.shrink();
+              }
+              return const JoinCourseButton();
+            },
+          ),
           backgroundColor: StudentCoursesTheme.scaffoldBackground(isDark),
           body: BlocListener<CoursesBloc, CoursesState>(
             listener: (context, state) {
@@ -127,7 +142,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                           child: Text(
                             state.message.isNotEmpty
                                 ? state.message
-                                : 'Unable to load courses. Please check your connection.',
+                                : l10n.noInternetConnection,
                             style: const TextStyle(fontSize: 13),
                           ),
                         ),
@@ -135,8 +150,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     ),
                     backgroundColor: const Color(0xFFEF4444),
                     behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: StudentCoursesTheme.controlRadius,
                     ),
                     duration: const Duration(seconds: 4),
                     action: SnackBarAction(
@@ -157,8 +172,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     ),
                     backgroundColor: const Color(0xFFB45309),
                     behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: StudentCoursesTheme.controlRadius,
                     ),
                     duration: const Duration(seconds: 4),
                   ),
@@ -184,8 +199,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     ),
                     backgroundColor: const Color(0xFFF59E0B),
                     behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: StudentCoursesTheme.controlRadius,
                     ),
                     duration: const Duration(seconds: 3),
                   ),
@@ -198,6 +213,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
                     StudentCourseFilters.deriveSemesterOptions(
                       _enrollmentsFromState(state),
                     );
+                final bool showInteractiveControls = _showInteractiveControls(
+                  state,
+                );
                 _ensureSemesterSelectionIsValid(semesterOptions);
 
                 return SafeArea(
@@ -212,61 +230,66 @@ class _CoursesScreenState extends State<CoursesScreen> {
                               subtitle: l10n.allEnrolledCoursesThisSemester,
                             ),
                             const SizedBox(height: 16),
-                            CourseSearchBar(
-                              onSearchChanged: (query) {
-                                setState(() {
-                                  _searchQuery = query;
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                FilterButton(
-                                  selectedFilter: _selectedFilter,
-                                  selectedSemesterId: _selectedSemesterId,
-                                  semesterOptions: semesterOptions,
-                                  onFilterChanged: (filter) {
-                                    setState(() {
-                                      _selectedFilter = filter;
-                                    });
-                                  },
-                                  onSemesterChanged: (semesterId) {
-                                    setState(() {
-                                      _selectedSemesterId = semesterId;
-                                    });
-                                    _retryStudentFetch();
-                                  },
-                                ),
-                                const SizedBox(width: 12),
-                                SortButton(
-                                  selectedSort: _selectedSort,
-                                  onSortChanged: (sort) {
-                                    setState(() {
-                                      _selectedSort = sort;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            CourseFilterBar(
-                              selectedFilter: _selectedFilter,
-                              onFilterChanged: (filter) {
-                                setState(() {
-                                  _selectedFilter = filter;
-                                });
-                              },
-                              selectedSemesterId: _selectedSemesterId,
-                              semesterOptions: semesterOptions,
-                              onSemesterChanged: (semesterId) {
-                                setState(() {
-                                  _selectedSemesterId = semesterId;
-                                });
-                                _retryStudentFetch();
-                              },
-                            ),
+                            if (showInteractiveControls) ...<Widget>[
+                              CourseSearchBar(
+                                onSearchChanged: (query) {
+                                  setState(() {
+                                    _searchQuery = query;
+                                  });
+                                },
+                              ),
+                              const SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  FilterButton(
+                                    selectedFilter: _selectedFilter,
+                                    selectedSemesterId: _selectedSemesterId,
+                                    semesterOptions: semesterOptions,
+                                    onFilterChanged: (filter) {
+                                      setState(() {
+                                        _selectedFilter = filter;
+                                      });
+                                    },
+                                    onSemesterChanged: (semesterId) {
+                                      setState(() {
+                                        _selectedSemesterId = semesterId;
+                                      });
+                                      _retryStudentFetch();
+                                    },
+                                  ),
+                                  const SizedBox(width: 12),
+                                  SortButton(
+                                    selectedSort: _selectedSort,
+                                    onSortChanged: (sort) {
+                                      setState(() {
+                                        _selectedSort = sort;
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 16),
+                              CourseFilterBar(
+                                selectedFilter: _selectedFilter,
+                                onFilterChanged: (filter) {
+                                  setState(() {
+                                    _selectedFilter = filter;
+                                  });
+                                },
+                                selectedSemesterId: _selectedSemesterId,
+                                semesterOptions: semesterOptions,
+                                onSemesterChanged: (semesterId) {
+                                  setState(() {
+                                    _selectedSemesterId = semesterId;
+                                  });
+                                  _retryStudentFetch();
+                                },
+                              ),
+                            ] else ...<Widget>[
+                              _buildRestrictedControlsNotice(isDark, l10n),
+                            ],
                             const SizedBox(height: 20),
                             _buildContent(state, isDark, l10n),
                             const SizedBox(height: 32),
@@ -282,6 +305,29 @@ class _CoursesScreenState extends State<CoursesScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildRestrictedControlsNotice(bool isDark, AppLocalizations l10n) {
+    return Container(
+      key: const Key('courses_shell_restricted_controls_notice'),
+      width: double.infinity,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2A3F5F) : const Color(0xFFF1F5FF),
+        borderRadius: StudentCoursesTheme.controlRadius,
+        border: Border.all(
+          color: isDark ? Colors.white24 : const Color(0xFFBFDBFE),
+        ),
+      ),
+      child: Text(
+        l10n.coursesShellSessionRequiredMessage,
+        style: TextStyle(
+          color: isDark ? Colors.white70 : const Color(0xFF1D4ED8),
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
     );
   }
 
@@ -321,7 +367,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
     }
 
     if (state is CoursesAuthSessionRequired) {
-      return _buildAuthSessionRequiredState(isDark, state);
+      return _buildAuthSessionRequiredState(isDark, state, l10n);
     }
 
     if (state is CoursesError) {
@@ -333,6 +379,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
   Widget _buildSkeletonLoader(bool isDark) {
     return Column(
+      key: const Key('courses_shell_loading_state'),
       children: List.generate(
         3,
         (index) => Padding(
@@ -411,7 +458,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
       height: height,
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.white.withOpacity(0.08)
+            ? Colors.white.withValues(alpha: 0.08)
             : const Color(0xFFE5E7EB),
         borderRadius: BorderRadius.circular(radius),
       ),
@@ -420,6 +467,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
   Widget _buildEmptyState(bool isDark, AppLocalizations l10n) {
     return Center(
+      key: const Key('courses_shell_empty_state'),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
         child: Column(
@@ -439,7 +487,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                 size: 40,
                 color: isDark
                     ? Colors.white30
-                    : const Color(0xFF155DFC).withOpacity(0.4),
+                    : const Color(0xFF155DFC).withValues(alpha: 0.4),
               ),
             ),
             const SizedBox(height: 20),
@@ -473,6 +521,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
         _selectedFilter == 'all';
 
     return Center(
+      key: const Key('courses_shell_no_results_state'),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
         child: Column(
@@ -486,8 +535,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
             const SizedBox(height: 16),
             Text(
               semesterOnly
-                  ? 'No courses in this semester'
-                  : 'No courses match your filters',
+                  ? l10n.coursesShellNoSemesterMatches
+                  : l10n.noCoursesFoundDescription,
               style: TextStyle(
                 color: isDark ? Colors.white54 : Colors.grey[600],
                 fontSize: 15,
@@ -513,6 +562,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
 
   Widget _buildErrorState(bool isDark, AppLocalizations l10n) {
     return Center(
+      key: const Key('courses_shell_error_state'),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
         child: Column(
@@ -560,8 +610,8 @@ class _CoursesScreenState extends State<CoursesScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF155DFC),
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: StudentCoursesTheme.controlRadius,
                 ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
@@ -578,8 +628,12 @@ class _CoursesScreenState extends State<CoursesScreen> {
   Widget _buildAuthSessionRequiredState(
     bool isDark,
     CoursesAuthSessionRequired state,
+    AppLocalizations l10n,
   ) {
+    final bool isForbidden = state.statusCode == 403;
+
     return Center(
+      key: const Key('courses_shell_auth_state'),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 40),
         child: Column(
@@ -604,7 +658,9 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ),
             const SizedBox(height: 20),
             Text(
-              'Session Required',
+              isForbidden
+                  ? 'Access Restricted'
+                  : l10n.coursesShellSessionRequiredTitle,
               style: TextStyle(
                 color: isDark ? Colors.white : const Color(0xFF101828),
                 fontSize: 18,
@@ -613,7 +669,11 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              state.message,
+              isForbidden
+                  ? l10n.coursesShellSessionRequiredMessage
+                  : (state.message.isNotEmpty
+                        ? state.message
+                        : l10n.coursesShellSessionRequiredMessage),
               style: TextStyle(
                 color: StudentCoursesTheme.mutedText(isDark),
                 fontSize: 14,
@@ -624,12 +684,14 @@ class _CoursesScreenState extends State<CoursesScreen> {
             ElevatedButton.icon(
               onPressed: _retryStudentFetch,
               icon: const Icon(Icons.refresh, size: 18),
-              label: const Text('Re-authenticate'),
+              label: Text(
+                isForbidden ? l10n.refresh : l10n.coursesShellReauthenticate,
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF155DFC),
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: StudentCoursesTheme.controlRadius,
                 ),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,

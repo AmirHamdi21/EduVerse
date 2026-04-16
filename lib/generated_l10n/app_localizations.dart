@@ -24497,6 +24497,48 @@ abstract class AppLocalizations {
   /// **'User #{userId}'**
   String adminUnknownUserWithId(int userId);
 
+  /// No description provided for @coursesShellStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get coursesShellStatusLabel;
+
+  /// No description provided for @coursesShellSemesterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Semester'**
+  String get coursesShellSemesterLabel;
+
+  /// No description provided for @coursesShellSessionRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Session Required'**
+  String get coursesShellSessionRequiredTitle;
+
+  /// No description provided for @coursesShellSessionRequiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your session has expired. Please sign in again.'**
+  String get coursesShellSessionRequiredMessage;
+
+  /// No description provided for @coursesShellReauthenticate.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-authenticate'**
+  String get coursesShellReauthenticate;
+
+  /// No description provided for @coursesShellNoSemesterMatches.
+  ///
+  /// In en, this message translates to:
+  /// **'No courses in this semester'**
+  String get coursesShellNoSemesterMatches;
+
+  /// No description provided for @coursesShellSearchSemanticsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by course code, title, section, semester, or instructor'**
+  String get coursesShellSearchSemanticsHint;
+
   /// No description provided for @adminUseTimeFormat.
   ///
   /// In en, this message translates to:

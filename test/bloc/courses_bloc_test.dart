@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
 import 'package:edu_verse/bloc/courses/courses_event.dart';
@@ -234,6 +236,65 @@ void main() {
     );
 
     test(
+      'StudentCoursesFetched falls back to cached enrollments when network fails',
+      () async {
+        SharedPreferences.setMockInitialValues({
+          'courses_cache_enrollments': jsonEncode([
+            {
+              'id': 'cached-1',
+              'userId': 42,
+              'sectionId': 7,
+              'status': 'enrolled',
+              'enrollmentDate': '2026-01-15T00:00:00.000Z',
+              'course': {
+                'id': 101,
+                'code': 'CS101',
+                'name': 'Intro to Programming',
+                'credits': 3,
+                'level': 'freshman',
+              },
+              'section': {
+                'id': 7,
+                'sectionNumber': 'A',
+                'maxCapacity': 30,
+                'currentEnrollment': 28,
+              },
+              'semester': {'id': 1, 'name': 'Fall 2026'},
+            },
+          ]),
+        });
+
+        final bloc = _buildBloc((options) {
+          throw DioException(
+            requestOptions: options,
+            type: DioExceptionType.connectionError,
+            message: 'Offline',
+          );
+        });
+
+        bloc.add(const StudentCoursesFetched());
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            isA<CoursesLoading>().having(
+              (state) => state.cachedData.length,
+              'cachedData length',
+              greaterThan(0),
+            ),
+            isA<CoursesLoaded>(),
+          ]),
+        );
+
+        final loaded = bloc.state as CoursesLoaded;
+        expect(loaded.enrollments.length, 1);
+        expect(loaded.enrollments.first.course?.courseCode, 'CS101');
+
+        await bloc.close();
+      },
+    );
+
+    test(
       'StudentCoursesFetched emits auth/session state on unauthorized response',
       () async {
         final bloc = _buildBloc((options) {
@@ -258,6 +319,149 @@ void main() {
 
         final state = bloc.state as CoursesAuthSessionRequired;
         expect(state.statusCode, 401);
+
+        await bloc.close();
+      },
+    );
+
+    test(
+      'StudentCoursesFetched emits auth/session state on forbidden response',
+      () async {
+        final bloc = _buildBloc((options) {
+          if (options.path.contains('/enrollments/my-courses')) {
+            return {
+              'statusCode': 403,
+              'data': {'message': 'Forbidden'},
+            };
+          }
+          return {'data': []};
+        });
+
+        bloc.add(const StudentCoursesFetched());
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([
+            isA<CoursesLoading>(),
+            isA<CoursesAuthSessionRequired>(),
+          ]),
+        );
+
+        final state = bloc.state as CoursesAuthSessionRequired;
+        expect(state.statusCode, 403);
+
+        await bloc.close();
+      },
+    );
+
+    test(
+      'StudentCoursesFetched handles null nested enrollment payload fields',
+      () async {
+        final bloc = _buildBloc((options) {
+          if (options.path.contains('/enrollments/my-courses')) {
+            return {
+              'statusCode': 200,
+              'data': [
+                {
+                  'id': 'null-nested-1',
+                  'userId': 42,
+                  'sectionId': 7,
+                  'status': 'enrolled',
+                  'enrollmentDate': '2026-01-15T00:00:00.000Z',
+                  'course': null,
+                  'section': null,
+                  'semester': null,
+                  'instructor': null,
+                  'prerequisites': null,
+                },
+              ],
+            };
+          }
+          return {'data': []};
+        });
+
+        bloc.add(const StudentCoursesFetched());
+
+        await expectLater(
+          bloc.stream,
+          emitsInOrder([isA<CoursesLoading>(), isA<CoursesLoaded>()]),
+        );
+
+        final loaded = bloc.state as CoursesLoaded;
+        expect(loaded.enrollments.length, 1);
+        expect(loaded.enrollments.first.course, isNull);
+        expect(loaded.enrollments.first.section, isNull);
+        expect(loaded.enrollments.first.semester, isNull);
+
+        await bloc.close();
+      },
+    );
+
+    test(
+      'rapid semester fetch events settle on latest response data',
+      () async {
+        final bloc = _buildBloc((options) {
+          if (options.path.contains('/enrollments/my-courses')) {
+            final semester = options.queryParameters['semester'] as int?;
+            if (semester == 1) {
+              return {
+                'statusCode': 200,
+                'data': [
+                  {
+                    'id': 'rapid-1',
+                    'userId': 42,
+                    'sectionId': 1,
+                    'status': 'enrolled',
+                    'enrollmentDate': '2026-01-15T00:00:00.000Z',
+                    'course': {
+                      'id': 11,
+                      'code': 'CS101',
+                      'name': 'Intro',
+                      'credits': 3,
+                      'level': 'freshman',
+                    },
+                    'semester': {'id': 1, 'name': 'Fall 2026'},
+                  },
+                ],
+              };
+            }
+            if (semester == 2) {
+              return {
+                'statusCode': 200,
+                'data': [
+                  {
+                    'id': 'rapid-2',
+                    'userId': 42,
+                    'sectionId': 2,
+                    'status': 'enrolled',
+                    'enrollmentDate': '2026-01-16T00:00:00.000Z',
+                    'course': {
+                      'id': 22,
+                      'code': 'CS202',
+                      'name': 'Data Structures',
+                      'credits': 4,
+                      'level': 'sophomore',
+                    },
+                    'semester': {'id': 2, 'name': 'Spring 2027'},
+                  },
+                ],
+              };
+            }
+          }
+          return {'data': []};
+        });
+
+        bloc.add(const StudentCoursesFetched(semester: 1));
+        bloc.add(const StudentCoursesFetched(semester: 2));
+
+        await expectLater(bloc.stream, emitsThrough(isA<CoursesLoaded>()));
+
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+
+        final loaded = bloc.state as CoursesLoaded;
+        expect(loaded.enrollments.length, 1);
+        expect(loaded.enrollments.first.course?.courseCode, 'CS202');
+        expect(loaded.enrollments.first.semester?.id, 2);
 
         await bloc.close();
       },

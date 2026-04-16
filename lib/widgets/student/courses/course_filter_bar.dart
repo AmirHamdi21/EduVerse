@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../common/utils/student_course_filters.dart';
+import '../../../common/utils/student_courses_theme.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
@@ -97,7 +98,7 @@ class CourseFilterBar extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: StudentCoursesTheme.controlAnimationDuration,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
           gradient: isSelected && isGradient
@@ -109,18 +110,18 @@ class CourseFilterBar extends StatelessWidget {
               : null,
           color: isSelected && !isGradient
               ? (isDark ? const Color(0xFF2A3F5F) : const Color(0xFFF0F4FF))
-              : (isDark ? const Color(0xFF16213E) : Colors.white),
+              : StudentCoursesTheme.cardBackground(isDark),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected && !isGradient
                 ? const Color(0xFF155DFC)
-                : (isDark ? Colors.white10 : const Color(0xFFD1D5DC)),
+                : StudentCoursesTheme.borderColor(isDark),
             width: 1.5,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: const Color(0xFF155DFC).withOpacity(0.3),
+                    color: const Color(0xFF155DFC).withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
@@ -152,17 +153,17 @@ class CourseFilterBar extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+        duration: StudentCoursesTheme.controlAnimationDuration,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
         decoration: BoxDecoration(
           color: selected
               ? (isDark ? const Color(0xFF2A3F5F) : const Color(0xFFF0F4FF))
-              : (isDark ? const Color(0xFF16213E) : Colors.white),
+              : StudentCoursesTheme.cardBackground(isDark),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: selected
                 ? const Color(0xFF155DFC)
-                : (isDark ? Colors.white10 : const Color(0xFFD1D5DC)),
+                : StudentCoursesTheme.borderColor(isDark),
             width: 1.5,
           ),
         ),

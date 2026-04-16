@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../common/utils/student_courses_theme.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
@@ -18,6 +19,7 @@ class _JoinCourseButtonState extends State<JoinCourseButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+  bool _isRepeating = false;
 
   @override
   void initState() {
@@ -30,7 +32,21 @@ class _JoinCourseButtonState extends State<JoinCourseButton>
       begin: 1.0,
       end: 1.05,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-    _controller.repeat(reverse: true);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final bool shouldAnimate = TickerMode.of(context);
+    if (shouldAnimate && !_isRepeating) {
+      _controller.repeat(reverse: true);
+      _isRepeating = true;
+    } else if (!shouldAnimate && _isRepeating) {
+      _controller.stop();
+      _isRepeating = false;
+      _controller.value = 0;
+    }
   }
 
   @override
@@ -71,7 +87,7 @@ class _JoinCourseButtonState extends State<JoinCourseButton>
                   ],
                 ),
                 child: ElevatedButton.icon(
-                  onPressed: widget.onPressed ?? () {},
+                  onPressed: () => _onPressed(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     foregroundColor: Colors.white,
@@ -99,5 +115,20 @@ class _JoinCourseButtonState extends State<JoinCourseButton>
         );
       },
     );
+  }
+
+  void _onPressed(BuildContext context) {
+    if (widget.onPressed != null) {
+      widget.onPressed!();
+      return;
+    }
+
+    final GoRouter? router = GoRouter.maybeOf(context);
+    if (router != null) {
+      context.push('/courses');
+      return;
+    }
+
+    Navigator.of(context).pushNamed('/courses');
   }
 }

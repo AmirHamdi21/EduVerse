@@ -12508,5 +12508,29 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get coursesShellStatusLabel => 'الحالة';
+
+  @override
+  String get coursesShellSemesterLabel => 'الفصل الدراسي';
+
+  @override
+  String get coursesShellSessionRequiredTitle => 'مطلوب تسجيل الدخول';
+
+  @override
+  String get coursesShellSessionRequiredMessage =>
+      'انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.';
+
+  @override
+  String get coursesShellReauthenticate => 'إعادة تسجيل الدخول';
+
+  @override
+  String get coursesShellNoSemesterMatches =>
+      'لا توجد مقررات في هذا الفصل الدراسي';
+
+  @override
+  String get coursesShellSearchSemanticsHint =>
+      'ابحث برمز المقرر أو الاسم أو الشعبة أو الفصل الدراسي أو اسم المدرس';
+
+  @override
   String get adminUseTimeFormat => 'استخدم تنسيق HH:mm للأوقات.';
 }

@@ -12558,5 +12558,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get coursesShellStatusLabel => 'Status';
+
+  @override
+  String get coursesShellSemesterLabel => 'Semester';
+
+  @override
+  String get coursesShellSessionRequiredTitle => 'Session Required';
+
+  @override
+  String get coursesShellSessionRequiredMessage =>
+      'Your session has expired. Please sign in again.';
+
+  @override
+  String get coursesShellReauthenticate => 'Re-authenticate';
+
+  @override
+  String get coursesShellNoSemesterMatches => 'No courses in this semester';
+
+  @override
+  String get coursesShellSearchSemanticsHint =>
+      'Search by course code, title, section, semester, or instructor';
+
+  @override
   String get adminUseTimeFormat => 'Use HH:mm format for times.';
 }

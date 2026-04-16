@@ -55,8 +55,7 @@ class _CourseSearchBarState extends State<CourseSearchBar> {
           child: Semantics(
             textField: true,
             label: l10n.searchCourseNameOrInstructor,
-            hint:
-                'Search by course code, title, section, semester, or instructor',
+            hint: l10n.coursesShellSearchSemanticsHint,
             child: TextField(
               controller: _controller,
               onChanged: (value) {
@@ -81,7 +80,7 @@ class _CourseSearchBarState extends State<CourseSearchBar> {
                 ),
                 suffixIcon: _controller.text.isNotEmpty
                     ? IconButton(
-                        tooltip: 'Clear search',
+                        tooltip: l10n.clearSearch,
                         onPressed: () {
                           _controller.clear();
                           widget.onSearchChanged('');

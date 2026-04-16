@@ -52,7 +52,6 @@ import 'package:edu_verse/screens/student/search/overall_search_screen.dart';
 import 'package:edu_verse/screens/student/calendar/calendar_screen.dart';
 import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
-import 'package:edu_verse/features/courses/screens/course_list_screen.dart';
 import 'package:edu_verse/features/courses/screens/course_detail_screen.dart';
 // Instructor screens
 import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_screen.dart';
@@ -212,7 +211,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '/courses',
-        builder: (context, state) => const CourseListScreen(),
+        builder: (context, state) => const CoursesScreen(),
       ),
       GoRoute(
         path: '/flashcards',

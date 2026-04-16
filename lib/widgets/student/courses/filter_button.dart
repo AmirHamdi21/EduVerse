@@ -32,10 +32,18 @@ class FilterButton extends StatelessWidget {
       case 'completed':
         return l10n.completed;
       case 'dropped':
-        return 'Dropped';
+        return _titleCase(filter);
       default:
         return l10n.filter;
     }
+  }
+
+  String _titleCase(String value) {
+    if (value.isEmpty) {
+      return value;
+    }
+
+    return '${value[0].toUpperCase()}${value.substring(1)}';
   }
 
   bool get _hasSelection =>
@@ -67,50 +75,56 @@ class FilterButton extends StatelessWidget {
         final l10n = AppLocalizations.of(context);
 
         return Expanded(
-          child: GestureDetector(
-            onTap: () => _showFilterMenu(context, isDark, l10n),
-            child: Container(
-              height: 48,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF16213E) : Colors.white,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: _hasSelection
-                      ? const Color(0xFF155DFC)
-                      : (isDark ? Colors.white10 : const Color(0xFFD1D5DC)),
-                  width: _hasSelection ? 1.5 : 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  const SizedBox(width: 12),
-                  Icon(
-                    Icons.tune,
+          child: Semantics(
+            button: true,
+            label: l10n.filter,
+            value: _label(l10n),
+            hint: l10n.filterAndSort,
+            child: GestureDetector(
+              onTap: () => _showFilterMenu(context, isDark, l10n),
+              child: Container(
+                height: 48,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF16213E) : Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
                     color: _hasSelection
                         ? const Color(0xFF155DFC)
-                        : (isDark ? Colors.white54 : const Color(0xFF495565)),
-                    size: 20,
+                        : (isDark ? Colors.white10 : const Color(0xFFD1D5DC)),
+                    width: _hasSelection ? 1.5 : 1,
                   ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      _label(l10n),
-                      style: TextStyle(
-                        color: _hasSelection
-                            ? const Color(0xFF155DFC)
-                            : (isDark
-                                  ? Colors.white70
-                                  : const Color(0xFF364153)),
-                        fontSize: 14,
-                        fontWeight: _hasSelection
-                            ? FontWeight.w600
-                            : FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 12),
+                    Icon(
+                      Icons.tune,
+                      color: _hasSelection
+                          ? const Color(0xFF155DFC)
+                          : (isDark ? Colors.white54 : const Color(0xFF495565)),
+                      size: 20,
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                ],
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        _label(l10n),
+                        style: TextStyle(
+                          color: _hasSelection
+                              ? const Color(0xFF155DFC)
+                              : (isDark
+                                    ? Colors.white70
+                                    : const Color(0xFF364153)),
+                          fontSize: 14,
+                          fontWeight: _hasSelection
+                              ? FontWeight.w600
+                              : FontWeight.w500,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                ),
               ),
             ),
           ),
@@ -124,6 +138,8 @@ class FilterButton extends StatelessWidget {
     bool isDark,
     AppLocalizations l10n,
   ) {
+    final double maxSheetHeight = MediaQuery.of(context).size.height * 0.8;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: isDark ? const Color(0xFF16213E) : Colors.white,
@@ -133,54 +149,78 @@ class FilterButton extends StatelessWidget {
           topRight: Radius.circular(20),
         ),
       ),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.filter,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black,
+      builder: (context) => SafeArea(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: maxSheetHeight),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.filter,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    l10n.coursesShellStatusLabel,
+                    style: TextStyle(
+                      color: isDark ? Colors.white70 : const Color(0xFF364153),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildFilterOption(context, 'all', l10n.all, isDark),
+                  _buildFilterOption(context, 'active', l10n.active, isDark),
+                  _buildFilterOption(
+                    context,
+                    'completed',
+                    l10n.completed,
+                    isDark,
+                  ),
+                  _buildFilterOption(
+                    context,
+                    'dropped',
+                    _getFilterLabel('dropped', l10n),
+                    isDark,
+                  ),
+                  if (semesterOptions.isNotEmpty) ...<Widget>[
+                    const SizedBox(height: 8),
+                    Text(
+                      l10n.coursesShellSemesterLabel,
+                      style: TextStyle(
+                        color: isDark
+                            ? Colors.white70
+                            : const Color(0xFF364153),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    _buildSemesterOption(
+                      context,
+                      null,
+                      l10n.allSemesters,
+                      isDark,
+                    ),
+                    ...semesterOptions.map(
+                      (SemesterFilterOption option) => _buildSemesterOption(
+                        context,
+                        option.id,
+                        option.label,
+                        isDark,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
-            const SizedBox(height: 20),
-            Text(
-              'Status',
-              style: TextStyle(
-                color: isDark ? Colors.white70 : const Color(0xFF364153),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 8),
-            _buildFilterOption(context, 'all', l10n.all, isDark),
-            _buildFilterOption(context, 'active', l10n.active, isDark),
-            _buildFilterOption(context, 'completed', l10n.completed, isDark),
-            _buildFilterOption(context, 'dropped', 'Dropped', isDark),
-            if (semesterOptions.isNotEmpty) ...<Widget>[
-              const SizedBox(height: 8),
-              Text(
-                'Semester',
-                style: TextStyle(
-                  color: isDark ? Colors.white70 : const Color(0xFF364153),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              _buildSemesterOption(context, null, l10n.allSemesters, isDark),
-              ...semesterOptions.map(
-                (SemesterFilterOption option) => _buildSemesterOption(
-                  context,
-                  option.id,
-                  option.label,
-                  isDark,
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );

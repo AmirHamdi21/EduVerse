@@ -11,10 +11,10 @@
 
 **Purpose**: Prepare shared tokens, localization, and test scaffolding used by multiple stories.
 
-- [ ] T001 Create shared courses-shell design tokens in `lib/common/utils/student_courses_theme.dart`
-- [ ] T002 Add or update Phase 1 shell localization strings in `lib/l10n/app_en.arb` and `lib/l10n/app_ar.arb`
-- [ ] T003 [P] Create reusable enrollment fixtures for shell tests in `test/helpers/student_courses_fixture.dart`
-- [ ] T004 [P] Create Phase 1 widget test scaffold in `test/widgets/student/courses/courses_screen_phase1_test.dart`
+- [X] T001 Create shared courses-shell design tokens in `lib/common/utils/student_courses_theme.dart`
+- [X] T002 Add or update Phase 1 shell localization strings in `lib/l10n/app_en.arb` and `lib/l10n/app_ar.arb`
+- [X] T003 [P] Create reusable enrollment fixtures for shell tests in `test/helpers/student_courses_fixture.dart`
+- [X] T004 [P] Create Phase 1 widget test scaffold in `test/widgets/student/courses/courses_screen_phase1_test.dart`
 
 ---
 
@@ -24,15 +24,15 @@
 
 **CRITICAL**: No user story work should start until this phase is complete.
 
-- [ ] T005 Perform backend endpoint contract audit for Courses shell in `specs/025-courses-shell-foundation/contracts/student-courses-shell-endpoints.md` using `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend\src\modules\enrollments\controllers\enrollments.controller.ts`, `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend\src\modules\enrollments\services\enrollments.service.ts` (including `buildEnrollmentResponse`, `buildInstructorEnrollmentView`, and `buildInstructorResponse`), `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend\src\modules\enrollments\dto\enrollment-response.dto.ts`, `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend\src\modules\enrollments\dto\available-courses.dto.ts`, and `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend\src\modules\enrollments\dto\enroll-course.dto.ts`, and record mapper-to-model field evidence for consumed payload fields
-- [ ] T006 [P] Consolidate semester-aware my-courses request handling in `lib/services/api/enrollment_service.dart`
-- [ ] T007 [P] Align enrollment parsing/nullability with audited response shape in `lib/models/core/enrollment_model.dart`
-- [ ] T008 Add semester payload support to student fetch events in `lib/bloc/courses/courses_event.dart`
-- [ ] T009 Add dedicated auth/session-required state for `401`/`403` in `lib/bloc/courses/courses_state.dart`
-- [ ] T010 Implement semester fetch flow and `401`/`403` state mapping in `lib/bloc/courses/courses_bloc.dart`
-- [ ] T011 [P] Add foundational BLoC coverage for semester and auth/session transitions in `test/bloc/courses_bloc_test.dart`
-- [ ] T012 Record static/mock/fallback inventory for Phase 1 files in `specs/025-courses-shell-foundation/quickstart.md`
-- [ ] T013 Define extracted filter/sort/status helper boundaries and semester-option source policy (derive from enrollment.semester with All-only fallback when missing) in `lib/common/utils/student_course_filters.dart` and wire usage in `lib/screens/student/courses_screen.dart`
+- [X] T005 Perform backend endpoint contract audit for Courses shell in `specs/025-courses-shell-foundation/contracts/student-courses-shell-endpoints.md` using `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend\src\modules\enrollments\controllers\enrollments.controller.ts`, `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend\src\modules\enrollments\services\enrollments.service.ts` (including `buildEnrollmentResponse`, `buildInstructorEnrollmentView`, and `buildInstructorResponse`), `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend\src\modules\enrollments\dto\enrollment-response.dto.ts`, `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend\src\modules\enrollments\dto\available-courses.dto.ts`, and `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend\src\modules\enrollments\dto\enroll-course.dto.ts`, and record mapper-to-model field evidence for consumed payload fields
+- [X] T006 [P] Consolidate semester-aware my-courses request handling in `lib/services/api/enrollment_service.dart`
+- [X] T007 [P] Align enrollment parsing/nullability with audited response shape in `lib/models/core/enrollment_model.dart`
+- [X] T008 Add semester payload support to student fetch events in `lib/bloc/courses/courses_event.dart`
+- [X] T009 Add dedicated auth/session-required state for `401`/`403` in `lib/bloc/courses/courses_state.dart`
+- [X] T010 Implement semester fetch flow and `401`/`403` state mapping in `lib/bloc/courses/courses_bloc.dart`
+- [X] T011 [P] Add foundational BLoC coverage for semester and auth/session transitions in `test/bloc/courses_bloc_test.dart`
+- [X] T012 Record static/mock/fallback inventory for Phase 1 files in `specs/025-courses-shell-foundation/quickstart.md`
+- [X] T013 Define extracted filter/sort/status helper boundaries and semester-option source policy (derive from enrollment.semester with All-only fallback when missing) in `lib/common/utils/student_course_filters.dart` and wire usage in `lib/screens/student/courses_screen.dart`
 
 **Checkpoint**: Foundation complete. User stories can now be implemented.
 
@@ -47,19 +47,19 @@
 ### Tests for User Story 1
 
 - [ ] T014 [P] [US1] Add widget tests for loading, loaded, and empty shell states in `test/widgets/student/courses/courses_screen_phase1_test.dart`
-- [ ] T015 [P] [US1] Add list rendering regression coverage for enrollment passthrough in `test/widgets/course_list_screen_test.dart`
+- [X] T015 [P] [US1] Add list rendering regression coverage for enrollment passthrough in `test/widgets/course_list_screen_test.dart`
 
 ### Implementation for User Story 1
 
-- [ ] T016 [US1] Rebuild header visuals and typography tokens in `lib/widgets/student/courses/courses_header.dart`
-- [ ] T017 [US1] Rebuild search bar visuals and clear interaction in `lib/widgets/student/courses/course_search_bar.dart`
-- [ ] T018 [US1] Rebuild filter button container and filter sheet visuals in `lib/widgets/student/courses/filter_button.dart`
-- [ ] T019 [US1] Rebuild sort button container and sort option sheet visuals in `lib/widgets/student/courses/sort_button.dart`
-- [ ] T020 [US1] Rebuild animated horizontal filter chips in `lib/widgets/student/courses/course_filter_bar.dart`
-- [ ] T021 [US1] Rebuild Join Course button styling while keeping behavior unchanged in `lib/widgets/student/courses/join_course_button.dart`
-- [ ] T022 [US1] Rebuild screen shell layout, skeleton loader, and empty/no-results/error sections in `lib/screens/student/courses_screen.dart`
-- [ ] T023 [US1] Apply shared theme tokens across shell widgets in `lib/screens/student/courses_screen.dart` and `lib/widgets/student/courses/courses_header.dart`
-- [ ] T024 [US1] Remove story-local static/mock/fallback UI branches from US1-modified shell rendering in `lib/screens/student/courses_screen.dart`
+- [X] T016 [US1] Rebuild header visuals and typography tokens in `lib/widgets/student/courses/courses_header.dart`
+- [X] T017 [US1] Rebuild search bar visuals and clear interaction in `lib/widgets/student/courses/course_search_bar.dart`
+- [X] T018 [US1] Rebuild filter button container and filter sheet visuals in `lib/widgets/student/courses/filter_button.dart`
+- [X] T019 [US1] Rebuild sort button container and sort option sheet visuals in `lib/widgets/student/courses/sort_button.dart`
+- [X] T020 [US1] Rebuild animated horizontal filter chips in `lib/widgets/student/courses/course_filter_bar.dart`
+- [X] T021 [US1] Rebuild Join Course button styling while keeping behavior unchanged in `lib/widgets/student/courses/join_course_button.dart`
+- [X] T022 [US1] Rebuild screen shell layout, skeleton loader, and empty/no-results/error sections in `lib/screens/student/courses_screen.dart`
+- [X] T023 [US1] Apply shared theme tokens across shell widgets in `lib/screens/student/courses_screen.dart` and `lib/widgets/student/courses/courses_header.dart`
+- [X] T024 [US1] Remove story-local static/mock/fallback UI branches from US1-modified shell rendering in `lib/screens/student/courses_screen.dart`
 
 **Checkpoint**: User Story 1 is independently functional and testable.
 
@@ -73,18 +73,18 @@
 
 ### Tests for User Story 2
 
-- [ ] T025 [P] [US2] Add widget tests for search, status filter, and sort flows in `test/widgets/student/courses/courses_screen_phase1_test.dart`, including a dedicated semester-empty-versus-global-empty differentiation case with evidence notes in `specs/025-courses-shell-foundation/quickstart.md`
-- [ ] T026 [P] [US2] Add semester query serialization tests in `test/services/api/enrollment_service_test.dart`
-- [ ] T049 [P] [US2] Add Join Course behavior parity regression tests (happy path plus representative failure path unchanged) in `test/widgets/student/courses/courses_screen_phase1_test.dart` and `test/services/api/enrollment_service_test.dart`
+- [X] T025 [P] [US2] Add widget tests for search, status filter, and sort flows in `test/widgets/student/courses/courses_screen_phase1_test.dart`, including a dedicated semester-empty-versus-global-empty differentiation case with evidence notes in `specs/025-courses-shell-foundation/quickstart.md`
+- [X] T026 [P] [US2] Add semester query serialization tests in `test/services/api/enrollment_service_test.dart`
+- [X] T049 [P] [US2] Add Join Course behavior parity regression tests (happy path plus representative failure path unchanged) in `test/widgets/student/courses/courses_screen_phase1_test.dart` and `test/services/api/enrollment_service_test.dart`
 
 ### Implementation for User Story 2
 
-- [ ] T027 [US2] Add semester selection state and event dispatch in `lib/screens/student/courses_screen.dart`
-- [ ] T028 [US2] Add semester filter UI integration with options derived from enrollment.semester payload values and All-only fallback when metadata is missing in `lib/widgets/student/courses/filter_button.dart` and `lib/widgets/student/courses/course_filter_bar.dart`
-- [ ] T029 [US2] Implement backend-supported status normalization and filtering helpers in `lib/common/utils/student_course_filters.dart`
-- [ ] T030 [US2] Move search/filter/sort logic to extracted helpers and call them in `lib/screens/student/courses_screen.dart`, enforcing case-insensitive search over `course.code`, `course.name`, `section.sectionNumber`, `semester.name`, and optional instructor full name with precedence `exact/prefix code > title contains > section/semester/instructor contains`
-- [ ] T031 [US2] Preserve Join Course behavior while validating audited endpoint compatibility in `lib/widgets/student/courses/join_course_button.dart` and `lib/services/api/enrollment_service.dart`
-- [ ] T032 [US2] Update filter/sort callback contracts for semester-aware control state in `lib/widgets/student/courses/filter_button.dart` and `lib/widgets/student/courses/sort_button.dart`
+- [X] T027 [US2] Add semester selection state and event dispatch in `lib/screens/student/courses_screen.dart`
+- [X] T028 [US2] Add semester filter UI integration with options derived from enrollment.semester payload values and All-only fallback when metadata is missing in `lib/widgets/student/courses/filter_button.dart` and `lib/widgets/student/courses/course_filter_bar.dart`
+- [X] T029 [US2] Implement backend-supported status normalization and filtering helpers in `lib/common/utils/student_course_filters.dart`
+- [X] T030 [US2] Move search/filter/sort logic to extracted helpers and call them in `lib/screens/student/courses_screen.dart`, enforcing case-insensitive search over `course.code`, `course.name`, `section.sectionNumber`, `semester.name`, and optional instructor full name with precedence `exact/prefix code > title contains > section/semester/instructor contains`
+- [X] T031 [US2] Preserve Join Course behavior while validating audited endpoint compatibility in `lib/widgets/student/courses/join_course_button.dart` and `lib/services/api/enrollment_service.dart`
+- [X] T032 [US2] Update filter/sort callback contracts for semester-aware control state in `lib/widgets/student/courses/filter_button.dart` and `lib/widgets/student/courses/sort_button.dart`
 
 **Checkpoint**: User Story 2 is independently functional and testable.
 
@@ -98,18 +98,18 @@
 
 ### Tests for User Story 3
 
-- [ ] T033 [P] [US3] Add BLoC tests for cache fallback, generic error, and auth/session-required states in `test/bloc/courses_bloc_test.dart`
+- [X] T033 [P] [US3] Add BLoC tests for cache fallback, generic error, and auth/session-required states in `test/bloc/courses_bloc_test.dart`
 - [ ] T034 [P] [US3] Add widget tests for offline warning, generic error, and auth/session recovery UI in `test/widgets/student/courses/courses_screen_phase1_test.dart`
-- [ ] T050 [P] [US3] Add targeted edge-case tests for null nested enrollment fields and rapid search/filter/sort interactions during loading transitions in `test/widgets/student/courses/courses_screen_phase1_test.dart` and `test/bloc/courses_bloc_test.dart`
+- [X] T050 [P] [US3] Add targeted edge-case tests for null nested enrollment fields and rapid search/filter/sort interactions during loading transitions in `test/widgets/student/courses/courses_screen_phase1_test.dart` and `test/bloc/courses_bloc_test.dart`
 - [ ] T051 [P] [US3] Add widget-level RBAC tests for authenticated non-student access, restricted control visibility, and forbidden-state rendering in `test/widgets/student/courses/courses_screen_phase1_test.dart`
 
 ### Implementation for User Story 3
 
-- [ ] T035 [US3] Implement dedicated auth/session-required UI state and action in `lib/screens/student/courses_screen.dart`
-- [ ] T036 [US3] Separate empty, no-filter-results, offline-cache, and generic-error messaging in `lib/screens/student/courses_screen.dart` and both `lib/l10n/app_en.arb` and `lib/l10n/app_ar.arb`
-- [ ] T037 [US3] Ensure retry and refresh actions preserve semester-aware reload behavior in `lib/screens/student/courses_screen.dart`
-- [ ] T038 [US3] Refine error classification for unauthenticated/forbidden/network failures in `lib/bloc/courses/courses_bloc.dart`
-- [ ] T052 [US3] Implement widget-level RBAC gating and authorization-restricted UI state in `lib/screens/student/courses_screen.dart` and related shell controls
+- [X] T035 [US3] Implement dedicated auth/session-required UI state and action in `lib/screens/student/courses_screen.dart`
+- [X] T036 [US3] Separate empty, no-filter-results, offline-cache, and generic-error messaging in `lib/screens/student/courses_screen.dart` and both `lib/l10n/app_en.arb` and `lib/l10n/app_ar.arb`
+- [X] T037 [US3] Ensure retry and refresh actions preserve semester-aware reload behavior in `lib/screens/student/courses_screen.dart`
+- [X] T038 [US3] Refine error classification for unauthenticated/forbidden/network failures in `lib/bloc/courses/courses_bloc.dart`
+- [X] T052 [US3] Implement widget-level RBAC gating and authorization-restricted UI state in `lib/screens/student/courses_screen.dart` and related shell controls
 
 **Checkpoint**: User Story 3 is independently functional and testable.
 
@@ -123,14 +123,14 @@
 
 ### Tests for User Story 4
 
-- [ ] T039 [US4] Add light/dark visual regression assertions for shell tokens in `test/widgets/student/courses/courses_screen_phase1_test.dart`
-- [ ] T040 [US4] Add layout spacing/structure assertions for shell sections in `test/widgets/student/courses/courses_screen_phase1_test.dart`
+- [X] T039 [US4] Add light/dark visual regression assertions for shell tokens in `test/widgets/student/courses/courses_screen_phase1_test.dart`
+- [X] T040 [US4] Add layout spacing/structure assertions for shell sections in `test/widgets/student/courses/courses_screen_phase1_test.dart`
 
 ### Implementation for User Story 4
 
-- [ ] T041 [US4] Align spacing, radii, shadows, and animation timing to Phase 1 spec in `lib/screens/student/courses_screen.dart` and `lib/widgets/student/courses/course_filter_bar.dart`
-- [ ] T042 [US4] Align labels and semantics hints for redesigned controls in `lib/widgets/student/courses/course_search_bar.dart` and `lib/widgets/student/courses/filter_button.dart`
-- [ ] T043 [US4] Verify metadata field rendering compatibility with audited enrollment shape in `lib/widgets/student/courses/courses_list_view.dart` and `lib/models/core/enrollment_model.dart`
+- [X] T041 [US4] Align spacing, radii, shadows, and animation timing to Phase 1 spec in `lib/screens/student/courses_screen.dart` and `lib/widgets/student/courses/course_filter_bar.dart`
+- [X] T042 [US4] Align labels and semantics hints for redesigned controls in `lib/widgets/student/courses/course_search_bar.dart` and `lib/widgets/student/courses/filter_button.dart`
+- [X] T043 [US4] Verify metadata field rendering compatibility with audited enrollment shape in `lib/widgets/student/courses/courses_list_view.dart` and `lib/models/core/enrollment_model.dart`
 
 **Checkpoint**: User Story 4 is independently functional and testable.
 
@@ -140,9 +140,9 @@
 
 **Purpose**: Final verification, cleanup, and deletion of obsolete pre-integration artifacts.
 
-- [ ] T044 Run Phase 1 validation commands and record outcomes in `specs/025-courses-shell-foundation/quickstart.md`
-- [ ] T045 Run delta/reconciliation endpoint audit against `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend` only if post-T005 changes affect contract-consuming code paths (service/model/BLoC/UI bindings), then update findings in `specs/025-courses-shell-foundation/contracts/student-courses-shell-endpoints.md`; otherwise record explicit skip rationale in `specs/025-courses-shell-foundation/quickstart.md`
-- [ ] T046 Run global grep-based final static/mock/fallback verification across all Phase 1 scope files (final cross-feature check, not story-local cleanup)
+- [X] T044 Run Phase 1 validation commands and record outcomes in `specs/025-courses-shell-foundation/quickstart.md`
+- [X] T045 Run delta/reconciliation endpoint audit against `C:\Users\Friends\Desktop\Graduation\Backend\EduVerse_Backend` only if post-T005 changes affect contract-consuming code paths (service/model/BLoC/UI bindings), then update findings in `specs/025-courses-shell-foundation/contracts/student-courses-shell-endpoints.md`; otherwise record explicit skip rationale in `specs/025-courses-shell-foundation/quickstart.md`
+- [X] T046 Run global grep-based final static/mock/fallback verification across all Phase 1 scope files (final cross-feature check, not story-local cleanup)
 - [ ] T047 Detect and delete unused legacy pre-backend-integration files in `lib/widgets/student/courses/course_model.dart` and `lib/features/courses/screens/course_detail_screen.dart` only after deterministic checks pass: zero global usages in `lib/` and `test/`, route graph verification, `flutter analyze` pass, targeted tests pass, and cleanup owner approval documented in `specs/025-courses-shell-foundation/quickstart.md`
 - [ ] T048 Document cleanup proof (deleted files, removed imports, and no-unused-artifact check results) in `specs/025-courses-shell-foundation/research.md` and `specs/025-courses-shell-foundation/quickstart.md`
 - [ ] T053 Execute SC-002 reliability matrix with at least 100 first-load runs; record numerator/denominator and pass only if valid-state load rate is >=95% in `specs/025-courses-shell-foundation/quickstart.md`

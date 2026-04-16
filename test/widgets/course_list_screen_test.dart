@@ -27,6 +27,9 @@ void main() {
     expect(find.text('Programming Fundamentals'), findsOneWidget);
     expect(find.text('Linear Algebra'), findsOneWidget);
     expect(find.text('MATH200'), findsOneWidget);
+    expect(find.text('Section A1'), findsOneWidget);
+    expect(find.text('Fall 2026'), findsOneWidget);
+    expect(find.text('No Semester'), findsOneWidget);
   });
 
   testWidgets('courses list view shows empty placeholder when list is empty', (
