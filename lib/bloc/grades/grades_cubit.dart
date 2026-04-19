@@ -1,10 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../models/grades/grade_model.dart';
+import '../../services/api/student_stats_service.dart';
+import '../../services/storage_service.dart';
 import 'grades_state.dart';
 
 class GradesCubit extends Cubit<GradesState> {
-  GradesCubit() : super(const GradesState()) {
+  final StudentStatsService? _studentStatsService;
+  final StorageService? _storageService;
+  final int? _studentId;
+
+  GradesCubit({
+    StudentStatsService? studentStatsService,
+    StorageService? storageService,
+    int? studentId,
+  }) : _studentStatsService = studentStatsService,
+       _storageService = storageService,
+       _studentId = studentId,
+       super(const GradesState()) {
     loadGrades();
   }
 
@@ -17,8 +30,34 @@ class GradesCubit extends Cubit<GradesState> {
 
       final semesters = _generateDemoSemesters();
       final courses = _generateDemoCourses();
-      final statistics = _calculateStatistics(courses);
+      var statistics = _calculateStatistics(courses);
       final gradeTrend = _generateGradeTrend();
+
+      if (_studentStatsService != null) {
+        final resolvedStudentId = await _resolveStudentId();
+        if (resolvedStudentId != null && resolvedStudentId > 0) {
+          try {
+            final gpaModel = await _studentStatsService.getStudentGpa(
+              resolvedStudentId,
+            );
+
+            statistics = GradeStatistics(
+              cumulativeGPA: gpaModel.gpa,
+              semesterGPA: gpaModel.gpa,
+              totalCredits: statistics.totalCredits,
+              completedCredits: statistics.completedCredits,
+              totalCourses: statistics.totalCourses,
+              passedCourses: statistics.passedCourses,
+              highestGrade: statistics.highestGrade,
+              lowestGrade: statistics.lowestGrade,
+              averagePercentage: statistics.averagePercentage,
+              gradeDistribution: statistics.gradeDistribution,
+            );
+          } catch (_) {
+            // Keep demo-derived statistics when API GPA is unavailable.
+          }
+        }
+      }
 
       emit(
         state.copyWith(
@@ -628,5 +667,23 @@ class GradesCubit extends Cubit<GradesState> {
         creditHours: 17,
       ),
     ];
+  }
+
+  Future<int?> _resolveStudentId() async {
+    final configuredStudentId = _studentId;
+    if (configuredStudentId != null && configuredStudentId > 0) {
+      return configuredStudentId;
+    }
+
+    if (_storageService == null) {
+      return null;
+    }
+
+    final user = await _storageService.getUserData();
+    if (user == null || user.userId <= 0) {
+      return null;
+    }
+
+    return user.userId;
   }
 }

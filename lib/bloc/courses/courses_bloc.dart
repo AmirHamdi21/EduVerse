@@ -8,6 +8,9 @@ import '../../services/api/course_service.dart';
 import '../../services/api/enrollment_service.dart';
 import '../../services/api/material_service.dart';
 import '../../services/api/communication_service.dart';
+import '../../services/api/public_profile_service.dart';
+import '../../services/api/office_hours_service.dart';
+import '../../services/api/student_stats_service.dart';
 import '../../common/service_error.dart';
 import '../../models/core/enrollment_model.dart';
 import '../../models/core/course_model.dart';
@@ -26,10 +29,17 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   final EnrollmentService _enrollmentService;
   final MaterialService _materialService;
   final CommunicationService _communicationService;
+  final PublicProfileService? _publicProfileService;
+  final OfficeHoursService? _officeHoursService;
+  final StudentStatsService? _studentStatsService;
 
   CourseService get courseService => _courseService;
   EnrollmentService get enrollmentService => _enrollmentService;
   MaterialService get materialService => _materialService;
+  CommunicationService get communicationService => _communicationService;
+  PublicProfileService? get publicProfileService => _publicProfileService;
+  OfficeHoursService? get officeHoursService => _officeHoursService;
+  StudentStatsService? get studentStatsService => _studentStatsService;
 
   // ── Cache keys ─────────────────────────────────────────────────────────────
   static const _cacheKeyEnrollments = 'courses_cache_enrollments';
@@ -44,10 +54,16 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     required EnrollmentService enrollmentService,
     required MaterialService materialService,
     required CommunicationService communicationService,
+    PublicProfileService? publicProfileService,
+    OfficeHoursService? officeHoursService,
+    StudentStatsService? studentStatsService,
   }) : _courseService = courseService,
        _enrollmentService = enrollmentService,
        _materialService = materialService,
        _communicationService = communicationService,
+       _publicProfileService = publicProfileService,
+       _officeHoursService = officeHoursService,
+       _studentStatsService = studentStatsService,
        super(const CoursesInitial()) {
     on<StudentCoursesFetched>(_onStudentCoursesFetched);
     on<InstructorCoursesFetched>(_onInstructorCoursesFetched);
@@ -273,7 +289,11 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     emit(const CoursesLoading());
 
     try {
-      final announcements = await _communicationService.getAnnouncements();
+      final announcements = event.courseId != null
+          ? await _communicationService.getAnnouncementsByCourseId(
+              event.courseId,
+            )
+          : await _communicationService.getAnnouncements();
       emit(AnnouncementsLoaded(announcements: announcements));
     } catch (e) {
       emit(CoursesError(message: _sanitizeError(e)));

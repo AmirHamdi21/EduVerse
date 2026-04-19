@@ -347,21 +347,7 @@ class CourseListBloc extends Bloc<CourseListEvent, CourseListState> {
         section.id,
       );
       if (instructorsResult.isSuccess && instructorsResult.data != null) {
-        for (final assignment in instructorsResult.data!) {
-          staffAssignments.add(
-            InstructorAssignmentModel(
-              id: assignment.id,
-              sectionId: assignment.sectionId,
-              userId: assignment.userId,
-              role: assignment.role,
-              responsibilities: null,
-              assignedAt: null,
-              firstName: assignment.user?.firstName ?? '',
-              lastName: assignment.user?.lastName ?? '',
-              email: assignment.user?.email ?? '',
-            ),
-          );
-        }
+        staffAssignments.addAll(instructorsResult.data!);
       }
 
       final taResult = await _enrollmentService.getSectionTAs(section.id);

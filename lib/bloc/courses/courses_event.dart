@@ -56,7 +56,12 @@ class CourseMaterialsFetched extends CoursesEvent {
 
 /// Fetch announcements.
 class AnnouncementsFetched extends CoursesEvent {
-  const AnnouncementsFetched();
+  final dynamic courseId;
+
+  const AnnouncementsFetched({this.courseId});
+
+  @override
+  List<Object?> get props => [courseId];
 }
 
 /// Fetch assignments.

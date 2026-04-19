@@ -402,6 +402,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../bloc/grades/grades_cubit.dart';
+import '../../../bloc/grades/grades_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
@@ -425,17 +427,24 @@ class StudentStatsSection extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                  child: _CompactStatCard(
-                    title: l10n.gpa,
-                    value: '3.62',
-                    maxValue: 4.0,
-                    isDark: isDark,
-                    icon: Icons.school_rounded,
-                    gradientColors: const [
-                      Color(0xFF8B5CF6),
-                      Color(0xFFEC4899),
-                    ],
-                    onTap: () => context.push('/grades'),
+                  child: BlocBuilder<GradesCubit, GradesState>(
+                    builder: (context, gradesState) {
+                      final gpa = gradesState.statistics?.cumulativeGPA ?? 0.0;
+                      final safeGpa = gpa.isFinite ? gpa.clamp(0.0, 4.0) : 0.0;
+
+                      return _CompactStatCard(
+                        title: l10n.gpa,
+                        value: safeGpa.toStringAsFixed(2),
+                        maxValue: 4.0,
+                        isDark: isDark,
+                        icon: Icons.school_rounded,
+                        gradientColors: const [
+                          Color(0xFF8B5CF6),
+                          Color(0xFFEC4899),
+                        ],
+                        onTap: () => context.push('/grades'),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(width: 12),

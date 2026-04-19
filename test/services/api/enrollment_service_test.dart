@@ -217,4 +217,114 @@ void main() {
       expect(result.error?.message, contains('Already enrolled'));
     });
   });
+
+  group('EnrollmentService section staff endpoint compatibility', () {
+    test('getSectionTAs falls back to singular section path', () async {
+      final observedPaths = <String>[];
+
+      final EnrollmentService service = _buildService((RequestOptions options) {
+        observedPaths.add(options.path);
+
+        if (options.path == '/enrollments/sections/5/tas') {
+          throw DioException(
+            requestOptions: options,
+            response: Response<dynamic>(
+              requestOptions: options,
+              statusCode: 404,
+            ),
+            type: DioExceptionType.badResponse,
+          );
+        }
+
+        if (options.path == '/enrollments/section/5/tas') {
+          return <String, dynamic>{
+            'statusCode': 200,
+            'data': <Map<String, dynamic>>[
+              <String, dynamic>{
+                'id': 1,
+                'sectionId': 5,
+                'userId': 90,
+                'firstName': 'Nora',
+                'lastName': 'Ibrahim',
+                'email': 'nora@eduverse.test',
+                'assignedAt': '2026-04-01T10:00:00.000Z',
+              },
+            ],
+          };
+        }
+
+        return <String, dynamic>{
+          'statusCode': 404,
+          'data': <String, dynamic>{},
+        };
+      });
+
+      final result = await service.getSectionTAs(5);
+
+      expect(result.isSuccess, isTrue);
+      expect(result.data, isNotNull);
+      expect(result.data!.length, 1);
+      expect(observedPaths, <String>[
+        '/enrollments/sections/5/tas',
+        '/enrollments/section/5/tas',
+      ]);
+    });
+
+    test(
+      'getSectionInstructors falls back to singular instructor path',
+      () async {
+        final observedPaths = <String>[];
+
+        final EnrollmentService service = _buildService((
+          RequestOptions options,
+        ) {
+          observedPaths.add(options.path);
+
+          if (options.path == '/enrollments/sections/8/instructors') {
+            throw DioException(
+              requestOptions: options,
+              response: Response<dynamic>(
+                requestOptions: options,
+                statusCode: 404,
+              ),
+              type: DioExceptionType.badResponse,
+            );
+          }
+
+          if (options.path == '/enrollments/section/8/instructor') {
+            return <String, dynamic>{
+              'statusCode': 200,
+              'data': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 4,
+                  'sectionId': 8,
+                  'userId': 12,
+                  'firstName': 'Adam',
+                  'lastName': 'Mostafa',
+                  'email': 'adam@eduverse.test',
+                  'role': 'primary',
+                },
+              ],
+            };
+          }
+
+          return <String, dynamic>{
+            'statusCode': 404,
+            'data': <String, dynamic>{},
+          };
+        });
+
+        final result = await service.getSectionInstructors(8);
+
+        expect(result.isSuccess, isTrue);
+        expect(result.data, isNotNull);
+        expect(result.data!.length, 1);
+        expect(result.data!.first.userId, 12);
+        expect(observedPaths, <String>[
+          '/enrollments/sections/8/instructors',
+          '/enrollments/section/8/instructor',
+        ]);
+      },
+    );
+  });
 }

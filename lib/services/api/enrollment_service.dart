@@ -4,6 +4,7 @@ import '../../common/service_error.dart';
 import '../../models/core/enrollment_model.dart';
 import '../../models/instructor/teaching_course_model.dart';
 import '../../models/instructor/instructor_course_model.dart';
+import '../../models/courses/instructor_assignment_model.dart';
 import '../../models/ta/ta_assignment_model.dart';
 
 /// Service for Enrollment API endpoints.
@@ -185,9 +186,14 @@ class EnrollmentService {
     dynamic sectionId,
   ) {
     return RetryHelper.execute<List<TAAssignmentModel>>(() async {
-      final response = await _client.dio.get(
-        '/enrollments/sections/$sectionId/tas',
-      );
+      dynamic response;
+      try {
+        response = await _client.dio.get(
+          '/enrollments/sections/$sectionId/tas',
+        );
+      } on Exception {
+        response = await _client.dio.get('/enrollments/section/$sectionId/tas');
+      }
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
           .map(TAAssignmentModel.fromJson)
@@ -196,16 +202,24 @@ class EnrollmentService {
   }
 
   /// GET /api/enrollments/sections/:id/instructors
-  Future<ServiceResult<List<EnrollmentModel>>> getSectionInstructors(
+  Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
     dynamic sectionId,
   ) {
-    return RetryHelper.execute<List<EnrollmentModel>>(() async {
-      final response = await _client.dio.get(
-        '/enrollments/sections/$sectionId/instructors',
-      );
+    return RetryHelper.execute<List<InstructorAssignmentModel>>(() async {
+      dynamic response;
+      try {
+        response = await _client.dio.get(
+          '/enrollments/sections/$sectionId/instructors',
+        );
+      } on Exception {
+        response = await _client.dio.get(
+          '/enrollments/section/$sectionId/instructor',
+        );
+      }
+
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
-          .map(EnrollmentModel.fromJson)
+          .map(InstructorAssignmentModel.fromJson)
           .toList();
     }, fallbackMessage: 'Failed to load section instructors');
   }

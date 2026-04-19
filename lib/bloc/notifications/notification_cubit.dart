@@ -1,9 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../models/notifications/notification_model.dart';
+import '../../services/api/student_stats_service.dart';
 import 'notification_state.dart';
 
 class NotificationCubit extends Cubit<NotificationState> {
-  NotificationCubit() : super(const NotificationState());
+  final StudentStatsService? _studentStatsService;
+
+  NotificationCubit({StudentStatsService? studentStatsService})
+    : _studentStatsService = studentStatsService,
+      super(const NotificationState());
 
   /// Load notifications - in a real app, this would call an API
   Future<void> loadNotifications() async {
@@ -18,7 +23,18 @@ class NotificationCubit extends Cubit<NotificationState> {
       final aiInsights = _generateSampleAIInsights();
       final systemAlerts = _generateSampleSystemAlerts();
 
-      final unreadCount = notifications.where((n) => !n.isRead).length;
+      var unreadCount = notifications.where((n) => !n.isRead).length;
+
+      // Keep the dashboard badge in sync with backend unread count when
+      // available, while retaining demo notifications as the list source.
+      if (_studentStatsService != null) {
+        try {
+          final unreadModel = await _studentStatsService.getUnreadCount();
+          unreadCount = unreadModel.unreadCount;
+        } catch (_) {
+          // Ignore network failures and keep the locally computed fallback.
+        }
+      }
 
       emit(
         state.copyWith(

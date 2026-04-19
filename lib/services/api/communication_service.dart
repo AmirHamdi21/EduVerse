@@ -25,6 +25,24 @@ class CommunicationService {
         .toList();
   }
 
+  /// GET /api/announcements?courseId={id}
+  Future<List<AnnouncementModel>> getAnnouncementsByCourseId(
+    dynamic courseId,
+  ) async {
+    final response = await _client.dio.get(
+      '/announcements',
+      queryParameters: <String, dynamic>{'courseId': courseId},
+    );
+
+    final List data = response.data is List
+        ? response.data as List
+        : (response.data['data'] as List?) ?? [];
+
+    return data
+        .map((e) => AnnouncementModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
   /// POST /api/announcements
   Future<AnnouncementModel> createAnnouncement(
     Map<String, dynamic> body,

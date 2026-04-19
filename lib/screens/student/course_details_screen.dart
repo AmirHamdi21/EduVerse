@@ -148,6 +148,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
       _courseDetailBloc.add(
         LoadCourseDetail(
           courseId: courseId,
+          sectionId: widget.enrollment?.sectionId,
           initialTabIndex: widget.initialTab,
         ),
       );
@@ -289,7 +290,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                                     ),
                                     decoration: BoxDecoration(
                                       color: isDark
-                                          ? Colors.white.withOpacity(0.08)
+                                          ? Colors.white.withValues(alpha: 0.08)
                                           : const Color(0xFFF0F4FF),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
@@ -415,7 +416,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -478,9 +479,12 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withOpacity(0.2), width: 1),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.2),
+          width: 1,
+        ),
       ),
       child: Column(
         children: [
@@ -498,7 +502,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
           Text(
             label,
             style: TextStyle(
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
               fontSize: 11,
             ),
             maxLines: 1,
@@ -535,7 +539,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
         boxShadow: isPrimary
             ? [
                 BoxShadow(
-                  color: const Color(0xFF155DFC).withOpacity(0.3),
+                  color: const Color(0xFF155DFC).withValues(alpha: 0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 3),
                 ),
@@ -579,7 +583,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),

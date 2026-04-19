@@ -210,6 +210,44 @@ void main() {
       },
     );
 
+    test('AnnouncementsFetched forwards optional courseId query', () async {
+      dynamic observedCourseId;
+
+      final bloc = _buildBloc((options) {
+        if (options.path.contains('/announcements')) {
+          observedCourseId = options.queryParameters['courseId'];
+          return {
+            'statusCode': 200,
+            'data': [
+              {
+                'id': 'a-1',
+                'courseId': '22',
+                'title': 'Announcement',
+                'content': 'Scoped announcement',
+                'createdBy': 7,
+                'priority': 'high',
+                'publishedAt': '2026-04-01T00:00:00.000Z',
+                'createdAt': '2026-04-01T00:00:00.000Z',
+                'updatedAt': '2026-04-01T00:00:00.000Z',
+              },
+            ],
+          };
+        }
+        return {'statusCode': 200, 'data': []};
+      });
+
+      bloc.add(const AnnouncementsFetched(courseId: 22));
+
+      await expectLater(
+        bloc.stream,
+        emitsInOrder([isA<CoursesLoading>(), isA<AnnouncementsLoaded>()]),
+      );
+
+      expect(observedCourseId, 22);
+
+      await bloc.close();
+    });
+
     test(
       'StudentCoursesFetched emits CoursesError when network fails and no cache',
       () async {

@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../models/core/course_model.dart';
-import '../../models/core/enrollment_model.dart';
+import '../../models/courses/instructor_assignment_model.dart';
 import '../../models/core/enums/course_enums.dart';
 import '../../models/ta/ta_assignment_model.dart';
 import '../../services/api/course_service.dart';
@@ -559,10 +559,10 @@ class CourseWizardBloc extends Bloc<CourseWizardEvent, CourseWizardState> {
       }
 
       final existingInstructors =
-          existingInstructorsResult.data ?? const <EnrollmentModel>[];
+          existingInstructorsResult.data ?? const <InstructorAssignmentModel>[];
       final existingTAs = existingTAsResult.data ?? const <TAAssignmentModel>[];
 
-      final existingInstructorByUserId = <int, EnrollmentModel>{
+      final existingInstructorByUserId = <int, InstructorAssignmentModel>{
         for (final item in existingInstructors)
           if (item.userId > 0) item.userId: item,
       };
@@ -578,7 +578,7 @@ class CourseWizardBloc extends Bloc<CourseWizardEvent, CourseWizardState> {
           .where((item) => item.isTa && item.userId > 0)
           .toList();
 
-      final remainingInstructorByUserId = <int, EnrollmentModel>{
+      final remainingInstructorByUserId = <int, InstructorAssignmentModel>{
         ...existingInstructorByUserId,
       };
       final remainingTaByUserId = <int, TAAssignmentModel>{

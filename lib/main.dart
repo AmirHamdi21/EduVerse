@@ -44,6 +44,9 @@ import 'package:edu_verse/services/api/material_service.dart';
 import 'package:edu_verse/services/api/schedule_service.dart';
 import 'package:edu_verse/services/api/section_service.dart';
 import 'package:edu_verse/services/api/communication_service.dart';
+import 'package:edu_verse/services/api/public_profile_service.dart';
+import 'package:edu_verse/services/api/office_hours_service.dart';
+import 'package:edu_verse/services/api/student_stats_service.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -111,6 +114,9 @@ class _MyAppState extends State<MyApp> {
   late LabService _labService;
   late MaterialService _materialService;
   late CommunicationService _communicationService;
+  late PublicProfileService _publicProfileService;
+  late OfficeHoursService _officeHoursService;
+  late StudentStatsService _studentStatsService;
   StreamSubscription<String>? _sessionExpirySubscription;
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
@@ -125,9 +131,28 @@ class _MyAppState extends State<MyApp> {
       storageService: _storageService,
     );
     _languageCubit = LanguageCubit();
-    _notificationCubit = NotificationCubit()..loadNotifications();
+
+    final coreApiClient = CoreApiClient(storageService: _storageService);
+    _courseService = CourseService(coreApiClient: coreApiClient);
+    _assignmentService = AssignmentService(coreApiClient: coreApiClient);
+    _enrollmentService = EnrollmentService(coreApiClient: coreApiClient);
+    _labService = LabService(coreApiClient: coreApiClient);
+    _materialService = MaterialService(coreApiClient: coreApiClient);
+    _sectionService = SectionService(coreApiClient: coreApiClient);
+    _scheduleService = ScheduleService(coreApiClient: coreApiClient);
+    _communicationService = CommunicationService(coreApiClient: coreApiClient);
+    _publicProfileService = PublicProfileService(coreApiClient: coreApiClient);
+    _officeHoursService = OfficeHoursService(coreApiClient: coreApiClient);
+    _studentStatsService = StudentStatsService(coreApiClient: coreApiClient);
+
+    _notificationCubit = NotificationCubit(
+      studentStatsService: _studentStatsService,
+    )..loadNotifications();
     _tasksCubit = TasksCubit()..loadTasks();
-    _gradesCubit = GradesCubit()..loadGrades();
+    _gradesCubit = GradesCubit(
+      studentStatsService: _studentStatsService,
+      storageService: _storageService,
+    );
     _attendanceCubit = AttendanceCubit()..loadAttendance();
     _summarizerCubit = SummarizerCubit();
     _smartStudyCubit = SmartStudyCubit();
@@ -162,16 +187,7 @@ class _MyAppState extends State<MyApp> {
       });
     });
 
-    // ── Course API layer (Phase 1) ─────────────────────────
-    final coreApiClient = CoreApiClient(storageService: _storageService);
-    _courseService = CourseService(coreApiClient: coreApiClient);
-    _assignmentService = AssignmentService(coreApiClient: coreApiClient);
-    _enrollmentService = EnrollmentService(coreApiClient: coreApiClient);
-    _labService = LabService(coreApiClient: coreApiClient);
-    _materialService = MaterialService(coreApiClient: coreApiClient);
-    _sectionService = SectionService(coreApiClient: coreApiClient);
-    _scheduleService = ScheduleService(coreApiClient: coreApiClient);
-    _communicationService = CommunicationService(coreApiClient: coreApiClient);
+    // ── Course API layer (Phase 1+) ────────────────────────
 
     _labsCubit = LabsCubit(
       enrollmentService: _enrollmentService,
@@ -186,6 +202,9 @@ class _MyAppState extends State<MyApp> {
       enrollmentService: _enrollmentService,
       materialService: _materialService,
       communicationService: _communicationService,
+      publicProfileService: _publicProfileService,
+      officeHoursService: _officeHoursService,
+      studentStatsService: _studentStatsService,
     );
 
     _instructorCoursesBloc = InstructorCoursesBloc(
