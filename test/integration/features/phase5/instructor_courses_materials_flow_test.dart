@@ -256,6 +256,7 @@ Future<void> _waitUntil(
   );
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   test(
     'phase5 core flow loads instructor courses, materials bundles, structure',

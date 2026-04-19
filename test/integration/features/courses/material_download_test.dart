@@ -17,6 +17,7 @@ Future<void> _flush() async {
   await Future<void>.delayed(const Duration(milliseconds: 1));
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   test('download flow transitions to complete and file exists', () async {
     SharedPreferences.setMockInitialValues(<String, Object>{});

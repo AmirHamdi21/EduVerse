@@ -8,9 +8,9 @@ import 'package:edu_verse/widgets/instructor/course_management/materials_tab.dar
 
 Widget _buildTab(
   List<MaterialModel> materials, {
-  bool structureLoading = false,
-  String? structureErrorMessage,
-  VoidCallback? onReloadStructure,
+  String? partialFailureMessage,
+  List<String> failedMaterialIds = const <String>[],
+  VoidCallback? onRetryFailedMaterials,
 }) {
   return MaterialApp(
     localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
@@ -25,6 +25,9 @@ Widget _buildTab(
         return Scaffold(
           body: MaterialsTab(
             materials: materials,
+            partialFailureMessage: partialFailureMessage,
+            failedMaterialIds: failedMaterialIds,
+            onRetryFailedMaterials: onRetryFailedMaterials,
             isDark: false,
             l10n: AppLocalizations.of(context),
           ),
@@ -34,6 +37,7 @@ Widget _buildTab(
   );
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   testWidgets('shows empty state when there are no materials', (
     WidgetTester tester,
@@ -98,18 +102,16 @@ void main() {
     }
   });
 
-  testWidgets('shows structure loading indicator when structure is loading', (
+  testWidgets('shows empty state when no materials are available', (
     WidgetTester tester,
   ) async {
-    await tester.pumpWidget(
-      _buildTab(const <MaterialModel>[], structureLoading: true),
-    );
+    await tester.pumpWidget(_buildTab(const <MaterialModel>[]));
     await tester.pump();
 
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.text('No materials yet'), findsOneWidget);
   });
 
-  testWidgets('shows structure error state and retry action', (
+  testWidgets('shows partial failure banner and retry action', (
     WidgetTester tester,
   ) async {
     var retried = false;
@@ -117,13 +119,13 @@ void main() {
     await tester.pumpWidget(
       _buildTab(
         const <MaterialModel>[],
-        structureErrorMessage: 'structure failed',
-        onReloadStructure: () => retried = true,
+        partialFailureMessage: 'structure failed',
+        failedMaterialIds: const <String>['m1'],
+        onRetryFailedMaterials: () => retried = true,
       ),
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Failed to load course structure'), findsOneWidget);
     expect(find.text('structure failed'), findsOneWidget);
 
     await tester.tap(find.text('Retry'));

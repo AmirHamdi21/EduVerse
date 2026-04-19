@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/models/materials/course_material_model.dart';
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('CourseMaterialModel.fromJson phase5 parsing', () {
     test(

@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:edu_verse/models/instructor/instructor_course_model.dart';
 import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('TeachingCourseModel.fromJson', () {
     test('parses nested objects and decimal statistics from strings', () {

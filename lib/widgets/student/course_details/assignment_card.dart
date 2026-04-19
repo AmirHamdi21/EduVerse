@@ -113,6 +113,8 @@ class _AssignmentCardState extends State<AssignmentCard>
     final secondaryTextColor = widget.isDark
         ? const Color(0xFFB0B0B0)
         : const Color(0xFF4A5565);
+    final isSubmittedAwaitingGrading =
+        widget.assignment.isSubmittedAwaitingGrading;
     return ScaleTransition(
       scale: _scaleAnimation,
       child: FadeTransition(
@@ -328,19 +330,25 @@ class _AssignmentCardState extends State<AssignmentCard>
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {},
+                                onTap: isSubmittedAwaitingGrading
+                                    ? null
+                                    : () {},
                                 borderRadius: BorderRadius.circular(14),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                      Icons.feedback_outlined,
+                                      isSubmittedAwaitingGrading
+                                          ? Icons.assignment_turned_in_outlined
+                                          : Icons.feedback_outlined,
                                       size: 16,
                                       color: textColor,
                                     ),
                                     const SizedBox(width: 6),
                                     Text(
-                                      'Feedback',
+                                      isSubmittedAwaitingGrading
+                                          ? 'Submitted'
+                                          : 'Feedback',
                                       style: TextStyle(
                                         color: textColor,
                                         fontSize: 14,
@@ -369,7 +377,7 @@ class _AssignmentCardState extends State<AssignmentCard>
                                 BoxShadow(
                                   color: const Color(
                                     0xFF155DFC,
-                                  ).withOpacity(0.3),
+                                  ).withValues(alpha: 0.3),
                                   blurRadius: 8,
                                   offset: const Offset(0, 2),
                                 ),

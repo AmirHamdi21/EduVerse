@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/course_structure/course_structure_event.dart';
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('CourseStructureEvent', () {
     test('LoadStructure supports value equality', () {

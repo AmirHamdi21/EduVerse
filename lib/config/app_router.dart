@@ -41,6 +41,7 @@ import 'package:edu_verse/screens/student/notifications/notifications_screen.dar
 import 'package:edu_verse/screens/student/quiz_questions_screen.dart';
 import 'package:edu_verse/screens/student/student_dashboard_screen.dart';
 import 'package:edu_verse/screens/student/course_details_screen.dart';
+import 'package:edu_verse/screens/student/course_instructor_info_screen.dart';
 import 'package:edu_verse/screens/student/tasks_screen.dart';
 import 'package:edu_verse/screens/student/voice_to_text/voice_to_text_screen.dart';
 import 'package:edu_verse/screens/student/attendance/attendance_screen.dart';
@@ -52,7 +53,6 @@ import 'package:edu_verse/screens/student/search/overall_search_screen.dart';
 import 'package:edu_verse/screens/student/calendar/calendar_screen.dart';
 import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
-import 'package:edu_verse/features/courses/screens/course_detail_screen.dart';
 // Instructor screens
 import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_screen.dart';
 import 'package:edu_verse/screens/instructor/courses/instructor_courses_screen.dart';
@@ -259,9 +259,9 @@ class AppRouter {
 
           // Live enrollment from CoursesBloc
           if (extra is CourseEnrollmentModel) {
-            return CourseDetailScreen(
+            return CourseDetailsScreen(
               enrollment: extra,
-              initialTabIndex: initialTab,
+              initialTab: initialTab,
             );
           }
 
@@ -272,9 +272,9 @@ class AppRouter {
             initialTab = extra['initialTab'] as int? ?? 0;
 
             if (enrollment != null) {
-              return CourseDetailScreen(
+              return CourseDetailsScreen(
                 enrollment: enrollment,
-                initialTabIndex: initialTab,
+                initialTab: initialTab,
               );
             }
             if (legacyCourse != null) {
@@ -294,6 +294,50 @@ class AppRouter {
           }
 
           return const Scaffold(body: Center(child: Text('Course not found')));
+        },
+      ),
+      GoRoute(
+        path: '/course-instructor-info',
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is! Map<String, dynamic>) {
+            return const Scaffold(
+              body: Center(child: Text('Instructor not found')),
+            );
+          }
+
+          final dynamic rawInstructorId = extra['instructorId'];
+          final instructorId = rawInstructorId is int
+              ? rawInstructorId
+              : int.tryParse(rawInstructorId?.toString() ?? '');
+
+          if (instructorId == null || instructorId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Instructor not found')),
+            );
+          }
+
+          final dynamic rawCourseId = extra['courseId'];
+          final dynamic rawSectionId = extra['sectionId'];
+
+          final courseId = rawCourseId is int
+              ? rawCourseId
+              : int.tryParse(rawCourseId?.toString() ?? '');
+
+          final sectionId = rawSectionId is int
+              ? rawSectionId
+              : int.tryParse(rawSectionId?.toString() ?? '');
+
+          final name = (extra['instructorName'] as String?)?.trim();
+
+          return CourseInstructorInfoScreen(
+            instructorId: instructorId,
+            instructorName: (name == null || name.isEmpty)
+                ? 'Instructor'
+                : name,
+            courseId: courseId,
+            sectionId: sectionId,
+          );
         },
       ),
       GoRoute(

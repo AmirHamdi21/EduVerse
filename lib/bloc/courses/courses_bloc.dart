@@ -11,6 +11,8 @@ import '../../services/api/communication_service.dart';
 import '../../services/api/public_profile_service.dart';
 import '../../services/api/office_hours_service.dart';
 import '../../services/api/student_stats_service.dart';
+import '../../services/api/assignment_service.dart';
+import '../../services/api/lab_service.dart';
 import '../../common/service_error.dart';
 import '../../models/core/enrollment_model.dart';
 import '../../models/core/course_model.dart';
@@ -29,6 +31,8 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   final EnrollmentService _enrollmentService;
   final MaterialService _materialService;
   final CommunicationService _communicationService;
+  final AssignmentService? _assignmentService;
+  final LabService? _labService;
   final PublicProfileService? _publicProfileService;
   final OfficeHoursService? _officeHoursService;
   final StudentStatsService? _studentStatsService;
@@ -37,6 +41,8 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   EnrollmentService get enrollmentService => _enrollmentService;
   MaterialService get materialService => _materialService;
   CommunicationService get communicationService => _communicationService;
+  AssignmentService? get assignmentService => _assignmentService;
+  LabService? get labService => _labService;
   PublicProfileService? get publicProfileService => _publicProfileService;
   OfficeHoursService? get officeHoursService => _officeHoursService;
   StudentStatsService? get studentStatsService => _studentStatsService;
@@ -54,6 +60,8 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     required EnrollmentService enrollmentService,
     required MaterialService materialService,
     required CommunicationService communicationService,
+    AssignmentService? assignmentService,
+    LabService? labService,
     PublicProfileService? publicProfileService,
     OfficeHoursService? officeHoursService,
     StudentStatsService? studentStatsService,
@@ -61,6 +69,8 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
        _enrollmentService = enrollmentService,
        _materialService = materialService,
        _communicationService = communicationService,
+       _assignmentService = assignmentService,
+       _labService = labService,
        _publicProfileService = publicProfileService,
        _officeHoursService = officeHoursService,
        _studentStatsService = studentStatsService,

@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/models/core/course_structure_model.dart';
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('CourseStructureModel', () {
     test('fromJson reads sortOrder into orderIndex', () {

@@ -16,47 +16,49 @@ class _NoopMaterialService extends MaterialService {
 }
 
 void main() {
-  testWidgets('DocumentPreviewWidget shows preview with download action', (
-    tester,
-  ) async {
-    final material = CourseMaterialModel(
-      materialId: '201',
-      courseId: '5',
-      materialType: 'document',
-      title: 'Week 1 Slides',
-      isPublished: true,
-      createdAt: DateTime(2026, 1, 1),
-      file: const DriveFileModel(
-        driveId: 'drive-file-1',
-        fileName: 'week1_slides.pdf',
-        mimeType: 'application/pdf',
-        fileSize: 1024,
-      ),
-    );
+  testWidgets(
+    'DocumentPreviewWidget shows preview with download action',
+    (tester) async {
+      final material = CourseMaterialModel(
+        materialId: '201',
+        courseId: '5',
+        materialType: 'document',
+        title: 'Week 1 Slides',
+        isPublished: true,
+        createdAt: DateTime(2026, 1, 1),
+        file: const DriveFileModel(
+          driveId: 'drive-file-1',
+          fileName: 'week1_slides.pdf',
+          mimeType: 'application/pdf',
+          fileSize: 1024,
+        ),
+      );
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: BlocProvider(
-          create: (_) =>
-              MaterialViewerBloc(materialService: _NoopMaterialService()),
-          child: Scaffold(
-            body: DocumentPreviewWidget(
-              courseId: 5,
-              material: material,
-              enableWebView: false,
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider(
+            create: (_) =>
+                MaterialViewerBloc(materialService: _NoopMaterialService()),
+            child: Scaffold(
+              body: DocumentPreviewWidget(
+                courseId: 5,
+                material: material,
+                enableWebView: false,
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    expect(find.text('Week 1 Slides'), findsOneWidget);
-    expect(
-      find.textContaining('drive.google.com/file/d/drive-file-1/preview'),
-      findsOneWidget,
-    );
-    expect(find.text('Download for offline'), findsOneWidget);
-  });
+      expect(find.text('Week 1 Slides'), findsOneWidget);
+      expect(
+        find.textContaining('drive.google.com/file/d/drive-file-1/preview'),
+        findsOneWidget,
+      );
+      expect(find.text('Download for offline'), findsOneWidget);
+    },
+    timeout: const Timeout(Duration(seconds: 20)),
+  );
 }

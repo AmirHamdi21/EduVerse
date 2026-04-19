@@ -63,6 +63,7 @@ class _MockAdapter implements HttpClientAdapter {
   void close({bool force = false}) {}
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   late CoreApiClient coreApiClient;
   late CourseService courseService;

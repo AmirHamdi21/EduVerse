@@ -4,16 +4,25 @@ import 'package:edu_verse/common/service_error.dart';
 import 'package:edu_verse/features/courses/bloc/course_detail/course_detail_bloc.dart';
 import 'package:edu_verse/features/courses/bloc/course_detail/course_detail_event.dart';
 import 'package:edu_verse/models/admin/admin_periods_models.dart';
+import 'package:edu_verse/models/assignments/assignment_model.dart';
+import 'package:edu_verse/models/assignments/assignment_submission_model.dart';
 import 'package:edu_verse/models/core/course_structure_model.dart';
+import 'package:edu_verse/models/core/enrollment_model.dart';
+import 'package:edu_verse/models/core/enums/assignment_enums.dart' as api;
+import 'package:edu_verse/models/core/paginated_response.dart';
 import 'package:edu_verse/models/courses/instructor_assignment_model.dart';
+import 'package:edu_verse/models/labs/lab_model.dart';
+import 'package:edu_verse/models/labs/lab_submission_model.dart';
 import 'package:edu_verse/models/materials/course_material_model.dart';
 import 'package:edu_verse/models/materials/announcement_model.dart';
 import 'package:edu_verse/models/student/public_profile_model.dart';
 import 'package:edu_verse/models/ta/ta_assignment_model.dart';
+import 'package:edu_verse/services/api/assignment_service.dart';
 import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/api/communication_service.dart';
 import 'package:edu_verse/services/api/course_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
+import 'package:edu_verse/services/api/lab_service.dart';
 import 'package:edu_verse/services/api/material_service.dart';
 import 'package:edu_verse/services/api/office_hours_service.dart';
 import 'package:edu_verse/services/api/public_profile_service.dart';
@@ -63,6 +72,146 @@ class _FakeMaterialService extends MaterialService {
   }
 }
 
+class _FakeAssignmentService extends AssignmentService {
+  final List<AssignmentModel> assignments;
+  final Map<int, AssignmentSubmissionModel?> submissionsByAssignmentId;
+  final bool failGetAll;
+  final bool failGetMySubmission;
+
+  _FakeAssignmentService({
+    this.assignments = const <AssignmentModel>[],
+    this.submissionsByAssignmentId = const <int, AssignmentSubmissionModel?>{},
+    this.failGetAll = false,
+    this.failGetMySubmission = false,
+  }) : super(coreApiClient: CoreApiClient.test());
+
+  @override
+  Future<ServiceResult<PaginatedResponse<AssignmentModel>>> getAll({
+    int? courseId,
+    int? sectionId,
+    api.AssignmentStatus? status,
+    String? search,
+    int? page,
+    int? limit,
+    String? sortBy,
+    String? sortOrder,
+  }) async {
+    if (failGetAll) {
+      return ServiceResult<PaginatedResponse<AssignmentModel>>.failure(
+        const ServiceError(
+          type: ServiceErrorType.server,
+          message: 'assignments endpoint failed',
+        ),
+      );
+    }
+
+    final data = courseId == null
+        ? assignments
+        : assignments.where((item) => item.courseId == courseId).toList();
+
+    return ServiceResult<PaginatedResponse<AssignmentModel>>.success(
+      PaginatedResponse<AssignmentModel>(
+        data: data,
+        total: data.length,
+        page: 1,
+        limit: data.isEmpty ? 1 : data.length,
+        totalPages: 1,
+      ),
+    );
+  }
+
+  @override
+  Future<ServiceResult<AssignmentSubmissionModel>> getMySubmission(
+    dynamic assignmentId,
+  ) async {
+    if (failGetMySubmission) {
+      return ServiceResult<AssignmentSubmissionModel>.failure(
+        const ServiceError(
+          type: ServiceErrorType.server,
+          message: 'assignment submission endpoint failed',
+        ),
+      );
+    }
+
+    final id = assignmentId is int
+        ? assignmentId
+        : int.tryParse(assignmentId.toString()) ?? 0;
+
+    final submission = submissionsByAssignmentId[id];
+    if (submission == null) {
+      return ServiceResult<AssignmentSubmissionModel>.failure(
+        const ServiceError(
+          type: ServiceErrorType.server,
+          message: 'submission not found',
+        ),
+      );
+    }
+
+    return ServiceResult<AssignmentSubmissionModel>.success(submission);
+  }
+}
+
+class _FakeLabService extends LabService {
+  final List<LabModel> labs;
+  final Map<int, List<LabSubmissionModel>?> submissionsByLabId;
+  final bool failGetAll;
+  final bool failGetMySubmission;
+
+  _FakeLabService({
+    this.labs = const <LabModel>[],
+    this.submissionsByLabId = const <int, List<LabSubmissionModel>?>{},
+    this.failGetAll = false,
+    this.failGetMySubmission = false,
+  }) : super(coreApiClient: CoreApiClient.test());
+
+  @override
+  Future<ServiceResult<List<LabModel>>> getAll({
+    int? courseId,
+    String? status,
+    String? search,
+    int page = 1,
+    int limit = 50,
+  }) async {
+    if (failGetAll) {
+      return ServiceResult<List<LabModel>>.failure(
+        const ServiceError(
+          type: ServiceErrorType.server,
+          message: 'labs endpoint failed',
+        ),
+      );
+    }
+
+    final data = courseId == null
+        ? labs
+        : labs.where((item) => item.courseId == courseId).toList();
+    return ServiceResult<List<LabModel>>.success(data);
+  }
+
+  @override
+  Future<ServiceResult<List<LabSubmissionModel>>> getMySubmission(
+    dynamic labId,
+  ) async {
+    if (failGetMySubmission) {
+      return ServiceResult<List<LabSubmissionModel>>.failure(
+        const ServiceError(
+          type: ServiceErrorType.server,
+          message: 'lab submission endpoint failed',
+        ),
+      );
+    }
+
+    final id = labId is int ? labId : int.tryParse(labId.toString()) ?? 0;
+    final submissions = submissionsByLabId[id];
+    if (submissions == null) {
+      return ServiceResult<List<LabSubmissionModel>>.success(
+        const <LabSubmissionModel>[],
+      );
+    }
+
+    return ServiceResult<List<LabSubmissionModel>>.success(submissions);
+  }
+}
+
 class _FakeCommunicationService extends CommunicationService {
   final List<AnnouncementModel> announcements;
 
@@ -101,12 +250,16 @@ class _FakeEnrollmentService extends EnrollmentService {
 
 class _FakePublicProfileService extends PublicProfileService {
   final PublicProfileModel profile;
+  final bool throwsError;
 
-  _FakePublicProfileService({required this.profile})
+  _FakePublicProfileService({required this.profile, this.throwsError = false})
     : super(coreApiClient: CoreApiClient.test());
 
   @override
   Future<PublicProfileModel> getPublicProfile(dynamic userId) async {
+    if (throwsError) {
+      throw Exception('profile failed');
+    }
     return profile;
   }
 }
@@ -159,110 +312,122 @@ Future<void> _flush() async {
 
 void main() {
   group('CourseDetailBloc', () {
-    test('loads structure and materials and computes bundles', () async {
-      final bloc = CourseDetailBloc(
-        courseService: _FakeCourseService(
-          structure: <CourseStructureModel>[
-            CourseStructureModel(
-              organizationId: 1,
-              courseId: '1',
-              materialId: 'm1',
-              organizationType: 'video',
-              title: 'Week 1 - Intro Video',
-              weekNumber: 1,
-              orderIndex: 0,
-            ),
-            CourseStructureModel(
-              organizationId: 2,
-              courseId: '1',
-              materialId: 'm2',
-              organizationType: 'document',
-              title: 'Week 1 - Intro Slides',
-              weekNumber: 1,
-              orderIndex: 1,
-            ),
-          ],
-        ),
-        materialService: _FakeMaterialService(
-          materials: <CourseMaterialModel>[
-            CourseMaterialModel(
-              materialId: 'm1',
-              courseId: '1',
-              materialType: 'video',
-              title: 'Week 1 - Intro Video',
-              weekNumber: 1,
-              isPublished: true,
-              createdAt: DateTime(2026, 1, 1),
-            ),
-            CourseMaterialModel(
-              materialId: 'm2',
-              courseId: '1',
-              materialType: 'document',
-              title: 'Week 1 - Intro Slides',
-              weekNumber: 1,
-              isPublished: true,
-              createdAt: DateTime(2026, 1, 1),
-            ),
-          ],
-        ),
-      );
+    test(
+      'loads structure and materials and computes bundles',
+      () async {
+        final bloc = CourseDetailBloc(
+          courseService: _FakeCourseService(
+            structure: <CourseStructureModel>[
+              CourseStructureModel(
+                organizationId: 1,
+                courseId: '1',
+                materialId: 'm1',
+                organizationType: 'video',
+                title: 'Week 1 - Intro Video',
+                weekNumber: 1,
+                orderIndex: 0,
+              ),
+              CourseStructureModel(
+                organizationId: 2,
+                courseId: '1',
+                materialId: 'm2',
+                organizationType: 'document',
+                title: 'Week 1 - Intro Slides',
+                weekNumber: 1,
+                orderIndex: 1,
+              ),
+            ],
+          ),
+          materialService: _FakeMaterialService(
+            materials: <CourseMaterialModel>[
+              CourseMaterialModel(
+                materialId: 'm1',
+                courseId: '1',
+                materialType: 'video',
+                title: 'Week 1 - Intro Video',
+                weekNumber: 1,
+                isPublished: true,
+                createdAt: DateTime(2026, 1, 1),
+              ),
+              CourseMaterialModel(
+                materialId: 'm2',
+                courseId: '1',
+                materialType: 'document',
+                title: 'Week 1 - Intro Slides',
+                weekNumber: 1,
+                isPublished: true,
+                createdAt: DateTime(2026, 1, 1),
+              ),
+            ],
+          ),
+        );
 
-      bloc.add(const LoadCourseDetail(courseId: 1, initialTabIndex: 2));
-      await _flush();
-      await _flush();
+        bloc.add(const LoadCourseDetail(courseId: 1, initialTabIndex: 2));
+        await _flush();
+        await _flush();
 
-      expect(bloc.state.selectedTabIndex, 2);
-      expect(bloc.state.structure.length, 2);
-      expect(bloc.state.materials.length, 2);
-      expect(bloc.state.bundles.length, 1);
-      expect(bloc.state.error, isNull);
+        expect(bloc.state.selectedTabIndex, 2);
+        expect(bloc.state.structure.length, 2);
+        expect(bloc.state.materials.length, 2);
+        expect(bloc.state.bundles.length, 1);
+        expect(bloc.state.error, isNull);
 
-      await bloc.close();
-    });
+        await bloc.close();
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
 
-    test('expand week and switch tab update state', () async {
-      final bloc = CourseDetailBloc(
-        courseService: _FakeCourseService(
-          structure: const <CourseStructureModel>[],
-        ),
-        materialService: _FakeMaterialService(
-          materials: const <CourseMaterialModel>[],
-        ),
-      );
+    test(
+      'expand week and switch tab update state',
+      () async {
+        final bloc = CourseDetailBloc(
+          courseService: _FakeCourseService(
+            structure: const <CourseStructureModel>[],
+          ),
+          materialService: _FakeMaterialService(
+            materials: const <CourseMaterialModel>[],
+          ),
+        );
 
-      bloc.add(const ExpandWeek(weekIndex: 3));
-      await _flush();
-      expect(bloc.state.selectedWeekIndex, 3);
+        bloc.add(const ExpandWeek(weekIndex: 3));
+        await _flush();
+        expect(bloc.state.selectedWeekIndex, 3);
 
-      bloc.add(const SwitchTab(tabIndex: 1));
-      await _flush();
-      expect(bloc.state.selectedTabIndex, 1);
+        bloc.add(const SwitchTab(tabIndex: 1));
+        await _flush();
+        expect(bloc.state.selectedTabIndex, 1);
 
-      await bloc.close();
-    });
+        await bloc.close();
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
 
-    test('error from service is surfaced in state', () async {
-      final bloc = CourseDetailBloc(
-        courseService: _FakeCourseService(
-          structure: const <CourseStructureModel>[],
-          throwsError: true,
-        ),
-        materialService: _FakeMaterialService(
-          materials: const <CourseMaterialModel>[],
-          throwsError: true,
-        ),
-      );
+    test(
+      'error from service is surfaced in state',
+      () async {
+        final bloc = CourseDetailBloc(
+          courseService: _FakeCourseService(
+            structure: const <CourseStructureModel>[],
+            throwsError: true,
+          ),
+          materialService: _FakeMaterialService(
+            materials: const <CourseMaterialModel>[],
+            throwsError: true,
+          ),
+        );
 
-      bloc.add(const LoadCourseDetail(courseId: 7));
-      await _flush();
-      await _flush();
+        bloc.add(const LoadCourseDetail(courseId: 7));
+        await _flush();
+        await _flush();
 
-      expect(bloc.state.error, isNotNull);
-      expect(bloc.state.isLoadingStructure, isFalse);
-      expect(bloc.state.isLoadingMaterials, isFalse);
+        expect(bloc.state.error, isNotNull);
+        expect(bloc.state.isLoadingStructure, isFalse);
+        expect(bloc.state.isLoadingMaterials, isFalse);
 
-      await bloc.close();
-    });
+        await bloc.close();
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
 
     test(
       'loads announcements and section staff when sectionId is provided',
@@ -326,6 +491,7 @@ void main() {
 
         await bloc.close();
       },
+      timeout: const Timeout(Duration(seconds: 20)),
     );
 
     test(
@@ -399,6 +565,369 @@ void main() {
 
         await bloc.close();
       },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
+
+    test(
+      'loads office-hour slots even when instructor profile fails',
+      () async {
+        final bloc = CourseDetailBloc(
+          courseService: _FakeCourseService(
+            structure: const <CourseStructureModel>[],
+          ),
+          materialService: _FakeMaterialService(
+            materials: const <CourseMaterialModel>[],
+          ),
+          publicProfileService: _FakePublicProfileService(
+            profile: const PublicProfileModel(
+              userId: 7,
+              firstName: 'Lina',
+              lastName: 'Ali',
+              email: 'lina@eduverse.test',
+            ),
+            throwsError: true,
+          ),
+          officeHoursService: _FakeOfficeHoursService(
+            slots: const <OfficeHourSlotModel>[
+              OfficeHourSlotModel(
+                slotId: 6,
+                instructorId: 7,
+                dayOfWeek: 'tuesday',
+                startTime: '12:00',
+                endTime: '13:00',
+                location: 'C307',
+                mode: 'in_person',
+                maxAppointments: 3,
+                currentAppointments: 0,
+                isActive: true,
+                notes: null,
+              ),
+            ],
+            appointments: const <OfficeHourAppointmentModel>[],
+          ),
+        );
+
+        bloc.add(const LoadInstructorProfile(userId: 7));
+        await _flush();
+        await _flush();
+        await _flush();
+
+        expect(bloc.state.selectedProfile, isNull);
+        expect(bloc.state.officeHourSlots.length, 1);
+        expect(bloc.state.officeHourSlots.first.instructorId, 7);
+        expect(bloc.state.isLoadingOfficeHours, isFalse);
+
+        await bloc.close();
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
+
+    test(
+      'loads assignments and labs from dedicated services with submission snapshots',
+      () async {
+        final assignment = AssignmentModel(
+          id: '11',
+          assignmentId: 11,
+          courseId: 1,
+          title: 'Homework 1',
+          courseName: 'Algorithms',
+          courseCode: 'CS201',
+          instructorName: 'Dr. Lina',
+          type: AssignmentType.document,
+          status: AssignmentStatus.pending,
+          priority: AssignmentPriority.medium,
+          dueDate: DateTime(2026, 4, 20),
+          maxGrade: 100,
+          createdAt: DateTime(2026, 4, 1),
+        );
+
+        final lab = LabModel(
+          id: '21',
+          labId: 21,
+          courseId: 1,
+          title: 'Lab 1',
+          dueDate: DateTime(2026, 4, 18),
+          maxScore: 50,
+          createdAt: DateTime(2026, 4, 1),
+        );
+
+        final bloc = CourseDetailBloc(
+          courseService: _FakeCourseService(
+            structure: const <CourseStructureModel>[],
+          ),
+          materialService: _FakeMaterialService(
+            materials: const <CourseMaterialModel>[],
+          ),
+          assignmentService: _FakeAssignmentService(
+            assignments: <AssignmentModel>[assignment],
+            submissionsByAssignmentId: <int, AssignmentSubmissionModel?>{
+              11: AssignmentSubmissionModel(
+                id: 501,
+                assignmentId: 11,
+                userId: 9,
+                submissionStatus: api.SubmissionStatus.submitted,
+                isLate: true,
+                attemptNumber: 1,
+                submittedAt: DateTime(2026, 4, 19, 8, 30),
+                score: 44,
+              ),
+            },
+          ),
+          labService: _FakeLabService(
+            labs: <LabModel>[lab],
+            submissionsByLabId: <int, List<LabSubmissionModel>?>{
+              21: <LabSubmissionModel>[
+                LabSubmissionModel(
+                  id: 701,
+                  labId: 21,
+                  userId: 9,
+                  submissionStatus: api.SubmissionStatus.graded,
+                  isLate: false,
+                  submittedAt: DateTime(2026, 4, 18, 12, 0),
+                  score: 48,
+                ),
+              ],
+            },
+          ),
+        );
+
+        bloc.add(const LoadCourseDetail(courseId: 1));
+        await _flush();
+        await _flush();
+        await _flush();
+        await _flush();
+        await _flush();
+
+        expect(bloc.state.assignments.length, 1);
+        expect(bloc.state.labs.length, 1);
+        expect(bloc.state.usedAssignmentsMaterialsFallback, isFalse);
+        expect(bloc.state.usedLabsMaterialsFallback, isFalse);
+        expect(bloc.state.assignmentSubmissions[11]?.isLate, isTrue);
+        expect(bloc.state.assignmentSubmissions[11]?.score, 44);
+        expect(bloc.state.labSubmissions[21]?.score, 48);
+
+        await bloc.close();
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
+
+    test(
+      'falls back to materials for assignments and labs when primary endpoints return empty',
+      () async {
+        final bloc = CourseDetailBloc(
+          courseService: _FakeCourseService(
+            structure: const <CourseStructureModel>[],
+          ),
+          materialService: _FakeMaterialService(
+            materials: <CourseMaterialModel>[
+              CourseMaterialModel(
+                materialId: '501',
+                courseId: '1',
+                materialType: 'assignment',
+                title: 'Fallback Assignment',
+                description: 'From materials endpoint',
+                isPublished: true,
+                createdAt: DateTime(2026, 4, 1),
+              ),
+              CourseMaterialModel(
+                materialId: '601',
+                courseId: '1',
+                materialType: 'lab',
+                title: 'Fallback Lab',
+                description: 'From materials endpoint',
+                isPublished: true,
+                createdAt: DateTime(2026, 4, 1),
+              ),
+              CourseMaterialModel(
+                materialId: '701',
+                courseId: '1',
+                materialType: 'video',
+                title: 'Regular Video',
+                isPublished: true,
+                createdAt: DateTime(2026, 4, 1),
+              ),
+            ],
+          ),
+          assignmentService: _FakeAssignmentService(
+            assignments: const <AssignmentModel>[],
+          ),
+          labService: _FakeLabService(labs: const <LabModel>[]),
+        );
+
+        bloc.add(const LoadCourseDetail(courseId: 1));
+        await _flush();
+        await _flush();
+        await _flush();
+        await _flush();
+        await _flush();
+
+        expect(bloc.state.usedAssignmentsMaterialsFallback, isTrue);
+        expect(bloc.state.usedLabsMaterialsFallback, isTrue);
+        expect(bloc.state.assignments.length, 1);
+        expect(bloc.state.assignments.first.title, 'Fallback Assignment');
+        expect(bloc.state.labs.length, 1);
+        expect(bloc.state.labs.first.title, 'Fallback Lab');
+
+        await bloc.close();
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
+
+    test(
+      'falls back to materials when assignments/labs endpoints fail',
+      () async {
+        final bloc = CourseDetailBloc(
+          courseService: _FakeCourseService(
+            structure: const <CourseStructureModel>[],
+          ),
+          materialService: _FakeMaterialService(
+            materials: <CourseMaterialModel>[
+              CourseMaterialModel(
+                materialId: '801',
+                courseId: '1',
+                materialType: 'assignment',
+                title: 'Fallback Assignment on Error',
+                isPublished: true,
+                createdAt: DateTime(2026, 4, 1),
+              ),
+              CourseMaterialModel(
+                materialId: '901',
+                courseId: '1',
+                materialType: 'lab',
+                title: 'Fallback Lab on Error',
+                isPublished: true,
+                createdAt: DateTime(2026, 4, 1),
+              ),
+            ],
+          ),
+          assignmentService: _FakeAssignmentService(failGetAll: true),
+          labService: _FakeLabService(failGetAll: true),
+        );
+
+        bloc.add(const LoadCourseDetail(courseId: 1));
+        await _flush();
+        await _flush();
+        await _flush();
+        await _flush();
+        await _flush();
+
+        expect(bloc.state.usedAssignmentsMaterialsFallback, isTrue);
+        expect(bloc.state.usedLabsMaterialsFallback, isTrue);
+        expect(
+          bloc.state.assignments.map((item) => item.title),
+          contains('Fallback Assignment on Error'),
+        );
+        expect(
+          bloc.state.labs.map((item) => item.title),
+          contains('Fallback Lab on Error'),
+        );
+
+        await bloc.close();
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
+
+    test(
+      'keeps null submission snapshots when submission endpoints fail',
+      () async {
+        final assignment = AssignmentModel(
+          id: '31',
+          assignmentId: 31,
+          courseId: 1,
+          title: 'Submission Failure Assignment',
+          courseName: 'Algorithms',
+          courseCode: 'CS201',
+          instructorName: 'Dr. Lina',
+          type: AssignmentType.document,
+          status: AssignmentStatus.pending,
+          priority: AssignmentPriority.medium,
+          dueDate: DateTime(2026, 4, 20),
+          maxGrade: 100,
+          createdAt: DateTime(2026, 4, 1),
+        );
+
+        final lab = LabModel(
+          id: '41',
+          labId: 41,
+          courseId: 1,
+          title: 'Submission Failure Lab',
+          dueDate: DateTime(2026, 4, 18),
+          maxScore: 50,
+          createdAt: DateTime(2026, 4, 1),
+        );
+
+        final bloc = CourseDetailBloc(
+          courseService: _FakeCourseService(
+            structure: const <CourseStructureModel>[],
+          ),
+          materialService: _FakeMaterialService(
+            materials: const <CourseMaterialModel>[],
+          ),
+          assignmentService: _FakeAssignmentService(
+            assignments: <AssignmentModel>[assignment],
+            failGetMySubmission: true,
+          ),
+          labService: _FakeLabService(
+            labs: <LabModel>[lab],
+            failGetMySubmission: true,
+          ),
+        );
+
+        bloc.add(const LoadCourseDetail(courseId: 1));
+        await _flush();
+        await _flush();
+        await _flush();
+        await _flush();
+        await _flush();
+
+        expect(bloc.state.assignments.length, 1);
+        expect(bloc.state.labs.length, 1);
+        expect(bloc.state.assignmentSubmissions.containsKey(31), isTrue);
+        expect(bloc.state.assignmentSubmissions[31], isNull);
+        expect(bloc.state.labSubmissions.containsKey(41), isTrue);
+        expect(bloc.state.labSubmissions[41], isNull);
+
+        await bloc.close();
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
+
+    test(
+      'stores prerequisites payload from LoadCourseDetail',
+      () async {
+        final bloc = CourseDetailBloc(
+          courseService: _FakeCourseService(
+            structure: const <CourseStructureModel>[],
+          ),
+          materialService: _FakeMaterialService(
+            materials: const <CourseMaterialModel>[],
+          ),
+        );
+
+        final prerequisites = <EnrollmentPrerequisite>[
+          const EnrollmentPrerequisite(
+            id: 1,
+            courseId: 1,
+            prerequisiteCourseId: 10,
+            courseCode: 'CS101',
+            courseName: 'Intro to CS',
+            isMandatory: true,
+            studentCompleted: true,
+            studentGrade: 'A',
+          ),
+        ];
+
+        bloc.add(LoadCourseDetail(courseId: 1, prerequisites: prerequisites));
+        await _flush();
+        await _flush();
+
+        expect(bloc.state.prerequisites.length, 1);
+        expect(bloc.state.prerequisites.first.courseCode, 'CS101');
+        expect(bloc.state.prerequisites.first.studentCompleted, isTrue);
+
+        await bloc.close();
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
     );
   });
 }

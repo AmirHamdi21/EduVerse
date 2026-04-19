@@ -2,10 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/admin_course_management/course_wizard_bloc.dart';
 import 'package:edu_verse/common/service_error.dart';
+import 'package:edu_verse/models/courses/instructor_assignment_model.dart';
 import 'package:edu_verse/models/core/course_model.dart';
-import 'package:edu_verse/models/core/enrollment_model.dart';
 import 'package:edu_verse/models/core/enums/course_enums.dart';
-import 'package:edu_verse/models/core/enums/enrollment_enums.dart';
 import 'package:edu_verse/models/core/section_model.dart';
 import 'package:edu_verse/models/ta/ta_assignment_model.dart';
 import 'package:edu_verse/services/api/core_api_client.dart';
@@ -138,24 +137,22 @@ class _AddFailsBeforeRemovalEnrollmentService extends EnrollmentService {
   int removeInstructorCalls = 0;
 
   @override
-  Future<ServiceResult<List<EnrollmentModel>>> getSectionInstructors(
+  Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
     dynamic sectionId,
   ) async {
-    return ServiceResult<List<EnrollmentModel>>.success(<EnrollmentModel>[
-      EnrollmentModel(
-        id: 401,
-        userId: 10,
-        sectionId: 77,
-        enrollmentStatus: EnrollmentStatus.enrolled,
-        role: 'primary',
-        user: const UserLite(
+    return ServiceResult<List<InstructorAssignmentModel>>.success(
+      <InstructorAssignmentModel>[
+        InstructorAssignmentModel(
+          id: 401,
+          sectionId: 77,
           userId: 10,
+          role: 'primary',
           firstName: 'Existing',
           lastName: 'Instructor',
           email: 'existing@eduverse.dev',
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   @override
@@ -200,24 +197,22 @@ class _RoleUpdateEnrollmentService extends EnrollmentService {
   String? lastAssignedRole;
 
   @override
-  Future<ServiceResult<List<EnrollmentModel>>> getSectionInstructors(
+  Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
     dynamic sectionId,
   ) async {
-    return ServiceResult<List<EnrollmentModel>>.success(<EnrollmentModel>[
-      EnrollmentModel(
-        id: 401,
-        userId: 10,
-        sectionId: 77,
-        enrollmentStatus: EnrollmentStatus.enrolled,
-        role: 'primary',
-        user: const UserLite(
+    return ServiceResult<List<InstructorAssignmentModel>>.success(
+      <InstructorAssignmentModel>[
+        InstructorAssignmentModel(
+          id: 401,
+          sectionId: 77,
           userId: 10,
+          role: 'primary',
           firstName: 'Existing',
           lastName: 'Instructor',
           email: 'existing@eduverse.dev',
         ),
-      ),
-    ]);
+      ],
+    );
   }
 
   @override
@@ -291,6 +286,7 @@ Future<void> _flush() async {
   await Future<void>.delayed(const Duration(milliseconds: 1));
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('CourseWizardBloc create contract safety', () {
     test(

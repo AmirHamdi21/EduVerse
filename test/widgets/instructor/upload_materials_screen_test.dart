@@ -264,7 +264,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('No Week (Course Level)'), findsOneWidget);
+    expect(find.text('Week Number'), findsOneWidget);
 
     await tester.tap(find.byType(FloatingActionButton));
     await tester.pumpAndSettle();
@@ -304,7 +304,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('No Week (Course Level)'), findsOneWidget);
+      expect(find.text('Week Number'), findsOneWidget);
       expect(tester.takeException(), isNull);
     }
   });

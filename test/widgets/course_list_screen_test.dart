@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/student_courses_fixture.dart';
 
+@Timeout(Duration(seconds: 30))
 void main() {
   testWidgets('courses list view renders enrollment payload fields', (
     WidgetTester tester,

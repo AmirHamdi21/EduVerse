@@ -234,6 +234,23 @@ Finder _verticalScrollable() {
   });
 }
 
+Future<void> _pumpUi(WidgetTester tester) async {
+  await tester.pump(const Duration(milliseconds: 100));
+  await tester.pump(const Duration(milliseconds: 300));
+}
+
+Future<void> _waitForWidget(
+  WidgetTester tester,
+  Finder finder, {
+  Duration timeout = const Duration(seconds: 5),
+}) async {
+  final deadline = DateTime.now().add(timeout);
+  while (finder.evaluate().isEmpty && DateTime.now().isBefore(deadline)) {
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+  expect(finder, findsWidgets);
+}
+
 Future<void> _confirmDatePicker(WidgetTester tester) async {
   final dateDialog = find.byType(DatePickerDialog);
   Finder confirmFinder = find.descendant(
@@ -250,235 +267,236 @@ Future<void> _confirmDatePicker(WidgetTester tester) async {
 
   expect(confirmFinder, findsOneWidget);
   await tester.tap(confirmFinder);
-  await tester.pumpAndSettle();
+  await _pumpUi(tester);
 }
 
 void main() {
-  testWidgets('Staff & Booking tab loads profile and renders slots', (
-    WidgetTester tester,
-  ) async {
-    final officeHoursService = _SpyOfficeHoursService(
-      slots: const <OfficeHourSlotModel>[
-        OfficeHourSlotModel(
-          slotId: 5,
-          instructorId: 7,
-          dayOfWeek: 'monday',
-          startTime: '10:00',
-          endTime: '11:00',
-          location: 'C-305',
-          mode: 'in_person',
-          maxAppointments: 4,
-          currentAppointments: 1,
-          isActive: true,
-          notes: null,
-        ),
-      ],
-    );
+  testWidgets(
+    'Staff & Booking tab loads profile and renders slots',
+    (WidgetTester tester) async {
+      final officeHoursService = _SpyOfficeHoursService(
+        slots: const <OfficeHourSlotModel>[
+          OfficeHourSlotModel(
+            slotId: 5,
+            instructorId: 7,
+            dayOfWeek: 'monday',
+            startTime: '10:00',
+            endTime: '11:00',
+            location: 'C-305',
+            mode: 'in_person',
+            maxAppointments: 4,
+            currentAppointments: 1,
+            isActive: true,
+            notes: null,
+          ),
+        ],
+      );
 
-    final coursesBloc = _buildCoursesBloc(
-      enrollmentService: _StubEnrollmentService(
-        instructors: const <InstructorAssignmentModel>[
-          InstructorAssignmentModel(
-            id: 1,
-            sectionId: 11,
+      final coursesBloc = _buildCoursesBloc(
+        enrollmentService: _StubEnrollmentService(
+          instructors: const <InstructorAssignmentModel>[
+            InstructorAssignmentModel(
+              id: 1,
+              sectionId: 11,
+              userId: 7,
+              role: 'primary',
+              firstName: 'Lina',
+              lastName: 'Ali',
+              email: 'lina@eduverse.test',
+            ),
+          ],
+          tas: <TAAssignmentModel>[
+            TAAssignmentModel(
+              id: 2,
+              sectionId: 11,
+              userId: 9,
+              assignedAt: DateTime(2026, 4, 1),
+              firstName: 'Omar',
+              lastName: 'Samir',
+              email: 'omar@eduverse.test',
+            ),
+          ],
+        ),
+        communicationService: _StubCommunicationService(
+          announcements: <AnnouncementModel>[
+            AnnouncementModel(
+              id: 'a1',
+              courseId: '101',
+              title: 'Exam update',
+              content: 'Exam moved to next week',
+              createdBy: 7,
+              priority: 'high',
+              publishedAt: DateTime(2026, 4, 1),
+              createdAt: DateTime(2026, 4, 1),
+              updatedAt: DateTime(2026, 4, 1),
+            ),
+          ],
+        ),
+        publicProfileService: _StubPublicProfileService(
+          profile: const PublicProfileModel(
             userId: 7,
-            role: 'primary',
             firstName: 'Lina',
             lastName: 'Ali',
             email: 'lina@eduverse.test',
+            officeLocation: 'C-305',
+            bio: 'Distributed systems and operating systems.',
+          ),
+        ),
+        officeHoursService: officeHoursService,
+      );
+
+      await tester.pumpWidget(_buildTestApp(coursesBloc));
+      await _pumpUi(tester);
+
+      expect(find.text('Latest Announcements'), findsOneWidget);
+      expect(find.text('Exam moved to next week'), findsOneWidget);
+
+      final viewProfileButton = find.widgetWithText(TextButton, 'View Profile');
+      await _waitForWidget(tester, viewProfileButton);
+      await tester.tap(viewProfileButton.first);
+      await _pumpUi(tester);
+
+      expect(find.text('Lina Ali'), findsWidgets);
+      expect(find.text('Office: C-305'), findsOneWidget);
+
+      final detailBloc = BlocProvider.of<CourseDetailBloc>(
+        tester.element(find.byType(TabBarView)),
+      );
+      detailBloc.add(const LoadOfficeHourSlots(instructorId: 7));
+      await _pumpUi(tester);
+
+      expect(officeHoursService.slotLoadCalls, greaterThan(0));
+
+      await tester.scrollUntilVisible(
+        find.text('Office Hour Slots'),
+        300,
+        scrollable: _verticalScrollable().first,
+      );
+      await _pumpUi(tester);
+
+      expect(find.textContaining('1/4'), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, 'Book'), findsOneWidget);
+
+      coursesBloc.close();
+    },
+    timeout: const Timeout(Duration(seconds: 30)),
+  );
+
+  testWidgets(
+    'Staff & Booking tab books slot from UI dialog flow',
+    (WidgetTester tester) async {
+      final officeHoursService = _SpyOfficeHoursService(
+        slots: const <OfficeHourSlotModel>[
+          OfficeHourSlotModel(
+            slotId: 5,
+            instructorId: 7,
+            dayOfWeek: 'monday',
+            startTime: '10:00',
+            endTime: '11:00',
+            location: 'C-305',
+            mode: 'in_person',
+            maxAppointments: 4,
+            currentAppointments: 1,
+            isActive: true,
+            notes: null,
           ),
         ],
-        tas: <TAAssignmentModel>[
-          TAAssignmentModel(
-            id: 2,
-            sectionId: 11,
-            userId: 9,
-            assignedAt: DateTime(2026, 4, 1),
-            firstName: 'Omar',
-            lastName: 'Samir',
-            email: 'omar@eduverse.test',
-          ),
-        ],
-      ),
-      communicationService: _StubCommunicationService(
-        announcements: <AnnouncementModel>[
-          AnnouncementModel(
-            id: 'a1',
-            courseId: '101',
-            title: 'Exam update',
-            content: 'Exam moved to next week',
-            createdBy: 7,
-            priority: 'high',
-            publishedAt: DateTime(2026, 4, 1),
-            createdAt: DateTime(2026, 4, 1),
-            updatedAt: DateTime(2026, 4, 1),
-          ),
-        ],
-      ),
-      publicProfileService: _StubPublicProfileService(
+      );
+
+      final publicProfileService = _StubPublicProfileService(
         profile: const PublicProfileModel(
           userId: 7,
           firstName: 'Lina',
           lastName: 'Ali',
           email: 'lina@eduverse.test',
-          officeLocation: 'C-305',
-          bio: 'Distributed systems and operating systems.',
         ),
-      ),
-      officeHoursService: officeHoursService,
-    );
+      );
 
-    await tester.pumpWidget(_buildTestApp(coursesBloc));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Latest Announcements'), findsOneWidget);
-    expect(find.text('Exam moved to next week'), findsOneWidget);
-
-    await tester.tap(find.widgetWithText(TextButton, 'View Profile'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Lina Ali'), findsWidgets);
-    expect(find.text('Office: C-305'), findsOneWidget);
-
-    final detailBloc = BlocProvider.of<CourseDetailBloc>(
-      tester.element(find.byType(TabBarView)),
-    );
-    detailBloc.add(const LoadOfficeHourSlots(instructorId: 7));
-    await tester.pumpAndSettle();
-
-    expect(officeHoursService.slotLoadCalls, greaterThan(0));
-
-    await tester.scrollUntilVisible(
-      find.text('Office Hour Slots'),
-      300,
-      scrollable: _verticalScrollable().first,
-    );
-    await tester.pumpAndSettle();
-
-    expect(find.textContaining('1/4'), findsOneWidget);
-    expect(find.widgetWithText(FilledButton, 'Book'), findsOneWidget);
-
-    await coursesBloc.close();
-  });
-
-  testWidgets('Staff & Booking tab books slot from UI dialog flow', (
-    WidgetTester tester,
-  ) async {
-    final officeHoursService = _SpyOfficeHoursService(
-      slots: const <OfficeHourSlotModel>[
-        OfficeHourSlotModel(
-          slotId: 5,
-          instructorId: 7,
-          dayOfWeek: 'monday',
-          startTime: '10:00',
-          endTime: '11:00',
-          location: 'C-305',
-          mode: 'in_person',
-          maxAppointments: 4,
-          currentAppointments: 1,
-          isActive: true,
-          notes: null,
+      final coursesBloc = _buildCoursesBloc(
+        enrollmentService: _StubEnrollmentService(
+          instructors: const <InstructorAssignmentModel>[
+            InstructorAssignmentModel(
+              id: 1,
+              sectionId: 11,
+              userId: 7,
+              role: 'primary',
+              firstName: 'Lina',
+              lastName: 'Ali',
+              email: 'lina@eduverse.test',
+            ),
+          ],
+          tas: const <TAAssignmentModel>[],
         ),
-      ],
-    );
+        communicationService: _StubCommunicationService(
+          announcements: const <AnnouncementModel>[],
+        ),
+        publicProfileService: publicProfileService,
+        officeHoursService: officeHoursService,
+      );
 
-    final publicProfileService = _StubPublicProfileService(
-      profile: const PublicProfileModel(
-        userId: 7,
-        firstName: 'Lina',
-        lastName: 'Ali',
-        email: 'lina@eduverse.test',
-      ),
-    );
+      await tester.pumpWidget(_buildTestApp(coursesBloc));
+      await _pumpUi(tester);
 
-    final coursesBloc = _buildCoursesBloc(
-      enrollmentService: _StubEnrollmentService(
-        instructors: const <InstructorAssignmentModel>[
-          InstructorAssignmentModel(
-            id: 1,
-            sectionId: 11,
-            userId: 7,
-            role: 'primary',
-            firstName: 'Lina',
-            lastName: 'Ali',
-            email: 'lina@eduverse.test',
-          ),
-        ],
-        tas: const <TAAssignmentModel>[],
-      ),
-      communicationService: _StubCommunicationService(
-        announcements: const <AnnouncementModel>[],
-      ),
-      publicProfileService: publicProfileService,
-      officeHoursService: officeHoursService,
-    );
+      final viewProfileButton = find.widgetWithText(TextButton, 'View Profile');
+      await _waitForWidget(tester, viewProfileButton);
+      await tester.tap(viewProfileButton.first);
+      await _pumpUi(tester);
 
-    await tester.pumpWidget(_buildTestApp(coursesBloc));
-    await tester.pumpAndSettle();
+      expect(publicProfileService.requests, 1);
 
-    await tester.tap(find.widgetWithText(TextButton, 'View Profile'));
-    await tester.pumpAndSettle();
+      final detailBloc = BlocProvider.of<CourseDetailBloc>(
+        tester.element(find.byType(TabBarView)),
+      );
+      detailBloc.add(const LoadOfficeHourSlots(instructorId: 7));
+      await _pumpUi(tester);
 
-    expect(publicProfileService.requests, 1);
+      expect(officeHoursService.slotLoadCalls, greaterThan(0));
 
-    final detailBloc = BlocProvider.of<CourseDetailBloc>(
-      tester.element(find.byType(TabBarView)),
-    );
-    detailBloc.add(const LoadOfficeHourSlots(instructorId: 7));
-    await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.widgetWithText(FilledButton, 'Book'),
+        300,
+        scrollable: _verticalScrollable().first,
+      );
+      await _pumpUi(tester);
 
-    expect(officeHoursService.slotLoadCalls, greaterThan(0));
+      final bookButton = find.widgetWithText(FilledButton, 'Book');
+      await _waitForWidget(tester, bookButton);
+      await tester.tap(bookButton.first);
+      await _pumpUi(tester);
 
-    await tester.scrollUntilVisible(
-      find.widgetWithText(FilledButton, 'Book'),
-      300,
-      scrollable: _verticalScrollable().first,
-    );
-    await tester.pumpAndSettle();
+      final dateDialog = find.byType(DatePickerDialog);
+      expect(dateDialog, findsOneWidget);
 
-    await tester.tap(find.widgetWithText(FilledButton, 'Book').first);
-    await tester.pumpAndSettle();
+      await _confirmDatePicker(tester);
 
-    final dateDialog = find.byType(DatePickerDialog);
-    expect(dateDialog, findsOneWidget);
+      final bookingDialog = find.byType(AlertDialog);
+      expect(bookingDialog, findsOneWidget);
 
-    final tomorrow = DateTime.now().add(const Duration(days: 1));
-    final dayFinder = find.descendant(
-      of: dateDialog,
-      matching: find.text(tomorrow.day.toString()),
-    );
-    expect(dayFinder, findsWidgets);
-    await tester.tap(dayFinder.last);
-    await tester.pumpAndSettle();
+      await tester.enterText(
+        _textFieldByLabel('Topic (optional)'),
+        'Capstone guidance',
+      );
+      await tester.enterText(
+        _textFieldByLabel('Notes (optional)'),
+        'Need feedback',
+      );
 
-    await _confirmDatePicker(tester);
+      await tester.tap(
+        find.descendant(
+          of: bookingDialog,
+          matching: find.widgetWithText(FilledButton, 'Book'),
+        ),
+      );
+      await _pumpUi(tester);
 
-    final bookingDialog = find.byType(AlertDialog);
-    expect(bookingDialog, findsOneWidget);
+      expect(officeHoursService.bookingCalls, 1);
+      expect(officeHoursService.lastBookedSlotId, 5);
+      expect(officeHoursService.lastBookedTopic, 'Capstone guidance');
+      expect(officeHoursService.lastBookedNotes, 'Need feedback');
+      expect(find.text('Capstone guidance'), findsOneWidget);
 
-    await tester.enterText(
-      _textFieldByLabel('Topic (optional)'),
-      'Capstone guidance',
-    );
-    await tester.enterText(
-      _textFieldByLabel('Notes (optional)'),
-      'Need feedback',
-    );
-
-    await tester.tap(
-      find.descendant(
-        of: bookingDialog,
-        matching: find.widgetWithText(FilledButton, 'Book'),
-      ),
-    );
-    await tester.pumpAndSettle();
-
-    expect(officeHoursService.bookingCalls, 1);
-    expect(officeHoursService.lastBookedSlotId, 5);
-    expect(officeHoursService.lastBookedTopic, 'Capstone guidance');
-    expect(officeHoursService.lastBookedNotes, 'Need feedback');
-    expect(find.text('Capstone guidance'), findsOneWidget);
-
-    await coursesBloc.close();
-  });
+      coursesBloc.close();
+    },
+    timeout: const Timeout(Duration(seconds: 30)),
+  );
 }

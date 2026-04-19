@@ -29,6 +29,7 @@ Widget _buildStudentsTab(List<SectionStudentModel> students) {
   );
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   testWidgets('renders students list with grade and score', (
     WidgetTester tester,

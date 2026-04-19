@@ -1,6 +1,7 @@
 import 'package:edu_verse/widgets/student/course_details/course_details_header.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../bloc/courses/courses_bloc.dart';
 import '../../features/courses/bloc/course_detail/course_detail_bloc.dart';
 import '../../features/courses/bloc/course_detail/course_detail_event.dart';
@@ -9,6 +10,7 @@ import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../common/utils/course_ui_utils.dart';
 import '../../models/core/enrollment_model.dart';
+import '../../models/courses/instructor_assignment_model.dart';
 import '../../widgets/student/courses/course_model.dart';
 import '../../widgets/student/course_details/course_tabs.dart';
 import '../../widgets/shared/course_structure_viewer.dart';
@@ -64,7 +66,19 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
 
   String get _instructor {
     if (widget.enrollment != null) {
-      return widget.enrollment!.course?.departmentName ?? 'Unknown Instructor';
+      final enrollmentInstructor = widget.enrollment?.instructor;
+      if (enrollmentInstructor != null) {
+        final fullName =
+            '${enrollmentInstructor.firstName} ${enrollmentInstructor.lastName}'
+                .trim();
+        if (fullName.isNotEmpty) {
+          return fullName;
+        }
+        if (enrollmentInstructor.email.trim().isNotEmpty) {
+          return enrollmentInstructor.email;
+        }
+      }
+      return widget.legacyCourse?.instructor ?? 'Unknown Instructor';
     }
     return widget.legacyCourse?.instructor ?? 'Unknown Instructor';
   }
@@ -141,20 +155,35 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
     _courseDetailBloc = CourseDetailBloc(
       courseService: coursesBloc.courseService,
       materialService: coursesBloc.materialService,
+      assignmentService: coursesBloc.assignmentService,
+      labService: coursesBloc.labService,
+      enrollmentService: coursesBloc.enrollmentService,
+      communicationService: coursesBloc.communicationService,
+      publicProfileService: coursesBloc.publicProfileService,
+      officeHoursService: coursesBloc.officeHoursService,
     );
 
     final courseId = _resolvedCourseId;
+    final sectionId = widget.enrollment?.sectionId;
+
     if (courseId != null) {
       _courseDetailBloc.add(
         LoadCourseDetail(
           courseId: courseId,
-          sectionId: widget.enrollment?.sectionId,
+          sectionId: sectionId,
+          prerequisites: widget.enrollment?.prerequisites,
           initialTabIndex: widget.initialTab,
         ),
       );
     } else {
       _courseDetailBloc.add(SwitchTab(tabIndex: widget.initialTab));
+
+      if (sectionId != null && sectionId > 0) {
+        _courseDetailBloc.add(LoadSectionStaff(sectionId: sectionId));
+      }
     }
+
+    _courseDetailBloc.add(const LoadMyAppointments());
 
     _headerAnimationController = AnimationController(
       vsync: this,
@@ -193,178 +222,205 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
           backgroundColor: bgColor,
           body: BlocProvider.value(
             value: _courseDetailBloc,
-            child: Stack(
-              children: [
-                CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    // Hero header with gradient
-                    SliverToBoxAdapter(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: isDark
-                                ? [
-                                    const Color(0xFF1E293B),
-                                    const Color(0xFF0F172A),
-                                  ]
-                                : _gradientColors,
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: SafeArea(
-                          bottom: false,
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              children: [
-                                CourseDetailsHeader(
-                                  title: _title,
-                                  isDark: isDark,
-                                  onBackPressed: () => Navigator.pop(context),
-                                ),
-                                const SizedBox(height: 20),
-                                // Stats cards row — T015
-                                Row(
+            child: BlocConsumer<CourseDetailBloc, CourseDetailState>(
+              listenWhen: (previous, current) =>
+                  previous.error != current.error ||
+                  previous.bookingMessage != current.bookingMessage,
+              listener: (context, detailState) {
+                if (detailState.error != null &&
+                    detailState.error!.isNotEmpty) {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(SnackBar(content: Text(detailState.error!)));
+                } else if (detailState.bookingMessage != null &&
+                    detailState.bookingMessage!.isNotEmpty) {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      SnackBar(content: Text(detailState.bookingMessage!)),
+                    );
+                }
+              },
+              builder: (context, detailState) {
+                return Stack(
+                  children: [
+                    CustomScrollView(
+                      controller: _scrollController,
+                      slivers: [
+                        // Hero header with gradient
+                        SliverToBoxAdapter(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: isDark
+                                    ? [
+                                        const Color(0xFF1E293B),
+                                        const Color(0xFF0F172A),
+                                      ]
+                                    : _gradientColors,
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: SafeArea(
+                              bottom: false,
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
                                   children: [
-                                    Expanded(
-                                      child: _buildStatCard(
-                                        icon: Icons.credit_card_outlined,
-                                        value: '$_credits',
-                                        label: 'Credits',
-                                      ),
+                                    CourseDetailsHeader(
+                                      title: _title,
+                                      isDark: isDark,
+                                      onBackPressed: () =>
+                                          Navigator.pop(context),
                                     ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: _buildStatCard(
-                                        icon: Icons.layers_outlined,
-                                        value: _level,
-                                        label: 'Level',
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: _buildStatCard(
-                                        icon: Icons.check_circle_outline,
-                                        value: _statusLabel,
-                                        label: 'Status',
-                                      ),
+                                    const SizedBox(height: 20),
+                                    // Stats cards row — T015
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: _buildStatCard(
+                                            icon: Icons.credit_card_outlined,
+                                            value: '$_credits',
+                                            label: 'Credits',
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: _buildStatCard(
+                                            icon: Icons.layers_outlined,
+                                            value: _level,
+                                            label: 'Level',
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: _buildStatCard(
+                                            icon: Icons.check_circle_outline,
+                                            value: _statusLabel,
+                                            label: 'Status',
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ),
-                    const SliverToBoxAdapter(child: SizedBox(height: 16)),
-                    // Content card
-                    SliverToBoxAdapter(
-                      child: Transform.translate(
-                        offset: const Offset(0, -20),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: bgColor,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(30),
-                              topRight: Radius.circular(30),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Instructor / Department info card
-                                _buildInstructorCard(isDark),
-                                const SizedBox(height: 20),
-                                // Course code & description
-                                if (_courseCode.isNotEmpty) ...[
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isDark
-                                          ? Colors.white.withValues(alpha: 0.08)
-                                          : const Color(0xFFF0F4FF),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      _courseCode,
-                                      style: TextStyle(
-                                        color: isDark
-                                            ? const Color(0xFF8EC5FF)
-                                            : const Color(0xFF155DFC),
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                ],
-                                if (_description != null &&
-                                    _description!.isNotEmpty) ...[
-                                  Text(
-                                    _description!,
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? Colors.white70
-                                          : const Color(0xFF4A5565),
-                                      fontSize: 14,
-                                      height: 1.6,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 20),
-                                ],
-                                // Action buttons
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: _buildActionButton(
-                                        label: 'Continue',
-                                        icon: Icons.play_circle_outline,
-                                        isPrimary: true,
-                                        onTap: () {},
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: _buildActionButton(
-                                        label: 'Chat',
-                                        icon: Icons.chat_bubble_outline,
-                                        isPrimary: false,
-                                        onTap: () {},
-                                      ),
-                                    ),
-                                  ],
+                        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                        // Content card
+                        SliverToBoxAdapter(
+                          child: Transform.translate(
+                            offset: const Offset(0, -20),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: bgColor,
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(30),
+                                  topRight: Radius.circular(30),
                                 ),
-                                const SizedBox(height: 24),
-                                // Progress section
-                                _buildProgressSection(isDark),
-                                const SizedBox(height: 24),
-                                // T008: Course Structure Viewer
-                                if (widget.enrollment != null)
-                                  CourseStructureViewer(
-                                    courseId:
-                                        widget.enrollment!.course?.courseId ??
-                                        widget.enrollment!.courseId,
-                                    isDark: isDark,
-                                  ),
-                                if (widget.enrollment != null)
-                                  const SizedBox(height: 24),
-                                // Tabs — pass legacy CourseModel for tab content compatibility
-                                BlocBuilder<
-                                  CourseDetailBloc,
-                                  CourseDetailState
-                                >(
-                                  builder: (context, detailState) {
-                                    return CourseTabs(
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Instructor / Department info card
+                                    _buildInstructorCard(
+                                      context,
+                                      isDark,
+                                      detailState,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    // Course code & description
+                                    if (_courseCode.isNotEmpty) ...[
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isDark
+                                              ? Colors.white.withValues(
+                                                  alpha: 0.08,
+                                                )
+                                              : const Color(0xFFF0F4FF),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          _courseCode,
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? const Color(0xFF8EC5FF)
+                                                : const Color(0xFF155DFC),
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                    ],
+                                    if (_description != null &&
+                                        _description!.isNotEmpty) ...[
+                                      Text(
+                                        _description!,
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white70
+                                              : const Color(0xFF4A5565),
+                                          fontSize: 14,
+                                          height: 1.6,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                    ],
+                                    // Action buttons
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: _buildActionButton(
+                                            label: 'Continue',
+                                            icon: Icons.play_circle_outline,
+                                            isPrimary: true,
+                                            onTap: () {},
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: _buildActionButton(
+                                            label: 'Chat',
+                                            icon: Icons.chat_bubble_outline,
+                                            isPrimary: false,
+                                            onTap: () {},
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 24),
+                                    // Progress section
+                                    _buildProgressSection(isDark),
+                                    const SizedBox(height: 24),
+                                    // T008: Course Structure Viewer
+                                    if (widget.enrollment != null)
+                                      CourseStructureViewer(
+                                        courseId:
+                                            widget
+                                                .enrollment!
+                                                .course
+                                                ?.courseId ??
+                                            widget.enrollment!.courseId,
+                                        isDark: isDark,
+                                      ),
+                                    if (widget.enrollment != null)
+                                      const SizedBox(height: 24),
+                                    // Tabs — pass legacy CourseModel for tab content compatibility
+                                    CourseTabs(
                                       selectedIndex:
                                           detailState.selectedTabIndex,
                                       onTabChanged: (index) {
@@ -374,18 +430,18 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                                       },
                                       isDark: isDark,
                                       course: _buildLegacyCourseForTabs(),
-                                    );
-                                  },
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
-                ),
-              ],
+                );
+              },
             ),
           ),
         );
@@ -409,7 +465,12 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
     );
   }
 
-  Widget _buildInstructorCard(bool isDark) {
+  Widget _buildInstructorCard(
+    BuildContext blocContext,
+    bool isDark,
+    CourseDetailState detailState,
+  ) {
+    final instructorLabel = _resolveInstructorLabel(detailState);
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF2D2D44) : Colors.white,
@@ -439,12 +500,15 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  _instructor,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : const Color(0xFF101828),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                GestureDetector(
+                  onTap: () => _openInstructorInfo(blocContext, detailState),
+                  child: Text(
+                    instructorLabel,
+                    style: TextStyle(
+                      color: isDark ? Colors.white : const Color(0xFF101828),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -459,7 +523,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
             ),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () => _openInstructorInfo(blocContext, detailState),
             icon: const Icon(
               Icons.message_outlined,
               color: Color(0xFF155DFC),
@@ -468,6 +532,110 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
           ),
         ],
       ),
+    );
+  }
+
+  InstructorAssignmentModel? _resolvePrimaryInstructor(
+    CourseDetailState detailState,
+  ) {
+    if (detailState.instructors.isEmpty) {
+      return null;
+    }
+
+    for (final instructor in detailState.instructors) {
+      if (instructor.role.toLowerCase() == 'primary') {
+        return instructor;
+      }
+    }
+
+    return detailState.instructors.first;
+  }
+
+  String _resolveInstructorLabel(CourseDetailState detailState) {
+    final primaryInstructor = _resolvePrimaryInstructor(detailState);
+    if (primaryInstructor != null && primaryInstructor.fullName.isNotEmpty) {
+      return primaryInstructor.fullName;
+    }
+
+    final hasSection = (widget.enrollment?.sectionId ?? 0) > 0;
+    if (hasSection) {
+      return detailState.isLoadingStaff
+          ? 'Loading instructor...'
+          : 'Unknown Instructor';
+    }
+
+    return _instructor;
+  }
+
+  int? _resolveInstructorId(CourseDetailState detailState) {
+    final primaryInstructor = _resolvePrimaryInstructor(detailState);
+    if (primaryInstructor != null && primaryInstructor.userId > 0) {
+      return primaryInstructor.userId;
+    }
+
+    final hasSection = (widget.enrollment?.sectionId ?? 0) > 0;
+    if (!hasSection) {
+      final directId = widget.enrollment?.course?.instructorId;
+      if (directId != null && directId > 0) {
+        return directId;
+      }
+    }
+
+    return null;
+  }
+
+  void _openInstructorInfo(
+    BuildContext context,
+    CourseDetailState detailState,
+  ) {
+    final primaryInstructor = _resolvePrimaryInstructor(detailState);
+    final instructorId = _resolveInstructorId(detailState);
+
+    if (instructorId == null || instructorId <= 0) {
+      final sectionId = widget.enrollment?.sectionId;
+      if (sectionId != null &&
+          sectionId > 0 &&
+          detailState.instructors.isEmpty) {
+        context.read<CourseDetailBloc>().add(
+          LoadSectionStaff(sectionId: sectionId),
+        );
+
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('Instructor information is still loading.'),
+            ),
+          );
+      } else {
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(content: Text('No instructor is assigned yet.')),
+          );
+      }
+      return;
+    }
+
+    final instructorName = primaryInstructor == null
+        ? _resolveInstructorLabel(detailState)
+        : (primaryInstructor.fullName.trim().isNotEmpty
+              ? primaryInstructor.fullName
+              : (primaryInstructor.email.trim().isNotEmpty
+                    ? primaryInstructor.email
+                    : _resolveInstructorLabel(detailState)));
+    final resolvedSectionId = (primaryInstructor?.sectionId ?? 0) > 0
+        ? primaryInstructor!.sectionId
+        : widget.enrollment?.sectionId;
+
+    context.push(
+      '/course-instructor-info',
+      extra: <String, dynamic>{
+        'instructorId': instructorId,
+        'instructorName': instructorName,
+        'courseId': _resolvedCourseId,
+        'sectionId': resolvedSectionId,
+      },
     );
   }
 

@@ -16,40 +16,42 @@ class _NoopMaterialService extends MaterialService {
 }
 
 void main() {
-  testWidgets('VideoPlayerWidget shows player container and controls', (
-    tester,
-  ) async {
-    final material = CourseMaterialModel(
-      materialId: '101',
-      courseId: '5',
-      materialType: 'video',
-      title: 'Intro Lecture',
-      externalUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-      isPublished: true,
-      createdAt: DateTime(2026, 1, 1),
-    );
+  testWidgets(
+    'VideoPlayerWidget shows player container and controls',
+    (tester) async {
+      final material = CourseMaterialModel(
+        materialId: '101',
+        courseId: '5',
+        materialType: 'video',
+        title: 'Intro Lecture',
+        externalUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+        isPublished: true,
+        createdAt: DateTime(2026, 1, 1),
+      );
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: BlocProvider(
-          create: (_) =>
-              MaterialViewerBloc(materialService: _NoopMaterialService()),
-          child: Scaffold(
-            body: VideoPlayerWidget(
-              courseId: 5,
-              material: material,
-              enableEmbeddedPlayer: false,
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider(
+            create: (_) =>
+                MaterialViewerBloc(materialService: _NoopMaterialService()),
+            child: Scaffold(
+              body: VideoPlayerWidget(
+                courseId: 5,
+                material: material,
+                enableEmbeddedPlayer: false,
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
 
-    await tester.pumpAndSettle();
+      await tester.pumpAndSettle();
 
-    expect(find.text('Intro Lecture'), findsOneWidget);
-    expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.pause_rounded), findsOneWidget);
-    expect(find.byIcon(Icons.fullscreen_rounded), findsOneWidget);
-  });
+      expect(find.text('Intro Lecture'), findsOneWidget);
+      expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.pause_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.fullscreen_rounded), findsOneWidget);
+    },
+    timeout: const Timeout(Duration(seconds: 20)),
+  );
 }

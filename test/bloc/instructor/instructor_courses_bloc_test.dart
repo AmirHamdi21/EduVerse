@@ -204,6 +204,7 @@ Future<void> _flush() async {
   await Future<void>.delayed(const Duration(milliseconds: 1));
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('InstructorCoursesBloc', () {
     test('loads teaching courses successfully', () async {

@@ -202,6 +202,8 @@ class _MyAppState extends State<MyApp> {
       enrollmentService: _enrollmentService,
       materialService: _materialService,
       communicationService: _communicationService,
+      assignmentService: _assignmentService,
+      labService: _labService,
       publicProfileService: _publicProfileService,
       officeHoursService: _officeHoursService,
       studentStatsService: _studentStatsService,

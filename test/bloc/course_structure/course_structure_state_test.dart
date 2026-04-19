@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:edu_verse/bloc/course_structure/course_structure_state.dart';
 import 'package:edu_verse/models/core/course_structure_model.dart';
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('CourseStructureState', () {
     test('StructureLoaded supports value equality', () {

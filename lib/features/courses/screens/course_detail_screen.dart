@@ -39,6 +39,8 @@ class CourseDetailScreen extends StatelessWidget {
           CourseDetailBloc(
               courseService: coursesBloc.courseService,
               materialService: coursesBloc.materialService,
+              assignmentService: coursesBloc.assignmentService,
+              labService: coursesBloc.labService,
               enrollmentService: coursesBloc.enrollmentService,
               communicationService: coursesBloc.communicationService,
               publicProfileService: coursesBloc.publicProfileService,
@@ -48,6 +50,7 @@ class CourseDetailScreen extends StatelessWidget {
               LoadCourseDetail(
                 courseId: courseId,
                 sectionId: enrollment.sectionId,
+                prerequisites: enrollment.prerequisites,
                 initialTabIndex: initialTabIndex,
               ),
             )

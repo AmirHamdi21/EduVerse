@@ -110,6 +110,8 @@ class Assignment {
   final int progressPercentage;
   final int? completedQuestions;
   final int? totalQuestions;
+  final bool hasSubmission;
+  final bool isGraded;
 
   Assignment({
     required this.id,
@@ -120,7 +122,11 @@ class Assignment {
     required this.progressPercentage,
     this.completedQuestions,
     this.totalQuestions,
+    this.hasSubmission = false,
+    this.isGraded = false,
   });
+
+  bool get isSubmittedAwaitingGrading => hasSubmission && !isGraded;
 }
 
 enum AssignmentStatus { completed, inProgress, notStarted }

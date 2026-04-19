@@ -186,6 +186,7 @@ void _setViewport(WidgetTester tester, Size size) {
   });
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   testWidgets('shows loading skeleton while teaching courses load', (
     WidgetTester tester,

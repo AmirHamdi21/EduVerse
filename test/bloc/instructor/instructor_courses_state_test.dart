@@ -37,6 +37,7 @@ TeachingCourseModel _course() {
   });
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('InstructorCoursesState', () {
     test('InstructorCoursesLoaded supports value equality', () {

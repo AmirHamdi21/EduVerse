@@ -1,13 +1,20 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../models/assignments/assignment_model.dart';
+import '../../../../models/assignments/assignment_submission_model.dart';
+import '../../../../models/core/enrollment_model.dart';
 import '../../../../services/api/course_service.dart';
 import '../../../../services/api/material_service.dart';
 import '../../../../services/api/enrollment_service.dart';
 import '../../../../services/api/communication_service.dart';
+import '../../../../services/api/assignment_service.dart';
+import '../../../../services/api/lab_service.dart';
 import '../../../../services/api/public_profile_service.dart';
 import '../../../../services/api/office_hours_service.dart';
 import '../../../../models/admin/admin_periods_models.dart';
 import '../../../../models/courses/instructor_assignment_model.dart';
+import '../../../../models/labs/lab_model.dart';
+import '../../../../models/labs/lab_submission_model.dart';
 import '../../../../models/ta/ta_assignment_model.dart';
 import '../../../../models/materials/course_material_model.dart';
 import '../../../../models/materials/material_bundle_model.dart';
@@ -17,6 +24,8 @@ import 'course_detail_state.dart';
 class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
   final CourseService _courseService;
   final MaterialService _materialService;
+  final AssignmentService? _assignmentService;
+  final LabService? _labService;
   final EnrollmentService? _enrollmentService;
   final CommunicationService? _communicationService;
   final PublicProfileService? _publicProfileService;
@@ -25,12 +34,16 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
   CourseDetailBloc({
     required CourseService courseService,
     required MaterialService materialService,
+    AssignmentService? assignmentService,
+    LabService? labService,
     EnrollmentService? enrollmentService,
     CommunicationService? communicationService,
     PublicProfileService? publicProfileService,
     OfficeHoursService? officeHoursService,
   }) : _courseService = courseService,
        _materialService = materialService,
+       _assignmentService = assignmentService,
+       _labService = labService,
        _enrollmentService = enrollmentService,
        _communicationService = communicationService,
        _publicProfileService = publicProfileService,
@@ -39,6 +52,11 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     on<LoadCourseDetail>(_onLoadCourseDetail);
     on<LoadStructure>(_onLoadStructure);
     on<LoadMaterials>(_onLoadMaterials);
+    on<LoadAssignments>(_onLoadAssignments);
+    on<LoadLabs>(_onLoadLabs);
+    on<LoadAssignmentSubmissions>(_onLoadAssignmentSubmissions);
+    on<LoadLabSubmissions>(_onLoadLabSubmissions);
+    on<LoadPrerequisites>(_onLoadPrerequisites);
     on<ExpandWeek>(_onExpandWeek);
     on<SwitchTab>(_onSwitchTab);
     on<LoadAnnouncements>(_onLoadAnnouncements);
@@ -58,9 +76,17 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         selectedTabIndex: event.initialTabIndex,
         isLoadingStructure: true,
         isLoadingMaterials: true,
+        isLoadingAssignments: true,
+        isLoadingLabs: true,
+        isLoadingAssignmentSubmissions: false,
+        isLoadingLabSubmissions: false,
+        isLoadingPrerequisites: false,
         isLoadingAnnouncements:
             event.courseId != null && _communicationService != null,
         isLoadingStaff: event.sectionId != null && _enrollmentService != null,
+        usedAssignmentsMaterialsFallback: false,
+        usedLabsMaterialsFallback: false,
+        prerequisites: event.prerequisites ?? const <EnrollmentPrerequisite>[],
         clearError: true,
         clearBookingMessage: true,
       ),
@@ -69,6 +95,8 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     final futures = <Future<void>>[
       _fetchStructure(event.courseId, emit),
       _fetchMaterials(event.courseId, emit),
+      _fetchAssignments(event.courseId, emit),
+      _fetchLabs(event.courseId, emit),
     ];
 
     if (event.courseId != null) {
@@ -77,6 +105,10 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
 
     if (event.sectionId != null && event.sectionId! > 0) {
       futures.add(_fetchStaff(event.sectionId!, emit));
+    }
+
+    if (event.prerequisites != null) {
+      futures.add(_fetchPrerequisitesFromPayload(event.prerequisites!, emit));
     }
 
     await Future.wait<void>(futures);
@@ -96,6 +128,150 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
   ) async {
     emit(state.copyWith(isLoadingMaterials: true, clearError: true));
     await _fetchMaterials(event.courseId, emit, weekNumber: event.weekNumber);
+  }
+
+  Future<void> _onLoadAssignments(
+    LoadAssignments event,
+    Emitter<CourseDetailState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        isLoadingAssignments: true,
+        usedAssignmentsMaterialsFallback: false,
+        clearError: true,
+      ),
+    );
+    await _fetchAssignments(event.courseId, emit);
+  }
+
+  Future<void> _onLoadLabs(
+    LoadLabs event,
+    Emitter<CourseDetailState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        isLoadingLabs: true,
+        usedLabsMaterialsFallback: false,
+        clearError: true,
+      ),
+    );
+    await _fetchLabs(event.courseId, emit);
+  }
+
+  Future<void> _onLoadAssignmentSubmissions(
+    LoadAssignmentSubmissions event,
+    Emitter<CourseDetailState> emit,
+  ) async {
+    final assignmentService = _assignmentService;
+    if (assignmentService == null || event.assignments.isEmpty) {
+      emit(
+        state.copyWith(
+          isLoadingAssignmentSubmissions: false,
+          assignmentSubmissions: const <int, AssignmentSubmissionModel?>{},
+        ),
+      );
+      return;
+    }
+
+    emit(
+      state.copyWith(isLoadingAssignmentSubmissions: true, clearError: true),
+    );
+    try {
+      final snapshots = <int, AssignmentSubmissionModel?>{};
+      for (final assignment in event.assignments) {
+        final assignmentId = assignment.assignmentId;
+        if (assignmentId <= 0) {
+          continue;
+        }
+
+        final result = await assignmentService.getMySubmission(assignmentId);
+        if (!result.isSuccess) {
+          snapshots[assignmentId] = null;
+          continue;
+        }
+
+        snapshots[assignmentId] = _normalizeAssignmentSubmission(result.data);
+      }
+
+      emit(
+        state.copyWith(
+          assignmentSubmissions: snapshots,
+          isLoadingAssignmentSubmissions: false,
+          clearError: true,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isLoadingAssignmentSubmissions: false,
+          error: _toMessage(e),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onLoadLabSubmissions(
+    LoadLabSubmissions event,
+    Emitter<CourseDetailState> emit,
+  ) async {
+    final labService = _labService;
+    if (labService == null || event.labs.isEmpty) {
+      emit(
+        state.copyWith(
+          isLoadingLabSubmissions: false,
+          labSubmissions: const <int, LabSubmissionModel?>{},
+        ),
+      );
+      return;
+    }
+
+    emit(state.copyWith(isLoadingLabSubmissions: true, clearError: true));
+
+    try {
+      final snapshots = <int, LabSubmissionModel?>{};
+      for (final lab in event.labs) {
+        final labId = lab.labId ?? int.tryParse(lab.id) ?? 0;
+        if (labId <= 0) {
+          continue;
+        }
+
+        final result = await labService.getMySubmission(labId);
+        if (!result.isSuccess) {
+          snapshots[labId] = null;
+          continue;
+        }
+
+        final items = result.data ?? const <LabSubmissionModel>[];
+        if (items.isEmpty) {
+          snapshots[labId] = null;
+          continue;
+        }
+
+        final sorted = items.toList()
+          ..sort((a, b) => b.submittedAt.compareTo(a.submittedAt));
+        snapshots[labId] = _normalizeLabSubmission(sorted.first);
+      }
+
+      emit(
+        state.copyWith(
+          labSubmissions: snapshots,
+          isLoadingLabSubmissions: false,
+          clearError: true,
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(isLoadingLabSubmissions: false, error: _toMessage(e)),
+      );
+    }
+  }
+
+  Future<void> _onLoadPrerequisites(
+    LoadPrerequisites event,
+    Emitter<CourseDetailState> emit,
+  ) async {
+    emit(state.copyWith(isLoadingPrerequisites: true, clearError: true));
+    await _fetchPrerequisitesFromPayload(event.prerequisites, emit);
   }
 
   void _onExpandWeek(ExpandWeek event, Emitter<CourseDetailState> emit) {
@@ -127,6 +303,7 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     Emitter<CourseDetailState> emit,
   ) async {
     if (_publicProfileService == null) {
+      add(LoadOfficeHourSlots(instructorId: event.userId));
       return;
     }
 
@@ -153,6 +330,7 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
       add(LoadOfficeHourSlots(instructorId: event.userId));
     } catch (e) {
       emit(state.copyWith(isLoadingProfile: false, error: _toMessage(e)));
+      add(LoadOfficeHourSlots(instructorId: event.userId));
     }
   }
 
@@ -319,6 +497,194 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     }
   }
 
+  Future<void> _fetchAssignments(
+    dynamic courseId,
+    Emitter<CourseDetailState> emit,
+  ) async {
+    final normalizedCourseId = _parsePositiveInt(courseId);
+    if (normalizedCourseId == null) {
+      emit(
+        state.copyWith(
+          assignments: const <AssignmentModel>[],
+          assignmentSubmissions: const <int, AssignmentSubmissionModel?>{},
+          isLoadingAssignments: false,
+          isLoadingAssignmentSubmissions: false,
+        ),
+      );
+      return;
+    }
+
+    List<AssignmentModel> assignments = const <AssignmentModel>[];
+    var usedFallback = false;
+    String? primaryError;
+
+    if (_assignmentService != null) {
+      final response = await _assignmentService.getAll(
+        courseId: normalizedCourseId,
+        page: 1,
+        limit: 100,
+      );
+
+      if (response.isSuccess && response.data != null) {
+        assignments = response.data!.data
+            .map(_normalizeAssignment)
+            .toList(growable: false);
+      } else {
+        primaryError = response.error?.message;
+      }
+    }
+
+    if (assignments.isEmpty) {
+      usedFallback = true;
+      try {
+        final materials = await _materialService.getMaterials(
+          courseId,
+          materialType: 'assignment',
+        );
+
+        assignments = materials
+            .where(_isAssignmentMaterial)
+            .map(
+              (material) =>
+                  _fromMaterialAsAssignment(material, normalizedCourseId),
+            )
+            .map(_normalizeAssignment)
+            .toList(growable: false);
+      } catch (e) {
+        emit(
+          state.copyWith(
+            assignments: const <AssignmentModel>[],
+            assignmentSubmissions: const <int, AssignmentSubmissionModel?>{},
+            isLoadingAssignments: false,
+            isLoadingAssignmentSubmissions: false,
+            usedAssignmentsMaterialsFallback: usedFallback,
+            error: primaryError ?? _toMessage(e),
+          ),
+        );
+        return;
+      }
+    }
+
+    emit(
+      state.copyWith(
+        assignments: assignments,
+        isLoadingAssignments: false,
+        usedAssignmentsMaterialsFallback: usedFallback,
+        clearError: true,
+      ),
+    );
+
+    if (_assignmentService == null || assignments.isEmpty) {
+      emit(
+        state.copyWith(
+          assignmentSubmissions: const <int, AssignmentSubmissionModel?>{},
+          isLoadingAssignmentSubmissions: false,
+        ),
+      );
+      return;
+    }
+
+    add(LoadAssignmentSubmissions(assignments: assignments));
+  }
+
+  Future<void> _fetchLabs(
+    dynamic courseId,
+    Emitter<CourseDetailState> emit,
+  ) async {
+    final normalizedCourseId = _parsePositiveInt(courseId);
+    if (normalizedCourseId == null) {
+      emit(
+        state.copyWith(
+          labs: const <LabModel>[],
+          labSubmissions: const <int, LabSubmissionModel?>{},
+          isLoadingLabs: false,
+          isLoadingLabSubmissions: false,
+        ),
+      );
+      return;
+    }
+
+    List<LabModel> labs = const <LabModel>[];
+    var usedFallback = false;
+    String? primaryError;
+
+    if (_labService != null) {
+      final response = await _labService.getAll(
+        courseId: normalizedCourseId,
+        page: 1,
+        limit: 100,
+      );
+
+      if (response.isSuccess && response.data != null) {
+        labs = response.data!.map(_normalizeLab).toList(growable: false);
+      } else {
+        primaryError = response.error?.message;
+      }
+    }
+
+    if (labs.isEmpty) {
+      usedFallback = true;
+      try {
+        final materials = await _materialService.getMaterials(
+          courseId,
+          materialType: 'lab',
+        );
+
+        labs = materials
+            .where(_isLabMaterial)
+            .map((material) => _fromMaterialAsLab(material, normalizedCourseId))
+            .map(_normalizeLab)
+            .toList(growable: false);
+      } catch (e) {
+        emit(
+          state.copyWith(
+            labs: const <LabModel>[],
+            labSubmissions: const <int, LabSubmissionModel?>{},
+            isLoadingLabs: false,
+            isLoadingLabSubmissions: false,
+            usedLabsMaterialsFallback: usedFallback,
+            error: primaryError ?? _toMessage(e),
+          ),
+        );
+        return;
+      }
+    }
+
+    emit(
+      state.copyWith(
+        labs: labs,
+        isLoadingLabs: false,
+        usedLabsMaterialsFallback: usedFallback,
+        clearError: true,
+      ),
+    );
+
+    if (_labService == null || labs.isEmpty) {
+      emit(
+        state.copyWith(
+          labSubmissions: const <int, LabSubmissionModel?>{},
+          isLoadingLabSubmissions: false,
+        ),
+      );
+      return;
+    }
+
+    add(LoadLabSubmissions(labs: labs));
+  }
+
+  Future<void> _fetchPrerequisitesFromPayload(
+    List<EnrollmentPrerequisite> prerequisites,
+    Emitter<CourseDetailState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        prerequisites: prerequisites,
+        isLoadingPrerequisites: false,
+        clearError: true,
+      ),
+    );
+  }
+
   Future<void> _fetchAnnouncements(
     dynamic courseId,
     Emitter<CourseDetailState> emit,
@@ -407,6 +773,119 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     });
 
     return merged;
+  }
+
+  int? _parsePositiveInt(dynamic value) {
+    if (value is int && value > 0) {
+      return value;
+    }
+
+    final parsed = int.tryParse(value?.toString() ?? '');
+    if (parsed != null && parsed > 0) {
+      return parsed;
+    }
+
+    return null;
+  }
+
+  bool _isAssignmentMaterial(CourseMaterialModel material) {
+    final type = material.materialType.trim().toLowerCase();
+    return type == 'assignment' || type == 'homework';
+  }
+
+  bool _isLabMaterial(CourseMaterialModel material) {
+    final type = material.materialType.trim().toLowerCase();
+    return type == 'lab' || type == 'laboratory';
+  }
+
+  AssignmentModel _fromMaterialAsAssignment(
+    CourseMaterialModel material,
+    int courseId,
+  ) {
+    final dueDate =
+        material.publishedAt ?? material.updatedAt ?? material.createdAt;
+
+    return AssignmentModel(
+      id: material.materialId,
+      assignmentId: int.tryParse(material.materialId) ?? 0,
+      courseId: int.tryParse(material.courseId) ?? courseId,
+      title: material.title,
+      description: material.description,
+      courseName: '',
+      courseCode: '',
+      instructorName: '',
+      type: AssignmentType.other,
+      status: AssignmentStatus.pending,
+      priority: AssignmentPriority.medium,
+      dueDate: dueDate,
+      assignedDate: material.createdAt,
+      maxGrade: 0,
+      instructions: material.description == null
+          ? null
+          : <String>[material.description!],
+      createdAt: material.createdAt,
+    );
+  }
+
+  LabModel _fromMaterialAsLab(CourseMaterialModel material, int courseId) {
+    final dueDate =
+        material.publishedAt ?? material.updatedAt ?? material.createdAt;
+
+    return LabModel(
+      id: material.materialId,
+      labId: int.tryParse(material.materialId),
+      courseId: int.tryParse(material.courseId) ?? courseId,
+      title: material.title,
+      description: material.description,
+      dueDate: dueDate,
+      availableFrom: material.createdAt,
+      maxScore: 0,
+      createdAt: material.createdAt,
+      updatedAt: material.updatedAt,
+    );
+  }
+
+  AssignmentModel _normalizeAssignment(AssignmentModel model) {
+    return model.copyWith(maxGrade: _normalizeScore(model.maxGrade));
+  }
+
+  LabModel _normalizeLab(LabModel model) {
+    return model.copyWith(maxScore: _normalizeScore(model.maxScore));
+  }
+
+  AssignmentSubmissionModel? _normalizeAssignmentSubmission(
+    AssignmentSubmissionModel? submission,
+  ) {
+    if (submission == null) {
+      return null;
+    }
+
+    final payload = submission.toJson();
+    payload['isLate'] = submission.isLate;
+    if (submission.score != null) {
+      payload['score'] = _normalizeScore(submission.score!);
+    }
+    return AssignmentSubmissionModel.fromJson(payload);
+  }
+
+  LabSubmissionModel? _normalizeLabSubmission(LabSubmissionModel? submission) {
+    if (submission == null) {
+      return null;
+    }
+
+    return LabSubmissionModel.fromJson(submission.toJson()).copyWith(
+      score: submission.score == null
+          ? null
+          : _normalizeScore(submission.score!),
+      isLate: submission.isLate,
+    );
+  }
+
+  double _normalizeScore(double score) {
+    if (score.isNaN || score.isInfinite || score < 0) {
+      return 0;
+    }
+    return score;
   }
 
   String _toMessage(Object error) {

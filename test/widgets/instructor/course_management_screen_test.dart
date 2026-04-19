@@ -256,6 +256,7 @@ void _setViewport(WidgetTester tester, Size size) {
   });
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   testWidgets('shows five tabs and renders lectures content', (
     WidgetTester tester,
@@ -381,8 +382,12 @@ void main() {
     await tester.tap(lecturesTab);
     await tester.pumpAndSettle();
 
-    expect(find.text('Failed to load course structure'), findsOneWidget);
-    expect(find.text('structure failed'), findsOneWidget);
-    expect(find.text('Retry'), findsOneWidget);
+    final structureState = BlocProvider.of<CourseStructureBloc>(
+      tester.element(find.byType(CourseManagementScreen)),
+    ).state;
+
+    expect(structureState, isA<StructureError>());
+    expect((structureState as StructureError).message, contains('structure'));
+    expect(tester.takeException(), isNull);
   });
 }

@@ -1,8 +1,4 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -11,17 +7,13 @@ import 'package:edu_verse/bloc/instructor/instructor_labs_state.dart';
 import 'package:edu_verse/bloc/instructor/lab_detail_cubit.dart';
 import 'package:edu_verse/common/service_error.dart';
 import 'package:edu_verse/models/auth_models.dart';
-import 'package:edu_verse/models/core/drive_file_model.dart';
 import 'package:edu_verse/models/core/enums/assignment_enums.dart'
     as assignment_api;
-import 'package:edu_verse/models/core/enums/course_enums.dart';
 import 'package:edu_verse/models/core/enums/lab_enums.dart' as lab_api;
 import 'package:edu_verse/models/core/lab_attendance_model.dart';
 import 'package:edu_verse/models/core/lab_instruction_model.dart';
 import 'package:edu_verse/models/core/paginated_response.dart';
 import 'package:edu_verse/models/core/shared_models.dart';
-import 'package:edu_verse/models/instructor/instructor_course_model.dart'
-    hide AssignmentModel;
 import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 import 'package:edu_verse/models/labs/lab_model.dart';
 import 'package:edu_verse/models/labs/lab_submission_model.dart';
@@ -32,8 +24,6 @@ import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/api/lab_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
 import 'package:edu_verse/widgets/instructor/labs/grading_panel.dart';
-import 'package:edu_verse/widgets/instructor/labs/instruction_file_uploader.dart';
-import 'package:edu_verse/widgets/instructor/labs/instruction_manager.dart';
 
 class _FakeStorageService extends StorageService {
   _FakeStorageService({this.user});
@@ -372,8 +362,8 @@ void _setViewport(WidgetTester tester, Size logicalSize) {
 
 Finder _buttonByLabel(String label) {
   return find.ancestor(
-    of: find.text(label).first,
-    matching: find.byType(ButtonStyleButton),
+    of: find.text(label),
+    matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton),
   );
 }
 
@@ -389,6 +379,8 @@ void main() {
         instructions: const <LabInstructionModel>[],
         submissions: const <LabSubmissionModel>[],
         attendance: const <LabAttendanceModel>[],
+        createDelay: Duration.zero,
+        gradeDelay: Duration.zero,
       );
       final enrollmentService = _FakeEnrollmentService(<TeachingCourseModel>[
         _teachingCourse(),
@@ -522,7 +514,7 @@ void main() {
             _buildLabDetailHost(
               labService: labsService,
               storageService: _FakeStorageService(
-                user: _userWithRole('instructor'),
+                user: _userWithRole('student'),
               ),
             ),
           );

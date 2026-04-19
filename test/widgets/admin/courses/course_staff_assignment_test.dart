@@ -81,6 +81,7 @@ Widget _buildHost({
   );
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   testWidgets('shows responsibilities field only for TA rows', (
     WidgetTester tester,

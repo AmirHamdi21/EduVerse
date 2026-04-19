@@ -29,6 +29,7 @@ Widget _buildEditor({
   );
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   testWidgets('renders structure item card with material count', (
     WidgetTester tester,

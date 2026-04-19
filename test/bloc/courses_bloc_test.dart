@@ -81,6 +81,7 @@ CoursesBloc _buildBloc(Map<String, dynamic> Function(RequestOptions) handler) {
   );
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   // Initialize SharedPreferences with empty values for tests.
   setUp(() {

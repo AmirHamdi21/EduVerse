@@ -2,9 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/admin_course_management/course_list_bloc.dart';
 import 'package:edu_verse/common/service_error.dart';
-import 'package:edu_verse/models/core/enrollment_model.dart';
+import 'package:edu_verse/models/courses/instructor_assignment_model.dart';
 import 'package:edu_verse/models/core/enums/course_enums.dart';
-import 'package:edu_verse/models/core/enums/enrollment_enums.dart';
 import 'package:edu_verse/models/core/course_model.dart';
 import 'package:edu_verse/models/core/section_model.dart';
 import 'package:edu_verse/models/core/schedule_model.dart';
@@ -76,25 +75,23 @@ class _FakeEnrollmentService extends EnrollmentService {
   _FakeEnrollmentService() : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<ServiceResult<List<EnrollmentModel>>> getSectionInstructors(
+  Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
     dynamic sectionId,
   ) {
-    return Future<ServiceResult<List<EnrollmentModel>>>.value(
-      ServiceResult<List<EnrollmentModel>>.success(<EnrollmentModel>[
-        EnrollmentModel(
-          id: 501,
-          userId: 71,
-          sectionId: 11,
-          enrollmentStatus: EnrollmentStatus.enrolled,
-          role: 'primary',
-          user: const UserLite(
+    return Future<ServiceResult<List<InstructorAssignmentModel>>>.value(
+      ServiceResult<List<InstructorAssignmentModel>>.success(
+        <InstructorAssignmentModel>[
+          InstructorAssignmentModel(
+            id: 501,
+            sectionId: 11,
             userId: 71,
+            role: 'primary',
             firstName: 'Alaa',
             lastName: 'Instructor',
             email: 'alaa@example.com',
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 
@@ -124,6 +121,7 @@ Future<void> _drainBloc() async {
   }
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('CourseListBloc staff-based filters', () {
     test(

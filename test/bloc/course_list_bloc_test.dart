@@ -49,6 +49,7 @@ CourseEnrollmentModel _enrollment() {
   );
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('CourseListBloc', () {
     test('emits loading then loaded when service succeeds', () async {

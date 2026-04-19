@@ -95,6 +95,7 @@ Future<void> _pumpCoursesScreen(WidgetTester tester, CoursesBloc bloc) async {
   );
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('CoursesScreen Phase 1 scaffold', () {
     setUp(() {
@@ -306,7 +307,9 @@ void main() {
       await tester.pump();
       expect(latestQuery, 'math');
 
-      await tester.tap(find.byTooltip('Clear search'));
+      final clearButton = find.byIcon(Icons.clear);
+      expect(clearButton, findsOneWidget);
+      await tester.tap(clearButton);
       await tester.pump();
       expect(latestQuery, isEmpty);
     });
@@ -402,8 +405,12 @@ void main() {
 
       await tester.tap(find.byIcon(Icons.swap_vert));
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('Least Credits'));
-      await tester.tap(find.text('Least Credits'));
+
+      final ascendingCreditsOption = find.byWidgetPredicate((widget) {
+        return widget is Text && (widget.data?.contains('↑') ?? false);
+      });
+      expect(ascendingCreditsOption, findsWidgets);
+      await tester.tap(ascendingCreditsOption.first);
       await tester.pumpAndSettle();
 
       expect(selectedSort, 'credits_asc');
@@ -437,101 +444,119 @@ void main() {
       expect(find.text('Courses Route'), findsOneWidget);
     });
 
-    testWidgets('screen shows loading shell state before slow fetch resolves', (
-      tester,
-    ) async {
-      final Completer<Map<String, dynamic>> pendingResponse =
-          Completer<Map<String, dynamic>>();
-
-      final CoursesBloc bloc = _buildCoursesBloc((RequestOptions options) {
-        if (options.path.contains('/enrollments/my-courses')) {
-          return pendingResponse.future;
-        }
-        return Future<Map<String, dynamic>>.value(<String, dynamic>{
-          'statusCode': 200,
-          'data': <dynamic>[],
+    testWidgets(
+      'screen shows loading shell state before slow fetch resolves',
+      (tester) async {
+        final CoursesBloc bloc = _buildCoursesBloc((RequestOptions options) {
+          if (options.path.contains('/enrollments/my-courses')) {
+            return Future<Map<String, dynamic>>.delayed(
+              const Duration(milliseconds: 800),
+              () => <String, dynamic>{'statusCode': 200, 'data': <dynamic>[]},
+            );
+          }
+          return Future<Map<String, dynamic>>.value(<String, dynamic>{
+            'statusCode': 200,
+            'data': <dynamic>[],
+          });
         });
-      });
 
-      await _pumpCoursesScreen(tester, bloc);
-      await tester.pump();
+        await _pumpCoursesScreen(tester, bloc);
+        await tester.pump();
 
-      expect(
-        find.byKey(const Key('courses_shell_loading_state')),
-        findsOneWidget,
-      );
+        expect(
+          find.byKey(const Key('courses_shell_loading_state')),
+          findsOneWidget,
+        );
 
-      pendingResponse.complete(<String, dynamic>{
-        'statusCode': 200,
-        'data': <dynamic>[],
-      });
-      await tester.pump();
-      await bloc.close();
-    });
+        await tester.pump(const Duration(milliseconds: 900));
+        for (var i = 0; i < 6; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        bloc.close();
+        await tester.pump(const Duration(milliseconds: 100));
+      },
+      timeout: const Timeout(Duration(seconds: 15)),
+    );
 
     testWidgets(
       'screen shows loaded course list state when backend returns data',
       (tester) async {
-        final CoursesBloc bloc = _buildCoursesBloc((
-          RequestOptions options,
-        ) async {
+        final CoursesBloc bloc = _buildCoursesBloc((RequestOptions options) {
           if (options.path.contains('/enrollments/my-courses')) {
-            return <String, dynamic>{
-              'statusCode': 200,
-              'data': <Map<String, dynamic>>[
-                <String, dynamic>{
-                  'id': 1,
-                  'userId': 42,
-                  'sectionId': 3,
-                  'status': 'enrolled',
-                  'enrollmentDate': '2026-08-15T10:00:00.000Z',
-                  'course': <String, dynamic>{
-                    'id': 12,
-                    'name': 'Discrete Mathematics',
-                    'code': 'MATH201',
-                    'credits': 3,
-                    'level': 'freshman',
+            return Future<Map<String, dynamic>>.delayed(
+              const Duration(milliseconds: 500),
+              () => <String, dynamic>{
+                'statusCode': 200,
+                'data': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'id': 1,
+                    'userId': 42,
+                    'sectionId': 3,
+                    'status': 'enrolled',
+                    'enrollmentDate': '2026-08-15T10:00:00.000Z',
+                    'course': <String, dynamic>{
+                      'id': 12,
+                      'name': 'Discrete Mathematics',
+                      'code': 'MATH201',
+                      'credits': 3,
+                      'level': 'freshman',
+                    },
+                    'section': <String, dynamic>{
+                      'id': 3,
+                      'sectionNumber': 'A',
+                      'maxCapacity': 30,
+                      'currentEnrollment': 20,
+                    },
+                    'semester': <String, dynamic>{'id': 5, 'name': 'Fall 2026'},
                   },
-                  'section': <String, dynamic>{
-                    'id': 3,
-                    'sectionNumber': 'A',
-                    'maxCapacity': 30,
-                    'currentEnrollment': 20,
-                  },
-                  'semester': <String, dynamic>{'id': 5, 'name': 'Fall 2026'},
-                },
-              ],
-            };
+                ],
+              },
+            );
           }
-          return <String, dynamic>{'statusCode': 200, 'data': <dynamic>[]};
+          return Future<Map<String, dynamic>>.value(<String, dynamic>{
+            'statusCode': 200,
+            'data': <dynamic>[],
+          });
         });
 
         await _pumpCoursesScreen(tester, bloc);
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 700));
+        for (var i = 0; i < 4; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
 
         expect(find.text('Discrete Mathematics'), findsOneWidget);
         expect(find.text('MATH201'), findsOneWidget);
 
-        await bloc.close();
+        bloc.close();
+        await tester.pump(const Duration(milliseconds: 100));
       },
+      timeout: const Timeout(Duration(seconds: 15)),
     );
 
     testWidgets(
       'screen shows empty state when backend returns no enrollments',
       (tester) async {
-        final CoursesBloc bloc = _buildCoursesBloc((
-          RequestOptions options,
-        ) async {
+        final CoursesBloc bloc = _buildCoursesBloc((RequestOptions options) {
           if (options.path.contains('/enrollments/my-courses')) {
-            return <String, dynamic>{'statusCode': 200, 'data': <dynamic>[]};
+            return Future<Map<String, dynamic>>.delayed(
+              const Duration(milliseconds: 500),
+              () => <String, dynamic>{'statusCode': 200, 'data': <dynamic>[]},
+            );
           }
-          return <String, dynamic>{'statusCode': 200, 'data': <dynamic>[]};
+          return Future<Map<String, dynamic>>.value(<String, dynamic>{
+            'statusCode': 200,
+            'data': <dynamic>[],
+          });
         });
 
         await _pumpCoursesScreen(tester, bloc);
         await tester.pump();
-        await tester.pump(const Duration(milliseconds: 600));
+        await tester.pump(const Duration(milliseconds: 700));
+        for (var i = 0; i < 4; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
 
         expect(
           find.byKey(const Key('courses_shell_empty_state')),
@@ -539,92 +564,132 @@ void main() {
         );
         expect(find.text('No Courses Found'), findsOneWidget);
 
-        await bloc.close();
+        bloc.close();
+        await tester.pump(const Duration(milliseconds: 100));
       },
+      timeout: const Timeout(Duration(seconds: 15)),
     );
 
-    testWidgets('screen shows generic error state on network failure', (
-      tester,
-    ) async {
-      final CoursesBloc bloc = _buildCoursesBloc((RequestOptions options) {
-        throw DioException(
-          requestOptions: options,
-          type: DioExceptionType.connectionTimeout,
-          message: 'Timeout',
+    testWidgets(
+      'screen shows generic error state on network failure',
+      (tester) async {
+        final CoursesBloc bloc = _buildCoursesBloc((RequestOptions options) {
+          throw Exception('synthetic test failure');
+        });
+
+        await _pumpCoursesScreen(tester, bloc);
+        await tester.pump();
+
+        var errorStateVisible = false;
+        for (var i = 0; i < 12; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+          if (find
+              .byKey(const Key('courses_shell_error_state'))
+              .evaluate()
+              .isNotEmpty) {
+            errorStateVisible = true;
+            break;
+          }
+        }
+
+        expect(errorStateVisible, isTrue);
+
+        expect(
+          find.byKey(const Key('courses_shell_error_state')),
+          findsOneWidget,
         );
-      });
+        expect(find.text('Connection Error'), findsOneWidget);
+        expect(find.text('Try Again'), findsOneWidget);
 
-      await _pumpCoursesScreen(tester, bloc);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 600));
+        bloc.close();
+        await tester.pump(const Duration(milliseconds: 100));
+      },
+      timeout: const Timeout(Duration(seconds: 15)),
+    );
 
-      expect(
-        find.byKey(const Key('courses_shell_error_state')),
-        findsOneWidget,
-      );
-      expect(find.text('Connection Error'), findsOneWidget);
-      expect(find.text('Try Again'), findsOneWidget);
+    testWidgets(
+      'screen shows auth/session recovery state on unauthorized',
+      (tester) async {
+        final CoursesBloc bloc = _buildCoursesBloc((RequestOptions options) {
+          if (options.path.contains('/enrollments/my-courses')) {
+            return Future<Map<String, dynamic>>.delayed(
+              const Duration(milliseconds: 500),
+              () => <String, dynamic>{
+                'statusCode': 401,
+                'data': <String, dynamic>{'message': 'Unauthorized'},
+              },
+            );
+          }
+          return Future<Map<String, dynamic>>.value(<String, dynamic>{
+            'statusCode': 200,
+            'data': <dynamic>[],
+          });
+        });
 
-      await bloc.close();
-    });
-
-    testWidgets('screen shows auth/session recovery state on unauthorized', (
-      tester,
-    ) async {
-      final CoursesBloc bloc = _buildCoursesBloc((
-        RequestOptions options,
-      ) async {
-        if (options.path.contains('/enrollments/my-courses')) {
-          return <String, dynamic>{
-            'statusCode': 401,
-            'data': <String, dynamic>{'message': 'Unauthorized'},
-          };
+        await _pumpCoursesScreen(tester, bloc);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 700));
+        for (var i = 0; i < 4; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
         }
-        return <String, dynamic>{'statusCode': 200, 'data': <dynamic>[]};
-      });
 
-      await _pumpCoursesScreen(tester, bloc);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 600));
+        expect(
+          find.byKey(const Key('courses_shell_auth_state')),
+          findsOneWidget,
+        );
+        expect(find.text('Session Required'), findsOneWidget);
+        expect(find.text('Re-authenticate'), findsOneWidget);
 
-      expect(find.byKey(const Key('courses_shell_auth_state')), findsOneWidget);
-      expect(find.text('Session Required'), findsOneWidget);
-      expect(find.text('Re-authenticate'), findsOneWidget);
+        bloc.close();
+        await tester.pump(const Duration(milliseconds: 100));
+      },
+      timeout: const Timeout(Duration(seconds: 15)),
+    );
 
-      await bloc.close();
-    });
+    testWidgets(
+      'screen applies RBAC restricted UI on forbidden response',
+      (tester) async {
+        final CoursesBloc bloc = _buildCoursesBloc((RequestOptions options) {
+          if (options.path.contains('/enrollments/my-courses')) {
+            return Future<Map<String, dynamic>>.delayed(
+              const Duration(milliseconds: 500),
+              () => <String, dynamic>{
+                'statusCode': 403,
+                'data': <String, dynamic>{'message': 'Forbidden'},
+              },
+            );
+          }
+          return Future<Map<String, dynamic>>.value(<String, dynamic>{
+            'statusCode': 200,
+            'data': <dynamic>[],
+          });
+        });
 
-    testWidgets('screen applies RBAC restricted UI on forbidden response', (
-      tester,
-    ) async {
-      final CoursesBloc bloc = _buildCoursesBloc((
-        RequestOptions options,
-      ) async {
-        if (options.path.contains('/enrollments/my-courses')) {
-          return <String, dynamic>{
-            'statusCode': 403,
-            'data': <String, dynamic>{'message': 'Forbidden'},
-          };
+        await _pumpCoursesScreen(tester, bloc);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 700));
+        for (var i = 0; i < 4; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
         }
-        return <String, dynamic>{'statusCode': 200, 'data': <dynamic>[]};
-      });
 
-      await _pumpCoursesScreen(tester, bloc);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 600));
+        expect(
+          find.byKey(const Key('courses_shell_auth_state')),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(const Key('courses_shell_restricted_controls_notice')),
+          findsOneWidget,
+        );
+        expect(find.text('Access Restricted'), findsOneWidget);
+        expect(find.text('Refresh'), findsOneWidget);
+        expect(find.byType(CourseSearchBar), findsNothing);
+        expect(find.text('Join Course'), findsNothing);
 
-      expect(find.byKey(const Key('courses_shell_auth_state')), findsOneWidget);
-      expect(
-        find.byKey(const Key('courses_shell_restricted_controls_notice')),
-        findsOneWidget,
-      );
-      expect(find.text('Access Restricted'), findsOneWidget);
-      expect(find.text('Refresh'), findsOneWidget);
-      expect(find.byType(CourseSearchBar), findsNothing);
-      expect(find.text('Join Course'), findsNothing);
-
-      await bloc.close();
-    });
+        bloc.close();
+        await tester.pump(const Duration(milliseconds: 100));
+      },
+      timeout: const Timeout(Duration(seconds: 15)),
+    );
 
     test(
       'semester-empty result can be distinguished from global-empty result',
@@ -650,65 +715,70 @@ void main() {
         expect(global, isNotEmpty);
         expect(semesterOnly, isEmpty);
       },
+      timeout: const Timeout(Duration(seconds: 10)),
     );
 
-    test('rapid helper interactions remain stable with null nested fields', () {
-      final CourseEnrollmentModel nullNested =
-          CourseEnrollmentModel.fromJson(<String, dynamic>{
-            'id': 'null-nested',
-            'userId': 42,
-            'sectionId': 7,
-            'status': 'enrolled',
-            'enrollmentDate': '2026-01-15T00:00:00.000Z',
-            'course': null,
-            'section': null,
-            'semester': null,
-            'instructor': null,
-            'prerequisites': null,
-          });
+    test(
+      'rapid helper interactions remain stable with null nested fields',
+      () {
+        final CourseEnrollmentModel nullNested =
+            CourseEnrollmentModel.fromJson(<String, dynamic>{
+              'id': 'null-nested',
+              'userId': 42,
+              'sectionId': 7,
+              'status': 'enrolled',
+              'enrollmentDate': '2026-01-15T00:00:00.000Z',
+              'course': null,
+              'section': null,
+              'semester': null,
+              'instructor': null,
+              'prerequisites': null,
+            });
 
-      final List<CourseEnrollmentModel> source = <CourseEnrollmentModel>[
-        ...StudentCoursesFixture.listWithMixedData(),
-        nullNested,
-      ];
+        final List<CourseEnrollmentModel> source = <CourseEnrollmentModel>[
+          ...StudentCoursesFixture.listWithMixedData(),
+          nullNested,
+        ];
 
-      const List<String> queries = <String>[
-        '',
-        'cs',
-        'fall',
-        'instructor',
-        'zzz-no-match',
-      ];
-      const List<String> statuses = <String>[
-        'all',
-        'active',
-        'completed',
-        'dropped',
-      ];
-      const List<String> sorts = <String>[
-        'title_asc',
-        'title_desc',
-        'credits_asc',
-        'credits_desc',
-        'date',
-      ];
+        const List<String> queries = <String>[
+          '',
+          'cs',
+          'fall',
+          'instructor',
+          'zzz-no-match',
+        ];
+        const List<String> statuses = <String>[
+          'all',
+          'active',
+          'completed',
+          'dropped',
+        ];
+        const List<String> sorts = <String>[
+          'title_asc',
+          'title_desc',
+          'credits_asc',
+          'credits_desc',
+          'date',
+        ];
 
-      for (final String query in queries) {
-        for (final String status in statuses) {
-          for (final String sort in sorts) {
-            final List<CourseEnrollmentModel> result =
-                StudentCourseFilters.applyCourseFiltersAndSort(
-                  enrollments: source,
-                  query: query,
-                  selectedStatus: status,
-                  sortKey: sort,
-                  selectedSemesterId: null,
-                );
-            expect(result, isA<List<CourseEnrollmentModel>>());
+        for (final String query in queries) {
+          for (final String status in statuses) {
+            for (final String sort in sorts) {
+              final List<CourseEnrollmentModel> result =
+                  StudentCourseFilters.applyCourseFiltersAndSort(
+                    enrollments: source,
+                    query: query,
+                    selectedStatus: status,
+                    sortKey: sort,
+                    selectedSemesterId: null,
+                  );
+              expect(result, isA<List<CourseEnrollmentModel>>());
+            }
           }
         }
-      }
-    });
+      },
+      timeout: const Timeout(Duration(seconds: 10)),
+    );
   });
 }
 

@@ -37,6 +37,7 @@ class _QueueAdapter implements HttpClientAdapter {
   void close({bool force = false}) {}
 }
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('CourseService phase5 structure endpoints', () {
     test('create, update, delete and reorder structure items', () async {

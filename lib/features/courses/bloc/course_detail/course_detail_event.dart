@@ -1,18 +1,29 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../../models/assignments/assignment_model.dart';
+import '../../../../models/core/enrollment_model.dart';
+import '../../../../models/labs/lab_model.dart';
+
 class LoadCourseDetail extends CourseDetailEvent {
   final dynamic courseId;
   final int? sectionId;
+  final List<EnrollmentPrerequisite>? prerequisites;
   final int initialTabIndex;
 
   const LoadCourseDetail({
     required this.courseId,
     this.sectionId,
+    this.prerequisites,
     this.initialTabIndex = 0,
   });
 
   @override
-  List<Object?> get props => <Object?>[courseId, sectionId, initialTabIndex];
+  List<Object?> get props => <Object?>[
+    courseId,
+    sectionId,
+    prerequisites,
+    initialTabIndex,
+  ];
 }
 
 class LoadStructure extends CourseDetailEvent {
@@ -32,6 +43,51 @@ class LoadMaterials extends CourseDetailEvent {
 
   @override
   List<Object?> get props => <Object?>[courseId, weekNumber];
+}
+
+class LoadAssignments extends CourseDetailEvent {
+  final dynamic courseId;
+
+  const LoadAssignments({required this.courseId});
+
+  @override
+  List<Object?> get props => <Object?>[courseId];
+}
+
+class LoadLabs extends CourseDetailEvent {
+  final dynamic courseId;
+
+  const LoadLabs({required this.courseId});
+
+  @override
+  List<Object?> get props => <Object?>[courseId];
+}
+
+class LoadAssignmentSubmissions extends CourseDetailEvent {
+  final List<AssignmentModel> assignments;
+
+  const LoadAssignmentSubmissions({required this.assignments});
+
+  @override
+  List<Object?> get props => <Object?>[assignments];
+}
+
+class LoadLabSubmissions extends CourseDetailEvent {
+  final List<LabModel> labs;
+
+  const LoadLabSubmissions({required this.labs});
+
+  @override
+  List<Object?> get props => <Object?>[labs];
+}
+
+class LoadPrerequisites extends CourseDetailEvent {
+  final List<EnrollmentPrerequisite> prerequisites;
+
+  const LoadPrerequisites({required this.prerequisites});
+
+  @override
+  List<Object?> get props => <Object?>[prerequisites];
 }
 
 class ExpandWeek extends CourseDetailEvent {

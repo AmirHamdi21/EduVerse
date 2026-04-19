@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/instructor/instructor_courses_event.dart';
 
+@Timeout(Duration(seconds: 30))
 void main() {
   group('InstructorCoursesEvent', () {
     test('SelectCourse supports value equality', () {

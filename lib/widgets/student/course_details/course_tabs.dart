@@ -3,6 +3,8 @@ import '../courses/course_model.dart';
 import 'course_tab_content.dart';
 import 'labs_tab_content.dart';
 import 'assignments_tab_content.dart';
+import 'announcements_tab_content.dart';
+import 'prerequisites_tab_content.dart';
 import 'statistics_tab_content.dart';
 import 'discussion_tab_content.dart';
 
@@ -29,6 +31,8 @@ class _CourseTabsState extends State<CourseTabs> with TickerProviderStateMixin {
     {'icon': Icons.video_library_outlined, 'label': 'Lectures'},
     {'icon': Icons.science_outlined, 'label': 'Labs'},
     {'icon': Icons.assignment_outlined, 'label': 'Assignments'},
+    {'icon': Icons.campaign_outlined, 'label': 'Announcements'},
+    {'icon': Icons.rule_folder_outlined, 'label': 'Prerequisites'},
     {'icon': Icons.analytics_outlined, 'label': 'Statistics'},
     {'icon': Icons.forum_outlined, 'label': 'Discussion'},
   ];
@@ -124,14 +128,29 @@ class _CourseTabsState extends State<CourseTabs> with TickerProviderStateMixin {
       );
     } else if (widget.selectedIndex == 1) {
       // Labs tab
-      return LabsTabContent(isDark: widget.isDark);
+      return LabsTabContent(
+        isDark: widget.isDark,
+        courseId: widget.course.courseId,
+      );
     } else if (widget.selectedIndex == 2) {
       // Assignments tab
-      return AssignmentsTabContent(isDark: widget.isDark);
+      return AssignmentsTabContent(
+        isDark: widget.isDark,
+        courseId: widget.course.courseId,
+      );
     } else if (widget.selectedIndex == 3) {
+      // Announcements tab
+      return AnnouncementsTabContent(
+        isDark: widget.isDark,
+        courseId: widget.course.courseId,
+      );
+    } else if (widget.selectedIndex == 4) {
+      // Prerequisites tab
+      return PrerequisitesTabContent(isDark: widget.isDark);
+    } else if (widget.selectedIndex == 5) {
       // Statistics tab
       return StatisticsTabContent(isDark: widget.isDark);
-    } else if (widget.selectedIndex == 4) {
+    } else if (widget.selectedIndex == 6) {
       // Discussion tab
       return DiscussionTabContent(
         isDark: widget.isDark,
@@ -177,7 +196,7 @@ class _CourseTabsState extends State<CourseTabs> with TickerProviderStateMixin {
         boxShadow: isSelected
             ? [
                 BoxShadow(
-                  color: const Color(0xFF155DFC).withOpacity(0.3),
+                  color: const Color(0xFF155DFC).withValues(alpha: 0.3),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
