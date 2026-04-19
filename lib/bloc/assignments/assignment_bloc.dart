@@ -28,14 +28,22 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
     FetchAssignments event,
     Emitter<AssignmentState> emit,
   ) async {
-    await _loadAssignments(emit: emit, showLoading: true);
+    await _loadAssignments(
+      emit: emit,
+      showLoading: true,
+      courseId: event.courseId,
+    );
   }
 
   Future<void> _onRefreshAssignments(
     RefreshAssignments event,
     Emitter<AssignmentState> emit,
   ) async {
-    await _loadAssignments(emit: emit, showLoading: false);
+    await _loadAssignments(
+      emit: emit,
+      showLoading: false,
+      courseId: event.courseId ?? state.selectedCourseId,
+    );
   }
 
   Future<void> _onSelectAssignment(
@@ -233,10 +241,18 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
   Future<void> _loadAssignments({
     required Emitter<AssignmentState> emit,
     required bool showLoading,
+    int? courseId,
   }) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    emit(
+      state.copyWith(
+        isLoading: true,
+        clearError: true,
+        selectedCourseId: courseId,
+      ),
+    );
 
     final result = await _assignmentService.getAll(
+      courseId: courseId,
       sortBy: 'dueDate',
       sortOrder: 'ASC',
       limit: 100,
@@ -275,6 +291,7 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
 
     emit(
       state.copyWith(
+        selectedCourseId: courseId,
         assignments: enrichedAssignments,
         selectedAssignment: updatedSelected,
         mySubmission: updatedSelected?.submission == null

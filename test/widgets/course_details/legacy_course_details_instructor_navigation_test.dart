@@ -194,6 +194,7 @@ void main() {
       expect(instructorPayload!['instructorName'], 'Lina Ali');
       expect(instructorPayload!['courseId'], 101);
       expect(instructorPayload!['sectionId'], 11);
+      expect(instructorPayload!['staffRole'], 'instructor');
 
       coursesBloc.close();
       themeBloc.close();

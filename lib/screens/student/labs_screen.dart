@@ -16,7 +16,9 @@ import '../../widgets/student/labs/labs_filter_sheet.dart';
 import 'lab_detail_screen.dart';
 
 class LabsScreen extends StatefulWidget {
-  const LabsScreen({super.key});
+  final int? preselectedCourseId;
+
+  const LabsScreen({super.key, this.preselectedCourseId});
 
   @override
   State<LabsScreen> createState() => _LabsScreenState();
@@ -44,7 +46,9 @@ class _LabsScreenState extends State<LabsScreen>
 
       final cubit = context.read<LabsCubit>();
       if (cubit.state.enrolledCourses.isEmpty && !cubit.state.isLoading) {
-        cubit.loadEnrolledCourses();
+        cubit.loadEnrolledCourses(
+          preselectedCourseId: widget.preselectedCourseId,
+        );
       }
     });
   }
@@ -584,7 +588,9 @@ class _LabsScreenState extends State<LabsScreen>
             ElevatedButton.icon(
               onPressed: () {
                 if (state.enrolledCourses.isEmpty) {
-                  context.read<LabsCubit>().loadEnrolledCourses();
+                  context.read<LabsCubit>().loadEnrolledCourses(
+                    preselectedCourseId: widget.preselectedCourseId,
+                  );
                 } else {
                   context.read<LabsCubit>().refreshLabs();
                 }

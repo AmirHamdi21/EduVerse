@@ -13,11 +13,21 @@ abstract class AssignmentEvent extends Equatable {
 }
 
 class FetchAssignments extends AssignmentEvent {
-  const FetchAssignments();
+  final int? courseId;
+
+  const FetchAssignments({this.courseId});
+
+  @override
+  List<Object?> get props => <Object?>[courseId];
 }
 
 class RefreshAssignments extends AssignmentEvent {
-  const RefreshAssignments();
+  final int? courseId;
+
+  const RefreshAssignments({this.courseId});
+
+  @override
+  List<Object?> get props => <Object?>[courseId];
 }
 
 class SelectAssignment extends AssignmentEvent {

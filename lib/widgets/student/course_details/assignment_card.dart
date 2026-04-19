@@ -5,11 +5,17 @@ import 'package:intl/intl.dart';
 class AssignmentCard extends StatefulWidget {
   final Assignment assignment;
   final bool isDark;
+  final VoidCallback? onViewTap;
+  final VoidCallback? onPrimaryActionTap;
+  final VoidCallback? onSecondaryActionTap;
 
   const AssignmentCard({
     super.key,
     required this.assignment,
     required this.isDark,
+    this.onViewTap,
+    this.onPrimaryActionTap,
+    this.onSecondaryActionTap,
   });
 
   @override
@@ -283,7 +289,7 @@ class _AssignmentCardState extends State<AssignmentCard>
                           child: Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              onTap: () {},
+                              onTap: widget.onViewTap,
                               borderRadius: BorderRadius.circular(14),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -332,7 +338,7 @@ class _AssignmentCardState extends State<AssignmentCard>
                               child: InkWell(
                                 onTap: isSubmittedAwaitingGrading
                                     ? null
-                                    : () {},
+                                    : widget.onSecondaryActionTap,
                                 borderRadius: BorderRadius.circular(14),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -386,7 +392,7 @@ class _AssignmentCardState extends State<AssignmentCard>
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {},
+                                onTap: widget.onPrimaryActionTap,
                                 borderRadius: BorderRadius.circular(14),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,

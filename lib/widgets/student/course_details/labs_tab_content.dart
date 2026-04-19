@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../features/courses/bloc/course_detail/course_detail_bloc.dart';
 import '../../../features/courses/bloc/course_detail/course_detail_event.dart';
@@ -51,13 +52,32 @@ class LabsTabContent extends StatelessWidget {
                 padding: EdgeInsets.only(
                   bottom: index == labs.length - 1 ? 0 : 16,
                 ),
-                child: LabCard(lab: labs[index], isDark: isDark),
+                child: LabCard(
+                  lab: labs[index],
+                  isDark: isDark,
+                  onViewSubmissionTap: () => _openLabsScreen(context),
+                  onSubmitWorkTap: () => _openLabsScreen(context),
+                  onResourcesTap: () => _openLabsScreen(context),
+                ),
               ),
             ),
           ],
         );
       },
     );
+  }
+
+  void _openLabsScreen(BuildContext context) {
+    final currentCourseId = courseId;
+    if (currentCourseId != null && currentCourseId > 0) {
+      context.push(
+        '/labs',
+        extra: <String, dynamic>{'courseId': currentCourseId},
+      );
+      return;
+    }
+
+    context.push('/labs');
   }
 
   List<legacy.Lab> _resolveLabs(CourseDetailState state) {

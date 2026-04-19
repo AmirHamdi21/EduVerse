@@ -16,7 +16,9 @@ import '../../widgets/student/assignments/assignments_filter_sheet.dart';
 import 'assignment_detail_screen.dart';
 
 class AssignmentsScreen extends StatefulWidget {
-  const AssignmentsScreen({super.key});
+  final int? preselectedCourseId;
+
+  const AssignmentsScreen({super.key, this.preselectedCourseId});
 
   @override
   State<AssignmentsScreen> createState() => _AssignmentsScreenState();
@@ -45,7 +47,9 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
       if (!mounted) {
         return;
       }
-      context.read<AssignmentBloc>().add(const FetchAssignments());
+      context.read<AssignmentBloc>().add(
+        FetchAssignments(courseId: widget.preselectedCourseId),
+      );
     });
   }
 
@@ -584,8 +588,9 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
             ),
             SizedBox(height: responsive.p24),
             ElevatedButton.icon(
-              onPressed: () =>
-                  context.read<AssignmentBloc>().add(const FetchAssignments()),
+              onPressed: () => context.read<AssignmentBloc>().add(
+                FetchAssignments(courseId: widget.preselectedCourseId),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
                 foregroundColor: Colors.white,
@@ -699,7 +704,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
 
   Future<void> _refreshAssignments(BuildContext context) async {
     final bloc = context.read<AssignmentBloc>();
-    bloc.add(const RefreshAssignments());
+    bloc.add(RefreshAssignments(courseId: widget.preselectedCourseId));
     await bloc.stream.firstWhere((state) => !state.isLoading);
   }
 

@@ -194,10 +194,9 @@ class EnrollmentService {
       } on Exception {
         response = await _client.dio.get('/enrollments/section/$sectionId/tas');
       }
-      return _extractList(response.data)
-          .whereType<Map<String, dynamic>>()
-          .map(TAAssignmentModel.fromJson)
-          .toList();
+      return _extractStaffMaps(
+        response.data,
+      ).map(TAAssignmentModel.fromJson).toList();
     }, fallbackMessage: 'Failed to load section TAs');
   }
 
@@ -217,10 +216,9 @@ class EnrollmentService {
         );
       }
 
-      return _extractList(response.data)
-          .whereType<Map<String, dynamic>>()
-          .map(InstructorAssignmentModel.fromJson)
-          .toList();
+      return _extractStaffMaps(
+        response.data,
+      ).map(InstructorAssignmentModel.fromJson).toList();
     }, fallbackMessage: 'Failed to load section instructors');
   }
 
@@ -377,6 +375,47 @@ class EnrollmentService {
       return payload;
     }
     return <String, dynamic>{};
+  }
+
+  static List<Map<String, dynamic>> _extractStaffMaps(dynamic payload) {
+    final listPayload = _extractList(
+      payload,
+    ).whereType<Map<String, dynamic>>().toList();
+    if (listPayload.isNotEmpty) {
+      return listPayload;
+    }
+
+    if (payload is! Map<String, dynamic>) {
+      return const <Map<String, dynamic>>[];
+    }
+
+    final dynamicData = payload['data'];
+    if (dynamicData is Map<String, dynamic> &&
+        _looksLikeStaffItem(dynamicData)) {
+      return <Map<String, dynamic>>[dynamicData];
+    }
+
+    final nestedKeys = <String>['instructor', 'ta', 'staff', 'teacher'];
+    for (final key in nestedKeys) {
+      final nested = payload[key];
+      if (nested is Map<String, dynamic> && _looksLikeStaffItem(nested)) {
+        return <Map<String, dynamic>>[nested];
+      }
+    }
+
+    if (_looksLikeStaffItem(payload)) {
+      return <Map<String, dynamic>>[payload];
+    }
+
+    return const <Map<String, dynamic>>[];
+  }
+
+  static bool _looksLikeStaffItem(Map<String, dynamic> item) {
+    return item.containsKey('userId') ||
+        item.containsKey('user') ||
+        item.containsKey('email') ||
+        item.containsKey('firstName') ||
+        item.containsKey('lastName');
   }
 
   static List<dynamic> _extractList(dynamic payload) {

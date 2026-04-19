@@ -12,6 +12,7 @@ class CourseInstructorInfoScreen extends StatefulWidget {
   final String instructorName;
   final int? courseId;
   final int? sectionId;
+  final String? staffRoleLabel;
 
   const CourseInstructorInfoScreen({
     super.key,
@@ -19,6 +20,7 @@ class CourseInstructorInfoScreen extends StatefulWidget {
     required this.instructorName,
     this.courseId,
     this.sectionId,
+    this.staffRoleLabel,
   });
 
   @override
@@ -127,9 +129,9 @@ class _CourseInstructorInfoScreenState
                                   ),
                                 ),
                                 const SizedBox(width: 8),
-                                const Expanded(
+                                Expanded(
                                   child: Text(
-                                    'Instructor Info & Booking',
+                                    '${widget.staffRoleLabel ?? 'Instructor'} Info & Booking',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 18,
@@ -183,7 +185,9 @@ class _CourseInstructorInfoScreenState
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          profile?.role ?? 'Course Instructor',
+                                          profile?.role ??
+                                              widget.staffRoleLabel ??
+                                              'Course Instructor',
                                           style: TextStyle(
                                             color: Colors.white.withValues(
                                               alpha: 0.85,

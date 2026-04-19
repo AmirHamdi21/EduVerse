@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../features/courses/bloc/course_detail/course_detail_bloc.dart';
 import '../../../features/courses/bloc/course_detail/course_detail_event.dart';
@@ -53,6 +54,9 @@ class AssignmentsTabContent extends StatelessWidget {
                 child: AssignmentCard(
                   assignment: assignments[index],
                   isDark: isDark,
+                  onViewTap: () => _openAssignmentsScreen(context),
+                  onPrimaryActionTap: () => _openAssignmentsScreen(context),
+                  onSecondaryActionTap: () => _openAssignmentsScreen(context),
                 ),
               ),
             ),
@@ -60,6 +64,19 @@ class AssignmentsTabContent extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _openAssignmentsScreen(BuildContext context) {
+    final currentCourseId = courseId;
+    if (currentCourseId != null && currentCourseId > 0) {
+      context.push(
+        '/assignments',
+        extra: <String, dynamic>{'courseId': currentCourseId},
+      );
+      return;
+    }
+
+    context.push('/assignments');
   }
 
   List<legacy.Assignment> _resolveAssignments(CourseDetailState state) {

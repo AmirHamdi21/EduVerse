@@ -60,8 +60,12 @@ void main() async {
   if (Platform.isAndroid || Platform.isIOS) {
     await FlutterDownloader.initialize(debug: false, ignoreSsl: false);
   }
-  // Hide status bar & navigation bar
-  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
+  await SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.manual,
+    overlays: SystemUiOverlay.values,
+  );
+
   if (Platform.isAndroid || Platform.isIOS) {
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -78,7 +82,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late StorageService _storageService;
   late ThemeBloc _themeBloc;
   late AuthBloc _authBloc;
@@ -124,6 +128,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _storageService = StorageService();
     _themeBloc = ThemeBloc(storageService: _storageService);
     _authBloc = AuthBloc(
@@ -195,7 +200,7 @@ class _MyAppState extends State<MyApp> {
     )..loadEnrolledCourses();
 
     _assignmentBloc = AssignmentBloc(assignmentService: _assignmentService)
-      ..add(const FetchAssignments());
+      ..add(const FetchAssignments(courseId: null));
 
     _coursesBloc = CoursesBloc(
       courseService: _courseService,
@@ -249,6 +254,22 @@ class _MyAppState extends State<MyApp> {
     // Initialize theme and language from storage
     _initializeTheme();
     _initializeLanguage();
+    _restoreSystemUiOverlays();
+  }
+
+  Future<void> _restoreSystemUiOverlays() async {
+    await SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      _restoreSystemUiOverlays();
+    }
   }
 
   Future<void> _initializeTheme() async {
@@ -261,6 +282,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _themeBloc.close();
     _authBloc.close();
     _languageCubit.close();

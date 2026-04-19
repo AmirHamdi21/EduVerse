@@ -181,6 +181,26 @@ import '../models/core/enrollment_model.dart';
 import '../models/core/course_model.dart' as core_models;
 
 class AppRouter {
+  static int? _parsePositiveInt(dynamic value) {
+    final parsed = value is int ? value : int.tryParse(value?.toString() ?? '');
+    if (parsed == null || parsed <= 0) {
+      return null;
+    }
+    return parsed;
+  }
+
+  static int? _resolveCoursePrefilter(GoRouterState state) {
+    final extra = state.extra;
+    if (extra is Map<String, dynamic>) {
+      final fromExtra = _parsePositiveInt(extra['courseId']);
+      if (fromExtra != null) {
+        return fromExtra;
+      }
+    }
+
+    return _parsePositiveInt(state.uri.queryParameters['courseId']);
+  }
+
   static final GoRouter router = GoRouter(
     initialLocation: '/',
     routes: [
@@ -217,10 +237,16 @@ class AppRouter {
         path: '/flashcards',
         builder: (context, state) => const FlashcardsScreen(),
       ),
-      GoRoute(path: '/labs', builder: (context, state) => const LabsScreen()),
+      GoRoute(
+        path: '/labs',
+        builder: (context, state) =>
+            LabsScreen(preselectedCourseId: _resolveCoursePrefilter(state)),
+      ),
       GoRoute(
         path: '/assignments',
-        builder: (context, state) => const AssignmentsScreen(),
+        builder: (context, state) => AssignmentsScreen(
+          preselectedCourseId: _resolveCoursePrefilter(state),
+        ),
       ),
       GoRoute(path: '/tasks', builder: (context, state) => const TasksScreen()),
       GoRoute(
@@ -319,6 +345,7 @@ class AppRouter {
 
           final dynamic rawCourseId = extra['courseId'];
           final dynamic rawSectionId = extra['sectionId'];
+          final dynamic rawStaffRole = extra['staffRole'];
 
           final courseId = rawCourseId is int
               ? rawCourseId
@@ -329,6 +356,10 @@ class AppRouter {
               : int.tryParse(rawSectionId?.toString() ?? '');
 
           final name = (extra['instructorName'] as String?)?.trim();
+          final roleText = rawStaffRole?.toString().toLowerCase();
+          final roleLabel = roleText == 'ta'
+              ? 'Teaching Assistant'
+              : 'Instructor';
 
           return CourseInstructorInfoScreen(
             instructorId: instructorId,
@@ -337,6 +368,7 @@ class AppRouter {
                 : name,
             courseId: courseId,
             sectionId: sectionId,
+            staffRoleLabel: roleLabel,
           );
         },
       ),

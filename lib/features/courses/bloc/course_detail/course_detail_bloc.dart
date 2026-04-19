@@ -83,7 +83,10 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         isLoadingPrerequisites: false,
         isLoadingAnnouncements:
             event.courseId != null && _communicationService != null,
-        isLoadingStaff: event.sectionId != null && _enrollmentService != null,
+        isLoadingStaff:
+            event.sectionId != null &&
+            event.sectionId! > 0 &&
+            _enrollmentService != null,
         usedAssignmentsMaterialsFallback: false,
         usedLabsMaterialsFallback: false,
         prerequisites: event.prerequisites ?? const <EnrollmentPrerequisite>[],
@@ -724,24 +727,62 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
       final instructorsResult = await _enrollmentService.getSectionInstructors(
         sectionId,
       );
-      if (!instructorsResult.isSuccess) {
-        throw Exception(
-          instructorsResult.error?.message ?? 'Failed to load instructors',
-        );
+      final tasResult = await _enrollmentService.getSectionTAs(sectionId);
+
+      final parsedSectionId = _parsePositiveInt(sectionId);
+
+      List<InstructorAssignmentModel> resolvedInstructors;
+      if (instructorsResult.isSuccess) {
+        resolvedInstructors =
+            instructorsResult.data ?? const <InstructorAssignmentModel>[];
+      } else {
+        resolvedInstructors = parsedSectionId == null
+            ? const <InstructorAssignmentModel>[]
+            : state.instructors
+                  .where((item) => item.sectionId == parsedSectionId)
+                  .toList(growable: false);
       }
 
-      final tasResult = await _enrollmentService.getSectionTAs(sectionId);
-      if (!tasResult.isSuccess) {
-        throw Exception(tasResult.error?.message ?? 'Failed to load TAs');
+      List<TAAssignmentModel> resolvedTeachingAssistants;
+      if (tasResult.isSuccess) {
+        resolvedTeachingAssistants =
+            tasResult.data ?? const <TAAssignmentModel>[];
+      } else {
+        resolvedTeachingAssistants = parsedSectionId == null
+            ? const <TAAssignmentModel>[]
+            : state.teachingAssistants
+                  .where((item) => item.sectionId == parsedSectionId)
+                  .toList(growable: false);
       }
+
+      final hasAnySuccess = instructorsResult.isSuccess || tasResult.isSuccess;
+      if (hasAnySuccess) {
+        emit(
+          state.copyWith(
+            instructors: resolvedInstructors,
+            teachingAssistants: resolvedTeachingAssistants,
+            isLoadingStaff: false,
+            clearError: true,
+          ),
+        );
+        return;
+      }
+
+      final messages = <String>[
+        if (instructorsResult.error?.message != null &&
+            instructorsResult.error!.message.trim().isNotEmpty)
+          instructorsResult.error!.message.trim(),
+        if (tasResult.error?.message != null &&
+            tasResult.error!.message.trim().isNotEmpty)
+          tasResult.error!.message.trim(),
+      ];
 
       emit(
         state.copyWith(
-          instructors:
-              instructorsResult.data ?? const <InstructorAssignmentModel>[],
-          teachingAssistants: tasResult.data ?? const <TAAssignmentModel>[],
           isLoadingStaff: false,
-          clearError: true,
+          error: messages.isEmpty
+              ? 'Failed to load section staff'
+              : messages.join(' | '),
         ),
       );
     } catch (e) {

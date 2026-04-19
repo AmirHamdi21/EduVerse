@@ -6,6 +6,7 @@ import '../../models/assignments/assignment_submission_model.dart';
 enum AssignmentFilterStatus { all, submitted, pending, overdue }
 
 class AssignmentState extends Equatable {
+  final int? selectedCourseId;
   final List<AssignmentModel> assignments;
   final AssignmentModel? selectedAssignment;
   final AssignmentSubmissionModel? mySubmission;
@@ -22,6 +23,7 @@ class AssignmentState extends Equatable {
   final int overdueCount;
 
   const AssignmentState({
+    this.selectedCourseId,
     this.assignments = const <AssignmentModel>[],
     this.selectedAssignment,
     this.mySubmission,
@@ -39,6 +41,7 @@ class AssignmentState extends Equatable {
   });
 
   AssignmentState copyWith({
+    int? selectedCourseId,
     List<AssignmentModel>? assignments,
     AssignmentModel? selectedAssignment,
     AssignmentSubmissionModel? mySubmission,
@@ -57,8 +60,12 @@ class AssignmentState extends Equatable {
     bool clearSubmitError = false,
     bool clearSelectedAssignment = false,
     bool clearSubmission = false,
+    bool clearSelectedCourseId = false,
   }) {
     return AssignmentState(
+      selectedCourseId: clearSelectedCourseId
+          ? null
+          : (selectedCourseId ?? this.selectedCourseId),
       assignments: assignments ?? this.assignments,
       selectedAssignment: clearSelectedAssignment
           ? null
@@ -125,6 +132,7 @@ class AssignmentState extends Equatable {
 
   @override
   List<Object?> get props => <Object?>[
+    selectedCourseId,
     assignments,
     selectedAssignment,
     mySubmission,

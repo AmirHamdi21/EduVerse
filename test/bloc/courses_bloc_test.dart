@@ -81,7 +81,6 @@ CoursesBloc _buildBloc(Map<String, dynamic> Function(RequestOptions) handler) {
   );
 }
 
-@Timeout(Duration(seconds: 30))
 void main() {
   // Initialize SharedPreferences with empty values for tests.
   setUp(() {
@@ -321,13 +320,18 @@ void main() {
               'cachedData length',
               greaterThan(0),
             ),
-            isA<CoursesLoaded>(),
+            isA<CoursesLoaded>().having(
+              (state) => state.isCachedFallback,
+              'isCachedFallback',
+              isTrue,
+            ),
           ]),
         );
 
         final loaded = bloc.state as CoursesLoaded;
         expect(loaded.enrollments.length, 1);
         expect(loaded.enrollments.first.course?.courseCode, 'CS101');
+        expect(loaded.isCachedFallback, isTrue);
 
         await bloc.close();
       },

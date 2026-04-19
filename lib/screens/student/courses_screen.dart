@@ -180,7 +180,7 @@ class _CoursesScreenState extends State<CoursesScreen> {
                 );
               }
 
-              if (state is CoursesLoading && state.cachedData.isNotEmpty) {
+              if (state is CoursesLoaded && state.isCachedFallback) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Row(

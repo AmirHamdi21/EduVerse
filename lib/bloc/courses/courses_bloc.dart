@@ -94,9 +94,16 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   ) async {
     _lastRequestedSemester = event.semester;
 
+    final currentlyVisible = state is CoursesLoaded
+        ? (state as CoursesLoaded).enrollments
+        : const <CourseEnrollmentModel>[];
+
     // Load cached data first for offline resilience
     final cached = await _loadCachedEnrollments();
-    emit(CoursesLoading(cachedData: cached));
+    final cachedForLoading = currentlyVisible.isNotEmpty
+        ? currentlyVisible
+        : cached;
+    emit(CoursesLoading(cachedData: cachedForLoading));
 
     try {
       final enrollmentsResult = await _enrollmentService.getMyEnrollments(
@@ -123,8 +130,13 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
         return;
       }
 
-      if (cached.isNotEmpty) {
-        emit(CoursesLoaded(enrollments: cached));
+      if (cachedForLoading.isNotEmpty) {
+        emit(
+          CoursesLoaded(
+            enrollments: cachedForLoading.cast<CourseEnrollmentModel>(),
+            isCachedFallback: true,
+          ),
+        );
         return;
       }
 
@@ -147,8 +159,13 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
         return;
       }
 
-      if (cached.isNotEmpty) {
-        emit(CoursesLoaded(enrollments: cached));
+      if (cachedForLoading.isNotEmpty) {
+        emit(
+          CoursesLoaded(
+            enrollments: cachedForLoading.cast<CourseEnrollmentModel>(),
+            isCachedFallback: true,
+          ),
+        );
       } else {
         emit(CoursesError(message: _sanitizeError(e)));
       }

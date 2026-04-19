@@ -5,8 +5,18 @@ import 'package:intl/intl.dart';
 class LabCard extends StatefulWidget {
   final Lab lab;
   final bool isDark;
+  final VoidCallback? onViewSubmissionTap;
+  final VoidCallback? onSubmitWorkTap;
+  final VoidCallback? onResourcesTap;
 
-  const LabCard({super.key, required this.lab, required this.isDark});
+  const LabCard({
+    super.key,
+    required this.lab,
+    required this.isDark,
+    this.onViewSubmissionTap,
+    this.onSubmitWorkTap,
+    this.onResourcesTap,
+  });
 
   @override
   State<LabCard> createState() => _LabCardState();
@@ -242,7 +252,7 @@ class _LabCardState extends State<LabCard> with TickerProviderStateMixin {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {},
+                                onTap: widget.onViewSubmissionTap,
                                 borderRadius: BorderRadius.circular(14),
                                 child: Center(
                                   child: Text(
@@ -278,7 +288,7 @@ class _LabCardState extends State<LabCard> with TickerProviderStateMixin {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {},
+                                onTap: widget.onResourcesTap,
                                 borderRadius: BorderRadius.circular(14),
                                 child: Center(
                                   child: Text(
@@ -312,7 +322,7 @@ class _LabCardState extends State<LabCard> with TickerProviderStateMixin {
                                 BoxShadow(
                                   color: const Color(
                                     0xFF155DFC,
-                                  ).withOpacity(0.3),
+                                  ).withValues(alpha: 0.3),
                                   blurRadius: 8,
                                   offset: const Offset(0, 2),
                                 ),
@@ -321,7 +331,7 @@ class _LabCardState extends State<LabCard> with TickerProviderStateMixin {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {},
+                                onTap: widget.onSubmitWorkTap,
                                 borderRadius: BorderRadius.circular(14),
                                 child: Center(
                                   child: Row(
@@ -364,7 +374,7 @@ class _LabCardState extends State<LabCard> with TickerProviderStateMixin {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {},
+                                onTap: widget.onResourcesTap,
                                 borderRadius: BorderRadius.circular(14),
                                 child: Center(
                                   child: Text(
@@ -396,7 +406,7 @@ class _LabCardState extends State<LabCard> with TickerProviderStateMixin {
                                 BoxShadow(
                                   color: const Color(
                                     0xFF155DFC,
-                                  ).withOpacity(0.3),
+                                  ).withValues(alpha: 0.3),
                                   blurRadius: 8,
                                   offset: const Offset(0, 2),
                                 ),
@@ -405,7 +415,7 @@ class _LabCardState extends State<LabCard> with TickerProviderStateMixin {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {},
+                                onTap: widget.onSubmitWorkTap,
                                 borderRadius: BorderRadius.circular(14),
                                 child: Center(
                                   child: Row(
@@ -448,7 +458,7 @@ class _LabCardState extends State<LabCard> with TickerProviderStateMixin {
                             child: Material(
                               color: Colors.transparent,
                               child: InkWell(
-                                onTap: () {},
+                                onTap: widget.onResourcesTap,
                                 borderRadius: BorderRadius.circular(14),
                                 child: Center(
                                   child: Text(

@@ -229,9 +229,13 @@ class _FakeCommunicationService extends CommunicationService {
 class _FakeEnrollmentService extends EnrollmentService {
   final List<InstructorAssignmentModel> instructors;
   final List<TAAssignmentModel> tas;
+  final bool failTAs;
 
-  _FakeEnrollmentService({required this.instructors, required this.tas})
-    : super(coreApiClient: CoreApiClient.test());
+  _FakeEnrollmentService({
+    required this.instructors,
+    required this.tas,
+    this.failTAs = false,
+  }) : super(coreApiClient: CoreApiClient.test());
 
   @override
   Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
@@ -244,6 +248,15 @@ class _FakeEnrollmentService extends EnrollmentService {
   Future<ServiceResult<List<TAAssignmentModel>>> getSectionTAs(
     dynamic sectionId,
   ) async {
+    if (failTAs) {
+      return ServiceResult<List<TAAssignmentModel>>.failure(
+        const ServiceError(
+          type: ServiceErrorType.server,
+          message: 'tas endpoint failed',
+        ),
+      );
+    }
+
     return ServiceResult<List<TAAssignmentModel>>.success(tas);
   }
 }
@@ -488,6 +501,77 @@ void main() {
         expect(bloc.state.announcements.length, 1);
         expect(bloc.state.instructors.length, 1);
         expect(bloc.state.teachingAssistants.length, 1);
+
+        await bloc.close();
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
+
+    test(
+      'keeps instructor data when TA fetch fails for section staff',
+      () async {
+        final bloc = CourseDetailBloc(
+          courseService: _FakeCourseService(
+            structure: const <CourseStructureModel>[],
+          ),
+          materialService: _FakeMaterialService(
+            materials: const <CourseMaterialModel>[],
+          ),
+          enrollmentService: _FakeEnrollmentService(
+            instructors: const <InstructorAssignmentModel>[
+              InstructorAssignmentModel(
+                id: 1,
+                sectionId: 2,
+                userId: 7,
+                role: 'primary',
+                firstName: 'Lina',
+                lastName: 'Ali',
+                email: 'lina@eduverse.test',
+              ),
+            ],
+            tas: const <TAAssignmentModel>[],
+            failTAs: true,
+          ),
+        );
+
+        bloc.add(const LoadSectionStaff(sectionId: 2));
+        await _flush();
+        await _flush();
+
+        expect(bloc.state.instructors.length, 1);
+        expect(bloc.state.instructors.first.userId, 7);
+        expect(bloc.state.teachingAssistants, isEmpty);
+        expect(bloc.state.isLoadingStaff, isFalse);
+        expect(bloc.state.error, isNull);
+
+        await bloc.close();
+      },
+      timeout: const Timeout(Duration(seconds: 20)),
+    );
+
+    test(
+      'does not keep staff loading when sectionId is non-positive',
+      () async {
+        final bloc = CourseDetailBloc(
+          courseService: _FakeCourseService(
+            structure: const <CourseStructureModel>[],
+          ),
+          materialService: _FakeMaterialService(
+            materials: const <CourseMaterialModel>[],
+          ),
+          enrollmentService: _FakeEnrollmentService(
+            instructors: const <InstructorAssignmentModel>[],
+            tas: const <TAAssignmentModel>[],
+          ),
+        );
+
+        bloc.add(const LoadCourseDetail(courseId: 1, sectionId: 0));
+        await _flush();
+        await _flush();
+
+        expect(bloc.state.isLoadingStaff, isFalse);
+        expect(bloc.state.instructors, isEmpty);
+        expect(bloc.state.teachingAssistants, isEmpty);
 
         await bloc.close();
       },

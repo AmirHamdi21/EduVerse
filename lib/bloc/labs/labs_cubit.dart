@@ -23,7 +23,7 @@ class LabsCubit extends Cubit<LabsState> {
   EnrollmentService get enrollmentService => _enrollmentService;
   LabService get labService => _labService;
 
-  Future<void> loadEnrolledCourses() async {
+  Future<void> loadEnrolledCourses({int? preselectedCourseId}) async {
     emit(state.copyWith(isLoading: true, clearError: true));
 
     final result = await _enrollmentService.getMyCourses();
@@ -52,7 +52,10 @@ class LabsCubit extends Cubit<LabsState> {
       return;
     }
 
-    final selectedCourseId = _resolveSelectedCourseId(courses);
+    final selectedCourseId = _resolveSelectedCourseId(
+      courses,
+      preselectedCourseId: preselectedCourseId,
+    );
     final selectedCourse = courses.firstWhere(
       (course) => course.id == selectedCourseId,
     );
@@ -151,7 +154,15 @@ class LabsCubit extends Cubit<LabsState> {
     emit(state.copyWith(clearError: true));
   }
 
-  int _resolveSelectedCourseId(List<CourseModel> courses) {
+  int _resolveSelectedCourseId(
+    List<CourseModel> courses, {
+    int? preselectedCourseId,
+  }) {
+    if (preselectedCourseId != null &&
+        courses.any((course) => course.id == preselectedCourseId)) {
+      return preselectedCourseId;
+    }
+
     final current = state.selectedCourseId;
     if (current != null && courses.any((course) => course.id == current)) {
       return current;

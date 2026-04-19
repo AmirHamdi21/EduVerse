@@ -326,5 +326,37 @@ void main() {
         ]);
       },
     );
+
+    test('getSectionInstructors parses singular object payloads', () async {
+      final EnrollmentService service = _buildService((RequestOptions options) {
+        if (options.path == '/enrollments/sections/9/instructors') {
+          return <String, dynamic>{
+            'statusCode': 200,
+            'data': <String, dynamic>{
+              'id': 6,
+              'sectionId': 9,
+              'userId': 44,
+              'role': 'primary',
+              'firstName': 'Laila',
+              'lastName': 'Hassan',
+              'email': 'laila@eduverse.test',
+            },
+          };
+        }
+
+        return <String, dynamic>{
+          'statusCode': 404,
+          'data': <String, dynamic>{},
+        };
+      });
+
+      final result = await service.getSectionInstructors(9);
+
+      expect(result.isSuccess, isTrue);
+      expect(result.data, isNotNull);
+      expect(result.data!.length, 1);
+      expect(result.data!.first.userId, 44);
+      expect(result.data!.first.fullName, 'Laila Hassan');
+    });
   });
 }

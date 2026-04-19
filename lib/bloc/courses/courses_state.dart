@@ -25,24 +25,36 @@ class CoursesLoading extends CoursesState {
   /// Previously loaded data shown while new data loads (offline resilience).
   final List<dynamic> cachedData;
 
-  const CoursesLoading({this.cachedData = const []});
+  /// Indicates the loading state is specifically from offline cached fallback.
+  final bool isOfflineFallback;
+
+  const CoursesLoading({
+    this.cachedData = const [],
+    this.isOfflineFallback = false,
+  });
 
   @override
-  List<Object?> get props => [cachedData];
+  List<Object?> get props => [cachedData, isOfflineFallback];
 }
 
 /// Successfully loaded enrolled courses (Student view).
 class CoursesLoaded extends CoursesState {
   final List<CourseEnrollmentModel> enrollments;
 
-  const CoursesLoaded({required this.enrollments});
+  /// True when data is shown as an offline cached fallback.
+  final bool isCachedFallback;
+
+  const CoursesLoaded({
+    required this.enrollments,
+    this.isCachedFallback = false,
+  });
 
   /// Convenience getter for the course objects.
   List<CourseModel> get courses =>
       enrollments.where((e) => e.course != null).map((e) => e.course!).toList();
 
   @override
-  List<Object?> get props => [enrollments];
+  List<Object?> get props => [enrollments, isCachedFallback];
 }
 
 /// Successfully loaded all courses (Catalog view).

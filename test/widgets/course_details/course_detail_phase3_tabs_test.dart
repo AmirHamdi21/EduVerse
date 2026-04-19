@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:edu_verse/common/service_error.dart';
 import 'package:edu_verse/features/courses/bloc/course_detail/course_detail_bloc.dart';
@@ -171,6 +172,148 @@ Future<void> _pumpFrames(WidgetTester tester, {int cycles = 8}) async {
 }
 
 void main() {
+  testWidgets(
+    'AssignmentsTabContent card taps navigate to assignments with course prefilter',
+    (tester) async {
+      final bloc = CourseDetailBloc(
+        courseService: _FakeCourseService(),
+        materialService: _FakeMaterialService(),
+        assignmentService: _FakeAssignmentService(
+          assignments: <AssignmentModel>[
+            AssignmentModel(
+              id: '99',
+              assignmentId: 99,
+              courseId: 1,
+              title: 'Navigation Assignment',
+              description: 'Navigate from card action',
+              courseName: 'Algorithms',
+              courseCode: 'CS201',
+              instructorName: 'Dr. Lina',
+              type: AssignmentType.document,
+              status: AssignmentStatus.pending,
+              priority: AssignmentPriority.medium,
+              dueDate: DateTime(2026, 4, 28),
+              maxGrade: 100,
+              createdAt: DateTime(2026, 4, 1),
+            ),
+          ],
+        ),
+      );
+
+      Map<String, dynamic>? capturedPayload;
+
+      final router = GoRouter(
+        initialLocation: '/details',
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/details',
+            builder: (context, state) {
+              return BlocProvider<CourseDetailBloc>.value(
+                value: bloc,
+                child: const Scaffold(
+                  body: AssignmentsTabContent(isDark: false, courseId: 1),
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/assignments',
+            builder: (context, state) {
+              capturedPayload = (state.extra as Map<dynamic, dynamic>?)
+                  ?.cast<String, dynamic>();
+              return const Scaffold(
+                body: Center(child: Text('Assignments Route Hit')),
+              );
+            },
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      bloc.add(const LoadAssignments(courseId: 1));
+      await _pumpFrames(tester, cycles: 12);
+
+      await tester.tap(find.text('View').first);
+      await _pumpFrames(tester, cycles: 8);
+
+      expect(find.text('Assignments Route Hit'), findsOneWidget);
+      expect(capturedPayload, isNotNull);
+      expect(capturedPayload!['courseId'], 1);
+
+      bloc.close();
+    },
+    timeout: const Timeout(Duration(seconds: 20)),
+  );
+
+  testWidgets(
+    'LabsTabContent card taps navigate to labs with course prefilter',
+    (tester) async {
+      final bloc = CourseDetailBloc(
+        courseService: _FakeCourseService(),
+        materialService: _FakeMaterialService(),
+        labService: _FakeLabService(
+          labs: <LabModel>[
+            LabModel(
+              id: '77',
+              labId: 77,
+              courseId: 1,
+              title: 'Navigation Lab',
+              description: 'Navigate from card action',
+              dueDate: DateTime(2026, 4, 30),
+              maxScore: 50,
+              createdAt: DateTime(2026, 4, 1),
+            ),
+          ],
+        ),
+      );
+
+      Map<String, dynamic>? capturedPayload;
+
+      final router = GoRouter(
+        initialLocation: '/details',
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/details',
+            builder: (context, state) {
+              return BlocProvider<CourseDetailBloc>.value(
+                value: bloc,
+                child: const Scaffold(
+                  body: LabsTabContent(isDark: false, courseId: 1),
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/labs',
+            builder: (context, state) {
+              capturedPayload = (state.extra as Map<dynamic, dynamic>?)
+                  ?.cast<String, dynamic>();
+              return const Scaffold(
+                body: Center(child: Text('Labs Route Hit')),
+              );
+            },
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      bloc.add(const LoadLabs(courseId: 1));
+      await _pumpFrames(tester, cycles: 12);
+
+      await tester.tap(find.text('Submit Work').first);
+      await _pumpFrames(tester, cycles: 8);
+
+      expect(find.text('Labs Route Hit'), findsOneWidget);
+      expect(capturedPayload, isNotNull);
+      expect(capturedPayload!['courseId'], 1);
+
+      bloc.close();
+    },
+    timeout: const Timeout(Duration(seconds: 20)),
+  );
+
   testWidgets(
     'LabsTabContent renders live lab data from CourseDetailBloc',
     (tester) async {

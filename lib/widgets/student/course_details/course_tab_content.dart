@@ -2,17 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../bloc/courses/courses_bloc.dart';
 import '../../../features/courses/bloc/course_detail/course_detail_bloc.dart';
 import '../../../features/courses/bloc/course_detail/course_detail_event.dart';
 import '../../../features/courses/bloc/course_detail/course_detail_state.dart';
-import '../../../features/courses/bloc/material_viewer/material_viewer_bloc.dart';
+import '../../../models/instructor/instructor_course_model.dart';
 import '../../../models/core/course_structure_model.dart';
 import '../../../models/materials/course_material_model.dart';
 import '../../../models/materials/material_bundle_model.dart';
+import '../../../screens/instructor/materials/material_preview_screen.dart';
+import '../../../screens/instructor/video/instructor_video_player_screen.dart';
 import '../courses/course_model.dart';
-import 'document_preview_widget.dart';
-import 'video_player_widget.dart';
 import 'week_accordion.dart';
 
 class CourseTabContent extends StatefulWidget {
@@ -89,74 +88,91 @@ class _CourseTabContentState extends State<CourseTabContent> {
     );
   }
 
-  dynamic _resolveCourseId(CourseMaterialModel material) {
-    final widgetCourseId = widget.course.courseId;
-    if (widgetCourseId != null) {
-      return widgetCourseId;
-    }
+  Future<void> _openMaterial(CourseMaterialModel material) async {
+    final type = material.materialType.toLowerCase().trim();
 
-    return int.tryParse(material.courseId) ?? material.courseId;
-  }
+    if (type == 'video') {
+      final videoId = material.youtubeVideoId;
+      if (videoId == null || videoId.isEmpty) {
+        if (!mounted) {
+          return;
+        }
 
-  Future<void> _showMaterialBottomSheet(
-    CourseMaterialModel material,
-    Widget Function(dynamic courseId) contentBuilder,
-  ) async {
-    final courseId = _resolveCourseId(material);
-    final coursesBloc = context.read<CoursesBloc>();
-
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return BlocProvider(
-          create: (_) =>
-              MaterialViewerBloc(materialService: coursesBloc.materialService),
-          child: Container(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.92,
-            ),
-            decoration: BoxDecoration(
-              color: widget.isDark
-                  ? const Color(0xFF0F172A)
-                  : const Color(0xFFFFFFFF),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
-              child: SingleChildScrollView(child: contentBuilder(courseId)),
-            ),
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('No video ID available for this material.'),
           ),
         );
-      },
-    );
-  }
+        return;
+      }
 
-  Future<void> _openMaterial(CourseMaterialModel material) async {
-    final type = material.materialType.toLowerCase();
-
-    if (type == 'video' || type == 'lecture') {
-      await _showMaterialBottomSheet(
-        material,
-        (courseId) => VideoPlayerWidget(courseId: courseId, material: material),
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => InstructorVideoPlayerScreen(
+            videoId: videoId,
+            courseName: widget.course.title,
+            videoTitle: material.title,
+          ),
+        ),
       );
       return;
     }
 
-    if (type == 'document' || type == 'slide') {
-      await _showMaterialBottomSheet(
-        material,
-        (courseId) =>
-            DocumentPreviewWidget(courseId: courseId, material: material),
+    final materialModel = _toMaterialModel(material);
+    if (materialModel.fileUrl.trim().isNotEmpty) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => MaterialPreviewScreen(material: materialModel),
+        ),
       );
       return;
     }
 
     await _openExternalMaterial(material);
+  }
+
+  MaterialModel _toMaterialModel(CourseMaterialModel courseMaterial) {
+    String fileUrl = '';
+    final driveFile = courseMaterial.file;
+
+    if (driveFile != null) {
+      fileUrl =
+          driveFile.webViewLink ??
+          driveFile.iframeUrl ??
+          driveFile.downloadUrl ??
+          '';
+    }
+
+    if (fileUrl.isEmpty && courseMaterial.externalUrl?.isNotEmpty == true) {
+      fileUrl = courseMaterial.externalUrl!;
+    }
+
+    if (fileUrl.isEmpty && courseMaterial.url?.isNotEmpty == true) {
+      fileUrl = courseMaterial.url!;
+    }
+
+    return MaterialModel(
+      id: courseMaterial.materialId,
+      title: courseMaterial.title,
+      type: courseMaterial.materialType,
+      fileSize: _formatBytes(courseMaterial.file?.fileSize),
+      fileUrl: fileUrl,
+      isPublished: courseMaterial.isPublished,
+      uploadedAt: courseMaterial.createdAt,
+    );
+  }
+
+  String _formatBytes(int? bytes) {
+    if (bytes == null || bytes <= 0) {
+      return '';
+    }
+    if (bytes < 1024) {
+      return '$bytes B';
+    }
+    if (bytes < 1024 * 1024) {
+      return '${(bytes / 1024).toStringAsFixed(1)} KB';
+    }
+    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 
   Future<void> _openExternalMaterial(CourseMaterialModel material) async {
@@ -203,6 +219,120 @@ class _CourseTabContentState extends State<CourseTabContent> {
     }
   }
 
+  Map<int, List<CourseMaterialModel>> _groupMaterialsByWeek(
+    List<CourseMaterialModel> materials,
+  ) {
+    final grouped = <int, List<CourseMaterialModel>>{};
+    for (final material in materials) {
+      final weekNumber = material.weekNumber ?? 0;
+      grouped
+          .putIfAbsent(weekNumber, () => <CourseMaterialModel>[])
+          .add(material);
+    }
+
+    for (final entry in grouped.entries) {
+      entry.value.sort((a, b) {
+        final orderCompare = (a.orderIndex ?? 0).compareTo(b.orderIndex ?? 0);
+        if (orderCompare != 0) {
+          return orderCompare;
+        }
+
+        return a.createdAt.compareTo(b.createdAt);
+      });
+    }
+
+    return grouped;
+  }
+
+  List<CourseMaterialModel> _flattenStructureMappedMaterials(
+    List<CourseStructureModel> structure,
+    Map<String, CourseMaterialModel> materialMap,
+  ) {
+    return structure
+        .map((item) => _materialFromStructure(item, materialMap))
+        .toList(growable: false);
+  }
+
+  List<CourseMaterialModel> _materialsNotInStructure({
+    required List<CourseMaterialModel> allMaterials,
+    required List<CourseMaterialModel> structureMaterials,
+  }) {
+    if (allMaterials.isEmpty) {
+      return const <CourseMaterialModel>[];
+    }
+
+    final inStructureIds = structureMaterials
+        .map((item) => item.materialId)
+        .toSet();
+
+    return allMaterials
+        .where((item) => !inStructureIds.contains(item.materialId))
+        .toList(growable: false);
+  }
+
+  Widget _buildWeeksFromMaterials(List<CourseMaterialModel> materials) {
+    if (materials.isEmpty) {
+      return Text(
+        'No course materials are available yet.',
+        style: TextStyle(
+          color: widget.isDark ? Colors.white60 : const Color(0xFF667085),
+          fontSize: 13,
+        ),
+      );
+    }
+
+    final grouped = _groupMaterialsByWeek(materials);
+    final weeks = grouped.keys.toList()..sort();
+
+    return Column(
+      children: List<Widget>.generate(weeks.length, (index) {
+        final weekNumber = weeks[index];
+        final weekMaterials = grouped[weekNumber] ?? <CourseMaterialModel>[];
+        final bundles = MaterialBundleModel.detectBundles(
+          weekMaterials,
+        ).values.toList();
+
+        return WeekAccordion(
+          weekNumber: weekNumber,
+          title: null,
+          materials: weekMaterials,
+          bundles: bundles,
+          isDark: widget.isDark,
+          initiallyExpanded:
+              index == 0 || _manuallyExpandedWeeks.contains(weekNumber),
+          onExpandedChanged: (expanded) {
+            setState(() {
+              if (expanded) {
+                _manuallyExpandedWeeks.add(weekNumber);
+                _loadingWeeks.add(weekNumber);
+              } else {
+                _manuallyExpandedWeeks.remove(weekNumber);
+                _loadingWeeks.remove(weekNumber);
+              }
+            });
+
+            if (expanded && widget.course.courseId != null) {
+              context.read<CourseDetailBloc>().add(
+                ExpandWeek(weekIndex: weekNumber),
+              );
+              context.read<CourseDetailBloc>().add(
+                LoadMaterials(
+                  courseId: widget.course.courseId!,
+                  weekNumber: weekNumber,
+                ),
+              );
+              _clearWeekLoading(weekNumber);
+            } else {
+              setState(() => _loadingWeeks.remove(weekNumber));
+            }
+          },
+          onMaterialTap: _openMaterial,
+          isLoading: _loadingWeeks.contains(weekNumber),
+        );
+      }),
+    );
+  }
+
   Widget _buildLoadingSkeleton() {
     return Column(
       children: List<Widget>.generate(
@@ -225,11 +355,15 @@ class _CourseTabContentState extends State<CourseTabContent> {
   Widget build(BuildContext context) {
     return BlocBuilder<CourseDetailBloc, CourseDetailState>(
       builder: (context, state) {
-        if (state.isLoadingStructure && state.structure.isEmpty) {
+        if (state.isLoadingStructure &&
+            state.structure.isEmpty &&
+            state.materials.isEmpty) {
           return _buildLoadingSkeleton();
         }
 
-        if (state.error != null && state.structure.isEmpty) {
+        if (state.error != null &&
+            state.structure.isEmpty &&
+            state.materials.isEmpty) {
           return Column(
             children: [
               Text(
@@ -261,29 +395,63 @@ class _CourseTabContentState extends State<CourseTabContent> {
           );
         }
 
-        if (state.structure.isEmpty) {
-          return Text(
-            'No course materials are available yet.',
-            style: TextStyle(
-              color: widget.isDark ? Colors.white60 : const Color(0xFF667085),
-              fontSize: 13,
-            ),
-          );
-        }
-
-        final grouped = _groupByWeek(state.structure);
-        final weeks = grouped.keys.toList()..sort();
         final materialMap = <String, CourseMaterialModel>{
           for (final material in state.materials) material.materialId: material,
         };
 
+        if (state.structure.isEmpty) {
+          return _buildWeeksFromMaterials(state.materials);
+        }
+
+        final grouped = _groupByWeek(state.structure);
+        final weeks = grouped.keys.toList()..sort();
+
+        final structureMaterials = _flattenStructureMappedMaterials(
+          state.structure,
+          materialMap,
+        );
+        final unmatchedMaterials = _materialsNotInStructure(
+          allMaterials: state.materials,
+          structureMaterials: structureMaterials,
+        );
+        final unmatchedByWeek = _groupMaterialsByWeek(unmatchedMaterials);
+        final allWeekNumbers = <int>{...weeks, ...unmatchedByWeek.keys}.toList()
+          ..sort();
+
         return Column(
-          children: List<Widget>.generate(weeks.length, (index) {
-            final weekNumber = weeks[index];
-            final weekItems = grouped[weekNumber] ?? <CourseStructureModel>[];
-            final materials = weekItems
+          children: List<Widget>.generate(allWeekNumbers.length, (index) {
+            final weekNumber = allWeekNumbers[index];
+            final weekItems =
+                grouped[weekNumber] ?? const <CourseStructureModel>[];
+
+            final structureMappedMaterials = weekItems
                 .map((item) => _materialFromStructure(item, materialMap))
                 .toList();
+
+            final extraMaterials =
+                unmatchedByWeek[weekNumber] ?? const <CourseMaterialModel>[];
+
+            final seenIds = structureMappedMaterials
+                .map((item) => item.materialId)
+                .toSet();
+
+            final materials =
+                <CourseMaterialModel>[
+                  ...structureMappedMaterials,
+                  ...extraMaterials.where(
+                    (item) => !seenIds.contains(item.materialId),
+                  ),
+                ]..sort((a, b) {
+                  final orderCompare = (a.orderIndex ?? 0).compareTo(
+                    b.orderIndex ?? 0,
+                  );
+                  if (orderCompare != 0) {
+                    return orderCompare;
+                  }
+
+                  return a.createdAt.compareTo(b.createdAt);
+                });
+
             final bundles = MaterialBundleModel.detectBundles(
               materials,
             ).values.toList();
