@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
 
+import '../../models/schedule/schedule_models.dart';
+import '../schedule/schedule_item_builder.dart';
+
 // Models
 class CalendarEvent {
   final String id;
@@ -13,6 +16,14 @@ class CalendarEvent {
   final String? description;
   final bool isCompleted;
   final bool hasReminder;
+  final ScheduleItemKind? kind;
+  final int? courseId;
+  final int? eventId;
+  final int? examId;
+  final int? campusEventId;
+  final bool? isMandatory;
+  final bool? registrationRequired;
+  final UnifiedScheduleItem? sourceItem;
 
   const CalendarEvent({
     required this.id,
@@ -26,6 +37,14 @@ class CalendarEvent {
     this.description,
     this.isCompleted = false,
     this.hasReminder = true,
+    this.kind,
+    this.courseId,
+    this.eventId,
+    this.examId,
+    this.campusEventId,
+    this.isMandatory,
+    this.registrationRequired,
+    this.sourceItem,
   });
 
   CalendarEvent copyWith({
@@ -40,6 +59,14 @@ class CalendarEvent {
     String? description,
     bool? isCompleted,
     bool? hasReminder,
+    ScheduleItemKind? kind,
+    int? courseId,
+    int? eventId,
+    int? examId,
+    int? campusEventId,
+    bool? isMandatory,
+    bool? registrationRequired,
+    UnifiedScheduleItem? sourceItem,
   }) {
     return CalendarEvent(
       id: id ?? this.id,
@@ -53,6 +80,14 @@ class CalendarEvent {
       description: description ?? this.description,
       isCompleted: isCompleted ?? this.isCompleted,
       hasReminder: hasReminder ?? this.hasReminder,
+      kind: kind ?? this.kind,
+      courseId: courseId ?? this.courseId,
+      eventId: eventId ?? this.eventId,
+      examId: examId ?? this.examId,
+      campusEventId: campusEventId ?? this.campusEventId,
+      isMandatory: isMandatory ?? this.isMandatory,
+      registrationRequired: registrationRequired ?? this.registrationRequired,
+      sourceItem: sourceItem ?? this.sourceItem,
     );
   }
 }
@@ -135,6 +170,8 @@ class CalendarState extends Equatable {
   final String? error;
   final String? successMessage;
   final List<CalendarEvent> events;
+  final List<UnifiedScheduleItem> unifiedItems;
+  final List<DailyScheduleResponse> rawDays;
   final List<AiReminder> aiReminders;
   final DateTime selectedDate;
   final DateTime focusedMonth;
@@ -142,12 +179,16 @@ class CalendarState extends Equatable {
   final EventFilter filter;
   final bool isFilterVisible;
   final bool isAddEventVisible;
+  final ScheduleItemKind? kindFilter;
+  final String? courseFilter;
 
   const CalendarState({
     this.isLoading = false,
     this.error,
     this.successMessage,
     this.events = const [],
+    this.unifiedItems = const [],
+    this.rawDays = const [],
     this.aiReminders = const [],
     DateTime? selectedDate,
     DateTime? focusedMonth,
@@ -155,12 +196,23 @@ class CalendarState extends Equatable {
     this.filter = const EventFilter(),
     this.isFilterVisible = false,
     this.isAddEventVisible = false,
-  }) : selectedDate = selectedDate ?? const _DefaultDate(),
-       focusedMonth = focusedMonth ?? const _DefaultDate();
+    this.kindFilter,
+    this.courseFilter,
+  }) : selectedDate = selectedDate ?? DateTime.now(),
+       focusedMonth = focusedMonth ?? DateTime.now();
+
+  List<UnifiedScheduleItem> get filteredItems {
+    return ScheduleItemBuilder.filter(
+      unifiedItems,
+      kindFilter: kindFilter,
+      courseFilter: courseFilter,
+    );
+  }
 
   // Get filtered events
   List<CalendarEvent> get filteredEvents {
-    return events.where((event) => filter.isTypeEnabled(event.type)).toList();
+    final source = events.isNotEmpty ? events : _toLegacyEvents(filteredItems);
+    return source.where((event) => filter.isTypeEnabled(event.type)).toList();
   }
 
   // Get events for selected date
@@ -174,12 +226,15 @@ class CalendarState extends Equatable {
 
   // Get upcoming events (next 7 days)
   List<CalendarEvent> get upcomingEvents {
-    final now = DateTime.now();
-    final weekLater = now.add(const Duration(days: 7));
-    return filteredEvents.where((event) {
-      return event.date.isAfter(now.subtract(const Duration(days: 1))) &&
-          event.date.isBefore(weekLater);
-    }).toList()..sort((a, b) => a.date.compareTo(b.date));
+    final upcomingItems = ScheduleItemBuilder.upcoming(filteredItems);
+    return _toLegacyEvents(upcomingItems)
+        .where((event) => filter.isTypeEnabled(event.type))
+        .toList(growable: false)
+      ..sort((a, b) => a.date.compareTo(b.date));
+  }
+
+  List<UnifiedScheduleItem> get upcomingItems {
+    return ScheduleItemBuilder.upcoming(filteredItems);
   }
 
   // Check if date has events
@@ -204,11 +259,20 @@ class CalendarState extends Equatable {
         .toList();
   }
 
+  List<UnifiedScheduleItem> getUnifiedEventsForDate(DateTime date) {
+    final isoDate = toISODate(date);
+    return filteredItems
+        .where((event) => event.date == isoDate)
+        .toList(growable: false);
+  }
+
   CalendarState copyWith({
     bool? isLoading,
     String? error,
     String? successMessage,
     List<CalendarEvent>? events,
+    List<UnifiedScheduleItem>? unifiedItems,
+    List<DailyScheduleResponse>? rawDays,
     List<AiReminder>? aiReminders,
     DateTime? selectedDate,
     DateTime? focusedMonth,
@@ -216,8 +280,12 @@ class CalendarState extends Equatable {
     EventFilter? filter,
     bool? isFilterVisible,
     bool? isAddEventVisible,
+    ScheduleItemKind? kindFilter,
+    String? courseFilter,
     bool clearError = false,
     bool clearSuccess = false,
+    bool clearKindFilter = false,
+    bool clearCourseFilter = false,
   }) {
     return CalendarState(
       isLoading: isLoading ?? this.isLoading,
@@ -226,6 +294,8 @@ class CalendarState extends Equatable {
           ? null
           : (successMessage ?? this.successMessage),
       events: events ?? this.events,
+      unifiedItems: unifiedItems ?? this.unifiedItems,
+      rawDays: rawDays ?? this.rawDays,
       aiReminders: aiReminders ?? this.aiReminders,
       selectedDate: selectedDate ?? this.selectedDate,
       focusedMonth: focusedMonth ?? this.focusedMonth,
@@ -233,6 +303,10 @@ class CalendarState extends Equatable {
       filter: filter ?? this.filter,
       isFilterVisible: isFilterVisible ?? this.isFilterVisible,
       isAddEventVisible: isAddEventVisible ?? this.isAddEventVisible,
+      kindFilter: clearKindFilter ? null : (kindFilter ?? this.kindFilter),
+      courseFilter: clearCourseFilter
+          ? null
+          : (courseFilter ?? this.courseFilter),
     );
   }
 
@@ -242,6 +316,8 @@ class CalendarState extends Equatable {
     error,
     successMessage,
     events,
+    unifiedItems,
+    rawDays,
     aiReminders,
     selectedDate,
     focusedMonth,
@@ -249,64 +325,58 @@ class CalendarState extends Equatable {
     filter,
     isFilterVisible,
     isAddEventVisible,
+    kindFilter,
+    courseFilter,
   ];
-}
 
-// Helper class for default date
-class _DefaultDate implements DateTime {
-  const _DefaultDate();
+  List<CalendarEvent> _toLegacyEvents(List<UnifiedScheduleItem> items) {
+    return items
+        .map((item) {
+          final parsedDate = DateTime.tryParse(item.date);
+          final date = parsedDate == null
+              ? DateTime.now()
+              : DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
 
-  DateTime get _now => DateTime.now();
+          return CalendarEvent(
+            id: item.id,
+            title: item.title,
+            type: _mapKindToEventType(item.kind),
+            date: date,
+            time: item.startTime,
+            endTime: item.endTime,
+            course: item.courseCode,
+            location: item.location,
+            description:
+                item.eventItem?.description ??
+                item.campusEventItem?.description ??
+                item.examItem?.title,
+            kind: item.kind,
+            courseId: item.courseId,
+            eventId: item.eventItem?.eventId,
+            examId: item.examItem?.examId,
+            campusEventId: item.campusEventItem?.eventId,
+            isMandatory: item.isMandatory,
+            registrationRequired: item.registrationRequired,
+            sourceItem: item,
+          );
+        })
+        .toList(growable: false);
+  }
 
-  @override
-  int get year => _now.year;
-  @override
-  int get month => _now.month;
-  @override
-  int get day => _now.day;
-  @override
-  int get hour => _now.hour;
-  @override
-  int get minute => _now.minute;
-  @override
-  int get second => _now.second;
-  @override
-  int get millisecond => _now.millisecond;
-  @override
-  int get microsecond => _now.microsecond;
-  @override
-  int get weekday => _now.weekday;
-  @override
-  bool get isUtc => _now.isUtc;
-  @override
-  String get timeZoneName => _now.timeZoneName;
-  @override
-  Duration get timeZoneOffset => _now.timeZoneOffset;
-  @override
-  int get millisecondsSinceEpoch => _now.millisecondsSinceEpoch;
-  @override
-  int get microsecondsSinceEpoch => _now.microsecondsSinceEpoch;
-
-  @override
-  DateTime add(Duration duration) => _now.add(duration);
-  @override
-  DateTime subtract(Duration duration) => _now.subtract(duration);
-  @override
-  Duration difference(DateTime other) => _now.difference(other);
-  @override
-  bool isAfter(DateTime other) => _now.isAfter(other);
-  @override
-  bool isBefore(DateTime other) => _now.isBefore(other);
-  @override
-  bool isAtSameMomentAs(DateTime other) => _now.isAtSameMomentAs(other);
-  @override
-  int compareTo(DateTime other) => _now.compareTo(other);
-  @override
-  DateTime toLocal() => _now.toLocal();
-  @override
-  DateTime toUtc() => _now.toUtc();
-  @override
-  String toIso8601String() => _now.toIso8601String();
-  @override
-  String toString() => _now.toString();
+  EventType _mapKindToEventType(ScheduleItemKind kind) {
+    switch (kind) {
+      case ScheduleItemKind.classSession:
+        return EventType.lecture;
+      case ScheduleItemKind.exam:
+        return EventType.exam;
+      case ScheduleItemKind.event:
+        return EventType.personalTask;
+      case ScheduleItemKind.campusEvent:
+        return EventType.assignment;
+      case ScheduleItemKind.officeHours:
+        return EventType.lab;
+      case ScheduleItemKind.unknown:
+        return EventType.personalTask;
+    }
+  }
 }

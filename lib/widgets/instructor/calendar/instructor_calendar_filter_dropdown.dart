@@ -9,6 +9,8 @@ class InstructorCalendarFilterDropdown extends StatelessWidget {
   final bool isVisible;
   final VoidCallback onToggle;
   final Function(InstructorEventType) onFilterChanged;
+  final String campusSource;
+  final ValueChanged<String> onCampusSourceChanged;
 
   const InstructorCalendarFilterDropdown({
     super.key,
@@ -16,6 +18,8 @@ class InstructorCalendarFilterDropdown extends StatelessWidget {
     required this.isVisible,
     required this.onToggle,
     required this.onFilterChanged,
+    required this.campusSource,
+    required this.onCampusSourceChanged,
   });
 
   @override
@@ -33,6 +37,8 @@ class InstructorCalendarFilterDropdown extends StatelessWidget {
           if (isVisible) ...[
             const SizedBox(height: 12),
             _buildFilterChips(isDark, l10n),
+            const SizedBox(height: 12),
+            _buildCampusSourceToggle(isDark),
           ],
         ],
       ),
@@ -200,6 +206,99 @@ class InstructorCalendarFilterDropdown extends StatelessWidget {
           ),
         );
       }).toList(),
+    );
+  }
+
+  Widget _buildCampusSourceToggle(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E2939) : Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark ? const Color(0xFF374151) : const Color(0xFFE5E7EB),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildCampusSourceChip(
+              label: 'All Campus Events',
+              icon: Icons.public_rounded,
+              value: 'all',
+              isDark: isDark,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: _buildCampusSourceChip(
+              label: 'My Campus Events',
+              icon: Icons.person_rounded,
+              value: 'my',
+              isDark: isDark,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCampusSourceChip({
+    required String label,
+    required IconData icon,
+    required String value,
+    required bool isDark,
+  }) {
+    final isActive = campusSource == value;
+
+    return GestureDetector(
+      onTap: () => onCampusSourceChanged(value),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        decoration: BoxDecoration(
+          color: isActive
+              ? const Color(0xFF155CFB)
+              : (isDark ? Colors.transparent : const Color(0xFFF8FAFC)),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: isActive
+                ? const Color(0xFF155CFB)
+                : (isDark ? const Color(0xFF475569) : const Color(0xFFDCE2EC)),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isActive
+                  ? Colors.white
+                  : (isDark
+                        ? const Color(0xFFE2E8F0)
+                        : const Color(0xFF334155)),
+            ),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                label,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: isActive
+                      ? Colors.white
+                      : (isDark
+                            ? const Color(0xFFE2E8F0)
+                            : const Color(0xFF334155)),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -15,6 +15,9 @@ import 'package:edu_verse/widgets/student/calendar/upcoming_events_section.dart'
 import 'package:edu_verse/widgets/student/calendar/add_event_sheet.dart';
 import 'package:edu_verse/widgets/student/calendar/event_details_sheet.dart';
 import 'package:edu_verse/widgets/student/calendar/date_events_sheet.dart';
+import 'package:edu_verse/services/api/core_api_client.dart';
+import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/services/api/schedule_api_service.dart';
 
 class CalendarScreen extends StatelessWidget {
   const CalendarScreen({super.key});
@@ -22,7 +25,14 @@ class CalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => CalendarCubit(),
+      create: (_) {
+        final coreApiClient = CoreApiClient(storageService: StorageService());
+        final scheduleApiService = ScheduleApiService(
+          coreApiClient: coreApiClient,
+        );
+
+        return CalendarCubit(scheduleService: scheduleApiService);
+      },
       child: const _CalendarView(),
     );
   }

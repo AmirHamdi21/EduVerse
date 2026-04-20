@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../bloc/theme/theme_bloc.dart';
-import '../../../bloc/theme/theme_state.dart';
-import '../../../generated_l10n/app_localizations.dart';
-import '../../../widgets/ta/shared/ta_colors.dart';
-import '../../../widgets/ta/dashboard/ta_drawer.dart';
+import 'package:edu_verse/bloc/ta/ta_calendar_cubit.dart';
+import 'package:edu_verse/bloc/ta/ta_calendar_state.dart';
+import 'package:edu_verse/bloc/theme/theme_bloc.dart';
+import 'package:edu_verse/bloc/theme/theme_state.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:edu_verse/models/schedule/schedule_models.dart';
+import 'package:edu_verse/services/api/core_api_client.dart';
+import 'package:edu_verse/services/api/office_hours_service.dart';
+import 'package:edu_verse/services/api/schedule_api_service.dart';
+import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/widgets/ta/dashboard/ta_drawer.dart';
+import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
 
 class TACalendarScreen extends StatefulWidget {
   const TACalendarScreen({super.key});
@@ -19,73 +25,20 @@ class TACalendarScreen extends StatefulWidget {
 class _TACalendarScreenState extends State<TACalendarScreen>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-
-  DateTime _selectedDate = DateTime.now();
-  DateTime _focusedMonth = DateTime.now();
-  String _selectedView = 'month'; // month, week, day
-  Set<String> _activeFilters = {'lab', 'grading', 'office_hours', 'meetings'};
-
-  // Mock events data
-  final List<Map<String, dynamic>> _events = [
-    {
-      'id': '1',
-      'title': 'Lab Session - CS201',
-      'date': DateTime.now(),
-      'startTime': '10:00 AM',
-      'endTime': '12:00 PM',
-      'type': 'lab',
-      'location': 'Lab Room 302',
-      'description': 'Introduction to Data Structures lab',
-    },
-    {
-      'id': '2',
-      'title': 'Grade Submissions Due',
-      'date': DateTime.now().add(const Duration(days: 1)),
-      'startTime': '11:59 PM',
-      'endTime': '',
-      'type': 'grading',
-      'description': 'Assignment 3 grading deadline',
-    },
-    {
-      'id': '3',
-      'title': 'Office Hours',
-      'date': DateTime.now().add(const Duration(days: 2)),
-      'startTime': '2:00 PM',
-      'endTime': '4:00 PM',
-      'type': 'office_hours',
-      'location': 'Room 205',
-    },
-    {
-      'id': '4',
-      'title': 'TA Meeting with Prof. Johnson',
-      'date': DateTime.now().add(const Duration(days: 3)),
-      'startTime': '3:00 PM',
-      'endTime': '4:00 PM',
-      'type': 'meetings',
-      'location': 'Conference Room A',
-    },
-    {
-      'id': '5',
-      'title': 'Lab Session - CS301',
-      'date': DateTime.now().add(const Duration(days: 4)),
-      'startTime': '2:00 PM',
-      'endTime': '4:00 PM',
-      'type': 'lab',
-      'location': 'Lab Room 301',
-    },
-  ];
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
+    _fadeAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeOut,
     );
     _animationController.forward();
   }
@@ -100,144 +53,195 @@ class _TACalendarScreenState extends State<TACalendarScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return BlocBuilder<ThemeBloc, ThemeState>(
-      builder: (context, themeState) {
-        final isDark = themeState.themeMode == AppThemeMode.dark;
+    return BlocProvider(
+      create: (_) {
+        final coreApiClient = CoreApiClient(storageService: StorageService());
+        final scheduleApiService = ScheduleApiService(
+          coreApiClient: coreApiClient,
+        );
+        final officeHoursService = OfficeHoursService(
+          coreApiClient: coreApiClient,
+        );
 
-        return Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: TAColors.scaffoldColor(isDark),
-          drawer: const TADrawer(currentRoute: '/ta/calendar'),
-          body: FadeTransition(
-            opacity: _fadeAnimation,
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              slivers: [
-                _buildAppBar(l10n, isDark),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildViewSelector(isDark, l10n),
-                        const SizedBox(height: 16),
-                        _buildFilterChips(isDark, l10n),
-                        const SizedBox(height: 20),
-                        _buildCalendarCard(isDark),
-                        const SizedBox(height: 24),
-                        _buildEventsForDay(isDark, l10n),
-                        const SizedBox(height: 24),
-                        _buildUpcomingEvents(isDark, l10n),
-                        const SizedBox(height: 32),
-                      ],
+        return TACalendarCubit(
+          scheduleService: scheduleApiService,
+          officeHoursService: officeHoursService,
+        );
+      },
+      child: BlocBuilder<ThemeBloc, ThemeState>(
+        builder: (context, themeState) {
+          final isDark = themeState.isDark;
+
+          return BlocConsumer<TACalendarCubit, TACalendarState>(
+            listener: (context, state) {
+              if (state.successMessage != null) {
+                _showSnackBar(state.successMessage!, isDark);
+              }
+              if (state.error != null) {
+                _showSnackBar(state.error!, isDark);
+              }
+            },
+            builder: (context, calendarState) {
+              return Scaffold(
+                key: _scaffoldKey,
+                backgroundColor: TAColors.scaffoldColor(isDark),
+                drawer: const TADrawer(currentRoute: '/ta/calendar'),
+                body: FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Stack(
+                    children: [
+                      CustomScrollView(
+                        physics: const BouncingScrollPhysics(),
+                        slivers: [
+                          _buildAppBar(l10n, isDark),
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildViewSelector(
+                                    isDark,
+                                    l10n,
+                                    calendarState,
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildFilterChips(
+                                    isDark,
+                                    l10n,
+                                    calendarState,
+                                  ),
+                                  const SizedBox(height: 20),
+                                  _buildCalendarCard(isDark, calendarState),
+                                  const SizedBox(height: 24),
+                                  _buildEventsForDay(
+                                    isDark,
+                                    l10n,
+                                    calendarState,
+                                  ),
+                                  const SizedBox(height: 24),
+                                  _buildUpcomingEvents(
+                                    isDark,
+                                    l10n,
+                                    calendarState,
+                                  ),
+                                  const SizedBox(height: 32),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (calendarState.isLoading)
+                        Positioned.fill(
+                          child: Container(
+                            color: Colors.black.withValues(alpha: 0.08),
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                floatingActionButton: FloatingActionButton.extended(
+                  onPressed: () => _showAddEventSheet(isDark, l10n),
+                  backgroundColor: TAColors.primary,
+                  icon: const Icon(Icons.add_rounded, color: Colors.white),
+                  label: Text(
+                    l10n.taCalendarAddEvent,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _showAddEventSheet(isDark, l10n),
-            backgroundColor: TAColors.primary,
-            icon: const Icon(Icons.add_rounded, color: Colors.white),
-            label: Text(
-              l10n.taCalendarAddEvent,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        );
-      },
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
   Widget _buildAppBar(AppLocalizations l10n, bool isDark) {
     return SliverAppBar(
-      backgroundColor: TAColors.primary,
-      expandedHeight: 120,
-      floating: false,
-      pinned: true,
+      expandedHeight: 110,
+      floating: true,
+      pinned: false,
+      snap: true,
+      backgroundColor: TAColors.scaffoldColor(isDark),
+      elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.menu_rounded, color: Colors.white),
+        icon: Icon(
+          Icons.menu_rounded,
+          color: TAColors.textPrimaryColor(isDark),
+        ),
         onPressed: () => _scaffoldKey.currentState?.openDrawer(),
+      ),
+      title: Text(
+        l10n.taCalendarTitle,
+        style: TextStyle(
+          color: TAColors.textPrimaryColor(isDark),
+          fontWeight: FontWeight.bold,
+          fontSize: 24,
+        ),
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.today_rounded, color: Colors.white),
-          onPressed: () => _goToToday(),
+          icon: Icon(
+            Icons.today_rounded,
+            color: TAColors.textPrimaryColor(isDark),
+          ),
+          onPressed: _goToToday,
+          tooltip: l10n.today,
         ),
         IconButton(
-          icon: const Icon(Icons.sync_rounded, color: Colors.white),
+          icon: Icon(
+            Icons.sync_rounded,
+            color: TAColors.textPrimaryColor(isDark),
+          ),
           onPressed: () => _syncCalendar(isDark),
+          tooltip: l10n.sync,
         ),
         const SizedBox(width: 8),
       ],
-      flexibleSpace: FlexibleSpaceBar(
-        title: Text(
-          l10n.calendar,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-        ),
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                TAColors.primary,
-                TAColors.primary.withValues(alpha: 0.8),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                right: -30,
-                bottom: -20,
-                child: Icon(
-                  Icons.calendar_month_rounded,
-                  size: 150,
-                  color: Colors.white.withValues(alpha: 0.1),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
-  Widget _buildViewSelector(bool isDark, AppLocalizations l10n) {
+  Widget _buildViewSelector(
+    bool isDark,
+    AppLocalizations l10n,
+    TACalendarState state,
+  ) {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
-        ),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: TAColors.borderColor(isDark)),
       ),
       child: Row(
         children: [
-          _buildViewTab('month', l10n.month, isDark),
-          _buildViewTab('week', l10n.week, isDark),
-          _buildViewTab('day', l10n.day, isDark),
+          _buildViewTab('month', l10n.month, isDark, state),
+          _buildViewTab('week', l10n.week, isDark, state),
+          _buildViewTab('day', l10n.day, isDark, state),
         ],
       ),
     );
   }
 
-  Widget _buildViewTab(String view, String label, bool isDark) {
-    final isSelected = _selectedView == view;
+  Widget _buildViewTab(
+    String view,
+    String label,
+    bool isDark,
+    TACalendarState state,
+  ) {
+    final isSelected = _viewTypeToString(state.viewType) == view;
+
     return Expanded(
       child: GestureDetector(
-        onTap: () => setState(() => _selectedView = view),
+        onTap: () => context.read<TACalendarCubit>().setView(view),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -262,7 +266,11 @@ class _TACalendarScreenState extends State<TACalendarScreen>
     );
   }
 
-  Widget _buildFilterChips(bool isDark, AppLocalizations l10n) {
+  Widget _buildFilterChips(
+    bool isDark,
+    AppLocalizations l10n,
+    TACalendarState state,
+  ) {
     final filters = [
       {'id': 'lab', 'label': l10n.taLabs, 'color': TAColors.info},
       {
@@ -283,22 +291,16 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       physics: const BouncingScrollPhysics(),
       child: Row(
         children: filters.map((filter) {
-          final isActive = _activeFilters.contains(filter['id']);
+          final isActive = state.activeFilters.contains(filter['id']);
           final color = filter['color'] as Color;
           return Padding(
             padding: const EdgeInsets.only(right: 8),
             child: FilterChip(
               label: Text(filter['label'] as String),
               selected: isActive,
-              onSelected: (selected) {
-                setState(() {
-                  if (selected) {
-                    _activeFilters.add(filter['id'] as String);
-                  } else {
-                    _activeFilters.remove(filter['id']);
-                  }
-                });
-              },
+              onSelected: (_) => context.read<TACalendarCubit>().toggleFilter(
+                filter['id'] as String,
+              ),
               selectedColor: color.withValues(alpha: 0.2),
               checkmarkColor: color,
               labelStyle: TextStyle(
@@ -316,7 +318,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
     );
   }
 
-  Widget _buildCalendarCard(bool isDark) {
+  Widget _buildCalendarCard(bool isDark, TACalendarState state) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -332,30 +334,23 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       ),
       child: Column(
         children: [
-          _buildCalendarHeader(isDark),
+          _buildCalendarHeader(isDark, state),
           const SizedBox(height: 16),
           _buildCalendarWeekDays(isDark),
           const SizedBox(height: 8),
-          _buildCalendarDays(isDark),
+          _buildCalendarDays(isDark, state),
         ],
       ),
     );
   }
 
-  Widget _buildCalendarHeader(bool isDark) {
-    final monthYear = DateFormat('MMMM yyyy').format(_focusedMonth);
+  Widget _buildCalendarHeader(bool isDark, TACalendarState state) {
+    final monthYear = DateFormat('MMMM yyyy').format(state.focusedMonth);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () {
-            setState(() {
-              _focusedMonth = DateTime(
-                _focusedMonth.year,
-                _focusedMonth.month - 1,
-              );
-            });
-          },
+          onPressed: () => context.read<TACalendarCubit>().previousMonth(),
           icon: Icon(
             Icons.chevron_left_rounded,
             color: TAColors.textPrimaryColor(isDark),
@@ -370,14 +365,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
           ),
         ),
         IconButton(
-          onPressed: () {
-            setState(() {
-              _focusedMonth = DateTime(
-                _focusedMonth.year,
-                _focusedMonth.month + 1,
-              );
-            });
-          },
+          onPressed: () => context.read<TACalendarCubit>().nextMonth(),
           icon: Icon(
             Icons.chevron_right_rounded,
             color: TAColors.textPrimaryColor(isDark),
@@ -411,50 +399,51 @@ class _TACalendarScreenState extends State<TACalendarScreen>
     );
   }
 
-  Widget _buildCalendarDays(bool isDark) {
+  Widget _buildCalendarDays(bool isDark, TACalendarState state) {
     final firstDayOfMonth = DateTime(
-      _focusedMonth.year,
-      _focusedMonth.month,
+      state.focusedMonth.year,
+      state.focusedMonth.month,
       1,
     );
     final lastDayOfMonth = DateTime(
-      _focusedMonth.year,
-      _focusedMonth.month + 1,
+      state.focusedMonth.year,
+      state.focusedMonth.month + 1,
       0,
     );
-    final firstWeekday = firstDayOfMonth.weekday % 7;
+
     final daysInMonth = lastDayOfMonth.day;
+    final firstWeekday = firstDayOfMonth.weekday % 7;
 
-    List<Widget> dayWidgets = [];
+    final dayWidgets = <Widget>[];
 
-    // Empty slots before first day
     for (int i = 0; i < firstWeekday; i++) {
       dayWidgets.add(const SizedBox(width: 40, height: 40));
     }
 
-    // Days of month
     for (int day = 1; day <= daysInMonth; day++) {
-      final date = DateTime(_focusedMonth.year, _focusedMonth.month, day);
-      final isSelected = _isSameDay(date, _selectedDate);
+      final date = DateTime(
+        state.focusedMonth.year,
+        state.focusedMonth.month,
+        day,
+      );
+      final isSelected = _isSameDay(date, state.selectedDate);
       final isToday = _isSameDay(date, DateTime.now());
-      final hasEvents = _getEventsForDay(date).isNotEmpty;
+      final hasEvents = _getEventsForDay(date, state).isNotEmpty;
 
       dayWidgets.add(
         GestureDetector(
-          onTap: () => setState(() => _selectedDate = date),
+          onTap: () => context.read<TACalendarCubit>().selectDate(date),
           child: Container(
             width: 40,
             height: 40,
+            margin: const EdgeInsets.all(2),
             decoration: BoxDecoration(
               color: isSelected
                   ? TAColors.primary
                   : isToday
-                  ? TAColors.primary.withValues(alpha: 0.1)
+                  ? TAColors.primary.withValues(alpha: 0.15)
                   : Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
-              border: isToday && !isSelected
-                  ? Border.all(color: TAColors.primary, width: 1.5)
-                  : null,
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Stack(
               alignment: Alignment.center,
@@ -470,16 +459,17 @@ class _TACalendarScreenState extends State<TACalendarScreen>
                     fontWeight: isSelected || isToday
                         ? FontWeight.w600
                         : FontWeight.w500,
+                    fontSize: 14,
                   ),
                 ),
-                if (hasEvents && !isSelected)
+                if (hasEvents)
                   Positioned(
-                    bottom: 4,
+                    bottom: 6,
                     child: Container(
-                      width: 6,
-                      height: 6,
+                      width: 4,
+                      height: 4,
                       decoration: BoxDecoration(
-                        color: TAColors.primary,
+                        color: isSelected ? Colors.white : TAColors.primary,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -491,17 +481,16 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       );
     }
 
-    return Wrap(
-      spacing: 4,
-      runSpacing: 4,
-      alignment: WrapAlignment.start,
-      children: dayWidgets,
-    );
+    return Wrap(alignment: WrapAlignment.start, children: dayWidgets);
   }
 
-  Widget _buildEventsForDay(bool isDark, AppLocalizations l10n) {
-    final dayEvents = _getEventsForDay(_selectedDate);
-    final formattedDate = DateFormat('EEEE, MMMM d').format(_selectedDate);
+  Widget _buildEventsForDay(
+    bool isDark,
+    AppLocalizations l10n,
+    TACalendarState state,
+  ) {
+    final dayEvents = _getEventsForDay(state.selectedDate, state);
+    final formattedDate = DateFormat('EEEE, MMMM d').format(state.selectedDate);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -509,32 +498,24 @@ class _TACalendarScreenState extends State<TACalendarScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  formattedDate,
+            Text(
+              '${l10n.taCalendarEventsFor} $formattedDate',
+              style: TextStyle(
+                color: TAColors.textPrimaryColor(isDark),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (dayEvents.length > 3)
+              TextButton(
+                onPressed: () => _showDayEventsSheet(dayEvents, isDark, l10n),
+                child: Text(
+                  'View all',
                   style: TextStyle(
-                    color: TAColors.textPrimaryColor(isDark),
-                    fontSize: 18,
+                    color: TAColors.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                Text(
-                  '${dayEvents.length} ${dayEvents.length == 1 ? 'event' : 'events'}',
-                  style: TextStyle(
-                    color: TAColors.textSecondaryColor(isDark),
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-            if (dayEvents.isNotEmpty)
-              TextButton.icon(
-                onPressed: () => _showDayEventsSheet(isDark, l10n),
-                icon: const Icon(Icons.open_in_full_rounded, size: 18),
-                label: Text(l10n.viewAll),
-                style: TextButton.styleFrom(foregroundColor: TAColors.primary),
               ),
           ],
         ),
@@ -542,41 +523,138 @@ class _TACalendarScreenState extends State<TACalendarScreen>
         if (dayEvents.isEmpty)
           _buildNoEventsCard(isDark, l10n)
         else
-          ...dayEvents.map((event) => _buildEventCard(event, isDark)),
+          ...dayEvents
+              .take(3)
+              .map((event) => _buildEventCard(event, isDark, l10n)),
       ],
     );
   }
 
   Widget _buildNoEventsCard(bool isDark, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(32),
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
-        ),
+        border: Border.all(color: TAColors.borderColor(isDark)),
       ),
-      child: Center(
-        child: Column(
-          children: [
-            Icon(
-              Icons.event_available_rounded,
-              size: 48,
-              color: TAColors.textTertiaryColor(isDark),
+      child: Column(
+        children: [
+          Icon(
+            Icons.event_busy_rounded,
+            size: 48,
+            color: TAColors.textTertiaryColor(isDark),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            l10n.taCalendarNoEvents,
+            style: TextStyle(
+              color: TAColors.textSecondaryColor(isDark),
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
             ),
-            const SizedBox(height: 12),
-            Text(
-              l10n.taCalendarNoEvents,
-              style: TextStyle(
-                color: TAColors.textSecondaryColor(isDark),
-                fontSize: 14,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            l10n.taCalendarNoEventsDesc,
+            style: TextStyle(
+              color: TAColors.textTertiaryColor(isDark),
+              fontSize: 13,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEventCard(
+    Map<String, dynamic> event,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    final eventType = event['type'] as String? ?? 'meetings';
+    final color = _getEventColor(eventType);
+
+    return GestureDetector(
+      onTap: () => _showEventDetails(event, isDark, l10n),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: TAColors.cardColor(isDark),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withValues(alpha: 0.25)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(_getEventIcon(eventType), color: color, size: 22),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    event['title'] as String? ?? '',
+                    style: TextStyle(
+                      color: TAColors.textPrimaryColor(isDark),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '${event['startTime']}${(event['endTime'] as String).isNotEmpty ? ' - ${event['endTime']}' : ''}',
+                    style: TextStyle(
+                      color: TAColors.textSecondaryColor(isDark),
+                      fontSize: 13,
+                    ),
+                  ),
+                  if ((event['location'] as String?) != null &&
+                      (event['location'] as String).isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        event['location'] as String,
+                        style: TextStyle(
+                          color: TAColors.textTertiaryColor(isDark),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: () => _showAddEventSheet(isDark, l10n),
-              child: Text(l10n.taCalendarAddEvent),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                _getEventTypeLabel(eventType, l10n),
+                style: TextStyle(
+                  color: color,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         ),
@@ -584,114 +662,14 @@ class _TACalendarScreenState extends State<TACalendarScreen>
     );
   }
 
-  Widget _buildEventCard(Map<String, dynamic> event, bool isDark) {
-    final type = event['type'] as String;
-    final color = _getEventColor(type);
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: TAColors.cardColor(isDark),
-        borderRadius: BorderRadius.circular(16),
-        border: Border(left: BorderSide(color: color, width: 4)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => _showEventDetails(event, isDark),
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(_getEventIcon(type), color: color, size: 24),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        event['title'],
-                        style: TextStyle(
-                          color: TAColors.textPrimaryColor(isDark),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.access_time_rounded,
-                            size: 14,
-                            color: TAColors.textTertiaryColor(isDark),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            event['endTime'].isNotEmpty
-                                ? '${event['startTime']} - ${event['endTime']}'
-                                : event['startTime'],
-                            style: TextStyle(
-                              color: TAColors.textSecondaryColor(isDark),
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                      if (event['location'] != null) ...[
-                        const SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.location_on_outlined,
-                              size: 14,
-                              color: TAColors.textTertiaryColor(isDark),
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              event['location'],
-                              style: TextStyle(
-                                color: TAColors.textTertiaryColor(isDark),
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: TAColors.textTertiaryColor(isDark),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildUpcomingEvents(bool isDark, AppLocalizations l10n) {
-    final upcomingEvents = _events
-        .where((e) => (e['date'] as DateTime).isAfter(DateTime.now()))
-        .take(5)
-        .toList();
+  Widget _buildUpcomingEvents(
+    bool isDark,
+    AppLocalizations l10n,
+    TACalendarState state,
+  ) {
+    final upcomingEvents = state.upcomingItems
+        .map(_eventToMap)
+        .toList(growable: false);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -701,77 +679,99 @@ class _TACalendarScreenState extends State<TACalendarScreen>
           style: TextStyle(
             color: TAColors.textPrimaryColor(isDark),
             fontSize: 18,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.bold,
           ),
         ),
         const SizedBox(height: 12),
-        ...upcomingEvents.map(
-          (event) => _buildUpcomingEventTile(event, isDark),
-        ),
+        if (upcomingEvents.isEmpty)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: TAColors.cardColor(isDark),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: TAColors.borderColor(isDark)),
+            ),
+            child: Text(
+              '${l10n.taCalendarNoUpcoming} ${l10n.taCalendarNoUpcomingDesc}',
+              style: TextStyle(
+                color: TAColors.textSecondaryColor(isDark),
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          )
+        else
+          ...upcomingEvents.map(
+            (event) => _buildUpcomingEventTile(event, isDark, l10n),
+          ),
       ],
     );
   }
 
-  Widget _buildUpcomingEventTile(Map<String, dynamic> event, bool isDark) {
+  Widget _buildUpcomingEventTile(
+    Map<String, dynamic> event,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    final eventType = event['type'] as String? ?? 'meetings';
     final date = event['date'] as DateTime;
-    final type = event['type'] as String;
-    final color = _getEventColor(type);
+    final color = _getEventColor(eventType);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: TAColors.cardColor(isDark),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
-        ),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: TAColors.borderColor(isDark)),
       ),
       child: Row(
         children: [
           Container(
-            width: 50,
-            height: 50,
+            width: 56,
+            padding: const EdgeInsets.symmetric(vertical: 6),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  DateFormat('d').format(date),
-                  style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                  ),
-                ),
                 Text(
                   DateFormat('MMM').format(date),
                   style: TextStyle(
                     color: color,
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  '${date.day}',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  event['title'],
+                  event['title'] as String? ?? '',
                   style: TextStyle(
                     color: TAColors.textPrimaryColor(isDark),
                     fontWeight: FontWeight.w600,
+                    fontSize: 14,
                   ),
                 ),
+                const SizedBox(height: 2),
                 Text(
-                  event['startTime'],
+                  '${DateFormat('EEEE').format(date)} at ${event['startTime']}',
                   style: TextStyle(
                     color: TAColors.textSecondaryColor(isDark),
                     fontSize: 12,
@@ -780,33 +780,62 @@ class _TACalendarScreenState extends State<TACalendarScreen>
               ],
             ),
           ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              _getEventTypeLabel(type),
-              style: TextStyle(
-                color: color,
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
+          Icon(_getEventIcon(eventType), color: color, size: 20),
         ],
       ),
     );
   }
 
-  // Helper methods
-  List<Map<String, dynamic>> _getEventsForDay(DateTime date) {
-    return _events.where((event) {
-      final eventDate = event['date'] as DateTime;
-      final eventType = event['type'] as String;
-      return _isSameDay(eventDate, date) && _activeFilters.contains(eventType);
-    }).toList();
+  List<Map<String, dynamic>> _getEventsForDay(
+    DateTime date,
+    TACalendarState state,
+  ) {
+    return state.eventsForDate(date).map(_eventToMap).toList(growable: false);
+  }
+
+  Map<String, dynamic> _eventToMap(UnifiedScheduleItem item) {
+    final eventDate = _parseItemDate(item.date);
+    final formattedStart = _formatDisplayTime(item.startTime);
+    final formattedEnd = _formatDisplayTime(item.endTime);
+    final location =
+        item.classItem?.location ??
+        item.eventItem?.location ??
+        item.campusItem?.location;
+
+    return <String, dynamic>{
+      'id': item.id,
+      'title': item.title,
+      'date': eventDate,
+      'startTime': formattedStart,
+      'endTime': formattedEnd,
+      'type': _kindToTaType(item.kind),
+      'location': location ?? '',
+      'description':
+          item.eventItem?.description ?? item.campusItem?.description ?? '',
+    };
+  }
+
+  DateTime _parseItemDate(String isoDate) {
+    final parsed = DateTime.tryParse(isoDate);
+    if (parsed != null) {
+      return DateTime(parsed.year, parsed.month, parsed.day);
+    }
+    return DateTime.now();
+  }
+
+  String _kindToTaType(ScheduleItemKind kind) {
+    switch (kind) {
+      case ScheduleItemKind.classSession:
+        return 'lab';
+      case ScheduleItemKind.exam:
+        return 'grading';
+      case ScheduleItemKind.officeHours:
+        return 'office_hours';
+      case ScheduleItemKind.event:
+      case ScheduleItemKind.campusEvent:
+      case ScheduleItemKind.unknown:
+        return 'meetings';
+    }
   }
 
   bool _isSameDay(DateTime a, DateTime b) {
@@ -824,7 +853,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       case 'meetings':
         return TAColors.primary;
       default:
-        return TAColors.textSecondaryColor(false);
+        return TAColors.primary;
     }
   }
 
@@ -833,7 +862,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       case 'lab':
         return Icons.science_rounded;
       case 'grading':
-        return Icons.grading_rounded;
+        return Icons.assignment_turned_in_rounded;
       case 'office_hours':
         return Icons.schedule_rounded;
       case 'meetings':
@@ -843,363 +872,450 @@ class _TACalendarScreenState extends State<TACalendarScreen>
     }
   }
 
-  String _getEventTypeLabel(String type) {
+  String _getEventTypeLabel(String type, AppLocalizations l10n) {
     switch (type) {
       case 'lab':
-        return 'Lab';
+        return l10n.taLabs;
       case 'grading':
-        return 'Grading';
+        return l10n.pendingGrading;
       case 'office_hours':
-        return 'Office Hours';
+        return l10n.taOfficeHoursTitle;
       case 'meetings':
-        return 'Meeting';
+        return l10n.meetings;
       default:
-        return 'Event';
+        return l10n.eventDetails;
+    }
+  }
+
+  String _formatDisplayTime(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return '';
+    }
+
+    final normalized = normalizeTime(value);
+    if (normalized.isEmpty) {
+      return value;
+    }
+
+    return formatTime24To12(normalized);
+  }
+
+  String _viewTypeToString(TACalendarViewType viewType) {
+    switch (viewType) {
+      case TACalendarViewType.week:
+        return 'week';
+      case TACalendarViewType.day:
+        return 'day';
+      case TACalendarViewType.month:
+        return 'month';
     }
   }
 
   void _goToToday() {
-    setState(() {
-      _selectedDate = DateTime.now();
-      _focusedMonth = DateTime.now();
-    });
+    context.read<TACalendarCubit>().goToToday();
   }
 
   void _syncCalendar(bool isDark) {
-    _showSnackBar('Calendar synced', isDark);
+    context.read<TACalendarCubit>().syncCalendar();
   }
 
   void _showAddEventSheet(bool isDark, AppLocalizations l10n) {
-    String title = '';
-    String selectedType = 'lab';
-    TimeOfDay startTime = const TimeOfDay(hour: 9, minute: 0);
-    TimeOfDay endTime = const TimeOfDay(hour: 10, minute: 0);
-    String location = '';
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setSheetState) => Container(
-          padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-          ),
-          decoration: BoxDecoration(
-            color: TAColors.scaffoldColor(isDark),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: TAColors.borderColor(isDark),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
+      builder: (context) {
+        final titleController = TextEditingController();
+        final locationController = TextEditingController();
+        String selectedType = 'meetings';
+        TimeOfDay startTime = const TimeOfDay(hour: 9, minute: 0);
+        TimeOfDay endTime = const TimeOfDay(hour: 10, minute: 0);
+
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+              ),
+              decoration: BoxDecoration(
+                color: TAColors.cardColor(isDark),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
                 ),
-                const SizedBox(height: 20),
-                Text(
-                  l10n.taCalendarAddEvent,
-                  style: TextStyle(
-                    color: TAColors.textPrimaryColor(isDark),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                TextField(
-                  onChanged: (value) => title = value,
-                  decoration: InputDecoration(
-                    labelText: 'Event Title',
-                    labelStyle: TextStyle(
-                      color: TAColors.textSecondaryColor(isDark),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
                         color: TAColors.borderColor(isDark),
+                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: TAColors.primary),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    l10n.addEvent,
+                    style: TextStyle(
+                      color: TAColors.textPrimaryColor(isDark),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Event Type',
-                  style: TextStyle(
-                    color: TAColors.textSecondaryColor(isDark),
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  children: [
-                    _buildTypeChip('lab', 'Lab', selectedType, isDark, (type) {
-                      setSheetState(() => selectedType = type);
-                    }),
-                    _buildTypeChip('grading', 'Grading', selectedType, isDark, (
-                      type,
-                    ) {
-                      setSheetState(() => selectedType = type);
-                    }),
-                    _buildTypeChip(
-                      'office_hours',
-                      'Office Hours',
-                      selectedType,
-                      isDark,
-                      (type) {
-                        setSheetState(() => selectedType = type);
-                      },
-                    ),
-                    _buildTypeChip(
-                      'meetings',
-                      'Meeting',
-                      selectedType,
-                      isDark,
-                      (type) {
-                        setSheetState(() => selectedType = type);
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  onChanged: (value) => location = value,
-                  decoration: InputDecoration(
-                    labelText: 'Location',
-                    labelStyle: TextStyle(
-                      color: TAColors.textSecondaryColor(isDark),
-                    ),
-                    prefixIcon: Icon(
-                      Icons.location_on_outlined,
-                      color: TAColors.textSecondaryColor(isDark),
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
-                        color: TAColors.borderColor(isDark),
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: TAColors.primary),
-                    ),
-                  ),
-                  style: TextStyle(color: TAColors.textPrimaryColor(isDark)),
-                ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (title.isNotEmpty) {
-                        Navigator.pop(context);
-                        setState(() {
-                          _events.add({
-                            'id': DateTime.now().toString(),
-                            'title': title,
-                            'date': _selectedDate,
-                            'startTime': startTime.format(context),
-                            'endTime': endTime.format(context),
-                            'type': selectedType,
-                            'location': location,
-                          });
-                        });
-                        _showSnackBar('Event added', isDark);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TAColors.primary,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: titleController,
+                    decoration: InputDecoration(
+                      labelText: l10n.title,
+                      filled: true,
+                      fillColor: TAColors.scaffoldColor(isDark),
+                      border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      l10n.taCalendarAddEvent,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
+                        borderSide: BorderSide.none,
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: locationController,
+                    decoration: InputDecoration(
+                      labelText: l10n.location,
+                      filled: true,
+                      fillColor: TAColors.scaffoldColor(isDark),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _buildTypeChip(
+                          'lab',
+                          l10n.taLabs,
+                          selectedType,
+                          (value) => setModalState(() => selectedType = value),
+                          isDark,
+                        ),
+                        _buildTypeChip(
+                          'grading',
+                          l10n.pendingGrading,
+                          selectedType,
+                          (value) => setModalState(() => selectedType = value),
+                          isDark,
+                        ),
+                        _buildTypeChip(
+                          'office_hours',
+                          l10n.taOfficeHoursTitle,
+                          selectedType,
+                          (value) => setModalState(() => selectedType = value),
+                          isDark,
+                        ),
+                        _buildTypeChip(
+                          'meetings',
+                          l10n.meetings,
+                          selectedType,
+                          (value) => setModalState(() => selectedType = value),
+                          isDark,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                            l10n.startTime,
+                            style: TextStyle(
+                              color: TAColors.textSecondaryColor(isDark),
+                            ),
+                          ),
+                          subtitle: Text(
+                            startTime.format(context),
+                            style: TextStyle(
+                              color: TAColors.textPrimaryColor(isDark),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          onTap: () async {
+                            final picked = await showTimePicker(
+                              context: context,
+                              initialTime: startTime,
+                            );
+                            if (picked != null) {
+                              setModalState(() => startTime = picked);
+                            }
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(
+                            l10n.endTime,
+                            style: TextStyle(
+                              color: TAColors.textSecondaryColor(isDark),
+                            ),
+                          ),
+                          subtitle: Text(
+                            endTime.format(context),
+                            style: TextStyle(
+                              color: TAColors.textPrimaryColor(isDark),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          onTap: () async {
+                            final picked = await showTimePicker(
+                              context: context,
+                              initialTime: endTime,
+                            );
+                            if (picked != null) {
+                              setModalState(() => endTime = picked);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: TAColors.borderColor(isDark),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          child: Text(
+                            l10n.cancel,
+                            style: TextStyle(
+                              color: TAColors.textSecondaryColor(isDark),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            final title = titleController.text.trim();
+                            final location = locationController.text.trim();
+
+                            if (title.isEmpty) {
+                              return;
+                            }
+
+                            Navigator.pop(context);
+                            context.read<TACalendarCubit>().addEvent(
+                              title: title,
+                              type: selectedType,
+                              date: context
+                                  .read<TACalendarCubit>()
+                                  .state
+                                  .selectedDate,
+                              startTime: startTime.format(context),
+                              endTime: endTime.format(context),
+                              location: location.isEmpty ? null : location,
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: TAColors.primary,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          child: Text(
+                            l10n.addEvent,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
   Widget _buildTypeChip(
-    String type,
+    String value,
     String label,
-    String selectedType,
-    bool isDark,
+    String selected,
     ValueChanged<String> onSelected,
+    bool isDark,
   ) {
-    final isSelected = type == selectedType;
-    final color = _getEventColor(type);
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (_) => onSelected(type),
-      selectedColor: color.withValues(alpha: 0.2),
-      labelStyle: TextStyle(
-        color: isSelected ? color : TAColors.textPrimaryColor(isDark),
+    final isSelected = selected == value;
+    final color = _getEventColor(value);
+
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: ChoiceChip(
+        label: Text(label),
+        selected: isSelected,
+        onSelected: (_) => onSelected(value),
+        selectedColor: color.withValues(alpha: 0.2),
+        backgroundColor: TAColors.scaffoldColor(isDark),
+        labelStyle: TextStyle(
+          color: isSelected ? color : TAColors.textSecondaryColor(isDark),
+          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+        ),
+        side: BorderSide(
+          color: isSelected ? color : TAColors.borderColor(isDark),
+        ),
       ),
     );
   }
 
-  void _showEventDetails(Map<String, dynamic> event, bool isDark) {
-    final type = event['type'] as String;
-    final color = _getEventColor(type);
+  void _showEventDetails(
+    Map<String, dynamic> event,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    final canDelete =
+        _kindToTaType(ScheduleItemKind.event) == (event['type'] as String?) ||
+        (event['type'] as String?) == 'meetings';
 
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: TAColors.scaffoldColor(isDark),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Center(
-              child: Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: TAColors.borderColor(isDark),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: TAColors.cardColor(isDark),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(_getEventIcon(type), color: color),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Text(
-                    event['title'],
-                    style: TextStyle(
-                      color: TAColors.textPrimaryColor(isDark),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    color: TAColors.borderColor(isDark),
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            _buildDetailRow(
-              Icons.access_time_rounded,
-              '${event['startTime']}${event['endTime'].isNotEmpty ? ' - ${event['endTime']}' : ''}',
-              isDark,
-            ),
-            if (event['location'] != null)
+              ),
+              const SizedBox(height: 20),
+              Text(
+                event['title'] as String? ?? '',
+                style: TextStyle(
+                  color: TAColors.textPrimaryColor(isDark),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
               _buildDetailRow(
-                Icons.location_on_outlined,
-                event['location'],
+                Icons.access_time_rounded,
+                '${event['startTime']}${(event['endTime'] as String).isNotEmpty ? ' - ${event['endTime']}' : ''}',
                 isDark,
               ),
-            if (event['description'] != null)
               _buildDetailRow(
-                Icons.description_outlined,
-                event['description'],
+                Icons.location_on_rounded,
+                (event['location'] as String?)?.isNotEmpty == true
+                    ? event['location'] as String
+                    : l10n.location,
                 isDark,
               ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _showSnackBar('Edit feature coming soon', isDark);
-                    },
-                    icon: const Icon(Icons.edit_rounded),
-                    label: const Text('Edit'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: TAColors.primary,
-                      side: const BorderSide(color: TAColors.primary),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+              _buildDetailRow(
+                Icons.category_rounded,
+                _getEventTypeLabel(
+                  event['type'] as String? ?? 'meetings',
+                  l10n,
+                ),
+                isDark,
+              ),
+              if ((event['description'] as String?)?.isNotEmpty == true)
+                _buildDetailRow(
+                  Icons.notes_rounded,
+                  event['description'] as String,
+                  isDark,
+                ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: TAColors.borderColor(isDark)),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Text(
+                        l10n.close,
+                        style: TextStyle(
+                          color: TAColors.textSecondaryColor(isDark),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      setState(() {
-                        _events.remove(event);
-                      });
-                      _showSnackBar('Event deleted', isDark);
-                    },
-                    icon: const Icon(
-                      Icons.delete_outline_rounded,
-                      color: Colors.white,
-                    ),
-                    label: const Text(
-                      'Delete',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: TAColors.error,
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: canDelete
+                          ? () {
+                              Navigator.pop(context);
+                              context.read<TACalendarCubit>().deleteEvent(
+                                event['id'] as String,
+                              );
+                            }
+                          : null,
+                      icon: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                      label: Text(
+                        l10n.delete,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: canDelete
+                            ? TAColors.danger
+                            : TAColors.borderColor(isDark),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
   Widget _buildDetailRow(IconData icon, String text, bool isDark) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 20, color: TAColors.textSecondaryColor(isDark)),
-          const SizedBox(width: 12),
+          Icon(icon, size: 18, color: TAColors.textSecondaryColor(isDark)),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
@@ -1214,17 +1330,71 @@ class _TACalendarScreenState extends State<TACalendarScreen>
     );
   }
 
-  void _showDayEventsSheet(bool isDark, AppLocalizations l10n) {
-    _showSnackBar('Day events view coming soon', isDark);
+  void _showDayEventsSheet(
+    List<Map<String, dynamic>> events,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.7,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: TAColors.cardColor(isDark),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: TAColors.borderColor(isDark),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                l10n.eventDetails,
+                style: TextStyle(
+                  color: TAColors.textPrimaryColor(isDark),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: events.length,
+                  itemBuilder: (context, index) {
+                    return _buildEventCard(events[index], isDark, l10n);
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _showSnackBar(String message, bool isDark) {
+    if (!mounted) {
+      return;
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: TAColors.primary,
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        backgroundColor: TAColors.primary,
       ),
     );
   }

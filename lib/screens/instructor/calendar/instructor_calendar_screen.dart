@@ -14,6 +14,10 @@ import '../../../widgets/instructor/calendar/instructor_day_view_calendar.dart';
 import '../../../widgets/instructor/calendar/instructor_upcoming_events_section.dart';
 import '../../../widgets/instructor/calendar/instructor_add_event_sheet.dart';
 import '../../../widgets/instructor/calendar/instructor_event_details_sheet.dart';
+import '../../../services/api/core_api_client.dart';
+import '../../../services/storage_service.dart';
+import '../../../services/api/schedule_api_service.dart';
+import '../../../services/api/office_hours_service.dart';
 
 class InstructorCalendarScreen extends StatelessWidget {
   const InstructorCalendarScreen({super.key});
@@ -21,7 +25,20 @@ class InstructorCalendarScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => InstructorCalendarCubit(),
+      create: (_) {
+        final coreApiClient = CoreApiClient(storageService: StorageService());
+        final scheduleApiService = ScheduleApiService(
+          coreApiClient: coreApiClient,
+        );
+        final officeHoursService = OfficeHoursService(
+          coreApiClient: coreApiClient,
+        );
+
+        return InstructorCalendarCubit(
+          scheduleService: scheduleApiService,
+          officeHoursService: officeHoursService,
+        );
+      },
       child: const _InstructorCalendarView(),
     );
   }
@@ -97,6 +114,10 @@ class _InstructorCalendarView extends StatelessWidget {
                               onFilterChanged: (type) => context
                                   .read<InstructorCalendarCubit>()
                                   .toggleFilterType(type),
+                              campusSource: state.campusSource,
+                              onCampusSourceChanged: (source) => context
+                                  .read<InstructorCalendarCubit>()
+                                  .setCampusSource(source),
                             ),
                             const SizedBox(height: 16),
                             _buildCalendarCard(context, state, isDark),

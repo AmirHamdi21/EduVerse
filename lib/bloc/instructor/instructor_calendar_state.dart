@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
 
+import '../../models/schedule/schedule_models.dart';
+import '../schedule/schedule_item_builder.dart';
+
 // Instructor-specific event types
 enum InstructorEventType {
   lecture,
@@ -25,6 +28,14 @@ class InstructorCalendarEvent {
   final bool isCompleted;
   final bool hasReminder;
   final int? studentCount;
+  final ScheduleItemKind? kind;
+  final int? courseId;
+  final int? eventId;
+  final int? examId;
+  final int? campusEventId;
+  final bool? isMandatory;
+  final bool? registrationRequired;
+  final UnifiedScheduleItem? sourceItem;
 
   const InstructorCalendarEvent({
     required this.id,
@@ -39,6 +50,14 @@ class InstructorCalendarEvent {
     this.isCompleted = false,
     this.hasReminder = true,
     this.studentCount,
+    this.kind,
+    this.courseId,
+    this.eventId,
+    this.examId,
+    this.campusEventId,
+    this.isMandatory,
+    this.registrationRequired,
+    this.sourceItem,
   });
 
   InstructorCalendarEvent copyWith({
@@ -54,6 +73,14 @@ class InstructorCalendarEvent {
     bool? isCompleted,
     bool? hasReminder,
     int? studentCount,
+    ScheduleItemKind? kind,
+    int? courseId,
+    int? eventId,
+    int? examId,
+    int? campusEventId,
+    bool? isMandatory,
+    bool? registrationRequired,
+    UnifiedScheduleItem? sourceItem,
   }) {
     return InstructorCalendarEvent(
       id: id ?? this.id,
@@ -68,6 +95,14 @@ class InstructorCalendarEvent {
       isCompleted: isCompleted ?? this.isCompleted,
       hasReminder: hasReminder ?? this.hasReminder,
       studentCount: studentCount ?? this.studentCount,
+      kind: kind ?? this.kind,
+      courseId: courseId ?? this.courseId,
+      eventId: eventId ?? this.eventId,
+      examId: examId ?? this.examId,
+      campusEventId: campusEventId ?? this.campusEventId,
+      isMandatory: isMandatory ?? this.isMandatory,
+      registrationRequired: registrationRequired ?? this.registrationRequired,
+      sourceItem: sourceItem ?? this.sourceItem,
     );
   }
 }
@@ -161,6 +196,8 @@ class InstructorCalendarState extends Equatable {
   final String? error;
   final String? successMessage;
   final List<InstructorCalendarEvent> events;
+  final List<UnifiedScheduleItem> unifiedItems;
+  final List<DailyScheduleResponse> rawDays;
   final List<InstructorReminder> reminders;
   final DateTime selectedDate;
   final DateTime focusedMonth;
@@ -168,12 +205,17 @@ class InstructorCalendarState extends Equatable {
   final InstructorEventFilter filter;
   final bool isFilterVisible;
   final bool isAddEventVisible;
+  final ScheduleItemKind? kindFilter;
+  final String? courseFilter;
+  final String campusSource;
 
   InstructorCalendarState({
     this.isLoading = false,
     this.error,
     this.successMessage,
     this.events = const [],
+    this.unifiedItems = const [],
+    this.rawDays = const [],
     this.reminders = const [],
     DateTime? selectedDate,
     DateTime? focusedMonth,
@@ -181,12 +223,24 @@ class InstructorCalendarState extends Equatable {
     this.filter = const InstructorEventFilter(),
     this.isFilterVisible = false,
     this.isAddEventVisible = false,
+    this.kindFilter,
+    this.courseFilter,
+    this.campusSource = 'all',
   }) : selectedDate = selectedDate ?? DateTime.now(),
        focusedMonth = focusedMonth ?? DateTime.now();
 
+  List<UnifiedScheduleItem> get filteredItems {
+    return ScheduleItemBuilder.filter(
+      unifiedItems,
+      kindFilter: kindFilter,
+      courseFilter: courseFilter,
+    );
+  }
+
   // Get filtered events
   List<InstructorCalendarEvent> get filteredEvents {
-    return events.where((event) => filter.isTypeEnabled(event.type)).toList();
+    final source = events.isNotEmpty ? events : _toLegacyEvents(filteredItems);
+    return source.where((event) => filter.isTypeEnabled(event.type)).toList();
   }
 
   // Get events for selected date
@@ -200,12 +254,15 @@ class InstructorCalendarState extends Equatable {
 
   // Get upcoming events (next 7 days)
   List<InstructorCalendarEvent> get upcomingEvents {
-    final now = DateTime.now();
-    final weekLater = now.add(const Duration(days: 7));
-    return filteredEvents.where((event) {
-      return event.date.isAfter(now.subtract(const Duration(days: 1))) &&
-          event.date.isBefore(weekLater);
-    }).toList()..sort((a, b) => a.date.compareTo(b.date));
+    final upcomingItems = ScheduleItemBuilder.upcoming(filteredItems);
+    return _toLegacyEvents(upcomingItems)
+        .where((event) => filter.isTypeEnabled(event.type))
+        .toList(growable: false)
+      ..sort((a, b) => a.date.compareTo(b.date));
+  }
+
+  List<UnifiedScheduleItem> get upcomingItems {
+    return ScheduleItemBuilder.upcoming(filteredItems);
   }
 
   // Check if date has events
@@ -230,11 +287,20 @@ class InstructorCalendarState extends Equatable {
         .toList();
   }
 
+  List<UnifiedScheduleItem> getUnifiedEventsForDate(DateTime date) {
+    final isoDate = toISODate(date);
+    return filteredItems
+        .where((event) => event.date == isoDate)
+        .toList(growable: false);
+  }
+
   InstructorCalendarState copyWith({
     bool? isLoading,
     String? error,
     String? successMessage,
     List<InstructorCalendarEvent>? events,
+    List<UnifiedScheduleItem>? unifiedItems,
+    List<DailyScheduleResponse>? rawDays,
     List<InstructorReminder>? reminders,
     DateTime? selectedDate,
     DateTime? focusedMonth,
@@ -242,8 +308,13 @@ class InstructorCalendarState extends Equatable {
     InstructorEventFilter? filter,
     bool? isFilterVisible,
     bool? isAddEventVisible,
+    ScheduleItemKind? kindFilter,
+    String? courseFilter,
+    String? campusSource,
     bool clearError = false,
     bool clearSuccess = false,
+    bool clearKindFilter = false,
+    bool clearCourseFilter = false,
   }) {
     return InstructorCalendarState(
       isLoading: isLoading ?? this.isLoading,
@@ -252,6 +323,8 @@ class InstructorCalendarState extends Equatable {
           ? null
           : (successMessage ?? this.successMessage),
       events: events ?? this.events,
+      unifiedItems: unifiedItems ?? this.unifiedItems,
+      rawDays: rawDays ?? this.rawDays,
       reminders: reminders ?? this.reminders,
       selectedDate: selectedDate ?? this.selectedDate,
       focusedMonth: focusedMonth ?? this.focusedMonth,
@@ -259,6 +332,11 @@ class InstructorCalendarState extends Equatable {
       filter: filter ?? this.filter,
       isFilterVisible: isFilterVisible ?? this.isFilterVisible,
       isAddEventVisible: isAddEventVisible ?? this.isAddEventVisible,
+      kindFilter: clearKindFilter ? null : (kindFilter ?? this.kindFilter),
+      courseFilter: clearCourseFilter
+          ? null
+          : (courseFilter ?? this.courseFilter),
+      campusSource: campusSource ?? this.campusSource,
     );
   }
 
@@ -268,6 +346,8 @@ class InstructorCalendarState extends Equatable {
     error,
     successMessage,
     events,
+    unifiedItems,
+    rawDays,
     reminders,
     selectedDate,
     focusedMonth,
@@ -275,5 +355,62 @@ class InstructorCalendarState extends Equatable {
     filter,
     isFilterVisible,
     isAddEventVisible,
+    kindFilter,
+    courseFilter,
+    campusSource,
   ];
+
+  List<InstructorCalendarEvent> _toLegacyEvents(
+    List<UnifiedScheduleItem> items,
+  ) {
+    return items
+        .map((item) {
+          final parsedDate = DateTime.tryParse(item.date);
+          final date = parsedDate == null
+              ? DateTime.now()
+              : DateTime(parsedDate.year, parsedDate.month, parsedDate.day);
+
+          return InstructorCalendarEvent(
+            id: item.id,
+            title: item.title,
+            type: _mapKindToType(item.kind),
+            date: date,
+            time: item.startTime,
+            endTime: item.endTime,
+            course: item.courseCode,
+            location: item.location,
+            description:
+                item.eventItem?.description ??
+                item.campusEventItem?.description ??
+                item.examItem?.title,
+            studentCount: item.officeHoursSlot?.currentAppointments,
+            kind: item.kind,
+            courseId: item.courseId,
+            eventId: item.eventItem?.eventId,
+            examId: item.examItem?.examId,
+            campusEventId: item.campusEventItem?.eventId,
+            isMandatory: item.isMandatory,
+            registrationRequired: item.registrationRequired,
+            sourceItem: item,
+          );
+        })
+        .toList(growable: false);
+  }
+
+  InstructorEventType _mapKindToType(ScheduleItemKind kind) {
+    switch (kind) {
+      case ScheduleItemKind.classSession:
+        return InstructorEventType.lecture;
+      case ScheduleItemKind.exam:
+        return InstructorEventType.exam;
+      case ScheduleItemKind.event:
+        return InstructorEventType.meeting;
+      case ScheduleItemKind.campusEvent:
+        return InstructorEventType.meeting;
+      case ScheduleItemKind.officeHours:
+        return InstructorEventType.officeHours;
+      case ScheduleItemKind.unknown:
+        return InstructorEventType.meeting;
+    }
+  }
 }
