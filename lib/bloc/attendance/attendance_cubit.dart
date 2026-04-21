@@ -1,34 +1,56 @@
-import 'dart:math';
+import 'dart:io';
+
+import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../models/attendance/student_attendance_summary_model.dart';
+import '../../services/api/attendance_service.dart';
 import 'attendance_state.dart';
 
 class AttendanceCubit extends Cubit<AttendanceState> {
-  AttendanceCubit() : super(const AttendanceState());
+  final AttendanceService _attendanceService;
+
+  AttendanceCubit({required AttendanceService attendanceService})
+    : _attendanceService = attendanceService,
+      super(AttendanceState());
 
   Future<void> loadAttendance() async {
     emit(state.copyWith(isLoading: true, clearError: true));
 
     try {
-      await Future.delayed(const Duration(milliseconds: 800));
-
-      final records = _generateDemoRecords();
-      final courseAttendances = _generateCourseAttendances(records);
-      final statistics = _calculateStatistics(records);
-
-      emit(
-        state.copyWith(
-          isLoading: false,
-          allRecords: records,
-          filteredRecords: records,
-          courseAttendances: courseAttendances,
-          statistics: statistics,
-        ),
-      );
+      final result = await _attendanceService.getMyAttendance();
+      if (result.isSuccess && result.data != null) {
+        final apiSummaries = result.data!;
+        final records = _mapApiToRecords(apiSummaries);
+        final courseAttendances = _mapApiToCourseAttendances(apiSummaries);
+        final statistics = _calculateStatisticsFromApi(apiSummaries, records);
+        emit(
+          state.copyWith(
+            isLoading: false,
+            allRecords: records,
+            filteredRecords: _applyFilters(
+              records,
+              selectedCourseId: state.selectedCourseId,
+              filterOption: state.filterOption,
+              searchQuery: state.searchQuery,
+            ),
+            courseAttendances: courseAttendances,
+            statistics: statistics,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: result.error?.message ?? 'Failed to load attendance',
+          ),
+        );
+      }
     } catch (e) {
       emit(
         state.copyWith(
           isLoading: false,
-          errorMessage: 'Failed to load attendance data: $e',
+          errorMessage: 'Failed to load attendance: $e',
         ),
       );
     }
@@ -40,40 +62,33 @@ class AttendanceCubit extends Cubit<AttendanceState> {
   }
 
   void setSelectedCourse(String? courseId) {
-    if (courseId == null) {
-      emit(
-        state.copyWith(
-          clearSelectedCourse: true,
-          filteredRecords: state.allRecords,
+    final selectedCourseId = courseId;
+    emit(
+      state.copyWith(
+        selectedCourseId: selectedCourseId,
+        clearSelectedCourse: selectedCourseId == null,
+        filteredRecords: _applyFilters(
+          state.allRecords,
+          selectedCourseId: selectedCourseId,
+          filterOption: state.filterOption,
+          searchQuery: state.searchQuery,
         ),
-      );
-    } else {
-      final filtered = state.allRecords
-          .where((r) => r.courseId == courseId)
-          .toList();
-      emit(
-        state.copyWith(selectedCourseId: courseId, filteredRecords: filtered),
-      );
-    }
+      ),
+    );
   }
 
   void setFilter(FilterOption option) {
-    List<AttendanceRecord> filtered;
-
-    if (option == FilterOption.all) {
-      filtered = state.allRecords;
-    } else {
-      final status = _filterOptionToStatus(option);
-      filtered = state.allRecords.where((r) => r.status == status).toList();
-    }
-
-    if (state.selectedCourseId != null) {
-      filtered = filtered
-          .where((r) => r.courseId == state.selectedCourseId)
-          .toList();
-    }
-
-    emit(state.copyWith(filterOption: option, filteredRecords: filtered));
+    emit(
+      state.copyWith(
+        filterOption: option,
+        filteredRecords: _applyFilters(
+          state.allRecords,
+          selectedCourseId: state.selectedCourseId,
+          filterOption: option,
+          searchQuery: state.searchQuery,
+        ),
+      ),
+    );
   }
 
   void setViewMode(ViewMode mode) {
@@ -85,27 +100,82 @@ class AttendanceCubit extends Cubit<AttendanceState> {
   }
 
   void setSearchQuery(String query) {
-    List<AttendanceRecord> filtered = state.allRecords;
-
-    if (query.isNotEmpty) {
-      filtered = filtered.where((r) {
-        return r.courseName.toLowerCase().contains(query.toLowerCase()) ||
-            r.courseCode.toLowerCase().contains(query.toLowerCase()) ||
-            (r.lectureTitle?.toLowerCase().contains(query.toLowerCase()) ??
-                false);
-      }).toList();
-    }
-
-    if (state.filterOption != FilterOption.all) {
-      final status = _filterOptionToStatus(state.filterOption);
-      filtered = filtered.where((r) => r.status == status).toList();
-    }
-
-    emit(state.copyWith(searchQuery: query, filteredRecords: filtered));
+    emit(
+      state.copyWith(
+        searchQuery: query,
+        filteredRecords: _applyFilters(
+          state.allRecords,
+          selectedCourseId: state.selectedCourseId,
+          filterOption: state.filterOption,
+          searchQuery: query,
+        ),
+      ),
+    );
   }
 
   void clearError() {
     emit(state.copyWith(clearError: true));
+  }
+
+  Future<void> loadFaceReferences() async {
+    final result = await _attendanceService.listMyFaceReferences();
+    if (result.isSuccess && result.data != null) {
+      emit(
+        state.copyWith(
+          faceReferences: result.data!,
+          clearFaceUploadError: true,
+        ),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          faceUploadError:
+              result.error?.message ?? 'Failed to load face references',
+        ),
+      );
+    }
+  }
+
+  Future<void> uploadFaceReference(File image) async {
+    emit(state.copyWith(isFaceUploading: true, clearFaceUploadError: true));
+
+    final result = await _attendanceService.uploadMyFaceReference(image);
+    if (result.isSuccess && result.data != null) {
+      emit(
+        state.copyWith(
+          isFaceUploading: false,
+          faceReferences: [result.data!, ...state.faceReferences],
+        ),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          isFaceUploading: false,
+          faceUploadError:
+              result.error?.message ?? 'Failed to upload face reference',
+        ),
+      );
+    }
+  }
+
+  Future<void> deleteFaceReference(int id) async {
+    final result = await _attendanceService.deleteMyFaceReference(id);
+    if (result.isSuccess) {
+      emit(
+        state.copyWith(
+          faceReferences: state.faceReferences
+              .where((e) => e.id != id)
+              .toList(),
+        ),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          faceUploadError:
+              result.error?.message ?? 'Failed to delete face reference',
+        ),
+      );
+    }
   }
 
   AttendanceStatus _filterOptionToStatus(FilterOption option) {
@@ -123,6 +193,35 @@ class AttendanceCubit extends Cubit<AttendanceState> {
     }
   }
 
+  List<AttendanceRecord> _applyFilters(
+    List<AttendanceRecord> source, {
+    required String? selectedCourseId,
+    required FilterOption filterOption,
+    required String searchQuery,
+  }) {
+    var filtered = source;
+
+    if (selectedCourseId != null) {
+      filtered = filtered.where((r) => r.courseId == selectedCourseId).toList();
+    }
+
+    if (filterOption != FilterOption.all) {
+      final status = _filterOptionToStatus(filterOption);
+      filtered = filtered.where((r) => r.status == status).toList();
+    }
+
+    if (searchQuery.trim().isNotEmpty) {
+      final q = searchQuery.toLowerCase();
+      filtered = filtered.where((r) {
+        return r.courseName.toLowerCase().contains(q) ||
+            r.courseCode.toLowerCase().contains(q) ||
+            (r.lectureTitle?.toLowerCase().contains(q) ?? false);
+      }).toList();
+    }
+
+    return filtered;
+  }
+
   List<AttendanceRecord> _filterRecordsByDate(
     List<AttendanceRecord> records,
     DateTime date,
@@ -134,90 +233,9 @@ class AttendanceCubit extends Cubit<AttendanceState> {
     }).toList();
   }
 
-  List<AttendanceRecord> _generateDemoRecords() {
-    final random = Random(42);
-    final List<AttendanceRecord> records = [];
-
-    final courses = [
-      {'id': 'cs101', 'name': 'Data Structures', 'code': 'CS101'},
-      {'id': 'cs102', 'name': 'Algorithms', 'code': 'CS102'},
-      {'id': 'cs103', 'name': 'Database Systems', 'code': 'CS103'},
-      {'id': 'cs104', 'name': 'Computer Networks', 'code': 'CS104'},
-      {'id': 'cs105', 'name': 'Software Engineering', 'code': 'CS105'},
-      {'id': 'cs106', 'name': 'Machine Learning', 'code': 'CS106'},
-    ];
-
-    final lectureTitles = [
-      'Introduction',
-      'Fundamentals',
-      'Advanced Topics',
-      'Practical Session',
-      'Review & Practice',
-      'Lab Work',
-      'Quiz & Assessment',
-    ];
-
-    final now = DateTime.now();
-
-    for (int weekOffset = 0; weekOffset < 12; weekOffset++) {
-      for (var course in courses) {
-        final classesPerWeek = 2 + random.nextInt(2);
-
-        for (int c = 0; c < classesPerWeek; c++) {
-          final dayOffset = random.nextInt(5);
-          final date = now.subtract(Duration(days: weekOffset * 7 + dayOffset));
-
-          if (date.isAfter(now)) continue;
-
-          final statusRoll = random.nextDouble();
-          AttendanceStatus status;
-          if (statusRoll < 0.75) {
-            status = AttendanceStatus.present;
-          } else if (statusRoll < 0.88) {
-            status = AttendanceStatus.late;
-          } else if (statusRoll < 0.95) {
-            status = AttendanceStatus.absent;
-          } else {
-            status = AttendanceStatus.excused;
-          }
-
-          final hour = 8 + random.nextInt(8);
-
-          records.add(
-            AttendanceRecord(
-              id: '${course['id']}_${date.millisecondsSinceEpoch}_$c',
-              courseId: course['id']!,
-              courseName: course['name']!,
-              courseCode: course['code']!,
-              date: date,
-              status: status,
-              lectureTitle: lectureTitles[random.nextInt(lectureTitles.length)],
-              startTime: TimeOfDay(hour: hour, minute: 0),
-              endTime: TimeOfDay(hour: hour + 1, minute: 30),
-              note: status == AttendanceStatus.excused
-                  ? 'Medical leave approved'
-                  : status == AttendanceStatus.absent
-                  ? 'Unexcused absence'
-                  : null,
-            ),
-          );
-        }
-      }
-    }
-
-    records.sort((a, b) => b.date.compareTo(a.date));
-    return records;
-  }
-
-  List<CourseAttendance> _generateCourseAttendances(
-    List<AttendanceRecord> records,
+  List<CourseAttendance> _mapApiToCourseAttendances(
+    List<StudentAttendanceSummaryModel> summaries,
   ) {
-    final Map<String, List<AttendanceRecord>> courseRecords = {};
-
-    for (var record in records) {
-      courseRecords.putIfAbsent(record.courseId, () => []).add(record);
-    }
-
     final gradientColors = [
       [0xFF6366F1, 0xFF8B5CF6],
       [0xFF3B82F6, 0xFF06B6D4],
@@ -226,65 +244,92 @@ class AttendanceCubit extends Cubit<AttendanceState> {
       [0xFFEC4899, 0xFF8B5CF6],
       [0xFF14B8A6, 0xFF22D3EE],
     ];
-
-    int colorIndex = 0;
-    final List<CourseAttendance> courseAttendances = [];
-
-    for (var entry in courseRecords.entries) {
-      final records = entry.value;
-      final presentCount = records
-          .where((r) => r.status == AttendanceStatus.present)
-          .length;
-      final absentCount = records
-          .where((r) => r.status == AttendanceStatus.absent)
-          .length;
-      final lateCount = records
-          .where((r) => r.status == AttendanceStatus.late)
-          .length;
-      final excusedCount = records
-          .where((r) => r.status == AttendanceStatus.excused)
-          .length;
-
-      courseAttendances.add(
-        CourseAttendance(
-          courseId: entry.key,
-          courseName: records.first.courseName,
-          courseCode: records.first.courseCode,
-          totalClasses: records.length,
-          presentCount: presentCount,
-          absentCount: absentCount,
-          lateCount: lateCount,
-          excusedCount: excusedCount,
-          gradientColors: gradientColors[colorIndex % gradientColors.length],
-        ),
+    return summaries.asMap().entries.map((entry) {
+      return CourseAttendance.fromApi(
+        entry.value,
+        gradientColors[entry.key % gradientColors.length],
       );
-
-      colorIndex++;
-    }
-
-    return courseAttendances;
+    }).toList();
   }
 
-  AttendanceStatistics _calculateStatistics(List<AttendanceRecord> records) {
-    final presentCount = records
-        .where((r) => r.status == AttendanceStatus.present)
-        .length;
-    final absentCount = records
-        .where((r) => r.status == AttendanceStatus.absent)
-        .length;
-    final lateCount = records
-        .where((r) => r.status == AttendanceStatus.late)
-        .length;
-    final excusedCount = records
-        .where((r) => r.status == AttendanceStatus.excused)
-        .length;
-    final totalClasses = records.length;
+  List<AttendanceRecord> _mapApiToRecords(
+    List<StudentAttendanceSummaryModel> summaries,
+  ) {
+    final List<AttendanceRecord> records = <AttendanceRecord>[];
+    final now = DateTime.now();
+
+    for (var i = 0; i < summaries.length; i++) {
+      final summary = summaries[i];
+      final statuses = <AttendanceStatus>[
+        ...List<AttendanceStatus>.filled(
+          summary.attended,
+          AttendanceStatus.present,
+        ),
+        ...List<AttendanceStatus>.filled(
+          summary.absent,
+          AttendanceStatus.absent,
+        ),
+        ...List<AttendanceStatus>.filled(
+          summary.lateCount,
+          AttendanceStatus.late,
+        ),
+        ...List<AttendanceStatus>.filled(
+          summary.excused,
+          AttendanceStatus.excused,
+        ),
+      ];
+
+      for (var j = 0; j < statuses.length; j++) {
+        final fallbackDate = now.subtract(Duration(days: i * 4 + j));
+        final parsedLastClassDate = DateTime.tryParse(
+          summary.lastClassDate ?? '',
+        );
+        final date = (parsedLastClassDate ?? fallbackDate).subtract(
+          Duration(days: j),
+        );
+        final status = statuses[j];
+
+        records.add(
+          AttendanceRecord(
+            id: '${summary.courseId}_${date.millisecondsSinceEpoch}_$j',
+            courseId: summary.courseId.toString(),
+            courseName: summary.courseName,
+            courseCode: summary.courseCode,
+            date: date,
+            status: status,
+            lectureTitle: 'Session ${j + 1}',
+            startTime: const TimeOfDay(hour: 9, minute: 0),
+            endTime: const TimeOfDay(hour: 10, minute: 30),
+            note: status == AttendanceStatus.absent
+                ? 'Absent'
+                : status == AttendanceStatus.excused
+                ? 'Excused'
+                : null,
+          ),
+        );
+      }
+    }
+
+    records.sort((a, b) => b.date.compareTo(a.date));
+    return records;
+  }
+
+  AttendanceStatistics _calculateStatisticsFromApi(
+    List<StudentAttendanceSummaryModel> summaries,
+    List<AttendanceRecord> records,
+  ) {
+    final totalClasses = summaries.fold<int>(
+      0,
+      (sum, s) => sum + s.totalClasses,
+    );
+    final presentCount = summaries.fold<int>(0, (sum, s) => sum + s.attended);
+    final absentCount = summaries.fold<int>(0, (sum, s) => sum + s.absent);
+    final lateCount = summaries.fold<int>(0, (sum, s) => sum + s.lateCount);
+    final excusedCount = summaries.fold<int>(0, (sum, s) => sum + s.excused);
 
     final overallPercentage = totalClasses > 0
-        ? ((presentCount + lateCount + excusedCount) / totalClasses) * 100
-        : 100.0;
-
-    final weeklyTrend = _calculateWeeklyTrend(records);
+        ? ((presentCount + lateCount + excusedCount) / totalClasses) * 100.0
+        : 0.0;
 
     return AttendanceStatistics(
       totalClasses: totalClasses,
@@ -293,21 +338,23 @@ class AttendanceCubit extends Cubit<AttendanceState> {
       lateCount: lateCount,
       excusedCount: excusedCount,
       overallPercentage: overallPercentage,
-      weeklyTrend: weeklyTrend,
+      weeklyTrend: _buildWeeklyTrend(records),
     );
   }
 
-  List<WeeklyAttendance> _calculateWeeklyTrend(List<AttendanceRecord> records) {
+  List<WeeklyAttendance> _buildWeeklyTrend(List<AttendanceRecord> records) {
+    if (records.isEmpty) {
+      return const <WeeklyAttendance>[];
+    }
+
     final now = DateTime.now();
-    final List<WeeklyAttendance> trend = [];
+    final List<WeeklyAttendance> trend = <WeeklyAttendance>[];
 
     for (int i = 7; i >= 0; i--) {
       final weekStart = now.subtract(Duration(days: i * 7 + now.weekday - 1));
       final weekEnd = weekStart.add(const Duration(days: 6));
-
       final weekRecords = records.where((r) {
-        return r.date.isAfter(weekStart.subtract(const Duration(days: 1))) &&
-            r.date.isBefore(weekEnd.add(const Duration(days: 1)));
+        return !r.date.isBefore(weekStart) && !r.date.isAfter(weekEnd);
       }).toList();
 
       if (weekRecords.isEmpty) continue;
@@ -321,10 +368,12 @@ class AttendanceCubit extends Cubit<AttendanceState> {
           )
           .length;
 
-      final percentage = (attended / weekRecords.length) * 100;
-      final weekLabel = 'W${8 - i}';
-
-      trend.add(WeeklyAttendance(week: weekLabel, percentage: percentage));
+      trend.add(
+        WeeklyAttendance(
+          week: 'W${8 - i}',
+          percentage: (attended / weekRecords.length) * 100,
+        ),
+      );
     }
 
     return trend;

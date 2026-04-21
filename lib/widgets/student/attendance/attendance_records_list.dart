@@ -347,7 +347,7 @@ class _AttendanceRecordCard extends StatelessWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              '${record.startTime.format()} - ${record.endTime.format()}',
+              '${record.startTime.format(context)} - ${record.endTime.format(context)}',
               style: TextStyle(
                 fontSize: 12,
                 color: isDark

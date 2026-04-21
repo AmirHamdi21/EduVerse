@@ -1,4 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart' show TimeOfDay;
+
+import '../../models/attendance/student_attendance_summary_model.dart';
+import '../../models/attendance/student_face_reference_model.dart';
 
 enum AttendanceStatus { present, absent, late, excused }
 
@@ -46,19 +50,6 @@ class AttendanceRecord extends Equatable {
   ];
 }
 
-class TimeOfDay {
-  final int hour;
-  final int minute;
-
-  const TimeOfDay({required this.hour, required this.minute});
-
-  String format() {
-    final h = hour > 12 ? hour - 12 : hour;
-    final period = hour >= 12 ? 'PM' : 'AM';
-    return '${h.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period';
-  }
-}
-
 class CourseAttendance extends Equatable {
   final String courseId;
   final String courseName;
@@ -81,6 +72,23 @@ class CourseAttendance extends Equatable {
     required this.excusedCount,
     required this.gradientColors,
   });
+
+  factory CourseAttendance.fromApi(
+    StudentAttendanceSummaryModel s,
+    List<int> gradientColors,
+  ) {
+    return CourseAttendance(
+      courseId: s.courseId.toString(),
+      courseName: s.courseName,
+      courseCode: s.courseCode,
+      totalClasses: s.totalClasses,
+      presentCount: s.attended,
+      absentCount: s.absent,
+      lateCount: s.lateCount,
+      excusedCount: s.excused,
+      gradientColors: gradientColors,
+    );
+  }
 
   double get attendancePercentage {
     if (totalClasses == 0) return 100.0;
@@ -155,8 +163,11 @@ class AttendanceState extends Equatable {
   final ViewMode viewMode;
   final int selectedTabIndex;
   final String searchQuery;
+  final List<StudentFaceReferenceModel> faceReferences;
+  final bool isFaceUploading;
+  final String? faceUploadError;
 
-  const AttendanceState({
+  AttendanceState({
     this.isLoading = false,
     this.errorMessage,
     this.allRecords = const [],
@@ -169,7 +180,10 @@ class AttendanceState extends Equatable {
     this.viewMode = ViewMode.calendar,
     this.selectedTabIndex = 0,
     this.searchQuery = '',
-  }) : selectedDate = selectedDate ?? const _DefaultDate();
+    this.faceReferences = const <StudentFaceReferenceModel>[],
+    this.isFaceUploading = false,
+    this.faceUploadError,
+  }) : selectedDate = selectedDate ?? DateTime.now();
 
   AttendanceState copyWith({
     bool? isLoading,
@@ -186,6 +200,10 @@ class AttendanceState extends Equatable {
     ViewMode? viewMode,
     int? selectedTabIndex,
     String? searchQuery,
+    List<StudentFaceReferenceModel>? faceReferences,
+    bool? isFaceUploading,
+    String? faceUploadError,
+    bool clearFaceUploadError = false,
   }) {
     return AttendanceState(
       isLoading: isLoading ?? this.isLoading,
@@ -202,6 +220,11 @@ class AttendanceState extends Equatable {
       viewMode: viewMode ?? this.viewMode,
       selectedTabIndex: selectedTabIndex ?? this.selectedTabIndex,
       searchQuery: searchQuery ?? this.searchQuery,
+      faceReferences: faceReferences ?? this.faceReferences,
+      isFaceUploading: isFaceUploading ?? this.isFaceUploading,
+      faceUploadError: clearFaceUploadError
+          ? null
+          : faceUploadError ?? this.faceUploadError,
     );
   }
 
@@ -219,63 +242,8 @@ class AttendanceState extends Equatable {
     viewMode,
     selectedTabIndex,
     searchQuery,
+    faceReferences,
+    isFaceUploading,
+    faceUploadError,
   ];
-}
-
-class _DefaultDate implements DateTime {
-  const _DefaultDate();
-
-  DateTime get _now => DateTime.now();
-
-  @override
-  int get year => _now.year;
-  @override
-  int get month => _now.month;
-  @override
-  int get day => _now.day;
-  @override
-  int get hour => _now.hour;
-  @override
-  int get minute => _now.minute;
-  @override
-  int get second => _now.second;
-  @override
-  int get millisecond => _now.millisecond;
-  @override
-  int get microsecond => _now.microsecond;
-  @override
-  int get weekday => _now.weekday;
-  @override
-  bool get isUtc => _now.isUtc;
-  @override
-  int get millisecondsSinceEpoch => _now.millisecondsSinceEpoch;
-  @override
-  int get microsecondsSinceEpoch => _now.microsecondsSinceEpoch;
-  @override
-  String get timeZoneName => _now.timeZoneName;
-  @override
-  Duration get timeZoneOffset => _now.timeZoneOffset;
-
-  @override
-  DateTime add(Duration duration) => _now.add(duration);
-  @override
-  DateTime subtract(Duration duration) => _now.subtract(duration);
-  @override
-  Duration difference(DateTime other) => _now.difference(other);
-  @override
-  bool isAfter(DateTime other) => _now.isAfter(other);
-  @override
-  bool isBefore(DateTime other) => _now.isBefore(other);
-  @override
-  bool isAtSameMomentAs(DateTime other) => _now.isAtSameMomentAs(other);
-  @override
-  int compareTo(DateTime other) => _now.compareTo(other);
-  @override
-  DateTime toLocal() => _now.toLocal();
-  @override
-  DateTime toUtc() => _now.toUtc();
-  @override
-  String toIso8601String() => _now.toIso8601String();
-  @override
-  String toString() => _now.toString();
 }

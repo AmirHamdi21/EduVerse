@@ -38,6 +38,7 @@ import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/session_expiry_notifier.dart';
 import 'package:edu_verse/services/api/course_service.dart';
 import 'package:edu_verse/services/api/assignment_service.dart';
+import 'package:edu_verse/services/api/attendance_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/api/lab_service.dart';
 import 'package:edu_verse/services/api/material_service.dart';
@@ -114,6 +115,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late ScheduleService _scheduleService;
   late CourseService _courseService;
   late AssignmentService _assignmentService;
+  late AttendanceService _attendanceService;
   late EnrollmentService _enrollmentService;
   late LabService _labService;
   late MaterialService _materialService;
@@ -140,6 +142,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     final coreApiClient = CoreApiClient(storageService: _storageService);
     _courseService = CourseService(coreApiClient: coreApiClient);
     _assignmentService = AssignmentService(coreApiClient: coreApiClient);
+    _attendanceService = AttendanceService(coreApiClient: coreApiClient);
     _enrollmentService = EnrollmentService(coreApiClient: coreApiClient);
     _labService = LabService(coreApiClient: coreApiClient);
     _materialService = MaterialService(coreApiClient: coreApiClient);
@@ -158,7 +161,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       studentStatsService: _studentStatsService,
       storageService: _storageService,
     );
-    _attendanceCubit = AttendanceCubit()..loadAttendance();
+    _attendanceCubit = AttendanceCubit(attendanceService: _attendanceService)
+      ..loadAttendance();
     _summarizerCubit = SummarizerCubit();
     _smartStudyCubit = SmartStudyCubit();
     _chatBloc = ChatBloc();
@@ -315,59 +319,67 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiRepositoryProvider(
       providers: [
-        BlocProvider.value(value: _authBloc),
-        BlocProvider.value(value: _themeBloc),
-        BlocProvider.value(value: _languageCubit),
-        BlocProvider.value(value: _notificationCubit),
-        BlocProvider.value(value: _tasksCubit),
-        BlocProvider.value(value: _labsCubit),
-        BlocProvider.value(value: _assignmentBloc),
-        BlocProvider.value(value: _gradesCubit),
-        BlocProvider.value(value: _attendanceCubit),
-        BlocProvider.value(value: _summarizerCubit),
-        BlocProvider.value(value: _smartStudyCubit),
-        BlocProvider.value(value: _chatBloc),
-        BlocProvider.value(value: _discussionBloc),
-        BlocProvider.value(value: _aiNoteCubit),
-        BlocProvider.value(value: _profileCubit),
-        BlocProvider.value(value: _searchCubit),
-        BlocProvider.value(value: _adminNotificationCubit),
-        BlocProvider.value(value: _coursesBloc),
-        BlocProvider.value(value: _instructorCoursesBloc),
-        BlocProvider.value(value: _materialsBloc),
-        BlocProvider.value(value: _courseStructureBloc),
-        BlocProvider.value(value: _taCoursesCubit),
-        BlocProvider.value(value: _taLabsCubit),
-        BlocProvider.value(value: _adminCourseListBloc),
-        BlocProvider.value(value: _courseWizardBloc),
-        BlocProvider.value(value: _adminEnrollmentBloc),
+        RepositoryProvider<AttendanceService>.value(value: _attendanceService),
+        RepositoryProvider<EnrollmentService>.value(value: _enrollmentService),
       ],
-      child: BlocBuilder<ThemeBloc, ThemeState>(
-        builder: (context, themeState) {
-          return BlocBuilder<LanguageCubit, Locale>(
-            builder: (context, locale) {
-              return MaterialApp.router(
-                title: 'EduVerse App',
-                debugShowCheckedModeBanner: false,
-                scaffoldMessengerKey: _scaffoldMessengerKey,
-                locale: locale,
-                supportedLocales: const [Locale('en'), Locale('ar')],
-                localizationsDelegates: [
-                  AppLocalizations.delegate,
-                  GlobalMaterialLocalizations.delegate,
-                  GlobalWidgetsLocalizations.delegate,
-                  GlobalCupertinoLocalizations.delegate,
-                ],
-                theme: AppTheme.lightTheme,
-                darkTheme: AppTheme.darkTheme,
-                themeMode: themeState.isDark ? ThemeMode.dark : ThemeMode.light,
-                routerConfig: AppRouter.router,
-              );
-            },
-          );
-        },
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider.value(value: _authBloc),
+          BlocProvider.value(value: _themeBloc),
+          BlocProvider.value(value: _languageCubit),
+          BlocProvider.value(value: _notificationCubit),
+          BlocProvider.value(value: _tasksCubit),
+          BlocProvider.value(value: _labsCubit),
+          BlocProvider.value(value: _assignmentBloc),
+          BlocProvider.value(value: _gradesCubit),
+          BlocProvider.value(value: _attendanceCubit),
+          BlocProvider.value(value: _summarizerCubit),
+          BlocProvider.value(value: _smartStudyCubit),
+          BlocProvider.value(value: _chatBloc),
+          BlocProvider.value(value: _discussionBloc),
+          BlocProvider.value(value: _aiNoteCubit),
+          BlocProvider.value(value: _profileCubit),
+          BlocProvider.value(value: _searchCubit),
+          BlocProvider.value(value: _adminNotificationCubit),
+          BlocProvider.value(value: _coursesBloc),
+          BlocProvider.value(value: _instructorCoursesBloc),
+          BlocProvider.value(value: _materialsBloc),
+          BlocProvider.value(value: _courseStructureBloc),
+          BlocProvider.value(value: _taCoursesCubit),
+          BlocProvider.value(value: _taLabsCubit),
+          BlocProvider.value(value: _adminCourseListBloc),
+          BlocProvider.value(value: _courseWizardBloc),
+          BlocProvider.value(value: _adminEnrollmentBloc),
+        ],
+        child: BlocBuilder<ThemeBloc, ThemeState>(
+          builder: (context, themeState) {
+            return BlocBuilder<LanguageCubit, Locale>(
+              builder: (context, locale) {
+                return MaterialApp.router(
+                  title: 'EduVerse App',
+                  debugShowCheckedModeBanner: false,
+                  scaffoldMessengerKey: _scaffoldMessengerKey,
+                  locale: locale,
+                  supportedLocales: const [Locale('en'), Locale('ar')],
+                  localizationsDelegates: [
+                    AppLocalizations.delegate,
+                    GlobalMaterialLocalizations.delegate,
+                    GlobalWidgetsLocalizations.delegate,
+                    GlobalCupertinoLocalizations.delegate,
+                  ],
+                  theme: AppTheme.lightTheme,
+                  darkTheme: AppTheme.darkTheme,
+                  themeMode: themeState.isDark
+                      ? ThemeMode.dark
+                      : ThemeMode.light,
+                  routerConfig: AppRouter.router,
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

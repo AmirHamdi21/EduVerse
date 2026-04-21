@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bloc/attendance/attendance_cubit.dart';
@@ -5,6 +8,8 @@ import '../../../bloc/attendance/attendance_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../models/attendance/student_face_reference_model.dart';
+import '../../../services/api/attendance_service.dart';
 import '../../../widgets/student/attendance/attendance_stats_card.dart';
 import '../../../widgets/student/attendance/attendance_calendar.dart';
 import '../../../widgets/student/attendance/course_attendance_list.dart';
@@ -48,7 +53,10 @@ class _AttendanceScreenState extends State<AttendanceScreen>
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AttendanceCubit()..loadAttendance(),
+      create: (context) =>
+          AttendanceCubit(attendanceService: context.read<AttendanceService>())
+            ..loadAttendance()
+            ..loadFaceReferences(),
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {
           final isDark = themeState.isDark;
@@ -287,6 +295,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const AttendanceStatsCard(),
+          _buildFaceSetupSection(state, isDark),
           const SizedBox(height: 8),
           const CourseAttendanceList(),
           const SizedBox(height: 24),
@@ -313,6 +322,122 @@ class _AttendanceScreenState extends State<AttendanceScreen>
     );
   }
 
+  Widget _buildFaceSetupSection(AttendanceState state, bool isDark) {
+    final cubit = context.read<AttendanceCubit>();
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.face_retouching_natural_rounded,
+                color: isDark
+                    ? const Color(0xFF60A5FA)
+                    : const Color(0xFF2563EB),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Face Setup',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Upload clear face photos to improve AI attendance matching.',
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: state.isFaceUploading
+                  ? null
+                  : () => _pickAndUploadFacePhoto(cubit),
+              icon: state.isFaceUploading
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.upload_rounded),
+              label: Text(
+                state.isFaceUploading ? 'Uploading...' : 'Upload Face Photo',
+              ),
+            ),
+          ),
+          if (state.faceUploadError != null) ...[
+            const SizedBox(height: 10),
+            Text(
+              state.faceUploadError!,
+              style: const TextStyle(
+                color: Color(0xFFEF4444),
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          if (state.faceReferences.isEmpty)
+            Text(
+              'No face references uploaded yet.',
+              style: TextStyle(
+                color: isDark
+                    ? const Color(0xFF94A3B8)
+                    : const Color(0xFF64748B),
+              ),
+            )
+          else
+            Column(
+              children: state.faceReferences
+                  .map(
+                    (ref) => _FaceReferenceTile(reference: ref, isDark: isDark),
+                  )
+                  .toList(),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickAndUploadFacePhoto(AttendanceCubit cubit) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+      allowMultiple: false,
+    );
+    final pickedPath = result?.files.single.path;
+    if (pickedPath == null || pickedPath.isEmpty) {
+      return;
+    }
+
+    await cubit.uploadFaceReference(File(pickedPath));
+  }
+
   void _showSearchDialog(BuildContext context, bool isDark) {
     final l10n = AppLocalizations.of(context);
     final attendanceCubit = context.read<AttendanceCubit>();
@@ -336,6 +461,96 @@ class _AttendanceScreenState extends State<AttendanceScreen>
       _searchController.clear();
       attendanceCubit.setSearchQuery('');
     });
+  }
+}
+
+class _FaceReferenceTile extends StatelessWidget {
+  final StudentFaceReferenceModel reference;
+  final bool isDark;
+
+  const _FaceReferenceTile({required this.reference, required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+        ),
+      ),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: _buildThumbnail(),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  reference.storagePath.split('/').last,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : const Color(0xFF1E293B),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  reference.isPrimary ? 'Primary reference' : 'Reference image',
+                  style: TextStyle(
+                    color: isDark
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF64748B),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: () {
+              context.read<AttendanceCubit>().deleteFaceReference(reference.id);
+            },
+            icon: const Icon(
+              Icons.delete_outline_rounded,
+              color: Color(0xFFEF4444),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThumbnail() {
+    if (reference.signedUrl != null && reference.signedUrl!.isNotEmpty) {
+      return Image.network(
+        reference.signedUrl!,
+        width: 56,
+        height: 56,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => _placeholderThumb(),
+      );
+    }
+    return _placeholderThumb();
+  }
+
+  Widget _placeholderThumb() {
+    return Container(
+      width: 56,
+      height: 56,
+      color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
+      child: Icon(
+        Icons.face_rounded,
+        color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+      ),
+    );
   }
 }
 

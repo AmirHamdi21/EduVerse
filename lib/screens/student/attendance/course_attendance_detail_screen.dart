@@ -638,7 +638,7 @@ class _CourseAttendanceDetailScreenState
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${_formatDate(record.date)} • ${record.startTime.format()} - ${record.endTime.format()}',
+                  '${_formatDate(record.date)} • ${record.startTime.format(context)} - ${record.endTime.format(context)}',
                   style: TextStyle(
                     fontSize: 12,
                     color: isDark
