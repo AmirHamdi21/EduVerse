@@ -10,6 +10,8 @@ import '../../services/api/attendance_service.dart';
 import '../../services/api/enrollment_service.dart';
 import 'instructor_attendance_state.dart';
 
+/// Mirrors the web's LectureAttendanceFlow.tsx:
+///   Classes grid  →  Section detail  →  Roster
 class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
   final AttendanceService _attendanceService;
   final EnrollmentService _enrollmentService;
@@ -23,6 +25,9 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
          InstructorAttendanceState(newSessionDate: _dateOnly(DateTime.now())),
        );
 
+  // ── Step 1: Classes ──────────────────────────────────────────────────
+
+  /// Loads all sections the instructor teaches → shows the classes grid.
   Future<void> loadTeachingSections() async {
     emit(state.copyWith(isLoading: true, clearError: true));
 
@@ -45,17 +50,25 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     }
   }
 
+  // ── Step 2: Section ──────────────────────────────────────────────────
+
+  /// Opens a section → loads its sessions → shows the section view.
+  /// Matches web: `openSection(row, sid)` (line 319).
   Future<void> openSection(TeachingCourseModel section, int sectionId) async {
     emit(
       state.copyWith(
         selectedSection: section,
         selectedSectionId: sectionId,
         view: InstructorAttendanceView.section,
+        newSessionDate: _dateOnly(DateTime.now()),
+        isRosterDirty: false,
       ),
     );
     await loadSessionsForSection(sectionId);
   }
 
+  /// Loads all sessions for the given section.
+  /// Matches web: `loadOpenSessions(sectionId)` (line 295).
   Future<void> loadSessionsForSection(int sectionId) async {
     emit(state.copyWith(isLoading: true, clearError: true));
     final result = await _attendanceService.getSessions(
@@ -83,14 +96,9 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     }
   }
 
-  void updateNewSessionDate(String date) {
-    emit(state.copyWith(newSessionDate: date));
-  }
-
-  void updateNewSessionType(String type) {
-    emit(state.copyWith(newSessionType: type));
-  }
-
+  /// Creates a new session then auto-opens the roster.
+  /// Matches web: `createSession()` (line 598) which calls
+  /// `openRosterFromSession(session)` after creation.
   Future<void> createSession() async {
     final sectionId = state.selectedSectionId;
     if (sectionId == null) {
@@ -105,7 +113,11 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
       sessionType: state.newSessionType,
     );
 
-    if (result.isSuccess) {
+    if (result.isSuccess && result.data != null) {
+      // Web behavior: auto-open the roster for the new session
+      await openRosterFromSession(result.data!);
+    } else if (result.isSuccess) {
+      // Session created but no data returned — reload sessions list
       await loadSessionsForSection(sectionId);
     } else {
       emit(
@@ -117,10 +129,46 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     }
   }
 
-  Future<void> openRosterFromSession(AttendanceSessionModel session) async {
-    await loadRosterData(session.id, session.isClosed);
+  void updateNewSessionDate(String date) {
+    emit(state.copyWith(newSessionDate: date));
   }
 
+  void updateNewSessionType(String type) {
+    emit(state.copyWith(newSessionType: type));
+  }
+
+  /// Goes back from Section → Classes grid.
+  /// Matches web: `backToClasses()` (line 327).
+  void backToClasses() {
+    emit(
+      state.copyWith(
+        view: InstructorAttendanceView.classes,
+        clearSelectedSection: true,
+        clearSelectedSectionId: true,
+        sessions: const <AttendanceSessionModel>[],
+        clearActiveSession: true,
+        rosterRows: const <RosterRow>[],
+        isRosterReadOnly: false,
+        isRosterDirty: false,
+        clearAiPhoto: true,
+        clearAiError: true,
+        clearAiResult: true,
+      ),
+    );
+  }
+
+  // ── Step 3: Roster ───────────────────────────────────────────────────
+
+  /// Opens the roster for a specific session.
+  /// Matches web: `openRosterFromSession(session)` (line 332).
+  Future<void> openRosterFromSession(AttendanceSessionModel session) async {
+    final readOnly =
+        session.status == 'completed' || session.status == 'cancelled';
+    await loadRosterData(session.id, readOnly);
+  }
+
+  /// Loads the roster data (session details + enrolled students).
+  /// Matches web: `loadRosterData(sessionId, readOnly)` (line 345).
   Future<void> loadRosterData(int sessionId, bool readOnly) async {
     emit(state.copyWith(isLoading: true, clearError: true));
 
@@ -143,6 +191,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
 
     List<RosterRow> rows = <RosterRow>[];
 
+    // Try to get full enrolled student list for the section
     final selectedSectionId = state.selectedSectionId;
     if (selectedSectionId != null) {
       final sectionStudents = await _enrollmentService.getSectionStudentsLite(
@@ -171,6 +220,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
       }
     }
 
+    // Fallback: use session records directly
     if (rows.isEmpty) {
       rows = session.records.map((record) {
         final status = AttendanceRecordModel.normalizeStatus(
@@ -188,6 +238,9 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
       }).toList();
     }
 
+    // Sort alphabetically like the web (line 362)
+    rows.sort((a, b) => a.name.compareTo(b.name));
+
     emit(
       state.copyWith(
         isLoading: false,
@@ -195,31 +248,18 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
         activeSession: session,
         rosterRows: rows,
         isRosterReadOnly: readOnly,
-        isRosterDirty: rows.any((e) => e.isDirty),
-        clearAiError: true,
-      ),
-    );
-  }
-
-  void backToClasses() {
-    emit(
-      state.copyWith(
-        view: InstructorAttendanceView.classes,
-        clearSelectedSection: true,
-        clearSelectedSectionId: true,
-        sessions: const <AttendanceSessionModel>[],
-        clearActiveSession: true,
-        rosterRows: const <RosterRow>[],
-        isRosterReadOnly: false,
         isRosterDirty: false,
-        clearAiPhoto: true,
         clearAiError: true,
         clearAiResult: true,
+        clearAiPhoto: true,
       ),
     );
   }
 
+  /// Goes back from Roster → Section detail.
+  /// Matches web: `backToSection()` (line 370) which reloads sessions.
   void backToSection() {
+    final sectionId = state.selectedSectionId;
     emit(
       state.copyWith(
         view: InstructorAttendanceView.section,
@@ -232,8 +272,16 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
         clearAiResult: true,
       ),
     );
+    // Reload sessions like the web does (line 371)
+    if (sectionId != null) {
+      loadSessionsForSection(sectionId);
+    }
   }
 
+  // ── Roster Actions ───────────────────────────────────────────────────
+
+  /// Toggle a single student's status.
+  /// Matches web: `applyStatus(userId, next)` (line 375).
   void applyStatus(int userId, String status) {
     if (state.isRosterReadOnly) return;
 
@@ -251,6 +299,8 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     );
   }
 
+  /// Set all students to a given status.
+  /// Matches web: `setAllStatus(status)` (line 382).
   void setAllStatus(String status) {
     if (state.isRosterReadOnly) return;
     final normalized = AttendanceRecordModel.normalizeStatus(status);
@@ -266,6 +316,8 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     );
   }
 
+  /// Save attendance batch.
+  /// Matches web: `saveBatch()` (line 414).
   Future<void> saveBatch() async {
     final session = state.activeSession;
     if (session == null) {
@@ -289,7 +341,17 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     );
 
     if (result.isSuccess) {
-      await loadRosterData(session.id, state.isRosterReadOnly);
+      // Match web behavior (line 426): reset dirty + update initials locally
+      final updatedRows = state.rosterRows
+          .map((r) => r.copyWith(initialStatus: r.status))
+          .toList();
+      emit(
+        state.copyWith(
+          isLoading: false,
+          rosterRows: updatedRows,
+          isRosterDirty: false,
+        ),
+      );
     } else {
       emit(
         state.copyWith(
@@ -300,6 +362,8 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     }
   }
 
+  /// Close and lock session.
+  /// Matches web: `closeSession()` (line 433).
   Future<void> closeSession() async {
     final session = state.activeSession;
     if (session == null) {
@@ -310,17 +374,10 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     emit(state.copyWith(isLoading: true, clearError: true));
     final result = await _attendanceService.closeSession(session.id);
     if (result.isSuccess) {
-      final selectedSectionId = state.selectedSectionId;
-      if (selectedSectionId != null) {
-        await loadSessionsForSection(selectedSectionId);
-      }
-
-      final refreshed = await _attendanceService.getSessionDetails(session.id);
       emit(
         state.copyWith(
           isLoading: false,
-          activeSession:
-              refreshed.data ?? session.copyWith(status: 'completed'),
+          activeSession: session.copyWith(status: 'completed'),
           isRosterReadOnly: true,
         ),
       );
@@ -334,10 +391,14 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     }
   }
 
+  // ── AI ────────────────────────────────────────────────────────────────
+
   void setAiFile(File? file) {
     emit(state.copyWith(aiPhoto: file, clearAiError: true));
   }
 
+  /// Upload photo → poll AI result → reload roster.
+  /// Matches web: `runLocalAiAttendance()` (line 462).
   Future<void> runAiAttendance() async {
     final session = state.activeSession;
     final photo = state.aiPhoto;
@@ -383,6 +444,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     }
 
     final result = poll.data!;
+    // Reload roster to pick up AI-marked records (web line 505)
     await loadRosterData(session.id, state.isRosterReadOnly);
     emit(
       state.copyWith(

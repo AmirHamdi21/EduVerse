@@ -27,22 +27,47 @@ class StudentAttendanceSummaryModel extends Equatable {
   });
 
   factory StudentAttendanceSummaryModel.fromJson(Map<String, dynamic> json) {
-    final total = _toInt(json['totalClasses']);
-    final attended = _toInt(json['attended']);
-    final rawPct = json['percentage'];
+    // The backend may return either per-course fields (courseId, totalClasses,
+    // attended, …) or flat aggregate fields (totalSessions, totalPresent, …).
+    // We handle both formats with fallback mappings.
+    final total = _toInt(json['totalClasses']) > 0
+        ? _toInt(json['totalClasses'])
+        : _toInt(json['totalSessions']);
+    final attended = _toInt(json['attended']) > 0
+        ? _toInt(json['attended'])
+        : _toInt(json['totalPresent']);
+    final absent = _toInt(json['absent']) > 0
+        ? _toInt(json['absent'])
+        : _toInt(json['totalAbsent']);
+    final late = _toInt(json['late']) > 0
+        ? _toInt(json['late'])
+        : _toInt(json['totalLate']);
+    final excused = _toInt(json['excused']) > 0
+        ? _toInt(json['excused'])
+        : _toInt(json['totalExcused']);
+
+    final rawPct = json['percentage'] ?? json['attendancePercentage'];
     final parsedPct = rawPct is num
         ? rawPct.toDouble()
         : double.tryParse(rawPct?.toString() ?? '');
 
+    // For courseName, fall back to studentName when the backend returns the
+    // flat summary (which has no per-course breakdown).
+    final courseName = json['courseName']?.toString() ??
+        json['studentName']?.toString() ??
+        '';
+
     return StudentAttendanceSummaryModel(
-      courseId: _toInt(json['courseId']),
-      courseName: json['courseName']?.toString() ?? '',
+      courseId: _toInt(json['courseId']) > 0
+          ? _toInt(json['courseId'])
+          : _toInt(json['userId']),
+      courseName: courseName,
       courseCode: json['courseCode']?.toString() ?? '',
       totalClasses: total,
       attended: attended,
-      absent: _toInt(json['absent']),
-      lateCount: _toInt(json['late']),
-      excused: _toInt(json['excused']),
+      absent: absent,
+      lateCount: late,
+      excused: excused,
       percentage: parsedPct ?? (total > 0 ? (attended / total) * 100 : 0),
       lastClassDate: json['lastClassDate']?.toString(),
     );

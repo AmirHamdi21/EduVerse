@@ -6,6 +6,7 @@ import '../../models/attendance/ai_processing_result_model.dart';
 import '../../models/attendance/attendance_session_model.dart';
 import '../../models/instructor/teaching_course_model.dart';
 
+/// Matches the web's 3-step navigation: Classes grid → Section detail → Roster.
 enum InstructorAttendanceView { classes, section, roster }
 
 class RosterRow extends Equatable {

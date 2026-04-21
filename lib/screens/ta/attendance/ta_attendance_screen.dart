@@ -130,7 +130,7 @@ class _TAAttendanceViewState extends State<_TAAttendanceView> {
               isDark: isDark,
               active: state.view == TAAttendanceView.results,
               label: 'Results',
-              onTap: state.detectedStudents.isEmpty ? null : cubit.showResults,
+              onTap: cubit.showResults,
             ),
           ),
           const SizedBox(width: 8),
@@ -316,6 +316,86 @@ class _TAAttendanceViewState extends State<_TAAttendanceView> {
 
   Widget _buildResultsView(bool isDark, TAAttendanceState state) {
     final cubit = context.read<TAAttendanceCubit>();
+
+    // Show a helpful empty state when no results are available yet
+    if (state.detectedStudents.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: TAColors.primaryLight,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Icon(
+                  Icons.assessment_outlined,
+                  size: 48,
+                  color: TAColors.primary,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'No Results Yet',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: TAColors.textPrimaryColor(isDark),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Upload a class photo and process it with AI,\nor view a past session from History.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: TAColors.textSecondaryColor(isDark),
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: cubit.resetToUpload,
+                    icon: const Icon(Icons.add_a_photo_rounded, size: 18),
+                    label: const Text('Upload Photo'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: TAColors.primary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  OutlinedButton.icon(
+                    onPressed: () {
+                      cubit.loadHistory();
+                      cubit.showHistory();
+                    },
+                    icon: const Icon(Icons.history_rounded, size: 18),
+                    label: const Text('View History'),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     final present = state.detectedStudents
         .where((s) => s.status == 'present')
         .length;

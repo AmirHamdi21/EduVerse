@@ -329,24 +329,27 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
   ) {
     final statusColor = _getStatusColor(record.status);
     final statusText = _getStatusText(record.status, l10n);
+    final statusIcon = _getStatusIcon(record.status);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: statusColor.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         children: [
+          // Status icon
           Container(
-            width: 4,
-            height: 40,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
-              color: statusColor,
-              borderRadius: BorderRadius.circular(2),
+              color: statusColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
             ),
+            child: Icon(statusIcon, color: statusColor, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -361,10 +364,51 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
                     color: isDark ? Colors.white : const Color(0xFF1E293B),
                   ),
                 ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Text(
+                      record.courseCode,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: isDark
+                            ? const Color(0xFF64748B)
+                            : const Color(0xFF94A3B8),
+                      ),
+                    ),
+                    if (record.lectureTitle != null &&
+                        record.lectureTitle!.isNotEmpty) ...[
+                      Text(
+                        ' · ',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDark
+                              ? const Color(0xFF64748B)
+                              : const Color(0xFF94A3B8),
+                        ),
+                      ),
+                      Expanded(
+                        child: Text(
+                          record.lectureTitle!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: isDark
+                                ? const Color(0xFF64748B)
+                                : const Color(0xFF94A3B8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 2),
                 Text(
                   '${record.startTime.format(context)} - ${record.endTime.format(context)}',
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 11,
                     color: isDark
                         ? const Color(0xFF64748B)
                         : const Color(0xFF94A3B8),
@@ -391,6 +435,19 @@ class _AttendanceCalendarState extends State<AttendanceCalendar> {
         ],
       ),
     );
+  }
+
+  IconData _getStatusIcon(AttendanceStatus status) {
+    switch (status) {
+      case AttendanceStatus.present:
+        return Icons.check_circle_rounded;
+      case AttendanceStatus.absent:
+        return Icons.cancel_rounded;
+      case AttendanceStatus.late:
+        return Icons.schedule_rounded;
+      case AttendanceStatus.excused:
+        return Icons.info_outline_rounded;
+    }
   }
 
   bool _isToday(DateTime date) {

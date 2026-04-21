@@ -12,18 +12,30 @@ import 'core_api_client.dart';
 
 /// Service for Attendance API endpoints.
 ///
-/// Wraps all `/api/attendance` calls.
+/// **Important:** The backend attendance controller uses
+/// `@Controller('attendance')` — without the `api/` prefix that most other
+/// controllers use.  The web frontend mirrors this with its `~/` (rawBaseURL)
+/// convention.  We therefore compute a [_base] URL that strips the trailing
+/// `/api` from the Dio base URL and build absolute URLs so Dio does not
+/// prepend `…/api/` to attendance paths.
 class AttendanceService {
   final CoreApiClient _client;
 
   AttendanceService({required CoreApiClient coreApiClient})
     : _client = coreApiClient;
 
-  // Student Endpoints
+  /// Raw base URL **without** the `/api` suffix.
+  ///
+  /// Example: if `dio.options.baseUrl` is `http://10.0.2.2:8081/api`
+  /// this returns `http://10.0.2.2:8081`.
+  String get _base =>
+      _client.dio.options.baseUrl.replaceAll(RegExp(r'/api/?$'), '');
+
+  // ── Student Endpoints ──────────────────────────────────────────────────
 
   Future<ServiceResult<List<StudentAttendanceSummaryModel>>> getMyAttendance() {
     return RetryHelper.execute<List<StudentAttendanceSummaryModel>>(() async {
-      final response = await _client.dio.get('/attendance/my');
+      final response = await _client.dio.get('$_base/attendance/my');
       final payload = response.data;
 
       List<dynamic> list;
@@ -35,7 +47,10 @@ class AttendanceService {
         } else if (payload['data'] is List) {
           list = payload['data'] as List;
         } else {
-          list = <dynamic>[];
+          // The backend /attendance/my returns a single flat summary object
+          // (totalSessions, totalPresent, etc.) — not an array. Wrap it so
+          // downstream parsing can handle it uniformly.
+          list = <dynamic>[payload];
         }
       } else {
         list = <dynamic>[];
@@ -52,7 +67,8 @@ class AttendanceService {
     int userId,
   ) {
     return RetryHelper.execute<List<StudentAttendanceSummaryModel>>(() async {
-      final response = await _client.dio.get('/attendance/by-student/$userId');
+      final response =
+          await _client.dio.get('$_base/attendance/by-student/$userId');
       final payload = response.data;
 
       List<dynamic> list;
@@ -69,7 +85,7 @@ class AttendanceService {
     }, fallbackMessage: 'Failed to load student attendance');
   }
 
-  // Session Endpoints
+  // ── Session Endpoints ──────────────────────────────────────────────────
 
   Future<ServiceResult<List<AttendanceSessionModel>>> getSessions({
     int? sectionId,
@@ -89,7 +105,7 @@ class AttendanceService {
       if (sortOrder != null) params['sortOrder'] = sortOrder;
 
       final response = await _client.dio.get(
-        '/attendance/sessions',
+        '$_base/attendance/sessions',
         queryParameters: params.isEmpty ? null : params,
       );
 
@@ -115,7 +131,7 @@ class AttendanceService {
       if (totalMinutes != null) body['totalMinutes'] = totalMinutes;
 
       final response = await _client.dio.post(
-        '/attendance/sessions',
+        '$_base/attendance/sessions',
         data: body,
       );
       return AttendanceSessionModel.fromJson(_extractMap(response.data));
@@ -124,7 +140,8 @@ class AttendanceService {
 
   Future<ServiceResult<AttendanceSessionModel>> getSessionDetails(int id) {
     return RetryHelper.execute<AttendanceSessionModel>(() async {
-      final response = await _client.dio.get('/attendance/sessions/$id');
+      final response =
+          await _client.dio.get('$_base/attendance/sessions/$id');
       return AttendanceSessionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to load session details');
   }
@@ -135,7 +152,7 @@ class AttendanceService {
   ) {
     return RetryHelper.execute<AttendanceSessionModel>(() async {
       final response = await _client.dio.put(
-        '/attendance/sessions/$id',
+        '$_base/attendance/sessions/$id',
         data: data,
       );
       return AttendanceSessionModel.fromJson(_extractMap(response.data));
@@ -144,17 +161,17 @@ class AttendanceService {
 
   Future<ServiceResult<void>> deleteSession(int id) {
     return RetryHelper.executeVoid(() async {
-      await _client.dio.delete('/attendance/sessions/$id');
+      await _client.dio.delete('$_base/attendance/sessions/$id');
     }, fallbackMessage: 'Failed to delete session');
   }
 
   Future<ServiceResult<void>> closeSession(int id) {
     return RetryHelper.executeVoid(() async {
-      await _client.dio.patch('/attendance/sessions/$id/close');
+      await _client.dio.patch('$_base/attendance/sessions/$id/close');
     }, fallbackMessage: 'Failed to close session');
   }
 
-  // Records Endpoints
+  // ── Records Endpoints ──────────────────────────────────────────────────
 
   Future<ServiceResult<void>> markBatchAttendance({
     required int sessionId,
@@ -162,20 +179,23 @@ class AttendanceService {
   }) {
     return RetryHelper.executeVoid(() async {
       await _client.dio.post(
-        '/attendance/records/batch',
+        '$_base/attendance/records/batch',
         data: <String, dynamic>{'sessionId': sessionId, 'records': records},
       );
     }, fallbackMessage: 'Failed to save attendance');
   }
 
-  Future<ServiceResult<Map<String, dynamic>>> getSectionSummary(int sectionId) {
+  Future<ServiceResult<Map<String, dynamic>>> getSectionSummary(
+    int sectionId,
+  ) {
     return RetryHelper.execute<Map<String, dynamic>>(() async {
-      final response = await _client.dio.get('/attendance/summary/$sectionId');
+      final response =
+          await _client.dio.get('$_base/attendance/summary/$sectionId');
       return _extractMap(response.data);
     }, fallbackMessage: 'Failed to load section summary');
   }
 
-  // Face Reference Endpoints (Student)
+  // ── Face Reference Endpoints (Student) ─────────────────────────────────
 
   Future<ServiceResult<StudentFaceReferenceModel>> uploadMyFaceReference(
     File image,
@@ -188,7 +208,7 @@ class AttendanceService {
         ),
       });
       final response = await _client.dio.post(
-        '/attendance/face-references/me',
+        '$_base/attendance/face-references/me',
         data: formData,
       );
       return StudentFaceReferenceModel.fromJson(_extractMap(response.data));
@@ -198,7 +218,8 @@ class AttendanceService {
   Future<ServiceResult<List<StudentFaceReferenceModel>>>
   listMyFaceReferences() {
     return RetryHelper.execute<List<StudentFaceReferenceModel>>(() async {
-      final response = await _client.dio.get('/attendance/face-references/me');
+      final response =
+          await _client.dio.get('$_base/attendance/face-references/me');
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
           .map(StudentFaceReferenceModel.fromJson)
@@ -208,11 +229,11 @@ class AttendanceService {
 
   Future<ServiceResult<void>> deleteMyFaceReference(int id) {
     return RetryHelper.executeVoid(() async {
-      await _client.dio.delete('/attendance/face-references/me/$id');
+      await _client.dio.delete('$_base/attendance/face-references/me/$id');
     }, fallbackMessage: 'Failed to delete face reference');
   }
 
-  // AI Attendance Endpoints
+  // ── AI Attendance Endpoints ────────────────────────────────────────────
 
   Future<ServiceResult<AiProcessingResultModel>> uploadAiPhoto({
     required int sessionId,
@@ -228,7 +249,7 @@ class AttendanceService {
       });
 
       final response = await _client.dio.post(
-        '/attendance/ai-photo',
+        '$_base/attendance/ai-photo',
         data: formData,
       );
       return AiProcessingResultModel.fromJson(_extractMap(response.data));
@@ -240,7 +261,7 @@ class AttendanceService {
   ) {
     return RetryHelper.execute<AiProcessingResultModel>(() async {
       final response = await _client.dio.get(
-        '/attendance/ai-photo/$processingId',
+        '$_base/attendance/ai-photo/$processingId',
       );
       return AiProcessingResultModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to get AI processing result');
@@ -256,7 +277,7 @@ class AttendanceService {
 
       while (DateTime.now().isBefore(deadline)) {
         final response = await _client.dio.get(
-          '/attendance/ai-photo/$processingId',
+          '$_base/attendance/ai-photo/$processingId',
         );
         final model = AiProcessingResultModel.fromJson(
           _extractMap(response.data),
@@ -276,7 +297,7 @@ class AttendanceService {
     }, fallbackMessage: 'AI processing polling failed');
   }
 
-  // Helpers
+  // ── Helpers ────────────────────────────────────────────────────────────
 
   static Map<String, dynamic> _extractMap(dynamic payload) {
     if (payload is Map<String, dynamic>) {

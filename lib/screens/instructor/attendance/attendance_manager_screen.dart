@@ -8,13 +8,36 @@ import '../../../bloc/attendance/instructor_attendance_cubit.dart';
 import '../../../bloc/attendance/instructor_attendance_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
-import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/attendance/attendance_session_model.dart';
-import '../../../models/instructor/teaching_course_model.dart';
 import '../../../services/api/attendance_service.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../widgets/shared/attendance/ai_attendance_panel.dart';
 import '../../../widgets/shared/attendance/status_toggle_widget.dart';
+
+// ── Color constants ────────────────────────────────────────────────────
+const _kPrimary = Color(0xFF3B82F6);
+const _kCyan = Color(0xFF06B6D4);
+const _kGreen = Color(0xFF10B981);
+const _kAmber = Color(0xFFF59E0B);
+const _kRed = Color(0xFFEF4444);
+
+const _kSectionGradients = [
+  [Color(0xFF3B82F6), Color(0xFF06B6D4)],
+  [Color(0xFF8B5CF6), Color(0xFFA78BFA)],
+  [Color(0xFFF59E0B), Color(0xFFFBBF24)],
+  [Color(0xFF10B981), Color(0xFF34D399)],
+  [Color(0xFFEF4444), Color(0xFFF87171)],
+  [Color(0xFFEC4899), Color(0xFFF472B6)],
+];
+
+Color _textPrimary(bool d) => d ? Colors.white : const Color(0xFF1E293B);
+Color _textSecondary(bool d) =>
+    d ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
+Color _cardBg(bool d) => d ? const Color(0xFF1E293B) : Colors.white;
+Color _border(bool d) =>
+    d ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+Color _scaffoldBg(bool d) =>
+    d ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
 
 class AttendanceManagerScreen extends StatelessWidget {
   const AttendanceManagerScreen({super.key});
@@ -22,91 +45,93 @@ class AttendanceManagerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<InstructorAttendanceCubit>(
-      create: (context) => InstructorAttendanceCubit(
-        attendanceService: context.read<AttendanceService>(),
-        enrollmentService: context.read<EnrollmentService>(),
+      create: (ctx) => InstructorAttendanceCubit(
+        attendanceService: ctx.read<AttendanceService>(),
+        enrollmentService: ctx.read<EnrollmentService>(),
       )..loadTeachingSections(),
-      child: BlocBuilder<ThemeBloc, ThemeState>(
-        builder: (context, themeState) {
-          final isDark = themeState.isDark;
-
-          return Scaffold(
-            backgroundColor: isDark
-                ? const Color(0xFF0F172A)
-                : const Color(0xFFF8FAFC),
-            body: SafeArea(
-              child:
-                  BlocConsumer<
-                    InstructorAttendanceCubit,
-                    InstructorAttendanceState
-                  >(
-                    listener: (context, state) {
-                      if (state.error != null && state.error!.isNotEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.error!),
-                            backgroundColor: const Color(0xFFEF4444),
-                          ),
-                        );
-                      }
-                      if (state.aiError != null && state.aiError!.isNotEmpty) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(state.aiError!),
-                            backgroundColor: const Color(0xFFF59E0B),
-                          ),
-                        );
-                      }
-                    },
-                    builder: (context, state) {
-                      if (state.isLoading &&
-                          state.view == InstructorAttendanceView.classes &&
-                          state.teachingSections.isEmpty) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-
-                      switch (state.view) {
-                        case InstructorAttendanceView.classes:
-                          return _ClassesView(isDark: isDark, state: state);
-                        case InstructorAttendanceView.section:
-                          return _SectionView(isDark: isDark, state: state);
-                        case InstructorAttendanceView.roster:
-                          return _RosterView(isDark: isDark, state: state);
-                      }
-                    },
-                  ),
-            ),
-          );
-        },
-      ),
+      child: const _Body(),
     );
   }
 }
 
+class _Body extends StatelessWidget {
+  const _Body();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState.isDark;
+        return Scaffold(
+          backgroundColor: _scaffoldBg(isDark),
+          body: SafeArea(
+            child: BlocConsumer<InstructorAttendanceCubit,
+                InstructorAttendanceState>(
+              listener: (ctx, s) {
+                if (s.error != null && s.error!.isNotEmpty) {
+                  ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+                    content: Text(s.error!),
+                    backgroundColor: _kRed,
+                  ));
+                }
+              },
+              builder: (ctx, state) {
+                if (state.isLoading && state.teachingSections.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                return switch (state.view) {
+                  InstructorAttendanceView.classes =>
+                    _ClassesView(isDark: isDark, state: state),
+                  InstructorAttendanceView.section =>
+                    _SectionView(isDark: isDark, state: state),
+                  InstructorAttendanceView.roster =>
+                    _RosterView(isDark: isDark, state: state),
+                };
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+//  VIEW 1 — Classes Grid
+// ════════════════════════════════════════════════════════════════════════
+
 class _ClassesView extends StatelessWidget {
   final bool isDark;
   final InstructorAttendanceState state;
-
   const _ClassesView({required this.isDark, required this.state});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
+    final cubit = context.read<InstructorAttendanceCubit>();
     return Column(
       children: [
-        _Header(
-          title: l10n.attendanceManager,
-          subtitle: 'Select a section to manage attendance',
-        ),
+        _header(context, 'Your Sections', 'Choose a class to take attendance',
+            isDark),
         Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: state.teachingSections.length,
-            itemBuilder: (context, index) {
-              final section = state.teachingSections[index];
-              return _SectionCard(section: section, isDark: isDark);
-            },
-          ),
+          child: state.teachingSections.isEmpty
+              ? Center(
+                  child: Text('No sections assigned.',
+                      style: TextStyle(color: _textSecondary(isDark))))
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: state.teachingSections.length,
+                  itemBuilder: (ctx, i) {
+                    final s = state.teachingSections[i];
+                    final colors =
+                        _kSectionGradients[i % _kSectionGradients.length];
+                    return _SectionCard(
+                      section: s,
+                      colors: colors,
+                      isDark: isDark,
+                      onTap: () => cubit.openSection(s, s.sectionId),
+                    );
+                  },
+                ),
         ),
       ],
     );
@@ -114,178 +139,271 @@ class _ClassesView extends StatelessWidget {
 }
 
 class _SectionCard extends StatelessWidget {
-  final TeachingCourseModel section;
+  final dynamic section;
+  final List<Color> colors;
   final bool isDark;
-
-  const _SectionCard({required this.section, required this.isDark});
+  final VoidCallback onTap;
+  const _SectionCard(
+      {required this.section,
+      required this.colors,
+      required this.isDark,
+      required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          color: _cardBg(isDark),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: _border(isDark)),
+          boxShadow: [
+            BoxShadow(
+              color: colors[0].withValues(alpha: 0.15),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-      ),
-      child: ListTile(
-        title: Text(
-          '${section.course.courseCode} - ${section.course.name}',
-          style: TextStyle(
-            color: isDark ? Colors.white : const Color(0xFF1E293B),
-            fontWeight: FontWeight.w700,
-          ),
+        child: Column(
+          children: [
+            Container(
+              height: 4,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(colors: colors),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(colors: colors),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(Icons.school_rounded,
+                        color: Colors.white, size: 24),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          section.course.courseCode,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: colors[0],
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          section.course.name,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: _textPrimary(isDark),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Section ${section.section.sectionNumber}',
+                          style: TextStyle(
+                              fontSize: 12, color: _textSecondary(isDark)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right_rounded,
+                      color: _textSecondary(isDark)),
+                ],
+              ),
+            ),
+          ],
         ),
-        subtitle: Text(
-          'Section ${section.section.sectionNumber} • ${section.semester.name}',
-          style: TextStyle(
-            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-          ),
-        ),
-        trailing: const Icon(Icons.chevron_right_rounded),
-        onTap: () {
-          context.read<InstructorAttendanceCubit>().openSection(
-            section,
-            section.sectionId,
-          );
-        },
       ),
     );
   }
 }
 
-class _SectionView extends StatefulWidget {
+// ════════════════════════════════════════════════════════════════════════
+//  VIEW 2 — Section Detail (Open Sessions + Create)
+// ════════════════════════════════════════════════════════════════════════
+
+class _SectionView extends StatelessWidget {
   final bool isDark;
   final InstructorAttendanceState state;
-
   const _SectionView({required this.isDark, required this.state});
 
   @override
-  State<_SectionView> createState() => _SectionViewState();
-}
-
-class _SectionViewState extends State<_SectionView> {
-  @override
   Widget build(BuildContext context) {
-    final state = widget.state;
     final cubit = context.read<InstructorAttendanceCubit>();
+    final sec = state.selectedSection;
+    final title = sec != null
+        ? '${sec.course.courseCode} — ${sec.course.name}'
+        : 'Section';
+    final subtitle = sec != null
+        ? 'Section ${sec.section.sectionNumber} · Take or resume attendance'
+        : '';
+
+    final openSessions = state.sessions
+        .where(
+            (s) => s.status == 'scheduled' || s.status == 'in_progress')
+        .toList();
 
     return Column(
       children: [
-        _Header(
-          title:
-              '${state.selectedSection?.course.courseCode ?? ''} ${state.selectedSection?.section.sectionNumber ?? ''}',
-          subtitle: state.selectedSection?.course.name ?? 'Attendance Sessions',
-          showBack: true,
-          onBack: cubit.backToClasses,
-        ),
-        _CreateSessionCard(isDark: widget.isDark, state: state),
-        const SizedBox(height: 8),
+        _headerWithBack(context, title, subtitle, isDark, '← All sections',
+            cubit.backToClasses),
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: state.sessions
-                .where(
-                  (s) => s.status == 'scheduled' || s.status == 'in_progress',
-                )
-                .map(
-                  (session) =>
-                      _SessionTile(session: session, isDark: widget.isDark),
-                )
-                .toList(),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _CreateSessionCard extends StatelessWidget {
-  final bool isDark;
-  final InstructorAttendanceState state;
-
-  const _CreateSessionCard({required this.isDark, required this.state});
-
-  @override
-  Widget build(BuildContext context) {
-    final cubit = context.read<InstructorAttendanceCubit>();
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Create Session',
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 10),
-          Row(
+            padding: const EdgeInsets.all(16),
             children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () async {
-                    final now = DateTime.now();
-                    final picked = await showDatePicker(
-                      context: context,
-                      initialDate: now,
-                      firstDate: DateTime(now.year - 1),
-                      lastDate: DateTime(now.year + 1),
-                    );
-                    if (picked != null) {
-                      final month = picked.month.toString().padLeft(2, '0');
-                      final day = picked.day.toString().padLeft(2, '0');
-                      cubit.updateNewSessionDate('${picked.year}-$month-$day');
-                    }
-                  },
-                  icon: const Icon(Icons.calendar_today_rounded),
-                  label: Text(state.newSessionDate),
+              // Open Sessions Card
+              _card(
+                isDark,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.pending_actions_rounded,
+                            color: _kPrimary, size: 20),
+                        const SizedBox(width: 8),
+                        Text('Open Sessions',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: _textPrimary(isDark))),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Sessions not closed yet. Resume to keep editing.',
+                      style:
+                          TextStyle(fontSize: 12, color: _textSecondary(isDark)),
+                    ),
+                    const SizedBox(height: 12),
+                    if (state.isLoading)
+                      const Center(
+                          child: Padding(
+                              padding: EdgeInsets.all(16),
+                              child:
+                                  CircularProgressIndicator(strokeWidth: 2)))
+                    else if (openSessions.isEmpty)
+                      Text('No open sessions. Start a new lecture below.',
+                          style: TextStyle(
+                              fontSize: 13, color: _textSecondary(isDark)))
+                    else
+                      ...openSessions.map((s) => _SessionTile(
+                          session: s,
+                          isDark: isDark,
+                          onTap: () => cubit.openRosterFromSession(s))),
+                  ],
                 ),
               ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: state.newSessionType,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: 'lecture', child: Text('Lecture')),
-                    DropdownMenuItem(value: 'lab', child: Text('Lab')),
-                    DropdownMenuItem(
-                      value: 'tutorial',
-                      child: Text('Tutorial'),
+              const SizedBox(height: 16),
+              // Create Session Card
+              _card(
+                isDark,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.add_circle_outline_rounded,
+                            color: _kGreen, size: 20),
+                        const SizedBox(width: 8),
+                        Text('Start New Lecture Attendance',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: _textPrimary(isDark))),
+                      ],
                     ),
-                    DropdownMenuItem(value: 'exam', child: Text('Exam')),
+                    const SizedBox(height: 14),
+                    Text('Date',
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: _textSecondary(isDark),
+                            letterSpacing: 1)),
+                    const SizedBox(height: 6),
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        final now = DateTime.now();
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: now,
+                          firstDate: DateTime(now.year - 1),
+                          lastDate: DateTime(now.year + 1),
+                        );
+                        if (picked != null) {
+                          final m = picked.month.toString().padLeft(2, '0');
+                          final d = picked.day.toString().padLeft(2, '0');
+                          cubit.updateNewSessionDate('${picked.year}-$m-$d');
+                        }
+                      },
+                      icon: const Icon(Icons.calendar_today_rounded, size: 16),
+                      label: Text(state.newSessionDate),
+                    ),
+                    const SizedBox(height: 10),
+                    Text('Type',
+                        style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: _textSecondary(isDark),
+                            letterSpacing: 1)),
+                    const SizedBox(height: 6),
+                    DropdownButtonFormField<String>(
+                      initialValue: state.newSessionType,
+                      decoration: InputDecoration(
+                        border: const OutlineInputBorder(),
+                        isDense: true,
+                        filled: true,
+                        fillColor: _cardBg(isDark),
+                      ),
+                      dropdownColor: _cardBg(isDark),
+                      items: const [
+                        DropdownMenuItem(
+                            value: 'lecture', child: Text('Lecture')),
+                        DropdownMenuItem(value: 'lab', child: Text('Lab')),
+                        DropdownMenuItem(
+                            value: 'tutorial', child: Text('Tutorial')),
+                        DropdownMenuItem(value: 'exam', child: Text('Exam')),
+                      ],
+                      onChanged: (v) {
+                        if (v != null) cubit.updateNewSessionType(v);
+                      },
+                    ),
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed:
+                            state.isLoading ? null : () => cubit.createSession(),
+                        icon: const Icon(Icons.play_arrow_rounded),
+                        label: const Text('Create Session & Open Roster'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _kPrimary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                      ),
+                    ),
                   ],
-                  onChanged: (value) {
-                    if (value != null) cubit.updateNewSessionType(value);
-                  },
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: cubit.createSession,
-              icon: const Icon(Icons.add_rounded),
-              label: const Text('Create Session'),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -293,66 +411,59 @@ class _CreateSessionCard extends StatelessWidget {
 class _SessionTile extends StatelessWidget {
   final AttendanceSessionModel session;
   final bool isDark;
-
-  const _SessionTile({required this.session, required this.isDark});
+  final VoidCallback onTap;
+  const _SessionTile(
+      {required this.session, required this.isDark, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = switch (session.status) {
-      'in_progress' => const Color(0xFFF59E0B),
-      'completed' => const Color(0xFF10B981),
-      'cancelled' => const Color(0xFFEF4444),
-      _ => const Color(0xFF3B82F6),
-    };
-
+    final statusColor = session.status == 'in_progress' ? _kAmber : _kPrimary;
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
+        color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
-        ),
+        border: Border.all(color: _border(isDark)),
       ),
       child: Row(
         children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: statusColor.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(session.status,
+                style: TextStyle(
+                    color: statusColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700)),
+          ),
+          const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  '${session.sessionDate} • ${session.sessionType ?? 'lecture'}',
-                  style: TextStyle(
-                    color: isDark ? Colors.white : const Color(0xFF1E293B),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 3,
-                  ),
-                  decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    session.status,
-                    style: TextStyle(color: statusColor, fontSize: 11),
-                  ),
-                ),
+                Text(session.sessionDate,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: _textPrimary(isDark))),
+                Text('${session.sessionType ?? 'lecture'} · id ${session.id}',
+                    style:
+                        TextStyle(fontSize: 11, color: _textSecondary(isDark))),
               ],
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              context.read<InstructorAttendanceCubit>().openRosterFromSession(
-                session,
-              );
-            },
-            child: const Text('Open'),
+            onPressed: onTap,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _kPrimary,
+              foregroundColor: Colors.white,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            ),
+            child: const Text('Open Roster', style: TextStyle(fontSize: 12)),
           ),
         ],
       ),
@@ -360,204 +471,290 @@ class _SessionTile extends StatelessWidget {
   }
 }
 
+// ════════════════════════════════════════════════════════════════════════
+//  VIEW 3 — Roster
+// ════════════════════════════════════════════════════════════════════════
+
 class _RosterView extends StatelessWidget {
   final bool isDark;
   final InstructorAttendanceState state;
-
   const _RosterView({required this.isDark, required this.state});
 
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<InstructorAttendanceCubit>();
+    final sec = state.selectedSection;
+    final title = sec != null ? '${sec.course.courseCode} — roster' : 'Roster';
+    final parts = [
+      if (state.activeSession != null) 'Session ${state.activeSession!.id}',
+      state.activeSession?.sessionDate ?? '',
+      state.activeSession?.sessionType ?? '',
+      state.activeSession?.status ?? '',
+    ].where((s) => s.isNotEmpty).join(' · ');
 
     return Column(
       children: [
-        _Header(
-          title: 'Session ${state.activeSession?.sessionDate ?? ''}',
-          subtitle: state.activeSession?.sessionType ?? 'Roster',
-          showBack: true,
-          onBack: cubit.backToSection,
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: state.isRosterReadOnly
-                      ? null
-                      : () => cubit.setAllStatus('present'),
-                  child: const Text('Mark All Present'),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: state.isRosterReadOnly
-                      ? null
-                      : () => cubit.setAllStatus('absent'),
-                  child: const Text('Mark All Absent'),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
+        _headerWithBack(
+            context, title, parts, isDark, '← Back', cubit.backToSection),
         Expanded(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            children: [
-              ...state.rosterRows.map(
-                (row) => Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E293B) : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: isDark
-                          ? const Color(0xFF334155)
-                          : const Color(0xFFE2E8F0),
+          child: state.isLoading && state.rosterRows.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    // Action buttons
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        _actionBtn('Everyone Present', _kPrimary,
+                            state.isRosterReadOnly
+                                ? null
+                                : () => cubit.setAllStatus('present')),
+                        _actionBtn(
+                            'Everyone Absent',
+                            isDark
+                                ? const Color(0xFF475569)
+                                : const Color(0xFF94A3B8),
+                            state.isRosterReadOnly
+                                ? null
+                                : () => cubit.setAllStatus('absent')),
+                        _actionBtn('Save', _kGreen,
+                            state.isRosterReadOnly ? null : cubit.saveBatch),
+                        _actionBtn('Close & Lock', _kRed,
+                            state.isRosterReadOnly ? null : cubit.closeSession),
+                      ],
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              row.name,
-                              style: TextStyle(
-                                color: isDark
-                                    ? Colors.white
-                                    : const Color(0xFF1E293B),
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                          if (row.aiConfidence != null)
-                            Text(
-                              'AI ${(row.aiConfidence! * 100).toStringAsFixed(0)}%',
-                              style: const TextStyle(
-                                color: Color(0xFF0EA5E9),
-                                fontSize: 12,
-                              ),
-                            ),
-                        ],
+                    const SizedBox(height: 12),
+
+                    // Read-only banner
+                    if (state.isRosterReadOnly)
+                      Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: _kAmber.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border:
+                              Border.all(color: _kAmber.withValues(alpha: 0.3)),
+                        ),
+                        child: Text(
+                          'This session is closed (view only).',
+                          style: TextStyle(
+                              fontSize: 13,
+                              color: isDark
+                                  ? const Color(0xFFFDE68A)
+                                  : const Color(0xFF92400E)),
+                        ),
                       ),
-                      const SizedBox(height: 8),
-                      StatusToggleWidget(
-                        currentStatus: row.status,
-                        isDisabled: state.isRosterReadOnly,
-                        isDark: isDark,
-                        onChanged: (status) =>
-                            cubit.applyStatus(row.userId, status),
+
+                    // AI Panel
+                    if (!state.isRosterReadOnly)
+                      AiAttendancePanel(
+                        sessionId: state.activeSession?.id,
+                        isReadOnly: state.isRosterReadOnly,
+                        isLoading: state.isAiLoading,
+                        error: state.aiError,
+                        result: state.aiResult,
+                        selectedPhoto: state.aiPhoto,
+                        onPickPhoto: () async {
+                          final r = await FilePicker.platform
+                              .pickFiles(type: FileType.image);
+                          final p = r?.files.single.path;
+                          if (p != null) cubit.setAiFile(File(p));
+                        },
+                        onRunAi: cubit.runAiAttendance,
+                        onApplyResults: cubit.applyAiResultsToRoster,
                       ),
-                    ],
-                  ),
+
+                    const SizedBox(height: 8),
+
+                    // Roster rows
+                    if (state.rosterRows.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Center(
+                          child: Text('No enrolled students.',
+                              style: TextStyle(color: _textSecondary(isDark))),
+                        ),
+                      )
+                    else
+                      ...state.rosterRows.map((row) => Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: _cardBg(isDark),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(color: _border(isDark)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(row.name,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  color:
+                                                      _textPrimary(isDark))),
+                                          if (row.email.isNotEmpty)
+                                            Text(row.email,
+                                                style: TextStyle(
+                                                    fontSize: 11,
+                                                    color: _textSecondary(
+                                                        isDark))),
+                                        ],
+                                      ),
+                                    ),
+                                    if (row.isAiMarked)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 2),
+                                        decoration: BoxDecoration(
+                                          color:
+                                              _kCyan.withValues(alpha: 0.15),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                        ),
+                                        child: Text(
+                                          'AI ${row.aiConfidence != null ? '${(row.aiConfidence! * 100).toStringAsFixed(0)}%' : ''}',
+                                          style: const TextStyle(
+                                              fontSize: 10, color: _kCyan),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                StatusToggleWidget(
+                                  currentStatus: row.status,
+                                  isDark: isDark,
+                                  isDisabled: state.isRosterReadOnly,
+                                  onChanged: (s) =>
+                                      cubit.applyStatus(row.userId, s),
+                                ),
+                              ],
+                            ),
+                          )),
+                  ],
                 ),
-              ),
-              AiAttendancePanel(
-                sessionId: state.activeSession?.id,
-                isReadOnly: state.isRosterReadOnly,
-                isLoading: state.isAiLoading,
-                error: state.aiError,
-                result: state.aiResult,
-                selectedPhoto: state.aiPhoto,
-                onPickPhoto: () async {
-                  final result = await FilePicker.platform.pickFiles(
-                    type: FileType.image,
-                    allowMultiple: false,
-                  );
-                  final path = result?.files.single.path;
-                  if (path != null && path.isNotEmpty) {
-                    cubit.setAiFile(File(path));
-                  }
-                },
-                onRunAi: cubit.runAiAttendance,
-                onApplyResults: cubit.applyAiResultsToRoster,
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: state.isRosterReadOnly
-                          ? null
-                          : cubit.saveBatch,
-                      icon: const Icon(Icons.save_rounded),
-                      label: const Text('Save'),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: state.isRosterReadOnly
-                          ? null
-                          : cubit.closeSession,
-                      icon: const Icon(Icons.lock_outline_rounded),
-                      label: const Text('Close Session'),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
         ),
       ],
     );
   }
-}
 
-class _Header extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final bool showBack;
-  final VoidCallback? onBack;
-
-  const _Header({
-    required this.title,
-    required this.subtitle,
-    this.showBack = false,
-    this.onBack,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
-      child: Row(
-        children: [
-          if (showBack)
-            IconButton(
-              onPressed: onBack,
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
-            ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xFF64748B),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+  Widget _actionBtn(String label, Color color, VoidCallback? onTap) {
+    return ElevatedButton(
+      onPressed: onTap,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        disabledBackgroundColor: color.withValues(alpha: 0.3),
       ),
+      child: Text(label, style: const TextStyle(fontSize: 12)),
     );
   }
+}
+
+// ════════════════════════════════════════════════════════════════════════
+//  Shared helpers
+// ════════════════════════════════════════════════════════════════════════
+
+Widget _header(BuildContext ctx, String title, String subtitle, bool isDark) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    decoration: BoxDecoration(
+      color: _cardBg(isDark),
+      border: Border(bottom: BorderSide(color: _border(isDark))),
+    ),
+    child: Row(
+      children: [
+        IconButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          icon: Icon(Icons.arrow_back_ios_new_rounded,
+              color: _textPrimary(isDark)),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title,
+                  style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: _textPrimary(isDark))),
+              if (subtitle.isNotEmpty)
+                Text(subtitle,
+                    style:
+                        TextStyle(fontSize: 13, color: _textSecondary(isDark))),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _headerWithBack(BuildContext ctx, String title, String subtitle,
+    bool isDark, String backLabel, VoidCallback onBack) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+    decoration: BoxDecoration(
+      color: _cardBg(isDark),
+      border: Border(bottom: BorderSide(color: _border(isDark))),
+    ),
+    child: Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title,
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: _textPrimary(isDark)),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis),
+              if (subtitle.isNotEmpty)
+                Text(subtitle,
+                    style:
+                        TextStyle(fontSize: 12, color: _textSecondary(isDark)),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis),
+            ],
+          ),
+        ),
+        OutlinedButton(
+          onPressed: onBack,
+          child: Text(backLabel, style: const TextStyle(fontSize: 12)),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _card(bool isDark, {required Widget child}) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: _cardBg(isDark),
+      borderRadius: BorderRadius.circular(16),
+      border: Border.all(color: _border(isDark)),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    ),
+    child: child,
+  );
 }

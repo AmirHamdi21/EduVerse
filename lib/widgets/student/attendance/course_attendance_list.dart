@@ -88,13 +88,22 @@ class _CourseAttendanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final percentage = course.attendancePercentage;
+    final statusLabel = percentage >= 90
+        ? 'Excellent'
+        : percentage >= 80
+        ? 'Good'
+        : 'Warning';
+    final statusColor = percentage >= 90
+        ? const Color(0xFF10B981)
+        : percentage >= 80
+        ? const Color(0xFF3B82F6)
+        : const Color(0xFFF59E0B);
 
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: isSelected
               ? LinearGradient(
@@ -131,107 +140,208 @@ class _CourseAttendanceCard extends StatelessWidget {
           ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            // Colored top bar
+            if (!isSelected)
+              Container(
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                height: 4,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(course.gradientColors[0]),
+                      Color(course.gradientColors[1]),
+                    ],
+                  ),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(20),
+                  ),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        course.courseName,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: isSelected
-                              ? Colors.white
-                              : isDark
-                              ? Colors.white
-                              : const Color(0xFF1E293B),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              course.courseName,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: isSelected
+                                    ? Colors.white
+                                    : isDark
+                                    ? Colors.white
+                                    : const Color(0xFF1E293B),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              course.courseCode,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isSelected
+                                    ? Colors.white.withValues(alpha: 0.8)
+                                    : isDark
+                                    ? const Color(0xFF94A3B8)
+                                    : const Color(0xFF64748B),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        course.courseCode,
-                        style: TextStyle(
-                          fontSize: 13,
+                      // Status badge
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
                           color: isSelected
-                              ? Colors.white.withValues(alpha: 0.8)
-                              : isDark
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF64748B),
+                              ? Colors.white.withValues(alpha: 0.2)
+                              : statusColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: isSelected
+                                ? Colors.white.withValues(alpha: 0.3)
+                                : statusColor.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Text(
+                          '${percentage.toStringAsFixed(1)}%',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: isSelected ? Colors.white : statusColor,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-                _buildPercentageIndicator(percentage, isSelected),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _buildProgressBar(percentage, isSelected),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildStatItem(
-                  l10n.present,
-                  course.presentCount.toString(),
-                  const Color(0xFF10B981),
-                  isSelected,
-                ),
-                _buildStatItem(
-                  l10n.late,
-                  course.lateCount.toString(),
-                  const Color(0xFFF59E0B),
-                  isSelected,
-                ),
-                _buildStatItem(
-                  l10n.absent,
-                  course.absentCount.toString(),
-                  const Color(0xFFEF4444),
-                  isSelected,
-                ),
-                _buildStatItem(
-                  l10n.excused,
-                  course.excusedCount.toString(),
-                  const Color(0xFF6366F1),
-                  isSelected,
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  // Stats grid matching web (4 columns)
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        top: BorderSide(
+                          color: isSelected
+                              ? Colors.white.withValues(alpha: 0.15)
+                              : isDark
+                              ? const Color(0xFF334155)
+                              : const Color(0xFFE2E8F0),
+                        ),
+                        bottom: BorderSide(
+                          color: isSelected
+                              ? Colors.white.withValues(alpha: 0.15)
+                              : isDark
+                              ? const Color(0xFF334155)
+                              : const Color(0xFFE2E8F0),
+                        ),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _buildStatItem(
+                          l10n.totalClasses,
+                          course.totalClasses.toString(),
+                          isSelected
+                              ? Colors.white
+                              : isDark
+                              ? Colors.white
+                              : const Color(0xFF1E293B),
+                          isSelected,
+                        ),
+                        _buildStatItem(
+                          l10n.present,
+                          course.presentCount.toString(),
+                          const Color(0xFF10B981),
+                          isSelected,
+                        ),
+                        _buildStatItem(
+                          l10n.absent,
+                          course.absentCount.toString(),
+                          const Color(0xFFEF4444),
+                          isSelected,
+                        ),
+                        _buildStatItem(
+                          l10n.late,
+                          course.lateCount.toString(),
+                          const Color(0xFFF59E0B),
+                          isSelected,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildProgressBar(percentage, isSelected),
+                  const SizedBox(height: 10),
+                  // Footer with status label
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? Colors.white.withValues(alpha: 0.15)
+                              : statusColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          statusLabel,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: isSelected ? Colors.white : statusColor,
+                          ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            size: 16,
+                            color: isSelected
+                                ? Colors.white.withValues(alpha: 0.7)
+                                : isDark
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF64748B),
+                          ),
+                          Text(
+                            'Details',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: isSelected
+                                  ? Colors.white.withValues(alpha: 0.7)
+                                  : isDark
+                                  ? const Color(0xFF94A3B8)
+                                  : const Color(0xFF64748B),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPercentageIndicator(double percentage, bool isSelected) {
-    final color = percentage >= 75
-        ? const Color(0xFF10B981)
-        : percentage >= 50
-        ? const Color(0xFFF59E0B)
-        : const Color(0xFFEF4444);
-
-    return Container(
-      width: 56,
-      height: 56,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: isSelected
-            ? Colors.white.withValues(alpha: 0.2)
-            : color.withValues(alpha: 0.15),
-      ),
-      child: Center(
-        child: Text(
-          '${percentage.toStringAsFixed(0)}%',
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.white : color,
-          ),
         ),
       ),
     );

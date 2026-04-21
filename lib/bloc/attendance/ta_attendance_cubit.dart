@@ -326,9 +326,6 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
   }
 
   void showResults() {
-    if (state.detectedStudents.isEmpty) {
-      return;
-    }
     emit(state.copyWith(view: TAAttendanceView.results));
   }
 
