@@ -1,40 +1,56 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../models/notifications/api_notification_model.dart';
 import '../../models/notifications/notification_model.dart';
-import '../../services/api/student_stats_service.dart';
+import '../../services/api/notification_api_service.dart';
 import 'notification_state.dart';
 
 class NotificationCubit extends Cubit<NotificationState> {
-  final StudentStatsService? _studentStatsService;
+  final NotificationApiService? _notificationApiService;
 
-  NotificationCubit({StudentStatsService? studentStatsService})
-    : _studentStatsService = studentStatsService,
+  NotificationCubit({NotificationApiService? notificationApiService})
+    : _notificationApiService = notificationApiService,
       super(const NotificationState());
 
-  /// Load notifications - in a real app, this would call an API
+  /// Load notifications from the backend API.
   Future<void> loadNotifications() async {
     emit(state.copyWith(status: NotificationLoadingStatus.loading));
 
     try {
-      // Simulate API call delay
-      await Future.delayed(const Duration(milliseconds: 500));
+      if (_notificationApiService == null) {
+        // Fallback to empty state when no service injected
+        emit(
+          state.copyWith(
+            status: NotificationLoadingStatus.loaded,
+            notifications: [],
+            aiInsights: _generateSampleAIInsights(),
+            systemAlerts: _generateSampleSystemAlerts(),
+            unreadCount: 0,
+          ),
+        );
+        return;
+      }
 
-      // Generate sample notifications
-      final notifications = _generateSampleNotifications();
+      // Fetch notifications from API
+      final result = await _notificationApiService.getAll(limit: 100);
+
+      List<NotificationModel> notifications = [];
+      if (result.isSuccess && result.data != null) {
+        notifications = result.data!
+            .map((json) => ApiNotificationModel.fromJson(json))
+            .map((api) => api.toNotificationModel())
+            .toList();
+      }
+
+      // Fetch unread count from API
+      int unreadCount = notifications.where((n) => !n.isRead).length;
+      final countResult = await _notificationApiService.getUnreadCount();
+      if (countResult.isSuccess && countResult.data != null) {
+        unreadCount = countResult.data!;
+      }
+
+      // AI Insights and System Alerts remain local-only (no backend endpoints)
       final aiInsights = _generateSampleAIInsights();
       final systemAlerts = _generateSampleSystemAlerts();
-
-      var unreadCount = notifications.where((n) => !n.isRead).length;
-
-      // Keep the dashboard badge in sync with backend unread count when
-      // available, while retaining demo notifications as the list source.
-      if (_studentStatsService != null) {
-        try {
-          final unreadModel = await _studentStatsService.getUnreadCount();
-          unreadCount = unreadModel.unreadCount;
-        } catch (_) {
-          // Ignore network failures and keep the locally computed fallback.
-        }
-      }
 
       emit(
         state.copyWith(
@@ -55,7 +71,7 @@ class NotificationCubit extends Cubit<NotificationState> {
     }
   }
 
-  /// Mark a notification as read
+  /// Mark a notification as read (optimistic UI + API call)
   void markAsRead(String id) {
     final updatedNotifications = state.notifications.map((n) {
       if (n.id == id) {
@@ -72,6 +88,9 @@ class NotificationCubit extends Cubit<NotificationState> {
         unreadCount: unreadCount,
       ),
     );
+
+    // Fire-and-forget API call
+    _notificationApiService?.markAsRead(id);
   }
 
   /// Mark a notification as unread
@@ -93,16 +112,19 @@ class NotificationCubit extends Cubit<NotificationState> {
     );
   }
 
-  /// Mark all notifications as read
+  /// Mark all notifications as read (optimistic UI + API call)
   void markAllAsRead() {
     final updatedNotifications = state.notifications.map((n) {
       return n.copyWith(isRead: true);
     }).toList();
 
     emit(state.copyWith(notifications: updatedNotifications, unreadCount: 0));
+
+    // Fire-and-forget API call
+    _notificationApiService?.markAllAsRead();
   }
 
-  /// Toggle bookmark status
+  /// Toggle bookmark status (local-only)
   void toggleBookmark(String id) {
     final updatedNotifications = state.notifications.map((n) {
       if (n.id == id) {
@@ -114,7 +136,7 @@ class NotificationCubit extends Cubit<NotificationState> {
     emit(state.copyWith(notifications: updatedNotifications));
   }
 
-  /// Delete a notification
+  /// Delete a notification (optimistic UI + API call)
   void deleteNotification(String id) {
     final updatedNotifications = state.notifications
         .where((n) => n.id != id)
@@ -127,19 +149,25 @@ class NotificationCubit extends Cubit<NotificationState> {
         unreadCount: unreadCount,
       ),
     );
+
+    // Fire-and-forget API call
+    _notificationApiService?.deleteNotification(id);
   }
 
-  /// Clear all notifications
+  /// Clear all notifications (local-only since backend has no clear-all endpoint)
   void clearAllNotifications() {
     emit(state.copyWith(notifications: [], unreadCount: 0));
   }
 
-  /// Clear read notifications
+  /// Clear read notifications (optimistic UI + API call)
   void clearReadNotifications() {
     final updatedNotifications = state.notifications
         .where((n) => !n.isRead)
         .toList();
     emit(state.copyWith(notifications: updatedNotifications));
+
+    // Fire-and-forget API call
+    _notificationApiService?.clearRead();
   }
 
   /// Set filter category
@@ -186,126 +214,9 @@ class NotificationCubit extends Cubit<NotificationState> {
     emit(state.copyWith(systemAlerts: updatedAlerts));
   }
 
-  /// Generate sample notifications for demo
-  List<NotificationModel> _generateSampleNotifications() {
-    final now = DateTime.now();
-    return [
-      NotificationModel(
-        id: '1',
-        title: 'Assignment 2 Deadline Tomorrow',
-        message:
-            'Due Oct 20, 11:59 PM — Operating Systems. Make sure to submit your work on time.',
-        type: NotificationType.assignment,
-        priority: NotificationPriority.urgent,
-        category: NotificationCategory.deadlines,
-        createdAt: now.subtract(const Duration(hours: 2)),
-        isRead: false,
-        courseName: 'Operating Systems',
-        instructorName: 'Dr. Amy Sano',
-        tags: {'Operating Systems': 'OS', 'Assignment': 'HW'},
-        dueDate: now.add(const Duration(days: 1)),
-      ),
-      NotificationModel(
-        id: '2',
-        title: 'New lecture notes uploaded',
-        message:
-            'Introduction to AI - Week 5 materials are now available. Review them before the next class.',
-        type: NotificationType.lecture,
-        priority: NotificationPriority.normal,
-        category: NotificationCategory.courses,
-        createdAt: now.subtract(const Duration(hours: 4)),
-        isRead: false,
-        courseName: 'Introduction to AI',
-        instructorName: 'Prof. Sarah Johnson',
-        tags: {'Introduction to AI': 'AI', 'Lecture': 'LEC'},
-      ),
-      NotificationModel(
-        id: '3',
-        title: 'Message from Prof. Alan Turing',
-        message:
-            'Reminder: Office hours are moved to 3 PM today. Please come prepared with your questions.',
-        type: NotificationType.message,
-        priority: NotificationPriority.normal,
-        category: NotificationCategory.messages,
-        createdAt: now.subtract(const Duration(days: 1)),
-        isRead: true,
-        instructorName: 'Prof. Alan Turing',
-        tags: {'Message': 'MSG'},
-      ),
-      NotificationModel(
-        id: '4',
-        title: 'Midterm Exam Schedule Updated',
-        message:
-            'The exam date has been changed to December 15th. Make sure to update your study schedule.',
-        type: NotificationType.exam,
-        priority: NotificationPriority.high,
-        category: NotificationCategory.deadlines,
-        createdAt: now.subtract(const Duration(days: 2)),
-        isRead: false,
-        courseName: 'Machine Learning',
-        instructorName: 'Dr. Alan Turing - Instructor',
-        tags: {'Course': 'ML', 'Machine Learning': 'EXAM'},
-        dueDate: DateTime(now.year, 12, 15),
-      ),
-      NotificationModel(
-        id: '5',
-        title: 'New Assignment',
-        message:
-            'Complete the binary search tree implementation by next week. Check the requirements carefully.',
-        type: NotificationType.assignment,
-        priority: NotificationPriority.normal,
-        category: NotificationCategory.deadlines,
-        createdAt: now.subtract(const Duration(days: 1)),
-        isRead: true,
-        courseName: 'Data Structures',
-        instructorName: 'Dr. Grace Hopper - Instructor',
-        tags: {'Course': 'DS', 'Algorithms': 'ALGO'},
-        dueDate: now.add(const Duration(days: 7)),
-      ),
-      NotificationModel(
-        id: '6',
-        title: 'Lab Report Due Soon',
-        message:
-            'Physics II Lab 3 report due in 2 days. Submit through the portal before the deadline.',
-        type: NotificationType.lab,
-        priority: NotificationPriority.high,
-        category: NotificationCategory.deadlines,
-        createdAt: now.subtract(const Duration(hours: 5)),
-        isRead: false,
-        courseName: 'Physics II',
-        instructorName: 'Lab Instructor',
-        tags: {'Physics II': 'PHY', 'Lab': 'LAB'},
-        dueDate: now.add(const Duration(days: 2)),
-      ),
-      NotificationModel(
-        id: '7',
-        title: 'Course Discussion Reply',
-        message:
-            'Someone replied to your question in the Neural Networks forum. Check it out!',
-        type: NotificationType.message,
-        priority: NotificationPriority.low,
-        category: NotificationCategory.messages,
-        createdAt: now.subtract(const Duration(days: 3)),
-        isRead: true,
-        courseName: 'Neural Networks',
-      ),
-      NotificationModel(
-        id: '8',
-        title: 'Quiz Results Available',
-        message:
-            'Your Data Structures quiz results are now available. View your score and feedback.',
-        type: NotificationType.course,
-        priority: NotificationPriority.normal,
-        category: NotificationCategory.courses,
-        createdAt: now.subtract(const Duration(days: 4)),
-        isRead: true,
-        courseName: 'Data Structures',
-        instructorName: 'Dr. Grace Hopper',
-      ),
-    ];
-  }
+  // ── Local-only features (no backend endpoints) ──────────────────
 
-  /// Generate sample AI insights
+  /// Generate sample AI insights (no backend endpoint exists for these)
   List<AIInsightModel> _generateSampleAIInsights() {
     final now = DateTime.now();
     return [
@@ -330,7 +241,7 @@ class NotificationCubit extends Cubit<NotificationState> {
     ];
   }
 
-  /// Generate sample system alerts
+  /// Generate sample system alerts (no backend endpoint exists for these)
   List<SystemAlertModel> _generateSampleSystemAlerts() {
     final now = DateTime.now();
     return [

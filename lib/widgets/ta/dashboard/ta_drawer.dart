@@ -391,6 +391,13 @@ class _TADrawerState extends State<TADrawer>
         category: 'main',
       ),
       _MenuItem(
+        icon: Icons.people_outline,
+        activeIcon: Icons.people,
+        title: 'Student Roster',
+        route: '/ta/roster',
+        category: 'main',
+      ),
+      _MenuItem(
         icon: Icons.calendar_month_outlined,
         activeIcon: Icons.calendar_month,
         title: l10n.calendar,

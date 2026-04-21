@@ -1,9 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../models/admin/admin_notification_model.dart';
+import '../../models/notifications/api_notification_model.dart';
+import '../../services/api/notification_api_service.dart';
 import 'admin_notification_state.dart';
 
 class AdminNotificationCubit extends Cubit<AdminNotificationState> {
-  AdminNotificationCubit() : super(const AdminNotificationState()) {
+  final NotificationApiService? _notificationApiService;
+
+  AdminNotificationCubit({NotificationApiService? notificationApiService})
+    : _notificationApiService = notificationApiService,
+      super(const AdminNotificationState()) {
     loadNotifications();
   }
 
@@ -11,9 +17,19 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
     emit(state.copyWith(status: AdminNotificationLoadingStatus.loading));
 
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
+      List<AdminNotificationModel> notifications = [];
 
-      final notifications = _generateMockNotifications();
+      if (_notificationApiService != null) {
+        final result = await _notificationApiService.getAll(limit: 100);
+        if (result.isSuccess && result.data != null) {
+          notifications = result.data!
+              .map((json) => ApiNotificationModel.fromJson(json))
+              .map((api) => api.toAdminNotificationModel())
+              .toList();
+        }
+      }
+
+      // Announcements remain local-only (no backend endpoint for admin announcements)
       final announcements = _generateMockAnnouncements();
 
       emit(
@@ -63,6 +79,9 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
     }).toList();
 
     emit(state.copyWith(notifications: notifications));
+
+    // Fire-and-forget API call
+    _notificationApiService?.markAsRead(id);
   }
 
   void markAsUnread(String id) {
@@ -113,6 +132,9 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
     final notifications = state.notifications.where((n) => n.id != id).toList();
 
     emit(state.copyWith(notifications: notifications));
+
+    // Fire-and-forget API call
+    _notificationApiService?.deleteNotification(id);
   }
 
   void markAllAsRead() {
@@ -121,12 +143,18 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
     }).toList();
 
     emit(state.copyWith(notifications: notifications));
+
+    // Fire-and-forget API call
+    _notificationApiService?.markAllAsRead();
   }
 
   void clearReadNotifications() {
     final notifications = state.notifications.where((n) => !n.isRead).toList();
 
     emit(state.copyWith(notifications: notifications));
+
+    // Fire-and-forget API call
+    _notificationApiService?.clearRead();
   }
 
   void clearAllNotifications() {
@@ -155,119 +183,7 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
     emit(state.copyWith(announcements: announcements));
   }
 
-  List<AdminNotificationModel> _generateMockNotifications() {
-    final now = DateTime.now();
-    return [
-      AdminNotificationModel(
-        id: '1',
-        title: 'New User Registration',
-        message: 'Ahmed Mohamed has registered as a new student',
-        type: AdminNotificationType.userActivity,
-        priority: AdminNotificationPriority.normal,
-        category: AdminNotificationCategory.users,
-        createdAt: now.subtract(const Duration(minutes: 5)),
-        userName: 'Ahmed Mohamed',
-        userRole: 'Student',
-        requiresAction: true,
-      ),
-      AdminNotificationModel(
-        id: '2',
-        title: 'System Maintenance Scheduled',
-        message: 'Scheduled maintenance window: Saturday 2:00 AM - 4:00 AM',
-        type: AdminNotificationType.maintenance,
-        priority: AdminNotificationPriority.high,
-        category: AdminNotificationCategory.system,
-        createdAt: now.subtract(const Duration(hours: 1)),
-      ),
-      AdminNotificationModel(
-        id: '3',
-        title: 'Course Approval Required',
-        message:
-            'New course "Advanced AI" submitted by Dr. Sarah needs approval',
-        type: AdminNotificationType.approval,
-        priority: AdminNotificationPriority.high,
-        category: AdminNotificationCategory.courses,
-        createdAt: now.subtract(const Duration(hours: 2)),
-        courseName: 'Advanced AI',
-        userName: 'Dr. Sarah',
-        requiresAction: true,
-      ),
-      AdminNotificationModel(
-        id: '4',
-        title: 'Security Alert',
-        message:
-            'Multiple failed login attempts detected for user john.doe@edu.com',
-        type: AdminNotificationType.security,
-        priority: AdminNotificationPriority.urgent,
-        category: AdminNotificationCategory.security,
-        createdAt: now.subtract(const Duration(hours: 3)),
-        requiresAction: true,
-      ),
-      AdminNotificationModel(
-        id: '5',
-        title: 'Monthly Report Generated',
-        message: 'System usage report for December 2024 is now available',
-        type: AdminNotificationType.report,
-        priority: AdminNotificationPriority.normal,
-        category: AdminNotificationCategory.reports,
-        createdAt: now.subtract(const Duration(hours: 5)),
-        isRead: true,
-      ),
-      AdminNotificationModel(
-        id: '6',
-        title: 'New Instructor Joined',
-        message: 'Dr. Mark Johnson has been added as an instructor',
-        type: AdminNotificationType.userActivity,
-        priority: AdminNotificationPriority.normal,
-        category: AdminNotificationCategory.users,
-        createdAt: now.subtract(const Duration(hours: 8)),
-        userName: 'Dr. Mark Johnson',
-        userRole: 'Instructor',
-        isRead: true,
-      ),
-      AdminNotificationModel(
-        id: '7',
-        title: 'Database Backup Completed',
-        message: 'Automated backup completed successfully at 3:00 AM',
-        type: AdminNotificationType.systemAlert,
-        priority: AdminNotificationPriority.low,
-        category: AdminNotificationCategory.system,
-        createdAt: now.subtract(const Duration(days: 1)),
-        isRead: true,
-      ),
-      AdminNotificationModel(
-        id: '8',
-        title: 'Enrollment Spike Detected',
-        message: '150 new enrollments in the last 24 hours - 50% above average',
-        type: AdminNotificationType.report,
-        priority: AdminNotificationPriority.normal,
-        category: AdminNotificationCategory.reports,
-        createdAt: now.subtract(const Duration(days: 1, hours: 2)),
-      ),
-      AdminNotificationModel(
-        id: '9',
-        title: 'User Role Update',
-        message: 'Lisa Chen promoted from TA to Instructor',
-        type: AdminNotificationType.userActivity,
-        priority: AdminNotificationPriority.normal,
-        category: AdminNotificationCategory.users,
-        createdAt: now.subtract(const Duration(days: 2)),
-        userName: 'Lisa Chen',
-        isRead: true,
-      ),
-      AdminNotificationModel(
-        id: '10',
-        title: 'Storage Warning',
-        message: 'Server storage at 85% capacity - consider cleanup',
-        type: AdminNotificationType.systemAlert,
-        priority: AdminNotificationPriority.high,
-        category: AdminNotificationCategory.system,
-        createdAt: now.subtract(const Duration(days: 2, hours: 5)),
-        requiresAction: true,
-      ),
-    ];
-  }
-
+  /// Announcements remain local-only (no backend endpoint exists)
   List<AdminAnnouncementModel> _generateMockAnnouncements() {
     final now = DateTime.now();
     return [

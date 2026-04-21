@@ -1,4 +1,6 @@
 import 'package:edu_verse/models/instructor/instrucor_notification_model.dart';
+import 'package:edu_verse/models/notifications/api_notification_model.dart';
+import 'package:edu_verse/services/api/notification_api_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -24,10 +26,10 @@ class _InstructorNotificationsScreenState
   final ScrollController _scrollController = ScrollController();
   bool _showElevation = false;
   bool _isSearching = false;
+  bool _isLoading = true;
   InstructorNotificationCategory _selectedCategory =
       InstructorNotificationCategory.all;
 
-  // Mock data
   List<InstructorNotificationModel> _notifications = [];
 
   @override
@@ -35,74 +37,39 @@ class _InstructorNotificationsScreenState
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _scrollController.addListener(_onScroll);
-    _loadMockData();
+    _loadNotificationsFromApi();
   }
 
-  void _loadMockData() {
-    final now = DateTime.now();
-    _notifications = [
-      InstructorNotificationModel(
-        id: '1',
-        title: 'New Assignment Submission',
-        message:
-            'Ahmed Hassan submitted Assignment 3 for CS201 - Data Structures',
-        type: InstructorNotificationType.submission,
-        timestamp: now.subtract(const Duration(minutes: 5)),
-        studentName: 'Ahmed Hassan',
-        courseName: 'CS201',
-      ),
-      InstructorNotificationModel(
-        id: '2',
-        title: 'Grading Reminder',
-        message: 'You have 12 pending submissions to grade for CS301',
-        type: InstructorNotificationType.grading,
-        timestamp: now.subtract(const Duration(hours: 1)),
-        courseName: 'CS301',
-      ),
-      InstructorNotificationModel(
-        id: '3',
-        title: 'New Message',
-        message: 'Sara Ali sent you a message about the midterm exam',
-        type: InstructorNotificationType.message,
-        timestamp: now.subtract(const Duration(hours: 2)),
-        studentName: 'Sara Ali',
-        isRead: true,
-      ),
-      InstructorNotificationModel(
-        id: '4',
-        title: 'Assignment Deadline Tomorrow',
-        message: 'Assignment 4 deadline for CS201 is tomorrow at 11:59 PM',
-        type: InstructorNotificationType.deadline,
-        timestamp: now.subtract(const Duration(hours: 5)),
-        courseName: 'CS201',
-      ),
-      InstructorNotificationModel(
-        id: '5',
-        title: 'Low Attendance Alert',
-        message: '5 students have attendance below 75% in CS401',
-        type: InstructorNotificationType.attendance,
-        timestamp: now.subtract(const Duration(days: 1)),
-        courseName: 'CS401',
-        isRead: true,
-      ),
-      InstructorNotificationModel(
-        id: '6',
-        title: 'System Update',
-        message: 'New grading features are now available in the platform',
-        type: InstructorNotificationType.system,
-        timestamp: now.subtract(const Duration(days: 2)),
-        isRead: true,
-      ),
-      InstructorNotificationModel(
-        id: '7',
-        title: 'Late Submission',
-        message: 'Omar Khaled submitted Assignment 2 late (2 days)',
-        type: InstructorNotificationType.submission,
-        timestamp: now.subtract(const Duration(days: 1)),
-        studentName: 'Omar Khaled',
-        courseName: 'CS201',
-      ),
-    ];
+  /// Load notifications from the real backend API.
+  Future<void> _loadNotificationsFromApi() async {
+    setState(() => _isLoading = true);
+
+    try {
+      final service = context.read<NotificationApiService>();
+      final result = await service.getAll(limit: 100);
+
+      if (result.isSuccess && result.data != null) {
+        final apiNotifications = result.data!
+            .map((json) => ApiNotificationModel.fromJson(json))
+            .map((api) => api.toInstructorNotification())
+            .toList();
+
+        if (mounted) {
+          setState(() {
+            _notifications = apiNotifications;
+            _isLoading = false;
+          });
+        }
+      } else {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -174,25 +141,29 @@ class _InstructorNotificationsScreenState
         _notifications[index] = _notifications[index].copyWith(isRead: true);
       }
     });
+
+    // Fire-and-forget API call
+    try {
+      context.read<NotificationApiService>().markAsRead(id);
+    } catch (_) {}
   }
 
   void _deleteNotification(String id) {
     setState(() {
       _notifications.removeWhere((n) => n.id == id);
     });
+
+    // Fire-and-forget API call
+    try {
+      context.read<NotificationApiService>().deleteNotification(id);
+    } catch (_) {}
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('Notification deleted'),
         backgroundColor: const Color(0xFFEF4444),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        action: SnackBarAction(
-          label: 'Undo',
-          textColor: Colors.white,
-          onPressed: () {
-            // Undo would restore the notification
-          },
-        ),
       ),
     );
   }
@@ -203,6 +174,12 @@ class _InstructorNotificationsScreenState
           .map((n) => n.copyWith(isRead: true))
           .toList();
     });
+
+    // Fire-and-forget API call
+    try {
+      context.read<NotificationApiService>().markAllAsRead();
+    } catch (_) {}
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: const Text('All notifications marked as read'),
@@ -240,11 +217,7 @@ class _InstructorNotificationsScreenState
                 ),
                 Expanded(
                   child: RefreshIndicator(
-                    onRefresh: () async {
-                      await Future.delayed(const Duration(seconds: 1));
-                      _loadMockData();
-                      setState(() {});
-                    },
+                    onRefresh: _loadNotificationsFromApi,
                     color: AppTheme.primaryColor,
                     backgroundColor: isDarkMode
                         ? AppTheme.darkCardColor
@@ -282,16 +255,23 @@ class _InstructorNotificationsScreenState
                             readLabel: l10n.read,
                           ),
                         ),
-                        SliverFillRemaining(
-                          child: TabBarView(
-                            controller: _tabController,
-                            children: [
-                              _buildNotificationsList(0, isDarkMode, l10n),
-                              _buildNotificationsList(1, isDarkMode, l10n),
-                              _buildNotificationsList(2, isDarkMode, l10n),
-                            ],
+                        if (_isLoading)
+                          const SliverFillRemaining(
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          )
+                        else
+                          SliverFillRemaining(
+                            child: TabBarView(
+                              controller: _tabController,
+                              children: [
+                                _buildNotificationsList(0, isDarkMode, l10n),
+                                _buildNotificationsList(1, isDarkMode, l10n),
+                                _buildNotificationsList(2, isDarkMode, l10n),
+                              ],
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),

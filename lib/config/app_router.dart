@@ -73,6 +73,7 @@ import 'package:edu_verse/screens/instructor/upload_materials/upload_materials_s
 import 'package:edu_verse/screens/instructor/calendar/instructor_calendar_screen.dart';
 import 'package:edu_verse/screens/instructor/search/instructor_search_screen.dart';
 import 'package:edu_verse/screens/instructor/notifications/instructor_notifications_screen.dart';
+import 'package:edu_verse/screens/instructor/roster/instructor_roster_screen.dart';
 import 'package:edu_verse/screens/instructor/profile/instructor_profile_screen.dart';
 import 'package:edu_verse/screens/instructor/profile/instructor_edit_profile_screen.dart';
 import 'package:edu_verse/screens/instructor/settings/instructor_settings_screen.dart';
@@ -101,6 +102,7 @@ import 'package:edu_verse/screens/ta/office_hours/ta_office_hours_screen.dart';
 import 'package:edu_verse/screens/ta/calendar/ta_calendar_screen.dart';
 import 'package:edu_verse/screens/ta/search/ta_search_screen.dart';
 import 'package:edu_verse/screens/ta/attendance/ta_attendance_screen.dart';
+import 'package:edu_verse/screens/ta/roster/ta_roster_screen.dart';
 import 'package:edu_verse/screens/ta/ai_assistant/ta_ai_assistant_screen.dart';
 import 'package:edu_verse/screens/admin/admin_dashboard_screen.dart';
 import 'package:edu_verse/screens/admin/users/admin_user_management_screen.dart';
@@ -863,6 +865,10 @@ class AppRouter {
         builder: (context, state) => const InstructorNotificationsScreen(),
       ),
       GoRoute(
+        path: '/instructor/roster',
+        builder: (context, state) => const InstructorRosterScreen(),
+      ),
+      GoRoute(
         path: '/instructor/profile',
         builder: (context, state) => const InstructorProfileScreen(),
       ),
@@ -941,6 +947,10 @@ class AppRouter {
       GoRoute(
         path: '/ta/notifications',
         builder: (context, state) => const TANotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/ta/roster',
+        builder: (context, state) => const TARosterScreen(),
       ),
       GoRoute(
         path: '/ta/discussions',

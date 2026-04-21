@@ -6,6 +6,8 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../models/notifications/api_notification_model.dart';
+import '../../../services/api/notification_api_service.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/dashboard/ta_drawer.dart';
 import '../../../widgets/ta/notifications/ta_notifications_barrel.dart';
@@ -48,83 +50,68 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
   Future<void> _loadNotifications() async {
     setState(() => _isLoading = true);
 
-    await Future.delayed(const Duration(milliseconds: 600));
+    try {
+      final service = context.read<NotificationApiService>();
+      final result = await service.getAll(limit: 100);
 
-    _notifications = _getMockNotifications();
+      if (result.isSuccess && result.data != null) {
+        _notifications = result.data!.map((json) {
+          final api = ApiNotificationModel.fromJson(json);
+          return _mapApiToTANotification(api);
+        }).toList();
+      } else {
+        _notifications = [];
+      }
+    } catch (e) {
+      _notifications = [];
+    }
 
-    setState(() => _isLoading = false);
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 
-  List<TANotificationItem> _getMockNotifications() {
-    return [
-      TANotificationItem(
-        id: '1',
-        title: 'Question in Lab 3 Thread',
-        senderName: 'Ahmed Hassan',
-        preview: 'Ahmed asked a question about process synchronization.',
-        timeAgo: '5 mins ago',
-        type: TANotificationType.question,
-        badge: 'Lab 3',
-        isUnread: true,
-        hasThread: true,
-        replyCount: 3,
-        fullContent:
-            'Hi TA, I\'m having trouble understanding the producer-consumer problem. Could you explain how semaphores prevent race conditions in this scenario?',
-        relatedTo: 'Lab 3 - Process Synchronization',
-      ),
-      TANotificationItem(
-        id: '2',
-        title: 'New Lab Submission',
-        senderName: 'Sara Johnson',
-        preview: 'Sara submitted her lab assignment.',
-        timeAgo: '15 mins ago',
-        type: TANotificationType.submission,
-        badge: 'Lab 3',
-        isUnread: true,
-      ),
-      TANotificationItem(
-        id: '3',
-        title: 'Plagiarism Check Request',
-        senderName: 'Dr. Michael Chen',
-        preview: 'Instructor requested TA to check plagiarism report.',
-        timeAgo: '1 hour ago',
-        type: TANotificationType.plagiarism,
-        badge: 'Assignment 2',
-        isUnread: false,
-      ),
-      TANotificationItem(
-        id: '4',
-        title: 'Students Needing Support',
-        senderName: 'CampusOne AI',
-        preview: 'AI identified 2 struggling students in Lab 4.',
-        timeAgo: '2 hours ago',
-        type: TANotificationType.aiAlert,
-        badge: 'Lab 4',
-        isUnread: true,
-      ),
-      TANotificationItem(
-        id: '5',
-        title: 'System Maintenance',
-        senderName: 'CampusOne System',
-        preview: 'CampusOne update scheduled for 2 AM tonight.',
-        timeAgo: '3 hours ago',
-        type: TANotificationType.system,
-        badge: 'System',
-        isUnread: false,
-      ),
-      TANotificationItem(
-        id: '6',
-        title: 'Lab Deadline Extension?',
-        senderName: 'Emily Rodriguez',
-        preview: 'Emily asked about extending the lab deadline.',
-        timeAgo: '5 hours ago',
-        type: TANotificationType.deadline,
-        badge: 'Lab 3',
-        isUnread: false,
-        hasThread: true,
-        replyCount: 2,
-      ),
-    ];
+  /// Map API notification to TA-specific notification item
+  TANotificationItem _mapApiToTANotification(ApiNotificationModel api) {
+    TANotificationType taType;
+    switch (api.type.toLowerCase()) {
+      case 'assignment':
+        taType = TANotificationType.submission;
+      case 'grade':
+        taType = TANotificationType.grade;
+      case 'announcement':
+        taType = TANotificationType.announcement;
+      case 'enrollment':
+        taType = TANotificationType.deadline;
+      case 'system':
+      default:
+        taType = TANotificationType.system;
+    }
+
+    // Compute relative time
+    final diff = DateTime.now().difference(api.createdAt);
+    String timeAgo;
+    if (diff.inMinutes < 60) {
+      timeAgo = '${diff.inMinutes} mins ago';
+    } else if (diff.inHours < 24) {
+      timeAgo = '${diff.inHours} hours ago';
+    } else {
+      timeAgo = '${diff.inDays} days ago';
+    }
+
+    return TANotificationItem(
+      id: api.id,
+      title: api.title,
+      senderName: 'EduVerse',
+      preview: api.body,
+      timeAgo: timeAgo,
+      type: taType,
+      badge: api.type.isNotEmpty
+          ? api.type[0].toUpperCase() + api.type.substring(1)
+          : null,
+      isUnread: !api.isRead,
+      fullContent: api.body,
+    );
   }
 
   List<TANotificationItem> get _filteredNotifications {
@@ -216,6 +203,14 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
   void _deleteSelected() {
     if (_selectedNotifications.isEmpty) return;
 
+    // Fire-and-forget API calls for each selected notification
+    try {
+      final service = context.read<NotificationApiService>();
+      for (final id in _selectedNotifications) {
+        service.deleteNotification(id);
+      }
+    } catch (_) {}
+
     setState(() {
       _notifications.removeWhere((n) => _selectedNotifications.contains(n.id));
       _selectedNotifications.clear();
@@ -226,6 +221,14 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
 
   void _markSelectedAsRead() {
     if (_selectedNotifications.isEmpty) return;
+
+    // Fire-and-forget API calls
+    try {
+      final service = context.read<NotificationApiService>();
+      for (final id in _selectedNotifications) {
+        service.markAsRead(id);
+      }
+    } catch (_) {}
 
     setState(() {
       for (var i = 0; i < _notifications.length; i++) {
@@ -280,6 +283,12 @@ class _TANotificationsScreenState extends State<TANotificationsScreen> {
     setState(() {
       _notifications.removeWhere((n) => n.id == id);
     });
+
+    // Fire-and-forget API call
+    try {
+      context.read<NotificationApiService>().deleteNotification(id);
+    } catch (_) {}
+
     _showSnackBar('Notification deleted');
   }
 

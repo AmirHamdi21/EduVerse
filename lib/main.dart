@@ -48,6 +48,7 @@ import 'package:edu_verse/services/api/communication_service.dart';
 import 'package:edu_verse/services/api/public_profile_service.dart';
 import 'package:edu_verse/services/api/office_hours_service.dart';
 import 'package:edu_verse/services/api/student_stats_service.dart';
+import 'package:edu_verse/services/api/notification_api_service.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -123,6 +124,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late PublicProfileService _publicProfileService;
   late OfficeHoursService _officeHoursService;
   late StudentStatsService _studentStatsService;
+  late NotificationApiService _notificationApiService;
   StreamSubscription<String>? _sessionExpirySubscription;
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
@@ -152,9 +154,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _publicProfileService = PublicProfileService(coreApiClient: coreApiClient);
     _officeHoursService = OfficeHoursService(coreApiClient: coreApiClient);
     _studentStatsService = StudentStatsService(coreApiClient: coreApiClient);
+    _notificationApiService = NotificationApiService(coreApiClient: coreApiClient);
 
     _notificationCubit = NotificationCubit(
-      studentStatsService: _studentStatsService,
+      notificationApiService: _notificationApiService,
     )..loadNotifications();
     _tasksCubit = TasksCubit()..loadTasks();
     _gradesCubit = GradesCubit(
@@ -170,7 +173,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _aiNoteCubit = AINoteCubit();
     _profileCubit = ProfileCubit()..loadProfile();
     _searchCubit = SearchCubit();
-    _adminNotificationCubit = AdminNotificationCubit();
+    _adminNotificationCubit = AdminNotificationCubit(
+      notificationApiService: _notificationApiService,
+    );
 
     _sessionExpirySubscription = SessionExpiryNotifier.stream.listen((message) {
       if (!mounted) {
@@ -323,6 +328,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       providers: [
         RepositoryProvider<AttendanceService>.value(value: _attendanceService),
         RepositoryProvider<EnrollmentService>.value(value: _enrollmentService),
+        RepositoryProvider<NotificationApiService>.value(value: _notificationApiService),
       ],
       child: MultiBlocProvider(
         providers: [

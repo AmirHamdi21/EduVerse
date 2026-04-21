@@ -329,6 +329,13 @@ class _InstructorDrawerState extends State<InstructorDrawer>
         category: 'main',
       ),
       _MenuItem(
+        icon: Icons.people_outline,
+        activeIcon: Icons.people,
+        title: 'Roster',
+        route: '/instructor/roster',
+        category: 'main',
+      ),
+      _MenuItem(
         icon: Icons.assignment_outlined,
         activeIcon: Icons.assignment,
         title: l10n.createAssignment,
