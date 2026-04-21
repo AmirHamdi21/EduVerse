@@ -182,7 +182,7 @@ class CalendarState extends Equatable {
   final ScheduleItemKind? kindFilter;
   final String? courseFilter;
 
-  const CalendarState({
+  CalendarState({
     this.isLoading = false,
     this.error,
     this.successMessage,

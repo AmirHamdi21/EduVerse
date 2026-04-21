@@ -16,7 +16,7 @@ class TACalendarState extends Equatable {
   final List<DailyScheduleResponse> rawDays;
   final List<UnifiedScheduleItem> unifiedItems;
 
-  const TACalendarState({
+  TACalendarState({
     this.isLoading = false,
     this.error,
     this.successMessage,

@@ -2225,6 +2225,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get upcomingEvents => 'الأحداث القادمة';
 
   @override
+  String get events => 'أحداث';
+
+  @override
   String get noUpcomingEvents => 'لا توجد أحداث قادمة';
 
   @override

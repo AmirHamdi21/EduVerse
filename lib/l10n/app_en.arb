@@ -784,6 +784,7 @@
   "dayView": "Day",
   "today": "Today",
   "upcomingEvents": "Upcoming Events",
+  "events": "Events",
   "noUpcomingEvents": "No upcoming events",
   "addYourFirstEvent": "Add Your First Event",
   "addNewEvent": "Add New Event",

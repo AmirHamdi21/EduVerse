@@ -72,7 +72,8 @@ class ScheduleItemBuilder {
       for (final exam in day.exams) {
         final startTime = normalizeTime(exam.startTime);
         final startMinutes = toMinutes(startTime);
-        final endMinutes = startMinutes + math.max(exam.durationMinutes, 30);
+        final endMinutes =
+            startMinutes + math.max(exam.durationMinutes, 30).toInt();
         final endTime = _minutesToTime(endMinutes);
 
         final courseCode = _pickString(<String?>[exam.course.courseCode]);

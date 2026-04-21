@@ -2234,6 +2234,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upcomingEvents => 'Upcoming Events';
 
   @override
+  String get events => 'Events';
+
+  @override
   String get noUpcomingEvents => 'No upcoming events';
 
   @override

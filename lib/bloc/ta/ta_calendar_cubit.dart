@@ -16,7 +16,7 @@ class TACalendarCubit extends Cubit<TACalendarState> {
     required OfficeHoursService officeHoursService,
   }) : _scheduleService = scheduleService,
        _officeHoursService = officeHoursService,
-       super(const TACalendarState()) {
+       super(TACalendarState()) {
     _initialize();
   }
 

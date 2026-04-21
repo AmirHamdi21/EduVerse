@@ -29,11 +29,13 @@ class InstructorUpcomingEventsSection extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Upcoming Events',
+                    l10n.upcomingEvents,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: isDark ? Colors.white : const Color(0xFF0F172A),
+                      color: isDark
+                          ? const Color.fromARGB(255, 56, 55, 55)
+                          : const Color(0xFF0F172A),
                     ),
                   ),
                   Container(
@@ -46,7 +48,7 @@ class InstructorUpcomingEventsSection extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
-                      '${upcomingEvents.length} events',
+                      '${upcomingEvents.length} ${l10n.events}',
                       style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,

@@ -4394,6 +4394,12 @@ abstract class AppLocalizations {
   /// **'Upcoming Events'**
   String get upcomingEvents;
 
+  /// No description provided for @events.
+  ///
+  /// In en, this message translates to:
+  /// **'Events'**
+  String get events;
+
   /// No description provided for @noUpcomingEvents.
   ///
   /// In en, this message translates to:

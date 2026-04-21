@@ -28,10 +28,20 @@ class _TACalendarScreenState extends State<TACalendarScreen>
 
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  late final TACalendarCubit _calendarCubit;
 
   @override
   void initState() {
     super.initState();
+
+    final coreApiClient = CoreApiClient(storageService: StorageService());
+    final scheduleApiService = ScheduleApiService(coreApiClient: coreApiClient);
+    final officeHoursService = OfficeHoursService(coreApiClient: coreApiClient);
+    _calendarCubit = TACalendarCubit(
+      scheduleService: scheduleApiService,
+      officeHoursService: officeHoursService,
+    );
+
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
@@ -45,6 +55,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
 
   @override
   void dispose() {
+    _calendarCubit.close();
     _animationController.dispose();
     super.dispose();
   }
@@ -53,21 +64,8 @@ class _TACalendarScreenState extends State<TACalendarScreen>
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
 
-    return BlocProvider(
-      create: (_) {
-        final coreApiClient = CoreApiClient(storageService: StorageService());
-        final scheduleApiService = ScheduleApiService(
-          coreApiClient: coreApiClient,
-        );
-        final officeHoursService = OfficeHoursService(
-          coreApiClient: coreApiClient,
-        );
-
-        return TACalendarCubit(
-          scheduleService: scheduleApiService,
-          officeHoursService: officeHoursService,
-        );
-      },
+    return BlocProvider.value(
+      value: _calendarCubit,
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {
           final isDark = themeState.isDark;
@@ -180,7 +178,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
         onPressed: () => _scaffoldKey.currentState?.openDrawer(),
       ),
       title: Text(
-        l10n.taCalendarTitle,
+        l10n.calendar,
         style: TextStyle(
           color: TAColors.textPrimaryColor(isDark),
           fontWeight: FontWeight.bold,
@@ -201,8 +199,8 @@ class _TACalendarScreenState extends State<TACalendarScreen>
             Icons.sync_rounded,
             color: TAColors.textPrimaryColor(isDark),
           ),
-          onPressed: () => _syncCalendar(isDark),
-          tooltip: l10n.sync,
+          onPressed: _syncCalendar,
+          tooltip: l10n.smartStudySyncCalendar,
         ),
         const SizedBox(width: 8),
       ],
@@ -241,7 +239,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
 
     return Expanded(
       child: GestureDetector(
-        onTap: () => context.read<TACalendarCubit>().setView(view),
+        onTap: () => _calendarCubit.setView(view),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -298,9 +296,8 @@ class _TACalendarScreenState extends State<TACalendarScreen>
             child: FilterChip(
               label: Text(filter['label'] as String),
               selected: isActive,
-              onSelected: (_) => context.read<TACalendarCubit>().toggleFilter(
-                filter['id'] as String,
-              ),
+              onSelected: (_) =>
+                  _calendarCubit.toggleFilter(filter['id'] as String),
               selectedColor: color.withValues(alpha: 0.2),
               checkmarkColor: color,
               labelStyle: TextStyle(
@@ -350,7 +347,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () => context.read<TACalendarCubit>().previousMonth(),
+          onPressed: _calendarCubit.previousMonth,
           icon: Icon(
             Icons.chevron_left_rounded,
             color: TAColors.textPrimaryColor(isDark),
@@ -365,7 +362,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
           ),
         ),
         IconButton(
-          onPressed: () => context.read<TACalendarCubit>().nextMonth(),
+          onPressed: _calendarCubit.nextMonth,
           icon: Icon(
             Icons.chevron_right_rounded,
             color: TAColors.textPrimaryColor(isDark),
@@ -432,7 +429,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
 
       dayWidgets.add(
         GestureDetector(
-          onTap: () => context.read<TACalendarCubit>().selectDate(date),
+          onTap: () => _calendarCubit.selectDate(date),
           child: Container(
             width: 40,
             height: 40,
@@ -499,7 +496,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              '${l10n.taCalendarEventsFor} $formattedDate',
+              '${l10n.calendar} • $formattedDate',
               style: TextStyle(
                 color: TAColors.textPrimaryColor(isDark),
                 fontSize: 18,
@@ -557,7 +554,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
           ),
           const SizedBox(height: 4),
           Text(
-            l10n.taCalendarNoEventsDesc,
+            l10n.noEventsDescription,
             style: TextStyle(
               color: TAColors.textTertiaryColor(isDark),
               fontSize: 13,
@@ -693,7 +690,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
               border: Border.all(color: TAColors.borderColor(isDark)),
             ),
             child: Text(
-              '${l10n.taCalendarNoUpcoming} ${l10n.taCalendarNoUpcomingDesc}',
+              l10n.noUpcomingEvents,
               style: TextStyle(
                 color: TAColors.textSecondaryColor(isDark),
                 fontSize: 14,
@@ -798,12 +795,13 @@ class _TACalendarScreenState extends State<TACalendarScreen>
     final formattedStart = _formatDisplayTime(item.startTime);
     final formattedEnd = _formatDisplayTime(item.endTime);
     final location =
-        item.classItem?.location ??
+        item.location ??
         item.eventItem?.location ??
-        item.campusItem?.location;
+        item.campusEventItem?.location;
 
     return <String, dynamic>{
       'id': item.id,
+      'kind': item.kind,
       'title': item.title,
       'date': eventDate,
       'startTime': formattedStart,
@@ -811,7 +809,9 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       'type': _kindToTaType(item.kind),
       'location': location ?? '',
       'description':
-          item.eventItem?.description ?? item.campusItem?.description ?? '',
+          item.eventItem?.description ??
+          item.campusEventItem?.description ??
+          '',
     };
   }
 
@@ -883,7 +883,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
       case 'meetings':
         return l10n.meetings;
       default:
-        return l10n.eventDetails;
+        return l10n.details;
     }
   }
 
@@ -912,11 +912,11 @@ class _TACalendarScreenState extends State<TACalendarScreen>
   }
 
   void _goToToday() {
-    context.read<TACalendarCubit>().goToToday();
+    _calendarCubit.goToToday();
   }
 
-  void _syncCalendar(bool isDark) {
-    context.read<TACalendarCubit>().syncCalendar();
+  void _syncCalendar() {
+    _calendarCubit.syncCalendar();
   }
 
   void _showAddEventSheet(bool isDark, AppLocalizations l10n) {
@@ -1122,13 +1122,10 @@ class _TACalendarScreenState extends State<TACalendarScreen>
                             }
 
                             Navigator.pop(context);
-                            context.read<TACalendarCubit>().addEvent(
+                            _calendarCubit.addEvent(
                               title: title,
                               type: selectedType,
-                              date: context
-                                  .read<TACalendarCubit>()
-                                  .state
-                                  .selectedDate,
+                              date: _calendarCubit.state.selectedDate,
                               startTime: startTime.format(context),
                               endTime: endTime.format(context),
                               location: location.isEmpty ? null : location,
@@ -1189,9 +1186,10 @@ class _TACalendarScreenState extends State<TACalendarScreen>
     bool isDark,
     AppLocalizations l10n,
   ) {
-    final canDelete =
-        _kindToTaType(ScheduleItemKind.event) == (event['type'] as String?) ||
-        (event['type'] as String?) == 'meetings';
+    final eventKind = event['kind'];
+    final canDelete = eventKind is ScheduleItemKind
+        ? eventKind == ScheduleItemKind.event
+        : (event['id'] as String?)?.startsWith('event-') == true;
 
     showModalBottomSheet(
       context: context,
@@ -1277,9 +1275,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
                       onPressed: canDelete
                           ? () {
                               Navigator.pop(context);
-                              context.read<TACalendarCubit>().deleteEvent(
-                                event['id'] as String,
-                              );
+                              _calendarCubit.deleteEvent(event['id'] as String);
                             }
                           : null,
                       icon: const Icon(
@@ -1293,7 +1289,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: canDelete
-                            ? TAColors.danger
+                            ? TAColors.error
                             : TAColors.borderColor(isDark),
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
@@ -1362,7 +1358,7 @@ class _TACalendarScreenState extends State<TACalendarScreen>
               ),
               const SizedBox(height: 20),
               Text(
-                l10n.eventDetails,
+                l10n.details,
                 style: TextStyle(
                   color: TAColors.textPrimaryColor(isDark),
                   fontSize: 20,
