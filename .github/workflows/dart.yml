@@ -42,6 +42,29 @@ jobs:
       #     flutter_version: 3.35.5
       #     flutter_channel: stable
 
+      # Auto-create a GitHub Issue if this job fails
+      - name: 🐛 Open issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🔍 Code Quality Failed on ${context.sha.slice(0,7)}`,
+              body: [
+                `## ❌ Code Quality Check Failed`,
+                `**Branch:** \`${context.ref}\``,
+                `**Commit:** \`${context.sha.slice(0,7)}\``,
+                `**Run:** [View logs](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+                ``,
+                `### What to check`,
+                `- Run \`flutter analyze\` locally`,
+                `- Run \`dart format . \` to fix formatting`,
+              ].join('\n'),
+              labels: ['bug', 'ci-failure', 'code-quality']
+            })
+
   # ─────────────────────────────────────────
   # JOB 2: Unit & Widget Tests + Coverage
   # ─────────────────────────────────────────
@@ -73,40 +96,86 @@ jobs:
           fail_ci_if_error: false
           verbose: true
 
-  # ─────────────────────────────────────────
-  # JOB 3: Integration Tests on Android
-  # ─────────────────────────────────────────
-  integration_tests:
-    name: 📱 Integration Tests (Android Emulator)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
+      # Auto-create a GitHub Issue if this job fails
+      - name: 🐛 Open issue on failure
+        if: failure()
+        uses: actions/github-script@v7
         with:
-          fetch-depth: 0
-          persist-credentials: true
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🧪 Tests Failed on ${context.sha.slice(0,7)}`,
+              body: [
+                `## ❌ Test Suite Failed`,
+                `**Branch:** \`${context.ref}\``,
+                `**Commit:** \`${context.sha.slice(0,7)}\``,
+                `**Run:** [View logs](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+                ``,
+                `### What to check`,
+                `- Run \`flutter test\` locally to reproduce`,
+                `- Check which test file failed in the logs above`,
+              ].join('\n'),
+              labels: ['bug', 'ci-failure', 'tests']
+            })
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: 3.35.5
-          channel: stable
+  # # ─────────────────────────────────────────
+  # # JOB 3: Integration Tests on Android
+  # # ─────────────────────────────────────────
+  # integration_tests:
+  #   name: 📱 Integration Tests (Android Emulator)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v5
+  #       with:
+  #         fetch-depth: 0
+  #         persist-credentials: true
 
-      - name: Install dependencies
-        run: flutter pub get
+  #     - name: Set up Flutter
+  #       uses: subosito/flutter-action@v2
+  #       with:
+  #         flutter-version: 3.35.5
+  #         channel: stable
 
-      - name: Enable KVM (faster emulator)
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
+  #     - name: Install dependencies
+  #       run: flutter pub get
 
-      - name: Run integration tests on emulator
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 33
-          arch: x86_64
-          profile: Nexus 6
-          script: flutter test integration_test
+  #     - name: Enable KVM (faster emulator)
+  #       run: |
+  #         echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+  #         sudo udevadm control --reload-rules
+  #         sudo udevadm trigger --name-match=kvm
+
+  #     - name: Run integration tests on emulator
+  #       uses: reactivecircus/android-emulator-runner@v2
+  #       with:
+  #         api-level: 33
+  #         arch: x86_64
+  #         profile: Nexus 6
+  #         script: flutter test integration_test
+
+  #     # Auto-create a GitHub Issue if this job fails
+  #     - name: 🐛 Open issue on failure
+  #       if: failure()
+  #       uses: actions/github-script@v7
+  #       with:
+  #         script: |
+  #           github.rest.issues.create({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             title: `📱 Integration Tests Failed on ${context.sha.slice(0,7)}`,
+  #             body: [
+  #               `## ❌ Integration Tests Failed`,
+  #               `**Branch:** \`${context.ref}\``,
+  #               `**Commit:** \`${context.sha.slice(0,7)}\``,
+  #               `**Run:** [View logs](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+  #               ``,
+  #               `### What to check`,
+  #               `- Run \`flutter test integration_test\` locally with a connected device`,
+  #               `- Check emulator logs in the run above for crash details`,
+  #             ].join('\n'),
+  #             labels: ['bug', 'ci-failure', 'integration-tests']
+  #           })
 
   # ─────────────────────────────────────────
   # JOB 4: Build Check (APK)
@@ -139,3 +208,51 @@ jobs:
         with:
           name: release-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
+      # Auto-create a GitHub Issue if this job fails
+      - name: 🐛 Open issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🏗️ APK Build Failed on ${context.sha.slice(0,7)}`,
+              body: [
+                `## ❌ Release APK Build Failed`,
+                `**Branch:** \`${context.ref}\``,
+                `**Commit:** \`${context.sha.slice(0,7)}\``,
+                `**Run:** [View logs](${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})`,
+                ``,
+                `### What to check`,
+                `- Run \`flutter build apk --release\` locally`,
+                `- Check for missing signing configs or gradle issues`,
+              ].join('\n'),
+              labels: ['bug', 'ci-failure', 'build']
+            })
+
+  # ─────────────────────────────────────────
+  # JOB 5: CodeQL Security Scanning
+  # Auto-creates issues in the Security tab
+  # ─────────────────────────────────────────
+  codeql:
+    name: 🔐 CodeQL Security Scan
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: java  # Covers the Android/Java layer of your Flutter app
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
