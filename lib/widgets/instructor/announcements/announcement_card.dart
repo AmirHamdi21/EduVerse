@@ -234,23 +234,22 @@ class AnnouncementCard extends StatelessWidget {
   }
 
   Widget _buildContent() {
-    return Row(
+    return Wrap(
+      spacing: 8,
+      runSpacing: 6,
       children: [
         _buildStatusChip(),
         if (announcement.priority != null &&
-            announcement.priority!.isNotEmpty) ...[
-          const SizedBox(width: 10),
+            announcement.priority!.isNotEmpty)
           _buildPriorityChip(),
-        ],
+        if (announcement.announcementType != null &&
+            announcement.announcementType!.isNotEmpty)
+          _buildAnnouncementTypeChip(),
         if (announcement.courseName != null &&
-            announcement.courseName!.isNotEmpty) ...[
-          const SizedBox(width: 10),
+            announcement.courseName!.isNotEmpty)
           _buildCourseChip(),
-        ],
-        if (announcement.attachments.isNotEmpty) ...[
-          const SizedBox(width: 10),
+        if (announcement.attachments.isNotEmpty)
           _buildAttachmentChip(),
-        ],
       ],
     );
   }
@@ -363,6 +362,27 @@ class AnnouncementCard extends StatelessWidget {
     );
   }
 
+  Widget _buildAnnouncementTypeChip() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AnnouncementColors.teal.withOpacity(0.15)
+            : AnnouncementColors.tealLight,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AnnouncementColors.teal.withOpacity(0.3)),
+      ),
+      child: Text(
+        announcement.announcementType!,
+        style: const TextStyle(
+          color: AnnouncementColors.teal,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
   Widget _buildMetadata() {
     final dateFormat = DateFormat('MMM d, yyyy - h:mm a');
     final DateTime date;
@@ -426,6 +446,25 @@ class AnnouncementCard extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 announcement.authorName!,
+                style: TextStyle(
+                  color: AnnouncementColors.textTertiaryColor(isDark),
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        if (announcement.viewCount > 0)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.visibility_outlined,
+                size: 14,
+                color: AnnouncementColors.textTertiaryColor(isDark),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                '${announcement.viewCount} views',
                 style: TextStyle(
                   color: AnnouncementColors.textTertiaryColor(isDark),
                   fontSize: 12,

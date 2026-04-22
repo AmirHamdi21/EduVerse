@@ -20,6 +20,8 @@ class AnnouncementItem extends Equatable {
   final String? priority;
   final String? announcementType;
   final String? authorName;
+  final String? targetAudience;
+  final int viewCount;
 
   AnnouncementItem({
     required this.id,
@@ -39,6 +41,8 @@ class AnnouncementItem extends Equatable {
     this.priority,
     this.announcementType,
     this.authorName,
+    this.targetAudience,
+    this.viewCount = 0,
   });
 
   factory AnnouncementItem.fromApi(AnnouncementModel api) {
@@ -60,6 +64,8 @@ class AnnouncementItem extends Equatable {
       priority: api.priority,
       announcementType: api.announcementType,
       authorName: api.author?.displayName,
+      targetAudience: api.targetAudience,
+      viewCount: api.viewCount,
     );
   }
 
@@ -84,6 +90,8 @@ class AnnouncementItem extends Equatable {
     String? priority,
     String? announcementType,
     String? authorName,
+    String? targetAudience,
+    int? viewCount,
   }) {
     return AnnouncementItem(
       id: id ?? this.id,
@@ -103,6 +111,8 @@ class AnnouncementItem extends Equatable {
       priority: priority ?? this.priority,
       announcementType: announcementType ?? this.announcementType,
       authorName: authorName ?? this.authorName,
+      targetAudience: targetAudience ?? this.targetAudience,
+      viewCount: viewCount ?? this.viewCount,
     );
   }
 
@@ -125,6 +135,8 @@ class AnnouncementItem extends Equatable {
     priority,
     announcementType,
     authorName,
+    targetAudience,
+    viewCount,
   ];
 }
 

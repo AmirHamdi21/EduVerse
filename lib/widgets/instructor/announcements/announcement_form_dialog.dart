@@ -6,6 +6,7 @@ import 'announcement_colors.dart';
 class AnnouncementFormDialog extends StatefulWidget {
   final AnnouncementItem? announcement;
   final bool isDark;
+  final bool isAdmin;
   final List<Map<String, String>>? courseOptions;
   final Function(AnnouncementItem) onSave;
   final VoidCallback onCancel;
@@ -14,6 +15,7 @@ class AnnouncementFormDialog extends StatefulWidget {
     super.key,
     this.announcement,
     required this.isDark,
+    this.isAdmin = false,
     this.courseOptions,
     required this.onSave,
     required this.onCancel,
@@ -35,6 +37,8 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
   TimeOfDay? _scheduledTime;
   String _selectedCourseId = '0';
   String _selectedPriority = 'medium';
+  String _selectedAudience = 'all';
+  List<String> _selectedChannels = ['push'];
   List<String> _attachments = [];
   bool _isLoading = false;
   String? _titleError;
@@ -88,6 +92,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
         _scheduledTime = TimeOfDay.fromDateTime(_scheduledDate!);
       }
       _attachments = List.from(widget.announcement!.attachments);
+      _selectedAudience = widget.announcement!.targetAudience ?? 'all';
     }
 
     _animController = AnimationController(
@@ -183,6 +188,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
       priority: _selectedPriority,
       announcementType: widget.announcement?.announcementType,
       authorName: widget.announcement?.authorName,
+      targetAudience: widget.isAdmin ? _selectedAudience : null,
     );
 
     widget.onSave(newAnnouncement);
@@ -341,6 +347,12 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                       _buildCourseSelector(),
                       const SizedBox(height: 20),
                       _buildPrioritySelector(),
+                      if (widget.isAdmin) ...[
+                        const SizedBox(height: 20),
+                        _buildTargetAudienceSection(),
+                        const SizedBox(height: 20),
+                        _buildNotificationChannelsSection(),
+                      ],
                       const SizedBox(height: 20),
                       _buildScheduleSection(),
                       const SizedBox(height: 20),
@@ -1022,6 +1034,197 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
               elevation: 0,
             ),
           ),
+        ),
+      ],
+    );
+  }
+
+  // ── Admin-only sections ──────────────────────────────────────────────
+
+  Widget _buildTargetAudienceSection() {
+    final audiences = [
+      {'value': 'all', 'label': 'All Users', 'icon': Icons.groups_rounded, 'color': AnnouncementColors.primary},
+      {'value': 'students', 'label': 'Students Only', 'icon': Icons.school_rounded, 'color': AnnouncementColors.published},
+      {'value': 'instructors', 'label': 'Instructors Only', 'icon': Icons.person_rounded, 'color': AnnouncementColors.accent},
+      {'value': 'admins', 'label': 'Admins Only', 'icon': Icons.admin_panel_settings_rounded, 'color': AnnouncementColors.scheduled},
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Target Audience',
+          style: TextStyle(
+            color: AnnouncementColors.textSecondaryColor(widget.isDark),
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 10),
+        GridView.count(
+          crossAxisCount: 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 2.4,
+          children: audiences.map((option) {
+            final isSelected = _selectedAudience == option['value'];
+            final color = option['color'] as Color;
+
+            return Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => setState(() => _selectedAudience = option['value'] as String),
+                borderRadius: BorderRadius.circular(14),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? (widget.isDark ? color.withOpacity(0.2) : color.withOpacity(0.08))
+                        : (widget.isDark
+                            ? AnnouncementColors.darkSurface.withOpacity(0.5)
+                            : AnnouncementColors.surface),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: isSelected
+                          ? color.withOpacity(0.6)
+                          : AnnouncementColors.borderColor(widget.isDark),
+                      width: isSelected ? 2 : 1,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        option['icon'] as IconData,
+                        size: 20,
+                        color: isSelected
+                            ? color
+                            : AnnouncementColors.textSecondaryColor(widget.isDark),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          option['label'] as String,
+                          style: TextStyle(
+                            color: isSelected
+                                ? color
+                                : AnnouncementColors.textPrimaryColor(widget.isDark),
+                            fontSize: 12,
+                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNotificationChannelsSection() {
+    final channels = [
+      {'id': 'push', 'label': 'Push', 'icon': Icons.notifications_active_rounded},
+      {'id': 'email', 'label': 'Email', 'icon': Icons.email_rounded},
+      {'id': 'sms', 'label': 'SMS', 'icon': Icons.sms_rounded},
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Notification Channels',
+          style: TextStyle(
+            color: AnnouncementColors.textSecondaryColor(widget.isDark),
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: channels.map((channel) {
+            final isActive = _selectedChannels.contains(channel['id']);
+
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  right: channel['id'] != 'sms' ? 10 : 0,
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        final id = channel['id'] as String;
+                        if (_selectedChannels.contains(id)) {
+                          if (_selectedChannels.length > 1) {
+                            _selectedChannels = _selectedChannels
+                                .where((c) => c != id)
+                                .toList();
+                          }
+                        } else {
+                          _selectedChannels = [..._selectedChannels, id];
+                        }
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(14),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      decoration: BoxDecoration(
+                        color: isActive
+                            ? (widget.isDark
+                                ? AnnouncementColors.primary.withOpacity(0.2)
+                                : AnnouncementColors.primarySurface)
+                            : (widget.isDark
+                                ? AnnouncementColors.darkSurface.withOpacity(0.5)
+                                : AnnouncementColors.surface),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: isActive
+                              ? AnnouncementColors.primary.withOpacity(0.5)
+                              : AnnouncementColors.borderColor(widget.isDark),
+                          width: isActive ? 2 : 1,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            channel['icon'] as IconData,
+                            size: 20,
+                            color: isActive
+                                ? AnnouncementColors.primary
+                                : AnnouncementColors.textSecondaryColor(
+                                    widget.isDark),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            channel['label'] as String,
+                            style: TextStyle(
+                              color: isActive
+                                  ? AnnouncementColors.primary
+                                  : AnnouncementColors.textSecondaryColor(
+                                      widget.isDark),
+                              fontSize: 12,
+                              fontWeight:
+                                  isActive ? FontWeight.w600 : FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
         ),
       ],
     );

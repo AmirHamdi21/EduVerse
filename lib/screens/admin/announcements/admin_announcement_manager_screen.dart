@@ -85,6 +85,7 @@ class _AdminAnnouncementManagerScreenState
       setState(() {
         _announcements = apiList.map(AnnouncementItem.fromApi).toList();
         _isLoading = false;
+        _buildCourseOptionsFromAnnouncements();
       });
 
       _fabAnimController.forward();
@@ -97,6 +98,22 @@ class _AdminAnnouncementManagerScreenState
         _errorMessage = e.toString();
       });
     }
+  }
+
+  /// Build dynamic course options from loaded announcements
+  /// (mirrors web frontend's courseOptions useMemo).
+  void _buildCourseOptionsFromAnnouncements() {
+    final Map<String, String> courseMap = {};
+    for (final a in _announcements) {
+      if (a.courseId != null && a.courseId!.isNotEmpty && a.courseId != '0') {
+        courseMap[a.courseId!] = a.courseName ?? a.audience;
+      }
+    }
+
+    _courseOptions = [
+      const {'id': '0', 'label': 'Campus-wide'},
+      ...courseMap.entries.map((e) => {'id': e.key, 'label': e.value}),
+    ];
   }
 
   List<AnnouncementItem> get _filteredAnnouncements {
@@ -152,6 +169,7 @@ class _AdminAnnouncementManagerScreenState
       barrierDismissible: false,
       builder: (context) => AnnouncementFormDialog(
         isDark: isDark,
+        isAdmin: true,
         courseOptions: _courseOptions,
         onSave: (announcement) {
           Navigator.pop(context);
@@ -169,6 +187,7 @@ class _AdminAnnouncementManagerScreenState
       builder: (context) => AnnouncementFormDialog(
         announcement: announcement,
         isDark: isDark,
+        isAdmin: true,
         courseOptions: _courseOptions,
         onSave: (updated) {
           Navigator.pop(context);
@@ -284,6 +303,8 @@ class _AdminAnnouncementManagerScreenState
           'title': announcement.title,
           'content': announcement.content,
           'priority': announcement.priority ?? 'medium',
+          if (announcement.targetAudience != null)
+            'targetAudience': announcement.targetAudience,
         });
 
         if (announcement.status == AnnouncementStatus.published) {
@@ -302,6 +323,8 @@ class _AdminAnnouncementManagerScreenState
           'priority': announcement.priority ?? 'medium',
           if (announcement.courseId != null && announcement.courseId != '0')
             'courseId': int.tryParse(announcement.courseId!) ?? 0,
+          if (announcement.targetAudience != null)
+            'targetAudience': announcement.targetAudience,
         });
 
         if (announcement.status == AnnouncementStatus.published) {
