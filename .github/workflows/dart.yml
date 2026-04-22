@@ -1,4 +1,4 @@
-name: Dart
+name: Flutter
 on:
   push:
     branches: [ "main" ]
@@ -13,19 +13,20 @@ jobs:
           fetch-depth: 0
           persist-credentials: true
 
-      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.29.3
+          channel: stable
 
       - name: Install dependencies
-        run: dart pub get
-
-      - name: dart-problem-matcher
-        uses: leancodepl/dart-problem-matcher@0.0.2
+        run: flutter pub get
 
       - name: Analyze project source
-        run: dart analyze
+        run: flutter analyze
 
       - name: Run tests
-        run: dart test
+        run: flutter test
 
       - name: Dart/Flutter Package Analyzer (PANA)
         uses: flutterings/dart-package-analyzer@v1
