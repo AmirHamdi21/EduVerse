@@ -237,9 +237,7 @@ Please adhere to the existing BLoC architecture patterns and ensure new features
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
-
----
+This project is licensed under the (still no License).
 
 <div align="center">
 
