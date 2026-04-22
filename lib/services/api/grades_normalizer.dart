@@ -55,7 +55,7 @@ class GradesNormalizer {
         final grade = courseGrades[i];
         final computedWeight = totalMaxScore > 0
             ? (grade.maxScore / totalMaxScore) * 100
-            : (assessmentCount > 0 ? 100 / assessmentCount : 0);
+            : (assessmentCount > 0 ? 100.0 / assessmentCount : 0.0);
 
         assessments.add(
           AssessmentGrade(
@@ -148,7 +148,7 @@ class GradesNormalizer {
     }
 
     final totalCourses = courses.length;
-    final computedGpa = totalCredits > 0 ? totalGpaPoints / totalCredits : 0;
+    final computedGpa = totalCredits > 0 ? totalGpaPoints / totalCredits : 0.0;
 
     return GradeStatistics(
       cumulativeGPA: computedGpa,
@@ -159,7 +159,7 @@ class GradesNormalizer {
       passedCourses: passedCourses,
       highestGrade: highest ?? GradeLetter.pending,
       lowestGrade: lowest ?? GradeLetter.pending,
-      averagePercentage: totalCourses > 0 ? totalPercentage / totalCourses : 0,
+      averagePercentage: totalCourses > 0 ? totalPercentage / totalCourses : 0.0,
       gradeDistribution: distribution,
     );
   }
