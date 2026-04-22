@@ -10,6 +10,10 @@ import '../../common/services/grade_pdf_service.dart';
 import '../../common/utils/responsive.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/grades/grade_model.dart';
+import '../../services/api/core_api_client.dart';
+import '../../services/api/grades_service.dart';
+import '../../services/api/student_stats_service.dart';
+import '../../services/storage_service.dart';
 import '../../widgets/student/grades/grade_card.dart';
 import '../../widgets/student/grades/grades_filter_sheet.dart';
 import '../../widgets/student/grades/grade_details_sheet.dart';
@@ -120,10 +124,17 @@ class _GradesScreenState extends State<GradesScreen>
     );
 
     try {
+      final storageService = StorageService();
+      final userData = await storageService.getUserData();
+      final roleName = userData?.primaryRoleName ?? 'student';
+      final roleLabel = roleName.isNotEmpty
+          ? '${roleName[0].toUpperCase()}${roleName.substring(1)}'
+          : 'Student';
+
       final reportData = GradeReportData(
-        studentName: 'Ahmed Mohamed', // TODO: Get from user profile
-        studentId: 'STU-2024-001',
-        program: 'Bachelor of Computer Science',
+        studentName: userData?.displayName ?? 'Student',
+        studentId: userData?.userId.toString() ?? '',
+        program: '$roleLabel Program',
         cumulativeGPA: state.statistics?.cumulativeGPA ?? 0,
         semesterGPA: state.semesterGPA,
         totalCredits: state.statistics?.totalCredits ?? 0,
@@ -171,7 +182,16 @@ class _GradesScreenState extends State<GradesScreen>
         final l10n = AppLocalizations.of(context);
 
         return BlocProvider(
-          create: (context) => GradesCubit(),
+          create: (context) {
+            final coreApiClient = CoreApiClient();
+            return GradesCubit(
+              gradesService: GradesService(coreApiClient: coreApiClient),
+              studentStatsService: StudentStatsService(
+                coreApiClient: coreApiClient,
+              ),
+              storageService: StorageService(),
+            );
+          },
           child: BlocConsumer<GradesCubit, GradesState>(
             listener: (context, state) {
               if (state.errorMessage != null) {

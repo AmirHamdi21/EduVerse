@@ -15,7 +15,12 @@ class GradeGpaModel extends Equatable {
       studentId: _parseInt(
         payload['studentId'] ?? payload['userId'] ?? payload['id'],
       ),
-      gpa: _parseDouble(payload['gpa'] ?? payload['cumulativeGPA']),
+      gpa: _parseDouble(
+        payload['gpa'] ??
+            payload['cumulativeGpa'] ??
+            payload['semesterGpa'] ??
+            payload['cumulativeGPA'],
+      ),
     );
   }
 

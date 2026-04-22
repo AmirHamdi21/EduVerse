@@ -7,6 +7,10 @@ import '../../bloc/theme/theme_state.dart';
 import '../../common/utils/responsive.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/grades/grade_model.dart';
+import '../../services/api/core_api_client.dart';
+import '../../services/api/grades_service.dart';
+import '../../services/api/student_stats_service.dart';
+import '../../services/storage_service.dart';
 
 class GradeAnalysisScreen extends StatefulWidget {
   const GradeAnalysisScreen({super.key});
@@ -45,7 +49,16 @@ class _GradeAnalysisScreenState extends State<GradeAnalysisScreen>
         final l10n = AppLocalizations.of(context);
 
         return BlocProvider(
-          create: (context) => GradesCubit(),
+          create: (context) {
+            final coreApiClient = CoreApiClient();
+            return GradesCubit(
+              gradesService: GradesService(coreApiClient: coreApiClient),
+              studentStatsService: StudentStatsService(
+                coreApiClient: coreApiClient,
+              ),
+              storageService: StorageService(),
+            );
+          },
           child: BlocBuilder<GradesCubit, GradesState>(
             builder: (context, state) {
               return Scaffold(

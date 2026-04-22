@@ -47,6 +47,7 @@ import 'package:edu_verse/services/api/section_service.dart';
 import 'package:edu_verse/services/api/communication_service.dart';
 import 'package:edu_verse/services/api/public_profile_service.dart';
 import 'package:edu_verse/services/api/office_hours_service.dart';
+import 'package:edu_verse/services/api/grades_service.dart';
 import 'package:edu_verse/services/api/student_stats_service.dart';
 import 'package:edu_verse/services/api/notification_api_service.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
@@ -154,13 +155,16 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _publicProfileService = PublicProfileService(coreApiClient: coreApiClient);
     _officeHoursService = OfficeHoursService(coreApiClient: coreApiClient);
     _studentStatsService = StudentStatsService(coreApiClient: coreApiClient);
-    _notificationApiService = NotificationApiService(coreApiClient: coreApiClient);
+    _notificationApiService = NotificationApiService(
+      coreApiClient: coreApiClient,
+    );
 
     _notificationCubit = NotificationCubit(
       notificationApiService: _notificationApiService,
     )..loadNotifications();
     _tasksCubit = TasksCubit()..loadTasks();
     _gradesCubit = GradesCubit(
+      gradesService: GradesService(coreApiClient: coreApiClient),
       studentStatsService: _studentStatsService,
       storageService: _storageService,
     );
@@ -328,7 +332,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       providers: [
         RepositoryProvider<AttendanceService>.value(value: _attendanceService),
         RepositoryProvider<EnrollmentService>.value(value: _enrollmentService),
-        RepositoryProvider<NotificationApiService>.value(value: _notificationApiService),
+        RepositoryProvider<NotificationApiService>.value(
+          value: _notificationApiService,
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
