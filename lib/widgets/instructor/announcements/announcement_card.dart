@@ -10,6 +10,7 @@ class AnnouncementCard extends StatelessWidget {
   final VoidCallback onDelete;
   final VoidCallback? onAnalytics;
   final VoidCallback? onPublish;
+  final VoidCallback? onPin;
 
   const AnnouncementCard({
     super.key,
@@ -19,6 +20,7 @@ class AnnouncementCard extends StatelessWidget {
     required this.onDelete,
     this.onAnalytics,
     this.onPublish,
+    this.onPin,
   });
 
   @override
@@ -106,87 +108,126 @@ class AnnouncementCard extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 12),
-        PopupMenuButton<String>(
-          icon: Icon(
-            Icons.more_vert_rounded,
-            color: AnnouncementColors.textSecondaryColor(isDark),
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          color: isDark ? AnnouncementColors.darkCard : Colors.white,
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 'edit',
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.edit_rounded,
-                    size: 18,
-                    color: AnnouncementColors.primary,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Edit',
-                    style: TextStyle(
-                      color: AnnouncementColors.textPrimaryColor(isDark),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (announcement.status == AnnouncementStatus.draft ||
-                announcement.status == AnnouncementStatus.scheduled)
-              PopupMenuItem(
-                value: 'publish',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.send_rounded,
-                      size: 18,
-                      color: AnnouncementColors.published,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Publish Now',
-                      style: TextStyle(
-                        color: AnnouncementColors.textPrimaryColor(isDark),
-                      ),
-                    ),
-                  ],
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (announcement.isPinned)
+              Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: Icon(
+                  Icons.push_pin_rounded,
+                  color: AnnouncementColors.primary,
+                  size: 18,
                 ),
               ),
-            PopupMenuItem(
-              value: 'delete',
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.delete_rounded,
-                    size: 18,
-                    color: AnnouncementColors.delete,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Delete',
-                    style: TextStyle(color: AnnouncementColors.delete),
-                  ),
-                ],
+            PopupMenuButton<String>(
+              icon: Icon(
+                Icons.more_vert_rounded,
+                color: AnnouncementColors.textSecondaryColor(isDark),
               ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              color: isDark ? AnnouncementColors.darkCard : Colors.white,
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'edit',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.edit_rounded,
+                        size: 18,
+                        color: AnnouncementColors.primary,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Edit',
+                        style: TextStyle(
+                          color: AnnouncementColors.textPrimaryColor(isDark),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (announcement.status == AnnouncementStatus.draft ||
+                    announcement.status == AnnouncementStatus.scheduled)
+                  PopupMenuItem(
+                    value: 'publish',
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.send_rounded,
+                          size: 18,
+                          color: AnnouncementColors.published,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Publish Now',
+                          style: TextStyle(
+                            color: AnnouncementColors.textPrimaryColor(isDark),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (onPin != null)
+                  PopupMenuItem(
+                    value: 'pin',
+                    child: Row(
+                      children: [
+                        Icon(
+                          announcement.isPinned
+                              ? Icons.push_pin_outlined
+                              : Icons.push_pin_rounded,
+                          size: 18,
+                          color: AnnouncementColors.accent,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          announcement.isPinned ? 'Unpin' : 'Pin',
+                          style: TextStyle(
+                            color: AnnouncementColors.textPrimaryColor(isDark),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                PopupMenuItem(
+                  value: 'delete',
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.delete_rounded,
+                        size: 18,
+                        color: AnnouncementColors.delete,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Delete',
+                        style: TextStyle(color: AnnouncementColors.delete),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              onSelected: (value) {
+                switch (value) {
+                  case 'edit':
+                    onEdit();
+                    break;
+                  case 'publish':
+                    onPublish?.call();
+                    break;
+                  case 'pin':
+                    onPin?.call();
+                    break;
+                  case 'delete':
+                    onDelete();
+                    break;
+                }
+              },
             ),
           ],
-          onSelected: (value) {
-            switch (value) {
-              case 'edit':
-                onEdit();
-                break;
-              case 'publish':
-                onPublish?.call();
-                break;
-              case 'delete':
-                onDelete();
-                break;
-            }
-          },
         ),
       ],
     );
@@ -196,6 +237,16 @@ class AnnouncementCard extends StatelessWidget {
     return Row(
       children: [
         _buildStatusChip(),
+        if (announcement.priority != null &&
+            announcement.priority!.isNotEmpty) ...[
+          const SizedBox(width: 10),
+          _buildPriorityChip(),
+        ],
+        if (announcement.courseName != null &&
+            announcement.courseName!.isNotEmpty) ...[
+          const SizedBox(width: 10),
+          _buildCourseChip(),
+        ],
         if (announcement.attachments.isNotEmpty) ...[
           const SizedBox(width: 10),
           _buildAttachmentChip(),
@@ -270,6 +321,48 @@ class AnnouncementCard extends StatelessWidget {
     );
   }
 
+  Widget _buildPriorityChip() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AnnouncementColors.accent.withOpacity(0.15)
+            : AnnouncementColors.accent.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AnnouncementColors.accent.withOpacity(0.25)),
+      ),
+      child: Text(
+        announcement.priority!,
+        style: const TextStyle(
+          color: AnnouncementColors.accent,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCourseChip() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AnnouncementColors.primary.withOpacity(0.15)
+            : AnnouncementColors.primary.withOpacity(0.08),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AnnouncementColors.primary.withOpacity(0.25)),
+      ),
+      child: Text(
+        announcement.courseName!,
+        style: const TextStyle(
+          color: AnnouncementColors.primary,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
   Widget _buildMetadata() {
     final dateFormat = DateFormat('MMM d, yyyy - h:mm a');
     final DateTime date;
@@ -280,35 +373,66 @@ class AnnouncementCard extends StatelessWidget {
       date = announcement.publishedAt ?? announcement.createdAt;
     }
 
-    return Row(
+    return Wrap(
+      spacing: 16,
+      runSpacing: 6,
       children: [
-        Icon(
-          Icons.calendar_today_rounded,
-          size: 14,
-          color: AnnouncementColors.textTertiaryColor(isDark),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.calendar_today_rounded,
+              size: 14,
+              color: AnnouncementColors.textTertiaryColor(isDark),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              dateFormat.format(date),
+              style: TextStyle(
+                color: AnnouncementColors.textTertiaryColor(isDark),
+                fontSize: 12,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 6),
-        Text(
-          dateFormat.format(date),
-          style: TextStyle(
-            color: AnnouncementColors.textTertiaryColor(isDark),
-            fontSize: 12,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.people_outline_rounded,
+              size: 14,
+              color: AnnouncementColors.textTertiaryColor(isDark),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              announcement.audience,
+              style: TextStyle(
+                color: AnnouncementColors.textTertiaryColor(isDark),
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+        if (announcement.authorName != null &&
+            announcement.authorName!.isNotEmpty)
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.person_outline_rounded,
+                size: 14,
+                color: AnnouncementColors.textTertiaryColor(isDark),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                announcement.authorName!,
+                style: TextStyle(
+                  color: AnnouncementColors.textTertiaryColor(isDark),
+                  fontSize: 12,
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(width: 16),
-        Icon(
-          Icons.people_outline_rounded,
-          size: 14,
-          color: AnnouncementColors.textTertiaryColor(isDark),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          announcement.audience,
-          style: TextStyle(
-            color: AnnouncementColors.textTertiaryColor(isDark),
-            fontSize: 12,
-          ),
-        ),
       ],
     );
   }

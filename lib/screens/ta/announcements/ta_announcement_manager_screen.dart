@@ -11,15 +11,16 @@ import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../widgets/instructor/announcements/announcement_barrel.dart';
 
-class AnnouncementManagerScreen extends StatefulWidget {
-  const AnnouncementManagerScreen({super.key});
+class TAAnnouncementManagerScreen extends StatefulWidget {
+  const TAAnnouncementManagerScreen({super.key});
 
   @override
-  State<AnnouncementManagerScreen> createState() =>
-      _AnnouncementManagerScreenState();
+  State<TAAnnouncementManagerScreen> createState() =>
+      _TAAnnouncementManagerScreenState();
 }
 
-class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
+class _TAAnnouncementManagerScreenState
+    extends State<TAAnnouncementManagerScreen>
     with TickerProviderStateMixin {
   late TextEditingController _searchController;
   late AnimationController _fabAnimController;

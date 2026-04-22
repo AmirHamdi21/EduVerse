@@ -22,7 +22,11 @@ class AnnouncementsTabContent extends StatelessWidget {
     return BlocBuilder<CourseDetailBloc, CourseDetailState>(
       builder: (context, state) {
         final announcements = List<AnnouncementModel>.from(state.announcements)
-          ..sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+          ..sort(
+            (a, b) => (b.publishedAt ?? b.createdAt).compareTo(
+              a.publishedAt ?? a.createdAt,
+            ),
+          );
 
         if (state.isLoadingAnnouncements && announcements.isEmpty) {
           return _buildLoadingSkeleton();
@@ -159,7 +163,7 @@ class AnnouncementsTabContent extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Published ${_formatDate(announcement.publishedAt)}',
+                      'Published ${_formatDate(announcement.publishedAt ?? announcement.createdAt)}',
                       style: TextStyle(
                         color: secondaryColor,
                         fontSize: 12,

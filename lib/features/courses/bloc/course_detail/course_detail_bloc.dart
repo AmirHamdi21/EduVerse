@@ -700,7 +700,11 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     try {
       final announcements = await _communicationService
           .getAnnouncementsByCourseId(courseId);
-      announcements.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
+      announcements.sort(
+        (a, b) => (b.publishedAt ?? b.createdAt).compareTo(
+          a.publishedAt ?? a.createdAt,
+        ),
+      );
 
       emit(
         state.copyWith(

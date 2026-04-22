@@ -1,5 +1,8 @@
+import 'package:equatable/equatable.dart';
+import '../materials/announcement_model.dart';
+
 /// Model for instructor announcements
-class AnnouncementItem {
+class AnnouncementItem extends Equatable {
   final String id;
   final String title;
   final String content;
@@ -13,6 +16,10 @@ class AnnouncementItem {
   final List<String> attachments;
   final String? courseName;
   final String? courseId;
+  final bool isPinned;
+  final String? priority;
+  final String? announcementType;
+  final String? authorName;
 
   AnnouncementItem({
     required this.id,
@@ -28,7 +35,33 @@ class AnnouncementItem {
     this.attachments = const [],
     this.courseName,
     this.courseId,
+    this.isPinned = false,
+    this.priority,
+    this.announcementType,
+    this.authorName,
   });
+
+  factory AnnouncementItem.fromApi(AnnouncementModel api) {
+    return AnnouncementItem(
+      id: api.id,
+      title: api.title,
+      content: api.content,
+      status: api.isPublished == 1
+          ? AnnouncementStatus.published
+          : AnnouncementStatus.draft,
+      createdAt: api.createdAt,
+      publishedAt: api.publishedAt,
+      audience: api.course?.displayLabel ?? 'Campus-wide',
+      totalAudience: 0,
+      readCount: api.viewCount,
+      courseName: api.course?.name,
+      courseId: api.courseId,
+      isPinned: api.isPinned == 1,
+      priority: api.priority,
+      announcementType: api.announcementType,
+      authorName: api.author?.displayName,
+    );
+  }
 
   double get readRate =>
       totalAudience > 0 ? (readCount / totalAudience) * 100 : 0;
@@ -47,6 +80,10 @@ class AnnouncementItem {
     List<String>? attachments,
     String? courseName,
     String? courseId,
+    bool? isPinned,
+    String? priority,
+    String? announcementType,
+    String? authorName,
   }) {
     return AnnouncementItem(
       id: id ?? this.id,
@@ -62,8 +99,33 @@ class AnnouncementItem {
       attachments: attachments ?? this.attachments,
       courseName: courseName ?? this.courseName,
       courseId: courseId ?? this.courseId,
+      isPinned: isPinned ?? this.isPinned,
+      priority: priority ?? this.priority,
+      announcementType: announcementType ?? this.announcementType,
+      authorName: authorName ?? this.authorName,
     );
   }
+
+  @override
+  List<Object?> get props => [
+    id,
+    title,
+    content,
+    status,
+    createdAt,
+    scheduledAt,
+    publishedAt,
+    audience,
+    totalAudience,
+    readCount,
+    attachments,
+    courseName,
+    courseId,
+    isPinned,
+    priority,
+    announcementType,
+    authorName,
+  ];
 }
 
 enum AnnouncementStatus { draft, scheduled, published }

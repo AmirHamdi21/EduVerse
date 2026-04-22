@@ -75,14 +75,30 @@ class CommunicationService {
     return AnnouncementModel.fromJson(data);
   }
 
+  /// DELETE /api/announcements/{id}
+  Future<void> deleteAnnouncement(dynamic id) async {
+    await _client.dio.delete('/announcements/$id');
+  }
+
   /// PATCH /api/announcements/{id}/publish
   Future<void> publishAnnouncement(dynamic id) async {
     await _client.dio.patch('/announcements/$id/publish');
   }
 
+  /// PATCH /api/announcements/{id}/schedule
+  Future<void> scheduleAnnouncement(dynamic id, DateTime scheduledAt) async {
+    await _client.dio.patch(
+      '/announcements/$id/schedule',
+      data: {'scheduledAt': scheduledAt.toIso8601String()},
+    );
+  }
+
   /// PATCH /api/announcements/{id}/pin
-  Future<void> pinAnnouncement(dynamic id) async {
-    await _client.dio.patch('/announcements/$id/pin');
+  Future<void> pinAnnouncement(dynamic id, {bool? isPinned}) async {
+    await _client.dio.patch(
+      '/announcements/$id/pin',
+      data: isPinned != null ? {'isPinned': isPinned} : null,
+    );
   }
 
   /// GET /api/announcements/{id}/analytics

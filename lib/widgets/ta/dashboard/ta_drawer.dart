@@ -391,6 +391,13 @@ class _TADrawerState extends State<TADrawer>
         category: 'main',
       ),
       _MenuItem(
+        icon: Icons.campaign_outlined,
+        activeIcon: Icons.campaign,
+        title: l10n.announcementsManager,
+        route: '/ta/announcements',
+        category: 'main',
+      ),
+      _MenuItem(
         icon: Icons.people_outline,
         activeIcon: Icons.people,
         title: 'Student Roster',

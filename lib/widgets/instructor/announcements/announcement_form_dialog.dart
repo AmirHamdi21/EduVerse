@@ -6,6 +6,7 @@ import 'announcement_colors.dart';
 class AnnouncementFormDialog extends StatefulWidget {
   final AnnouncementItem? announcement;
   final bool isDark;
+  final List<Map<String, String>>? courseOptions;
   final Function(AnnouncementItem) onSave;
   final VoidCallback onCancel;
 
@@ -13,6 +14,7 @@ class AnnouncementFormDialog extends StatefulWidget {
     super.key,
     this.announcement,
     required this.isDark,
+    this.courseOptions,
     required this.onSave,
     required this.onCancel,
   });
@@ -31,18 +33,32 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
   bool _publishImmediately = true;
   DateTime? _scheduledDate;
   TimeOfDay? _scheduledTime;
-  String _selectedAudience = 'All Students (120)';
+  String _selectedCourseId = '0';
+  String _selectedPriority = 'medium';
   List<String> _attachments = [];
   bool _isLoading = false;
   String? _titleError;
   String? _contentError;
 
-  final List<String> _audienceOptions = [
-    'All Students (120)',
-    'CS101 - Operating Systems (45)',
-    'CS202 - Data Structures (38)',
-    'CS305 - Database (52)',
-  ];
+  List<Map<String, String>> get _resolvedCourseOptions {
+    final provided =
+        widget.courseOptions
+            ?.where(
+              (c) =>
+                  (c['id'] ?? '').isNotEmpty && (c['label'] ?? '').isNotEmpty,
+            )
+            .toList() ??
+        <Map<String, String>>[];
+
+    if (provided.any((c) => c['id'] == '0')) {
+      return provided;
+    }
+
+    return [
+      {'id': '0', 'label': 'Campus-wide'},
+      ...provided,
+    ];
+  }
 
   @override
   void initState() {
@@ -53,6 +69,16 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
     _contentController = TextEditingController(
       text: widget.announcement?.content ?? '',
     );
+    _selectedPriority = widget.announcement?.priority ?? 'medium';
+
+    final options = _resolvedCourseOptions;
+    final existingCourseId = widget.announcement?.courseId;
+    final hasExisting =
+        existingCourseId != null &&
+        options.any((c) => c['id'] == existingCourseId);
+    _selectedCourseId = hasExisting
+        ? existingCourseId!
+        : (options.isNotEmpty ? options.first['id']! : '0');
 
     if (widget.announcement != null) {
       _publishImmediately =
@@ -111,53 +137,55 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
 
     setState(() => _isLoading = true);
 
-    // Simulate API call
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (!mounted) return;
+    final status = asDraft
+        ? AnnouncementStatus.draft
+        : (_publishImmediately
+              ? AnnouncementStatus.published
+              : AnnouncementStatus.scheduled);
 
-      final status = asDraft
-          ? AnnouncementStatus.draft
-          : (_publishImmediately
-                ? AnnouncementStatus.published
-                : AnnouncementStatus.scheduled);
-
-      DateTime? scheduledAt;
-      if (!_publishImmediately &&
-          _scheduledDate != null &&
-          _scheduledTime != null) {
-        scheduledAt = DateTime(
-          _scheduledDate!.year,
-          _scheduledDate!.month,
-          _scheduledDate!.day,
-          _scheduledTime!.hour,
-          _scheduledTime!.minute,
-        );
-      }
-
-      final newAnnouncement = AnnouncementItem(
-        id:
-            widget.announcement?.id ??
-            DateTime.now().millisecondsSinceEpoch.toString(),
-        title: _titleController.text.trim(),
-        content: _contentController.text.trim(),
-        status: status,
-        createdAt: widget.announcement?.createdAt ?? DateTime.now(),
-        scheduledAt: scheduledAt,
-        publishedAt: status == AnnouncementStatus.published
-            ? DateTime.now()
-            : null,
-        audience: _selectedAudience.split('(').first.trim(),
-        totalAudience:
-            int.tryParse(
-              _selectedAudience.split('(').last.replaceAll(')', '').trim(),
-            ) ??
-            120,
-        readCount: widget.announcement?.readCount ?? 0,
-        attachments: _attachments,
+    DateTime? scheduledAt;
+    if (!_publishImmediately &&
+        _scheduledDate != null &&
+        _scheduledTime != null) {
+      scheduledAt = DateTime(
+        _scheduledDate!.year,
+        _scheduledDate!.month,
+        _scheduledDate!.day,
+        _scheduledTime!.hour,
+        _scheduledTime!.minute,
       );
+    }
 
-      widget.onSave(newAnnouncement);
-    });
+    final selectedCourse = _resolvedCourseOptions.firstWhere(
+      (c) => c['id'] == _selectedCourseId,
+      orElse: () => const {'id': '0', 'label': 'Campus-wide'},
+    );
+
+    final newAnnouncement = AnnouncementItem(
+      id:
+          widget.announcement?.id ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
+      title: _titleController.text.trim(),
+      content: _contentController.text.trim(),
+      status: status,
+      createdAt: widget.announcement?.createdAt ?? DateTime.now(),
+      scheduledAt: scheduledAt,
+      publishedAt: status == AnnouncementStatus.published
+          ? DateTime.now()
+          : null,
+      audience: selectedCourse['label'] ?? 'Campus-wide',
+      totalAudience: widget.announcement?.totalAudience ?? 0,
+      readCount: widget.announcement?.readCount ?? 0,
+      attachments: _attachments,
+      courseName: _selectedCourseId == '0' ? null : selectedCourse['label'],
+      courseId: _selectedCourseId == '0' ? null : _selectedCourseId,
+      isPinned: widget.announcement?.isPinned ?? false,
+      priority: _selectedPriority,
+      announcementType: widget.announcement?.announcementType,
+      authorName: widget.announcement?.authorName,
+    );
+
+    widget.onSave(newAnnouncement);
   }
 
   Future<void> _selectDate() async {
@@ -310,7 +338,9 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                       const SizedBox(height: 16),
                       _buildContentField(),
                       const SizedBox(height: 20),
-                      _buildAudienceSelector(),
+                      _buildCourseSelector(),
+                      const SizedBox(height: 20),
+                      _buildPrioritySelector(),
                       const SizedBox(height: 20),
                       _buildScheduleSection(),
                       const SizedBox(height: 20),
@@ -563,12 +593,12 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
     );
   }
 
-  Widget _buildAudienceSelector() {
+  Widget _buildCourseSelector() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Audience',
+          'Course',
           style: TextStyle(
             color: AnnouncementColors.textSecondaryColor(widget.isDark),
             fontSize: 13,
@@ -588,7 +618,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              value: _selectedAudience,
+              value: _selectedCourseId,
               isExpanded: true,
               icon: Icon(
                 Icons.keyboard_arrow_down_rounded,
@@ -599,11 +629,11 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
               dropdownColor: widget.isDark
                   ? AnnouncementColors.darkCard
                   : Colors.white,
-              items: _audienceOptions.map((option) {
+              items: _resolvedCourseOptions.map((option) {
                 return DropdownMenuItem(
-                  value: option,
+                  value: option['id'],
                   child: Text(
-                    option,
+                    option['label'] ?? 'Course',
                     style: TextStyle(
                       color: AnnouncementColors.textPrimaryColor(widget.isDark),
                       fontSize: 14,
@@ -613,7 +643,69 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
               }).toList(),
               onChanged: (value) {
                 if (value != null) {
-                  setState(() => _selectedAudience = value);
+                  setState(() => _selectedCourseId = value);
+                }
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPrioritySelector() {
+    const priorities = <String>['low', 'medium', 'high', 'urgent'];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Priority',
+          style: TextStyle(
+            color: AnnouncementColors.textSecondaryColor(widget.isDark),
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: widget.isDark
+                ? AnnouncementColors.darkSurface.withOpacity(0.5)
+                : AnnouncementColors.surface,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: AnnouncementColors.borderColor(widget.isDark),
+            ),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _selectedPriority,
+              isExpanded: true,
+              icon: Icon(
+                Icons.keyboard_arrow_down_rounded,
+                color: AnnouncementColors.textSecondaryColor(widget.isDark),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              borderRadius: BorderRadius.circular(14),
+              dropdownColor: widget.isDark
+                  ? AnnouncementColors.darkCard
+                  : Colors.white,
+              items: priorities.map((priority) {
+                return DropdownMenuItem(
+                  value: priority,
+                  child: Text(
+                    priority[0].toUpperCase() + priority.substring(1),
+                    style: TextStyle(
+                      color: AnnouncementColors.textPrimaryColor(widget.isDark),
+                      fontSize: 14,
+                    ),
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() => _selectedPriority = value);
                 }
               },
             ),

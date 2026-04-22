@@ -102,9 +102,11 @@ import 'package:edu_verse/screens/ta/office_hours/ta_office_hours_screen.dart';
 import 'package:edu_verse/screens/ta/calendar/ta_calendar_screen.dart';
 import 'package:edu_verse/screens/ta/search/ta_search_screen.dart';
 import 'package:edu_verse/screens/ta/attendance/ta_attendance_screen.dart';
+import 'package:edu_verse/screens/ta/announcements/ta_announcement_manager_screen.dart';
 import 'package:edu_verse/screens/ta/roster/ta_roster_screen.dart';
 import 'package:edu_verse/screens/ta/ai_assistant/ta_ai_assistant_screen.dart';
 import 'package:edu_verse/screens/admin/admin_dashboard_screen.dart';
+import 'package:edu_verse/screens/admin/announcements/admin_announcement_manager_screen.dart';
 import 'package:edu_verse/screens/admin/users/admin_user_management_screen.dart';
 import 'package:edu_verse/screens/admin/roles/admin_roles_screen.dart';
 import 'package:edu_verse/screens/admin/courses/admin_course_management_screen.dart';
@@ -809,6 +811,14 @@ class AppRouter {
       GoRoute(
         path: '/instructor/announcements',
         builder: (context, state) => const AnnouncementManagerScreen(),
+      ),
+      GoRoute(
+        path: '/ta/announcements',
+        builder: (context, state) => const TAAnnouncementManagerScreen(),
+      ),
+      GoRoute(
+        path: '/admin/announcements',
+        builder: (context, state) => const AdminAnnouncementManagerScreen(),
       ),
       GoRoute(
         path: '/instructor/attendance',

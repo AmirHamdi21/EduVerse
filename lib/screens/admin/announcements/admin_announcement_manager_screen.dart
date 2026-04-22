@@ -8,28 +8,30 @@ import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/instructor/announcement_model.dart';
 import '../../../services/api/communication_service.dart';
 import '../../../services/api/core_api_client.dart';
-import '../../../services/api/enrollment_service.dart';
+import '../../../widgets/admin/shared/admin_colors.dart';
 import '../../../widgets/instructor/announcements/announcement_barrel.dart';
 
-class AnnouncementManagerScreen extends StatefulWidget {
-  const AnnouncementManagerScreen({super.key});
+class AdminAnnouncementManagerScreen extends StatefulWidget {
+  const AdminAnnouncementManagerScreen({super.key});
 
   @override
-  State<AnnouncementManagerScreen> createState() =>
-      _AnnouncementManagerScreenState();
+  State<AdminAnnouncementManagerScreen> createState() =>
+      _AdminAnnouncementManagerScreenState();
 }
 
-class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
+class _AdminAnnouncementManagerScreenState
+    extends State<AdminAnnouncementManagerScreen>
     with TickerProviderStateMixin {
   late TextEditingController _searchController;
   late AnimationController _fabAnimController;
   late AnimationController _listAnimController;
   late final CommunicationService _communicationService;
-  late final EnrollmentService _enrollmentService;
 
   AnnouncementFilterType _selectedFilter = AnnouncementFilterType.all;
   List<AnnouncementItem> _announcements = [];
-  List<Map<String, String>> _courseOptions = const [];
+  List<Map<String, String>> _courseOptions = const [
+    {'id': '0', 'label': 'Campus-wide'},
+  ];
   bool _isLoading = true;
   bool _hasError = false;
   String _errorMessage = '';
@@ -51,9 +53,6 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
 
     final coreApiClient = CoreApiClient();
     _communicationService = CommunicationService(coreApiClient: coreApiClient);
-    _enrollmentService = EnrollmentService(coreApiClient: coreApiClient);
-
-    _loadCourseOptions();
     _loadAnnouncements();
   }
 
@@ -68,29 +67,6 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
 
   void _onSearchChanged() {
     setState(() {});
-  }
-
-  Future<void> _loadCourseOptions() async {
-    final result = await _enrollmentService.getTeachingCourses();
-    if (!mounted || !result.isSuccess) {
-      return;
-    }
-
-    final options =
-        result.data
-            ?.map(
-              (course) => {
-                'id': course.courseId.toString(),
-                'label': '${course.course.code} - ${course.course.name}',
-              },
-            )
-            .toList() ??
-        <Map<String, String>>[];
-
-    if (!mounted) return;
-    setState(() {
-      _courseOptions = options;
-    });
   }
 
   Future<void> _loadAnnouncements() async {
@@ -490,15 +466,16 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
             onPressed: () => context.pop(),
             icon: Icon(
               Icons.arrow_back_ios_rounded,
-              color: AnnouncementColors.textPrimaryColor(isDark),
+              color: isDark ? Colors.white : AdminColors.primary,
             ),
             style: IconButton.styleFrom(
               backgroundColor: isDark
-                  ? AnnouncementColors.darkCard
-                  : Colors.white,
+                  ? AdminColors.darkCard
+                  : AdminColors.lightCard,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
+              side: BorderSide(color: AdminColors.primary.withOpacity(0.2)),
             ),
           ),
           const SizedBox(width: 12),
