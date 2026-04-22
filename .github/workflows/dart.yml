@@ -1,0 +1,62 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Dart
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Note: This workflow uses the latest stable version of the Dart SDK.
+      # You can specify other versions if desired, see documentation here:
+      # https://github.com/dart-lang/setup-dart/blob/main/README.md
+      # - uses: dart-lang/setup-dart@v1
+      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+
+      - name: Install dependencies
+        run: dart pub get
+
+      # Uncomment this step to verify the use of 'dart format' on each commit.
+      # - name: Verify formatting
+      #   run: dart format --output=none --set-exit-if-changed .
+
+      # Consider passing '--fatal-infos' for slightly stricter analysis.
+      - name: Analyze project source
+        run: dart analyze
+
+      # Your project will need to have tests in test/ and a dependency on
+      # package:test for this step to succeed. Note that Flutter projects will
+      # want to change this to 'flutter test'.
+      - name: Run tests
+        run: dart test
+
+      - name: dart-problem-matcher
+      # You may pin to the exact commit or the version.
+      # uses: leancodepl/dart-problem-matcher@db2c48534f89233ae58cb81a45ebc8fd21d90bff
+        uses: leancodepl/dart-problem-matcher@0.0.2
+
+        
+      - name: Dart/Flutter Package Analyzer (PANA)
+      # You may pin to the exact commit or the version.
+      # uses: flutterings/dart-package-analyzer@bff0f9679d1d54b3a926d623d0a3d5ab91ea64bf
+        uses: flutterings/dart-package-analyzer@v1
+        with:
+      # The version of Flutter to use
+          flutter_version: # optional, default is 3.13.9
+      # The channel of Flutter to use
+          flutter_channel: # optional, default is stable
+      # Path of the package relatively to the root of the repository
+          relativePath: # optional, default is 
+          
+          
