@@ -1,63 +1,92 @@
+import 'package:edu_verse/bloc/theme/theme_bloc.dart';
+import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/config/app_theme.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
+import 'package:edu_verse/common/utils/responsive.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SummaryCard extends StatelessWidget {
   const SummaryCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            AppTheme.onBoardingbackgroundLight,
-            AppTheme.onBoardingbackgroundCyan,
-          ],
-        ),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppTheme.onBoardingborderBlue),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x19000000),
-            blurRadius: 3,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      child: RichText(
-        textAlign: TextAlign.center,
-        text: const TextSpan(
-          style: TextStyle(
-            fontSize: 14,
-            color: AppTheme.onBoardingtextMedium,
-            height: 1.62,
-          ),
-          children: [
-            TextSpan(
-              text: 'EduVerse AI',
-              style: TextStyle(
-                color: AppTheme.onBoardingprimary,
-                fontWeight: FontWeight.w600,
+    final responsive = context.responsive;
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState.isDark;
+        final cardGradient = isDark
+            ? LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  AppTheme.onBoardingCardBlueDark.withOpacity(0.4),
+                  AppTheme.onBoardingCardCyanDark.withOpacity(0.4),
+                ],
+              )
+            : const LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  AppTheme.onBoardingbackgroundLight,
+                  AppTheme.onBoardingbackgroundCyan,
+                ],
+              );
+        final borderColor = isDark
+            ? AppTheme.onBoardingcyan
+            : AppTheme.onBoardingborderBlue;
+        final textColor = isDark
+            ? AppTheme.darkTextSecondary
+            : AppTheme.onBoardingtextMedium;
+
+        return Container(
+          padding: EdgeInsets.all(responsive.p20),
+          decoration: BoxDecoration(
+            gradient: cardGradient,
+            borderRadius: BorderRadius.circular(responsive.radius12),
+            border: Border.all(color: borderColor),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x19000000),
+                blurRadius: 3,
+                offset: Offset(0, 1),
               ),
-            ),
-            TextSpan(
-              text:
-                  ' connects all roles through one intelligent system — ensuring ',
-            ),
-            TextSpan(
-              text: 'personalized experiences',
+            ],
+          ),
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
               style: TextStyle(
-                color: AppTheme.onBoardingcyanLight,
-                fontWeight: FontWeight.w600,
+                fontSize: responsive.fontSize14,
+                color: textColor,
+                height: 1.62,
               ),
+              children: [
+                TextSpan(
+                  text: AppLocalizations.of(context)!.eduverseAi,
+                  style: TextStyle(
+                    color: AppTheme.onBoardingprimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                TextSpan(
+                  text: AppLocalizations.of(
+                    context,
+                  )!.connectAllRolesThroughOneIntelligentSystem,
+                ),
+                TextSpan(
+                  text: AppLocalizations.of(context)!.personalizedExperiences,
+                  style: TextStyle(
+                    color: AppTheme.onBoardingcyanLight,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                TextSpan(text: AppLocalizations.of(context)!.forEveryone),
+              ],
             ),
-            TextSpan(text: ' for everyone.'),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/auth_models.dart';
 
@@ -9,6 +10,9 @@ class StorageService {
   static const String _refreshTokenKey = 'refresh_token';
   static const String _userDataKey = 'user_data';
   static const String _darkModeKey = 'dark_mode';
+  static const String _fontSizeKey = 'font_size';
+  static const String _cachedConversationsKey = 'chat_cached_conversations';
+  static const String _cachedMessagesPrefix = 'chat_cached_messages_';
 
   // Save tokens
   Future<void> saveTokens(String accessToken, String refreshToken) async {
@@ -67,5 +71,79 @@ class StorageService {
   Future<bool> getDarkMode() async {
     final isDark = await _storage.read(key: _darkModeKey);
     return isDark == 'true' ? true : false;
+  }
+
+  // Set font size preference (0: small, 1: medium, 2: large)
+  Future<void> setFontSize(int sizeIndex) async {
+    await _storage.write(key: _fontSizeKey, value: sizeIndex.toString());
+  }
+
+  // Get font size preference
+  Future<int> getFontSize() async {
+    final size = await _storage.read(key: _fontSizeKey);
+    return size != null ? int.tryParse(size) ?? 1 : 1;
+  }
+
+  Future<bool> cacheConversations(String jsonString) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.setString(_cachedConversationsKey, jsonString);
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<String?> getCachedConversations() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_cachedConversationsKey);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<bool> cacheMessages(int conversationId, String jsonString) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.setString(
+        '$_cachedMessagesPrefix$conversationId',
+        jsonString,
+      );
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<String?> getCachedMessages(int conversationId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('$_cachedMessagesPrefix$conversationId');
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> clearChatCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final keysToRemove = <String>{
+        _cachedConversationsKey,
+        'chat_pinned_conversation_ids',
+        'chat_muted_conversation_ids',
+        'chat_hidden_conversation_ids',
+      };
+
+      for (final key in prefs.getKeys()) {
+        if (key.startsWith(_cachedMessagesPrefix)) {
+          keysToRemove.add(key);
+        }
+      }
+
+      for (final key in keysToRemove) {
+        await prefs.remove(key);
+      }
+    } catch (_) {
+      // Intentionally ignored to avoid blocking logout or startup flows.
+    }
   }
 }

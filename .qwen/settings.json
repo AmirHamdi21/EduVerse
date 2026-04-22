@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell *)",
+      "Bash(mkdir *)",
+      "Bash(.specify/scripts/powershell/update-agent-context.ps1 *)",
+      "Bash(.specify/scripts/powershell/create-new-feature.ps1 *)",
+      "Read(D:\\Graduation\\EduVerse/**)",
+      "Bash(flutter *)",
+      "Bash(findstr *)",
+      "Bash(.\\.specify\\scripts\\powershell\\create-new-feature.ps1 *)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\labs\\controllers/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\courses\\controllers\\course-sections.controller.ts/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\enrollments\\controllers\\enrollments.controller.ts/**)",
+      "Read(D:\\Graduation\\frontend tarek\\Eduverse-Frontend/**)",
+      "Read(D:\\Graduation\\frontend tarek\\Eduverse-Frontend\\src\\services\\api/**)",
+      "Read(D:\\Graduation\\frontend tarek\\Eduverse-Frontend\\src\\pages\\instructor-dashboard\\components/**)",
+      "Read(D:\\Graduation\\frontend tarek\\Eduverse-Frontend\\src\\pages\\ta-dashboard/**)",
+      "Read(D:\\Graduation\\frontend tarek\\Eduverse-Frontend\\src\\pages\\ta-dashboard\\components/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\enrollments\\services/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\enrollments\\services\\enrollments.service.ts/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\enrollments/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\enrollments\\controllers/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\courses/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\assignments/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\assignments\\controllers/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\labs/**)",
+      "Read(D:\\Graduation\\backend\\last_backend\\EduVerse_Backend\\src\\modules\\labs\\services/**)"
+    ]
+  },
+  "$version": 3
+}
