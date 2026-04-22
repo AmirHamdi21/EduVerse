@@ -159,7 +159,9 @@ class GradesNormalizer {
       passedCourses: passedCourses,
       highestGrade: highest ?? GradeLetter.pending,
       lowestGrade: lowest ?? GradeLetter.pending,
-      averagePercentage: totalCourses > 0 ? totalPercentage / totalCourses : 0.0,
+      averagePercentage: totalCourses > 0
+          ? totalPercentage / totalCourses
+          : 0.0,
       gradeDistribution: distribution,
     );
   }

@@ -67,8 +67,9 @@ class AttendanceService {
     int userId,
   ) {
     return RetryHelper.execute<List<StudentAttendanceSummaryModel>>(() async {
-      final response =
-          await _client.dio.get('$_base/attendance/by-student/$userId');
+      final response = await _client.dio.get(
+        '$_base/attendance/by-student/$userId',
+      );
       final payload = response.data;
 
       List<dynamic> list;
@@ -140,8 +141,7 @@ class AttendanceService {
 
   Future<ServiceResult<AttendanceSessionModel>> getSessionDetails(int id) {
     return RetryHelper.execute<AttendanceSessionModel>(() async {
-      final response =
-          await _client.dio.get('$_base/attendance/sessions/$id');
+      final response = await _client.dio.get('$_base/attendance/sessions/$id');
       return AttendanceSessionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to load session details');
   }
@@ -185,12 +185,11 @@ class AttendanceService {
     }, fallbackMessage: 'Failed to save attendance');
   }
 
-  Future<ServiceResult<Map<String, dynamic>>> getSectionSummary(
-    int sectionId,
-  ) {
+  Future<ServiceResult<Map<String, dynamic>>> getSectionSummary(int sectionId) {
     return RetryHelper.execute<Map<String, dynamic>>(() async {
-      final response =
-          await _client.dio.get('$_base/attendance/summary/$sectionId');
+      final response = await _client.dio.get(
+        '$_base/attendance/summary/$sectionId',
+      );
       return _extractMap(response.data);
     }, fallbackMessage: 'Failed to load section summary');
   }
@@ -218,8 +217,9 @@ class AttendanceService {
   Future<ServiceResult<List<StudentFaceReferenceModel>>>
   listMyFaceReferences() {
     return RetryHelper.execute<List<StudentFaceReferenceModel>>(() async {
-      final response =
-          await _client.dio.get('$_base/attendance/face-references/me');
+      final response = await _client.dio.get(
+        '$_base/attendance/face-references/me',
+      );
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
           .map(StudentFaceReferenceModel.fromJson)

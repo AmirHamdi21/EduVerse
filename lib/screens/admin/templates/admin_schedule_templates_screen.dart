@@ -206,7 +206,8 @@ class _AdminScheduleTemplatesScreenState
                         contentPadding: EdgeInsets.zero,
                         value: isActive,
                         title: Text(l10n.adminTemplateIsActive),
-                        onChanged: (value) => setModalState(() => isActive = value),
+                        onChanged: (value) =>
+                            setModalState(() => isActive = value),
                       ),
                       const SizedBox(height: 12),
                       Row(
@@ -240,28 +241,34 @@ class _AdminScheduleTemplatesScreenState
                                             : template.slots
                                                   .map(
                                                     (slot) => <String, dynamic>{
-                                                      'dayOfWeek': slot.dayOfWeek,
-                                                      'startTime': slot.startTime,
+                                                      'dayOfWeek':
+                                                          slot.dayOfWeek,
+                                                      'startTime':
+                                                          slot.startTime,
                                                       'endTime': slot.endTime,
                                                       'slotType': slot.slotType,
-                                                      if (slot.building != null &&
+                                                      if (slot.building !=
+                                                              null &&
                                                           slot.building!
                                                               .trim()
                                                               .isNotEmpty)
-                                                        'building':
-                                                            slot.building!.trim(),
+                                                        'building': slot
+                                                            .building!
+                                                            .trim(),
                                                       if (slot.room != null &&
                                                           slot.room!
                                                               .trim()
                                                               .isNotEmpty)
-                                                        'room': slot.room!.trim(),
+                                                        'room': slot.room!
+                                                            .trim(),
                                                     },
                                                   )
                                                   .toList(),
                                       };
 
-                                      final description =
-                                          descriptionController.text.trim();
+                                      final description = descriptionController
+                                          .text
+                                          .trim();
                                       if (description.isNotEmpty) {
                                         payload['description'] = description;
                                       }
@@ -269,13 +276,13 @@ class _AdminScheduleTemplatesScreenState
                                       setState(() => _isSaving = true);
 
                                       final result = template == null
-                                          ? await _periodsService.createScheduleTemplate(
-                                              payload,
-                                            )
-                                          : await _periodsService.updateScheduleTemplate(
-                                              template.templateId,
-                                              payload,
-                                            );
+                                          ? await _periodsService
+                                                .createScheduleTemplate(payload)
+                                          : await _periodsService
+                                                .updateScheduleTemplate(
+                                                  template.templateId,
+                                                  payload,
+                                                );
 
                                       if (!mounted) {
                                         return;
@@ -352,7 +359,9 @@ class _AdminScheduleTemplatesScreenState
       return;
     }
 
-    final result = await _periodsService.deleteScheduleTemplate(template.templateId);
+    final result = await _periodsService.deleteScheduleTemplate(
+      template.templateId,
+    );
 
     if (result.isFailure) {
       _showSnackBar(result.error?.message ?? l10n.adminTemplateDeleteFailed);
@@ -539,11 +548,10 @@ class _AdminScheduleTemplatesScreenState
                 }
 
                 Navigator.pop(context);
-                final successful = (result.data?['successful'] as num?)?.toInt() ?? 0;
+                final successful =
+                    (result.data?['successful'] as num?)?.toInt() ?? 0;
                 final failed = (result.data?['failed'] as num?)?.toInt() ?? 0;
-                _showSnackBar(
-                  l10n.adminBulkApplyResult(successful, failed),
-                );
+                _showSnackBar(l10n.adminBulkApplyResult(successful, failed));
               },
               child: Text(l10n.adminBulkApply),
             ),
@@ -598,14 +606,19 @@ class _AdminScheduleTemplatesScreenState
             icon: const Icon(Icons.add_rounded, color: Colors.white),
             label: Text(
               l10n.adminCreateTemplate,
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           body: SafeArea(
             child: Container(
               decoration: isDark
                   ? null
-                  : BoxDecoration(gradient: AdminColors.lightBackgroundGradient),
+                  : BoxDecoration(
+                      gradient: AdminColors.lightBackgroundGradient,
+                    ),
               child: RefreshIndicator(
                 onRefresh: _loadTemplates,
                 child: ListView(
@@ -621,11 +634,14 @@ class _AdminScheduleTemplatesScreenState
                       ),
                     if (!_isLoading && _errorMessage != null)
                       _buildErrorCard(isDark, _errorMessage!, l10n),
-                    if (!_isLoading && _errorMessage == null && _templates.isEmpty)
+                    if (!_isLoading &&
+                        _errorMessage == null &&
+                        _templates.isEmpty)
                       _buildEmptyCard(isDark, l10n),
                     if (!_isLoading && _errorMessage == null)
                       ..._templates.map(
-                        (template) => _buildTemplateCard(template, isDark, l10n),
+                        (template) =>
+                            _buildTemplateCard(template, isDark, l10n),
                       ),
                     if (!_isLoading) _buildPaginationRow(isDark, l10n),
                   ],
@@ -710,7 +726,9 @@ class _AdminScheduleTemplatesScreenState
     bool isDark,
     AppLocalizations l10n,
   ) {
-    final statusColor = template.isActive ? AdminColors.success : AdminColors.warning;
+    final statusColor = template.isActive
+        ? AdminColors.success
+        : AdminColors.warning;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -737,7 +755,10 @@ class _AdminScheduleTemplatesScreenState
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(999),
@@ -755,7 +776,9 @@ class _AdminScheduleTemplatesScreenState
             const SizedBox(height: 6),
             Text(
               '${_scheduleTypeLabel(template.scheduleType, l10n)} • ${template.departmentName}',
-              style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
+              style: TextStyle(
+                color: AdminColors.getTextSecondaryColor(isDark),
+              ),
             ),
             const SizedBox(height: 4),
             Text(
@@ -763,13 +786,18 @@ class _AdminScheduleTemplatesScreenState
                 template.slotCount,
                 template.creatorName,
               ),
-              style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
+              style: TextStyle(
+                color: AdminColors.getTextSecondaryColor(isDark),
+              ),
             ),
-            if (template.description != null && template.description!.isNotEmpty) ...[
+            if (template.description != null &&
+                template.description!.isNotEmpty) ...[
               const SizedBox(height: 8),
               Text(
                 template.description!,
-                style: TextStyle(color: AdminColors.getTextTertiaryColor(isDark)),
+                style: TextStyle(
+                  color: AdminColors.getTextTertiaryColor(isDark),
+                ),
               ),
             ],
             if (template.slots.isNotEmpty) ...[
@@ -782,22 +810,24 @@ class _AdminScheduleTemplatesScreenState
                 ),
               ),
               const SizedBox(height: 4),
-              ...template.slots.take(2).map(
-                (slot) => Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Text(
-                    l10n.adminTemplateSlotLine(
-                      _dayLabel(slot.dayOfWeek, l10n),
-                      slot.startTime,
-                      slot.endTime,
-                      _slotLocation(slot, l10n),
-                    ),
-                    style: TextStyle(
-                      color: AdminColors.getTextTertiaryColor(isDark),
+              ...template.slots
+                  .take(2)
+                  .map(
+                    (slot) => Padding(
+                      padding: const EdgeInsets.only(bottom: 2),
+                      child: Text(
+                        l10n.adminTemplateSlotLine(
+                          _dayLabel(slot.dayOfWeek, l10n),
+                          slot.startTime,
+                          slot.endTime,
+                          _slotLocation(slot, l10n),
+                        ),
+                        style: TextStyle(
+                          color: AdminColors.getTextTertiaryColor(isDark),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
               if (template.slots.length > 2)
                 Text(
                   l10n.adminMoreSlots(template.slots.length - 2),
@@ -822,7 +852,9 @@ class _AdminScheduleTemplatesScreenState
                   label: Text(l10n.adminBulkApply),
                 ),
                 OutlinedButton.icon(
-                  onPressed: _isSaving ? null : () => _openTemplateForm(template: template),
+                  onPressed: _isSaving
+                      ? null
+                      : () => _openTemplateForm(template: template),
                   icon: const Icon(Icons.edit_rounded),
                   label: Text(l10n.edit),
                 ),
@@ -902,7 +934,7 @@ class _AdminScheduleTemplatesScreenState
                       _loadTemplates();
                     },
               icon: const Icon(Icons.chevron_left_rounded),
-                label: Text(l10n.previous),
+              label: Text(l10n.previous),
             ),
           ),
           const SizedBox(width: 10),
@@ -925,7 +957,7 @@ class _AdminScheduleTemplatesScreenState
                       _loadTemplates();
                     },
               icon: const Icon(Icons.chevron_right_rounded),
-                label: Text(l10n.next),
+              label: Text(l10n.next),
             ),
           ),
         ],

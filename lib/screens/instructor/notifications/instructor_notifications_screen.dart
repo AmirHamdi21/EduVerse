@@ -257,9 +257,7 @@ class _InstructorNotificationsScreenState
                         ),
                         if (_isLoading)
                           const SliverFillRemaining(
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
+                            child: Center(child: CircularProgressIndicator()),
                           )
                         else
                           SliverFillRemaining(

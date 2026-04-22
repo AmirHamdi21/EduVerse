@@ -23,57 +23,68 @@ class RosterCubit extends Cubit<RosterState> {
 
       if (result.isSuccess && result.data != null) {
         final courses = result.data!;
-        emit(state.copyWith(
-          courses: courses,
-          coursesStatus: RosterStatus.loaded,
-        ));
+        emit(
+          state.copyWith(courses: courses, coursesStatus: RosterStatus.loaded),
+        );
 
         // Auto-select first course if available
         if (courses.isNotEmpty) {
           selectCourse(courses.first.sectionId);
         }
       } else {
-        emit(state.copyWith(
-          coursesStatus: RosterStatus.error,
-          errorMessage: result.error?.message ?? 'Failed to load courses',
-        ));
+        emit(
+          state.copyWith(
+            coursesStatus: RosterStatus.error,
+            errorMessage: result.error?.message ?? 'Failed to load courses',
+          ),
+        );
       }
     } catch (e) {
-      emit(state.copyWith(
-        coursesStatus: RosterStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          coursesStatus: RosterStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 
   /// Select a course and load its students.
   Future<void> selectCourse(int sectionId) async {
-    emit(state.copyWith(
-      selectedSectionId: sectionId,
-      studentsStatus: RosterStatus.loading,
-      students: [],
-      searchQuery: '',
-    ));
+    emit(
+      state.copyWith(
+        selectedSectionId: sectionId,
+        studentsStatus: RosterStatus.loading,
+        students: [],
+        searchQuery: '',
+      ),
+    );
 
     try {
       final result = await _enrollmentService.getSectionStudentsLite(sectionId);
 
       if (result.isSuccess && result.data != null) {
-        emit(state.copyWith(
-          students: result.data!,
-          studentsStatus: RosterStatus.loaded,
-        ));
+        emit(
+          state.copyWith(
+            students: result.data!,
+            studentsStatus: RosterStatus.loaded,
+          ),
+        );
       } else {
-        emit(state.copyWith(
-          studentsStatus: RosterStatus.error,
-          errorMessage: result.error?.message ?? 'Failed to load students',
-        ));
+        emit(
+          state.copyWith(
+            studentsStatus: RosterStatus.error,
+            errorMessage: result.error?.message ?? 'Failed to load students',
+          ),
+        );
       }
     } catch (e) {
-      emit(state.copyWith(
-        studentsStatus: RosterStatus.error,
-        errorMessage: e.toString(),
-      ));
+      emit(
+        state.copyWith(
+          studentsStatus: RosterStatus.error,
+          errorMessage: e.toString(),
+        ),
+      );
     }
   }
 

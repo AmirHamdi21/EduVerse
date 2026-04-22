@@ -239,8 +239,7 @@ class AnnouncementCard extends StatelessWidget {
       runSpacing: 6,
       children: [
         _buildStatusChip(),
-        if (announcement.priority != null &&
-            announcement.priority!.isNotEmpty)
+        if (announcement.priority != null && announcement.priority!.isNotEmpty)
           _buildPriorityChip(),
         if (announcement.announcementType != null &&
             announcement.announcementType!.isNotEmpty)
@@ -248,8 +247,7 @@ class AnnouncementCard extends StatelessWidget {
         if (announcement.courseName != null &&
             announcement.courseName!.isNotEmpty)
           _buildCourseChip(),
-        if (announcement.attachments.isNotEmpty)
-          _buildAttachmentChip(),
+        if (announcement.attachments.isNotEmpty) _buildAttachmentChip(),
       ],
     );
   }

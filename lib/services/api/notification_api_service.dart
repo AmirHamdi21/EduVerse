@@ -15,7 +15,7 @@ class NotificationApiService {
   final CoreApiClient _client;
 
   NotificationApiService({required CoreApiClient coreApiClient})
-      : _client = coreApiClient;
+    : _client = coreApiClient;
 
   // ── Helpers ────────────────────────────────────────────────────
 
@@ -57,9 +57,9 @@ class NotificationApiService {
         queryParameters: queryParams.isNotEmpty ? queryParams : null,
       );
 
-      return _extractList(response.data)
-          .whereType<Map<String, dynamic>>()
-          .toList();
+      return _extractList(
+        response.data,
+      ).whereType<Map<String, dynamic>>().toList();
     }, fallbackMessage: 'Failed to load notifications');
   }
 
@@ -98,9 +98,7 @@ class NotificationApiService {
     return RetryHelper.execute<int>(() async {
       final response = await _client.dio.delete('/notifications/clear-read');
       final payload = _extractMap(response.data);
-      return (payload['affected'] as int?) ??
-          (payload['count'] as int?) ??
-          0;
+      return (payload['affected'] as int?) ?? (payload['count'] as int?) ?? 0;
     }, fallbackMessage: 'Failed to clear read notifications');
   }
 

@@ -20,8 +20,7 @@ class _FakeAttendanceService implements AttendanceService {
     int? limit,
     String? sortBy,
     String? sortOrder,
-  }) async =>
-      sessionsResult;
+  }) async => sessionsResult;
 
   @override
   Future<ServiceResult<AttendanceSessionModel>> getSessionDetails(
@@ -94,17 +93,17 @@ void main() {
     test('loadOverviewStats computes stats from sessions', () async {
       fakeService.sessionsResult =
           ServiceResult<List<AttendanceSessionModel>>.success([
-        AttendanceSessionModel.fromJson(<String, dynamic>{
-          'id': 1,
-          'sectionId': 1,
-          'sessionDate': _dateOnly(DateTime.now()),
-          'status': 'completed',
-          'presentCount': 20,
-          'absentCount': 5,
-          'lateCount': 3,
-          'excusedCount': 2,
-        }),
-      ]);
+            AttendanceSessionModel.fromJson(<String, dynamic>{
+              'id': 1,
+              'sectionId': 1,
+              'sessionDate': _dateOnly(DateTime.now()),
+              'status': 'completed',
+              'presentCount': 20,
+              'absentCount': 5,
+              'lateCount': 3,
+              'excusedCount': 2,
+            }),
+          ]);
 
       await cubit.loadOverviewStats();
 
@@ -118,28 +117,28 @@ void main() {
     test('loadCourses groups by section', () async {
       fakeService.sessionsResult =
           ServiceResult<List<AttendanceSessionModel>>.success([
-        AttendanceSessionModel.fromJson(<String, dynamic>{
-          'id': 1,
-          'sectionId': 10,
-          'status': 'completed',
-          'presentCount': 15,
-          'absentCount': 5,
-        }),
-        AttendanceSessionModel.fromJson(<String, dynamic>{
-          'id': 2,
-          'sectionId': 10,
-          'status': 'completed',
-          'presentCount': 18,
-          'absentCount': 2,
-        }),
-        AttendanceSessionModel.fromJson(<String, dynamic>{
-          'id': 3,
-          'sectionId': 20,
-          'status': 'completed',
-          'presentCount': 10,
-          'absentCount': 10,
-        }),
-      ]);
+            AttendanceSessionModel.fromJson(<String, dynamic>{
+              'id': 1,
+              'sectionId': 10,
+              'status': 'completed',
+              'presentCount': 15,
+              'absentCount': 5,
+            }),
+            AttendanceSessionModel.fromJson(<String, dynamic>{
+              'id': 2,
+              'sectionId': 10,
+              'status': 'completed',
+              'presentCount': 18,
+              'absentCount': 2,
+            }),
+            AttendanceSessionModel.fromJson(<String, dynamic>{
+              'id': 3,
+              'sectionId': 20,
+              'status': 'completed',
+              'presentCount': 10,
+              'absentCount': 10,
+            }),
+          ]);
 
       await cubit.loadCourses();
 

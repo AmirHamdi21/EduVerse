@@ -15,9 +15,9 @@ class InstructorRosterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => RosterCubit(
-        enrollmentService: context.read<EnrollmentService>(),
-      )..loadCourses(),
+      create: (_) =>
+          RosterCubit(enrollmentService: context.read<EnrollmentService>())
+            ..loadCourses(),
       child: const _InstructorRosterView(),
     );
   }
@@ -55,7 +55,11 @@ class _InstructorRosterView extends StatelessWidget {
                       if (state.coursesStatus == RosterStatus.loaded &&
                           state.courses.isNotEmpty)
                         SliverToBoxAdapter(
-                          child: _buildCourseFilterChips(context, isDark, state),
+                          child: _buildCourseFilterChips(
+                            context,
+                            isDark,
+                            state,
+                          ),
                         ),
 
                       // ── Search Bar ──
@@ -68,9 +72,7 @@ class _InstructorRosterView extends StatelessWidget {
                       _buildStudentsList(context, isDark, state),
 
                       // Bottom padding
-                      const SliverToBoxAdapter(
-                        child: SizedBox(height: 100),
-                      ),
+                      const SliverToBoxAdapter(child: SizedBox(height: 100)),
                     ],
                   ),
                 );
@@ -214,9 +216,7 @@ class _InstructorRosterView extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.2),
-          ),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
         ),
         child: Column(
           children: [
@@ -301,11 +301,7 @@ class _InstructorRosterView extends StatelessWidget {
     );
   }
 
-  Widget _buildSearchBar(
-    BuildContext context,
-    bool isDark,
-    RosterState state,
-  ) {
+  Widget _buildSearchBar(BuildContext context, bool isDark, RosterState state) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Container(
@@ -370,23 +366,17 @@ class _InstructorRosterView extends StatelessWidget {
 
     // No courses
     if (state.courses.isEmpty) {
-      return SliverFillRemaining(
-        child: _buildEmptyCoursesState(isDark),
-      );
+      return SliverFillRemaining(child: _buildEmptyCoursesState(isDark));
     }
 
     // No section selected
     if (state.selectedSectionId == null) {
-      return SliverFillRemaining(
-        child: _buildSelectCourseState(isDark),
-      );
+      return SliverFillRemaining(child: _buildSelectCourseState(isDark));
     }
 
     // Loading students
     if (state.studentsStatus == RosterStatus.loading) {
-      return SliverToBoxAdapter(
-        child: _buildLoadingSkeletons(isDark),
-      );
+      return SliverToBoxAdapter(child: _buildLoadingSkeletons(isDark));
     }
 
     // Error loading students
@@ -406,51 +396,48 @@ class _InstructorRosterView extends StatelessWidget {
 
     // Student count header
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          if (index == 0) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: InstructorColors.primary.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      '${students.length} student${students.length == 1 ? '' : 's'}',
-                      style: TextStyle(
-                        color: InstructorColors.primary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        if (index == 0) {
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: InstructorColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${students.length} student${students.length == 1 ? '' : 's'}',
+                    style: TextStyle(
+                      color: InstructorColors.primary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const Spacer(),
-                  if (state.selectedCourse != null)
-                    Text(
-                      state.selectedCourse!.course.name,
-                      style: TextStyle(
-                        color: InstructorColors.textSecondaryColor(isDark),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
+                ),
+                const Spacer(),
+                if (state.selectedCourse != null)
+                  Text(
+                    state.selectedCourse!.course.name,
+                    style: TextStyle(
+                      color: InstructorColors.textSecondaryColor(isDark),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
-                ],
-              ),
-            );
-          }
+                  ),
+              ],
+            ),
+          );
+        }
 
-          final student = students[index - 1];
-          return _buildStudentCard(isDark, student, index - 1);
-        },
-        childCount: students.length + 1,
-      ),
+        final student = students[index - 1];
+        return _buildStudentCard(isDark, student, index - 1);
+      }, childCount: students.length + 1),
     );
   }
 
@@ -500,10 +487,7 @@ class _InstructorRosterView extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  avatarColor,
-                  avatarColor.withValues(alpha: 0.7),
-                ],
+                colors: [avatarColor, avatarColor.withValues(alpha: 0.7)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -630,12 +614,7 @@ class _InstructorRosterView extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoChip(
-    bool isDark,
-    IconData icon,
-    String label,
-    Color color,
-  ) {
+  Widget _buildInfoChip(bool isDark, IconData icon, String label, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
@@ -672,7 +651,9 @@ class _InstructorRosterView extends StatelessWidget {
               color: InstructorColors.cardColor(isDark),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: InstructorColors.borderColor(isDark).withValues(alpha: 0.3),
+                color: InstructorColors.borderColor(
+                  isDark,
+                ).withValues(alpha: 0.3),
               ),
             ),
             child: Center(
@@ -883,8 +864,18 @@ class _InstructorRosterView extends StatelessWidget {
 
   String _formatDate(DateTime date) {
     final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
     return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }

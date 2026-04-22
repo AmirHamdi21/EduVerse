@@ -13,25 +13,24 @@ import 'package:edu_verse/services/api/attendance_service.dart';
 class _FakeAttendanceService implements AttendanceService {
   ServiceResult<List<StudentAttendanceSummaryModel>> myAttendanceResult =
       ServiceResult<List<StudentAttendanceSummaryModel>>.success(
-    const <StudentAttendanceSummaryModel>[],
-  );
+        const <StudentAttendanceSummaryModel>[],
+      );
 
   ServiceResult<List<StudentFaceReferenceModel>> faceReferencesResult =
       ServiceResult<List<StudentFaceReferenceModel>>.success(
-    const <StudentFaceReferenceModel>[],
-  );
+        const <StudentFaceReferenceModel>[],
+      );
 
   ServiceResult<StudentFaceReferenceModel>? uploadFaceResult;
-  ServiceResult<void> deleteFaceResult =
-      ServiceResult<void>.success(null);
+  ServiceResult<void> deleteFaceResult = ServiceResult<void>.success(null);
 
   @override
   Future<ServiceResult<List<StudentAttendanceSummaryModel>>>
-      getMyAttendance() async => myAttendanceResult;
+  getMyAttendance() async => myAttendanceResult;
 
   @override
   Future<ServiceResult<List<StudentFaceReferenceModel>>>
-      listMyFaceReferences() async => faceReferencesResult;
+  listMyFaceReferences() async => faceReferencesResult;
 
   @override
   Future<ServiceResult<StudentFaceReferenceModel>> uploadMyFaceReference(
@@ -84,18 +83,18 @@ void main() {
     test('loadAttendance emits loading then success', () async {
       fakeService.myAttendanceResult =
           ServiceResult<List<StudentAttendanceSummaryModel>>.success([
-        StudentAttendanceSummaryModel.fromJson(<String, dynamic>{
-          'courseId': 1,
-          'courseName': 'CS 101',
-          'courseCode': 'CS101',
-          'totalClasses': 20,
-          'attended': 18,
-          'absent': 1,
-          'late': 1,
-          'excused': 0,
-          'percentage': 90.0,
-        }),
-      ]);
+            StudentAttendanceSummaryModel.fromJson(<String, dynamic>{
+              'courseId': 1,
+              'courseName': 'CS 101',
+              'courseCode': 'CS101',
+              'totalClasses': 20,
+              'attended': 18,
+              'absent': 1,
+              'late': 1,
+              'excused': 0,
+              'percentage': 90.0,
+            }),
+          ]);
 
       final loadFuture = cubit.loadAttendance();
 
@@ -115,11 +114,11 @@ void main() {
     test('loadAttendance emits error on failure', () async {
       fakeService.myAttendanceResult =
           ServiceResult<List<StudentAttendanceSummaryModel>>.failure(
-        const ServiceError(
-          type: ServiceErrorType.network,
-          message: 'No internet',
-        ),
-      );
+            const ServiceError(
+              type: ServiceErrorType.network,
+              message: 'No internet',
+            ),
+          );
 
       await cubit.loadAttendance();
 
@@ -130,18 +129,18 @@ void main() {
     test('setFilter updates filtered records', () async {
       fakeService.myAttendanceResult =
           ServiceResult<List<StudentAttendanceSummaryModel>>.success([
-        StudentAttendanceSummaryModel.fromJson(<String, dynamic>{
-          'courseId': 1,
-          'courseName': 'CS',
-          'courseCode': 'CS101',
-          'totalClasses': 10,
-          'attended': 5,
-          'absent': 3,
-          'late': 1,
-          'excused': 1,
-          'percentage': 70.0,
-        }),
-      ]);
+            StudentAttendanceSummaryModel.fromJson(<String, dynamic>{
+              'courseId': 1,
+              'courseName': 'CS',
+              'courseCode': 'CS101',
+              'totalClasses': 10,
+              'attended': 5,
+              'absent': 3,
+              'late': 1,
+              'excused': 1,
+              'percentage': 70.0,
+            }),
+          ]);
 
       await cubit.loadAttendance();
       final allCount = cubit.state.filteredRecords.length;
@@ -158,24 +157,24 @@ void main() {
     test('setSelectedCourse filters by course', () async {
       fakeService.myAttendanceResult =
           ServiceResult<List<StudentAttendanceSummaryModel>>.success([
-        StudentAttendanceSummaryModel.fromJson(<String, dynamic>{
-          'courseId': 1,
-          'courseName': 'CS',
-          'courseCode': 'CS101',
-          'totalClasses': 5,
-          'attended': 3,
-          'absent': 2,
-          'percentage': 60.0,
-        }),
-        StudentAttendanceSummaryModel.fromJson(<String, dynamic>{
-          'courseId': 2,
-          'courseName': 'Math',
-          'courseCode': 'MATH200',
-          'totalClasses': 5,
-          'attended': 5,
-          'percentage': 100.0,
-        }),
-      ]);
+            StudentAttendanceSummaryModel.fromJson(<String, dynamic>{
+              'courseId': 1,
+              'courseName': 'CS',
+              'courseCode': 'CS101',
+              'totalClasses': 5,
+              'attended': 3,
+              'absent': 2,
+              'percentage': 60.0,
+            }),
+            StudentAttendanceSummaryModel.fromJson(<String, dynamic>{
+              'courseId': 2,
+              'courseName': 'Math',
+              'courseCode': 'MATH200',
+              'totalClasses': 5,
+              'attended': 5,
+              'percentage': 100.0,
+            }),
+          ]);
 
       await cubit.loadAttendance();
 
@@ -205,11 +204,11 @@ void main() {
     test('clearError clears errorMessage', () async {
       fakeService.myAttendanceResult =
           ServiceResult<List<StudentAttendanceSummaryModel>>.failure(
-        const ServiceError(
-          type: ServiceErrorType.server,
-          message: 'Server error',
-        ),
-      );
+            const ServiceError(
+              type: ServiceErrorType.server,
+              message: 'Server error',
+            ),
+          );
       await cubit.loadAttendance();
       expect(cubit.state.errorMessage, isNotNull);
 
@@ -220,13 +219,13 @@ void main() {
     test('loadFaceReferences populates state', () async {
       fakeService.faceReferencesResult =
           ServiceResult<List<StudentFaceReferenceModel>>.success([
-        StudentFaceReferenceModel.fromJson(<String, dynamic>{
-          'id': 1,
-          'userId': 42,
-          'storagePath': '/faces/42/photo.jpg',
-          'isPrimary': true,
-        }),
-      ]);
+            StudentFaceReferenceModel.fromJson(<String, dynamic>{
+              'id': 1,
+              'userId': 42,
+              'storagePath': '/faces/42/photo.jpg',
+              'isPrimary': true,
+            }),
+          ]);
 
       await cubit.loadFaceReferences();
 
@@ -237,17 +236,17 @@ void main() {
     test('deleteFaceReference removes from state', () async {
       fakeService.faceReferencesResult =
           ServiceResult<List<StudentFaceReferenceModel>>.success([
-        StudentFaceReferenceModel.fromJson(<String, dynamic>{
-          'id': 1,
-          'userId': 42,
-          'storagePath': '/faces/42/photo.jpg',
-        }),
-        StudentFaceReferenceModel.fromJson(<String, dynamic>{
-          'id': 2,
-          'userId': 42,
-          'storagePath': '/faces/42/photo2.jpg',
-        }),
-      ]);
+            StudentFaceReferenceModel.fromJson(<String, dynamic>{
+              'id': 1,
+              'userId': 42,
+              'storagePath': '/faces/42/photo.jpg',
+            }),
+            StudentFaceReferenceModel.fromJson(<String, dynamic>{
+              'id': 2,
+              'userId': 42,
+              'storagePath': '/faces/42/photo2.jpg',
+            }),
+          ]);
 
       await cubit.loadFaceReferences();
       expect(cubit.state.faceReferences.length, 2);

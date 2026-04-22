@@ -42,9 +42,8 @@ class ApiNotificationModel {
     final id = rawId.toString();
 
     // Body normalization: 'body' or 'message'
-    final body = (json['body'] as String?) ??
-        (json['message'] as String?) ??
-        '';
+    final body =
+        (json['body'] as String?) ?? (json['message'] as String?) ?? '';
 
     // isRead normalization: bool or int(0|1)
     final rawIsRead = json['isRead'];
@@ -58,7 +57,8 @@ class ApiNotificationModel {
     }
 
     // Type normalization
-    final type = (json['notificationType'] as String?) ??
+    final type =
+        (json['notificationType'] as String?) ??
         (json['type'] as String?) ??
         'system';
 
@@ -186,8 +186,6 @@ class ApiNotificationModel {
         return NotificationPriority.normal;
     }
   }
-
-
 
   static InstructorNotificationType _mapToInstructorType(String type) {
     switch (type.toLowerCase()) {

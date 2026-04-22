@@ -101,8 +101,7 @@ class AttendanceRecordsList extends StatelessWidget {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color:
-                  isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
           ),
           const SizedBox(height: 8),
@@ -111,8 +110,7 @@ class AttendanceRecordsList extends StatelessWidget {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
-              color:
-                  isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
+              color: isDark ? const Color(0xFF64748B) : const Color(0xFF94A3B8),
             ),
           ),
         ],
@@ -143,13 +141,13 @@ class _CourseRecordCard extends StatelessWidget {
     final statusLabel = percentage >= 90
         ? 'Excellent'
         : percentage >= 80
-            ? 'Good'
-            : 'Warning';
+        ? 'Good'
+        : 'Warning';
     final statusColor = percentage >= 90
         ? const Color(0xFF10B981)
         : percentage >= 80
-            ? const Color(0xFF3B82F6)
-            : const Color(0xFFF59E0B);
+        ? const Color(0xFF3B82F6)
+        : const Color(0xFFF59E0B);
 
     return GestureDetector(
       onTap: onTap,
@@ -159,9 +157,7 @@ class _CourseRecordCard extends StatelessWidget {
           color: isDark ? const Color(0xFF1E293B) : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isDark
-                ? const Color(0xFF334155)
-                : const Color(0xFFE2E8F0),
+            color: isDark ? const Color(0xFF334155) : const Color(0xFFE2E8F0),
           ),
           boxShadow: [
             BoxShadow(
@@ -312,8 +308,8 @@ class _CourseRecordCard extends StatelessWidget {
                         percentage >= 75
                             ? const Color(0xFF10B981)
                             : percentage >= 50
-                                ? const Color(0xFFF59E0B)
-                                : const Color(0xFFEF4444),
+                            ? const Color(0xFFF59E0B)
+                            : const Color(0xFFEF4444),
                       ),
                       minHeight: 8,
                     ),
@@ -389,9 +385,7 @@ class _CourseRecordCard extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 11,
-            color: isDark
-                ? const Color(0xFF94A3B8)
-                : const Color(0xFF64748B),
+            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
           ),
         ),
       ],

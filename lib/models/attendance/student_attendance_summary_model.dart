@@ -53,9 +53,8 @@ class StudentAttendanceSummaryModel extends Equatable {
 
     // For courseName, fall back to studentName when the backend returns the
     // flat summary (which has no per-course breakdown).
-    final courseName = json['courseName']?.toString() ??
-        json['studentName']?.toString() ??
-        '';
+    final courseName =
+        json['courseName']?.toString() ?? json['studentName']?.toString() ?? '';
 
     return StudentAttendanceSummaryModel(
       courseId: _toInt(json['courseId']) > 0

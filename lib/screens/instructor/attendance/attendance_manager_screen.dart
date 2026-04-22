@@ -34,8 +34,7 @@ Color _textPrimary(bool d) => d ? Colors.white : const Color(0xFF1E293B);
 Color _textSecondary(bool d) =>
     d ? const Color(0xFF94A3B8) : const Color(0xFF64748B);
 Color _cardBg(bool d) => d ? const Color(0xFF1E293B) : Colors.white;
-Color _border(bool d) =>
-    d ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
+Color _border(bool d) => d ? const Color(0xFF334155) : const Color(0xFFE2E8F0);
 Color _scaffoldBg(bool d) =>
     d ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
 
@@ -65,30 +64,41 @@ class _Body extends StatelessWidget {
         return Scaffold(
           backgroundColor: _scaffoldBg(isDark),
           body: SafeArea(
-            child: BlocConsumer<InstructorAttendanceCubit,
-                InstructorAttendanceState>(
-              listener: (ctx, s) {
-                if (s.error != null && s.error!.isNotEmpty) {
-                  ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-                    content: Text(s.error!),
-                    backgroundColor: _kRed,
-                  ));
-                }
-              },
-              builder: (ctx, state) {
-                if (state.isLoading && state.teachingSections.isEmpty) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                return switch (state.view) {
-                  InstructorAttendanceView.classes =>
-                    _ClassesView(isDark: isDark, state: state),
-                  InstructorAttendanceView.section =>
-                    _SectionView(isDark: isDark, state: state),
-                  InstructorAttendanceView.roster =>
-                    _RosterView(isDark: isDark, state: state),
-                };
-              },
-            ),
+            child:
+                BlocConsumer<
+                  InstructorAttendanceCubit,
+                  InstructorAttendanceState
+                >(
+                  listener: (ctx, s) {
+                    if (s.error != null && s.error!.isNotEmpty) {
+                      ScaffoldMessenger.of(ctx).showSnackBar(
+                        SnackBar(
+                          content: Text(s.error!),
+                          backgroundColor: _kRed,
+                        ),
+                      );
+                    }
+                  },
+                  builder: (ctx, state) {
+                    if (state.isLoading && state.teachingSections.isEmpty) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return switch (state.view) {
+                      InstructorAttendanceView.classes => _ClassesView(
+                        isDark: isDark,
+                        state: state,
+                      ),
+                      InstructorAttendanceView.section => _SectionView(
+                        isDark: isDark,
+                        state: state,
+                      ),
+                      InstructorAttendanceView.roster => _RosterView(
+                        isDark: isDark,
+                        state: state,
+                      ),
+                    };
+                  },
+                ),
           ),
         );
       },
@@ -110,13 +120,20 @@ class _ClassesView extends StatelessWidget {
     final cubit = context.read<InstructorAttendanceCubit>();
     return Column(
       children: [
-        _header(context, 'Your Sections', 'Choose a class to take attendance',
-            isDark),
+        _header(
+          context,
+          'Your Sections',
+          'Choose a class to take attendance',
+          isDark,
+        ),
         Expanded(
           child: state.teachingSections.isEmpty
               ? Center(
-                  child: Text('No sections assigned.',
-                      style: TextStyle(color: _textSecondary(isDark))))
+                  child: Text(
+                    'No sections assigned.',
+                    style: TextStyle(color: _textSecondary(isDark)),
+                  ),
+                )
               : ListView.builder(
                   padding: const EdgeInsets.all(16),
                   itemCount: state.teachingSections.length,
@@ -143,11 +160,12 @@ class _SectionCard extends StatelessWidget {
   final List<Color> colors;
   final bool isDark;
   final VoidCallback onTap;
-  const _SectionCard(
-      {required this.section,
-      required this.colors,
-      required this.isDark,
-      required this.onTap});
+  const _SectionCard({
+    required this.section,
+    required this.colors,
+    required this.isDark,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -173,8 +191,9 @@ class _SectionCard extends StatelessWidget {
               height: 4,
               decoration: BoxDecoration(
                 gradient: LinearGradient(colors: colors),
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(20)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
               ),
             ),
             Padding(
@@ -187,8 +206,11 @@ class _SectionCard extends StatelessWidget {
                       gradient: LinearGradient(colors: colors),
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: const Icon(Icons.school_rounded,
-                        color: Colors.white, size: 24),
+                    child: const Icon(
+                      Icons.school_rounded,
+                      color: Colors.white,
+                      size: 24,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -217,13 +239,17 @@ class _SectionCard extends StatelessWidget {
                         Text(
                           'Section ${section.section.sectionNumber}',
                           style: TextStyle(
-                              fontSize: 12, color: _textSecondary(isDark)),
+                            fontSize: 12,
+                            color: _textSecondary(isDark),
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  Icon(Icons.chevron_right_rounded,
-                      color: _textSecondary(isDark)),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: _textSecondary(isDark),
+                  ),
                 ],
               ),
             ),
@@ -255,14 +281,19 @@ class _SectionView extends StatelessWidget {
         : '';
 
     final openSessions = state.sessions
-        .where(
-            (s) => s.status == 'scheduled' || s.status == 'in_progress')
+        .where((s) => s.status == 'scheduled' || s.status == 'in_progress')
         .toList();
 
     return Column(
       children: [
-        _headerWithBack(context, title, subtitle, isDark, '← All sections',
-            cubit.backToClasses),
+        _headerWithBack(
+          context,
+          title,
+          subtitle,
+          isDark,
+          '← All sections',
+          cubit.backToClasses,
+        ),
         Expanded(
           child: ListView(
             padding: const EdgeInsets.all(16),
@@ -275,37 +306,53 @@ class _SectionView extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.pending_actions_rounded,
-                            color: _kPrimary, size: 20),
+                        const Icon(
+                          Icons.pending_actions_rounded,
+                          color: _kPrimary,
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
-                        Text('Open Sessions',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                color: _textPrimary(isDark))),
+                        Text(
+                          'Open Sessions',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: _textPrimary(isDark),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Sessions not closed yet. Resume to keep editing.',
-                      style:
-                          TextStyle(fontSize: 12, color: _textSecondary(isDark)),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: _textSecondary(isDark),
+                      ),
                     ),
                     const SizedBox(height: 12),
                     if (state.isLoading)
                       const Center(
-                          child: Padding(
-                              padding: EdgeInsets.all(16),
-                              child:
-                                  CircularProgressIndicator(strokeWidth: 2)))
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
                     else if (openSessions.isEmpty)
-                      Text('No open sessions. Start a new lecture below.',
-                          style: TextStyle(
-                              fontSize: 13, color: _textSecondary(isDark)))
+                      Text(
+                        'No open sessions. Start a new lecture below.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: _textSecondary(isDark),
+                        ),
+                      )
                     else
-                      ...openSessions.map((s) => _SessionTile(
+                      ...openSessions.map(
+                        (s) => _SessionTile(
                           session: s,
                           isDark: isDark,
-                          onTap: () => cubit.openRosterFromSession(s))),
+                          onTap: () => cubit.openRosterFromSession(s),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -318,22 +365,31 @@ class _SectionView extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.add_circle_outline_rounded,
-                            color: _kGreen, size: 20),
+                        const Icon(
+                          Icons.add_circle_outline_rounded,
+                          color: _kGreen,
+                          size: 20,
+                        ),
                         const SizedBox(width: 8),
-                        Text('Start New Lecture Attendance',
-                            style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                color: _textPrimary(isDark))),
+                        Text(
+                          'Start New Lecture Attendance',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: _textPrimary(isDark),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 14),
-                    Text('Date',
-                        style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: _textSecondary(isDark),
-                            letterSpacing: 1)),
+                    Text(
+                      'Date',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: _textSecondary(isDark),
+                        letterSpacing: 1,
+                      ),
+                    ),
                     const SizedBox(height: 6),
                     OutlinedButton.icon(
                       onPressed: () async {
@@ -354,12 +410,15 @@ class _SectionView extends StatelessWidget {
                       label: Text(state.newSessionDate),
                     ),
                     const SizedBox(height: 10),
-                    Text('Type',
-                        style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                            color: _textSecondary(isDark),
-                            letterSpacing: 1)),
+                    Text(
+                      'Type',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: _textSecondary(isDark),
+                        letterSpacing: 1,
+                      ),
+                    ),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
                       initialValue: state.newSessionType,
@@ -372,10 +431,14 @@ class _SectionView extends StatelessWidget {
                       dropdownColor: _cardBg(isDark),
                       items: const [
                         DropdownMenuItem(
-                            value: 'lecture', child: Text('Lecture')),
+                          value: 'lecture',
+                          child: Text('Lecture'),
+                        ),
                         DropdownMenuItem(value: 'lab', child: Text('Lab')),
                         DropdownMenuItem(
-                            value: 'tutorial', child: Text('Tutorial')),
+                          value: 'tutorial',
+                          child: Text('Tutorial'),
+                        ),
                         DropdownMenuItem(value: 'exam', child: Text('Exam')),
                       ],
                       onChanged: (v) {
@@ -386,8 +449,9 @@ class _SectionView extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
-                        onPressed:
-                            state.isLoading ? null : () => cubit.createSession(),
+                        onPressed: state.isLoading
+                            ? null
+                            : () => cubit.createSession(),
                         icon: const Icon(Icons.play_arrow_rounded),
                         label: const Text('Create Session & Open Roster'),
                         style: ElevatedButton.styleFrom(
@@ -412,8 +476,11 @@ class _SessionTile extends StatelessWidget {
   final AttendanceSessionModel session;
   final bool isDark;
   final VoidCallback onTap;
-  const _SessionTile(
-      {required this.session, required this.isDark, required this.onTap});
+  const _SessionTile({
+    required this.session,
+    required this.isDark,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -434,24 +501,31 @@ class _SessionTile extends StatelessWidget {
               color: statusColor.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Text(session.status,
-                style: TextStyle(
-                    color: statusColor,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700)),
+            child: Text(
+              session.status,
+              style: TextStyle(
+                color: statusColor,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(session.sessionDate,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: _textPrimary(isDark))),
-                Text('${session.sessionType ?? 'lecture'} · id ${session.id}',
-                    style:
-                        TextStyle(fontSize: 11, color: _textSecondary(isDark))),
+                Text(
+                  session.sessionDate,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: _textPrimary(isDark),
+                  ),
+                ),
+                Text(
+                  '${session.sessionType ?? 'lecture'} · id ${session.id}',
+                  style: TextStyle(fontSize: 11, color: _textSecondary(isDark)),
+                ),
               ],
             ),
           ),
@@ -460,8 +534,7 @@ class _SessionTile extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: _kPrimary,
               foregroundColor: Colors.white,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
             ),
             child: const Text('Open Roster', style: TextStyle(fontSize: 12)),
           ),
@@ -495,7 +568,13 @@ class _RosterView extends StatelessWidget {
     return Column(
       children: [
         _headerWithBack(
-            context, title, parts, isDark, '← Back', cubit.backToSection),
+          context,
+          title,
+          parts,
+          isDark,
+          '← Back',
+          cubit.backToSection,
+        ),
         Expanded(
           child: state.isLoading && state.rosterRows.isEmpty
               ? const Center(child: CircularProgressIndicator())
@@ -507,22 +586,32 @@ class _RosterView extends StatelessWidget {
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        _actionBtn('Everyone Present', _kPrimary,
-                            state.isRosterReadOnly
-                                ? null
-                                : () => cubit.setAllStatus('present')),
                         _actionBtn(
-                            'Everyone Absent',
-                            isDark
-                                ? const Color(0xFF475569)
-                                : const Color(0xFF94A3B8),
-                            state.isRosterReadOnly
-                                ? null
-                                : () => cubit.setAllStatus('absent')),
-                        _actionBtn('Save', _kGreen,
-                            state.isRosterReadOnly ? null : cubit.saveBatch),
-                        _actionBtn('Close & Lock', _kRed,
-                            state.isRosterReadOnly ? null : cubit.closeSession),
+                          'Everyone Present',
+                          _kPrimary,
+                          state.isRosterReadOnly
+                              ? null
+                              : () => cubit.setAllStatus('present'),
+                        ),
+                        _actionBtn(
+                          'Everyone Absent',
+                          isDark
+                              ? const Color(0xFF475569)
+                              : const Color(0xFF94A3B8),
+                          state.isRosterReadOnly
+                              ? null
+                              : () => cubit.setAllStatus('absent'),
+                        ),
+                        _actionBtn(
+                          'Save',
+                          _kGreen,
+                          state.isRosterReadOnly ? null : cubit.saveBatch,
+                        ),
+                        _actionBtn(
+                          'Close & Lock',
+                          _kRed,
+                          state.isRosterReadOnly ? null : cubit.closeSession,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 12),
@@ -535,16 +624,18 @@ class _RosterView extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: _kAmber.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
-                          border:
-                              Border.all(color: _kAmber.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: _kAmber.withValues(alpha: 0.3),
+                          ),
                         ),
                         child: Text(
                           'This session is closed (view only).',
                           style: TextStyle(
-                              fontSize: 13,
-                              color: isDark
-                                  ? const Color(0xFFFDE68A)
-                                  : const Color(0xFF92400E)),
+                            fontSize: 13,
+                            color: isDark
+                                ? const Color(0xFFFDE68A)
+                                : const Color(0xFF92400E),
+                          ),
                         ),
                       ),
 
@@ -558,8 +649,9 @@ class _RosterView extends StatelessWidget {
                         result: state.aiResult,
                         selectedPhoto: state.aiPhoto,
                         onPickPhoto: () async {
-                          final r = await FilePicker.platform
-                              .pickFiles(type: FileType.image);
+                          final r = await FilePicker.platform.pickFiles(
+                            type: FileType.image,
+                          );
                           final p = r?.files.single.path;
                           if (p != null) cubit.setAiFile(File(p));
                         },
@@ -574,72 +666,82 @@ class _RosterView extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.all(24),
                         child: Center(
-                          child: Text('No enrolled students.',
-                              style: TextStyle(color: _textSecondary(isDark))),
+                          child: Text(
+                            'No enrolled students.',
+                            style: TextStyle(color: _textSecondary(isDark)),
+                          ),
                         ),
                       )
                     else
-                      ...state.rosterRows.map((row) => Container(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: _cardBg(isDark),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: _border(isDark)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(row.name,
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.w700,
-                                                  color:
-                                                      _textPrimary(isDark))),
-                                          if (row.email.isNotEmpty)
-                                            Text(row.email,
-                                                style: TextStyle(
-                                                    fontSize: 11,
-                                                    color: _textSecondary(
-                                                        isDark))),
-                                        ],
+                      ...state.rosterRows.map(
+                        (row) => Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: _cardBg(isDark),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: _border(isDark)),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          row.name,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            color: _textPrimary(isDark),
+                                          ),
+                                        ),
+                                        if (row.email.isNotEmpty)
+                                          Text(
+                                            row.email,
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: _textSecondary(isDark),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (row.isAiMarked)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 6,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: _kCyan.withValues(alpha: 0.15),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Text(
+                                        'AI ${row.aiConfidence != null ? '${(row.aiConfidence! * 100).toStringAsFixed(0)}%' : ''}',
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          color: _kCyan,
+                                        ),
                                       ),
                                     ),
-                                    if (row.isAiMarked)
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 6, vertical: 2),
-                                        decoration: BoxDecoration(
-                                          color:
-                                              _kCyan.withValues(alpha: 0.15),
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                        ),
-                                        child: Text(
-                                          'AI ${row.aiConfidence != null ? '${(row.aiConfidence! * 100).toStringAsFixed(0)}%' : ''}',
-                                          style: const TextStyle(
-                                              fontSize: 10, color: _kCyan),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                StatusToggleWidget(
-                                  currentStatus: row.status,
-                                  isDark: isDark,
-                                  isDisabled: state.isRosterReadOnly,
-                                  onChanged: (s) =>
-                                      cubit.applyStatus(row.userId, s),
-                                ),
-                              ],
-                            ),
-                          )),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              StatusToggleWidget(
+                                currentStatus: row.status,
+                                isDark: isDark,
+                                isDisabled: state.isRosterReadOnly,
+                                onChanged: (s) =>
+                                    cubit.applyStatus(row.userId, s),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                   ],
                 ),
         ),
@@ -676,23 +778,29 @@ Widget _header(BuildContext ctx, String title, String subtitle, bool isDark) {
       children: [
         IconButton(
           onPressed: () => Navigator.of(ctx).pop(),
-          icon: Icon(Icons.arrow_back_ios_new_rounded,
-              color: _textPrimary(isDark)),
+          icon: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: _textPrimary(isDark),
+          ),
         ),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: _textPrimary(isDark))),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: _textPrimary(isDark),
+                ),
+              ),
               if (subtitle.isNotEmpty)
-                Text(subtitle,
-                    style:
-                        TextStyle(fontSize: 13, color: _textSecondary(isDark))),
+                Text(
+                  subtitle,
+                  style: TextStyle(fontSize: 13, color: _textSecondary(isDark)),
+                ),
             ],
           ),
         ),
@@ -701,8 +809,14 @@ Widget _header(BuildContext ctx, String title, String subtitle, bool isDark) {
   );
 }
 
-Widget _headerWithBack(BuildContext ctx, String title, String subtitle,
-    bool isDark, String backLabel, VoidCallback onBack) {
+Widget _headerWithBack(
+  BuildContext ctx,
+  String title,
+  String subtitle,
+  bool isDark,
+  String backLabel,
+  VoidCallback onBack,
+) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     decoration: BoxDecoration(
@@ -715,19 +829,23 @@ Widget _headerWithBack(BuildContext ctx, String title, String subtitle,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: _textPrimary(isDark)),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: _textPrimary(isDark),
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               if (subtitle.isNotEmpty)
-                Text(subtitle,
-                    style:
-                        TextStyle(fontSize: 12, color: _textSecondary(isDark)),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
+                Text(
+                  subtitle,
+                  style: TextStyle(fontSize: 12, color: _textSecondary(isDark)),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
             ],
           ),
         ),

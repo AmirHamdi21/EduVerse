@@ -137,10 +137,7 @@ void main() {
       coreApiClient = CoreApiClient.test();
       coreApiClient.dio.httpClientAdapter = _MockAdapter((options) {
         capturedPath = options.path;
-        return {
-          'statusCode': 200,
-          'data': <Map<String, dynamic>>[],
-        };
+        return {'statusCode': 200, 'data': <Map<String, dynamic>>[]};
       });
 
       service = AttendanceService(coreApiClient: coreApiClient);
@@ -159,10 +156,7 @@ void main() {
       coreApiClient = CoreApiClient.test();
       coreApiClient.dio.httpClientAdapter = _MockAdapter((options) {
         capturedParams = options.queryParameters;
-        return {
-          'statusCode': 200,
-          'data': <Map<String, dynamic>>[],
-        };
+        return {'statusCode': 200, 'data': <Map<String, dynamic>>[]};
       });
 
       service = AttendanceService(coreApiClient: coreApiClient);

@@ -1043,10 +1043,30 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
 
   Widget _buildTargetAudienceSection() {
     final audiences = [
-      {'value': 'all', 'label': 'All Users', 'icon': Icons.groups_rounded, 'color': AnnouncementColors.primary},
-      {'value': 'students', 'label': 'Students Only', 'icon': Icons.school_rounded, 'color': AnnouncementColors.published},
-      {'value': 'instructors', 'label': 'Instructors Only', 'icon': Icons.person_rounded, 'color': AnnouncementColors.accent},
-      {'value': 'admins', 'label': 'Admins Only', 'icon': Icons.admin_panel_settings_rounded, 'color': AnnouncementColors.scheduled},
+      {
+        'value': 'all',
+        'label': 'All Users',
+        'icon': Icons.groups_rounded,
+        'color': AnnouncementColors.primary,
+      },
+      {
+        'value': 'students',
+        'label': 'Students Only',
+        'icon': Icons.school_rounded,
+        'color': AnnouncementColors.published,
+      },
+      {
+        'value': 'instructors',
+        'label': 'Instructors Only',
+        'icon': Icons.person_rounded,
+        'color': AnnouncementColors.accent,
+      },
+      {
+        'value': 'admins',
+        'label': 'Admins Only',
+        'icon': Icons.admin_panel_settings_rounded,
+        'color': AnnouncementColors.scheduled,
+      },
     ];
 
     return Column(
@@ -1075,17 +1095,24 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
             return Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () => setState(() => _selectedAudience = option['value'] as String),
+                onTap: () => setState(
+                  () => _selectedAudience = option['value'] as String,
+                ),
                 borderRadius: BorderRadius.circular(14),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? (widget.isDark ? color.withOpacity(0.2) : color.withOpacity(0.08))
+                        ? (widget.isDark
+                              ? color.withOpacity(0.2)
+                              : color.withOpacity(0.08))
                         : (widget.isDark
-                            ? AnnouncementColors.darkSurface.withOpacity(0.5)
-                            : AnnouncementColors.surface),
+                              ? AnnouncementColors.darkSurface.withOpacity(0.5)
+                              : AnnouncementColors.surface),
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
                       color: isSelected
@@ -1101,7 +1128,9 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                         size: 20,
                         color: isSelected
                             ? color
-                            : AnnouncementColors.textSecondaryColor(widget.isDark),
+                            : AnnouncementColors.textSecondaryColor(
+                                widget.isDark,
+                              ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
@@ -1110,9 +1139,13 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                           style: TextStyle(
                             color: isSelected
                                 ? color
-                                : AnnouncementColors.textPrimaryColor(widget.isDark),
+                                : AnnouncementColors.textPrimaryColor(
+                                    widget.isDark,
+                                  ),
                             fontSize: 12,
-                            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.w500,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1130,7 +1163,11 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
 
   Widget _buildNotificationChannelsSection() {
     final channels = [
-      {'id': 'push', 'label': 'Push', 'icon': Icons.notifications_active_rounded},
+      {
+        'id': 'push',
+        'label': 'Push',
+        'icon': Icons.notifications_active_rounded,
+      },
       {'id': 'email', 'label': 'Email', 'icon': Icons.email_rounded},
       {'id': 'sms', 'label': 'SMS', 'icon': Icons.sms_rounded},
     ];
@@ -1180,11 +1217,13 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                       decoration: BoxDecoration(
                         color: isActive
                             ? (widget.isDark
-                                ? AnnouncementColors.primary.withOpacity(0.2)
-                                : AnnouncementColors.primarySurface)
+                                  ? AnnouncementColors.primary.withOpacity(0.2)
+                                  : AnnouncementColors.primarySurface)
                             : (widget.isDark
-                                ? AnnouncementColors.darkSurface.withOpacity(0.5)
-                                : AnnouncementColors.surface),
+                                  ? AnnouncementColors.darkSurface.withOpacity(
+                                      0.5,
+                                    )
+                                  : AnnouncementColors.surface),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           color: isActive
@@ -1202,7 +1241,8 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                             color: isActive
                                 ? AnnouncementColors.primary
                                 : AnnouncementColors.textSecondaryColor(
-                                    widget.isDark),
+                                    widget.isDark,
+                                  ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -1211,10 +1251,12 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                               color: isActive
                                   ? AnnouncementColors.primary
                                   : AnnouncementColors.textSecondaryColor(
-                                      widget.isDark),
+                                      widget.isDark,
+                                    ),
                               fontSize: 12,
-                              fontWeight:
-                                  isActive ? FontWeight.w600 : FontWeight.w500,
+                              fontWeight: isActive
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
                             ),
                           ),
                         ],

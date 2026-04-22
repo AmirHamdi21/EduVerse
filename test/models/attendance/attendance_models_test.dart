@@ -20,11 +20,7 @@ void main() {
         'excusedCount': 2,
         'totalMinutes': 90,
         'records': <Map<String, dynamic>>[
-          {
-            'userId': 42,
-            'attendanceStatus': 'present',
-            'markedBy': 'manual',
-          },
+          {'userId': 42, 'attendanceStatus': 'present', 'markedBy': 'manual'},
         ],
       };
 
@@ -63,43 +59,49 @@ void main() {
 
     test('isOpen returns true for scheduled and in_progress', () {
       expect(
-        AttendanceSessionModel.fromJson(
-          <String, dynamic>{'id': 1, 'sectionId': 1, 'status': 'scheduled'},
-        ).isOpen,
+        AttendanceSessionModel.fromJson(<String, dynamic>{
+          'id': 1,
+          'sectionId': 1,
+          'status': 'scheduled',
+        }).isOpen,
         isTrue,
       );
       expect(
-        AttendanceSessionModel.fromJson(
-          <String, dynamic>{'id': 1, 'sectionId': 1, 'status': 'in_progress'},
-        ).isOpen,
+        AttendanceSessionModel.fromJson(<String, dynamic>{
+          'id': 1,
+          'sectionId': 1,
+          'status': 'in_progress',
+        }).isOpen,
         isTrue,
       );
     });
 
     test('isClosed returns true for completed and cancelled', () {
       expect(
-        AttendanceSessionModel.fromJson(
-          <String, dynamic>{'id': 1, 'sectionId': 1, 'status': 'completed'},
-        ).isClosed,
+        AttendanceSessionModel.fromJson(<String, dynamic>{
+          'id': 1,
+          'sectionId': 1,
+          'status': 'completed',
+        }).isClosed,
         isTrue,
       );
       expect(
-        AttendanceSessionModel.fromJson(
-          <String, dynamic>{'id': 1, 'sectionId': 1, 'status': 'cancelled'},
-        ).isClosed,
+        AttendanceSessionModel.fromJson(<String, dynamic>{
+          'id': 1,
+          'sectionId': 1,
+          'status': 'cancelled',
+        }).isClosed,
         isTrue,
       );
     });
 
     test('copyWith produces updated model', () {
-      final original = AttendanceSessionModel.fromJson(
-        <String, dynamic>{
-          'id': 1,
-          'sectionId': 1,
-          'status': 'scheduled',
-          'presentCount': 10,
-        },
-      );
+      final original = AttendanceSessionModel.fromJson(<String, dynamic>{
+        'id': 1,
+        'sectionId': 1,
+        'status': 'scheduled',
+        'presentCount': 10,
+      });
       final updated = original.copyWith(status: 'completed', presentCount: 25);
 
       expect(updated.status, 'completed');
@@ -108,16 +110,14 @@ void main() {
     });
 
     test('toJson produces correct map', () {
-      final model = AttendanceSessionModel.fromJson(
-        <String, dynamic>{
-          'id': 3,
-          'sectionId': 7,
-          'sessionDate': '2026-04-21',
-          'sessionType': 'lab',
-          'status': 'scheduled',
-          'totalMinutes': 120,
-        },
-      );
+      final model = AttendanceSessionModel.fromJson(<String, dynamic>{
+        'id': 3,
+        'sectionId': 7,
+        'sessionDate': '2026-04-21',
+        'sessionType': 'lab',
+        'status': 'scheduled',
+        'totalMinutes': 120,
+      });
       final json = model.toJson();
 
       expect(json['id'], 3);
@@ -128,12 +128,16 @@ void main() {
     });
 
     test('Equatable equality works', () {
-      final a = AttendanceSessionModel.fromJson(
-        <String, dynamic>{'id': 1, 'sectionId': 1, 'status': 'scheduled'},
-      );
-      final b = AttendanceSessionModel.fromJson(
-        <String, dynamic>{'id': 1, 'sectionId': 1, 'status': 'scheduled'},
-      );
+      final a = AttendanceSessionModel.fromJson(<String, dynamic>{
+        'id': 1,
+        'sectionId': 1,
+        'status': 'scheduled',
+      });
+      final b = AttendanceSessionModel.fromJson(<String, dynamic>{
+        'id': 1,
+        'sectionId': 1,
+        'status': 'scheduled',
+      });
       expect(a, equals(b));
     });
   });
@@ -183,28 +187,25 @@ void main() {
     });
 
     test('displayName falls back to email then Student #id', () {
-      final withName = AttendanceRecordModel.fromJson(
-        <String, dynamic>{
-          'userId': 1,
-          'attendanceStatus': 'present',
-          'firstName': 'Alice',
-          'lastName': 'Wonder',
-        },
-      );
+      final withName = AttendanceRecordModel.fromJson(<String, dynamic>{
+        'userId': 1,
+        'attendanceStatus': 'present',
+        'firstName': 'Alice',
+        'lastName': 'Wonder',
+      });
       expect(withName.displayName, 'Alice Wonder');
 
-      final withEmail = AttendanceRecordModel.fromJson(
-        <String, dynamic>{
-          'userId': 2,
-          'attendanceStatus': 'present',
-          'email': 'bob@example.com',
-        },
-      );
+      final withEmail = AttendanceRecordModel.fromJson(<String, dynamic>{
+        'userId': 2,
+        'attendanceStatus': 'present',
+        'email': 'bob@example.com',
+      });
       expect(withEmail.displayName, 'bob@example.com');
 
-      final fallback = AttendanceRecordModel.fromJson(
-        <String, dynamic>{'userId': 3, 'attendanceStatus': 'absent'},
-      );
+      final fallback = AttendanceRecordModel.fromJson(<String, dynamic>{
+        'userId': 3,
+        'attendanceStatus': 'absent',
+      });
       expect(fallback.displayName, 'Student #3');
     });
 
@@ -337,37 +338,38 @@ void main() {
     });
 
     test('status checks work correctly', () {
-      final completed = AiProcessingResultModel.fromJson(
-        <String, dynamic>{'processingId': 1, 'status': 'completed'},
-      );
+      final completed = AiProcessingResultModel.fromJson(<String, dynamic>{
+        'processingId': 1,
+        'status': 'completed',
+      });
       expect(completed.isCompleted, isTrue);
       expect(completed.isFailed, isFalse);
       expect(completed.isProcessing, isFalse);
 
-      final failed = AiProcessingResultModel.fromJson(
-        <String, dynamic>{'processingId': 2, 'status': 'failed'},
-      );
+      final failed = AiProcessingResultModel.fromJson(<String, dynamic>{
+        'processingId': 2,
+        'status': 'failed',
+      });
       expect(failed.isFailed, isTrue);
       expect(failed.isProcessing, isFalse);
 
-      final pending = AiProcessingResultModel.fromJson(
-        <String, dynamic>{'processingId': 3, 'status': 'pending'},
-      );
+      final pending = AiProcessingResultModel.fromJson(<String, dynamic>{
+        'processingId': 3,
+        'status': 'pending',
+      });
       expect(pending.isProcessing, isTrue);
       expect(pending.isCompleted, isFalse);
 
-      final manualReview = AiProcessingResultModel.fromJson(
-        <String, dynamic>{'processingId': 4, 'status': 'manual_review'},
-      );
+      final manualReview = AiProcessingResultModel.fromJson(<String, dynamic>{
+        'processingId': 4,
+        'status': 'manual_review',
+      });
       expect(manualReview.needsManualReview, isTrue);
       expect(manualReview.isProcessing, isFalse);
     });
 
     test('fromJson handles missing optional fields', () {
-      final json = <String, dynamic>{
-        'processingId': 5,
-        'status': 'processing',
-      };
+      final json = <String, dynamic>{'processingId': 5, 'status': 'processing'};
 
       final model = AiProcessingResultModel.fromJson(json);
 

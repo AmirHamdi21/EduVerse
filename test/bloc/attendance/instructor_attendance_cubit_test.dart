@@ -29,8 +29,7 @@ class _FakeAttendanceService implements AttendanceService {
     int? limit,
     String? sortBy,
     String? sortOrder,
-  }) async =>
-      sessionsResult;
+  }) async => sessionsResult;
 
   @override
   Future<ServiceResult<AttendanceSessionModel>> createSession({
@@ -81,8 +80,7 @@ class _FakeAttendanceService implements AttendanceService {
   Future<ServiceResult<void>> markBatchAttendance({
     required int sessionId,
     required List<Map<String, dynamic>> records,
-  }) async =>
-      batchResult;
+  }) async => batchResult;
 
   @override
   Future<ServiceResult<void>> closeSession(int id) async => closeResult;
@@ -140,11 +138,11 @@ void main() {
     test('loadTeachingSections populates sections', () async {
       fakeEnrollment.teachingResult =
           ServiceResult<List<TeachingCourseModel>>.failure(
-        const ServiceError(
-          type: ServiceErrorType.network,
-          message: 'No network',
-        ),
-      );
+            const ServiceError(
+              type: ServiceErrorType.network,
+              message: 'No network',
+            ),
+          );
 
       await cubit.loadTeachingSections();
 
@@ -171,18 +169,14 @@ void main() {
 
     test('applyStatus modifies roster row status', () async {
       // Load a roster first
-      fakeAttendance.sessionDetailsResult =
-          ServiceResult<AttendanceSessionModel>.success(
+      fakeAttendance
+          .sessionDetailsResult = ServiceResult<AttendanceSessionModel>.success(
         AttendanceSessionModel.fromJson(<String, dynamic>{
           'id': 5,
           'sectionId': 10,
           'status': 'in_progress',
           'records': <Map<String, dynamic>>[
-            {
-              'userId': 1,
-              'attendanceStatus': 'absent',
-              'firstName': 'Alice',
-            },
+            {'userId': 1, 'attendanceStatus': 'absent', 'firstName': 'Alice'},
           ],
         }),
       );
@@ -200,15 +194,15 @@ void main() {
     test('applyStatus is no-op when read-only', () async {
       fakeAttendance.sessionDetailsResult =
           ServiceResult<AttendanceSessionModel>.success(
-        AttendanceSessionModel.fromJson(<String, dynamic>{
-          'id': 5,
-          'sectionId': 10,
-          'status': 'completed',
-          'records': <Map<String, dynamic>>[
-            {'userId': 1, 'attendanceStatus': 'absent'},
-          ],
-        }),
-      );
+            AttendanceSessionModel.fromJson(<String, dynamic>{
+              'id': 5,
+              'sectionId': 10,
+              'status': 'completed',
+              'records': <Map<String, dynamic>>[
+                {'userId': 1, 'attendanceStatus': 'absent'},
+              ],
+            }),
+          );
 
       await cubit.loadRosterData(5, true);
       cubit.applyStatus(1, 'present');
@@ -220,16 +214,16 @@ void main() {
     test('setAllStatus updates all roster rows', () async {
       fakeAttendance.sessionDetailsResult =
           ServiceResult<AttendanceSessionModel>.success(
-        AttendanceSessionModel.fromJson(<String, dynamic>{
-          'id': 5,
-          'sectionId': 10,
-          'status': 'in_progress',
-          'records': <Map<String, dynamic>>[
-            {'userId': 1, 'attendanceStatus': 'absent'},
-            {'userId': 2, 'attendanceStatus': 'absent'},
-          ],
-        }),
-      );
+            AttendanceSessionModel.fromJson(<String, dynamic>{
+              'id': 5,
+              'sectionId': 10,
+              'status': 'in_progress',
+              'records': <Map<String, dynamic>>[
+                {'userId': 1, 'attendanceStatus': 'absent'},
+                {'userId': 2, 'attendanceStatus': 'absent'},
+              ],
+            }),
+          );
 
       await cubit.loadRosterData(5, false);
       cubit.setAllStatus('present');

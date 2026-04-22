@@ -33,7 +33,8 @@ class _FakeScheduleTemplatesService extends AdminPeriodsService {
   final List<ScheduleTemplateModel> templates;
 
   @override
-  Future<ServiceResult<PaginatedResult<ScheduleTemplateModel>>> getScheduleTemplates({
+  Future<ServiceResult<PaginatedResult<ScheduleTemplateModel>>>
+  getScheduleTemplates({
     int page = 1,
     int limit = 10,
     String? search,
