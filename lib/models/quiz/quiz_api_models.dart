@@ -80,7 +80,7 @@ enum AttemptStatusEnum {
   inProgress,
   submitted,
   graded,
-  expired;
+  abandoned;
 
   factory AttemptStatusEnum.fromJson(String? value) {
     switch (value?.toLowerCase()) {
@@ -91,10 +91,11 @@ enum AttemptStatusEnum {
         return AttemptStatusEnum.submitted;
       case 'graded':
         return AttemptStatusEnum.graded;
+      case 'abandoned':
       case 'expired':
-        return AttemptStatusEnum.expired;
+        return AttemptStatusEnum.abandoned;
       default:
-        return AttemptStatusEnum.inProgress;
+        return AttemptStatusEnum.abandoned;
     }
   }
 
@@ -106,8 +107,8 @@ enum AttemptStatusEnum {
         return 'submitted';
       case AttemptStatusEnum.graded:
         return 'graded';
-      case AttemptStatusEnum.expired:
-        return 'expired';
+      case AttemptStatusEnum.abandoned:
+        return 'abandoned';
     }
   }
 }

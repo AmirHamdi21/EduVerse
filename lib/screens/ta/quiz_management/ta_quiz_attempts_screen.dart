@@ -335,7 +335,7 @@ class _S extends State<TAQuizAttemptsScreen> {
         return TAColors.info;
       case AttemptStatusEnum.graded:
         return TAColors.success;
-      case AttemptStatusEnum.expired:
+      case AttemptStatusEnum.abandoned:
         return TAColors.error;
     }
   }

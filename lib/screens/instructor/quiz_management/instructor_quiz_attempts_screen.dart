@@ -333,7 +333,7 @@ class _AttState extends State<InstructorQuizAttemptsScreen> {
         return InstructorColors.info;
       case AttemptStatusEnum.graded:
         return InstructorColors.success;
-      case AttemptStatusEnum.expired:
+      case AttemptStatusEnum.abandoned:
         return InstructorColors.error;
     }
   }

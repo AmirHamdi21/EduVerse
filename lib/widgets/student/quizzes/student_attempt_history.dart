@@ -206,7 +206,7 @@ class StudentAttemptHistory extends StatelessWidget {
         return const Color(0xFF3B82F6);
       case AttemptStatusEnum.graded:
         return const Color(0xFF10B981);
-      case AttemptStatusEnum.expired:
+      case AttemptStatusEnum.abandoned:
         return const Color(0xFFEF4444);
     }
   }
