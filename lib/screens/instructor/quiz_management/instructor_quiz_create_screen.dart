@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:edu_verse/bloc/quiz/quiz_management_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,7 +7,9 @@ import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_cubit.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
+import 'package:edu_verse/services/api/quiz_ai_service.dart';
 import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:go_router/go_router.dart';
 
 class InstructorQuizCreateScreen extends StatefulWidget {
@@ -39,6 +42,14 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
 
   // Questions
   final List<_QuestionDraft> _questions = [];
+
+  // AI generation
+  final QuizAiService _aiService = QuizAiService();
+  File? _aiFile;
+  bool _aiLoading = false;
+  int _aiNumQuestions = 5;
+  String _aiQuestionType = 'MCQ';
+  String _aiDifficulty = 'medium';
 
   @override
   void dispose() {
@@ -249,26 +260,187 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
     ),
   );
 
+  Widget _aiPanel(bool dk) => Container(
+    margin: const EdgeInsets.only(bottom: 16),
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: InstructorColors.cardColor(dk),
+      borderRadius: BorderRadius.circular(16),
+      border: Border(left: BorderSide(color: InstructorColors.primary, width: 4)),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(children: [
+          Icon(Icons.auto_awesome_rounded, size: 18, color: InstructorColors.primary),
+          const SizedBox(width: 8),
+          Text('Generate questions with AI', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: InstructorColors.textPrimaryColor(dk))),
+        ]),
+        const SizedBox(height: 8),
+        Text('Upload a file (PDF, DOCX, TXT). AI-generated questions are added below and can be edited.',
+          style: TextStyle(fontSize: 12, color: InstructorColors.textSecondaryColor(dk))),
+        const SizedBox(height: 12),
+        // File picker
+        Row(children: [
+          ElevatedButton.icon(
+            onPressed: () async {
+              final result = await FilePicker.platform.pickFiles(
+                type: FileType.custom,
+                allowedExtensions: ['pdf', 'docx', 'txt'],
+              );
+              if (result != null && result.files.single.path != null) {
+                setState(() => _aiFile = File(result.files.single.path!));
+              }
+            },
+            icon: const Icon(Icons.upload_file_rounded, size: 16),
+            label: const Text('Choose File'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: InstructorColors.primary,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(child: Text(
+            _aiFile != null ? _aiFile!.path.split(Platform.pathSeparator).last : 'No file selected',
+            style: TextStyle(fontSize: 12, color: _aiFile != null ? InstructorColors.textPrimaryColor(dk) : InstructorColors.textTertiaryColor(dk)),
+            overflow: TextOverflow.ellipsis,
+          )),
+        ]),
+        const SizedBox(height: 12),
+        // Config row
+        Row(children: [
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Count', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: InstructorColors.textSecondaryColor(dk))),
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(color: dk ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(10), border: Border.all(color: InstructorColors.borderColor(dk).withValues(alpha: 0.5))),
+              child: DropdownButtonHideUnderline(child: DropdownButton<int>(
+                value: _aiNumQuestions, isExpanded: true, isDense: true,
+                dropdownColor: InstructorColors.cardColor(dk),
+                style: TextStyle(color: InstructorColors.textPrimaryColor(dk), fontSize: 13),
+                items: [3,5,10,15,20].map((n) => DropdownMenuItem(value: n, child: Text('$n'))).toList(),
+                onChanged: (v) { if (v != null) setState(() => _aiNumQuestions = v); },
+              )),
+            ),
+          ])),
+          const SizedBox(width: 8),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Style', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: InstructorColors.textSecondaryColor(dk))),
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(color: dk ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(10), border: Border.all(color: InstructorColors.borderColor(dk).withValues(alpha: 0.5))),
+              child: DropdownButtonHideUnderline(child: DropdownButton<String>(
+                value: _aiQuestionType, isExpanded: true, isDense: true,
+                dropdownColor: InstructorColors.cardColor(dk),
+                style: TextStyle(color: InstructorColors.textPrimaryColor(dk), fontSize: 13),
+                items: QuizAiService.questionTypes.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
+                onChanged: (v) { if (v != null) setState(() => _aiQuestionType = v); },
+              )),
+            ),
+          ])),
+          const SizedBox(width: 8),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('Difficulty', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: InstructorColors.textSecondaryColor(dk))),
+            const SizedBox(height: 4),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(color: dk ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(10), border: Border.all(color: InstructorColors.borderColor(dk).withValues(alpha: 0.5))),
+              child: DropdownButtonHideUnderline(child: DropdownButton<String>(
+                value: _aiDifficulty, isExpanded: true, isDense: true,
+                dropdownColor: InstructorColors.cardColor(dk),
+                style: TextStyle(color: InstructorColors.textPrimaryColor(dk), fontSize: 13),
+                items: QuizAiService.difficulties.map((d) => DropdownMenuItem(value: d, child: Text(d[0].toUpperCase() + d.substring(1)))).toList(),
+                onChanged: (v) { if (v != null) setState(() => _aiDifficulty = v); },
+              )),
+            ),
+          ])),
+        ]),
+        const SizedBox(height: 12),
+        // Generate button
+        SizedBox(width: double.infinity, child: ElevatedButton.icon(
+          onPressed: (_aiLoading || _aiFile == null) ? null : _generateAiQuestions,
+          icon: _aiLoading
+              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+              : const Icon(Icons.auto_awesome_rounded, size: 16),
+          label: Text(_aiLoading ? 'Generating...' : 'Generate & Add'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: InstructorColors.primary,
+            foregroundColor: Colors.white,
+            disabledBackgroundColor: InstructorColors.primary.withValues(alpha: 0.4),
+            disabledForegroundColor: Colors.white70,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            padding: const EdgeInsets.symmetric(vertical: 12),
+          ),
+        )),
+      ],
+    ),
+  );
+
+  Future<void> _generateAiQuestions() async {
+    if (_aiFile == null) return;
+    setState(() => _aiLoading = true);
+    try {
+      final generated = await _aiService.generateQuestions(
+        file: _aiFile!,
+        numQuestions: _aiNumQuestions,
+        questionType: _aiQuestionType,
+        difficulty: _aiDifficulty,
+      );
+      setState(() {
+        for (final q in generated) {
+          final options = q.type == 'MCQ'
+              ? q.paddedOptions.map((o) => <String, dynamic>{'text': o}).toList()
+              : <Map<String, dynamic>>[];
+          _questions.add(_QuestionDraft(
+            questionText: q.questionText,
+            type: q.mappedType,
+            options: options,
+            correctAnswer: q.type == 'MCQ' ? q.guessMcqAnswerIndex() : q.correctAnswer,
+            explanation: q.reference,
+            points: 1.0,
+          ));
+        }
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Added ${generated.length} AI-generated question(s)'),
+          backgroundColor: InstructorColors.success,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('AI generation failed: $e'),
+          backgroundColor: InstructorColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ));
+      }
+    } finally {
+      if (mounted) setState(() => _aiLoading = false);
+    }
+  }
+
   Widget _questionsForm(bool dk) {
     if (_questions.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.help_outline_rounded,
-              size: 56,
-              color: InstructorColors.textTertiaryColor(dk),
-            ),
+      return ListView(
+        padding: const EdgeInsets.all(20),
+        physics: const BouncingScrollPhysics(),
+        children: [
+          _aiPanel(dk),
+          Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Icon(Icons.help_outline_rounded, size: 56, color: InstructorColors.textTertiaryColor(dk)),
             const SizedBox(height: 16),
-            Text(
-              'No questions added yet',
-              style: TextStyle(
-                color: InstructorColors.textSecondaryColor(dk),
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+            Text('No questions added yet', style: TextStyle(color: InstructorColors.textSecondaryColor(dk), fontSize: 16, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            Text('Use AI above or add manually below', style: TextStyle(color: InstructorColors.textTertiaryColor(dk), fontSize: 13)),
             const SizedBox(height: 20),
             ElevatedButton.icon(
               onPressed: () => _addQuestion(dk),
@@ -277,21 +449,20 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: InstructorColors.primary,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-          ],
-        ),
+          ])),
+        ],
       );
     }
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 80),
       physics: const BouncingScrollPhysics(),
-      itemCount: _questions.length + 1,
+      itemCount: _questions.length + 2, // +1 for AI panel, +1 for add button
       itemBuilder: (_, i) {
-        if (i == _questions.length) {
+        if (i == 0) return Padding(padding: const EdgeInsets.only(bottom: 4), child: _aiPanel(dk));
+        if (i == _questions.length + 1) {
           return Padding(
             padding: const EdgeInsets.only(top: 12),
             child: OutlinedButton.icon(
@@ -301,18 +472,18 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
               style: OutlinedButton.styleFrom(
                 foregroundColor: InstructorColors.primary,
                 side: const BorderSide(color: InstructorColors.primary),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
           );
         }
-        return _questionCard(dk, i);
+        return _questionCard(dk, i - 1);
       },
     );
   }
+
+
 
   Widget _questionCard(bool dk, int idx) {
     final q = _questions[idx];

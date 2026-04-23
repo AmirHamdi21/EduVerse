@@ -84,8 +84,25 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
     _emitActiveState(result.data!);
   }
 
-  void _emitActiveState(QuizAttemptModel attempt) {
-    final questions = attempt.questions ?? [];
+  Future<void> _emitActiveState(QuizAttemptModel attempt) async {
+    var questions = attempt.questions ?? [];
+
+    // If the attempt response didn't include questions, fetch them separately
+    if (questions.isEmpty) {
+      final qResult = await _service.getQuizQuestions(attempt.quizId);
+      if (qResult.isSuccess && qResult.data != null && qResult.data!.isNotEmpty) {
+        questions = qResult.data!;
+      }
+    }
+
+    // Guard: if still no questions, emit error instead of crashing
+    if (questions.isEmpty) {
+      emit(const StudentQuizError(
+        'This quiz has no questions yet. Please try again later.',
+      ));
+      return;
+    }
+
     final existingAnswers = <int, AttemptAnswerModel>{};
     for (final a in attempt.answers) {
       existingAnswers[a.questionId] = a;

@@ -62,6 +62,20 @@ class QuizApiService {
 
   // ── Questions ────────────────────────────────────────────────────────────
 
+  /// Fetches all questions for a quiz (used when attempt response lacks them).
+  Future<ServiceResult<List<QuizQuestionModel>>> getQuizQuestions(
+    dynamic quizId,
+  ) {
+    return RetryHelper.execute<List<QuizQuestionModel>>(() async {
+      final response = await _client.dio.get('/quizzes/$quizId/questions');
+      return _extractList(response.data)
+          .whereType<Map<String, dynamic>>()
+          .map(QuizQuestionModel.fromJson)
+          .toList();
+    }, fallbackMessage: 'Failed to load quiz questions');
+  }
+
+
   Future<ServiceResult<QuizQuestionModel>> addQuestion(
     dynamic quizId,
     Map<String, dynamic> data,

@@ -79,7 +79,14 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
                   _startTimer(state.timeLimitMinutes!, state.startedAt);
                 });
               }
-              return _buildQuizUI(isDark, bg, state, responsive);
+              return state.totalQuestions > 0
+                  ? _buildQuizUI(isDark, bg, state, responsive)
+                  : Scaffold(
+                      backgroundColor: bg,
+                      body: const Center(
+                        child: CircularProgressIndicator(color: Color(0xFF2B7FFF)),
+                      ),
+                    );
             }
             if (state is StudentQuizSubmitting) {
               return Scaffold(
