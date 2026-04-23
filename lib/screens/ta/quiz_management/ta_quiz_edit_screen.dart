@@ -4,7 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/quiz/quiz_management_cubit.dart';
+import 'package:edu_verse/bloc/ta/ta_courses_cubit.dart';
+import 'package:edu_verse/bloc/ta/ta_courses_state.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart';
+import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 import 'package:edu_verse/services/api/quiz_api_service.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
 import 'package:go_router/go_router.dart';
@@ -17,16 +20,18 @@ class TAQuizEditScreen extends StatefulWidget {
 }
 
 class _QuestionDraft {
-  String? existingId; // null = new question
+  String? existingId;
   String questionText;
   QuestionTypeEnum type;
   List<Map<String, dynamic>> options;
   dynamic correctAnswer;
   String? explanation;
   double points;
-  String? provenance; // 'manual', 'ai', 'ai_edited'
-  _QuestionDraft({this.existingId, this.questionText = '', this.type = QuestionTypeEnum.multipleChoice, List<Map<String, dynamic>>? options, this.correctAnswer, this.explanation, this.points = 10.0, this.provenance})
-      : options = options ?? [{'text': ''}, {'text': ''}, {'text': ''}, {'text': ''}];
+  String? provenance;
+  List<Map<String, String>> matchingPairs;
+  _QuestionDraft({this.existingId, this.questionText = '', this.type = QuestionTypeEnum.multipleChoice, List<Map<String, dynamic>>? options, this.correctAnswer, this.explanation, this.points = 10.0, this.provenance, List<Map<String, String>>? matchingPairs})
+      : options = options ?? [{'text': ''}, {'text': ''}, {'text': ''}, {'text': ''}],
+        matchingPairs = matchingPairs ?? [];
 }
 
 class _EditState extends State<TAQuizEditScreen> with SingleTickerProviderStateMixin {
@@ -41,6 +46,7 @@ class _EditState extends State<TAQuizEditScreen> with SingleTickerProviderStateM
   late bool _randomize, _showCorrect;
   late ShowAnswersAfterEnum _showAfter;
   DateTime? _availFrom, _availUntil;
+  int? _courseId;
 
   // Questions
   final List<_QuestionDraft> _questions = [];
@@ -65,6 +71,7 @@ class _EditState extends State<TAQuizEditScreen> with SingleTickerProviderStateM
     _showAfter = q.showAnswersAfter;
     _availFrom = q.availableFrom;
     _availUntil = q.availableUntil;
+    _courseId = q.courseId;
     _loadQuestions();
   }
 
@@ -153,6 +160,7 @@ class _EditState extends State<TAQuizEditScreen> with SingleTickerProviderStateM
         _f(dk, 'Title *', _title, v: (s) => s == null || s.isEmpty ? 'Required' : null),
         const SizedBox(height: 14), _f(dk, 'Description', _desc, lines: 3),
         const SizedBox(height: 14), _f(dk, 'Instructions', _instructions, lines: 2),
+        const SizedBox(height: 14), _buildCourseSelector(dk),
       ]),
       const SizedBox(height: 16),
       _sec(dk, 'Settings', [
@@ -266,12 +274,35 @@ class _EditState extends State<TAQuizEditScreen> with SingleTickerProviderStateM
               icon: const Icon(Icons.add, size: 16), label: const Text('Add Option', style: TextStyle(fontSize: 12)),
               style: TextButton.styleFrom(foregroundColor: TAColors.primary)),
         ],
-        // Short answer / Essay correct answer
+        // Short answer correct answer
         if (q.type == QuestionTypeEnum.shortAnswer) ...[
           const SizedBox(height: 12),
           TextFormField(initialValue: q.correctAnswer?.toString() ?? '', onChanged: (v) => q.correctAnswer = v,
             style: TextStyle(color: dk ? Colors.white : const Color(0xFF1E293B), fontSize: 14),
             decoration: _inputDeco(dk, 'Correct Answer')),
+        ],
+        // Matching pairs editor
+        if (q.type == QuestionTypeEnum.matching) ...[
+          const SizedBox(height: 12),
+          Text('Matching Pairs', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: dk ? const Color(0xFF94A3B8) : const Color(0xFF64748B))),
+          const SizedBox(height: 8),
+          ...q.matchingPairs.asMap().entries.map((e) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(children: [
+              Expanded(child: TextFormField(initialValue: e.value['left'] ?? '', onChanged: (v) => setState(() => q.matchingPairs[e.key] = {'left': v, 'right': q.matchingPairs[e.key]['right'] ?? ''}),
+                style: TextStyle(color: dk ? Colors.white : const Color(0xFF1E293B), fontSize: 13), decoration: _inputDeco(dk, 'Left ${e.key + 1}'))),
+              const SizedBox(width: 8),
+              Icon(Icons.arrow_forward_rounded, size: 16, color: dk ? Colors.white38 : Colors.black26),
+              const SizedBox(width: 8),
+              Expanded(child: TextFormField(initialValue: e.value['right'] ?? '', onChanged: (v) => setState(() => q.matchingPairs[e.key] = {'left': q.matchingPairs[e.key]['left'] ?? '', 'right': v}),
+                style: TextStyle(color: dk ? Colors.white : const Color(0xFF1E293B), fontSize: 13), decoration: _inputDeco(dk, 'Right ${e.key + 1}'))),
+              IconButton(icon: Icon(Icons.close, size: 16, color: dk ? Colors.white38 : Colors.black26),
+                onPressed: () => setState(() => q.matchingPairs.removeAt(e.key))),
+            ]),
+          )),
+          TextButton.icon(onPressed: () => setState(() => q.matchingPairs.add({'left': '', 'right': ''})),
+            icon: const Icon(Icons.add, size: 16), label: const Text('Add Pair', style: TextStyle(fontSize: 12)),
+            style: TextButton.styleFrom(foregroundColor: TAColors.primary)),
         ],
       ]),
     );
@@ -311,6 +342,7 @@ class _EditState extends State<TAQuizEditScreen> with SingleTickerProviderStateM
     final data = <String, dynamic>{
       'title': _title.text.trim(), 'description': _desc.text.trim(), 'instructions': _instructions.text.trim(),
       'quizType': _quizType.toJson(),
+      if (_courseId != null) 'courseId': _courseId,
       if (_timeLimit.text.isNotEmpty) 'timeLimitMinutes': int.tryParse(_timeLimit.text) ?? 0,
       'maxAttempts': int.tryParse(_maxAttempts.text) ?? 1,
       'passingScore': (double.tryParse(_passingScore.text) ?? 50).toString(),
@@ -344,6 +376,9 @@ class _EditState extends State<TAQuizEditScreen> with SingleTickerProviderStateM
         payload['correctAnswer'] = q.correctAnswer?.toString() ?? '0';
       } else if (q.type == QuestionTypeEnum.shortAnswer) {
         payload['correctAnswer'] = q.correctAnswer?.toString() ?? '';
+      } else if (q.type == QuestionTypeEnum.matching) {
+        payload['matchingPairs'] = q.matchingPairs;
+        payload['correctAnswer'] = null;
       }
 
       if (q.existingId != null && _originalQuestionIds.contains(q.existingId)) {
@@ -361,6 +396,36 @@ class _EditState extends State<TAQuizEditScreen> with SingleTickerProviderStateM
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))));
       context.pop();
     }
+  }
+
+  // ── Course Selector ────────────────────────────────────────────────────────
+  Widget _buildCourseSelector(bool dk) {
+    final cubit = context.read<TACoursesCubit>();
+    final coursesStatus = cubit.state.coursesStatus;
+    if (coursesStatus is! TASubTabLoaded<List<TeachingCourseModel>>) {
+      return const SizedBox.shrink();
+    }
+    final courses = coursesStatus.data;
+    final items = courses.map((c) => DropdownMenuItem<int>(
+      value: c.courseId,
+      child: Text(c.course.name, overflow: TextOverflow.ellipsis),
+    )).toList();
+
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text('Course', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: dk ? const Color(0xFF94A3B8) : const Color(0xFF64748B))),
+      const SizedBox(height: 6),
+      Container(padding: const EdgeInsets.symmetric(horizontal: 14),
+        decoration: BoxDecoration(color: dk ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: dk ? Colors.white12 : const Color(0xFFE2E8F0))),
+        child: DropdownButtonHideUnderline(child: DropdownButton<int>(
+          value: items.any((i) => i.value == _courseId) ? _courseId : null,
+          hint: Text('Select course', style: TextStyle(color: dk ? const Color(0xFF64748B) : const Color(0xFF94A3B8), fontSize: 14)),
+          isExpanded: true, dropdownColor: dk ? const Color(0xFF1E293B) : Colors.white,
+          style: TextStyle(color: dk ? Colors.white : const Color(0xFF1E293B), fontSize: 14),
+          items: items,
+          onChanged: (v) => setState(() => _courseId = v),
+        ))),
+    ]);
   }
 
   // ── Shared widgets ────────────────────────────────────────────────────────

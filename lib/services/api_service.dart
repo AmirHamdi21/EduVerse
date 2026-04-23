@@ -196,8 +196,7 @@ import 'auth_interceptor.dart';
 
 class ApiService {
   // Change this to your backend URL
-  static const String baseUrl =
-      'http://192.168.100.4:8081/api'; // Android emulator
+  static const String baseUrl = 'http://10.0.2.2:8081/api'; // Android emulator
   // For iOS simulator use: 'http://localhost:8081/api'
   // For real device use your computer's IP: 'http://192.168.1.11:8081/api'
   //'http://10.0.2.2:8081/api';

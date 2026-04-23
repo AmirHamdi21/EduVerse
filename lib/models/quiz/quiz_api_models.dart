@@ -148,7 +148,8 @@ enum ShowAnswersAfterEnum {
 enum QuizStatusEnum {
   draft,
   published,
-  closed;
+  closed,
+  archived;
 
   factory QuizStatusEnum.fromJson(String? value) {
     switch (value?.toLowerCase()) {
@@ -158,6 +159,8 @@ enum QuizStatusEnum {
         return QuizStatusEnum.published;
       case 'closed':
         return QuizStatusEnum.closed;
+      case 'archived':
+        return QuizStatusEnum.archived;
       default:
         return QuizStatusEnum.draft;
     }
@@ -209,6 +212,8 @@ class QuizModel {
   final double weight;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  final int? createdBy;
+  final DateTime? deletedAt;
 
   // Nested relations (may be null depending on endpoint)
   final Map<String, dynamic>? course;
@@ -219,8 +224,9 @@ class QuizModel {
   final int questionCount;
   final double maxScore;
 
-  // Derived status based on availability dates
+  // Derived status based on availability dates (mirrors web's deriveQuizStatus)
   QuizStatusEnum get status {
+    if (deletedAt != null) return QuizStatusEnum.archived;
     final now = DateTime.now();
     if (availableFrom == null && availableUntil == null) {
       return QuizStatusEnum.draft;
@@ -264,6 +270,8 @@ class QuizModel {
     this.weight = 1.0,
     this.createdAt,
     this.updatedAt,
+    this.createdBy,
+    this.deletedAt,
     this.course,
     this.creator,
     this.questions,
@@ -306,6 +314,8 @@ class QuizModel {
       weight: _parseDouble(json['weight'], 1.0),
       createdAt: _parseDate(json['createdAt']),
       updatedAt: _parseDate(json['updatedAt']),
+      createdBy: json['createdBy'] != null ? _parseInt(json['createdBy']) : null,
+      deletedAt: _parseDate(json['deletedAt']),
       course: json['course'] is Map<String, dynamic>
           ? json['course'] as Map<String, dynamic>
           : null,
@@ -358,6 +368,8 @@ class QuizModel {
     double? weight,
     DateTime? createdAt,
     DateTime? updatedAt,
+    int? createdBy,
+    DateTime? deletedAt,
     Map<String, dynamic>? course,
     Map<String, dynamic>? creator,
     List<QuizQuestionModel>? questions,
@@ -382,6 +394,8 @@ class QuizModel {
       weight: weight ?? this.weight,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      createdBy: createdBy ?? this.createdBy,
+      deletedAt: deletedAt ?? this.deletedAt,
       course: course ?? this.course,
       creator: creator ?? this.creator,
       questions: questions ?? this.questions,
@@ -590,6 +604,7 @@ class QuizAttemptModel {
   final List<QuizQuestionModel>? questions;
   final QuizModel? quiz;
   final Map<String, dynamic>? user;
+  final String? ipAddress;
 
   // Computed
   int get questionCount => questions?.length ?? 0;
@@ -627,6 +642,7 @@ class QuizAttemptModel {
     this.questions,
     this.quiz,
     this.user,
+    this.ipAddress,
   });
 
   factory QuizAttemptModel.fromJson(Map<String, dynamic> json) {
@@ -668,6 +684,7 @@ class QuizAttemptModel {
       user: json['user'] is Map<String, dynamic>
           ? json['user'] as Map<String, dynamic>
           : null,
+      ipAddress: json['ipAddress'] as String?,
     );
   }
 

@@ -123,8 +123,8 @@ class _State extends State<TAQuizManagementScreen> with SingleTickerProviderStat
 class _Card extends StatelessWidget {
   final QuizModel quiz; final bool isDark;
   const _Card({required this.quiz, required this.isDark});
-  Color _sc() { switch(quiz.status) { case QuizStatusEnum.draft: return TAColors.warning; case QuizStatusEnum.published: return TAColors.success; case QuizStatusEnum.closed: return TAColors.error; } }
-  String _sl() { switch(quiz.status) { case QuizStatusEnum.draft: return 'Draft'; case QuizStatusEnum.published: return 'Published'; case QuizStatusEnum.closed: return 'Closed'; } }
+  Color _sc() { switch(quiz.status) { case QuizStatusEnum.draft: return TAColors.warning; case QuizStatusEnum.published: return TAColors.success; case QuizStatusEnum.closed: return TAColors.error; case QuizStatusEnum.archived: return Colors.grey; } }
+  String _sl() { switch(quiz.status) { case QuizStatusEnum.draft: return 'Draft'; case QuizStatusEnum.published: return 'Published'; case QuizStatusEnum.closed: return 'Closed'; case QuizStatusEnum.archived: return 'Archived'; } }
 
   @override
   Widget build(BuildContext context) {

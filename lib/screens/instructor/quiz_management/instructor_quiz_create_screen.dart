@@ -266,117 +266,285 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
     decoration: BoxDecoration(
       color: InstructorColors.cardColor(dk),
       borderRadius: BorderRadius.circular(16),
-      border: Border(left: BorderSide(color: InstructorColors.primary, width: 4)),
+      border: Border(
+        left: BorderSide(color: InstructorColors.primary, width: 4),
+      ),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          Icon(Icons.auto_awesome_rounded, size: 18, color: InstructorColors.primary),
-          const SizedBox(width: 8),
-          Text('Generate questions with AI', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: InstructorColors.textPrimaryColor(dk))),
-        ]),
+        Row(
+          children: [
+            Icon(
+              Icons.auto_awesome_rounded,
+              size: 18,
+              color: InstructorColors.primary,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Generate questions with AI',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: InstructorColors.textPrimaryColor(dk),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 8),
-        Text('Upload a file (PDF, DOCX, TXT). AI-generated questions are added below and can be edited.',
-          style: TextStyle(fontSize: 12, color: InstructorColors.textSecondaryColor(dk))),
+        Text(
+          'Upload a file (PDF, DOCX, TXT). AI-generated questions are added below and can be edited.',
+          style: TextStyle(
+            fontSize: 12,
+            color: InstructorColors.textSecondaryColor(dk),
+          ),
+        ),
         const SizedBox(height: 12),
         // File picker
-        Row(children: [
-          ElevatedButton.icon(
-            onPressed: () async {
-              final result = await FilePicker.platform.pickFiles(
-                type: FileType.custom,
-                allowedExtensions: ['pdf', 'docx', 'txt'],
-              );
-              if (result != null && result.files.single.path != null) {
-                setState(() => _aiFile = File(result.files.single.path!));
-              }
-            },
-            icon: const Icon(Icons.upload_file_rounded, size: 16),
-            label: const Text('Choose File'),
+        Row(
+          children: [
+            ElevatedButton.icon(
+              onPressed: () async {
+                final result = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['pdf', 'docx', 'txt'],
+                );
+                if (result != null && result.files.single.path != null) {
+                  setState(() => _aiFile = File(result.files.single.path!));
+                }
+              },
+              icon: const Icon(Icons.upload_file_rounded, size: 16),
+              label: const Text('Choose File'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: InstructorColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                _aiFile != null
+                    ? _aiFile!.path.split(Platform.pathSeparator).last
+                    : 'No file selected',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: _aiFile != null
+                      ? InstructorColors.textPrimaryColor(dk)
+                      : InstructorColors.textTertiaryColor(dk),
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        // Config row
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Count',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: InstructorColors.textSecondaryColor(dk),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: dk
+                          ? Colors.white.withValues(alpha: 0.04)
+                          : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: InstructorColors.borderColor(
+                          dk,
+                        ).withValues(alpha: 0.5),
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: _aiNumQuestions,
+                        isExpanded: true,
+                        isDense: true,
+                        dropdownColor: InstructorColors.cardColor(dk),
+                        style: TextStyle(
+                          color: InstructorColors.textPrimaryColor(dk),
+                          fontSize: 13,
+                        ),
+                        items: [3, 5, 10, 15, 20]
+                            .map(
+                              (n) =>
+                                  DropdownMenuItem(value: n, child: Text('$n')),
+                            )
+                            .toList(),
+                        onChanged: (v) {
+                          if (v != null) setState(() => _aiNumQuestions = v);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Style',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: InstructorColors.textSecondaryColor(dk),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: dk
+                          ? Colors.white.withValues(alpha: 0.04)
+                          : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: InstructorColors.borderColor(
+                          dk,
+                        ).withValues(alpha: 0.5),
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _aiQuestionType,
+                        isExpanded: true,
+                        isDense: true,
+                        dropdownColor: InstructorColors.cardColor(dk),
+                        style: TextStyle(
+                          color: InstructorColors.textPrimaryColor(dk),
+                          fontSize: 13,
+                        ),
+                        items: QuizAiService.questionTypes
+                            .map(
+                              (t) => DropdownMenuItem(value: t, child: Text(t)),
+                            )
+                            .toList(),
+                        onChanged: (v) {
+                          if (v != null) setState(() => _aiQuestionType = v);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Difficulty',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: InstructorColors.textSecondaryColor(dk),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: dk
+                          ? Colors.white.withValues(alpha: 0.04)
+                          : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: InstructorColors.borderColor(
+                          dk,
+                        ).withValues(alpha: 0.5),
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _aiDifficulty,
+                        isExpanded: true,
+                        isDense: true,
+                        dropdownColor: InstructorColors.cardColor(dk),
+                        style: TextStyle(
+                          color: InstructorColors.textPrimaryColor(dk),
+                          fontSize: 13,
+                        ),
+                        items: QuizAiService.difficulties
+                            .map(
+                              (d) => DropdownMenuItem(
+                                value: d,
+                                child: Text(
+                                  d[0].toUpperCase() + d.substring(1),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (v) {
+                          if (v != null) setState(() => _aiDifficulty = v);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        // Generate button
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: (_aiLoading || _aiFile == null)
+                ? null
+                : _generateAiQuestions,
+            icon: _aiLoading
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : const Icon(Icons.auto_awesome_rounded, size: 16),
+            label: Text(_aiLoading ? 'Generating...' : 'Generate & Add'),
             style: ElevatedButton.styleFrom(
               backgroundColor: InstructorColors.primary,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              disabledBackgroundColor: InstructorColors.primary.withValues(
+                alpha: 0.4,
+              ),
+              disabledForegroundColor: Colors.white70,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
             ),
           ),
-          const SizedBox(width: 10),
-          Expanded(child: Text(
-            _aiFile != null ? _aiFile!.path.split(Platform.pathSeparator).last : 'No file selected',
-            style: TextStyle(fontSize: 12, color: _aiFile != null ? InstructorColors.textPrimaryColor(dk) : InstructorColors.textTertiaryColor(dk)),
-            overflow: TextOverflow.ellipsis,
-          )),
-        ]),
-        const SizedBox(height: 12),
-        // Config row
-        Row(children: [
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Count', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: InstructorColors.textSecondaryColor(dk))),
-            const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(color: dk ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(10), border: Border.all(color: InstructorColors.borderColor(dk).withValues(alpha: 0.5))),
-              child: DropdownButtonHideUnderline(child: DropdownButton<int>(
-                value: _aiNumQuestions, isExpanded: true, isDense: true,
-                dropdownColor: InstructorColors.cardColor(dk),
-                style: TextStyle(color: InstructorColors.textPrimaryColor(dk), fontSize: 13),
-                items: [3,5,10,15,20].map((n) => DropdownMenuItem(value: n, child: Text('$n'))).toList(),
-                onChanged: (v) { if (v != null) setState(() => _aiNumQuestions = v); },
-              )),
-            ),
-          ])),
-          const SizedBox(width: 8),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Style', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: InstructorColors.textSecondaryColor(dk))),
-            const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(color: dk ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(10), border: Border.all(color: InstructorColors.borderColor(dk).withValues(alpha: 0.5))),
-              child: DropdownButtonHideUnderline(child: DropdownButton<String>(
-                value: _aiQuestionType, isExpanded: true, isDense: true,
-                dropdownColor: InstructorColors.cardColor(dk),
-                style: TextStyle(color: InstructorColors.textPrimaryColor(dk), fontSize: 13),
-                items: QuizAiService.questionTypes.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
-                onChanged: (v) { if (v != null) setState(() => _aiQuestionType = v); },
-              )),
-            ),
-          ])),
-          const SizedBox(width: 8),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Difficulty', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: InstructorColors.textSecondaryColor(dk))),
-            const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(color: dk ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(10), border: Border.all(color: InstructorColors.borderColor(dk).withValues(alpha: 0.5))),
-              child: DropdownButtonHideUnderline(child: DropdownButton<String>(
-                value: _aiDifficulty, isExpanded: true, isDense: true,
-                dropdownColor: InstructorColors.cardColor(dk),
-                style: TextStyle(color: InstructorColors.textPrimaryColor(dk), fontSize: 13),
-                items: QuizAiService.difficulties.map((d) => DropdownMenuItem(value: d, child: Text(d[0].toUpperCase() + d.substring(1)))).toList(),
-                onChanged: (v) { if (v != null) setState(() => _aiDifficulty = v); },
-              )),
-            ),
-          ])),
-        ]),
-        const SizedBox(height: 12),
-        // Generate button
-        SizedBox(width: double.infinity, child: ElevatedButton.icon(
-          onPressed: (_aiLoading || _aiFile == null) ? null : _generateAiQuestions,
-          icon: _aiLoading
-              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-              : const Icon(Icons.auto_awesome_rounded, size: 16),
-          label: Text(_aiLoading ? 'Generating...' : 'Generate & Add'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: InstructorColors.primary,
-            foregroundColor: Colors.white,
-            disabledBackgroundColor: InstructorColors.primary.withValues(alpha: 0.4),
-            disabledForegroundColor: Colors.white70,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-          ),
-        )),
+        ),
       ],
     ),
   );
@@ -394,34 +562,48 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
       setState(() {
         for (final q in generated) {
           final options = q.type == 'MCQ'
-              ? q.paddedOptions.map((o) => <String, dynamic>{'text': o}).toList()
+              ? q.paddedOptions
+                    .map((o) => <String, dynamic>{'text': o})
+                    .toList()
               : <Map<String, dynamic>>[];
-          _questions.add(_QuestionDraft(
-            questionText: q.questionText,
-            type: q.mappedType,
-            options: options,
-            correctAnswer: q.type == 'MCQ' ? q.guessMcqAnswerIndex() : q.correctAnswer,
-            explanation: q.reference,
-            points: 1.0,
-          ));
+          _questions.add(
+            _QuestionDraft(
+              questionText: q.questionText,
+              type: q.mappedType,
+              options: options,
+              correctAnswer: q.type == 'MCQ'
+                  ? q.guessMcqAnswerIndex()
+                  : q.correctAnswer,
+              explanation: q.reference,
+              points: 1.0,
+            ),
+          );
         }
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Added ${generated.length} AI-generated question(s)'),
-          backgroundColor: InstructorColors.success,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Added ${generated.length} AI-generated question(s)'),
+            backgroundColor: InstructorColors.success,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('AI generation failed: $e'),
-          backgroundColor: InstructorColors.error,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('AI generation failed: $e'),
+            backgroundColor: InstructorColors.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _aiLoading = false);
@@ -435,24 +617,48 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
         physics: const BouncingScrollPhysics(),
         children: [
           _aiPanel(dk),
-          Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Icon(Icons.help_outline_rounded, size: 56, color: InstructorColors.textTertiaryColor(dk)),
-            const SizedBox(height: 16),
-            Text('No questions added yet', style: TextStyle(color: InstructorColors.textSecondaryColor(dk), fontSize: 16, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 8),
-            Text('Use AI above or add manually below', style: TextStyle(color: InstructorColors.textTertiaryColor(dk), fontSize: 13)),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () => _addQuestion(dk),
-              icon: const Icon(Icons.add_rounded, size: 18),
-              label: const Text('Add Question'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: InstructorColors.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.help_outline_rounded,
+                  size: 56,
+                  color: InstructorColors.textTertiaryColor(dk),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No questions added yet',
+                  style: TextStyle(
+                    color: InstructorColors.textSecondaryColor(dk),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Use AI above or add manually below',
+                  style: TextStyle(
+                    color: InstructorColors.textTertiaryColor(dk),
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: () => _addQuestion(dk),
+                  icon: const Icon(Icons.add_rounded, size: 18),
+                  label: const Text('Add Question'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: InstructorColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ])),
+          ),
         ],
       );
     }
@@ -461,7 +667,11 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
       physics: const BouncingScrollPhysics(),
       itemCount: _questions.length + 2, // +1 for AI panel, +1 for add button
       itemBuilder: (_, i) {
-        if (i == 0) return Padding(padding: const EdgeInsets.only(bottom: 4), child: _aiPanel(dk));
+        if (i == 0)
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: _aiPanel(dk),
+          );
         if (i == _questions.length + 1) {
           return Padding(
             padding: const EdgeInsets.only(top: 12),
@@ -472,7 +682,9 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
               style: OutlinedButton.styleFrom(
                 foregroundColor: InstructorColors.primary,
                 side: const BorderSide(color: InstructorColors.primary),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
@@ -482,8 +694,6 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
       },
     );
   }
-
-
 
   Widget _questionCard(bool dk, int idx) {
     final q = _questions[idx];
@@ -1183,21 +1393,29 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
 
   Future<void> _saveQuiz() async {
     if (_title.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('Quiz title is required'),
-        backgroundColor: InstructorColors.error,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Quiz title is required'),
+          backgroundColor: InstructorColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
       return;
     }
     if (_questions.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('Add at least one question'),
-        backgroundColor: InstructorColors.error,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Add at least one question'),
+          backgroundColor: InstructorColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
       return;
     }
 
@@ -1259,8 +1477,9 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
       } else if (q.type == QuestionTypeEnum.trueFalse) {
         questionPayload['options'] = ['True', 'False'];
         // Convert 'True'/'False' to index
-        questionPayload['correctAnswer'] =
-            q.correctAnswer == 'True' ? '0' : '1';
+        questionPayload['correctAnswer'] = q.correctAnswer == 'True'
+            ? '0'
+            : '1';
       } else if (q.type == QuestionTypeEnum.shortAnswer) {
         questionPayload['correctAnswer'] = q.correctAnswer?.toString() ?? '';
       } else if (q.type == QuestionTypeEnum.essay) {
