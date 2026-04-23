@@ -34,6 +34,7 @@ enum QuestionTypeEnum {
 
   factory QuestionTypeEnum.fromJson(String? value) {
     switch (value?.toLowerCase()) {
+      case 'mcq':
       case 'multiple_choice':
       case 'multiplechoice':
         return QuestionTypeEnum.multipleChoice;
@@ -42,8 +43,11 @@ enum QuestionTypeEnum {
         return QuestionTypeEnum.trueFalse;
       case 'short_answer':
       case 'shortanswer':
+      case 'fill_blank':
+      case 'fillblank':
         return QuestionTypeEnum.shortAnswer;
       case 'essay':
+      case 'explain':
         return QuestionTypeEnum.essay;
       case 'matching':
         return QuestionTypeEnum.matching;
@@ -52,10 +56,12 @@ enum QuestionTypeEnum {
     }
   }
 
+  /// Returns the backend-native enum value.
+  /// Backend uses: mcq, true_false, short_answer, essay, matching
   String toJson() {
     switch (this) {
       case QuestionTypeEnum.multipleChoice:
-        return 'multiple_choice';
+        return 'mcq';
       case QuestionTypeEnum.trueFalse:
         return 'true_false';
       case QuestionTypeEnum.shortAnswer:
@@ -104,23 +110,24 @@ enum AttemptStatusEnum {
   }
 }
 
+/// Backend uses: immediate, after_due, never
 enum ShowAnswersAfterEnum {
-  never,
-  submission,
-  grading,
-  dueDate;
+  immediate,
+  afterDue,
+  never;
 
   factory ShowAnswersAfterEnum.fromJson(String? value) {
     switch (value?.toLowerCase()) {
+      case 'immediate':
+      case 'submission': // legacy compat
+        return ShowAnswersAfterEnum.immediate;
+      case 'after_due':
+      case 'afterdue':
+      case 'due_date': // legacy compat
+      case 'grading': // legacy compat
+        return ShowAnswersAfterEnum.afterDue;
       case 'never':
         return ShowAnswersAfterEnum.never;
-      case 'submission':
-        return ShowAnswersAfterEnum.submission;
-      case 'grading':
-        return ShowAnswersAfterEnum.grading;
-      case 'due_date':
-      case 'duedate':
-        return ShowAnswersAfterEnum.dueDate;
       default:
         return ShowAnswersAfterEnum.never;
     }
@@ -128,14 +135,12 @@ enum ShowAnswersAfterEnum {
 
   String toJson() {
     switch (this) {
+      case ShowAnswersAfterEnum.immediate:
+        return 'immediate';
+      case ShowAnswersAfterEnum.afterDue:
+        return 'after_due';
       case ShowAnswersAfterEnum.never:
         return 'never';
-      case ShowAnswersAfterEnum.submission:
-        return 'submission';
-      case ShowAnswersAfterEnum.grading:
-        return 'grading';
-      case ShowAnswersAfterEnum.dueDate:
-        return 'due_date';
     }
   }
 }
@@ -290,8 +295,10 @@ class QuizModel {
               : null),
       maxAttempts: _parseInt(json['maxAttempts'], 1),
       passingScore: _parseDouble(json['passingScore'], 50.0),
-      randomizeQuestions: json['randomizeQuestions'] == true,
-      showCorrectAnswers: json['showCorrectAnswers'] == true,
+      randomizeQuestions: json['randomizeQuestions'] == true ||
+          json['randomizeQuestions'] == 1,
+      showCorrectAnswers: json['showCorrectAnswers'] == true ||
+          json['showCorrectAnswers'] == 1,
       showAnswersAfter:
           ShowAnswersAfterEnum.fromJson(json['showAnswersAfter'] as String?),
       availableFrom: _parseDate(json['availableFrom']),
@@ -397,6 +404,7 @@ class QuizQuestionModel {
   final double points;
   final int? difficultyLevelId;
   final int orderIndex;
+  final List<Map<String, String>> matchingPairs;
 
   const QuizQuestionModel({
     required this.id,
@@ -409,6 +417,7 @@ class QuizQuestionModel {
     this.points = 1.0,
     this.difficultyLevelId,
     this.orderIndex = 0,
+    this.matchingPairs = const [],
   });
 
   factory QuizQuestionModel.fromJson(Map<String, dynamic> json) {
@@ -419,6 +428,20 @@ class QuizQuestionModel {
         if (e is Map<String, dynamic>) return e;
         if (e is String) return <String, dynamic>{'text': e};
         return <String, dynamic>{};
+      }).toList();
+    }
+
+    List<Map<String, String>> matchingPairs = [];
+    final rawPairs = json['matchingPairs'];
+    if (rawPairs is List) {
+      matchingPairs = rawPairs.map((p) {
+        if (p is Map) {
+          return <String, String>{
+            'left': (p['left'] ?? '').toString(),
+            'right': (p['right'] ?? '').toString(),
+          };
+        }
+        return <String, String>{'left': '', 'right': ''};
       }).toList();
     }
 
@@ -436,6 +459,7 @@ class QuizQuestionModel {
           ? _parseInt(json['difficultyLevelId'])
           : null,
       orderIndex: _parseInt(json['orderIndex']),
+      matchingPairs: matchingPairs,
     );
   }
 
@@ -448,6 +472,7 @@ class QuizQuestionModel {
         'points': points,
         if (difficultyLevelId != null) 'difficultyLevelId': difficultyLevelId,
         'orderIndex': orderIndex,
+        if (matchingPairs.isNotEmpty) 'matchingPairs': matchingPairs,
       };
 
   QuizQuestionModel copyWith({
@@ -461,6 +486,7 @@ class QuizQuestionModel {
     double? points,
     int? difficultyLevelId,
     int? orderIndex,
+    List<Map<String, String>>? matchingPairs,
   }) {
     return QuizQuestionModel(
       id: id ?? this.id,
@@ -473,6 +499,7 @@ class QuizQuestionModel {
       points: points ?? this.points,
       difficultyLevelId: difficultyLevelId ?? this.difficultyLevelId,
       orderIndex: orderIndex ?? this.orderIndex,
+      matchingPairs: matchingPairs ?? this.matchingPairs,
     );
   }
 }
@@ -487,6 +514,7 @@ class AttemptAnswerModel {
   final String? answerText;
   final bool? isCorrect;
   final double? pointsEarned;
+  final List<Map<String, String>> matchingAnswers;
 
   const AttemptAnswerModel({
     this.id,
@@ -496,9 +524,33 @@ class AttemptAnswerModel {
     this.answerText,
     this.isCorrect,
     this.pointsEarned,
+    this.matchingAnswers = const [],
   });
 
   factory AttemptAnswerModel.fromJson(Map<String, dynamic> json) {
+    // isCorrect can be bool or int (0/1) from backend
+    bool? isCorrect;
+    final rawCorrect = json['isCorrect'];
+    if (rawCorrect is bool) {
+      isCorrect = rawCorrect;
+    } else if (rawCorrect is int) {
+      isCorrect = rawCorrect == 1;
+    }
+
+    List<Map<String, String>> matchingAnswers = [];
+    final rawMatching = json['matchingAnswers'];
+    if (rawMatching is List) {
+      matchingAnswers = rawMatching.map((p) {
+        if (p is Map) {
+          return <String, String>{
+            'left': (p['left'] ?? '').toString(),
+            'right': (p['right'] ?? '').toString(),
+          };
+        }
+        return <String, String>{'left': '', 'right': ''};
+      }).toList();
+    }
+
     return AttemptAnswerModel(
       id: json['id'] != null ? _parseInt(json['id']) : null,
       attemptId:
@@ -506,10 +558,11 @@ class AttemptAnswerModel {
       questionId: _parseInt(json['questionId']),
       selectedOption: json['selectedOption'] as String?,
       answerText: json['answerText'] as String?,
-      isCorrect: json['isCorrect'] as bool?,
+      isCorrect: isCorrect,
       pointsEarned: json['pointsEarned'] != null
           ? _parseDouble(json['pointsEarned'])
           : null,
+      matchingAnswers: matchingAnswers,
     );
   }
 
@@ -517,6 +570,7 @@ class AttemptAnswerModel {
         'questionId': questionId,
         if (selectedOption != null) 'selectedOption': selectedOption,
         if (answerText != null) 'answerText': answerText,
+        if (matchingAnswers.isNotEmpty) 'matchingAnswers': matchingAnswers,
       };
 }
 

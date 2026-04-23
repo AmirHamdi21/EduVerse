@@ -67,9 +67,9 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
               context.pushReplacement('/student/quiz-result');
             }
             if (state is StudentQuizError) {
-              ScaffoldMessenger.of(ctx).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(
+                ctx,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (ctx, state) {
@@ -84,7 +84,9 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
                   : Scaffold(
                       backgroundColor: bg,
                       body: const Center(
-                        child: CircularProgressIndicator(color: Color(0xFF2B7FFF)),
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF2B7FFF),
+                        ),
                       ),
                     );
             }
@@ -166,7 +168,12 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
 
   Widget _buildHeader(bool isDark, StudentQuizActive state) {
     return Container(
-      padding: EdgeInsets.fromLTRB(16, MediaQuery.of(context).padding.top + 8, 16, 12),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        MediaQuery.of(context).padding.top + 8,
+        16,
+        12,
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isDark
@@ -184,7 +191,11 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
                 color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.close_rounded, color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.close_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -192,7 +203,9 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
             child: Text(
               'Q ${state.currentQuestionIndex + 1}/${state.totalQuestions}',
               style: const TextStyle(
-                color: Colors.white, fontSize: 16, fontWeight: FontWeight.w700,
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
@@ -206,7 +219,11 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
                 color: Colors.white.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.grid_view_rounded, color: Colors.white, size: 20),
+              child: const Icon(
+                Icons.grid_view_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
             ),
           ),
         ],
@@ -229,13 +246,18 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.timer_outlined, color: isLow ? const Color(0xFFEF4444) : Colors.white, size: 16),
+          Icon(
+            Icons.timer_outlined,
+            color: isLow ? const Color(0xFFEF4444) : Colors.white,
+            size: 16,
+          ),
           const SizedBox(width: 4),
           Text(
             '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}',
             style: TextStyle(
               color: isLow ? const Color(0xFFEF4444) : Colors.white,
-              fontSize: 14, fontWeight: FontWeight.w700,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
@@ -252,7 +274,9 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
         child: LinearProgressIndicator(
           value: progress,
           minHeight: 4,
-          backgroundColor: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
+          backgroundColor: isDark
+              ? const Color(0xFF1E293B)
+              : const Color(0xFFE2E8F0),
           valueColor: const AlwaysStoppedAnimation(Color(0xFF2B7FFF)),
         ),
       ),
@@ -271,12 +295,15 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFE2E8F0),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : const Color(0xFFE2E8F0),
         ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-            blurRadius: 12, offset: const Offset(0, 4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -293,7 +320,9 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
             child: Text(
               q.questionType.toJson().replaceAll('_', ' ').toUpperCase(),
               style: const TextStyle(
-                color: Color(0xFF2B7FFF), fontSize: 10, fontWeight: FontWeight.w700,
+                color: Color(0xFF2B7FFF),
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
@@ -302,7 +331,9 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
             q.questionText,
             style: TextStyle(
               color: isDark ? Colors.white : const Color(0xFF1E293B),
-              fontSize: 16, fontWeight: FontWeight.w600, height: 1.5,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              height: 1.5,
             ),
           ),
           const SizedBox(height: 20),
@@ -313,7 +344,11 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
     );
   }
 
-  Widget _buildAnswerArea(bool isDark, QuizQuestionModel q, AttemptAnswerModel? answer) {
+  Widget _buildAnswerArea(
+    bool isDark,
+    QuizQuestionModel q,
+    AttemptAnswerModel? answer,
+  ) {
     switch (q.questionType) {
       case QuestionTypeEnum.multipleChoice:
       case QuestionTypeEnum.trueFalse:
@@ -322,11 +357,48 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
       case QuestionTypeEnum.essay:
         return _buildTextArea(isDark, q, answer);
       case QuestionTypeEnum.matching:
-        return _buildOptionsArea(isDark, q, answer);
+        return _buildMatchingArea(isDark, q, answer);
     }
   }
 
-  Widget _buildOptionsArea(bool isDark, QuizQuestionModel q, AttemptAnswerModel? answer) {
+  /// Matching question UI — mirrors the web's MatchingQuestion.tsx.
+  /// Two columns: tap a left item, then tap a right item to pair them.
+  Widget _buildMatchingArea(
+    bool isDark,
+    QuizQuestionModel q,
+    AttemptAnswerModel? answer,
+  ) {
+    // Extract left/right items from matchingPairs
+    final leftItems = q.matchingPairs.map((p) => p['left'] ?? '').toList();
+    final rightItems = q.matchingPairs.map((p) => p['right'] ?? '').toList();
+
+    // If no matchingPairs, fall back to options
+    if (leftItems.isEmpty) {
+      return _buildOptionsArea(isDark, q, answer);
+    }
+
+    // Current pairs from the answer
+    final currentPairs = answer?.matchingAnswers ?? [];
+
+    return _MatchingQuestionWidget(
+      isDark: isDark,
+      leftItems: leftItems,
+      rightItems: rightItems..shuffle(), // Shuffle right side for challenge
+      selectedPairs: currentPairs,
+      onPairChange: (pairs) {
+        context.read<StudentQuizCubit>().submitAnswer(
+          q.id,
+          matchingAnswers: pairs,
+        );
+      },
+    );
+  }
+
+  Widget _buildOptionsArea(
+    bool isDark,
+    QuizQuestionModel q,
+    AttemptAnswerModel? answer,
+  ) {
     final options = q.options;
     return Column(
       children: options.asMap().entries.map((entry) {
@@ -344,7 +416,8 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
               onTap: () {
                 HapticFeedback.lightImpact();
                 context.read<StudentQuizCubit>().submitAnswer(
-                  q.id, selectedOption: optId,
+                  q.id,
+                  selectedOption: optId,
                 );
               },
               borderRadius: BorderRadius.circular(14),
@@ -354,33 +427,47 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? const Color(0xFF2B7FFF).withValues(alpha: 0.1)
-                      : (isDark ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC)),
+                      : (isDark
+                            ? Colors.white.withValues(alpha: 0.04)
+                            : const Color(0xFFF8FAFC)),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isSelected
                         ? const Color(0xFF2B7FFF)
-                        : (isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE2E8F0)),
+                        : (isDark
+                              ? Colors.white.withValues(alpha: 0.08)
+                              : const Color(0xFFE2E8F0)),
                     width: isSelected ? 2 : 1,
                   ),
                 ),
                 child: Row(
                   children: [
                     Container(
-                      width: 28, height: 28,
+                      width: 28,
+                      height: 28,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: isSelected
                             ? const Color(0xFF2B7FFF)
-                            : (isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE2E8F0)),
+                            : (isDark
+                                  ? Colors.white.withValues(alpha: 0.08)
+                                  : const Color(0xFFE2E8F0)),
                       ),
                       child: Center(
                         child: isSelected
-                            ? const Icon(Icons.check, color: Colors.white, size: 16)
+                            ? const Icon(
+                                Icons.check,
+                                color: Colors.white,
+                                size: 16,
+                              )
                             : Text(
                                 String.fromCharCode(65 + idx),
                                 style: TextStyle(
-                                  color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-                                  fontSize: 12, fontWeight: FontWeight.w600,
+                                  color: isDark
+                                      ? const Color(0xFF94A3B8)
+                                      : const Color(0xFF64748B),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                       ),
@@ -392,9 +479,13 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
                         style: TextStyle(
                           color: isSelected
                               ? const Color(0xFF2B7FFF)
-                              : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                              : (isDark
+                                    ? Colors.white
+                                    : const Color(0xFF1E293B)),
                           fontSize: 14,
-                          fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
                         ),
                       ),
                     ),
@@ -408,14 +499,20 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
     );
   }
 
-  Widget _buildTextArea(bool isDark, QuizQuestionModel q, AttemptAnswerModel? answer) {
+  Widget _buildTextArea(
+    bool isDark,
+    QuizQuestionModel q,
+    AttemptAnswerModel? answer,
+  ) {
     _answerController.text = answer?.answerText ?? '';
     return TextField(
       controller: _answerController,
-      onChanged: (v) => context.read<StudentQuizCubit>().submitAnswer(q.id, text: v),
+      onChanged: (v) =>
+          context.read<StudentQuizCubit>().submitAnswer(q.id, text: v),
       maxLines: q.questionType == QuestionTypeEnum.essay ? 8 : 3,
       style: TextStyle(
-        color: isDark ? Colors.white : const Color(0xFF1E293B), fontSize: 14,
+        color: isDark ? Colors.white : const Color(0xFF1E293B),
+        fontSize: 14,
       ),
       decoration: InputDecoration(
         hintText: 'Type your answer here...',
@@ -423,17 +520,23 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
           color: isDark ? const Color(0xFF475569) : const Color(0xFF94A3B8),
         ),
         filled: true,
-        fillColor: isDark ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC),
+        fillColor: isDark
+            ? Colors.white.withValues(alpha: 0.04)
+            : const Color(0xFFF8FAFC),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(
-            color: isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE2E8F0),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : const Color(0xFFE2E8F0),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide(
-            color: isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE2E8F0),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : const Color(0xFFE2E8F0),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -446,12 +549,19 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
 
   Widget _buildActions(bool isDark, StudentQuizActive state) {
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 12, 16, MediaQuery.of(context).padding.bottom + 12),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        12,
+        16,
+        MediaQuery.of(context).padding.bottom + 12,
+      ),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         border: Border(
           top: BorderSide(
-            color: isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFE2E8F0),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : const Color(0xFFE2E8F0),
           ),
         ),
       ),
@@ -459,17 +569,28 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
         children: [
           if (state.canGoPrevious)
             Expanded(
-              child: _actionBtn(isDark, 'Previous', Icons.arrow_back_rounded, () {
-                HapticFeedback.lightImpact();
-                context.read<StudentQuizCubit>().previousQuestion();
-              }, false),
+              child: _actionBtn(
+                isDark,
+                'Previous',
+                Icons.arrow_back_rounded,
+                () {
+                  HapticFeedback.lightImpact();
+                  context.read<StudentQuizCubit>().previousQuestion();
+                },
+                false,
+              ),
             ),
           if (state.canGoPrevious) const SizedBox(width: 10),
           Expanded(
             flex: 2,
             child: state.isLastQuestion
-                ? _actionBtn(isDark, 'Submit (${state.answeredCount}/${state.totalQuestions})',
-                    Icons.check_circle_rounded, () => _showSubmitDialog(isDark, state), true)
+                ? _actionBtn(
+                    isDark,
+                    'Submit (${state.answeredCount}/${state.totalQuestions})',
+                    Icons.check_circle_rounded,
+                    () => _showSubmitDialog(isDark, state),
+                    true,
+                  )
                 : _actionBtn(isDark, 'Next', Icons.arrow_forward_rounded, () {
                     HapticFeedback.lightImpact();
                     context.read<StudentQuizCubit>().nextQuestion();
@@ -480,7 +601,13 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
     );
   }
 
-  Widget _actionBtn(bool isDark, String label, IconData icon, VoidCallback onTap, bool primary) {
+  Widget _actionBtn(
+    bool isDark,
+    String label,
+    IconData icon,
+    VoidCallback onTap,
+    bool primary,
+  ) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -489,21 +616,42 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            gradient: primary ? const LinearGradient(colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)]) : null,
-            color: primary ? null : (isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF1F5F9)),
+            gradient: primary
+                ? const LinearGradient(
+                    colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
+                  )
+                : null,
+            color: primary
+                ? null
+                : (isDark
+                      ? Colors.white.withValues(alpha: 0.06)
+                      : const Color(0xFFF1F5F9)),
             borderRadius: BorderRadius.circular(14),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: primary ? Colors.white : (isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B)), size: 18),
+              Icon(
+                icon,
+                color: primary
+                    ? Colors.white
+                    : (isDark
+                          ? const Color(0xFF94A3B8)
+                          : const Color(0xFF64748B)),
+                size: 18,
+              ),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
                   label,
                   style: TextStyle(
-                    color: primary ? Colors.white : (isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B)),
-                    fontSize: 14, fontWeight: FontWeight.w600,
+                    color: primary
+                        ? Colors.white
+                        : (isDark
+                              ? const Color(0xFF94A3B8)
+                              : const Color(0xFF64748B)),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -525,20 +673,38 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF1E293B) : Colors.white,
           borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(24), topRight: Radius.circular(24),
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
           ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(2))),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white24 : Colors.black12,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
             const SizedBox(height: 16),
-            Text('Questions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: isDark ? Colors.white : const Color(0xFF1E293B))),
+            Text(
+              'Questions',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : const Color(0xFF1E293B),
+              ),
+            ),
             const SizedBox(height: 16),
             Wrap(
-              spacing: 10, runSpacing: 10,
+              spacing: 10,
+              runSpacing: 10,
               children: List.generate(state.totalQuestions, (i) {
-                final isAnswered = state.answers.containsKey(state.questions[i].id);
+                final isAnswered = state.answers.containsKey(
+                  state.questions[i].id,
+                );
                 final isCurrent = i == state.currentQuestionIndex;
                 return GestureDetector(
                   onTap: () {
@@ -546,19 +712,41 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
                     context.read<StudentQuizCubit>().goToQuestion(i);
                   },
                   child: Container(
-                    width: 44, height: 44,
+                    width: 44,
+                    height: 44,
                     decoration: BoxDecoration(
-                      gradient: isCurrent ? const LinearGradient(colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)]) : null,
-                      color: isCurrent ? null : (isAnswered ? const Color(0xFF10B981).withValues(alpha: 0.15) : (isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF1F5F9))),
+                      gradient: isCurrent
+                          ? const LinearGradient(
+                              colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
+                            )
+                          : null,
+                      color: isCurrent
+                          ? null
+                          : (isAnswered
+                                ? const Color(
+                                    0xFF10B981,
+                                  ).withValues(alpha: 0.15)
+                                : (isDark
+                                      ? Colors.white.withValues(alpha: 0.06)
+                                      : const Color(0xFFF1F5F9))),
                       borderRadius: BorderRadius.circular(12),
-                      border: isAnswered && !isCurrent ? Border.all(color: const Color(0xFF10B981), width: 2) : null,
+                      border: isAnswered && !isCurrent
+                          ? Border.all(color: const Color(0xFF10B981), width: 2)
+                          : null,
                     ),
                     child: Center(
                       child: Text(
                         '${i + 1}',
                         style: TextStyle(
-                          color: isCurrent ? Colors.white : (isAnswered ? const Color(0xFF10B981) : (isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B))),
-                          fontWeight: FontWeight.w700, fontSize: 14,
+                          color: isCurrent
+                              ? Colors.white
+                              : (isAnswered
+                                    ? const Color(0xFF10B981)
+                                    : (isDark
+                                          ? const Color(0xFF94A3B8)
+                                          : const Color(0xFF64748B))),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 14,
                         ),
                       ),
                     ),
@@ -581,15 +769,29 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Submit Quiz?', style: TextStyle(color: isDark ? Colors.white : const Color(0xFF1E293B))),
+        title: Text(
+          'Submit Quiz?',
+          style: TextStyle(
+            color: isDark ? Colors.white : const Color(0xFF1E293B),
+          ),
+        ),
         content: Text(
           'Answered: ${state.answeredCount}/${state.totalQuestions}\nUnanswered: ${state.totalQuestions - state.answeredCount}',
-          style: TextStyle(color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B)),
+          style: TextStyle(
+            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('Cancel', style: TextStyle(color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B))),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                color: isDark
+                    ? const Color(0xFF94A3B8)
+                    : const Color(0xFF64748B),
+              ),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -598,7 +800,9 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF2B7FFF),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: const Text('Submit', style: TextStyle(color: Colors.white)),
           ),
@@ -614,15 +818,25 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: isDark ? const Color(0xFF1E293B) : Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Text('Exit Quiz?', style: TextStyle(color: isDark ? Colors.white : const Color(0xFF1E293B))),
+        title: Text(
+          'Exit Quiz?',
+          style: TextStyle(
+            color: isDark ? Colors.white : const Color(0xFF1E293B),
+          ),
+        ),
         content: Text(
           'Your progress will be saved. You can resume later.',
-          style: TextStyle(color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B)),
+          style: TextStyle(
+            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Stay', style: TextStyle(color: Color(0xFF2B7FFF))),
+            child: const Text(
+              'Stay',
+              style: TextStyle(color: Color(0xFF2B7FFF)),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -633,11 +847,272 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEF4444),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: const Text('Exit', style: TextStyle(color: Colors.white)),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Matching Question Widget ─────────────────────────────────────────────────
+// Mirrors the web's MatchingQuestion.tsx — two columns, tap left then right to pair.
+
+const _pairColors = [
+  Color(0xFF3B82F6), // Blue
+  Color(0xFF10B981), // Green
+  Color(0xFFF59E0B), // Amber
+  Color(0xFFEF4444), // Red
+  Color(0xFF8B5CF6), // Violet
+  Color(0xFF06B6D4), // Cyan
+];
+
+class _MatchingQuestionWidget extends StatefulWidget {
+  final bool isDark;
+  final List<String> leftItems;
+  final List<String> rightItems;
+  final List<Map<String, String>> selectedPairs;
+  final ValueChanged<List<Map<String, String>>> onPairChange;
+
+  const _MatchingQuestionWidget({
+    required this.isDark,
+    required this.leftItems,
+    required this.rightItems,
+    required this.selectedPairs,
+    required this.onPairChange,
+  });
+
+  @override
+  State<_MatchingQuestionWidget> createState() =>
+      _MatchingQuestionWidgetState();
+}
+
+class _MatchingQuestionWidgetState extends State<_MatchingQuestionWidget> {
+  String? _activeLeft;
+  late List<String> _shuffledRight;
+
+  @override
+  void initState() {
+    super.initState();
+    _shuffledRight = List.of(widget.rightItems)..shuffle();
+  }
+
+  int? _pairIndexOf(String item) {
+    for (var i = 0; i < widget.selectedPairs.length; i++) {
+      if (widget.selectedPairs[i]['left'] == item ||
+          widget.selectedPairs[i]['right'] == item) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  Color? _colorOf(String item) {
+    final idx = _pairIndexOf(item);
+    return idx != null ? _pairColors[idx % _pairColors.length] : null;
+  }
+
+  void _onLeftTap(String item) {
+    final existingPair = widget.selectedPairs
+        .where((p) => p['left'] == item)
+        .firstOrNull;
+    if (existingPair != null) {
+      widget.onPairChange(
+        widget.selectedPairs.where((p) => p['left'] != item).toList(),
+      );
+      setState(() => _activeLeft = null);
+      return;
+    }
+    setState(() => _activeLeft = _activeLeft == item ? null : item);
+  }
+
+  void _onRightTap(String item) {
+    if (_activeLeft == null) {
+      final existingPair = widget.selectedPairs
+          .where((p) => p['right'] == item)
+          .firstOrNull;
+      if (existingPair != null) {
+        widget.onPairChange(
+          widget.selectedPairs.where((p) => p['right'] != item).toList(),
+        );
+      }
+      return;
+    }
+
+    var updated = List<Map<String, String>>.from(widget.selectedPairs);
+    updated.removeWhere((p) => p['right'] == item);
+    updated.removeWhere((p) => p['left'] == _activeLeft);
+    updated.add({'left': _activeLeft!, 'right': item});
+    widget.onPairChange(updated);
+    setState(() => _activeLeft = null);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final dk = widget.isDark;
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: dk
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: dk
+              ? Colors.white.withValues(alpha: 0.08)
+              : const Color(0xFFE2E8F0),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Left column
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Match from',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: dk
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF64748B),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ...widget.leftItems.map(
+                  (item) => _buildItem(
+                    item,
+                    true,
+                    dk,
+                    isActive: _activeLeft == item,
+                    pairColor: _colorOf(item),
+                    pairIndex: _pairIndexOf(item),
+                    onTap: () => _onLeftTap(item),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Right column
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Match to',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: dk
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF64748B),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ..._shuffledRight.map(
+                  (item) => _buildItem(
+                    item,
+                    false,
+                    dk,
+                    pairColor: _colorOf(item),
+                    pairIndex: _pairIndexOf(item),
+                    onTap: () => _onRightTap(item),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildItem(
+    String text,
+    bool isLeft,
+    bool dk, {
+    bool isActive = false,
+    Color? pairColor,
+    int? pairIndex,
+    required VoidCallback onTap,
+  }) {
+    final hasPair = pairColor != null;
+    final borderColor =
+        pairColor ??
+        (isActive
+            ? const Color(0xFF3B82F6)
+            : (dk
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : const Color(0xFFCBD5E1)));
+    final bgColor = hasPair
+        ? pairColor.withValues(alpha: 0.1)
+        : isActive
+        ? const Color(0xFF3B82F6).withValues(alpha: 0.08)
+        : Colors.transparent;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: borderColor,
+                width: hasPair || isActive ? 2 : 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    text,
+                    style: TextStyle(
+                      color: hasPair
+                          ? pairColor
+                          : (dk ? Colors.white : const Color(0xFF1E293B)),
+                      fontSize: 13,
+                      fontWeight: hasPair ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
+                ),
+                if (hasPair && pairIndex != null)
+                  Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: pairColor,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${pairIndex + 1}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

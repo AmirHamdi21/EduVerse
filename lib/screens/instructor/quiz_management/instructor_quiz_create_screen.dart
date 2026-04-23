@@ -233,7 +233,7 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
               dk,
               'Show Answers After',
               _showAfter.toJson(),
-              ['never', 'submission', 'grading', 'due_date'],
+              ['immediate', 'after_due', 'never'],
               (v) =>
                   setState(() => _showAfter = ShowAnswersAfterEnum.fromJson(v)),
             ),
@@ -993,7 +993,7 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
                       'Question Type',
                       type.toJson(),
                       [
-                        'multiple_choice',
+                        'mcq',
                         'true_false',
                         'short_answer',
                         'essay',
@@ -1182,8 +1182,29 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
   );
 
   Future<void> _saveQuiz() async {
+    if (_title.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Quiz title is required'),
+        backgroundColor: InstructorColors.error,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ));
+      return;
+    }
+    if (_questions.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text('Add at least one question'),
+        backgroundColor: InstructorColors.error,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ));
+      return;
+    }
+
     setState(() => _saving = true);
     final cubit = context.read<QuizManagementCubit>();
+
+    // Build quiz payload — matching web's QuizCreate.tsx format
     final data = <String, dynamic>{
       'title': _title.text.trim(),
       if (_desc.text.trim().isNotEmpty) 'description': _desc.text.trim(),
@@ -1191,44 +1212,69 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
         'instructions': _instructions.text.trim(),
       'quizType': _quizType.toJson(),
       if (_timeLimit.text.isNotEmpty)
-        'timeLimit': int.tryParse(_timeLimit.text) ?? 0,
+        'timeLimitMinutes': int.tryParse(_timeLimit.text) ?? 0,
       'maxAttempts': int.tryParse(_maxAttempts.text) ?? 1,
-      'passingScore': double.tryParse(_passingScore.text) ?? 50,
-      'weight': double.tryParse(_weight.text) ?? 1,
-      'randomizeQuestions': _randomize,
-      'showCorrectAnswers': _showCorrect,
+      // Backend expects passingScore as string
+      'passingScore': (double.tryParse(_passingScore.text) ?? 50).toString(),
+      'weight': (double.tryParse(_weight.text) ?? 1).toString(),
+      // Backend expects int (0/1) not bool
+      'randomizeQuestions': _randomize ? 1 : 0,
+      'showCorrectAnswers': _showCorrect ? 1 : 0,
       'showAnswersAfter': _showAfter.toJson(),
       if (_availFrom != null) 'availableFrom': _availFrom!.toIso8601String(),
       if (_availUntil != null) 'availableUntil': _availUntil!.toIso8601String(),
       if (_courseId != null) 'courseId': _courseId,
     };
 
-    final ok = await cubit.createQuiz(data);
-    if (!ok || !mounted) {
-      setState(() => _saving = false);
+    // Create quiz — returns the model with the new ID
+    final createdQuiz = await cubit.createQuiz(data);
+    if (createdQuiz == null || !mounted) {
+      if (mounted) setState(() => _saving = false);
       return;
     }
 
-    // Add questions if any
-    if (_questions.isNotEmpty) {
-      final quizzes = cubit.state;
-      if (quizzes is QuizMgmtLoaded && quizzes.quizzes.isNotEmpty) {
-        final newQuiz = quizzes.quizzes.first;
-        _createdQuizId = newQuiz.id;
-        for (var i = 0; i < _questions.length; i++) {
-          final q = _questions[i];
-          await cubit.addQuestion(newQuiz.id, {
-            'questionType': q.type.toJson(),
-            'questionText': q.questionText,
-            'options': q.options,
-            if (q.correctAnswer != null) 'correctAnswer': q.correctAnswer,
-            if (q.explanation.isNotEmpty) 'explanation': q.explanation,
-            'points': q.points,
-            'orderIndex': i,
-          });
-        }
+    final quizId = createdQuiz.id;
+    _createdQuizId = quizId;
+
+    // Add questions sequentially — matching web's QuizCreate.tsx handleSave
+    for (var i = 0; i < _questions.length; i++) {
+      final q = _questions[i];
+      // Build question payload matching backend expectations
+      final questionPayload = <String, dynamic>{
+        'questionText': q.questionText,
+        'questionType': q.type.toJson(), // Now sends 'mcq' etc.
+        'points': q.points.toString(), // Backend expects string
+        if (q.explanation.isNotEmpty) 'explanation': q.explanation,
+        'orderIndex': i,
+      };
+
+      // Handle options & correct answer based on type
+      if (q.type == QuestionTypeEnum.multipleChoice) {
+        // Send options as flat string list (backend expects string[])
+        questionPayload['options'] = q.options
+            .map((o) => (o['text'] ?? '').toString())
+            .where((s) => s.isNotEmpty)
+            .toList();
+        questionPayload['correctAnswer'] = q.correctAnswer?.toString() ?? '0';
+      } else if (q.type == QuestionTypeEnum.trueFalse) {
+        questionPayload['options'] = ['True', 'False'];
+        // Convert 'True'/'False' to index
+        questionPayload['correctAnswer'] =
+            q.correctAnswer == 'True' ? '0' : '1';
+      } else if (q.type == QuestionTypeEnum.shortAnswer) {
+        questionPayload['correctAnswer'] = q.correctAnswer?.toString() ?? '';
+      } else if (q.type == QuestionTypeEnum.essay) {
+        questionPayload['correctAnswer'] = null;
+      } else if (q.type == QuestionTypeEnum.matching) {
+        questionPayload['options'] = q.options
+            .map((p) => p.toString())
+            .toList();
+        questionPayload['correctAnswer'] = null;
       }
+
+      await cubit.addQuestion(quizId, questionPayload);
     }
+
     if (mounted) {
       HapticFeedback.mediumImpact();
       ScaffoldMessenger.of(context).showSnackBar(

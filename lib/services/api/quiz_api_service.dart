@@ -275,6 +275,14 @@ class QuizApiService {
     }, fallbackMessage: 'Failed to load course progress');
   }
 
+  Future<ServiceResult<List<String>>> getDifficultyLevels() {
+    return RetryHelper.execute<List<String>>(() async {
+      final response = await _client.dio.get('/quizzes/difficulty-levels');
+      final list = _extractList(response.data);
+      return list.map((e) => e.toString()).toList();
+    }, fallbackMessage: 'Failed to load difficulty levels');
+  }
+
   // ── Helpers ──────────────────────────────────────────────────────────────
 
   static Map<String, dynamic> _extractMap(dynamic payload) {

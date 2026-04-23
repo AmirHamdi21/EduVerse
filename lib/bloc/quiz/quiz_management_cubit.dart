@@ -45,24 +45,26 @@ class QuizManagementCubit extends Cubit<QuizManagementState> {
 
   // ── Quiz CRUD ────────────────────────────────────────────────────────────
 
-  Future<bool> createQuiz(Map<String, dynamic> data) async {
+  Future<QuizModel?> createQuiz(Map<String, dynamic> data) async {
     final prev = state;
     emit(const QuizMgmtOperating('creating'));
 
     final result = await _service.create(data);
     if (result.isFailure) {
       emit(QuizMgmtError(result.error?.message ?? 'Failed to create quiz'));
-      return false;
+      return null;
     }
+
+    final createdQuiz = result.data!;
 
     // Refresh the list
     if (prev is QuizMgmtLoaded) {
-      final updated = [result.data!, ...prev.quizzes];
+      final updated = [createdQuiz, ...prev.quizzes];
       emit(prev.copyWith(quizzes: updated));
     } else {
       await loadQuizzes();
     }
-    return true;
+    return createdQuiz;
   }
 
   Future<bool> updateQuiz(dynamic id, Map<String, dynamic> data) async {
@@ -139,6 +141,12 @@ class QuizManagementCubit extends Cubit<QuizManagementState> {
   Future<bool> deleteQuestion(dynamic quizId, dynamic questionId) async {
     final result = await _service.deleteQuestion(quizId, questionId);
     return result.isSuccess;
+  }
+
+  Future<List<QuizQuestionModel>?> getQuizQuestions(dynamic quizId) async {
+    final result = await _service.getQuizQuestions(quizId);
+    if (result.isFailure) return null;
+    return result.data;
   }
 
   // ── Attempts ─────────────────────────────────────────────────────────────

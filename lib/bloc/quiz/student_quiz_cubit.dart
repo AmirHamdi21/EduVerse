@@ -60,42 +60,84 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
   }
 
   // ── Start quiz ───────────────────────────────────────────────────────────
+  // Mirrors the web's QuizzesTab.handleStartQuiz flow:
+  // 1. Fetch full quiz (gets questions)  2. Check in-progress  3. Start/resume
 
   Future<void> startQuiz(int quizId) async {
     emit(const StudentQuizStarting());
 
-    // Check for in-progress attempt first
-    final ipResult = await _service.getInProgressAttempt(quizId);
-    if (ipResult.isSuccess && ipResult.data != null) {
-      final attempt = ipResult.data!;
-      _emitActiveState(attempt);
-      return;
-    }
-
-    // Start new attempt
-    final result = await _service.startAttempt(quizId);
-    if (result.isFailure) {
+    // 1. Fetch full quiz with questions (the web always does this first)
+    final quizResult = await _service.getById(quizId);
+    if (quizResult.isFailure) {
       emit(StudentQuizError(
-        result.error?.message ?? 'Failed to start quiz',
+        quizResult.error?.message ?? 'Failed to load quiz details',
       ));
       return;
     }
+    final fullQuiz = quizResult.data!;
 
-    _emitActiveState(result.data!);
-  }
+    // 2. Check for existing in-progress attempt
+    final ipResult = await _service.getInProgressAttempt(quizId);
 
-  Future<void> _emitActiveState(QuizAttemptModel attempt) async {
+    QuizAttemptModel attempt;
+    Map<int, AttemptAnswerModel> savedAnswers = {};
+
+    if (ipResult.isSuccess && ipResult.data != null) {
+      attempt = ipResult.data!;
+
+      // Check if the resumed attempt has expired
+      final timeLimitMinutes = fullQuiz.timeLimitMinutes;
+      if (timeLimitMinutes != null && attempt.startedAt != null) {
+        final elapsed = DateTime.now().difference(attempt.startedAt!).inSeconds;
+        final totalSeconds = timeLimitMinutes * 60;
+        if (elapsed >= totalSeconds) {
+          // Expired — start a new attempt instead
+          final newResult = await _service.startAttempt(quizId);
+          if (newResult.isFailure) {
+            emit(StudentQuizError(
+              newResult.error?.message ?? 'Failed to start new attempt',
+            ));
+            return;
+          }
+          attempt = newResult.data!;
+          savedAnswers = {};
+        } else {
+          // Restore saved answers from the existing attempt
+          for (final a in attempt.answers) {
+            savedAnswers[a.questionId] = a;
+          }
+        }
+      } else {
+        // No time limit — just restore answers
+        for (final a in attempt.answers) {
+          savedAnswers[a.questionId] = a;
+        }
+      }
+    } else {
+      // 3. Start new attempt
+      final startResult = await _service.startAttempt(quizId);
+      if (startResult.isFailure) {
+        emit(StudentQuizError(
+          startResult.error?.message ?? 'Failed to start quiz',
+        ));
+        return;
+      }
+      attempt = startResult.data!;
+    }
+
+    // Get questions: prefer attempt's questions, then quiz's, then fetch separately
     var questions = attempt.questions ?? [];
-
-    // If the attempt response didn't include questions, fetch them separately
     if (questions.isEmpty) {
-      final qResult = await _service.getQuizQuestions(attempt.quizId);
-      if (qResult.isSuccess && qResult.data != null && qResult.data!.isNotEmpty) {
+      questions = fullQuiz.questions ?? [];
+    }
+    if (questions.isEmpty) {
+      final qResult = await _service.getQuizQuestions(quizId);
+      if (qResult.isSuccess && qResult.data != null) {
         questions = qResult.data!;
       }
     }
 
-    // Guard: if still no questions, emit error instead of crashing
+    // Guard: no questions available
     if (questions.isEmpty) {
       emit(const StudentQuizError(
         'This quiz has no questions yet. Please try again later.',
@@ -103,16 +145,11 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
       return;
     }
 
-    final existingAnswers = <int, AttemptAnswerModel>{};
-    for (final a in attempt.answers) {
-      existingAnswers[a.questionId] = a;
-    }
-
     emit(StudentQuizActive(
       attempt: attempt,
       questions: questions,
-      answers: existingAnswers,
-      timeLimitMinutes: attempt.quiz?.timeLimitMinutes,
+      answers: savedAnswers,
+      timeLimitMinutes: fullQuiz.timeLimitMinutes,
       startedAt: attempt.startedAt ?? DateTime.now(),
     ));
 
@@ -150,7 +187,11 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
 
   // ── Answering ────────────────────────────────────────────────────────────
 
-  void submitAnswer(int questionId, {String? selectedOption, String? text}) {
+  void submitAnswer(int questionId, {
+    String? selectedOption,
+    String? text,
+    List<Map<String, String>>? matchingAnswers,
+  }) {
     final current = state;
     if (current is! StudentQuizActive) return;
 
@@ -159,6 +200,7 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
       questionId: questionId,
       selectedOption: selectedOption,
       answerText: text,
+      matchingAnswers: matchingAnswers ?? const [],
     );
 
     emit(current.copyWith(answers: updated));
