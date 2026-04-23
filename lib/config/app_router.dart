@@ -420,27 +420,11 @@ class AppRouter {
       ),
       GoRoute(
         path: '/student/quiz-take',
-        builder: (context, state) {
-          final quiz = state.extra as quiz_models.QuizModel?;
-          if (quiz == null) {
-            return const Scaffold(body: Center(child: Text('Quiz not found')));
-          }
-          return StudentQuizTakerScreen(quiz: quiz);
-        },
+        builder: (context, state) => const StudentQuizTakerScreen(),
       ),
       GoRoute(
         path: '/student/quiz-result',
-        builder: (context, state) {
-          final extra = state.extra;
-          if (extra is Map<String, dynamic>) {
-            final quiz = extra['quiz'] as quiz_models.QuizModel?;
-            final attempt = extra['attempt'] as quiz_models.QuizAttemptModel?;
-            if (quiz != null && attempt != null) {
-              return StudentQuizResultScreen(quiz: quiz, attempt: attempt);
-            }
-          }
-          return const Scaffold(body: Center(child: Text('Result not found')));
-        },
+        builder: (context, state) => const StudentQuizResultScreen(),
       ),
       GoRoute(
         path: '/my-files',

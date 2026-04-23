@@ -1,3 +1,5 @@
+import 'package:edu_verse/models/quiz/quiz_api_models.dart'
+    show QuizAttemptModel;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,7 +52,9 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
-        final bgColor = isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC);
+        final bgColor = isDark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC);
 
         return Scaffold(
           backgroundColor: bgColor,
@@ -77,7 +81,10 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
                       opacity: _fadeAnim,
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(
-                          responsive.p20, responsive.p16, responsive.p20, 0,
+                          responsive.p20,
+                          responsive.p16,
+                          responsive.p20,
+                          0,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -169,7 +176,11 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
       ),
       child: IconButton(
         onPressed: () => context.pop(),
-        icon: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 18),
+        icon: const Icon(
+          Icons.arrow_back_ios_rounded,
+          color: Colors.white,
+          size: 18,
+        ),
       ),
     );
   }
@@ -222,7 +233,9 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
               message,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                color: isDark
+                    ? const Color(0xFF94A3B8)
+                    : const Color(0xFF64748B),
                 fontSize: 14,
               ),
             ),
@@ -266,7 +279,9 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
             Text(
               'No quizzes available',
               style: TextStyle(
-                color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                color: isDark
+                    ? const Color(0xFF94A3B8)
+                    : const Color(0xFF64748B),
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -331,7 +346,8 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
           children: [
             const SizedBox(height: 12),
             Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
                 color: isDark ? Colors.white24 : Colors.black12,
                 borderRadius: BorderRadius.circular(2),

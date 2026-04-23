@@ -688,7 +688,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectCourse => 'Select Course';
 
   @override
-  String get quizType => 'Quiz';
+  String get quizType => 'Quiz Type';
 
   @override
   String get mcq => 'MCQ';
@@ -748,7 +748,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get score => 'Score';
 
   @override
-  String get quizCompleted => 'Quiz Completed';
+  String get quizCompleted => 'Completed';
 
   @override
   String get yourScore => 'Your Score';
@@ -12585,4 +12585,214 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminUseTimeFormat => 'Use HH:mm format for times.';
+
+  @override
+  String get quizManagement => 'Quiz Management';
+
+  @override
+  String get quizCreate => 'Create Quiz';
+
+  @override
+  String get quizEdit => 'Edit Quiz';
+
+  @override
+  String get quizDelete => 'Delete Quiz';
+
+  @override
+  String get quizDeleteConfirm => 'Are you sure you want to delete this quiz?';
+
+  @override
+  String get quizTitle => 'Quiz Title';
+
+  @override
+  String get quizDescription => 'Description';
+
+  @override
+  String get quizInstructions => 'Instructions';
+
+  @override
+  String get quizTypePractice => 'Practice';
+
+  @override
+  String get quizTypeGraded => 'Graded';
+
+  @override
+  String get quizTypeSurvey => 'Survey';
+
+  @override
+  String get quizTimeLimit => 'Time Limit (min)';
+
+  @override
+  String get quizMaxAttempts => 'Max Attempts';
+
+  @override
+  String get quizPassingScore => 'Passing Score (%)';
+
+  @override
+  String get quizWeight => 'Weight';
+
+  @override
+  String get quizRandomize => 'Randomize Questions';
+
+  @override
+  String get quizShowCorrectAnswers => 'Show Correct Answers';
+
+  @override
+  String get quizShowAnswersAfter => 'Show Answers After';
+
+  @override
+  String get quizAvailableFrom => 'Available From';
+
+  @override
+  String get quizAvailableUntil => 'Available Until';
+
+  @override
+  String get quizStatusDraft => 'Draft';
+
+  @override
+  String get quizStatusPublished => 'Published';
+
+  @override
+  String get quizStatusClosed => 'Closed';
+
+  @override
+  String get quizPublish => 'Publish';
+
+  @override
+  String get quizClose => 'Close Quiz';
+
+  @override
+  String get quizCreated => 'Quiz created successfully!';
+
+  @override
+  String get quizUpdated => 'Quiz updated successfully!';
+
+  @override
+  String get quizDeleted => 'Quiz deleted.';
+
+  @override
+  String get quizGradesSubmitted => 'Grades submitted successfully!';
+
+  @override
+  String get quizNoQuizzesYet => 'No quizzes yet';
+
+  @override
+  String get quizCreateToStart => 'Tap \"Create Quiz\" to get started';
+
+  @override
+  String get quizSearchHint => 'Search quizzes...';
+
+  @override
+  String get quizAddQuestion => 'Add Question';
+
+  @override
+  String get quizNoQuestionsAdded => 'No questions added';
+
+  @override
+  String get quizQuestionText => 'Question Text';
+
+  @override
+  String get quizPoints => 'Points';
+
+  @override
+  String get quizSaveQuiz => 'Save Quiz';
+
+  @override
+  String get quizSaveChanges => 'Save Changes';
+
+  @override
+  String get quizNextAddQuestions => 'Next: Add Questions';
+
+  @override
+  String get quizStepDetails => 'Step 1: Quiz Details';
+
+  @override
+  String get quizStepQuestions => 'Step 2: Add Questions';
+
+  @override
+  String get quizBasicInfo => 'Basic Info';
+
+  @override
+  String get quizSettings => 'Settings';
+
+  @override
+  String get quizAvailability => 'Availability';
+
+  @override
+  String get quizStudentAttempts => 'Student Attempts';
+
+  @override
+  String get quizViewAttempts => 'View Attempts';
+
+  @override
+  String get quizGradeAttempt => 'Grade Attempt';
+
+  @override
+  String get quizGrading => 'Grade';
+
+  @override
+  String get quizSubmitGrades => 'Submit Grades';
+
+  @override
+  String get quizStatistics => 'Quiz Statistics';
+
+  @override
+  String get quizTotalAttempts => 'Total Attempts';
+
+  @override
+  String get quizPassRate => 'Pass Rate';
+
+  @override
+  String get quizAverageScore => 'Avg Score';
+
+  @override
+  String get quizHighestScore => 'Highest';
+
+  @override
+  String get quizLowestScore => 'Lowest';
+
+  @override
+  String get quizScoreOverview => 'Score Overview';
+
+  @override
+  String get quizPerQuestionBreakdown => 'Per-Question Breakdown';
+
+  @override
+  String get quizStudentQuizzes => 'Quizzes';
+
+  @override
+  String get quizAvailable => 'Available';
+
+  @override
+  String get quizUpcoming => 'Upcoming';
+
+  @override
+  String get quizStartQuiz => 'Start Quiz';
+
+  @override
+  String get quizContinue => 'Continue';
+
+  @override
+  String get quizSubmit => 'Submit Quiz';
+
+  @override
+  String get quizTimeRemaining => 'Time Remaining';
+
+  @override
+  String get quizResult => 'Quiz Result';
+
+  @override
+  String get quizScore => 'Score';
+
+  @override
+  String get quizPassed => 'Passed';
+
+  @override
+  String get quizFailed => 'Failed';
+
+  @override
+  String get quizRetryAvailable => 'Retry Available';
+
+  @override
+  String get quizAttemptHistory => 'Attempt History';
 }
