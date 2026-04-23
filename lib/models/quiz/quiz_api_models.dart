@@ -291,6 +291,14 @@ class QuizModel {
           .toList();
     }
 
+    final rawTimeLimit = json['timeLimitMinutes'] ?? json['timeLimit'];
+    final parsedTimeLimit = rawTimeLimit != null
+        ? _parseInt(rawTimeLimit)
+        : null;
+    final normalizedTimeLimit = (parsedTimeLimit != null && parsedTimeLimit > 0)
+        ? parsedTimeLimit
+        : null;
+
     return QuizModel(
       id: _parseInt(json['id']),
       courseId: json['courseId'] != null ? _parseInt(json['courseId']) : null,
@@ -298,11 +306,7 @@ class QuizModel {
       description: json['description'] as String?,
       instructions: json['instructions'] as String?,
       quizType: QuizTypeEnum.fromJson(json['quizType'] as String?),
-      timeLimitMinutes: json['timeLimit'] != null
-          ? _parseInt(json['timeLimit'])
-          : (json['timeLimitMinutes'] != null
-                ? _parseInt(json['timeLimitMinutes'])
-                : null),
+      timeLimitMinutes: normalizedTimeLimit,
       maxAttempts: _parseInt(json['maxAttempts'], 1),
       passingScore: _parseDouble(json['passingScore'], 50.0),
       randomizeQuestions:

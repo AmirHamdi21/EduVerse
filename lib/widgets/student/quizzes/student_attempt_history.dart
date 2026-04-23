@@ -26,13 +26,17 @@ class StudentAttemptHistory extends StatelessWidget {
               Icon(
                 Icons.history_rounded,
                 size: 48,
-                color: isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
+                color: isDark
+                    ? const Color(0xFF475569)
+                    : const Color(0xFFCBD5E1),
               ),
               const SizedBox(height: 12),
               Text(
                 'No attempts yet',
                 style: TextStyle(
-                  color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+                  color: isDark
+                      ? const Color(0xFF94A3B8)
+                      : const Color(0xFF64748B),
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                 ),
@@ -109,7 +113,9 @@ class StudentAttemptHistory extends StatelessWidget {
                         Text(
                           'Attempt ${attempt.attemptNumber}',
                           style: TextStyle(
-                            color: isDark ? Colors.white : const Color(0xFF1E293B),
+                            color: isDark
+                                ? Colors.white
+                                : const Color(0xFF1E293B),
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -135,7 +141,10 @@ class StudentAttemptHistory extends StatelessWidget {
               // Score
               if (attempt.score != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -158,7 +167,9 @@ class StudentAttemptHistory extends StatelessWidget {
               const SizedBox(width: 8),
               Icon(
                 Icons.chevron_right_rounded,
-                color: isDark ? const Color(0xFF475569) : const Color(0xFFCBD5E1),
+                color: isDark
+                    ? const Color(0xFF475569)
+                    : const Color(0xFFCBD5E1),
                 size: 20,
               ),
             ],

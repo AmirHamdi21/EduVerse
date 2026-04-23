@@ -76,51 +76,50 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
       return;
     }
     final fullQuiz = quizResult.data!;
+    final effectiveTimeLimit =
+        (fullQuiz.timeLimitMinutes != null && fullQuiz.timeLimitMinutes! > 0)
+        ? fullQuiz.timeLimitMinutes
+        : null;
 
     // 2. Check for existing in-progress attempt
     final ipResult = await _service.getInProgressAttempt(quizId);
 
     QuizAttemptModel attempt;
     Map<int, AttemptAnswerModel> savedAnswers = {};
+    DateTime activeStartedAt = DateTime.now();
 
     if (ipResult.isSuccess && ipResult.data != null) {
       attempt = ipResult.data!;
 
-      // Fetch full attempt details to include questions + saved answers.
-      final detailedAttempt = await _service.getAttempt(attempt.id);
-      if (detailedAttempt.isSuccess && detailedAttempt.data != null) {
-        attempt = detailedAttempt.data!;
-      }
+      final shouldRestartAttempt =
+          attempt.status != AttemptStatusEnum.inProgress ||
+          (effectiveTimeLimit != null &&
+              attempt.startedAt != null &&
+              DateTime.now().difference(attempt.startedAt!).inSeconds >=
+                  effectiveTimeLimit * 60);
 
-      // Check if the resumed attempt has expired
-      final timeLimitMinutes = fullQuiz.timeLimitMinutes;
-      if (timeLimitMinutes != null && attempt.startedAt != null) {
-        final elapsed = DateTime.now().difference(attempt.startedAt!).inSeconds;
-        final totalSeconds = timeLimitMinutes * 60;
-        if (elapsed >= totalSeconds) {
-          // Expired — start a new attempt instead
-          final newResult = await _service.startAttempt(quizId);
-          if (newResult.isFailure) {
-            emit(
-              StudentQuizError(
-                newResult.error?.message ?? 'Failed to start new attempt',
-              ),
-            );
-            return;
-          }
-          attempt = newResult.data!;
-          savedAnswers = {};
-        } else {
-          // Restore saved answers from the existing attempt
-          for (final a in attempt.answers) {
-            savedAnswers[a.questionId] = a;
-          }
+      if (shouldRestartAttempt) {
+        // Attempt is stale/expired — request a fresh start from backend.
+        final newResult = await _service.startAttempt(quizId);
+        if (newResult.isFailure) {
+          emit(
+            StudentQuizError(
+              newResult.error?.message ?? 'Failed to start new attempt',
+            ),
+          );
+          return;
         }
+        attempt = newResult.data!;
+        savedAnswers = {};
+
+        // Match web behavior: restarted attempt always gets a fresh local timer window.
+        activeStartedAt = DateTime.now();
       } else {
-        // No time limit — just restore answers
+        // Restore saved answers from the existing attempt.
         for (final a in attempt.answers) {
           savedAnswers[a.questionId] = a;
         }
+        activeStartedAt = attempt.startedAt ?? DateTime.now();
       }
     } else {
       // 3. Start new attempt
@@ -134,6 +133,8 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
         return;
       }
       attempt = startResult.data!;
+      // Match web behavior: a newly started attempt always begins with full time.
+      activeStartedAt = DateTime.now();
     }
 
     // Get questions: prefer attempt payload, then full quiz payload, then fallback endpoint.
@@ -163,8 +164,8 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
         attempt: attempt,
         questions: questions,
         answers: savedAnswers,
-        timeLimitMinutes: fullQuiz.timeLimitMinutes,
-        startedAt: attempt.startedAt ?? DateTime.now(),
+        timeLimitMinutes: effectiveTimeLimit,
+        startedAt: activeStartedAt,
       ),
     );
 

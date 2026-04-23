@@ -144,7 +144,11 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
                         ),
                         child: BlocBuilder<StudentQuizCubit, StudentQuizState>(
                           builder: (context, state) {
-                            if (state is StudentQuizLoading) {
+                            if (state is StudentQuizLoading ||
+                                state is StudentQuizStarting ||
+                                state is StudentQuizActive ||
+                                state is StudentQuizSubmitting ||
+                                state is StudentQuizResultLoaded) {
                               return _loadingView(isDark);
                             }
                             if (state is StudentQuizError) {
@@ -319,10 +323,24 @@ class _StudentQuizzesScreenState extends State<StudentQuizzesScreen>
     );
   }
 
-  void _onStartQuiz(int quizId) {
+  Future<void> _onStartQuiz(int quizId) async {
     HapticFeedback.mediumImpact();
-    context.read<StudentQuizCubit>().startQuiz(quizId);
-    context.push('/student/quiz-take');
+    final cubit = context.read<StudentQuizCubit>();
+    await cubit.startQuiz(quizId);
+    if (!mounted) return;
+
+    final current = cubit.state;
+    if (current is StudentQuizActive) {
+      context.push('/student/quiz-take');
+      return;
+    }
+
+    if (current is StudentQuizError) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(current.message)));
+      await cubit.loadQuizzes();
+    }
   }
 
   void _showAttemptHistory(bool isDark, List<QuizAttemptModel> attempts) {

@@ -30,6 +30,7 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
   }
 
   void _startTimer(int minutes, DateTime startedAt) {
+    if (minutes <= 0) return;
     if (_countdownTimer != null) return;
     final endTime = startedAt.add(Duration(minutes: minutes));
     _remainingSeconds = endTime.difference(DateTime.now()).inSeconds;
@@ -47,9 +48,9 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
   }
 
   void _autoSubmit() {
+    if (!mounted) return;
     HapticFeedback.heavyImpact();
     context.read<StudentQuizCubit>().submitQuiz();
-    context.pushReplacement('/student/quiz-result');
   }
 
   @override
@@ -64,9 +65,11 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
         return BlocConsumer<StudentQuizCubit, StudentQuizState>(
           listener: (ctx, state) {
             if (state is StudentQuizResultLoaded) {
+              _countdownTimer?.cancel();
               context.pushReplacement('/student/quiz-result');
             }
             if (state is StudentQuizError) {
+              _countdownTimer?.cancel();
               ScaffoldMessenger.of(
                 ctx,
               ).showSnackBar(SnackBar(content: Text(state.message)));
@@ -110,6 +113,54 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
                 backgroundColor: bg,
                 body: const Center(
                   child: CircularProgressIndicator(color: Color(0xFF2B7FFF)),
+                ),
+              );
+            }
+            if (state is StudentQuizError) {
+              return Scaffold(
+                backgroundColor: bg,
+                body: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.error_outline_rounded,
+                          size: 56,
+                          color: isDark
+                              ? const Color(0xFFEF4444)
+                              : const Color(0xFFDC2626),
+                        ),
+                        const SizedBox(height: 14),
+                        Text(
+                          state.message,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: isDark
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF64748B),
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.read<StudentQuizCubit>().backToList();
+                            context.pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2B7FFF),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: const Text('Back to Quizzes'),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               );
             }
