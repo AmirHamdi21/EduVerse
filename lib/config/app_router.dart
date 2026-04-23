@@ -53,6 +53,23 @@ import 'package:edu_verse/screens/student/search/overall_search_screen.dart';
 import 'package:edu_verse/screens/student/calendar/calendar_screen.dart';
 import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
+// Quiz screens
+import 'package:edu_verse/screens/student/quizzes/student_quizzes_screen.dart';
+import 'package:edu_verse/screens/student/quizzes/student_quiz_taker_screen.dart';
+import 'package:edu_verse/screens/student/quizzes/student_quiz_result_screen.dart';
+import 'package:edu_verse/screens/instructor/quiz_management/instructor_quiz_management_screen.dart';
+import 'package:edu_verse/screens/instructor/quiz_management/instructor_quiz_create_screen.dart';
+import 'package:edu_verse/screens/instructor/quiz_management/instructor_quiz_edit_screen.dart';
+import 'package:edu_verse/screens/instructor/quiz_management/instructor_quiz_attempts_screen.dart';
+import 'package:edu_verse/screens/instructor/quiz_management/instructor_quiz_grading_screen.dart';
+import 'package:edu_verse/screens/instructor/quiz_management/instructor_quiz_statistics_screen.dart';
+import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_management_screen.dart';
+import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_create_screen.dart';
+import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_edit_screen.dart';
+import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_attempts_screen.dart';
+import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_grading_screen.dart';
+import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_statistics_screen.dart';
+import 'package:edu_verse/models/quiz/quiz_api_models.dart' as quiz_models;
 // Instructor screens
 import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_screen.dart';
 import 'package:edu_verse/screens/instructor/courses/instructor_courses_screen.dart';
@@ -395,6 +412,35 @@ class AppRouter {
       GoRoute(
         path: '/attendance',
         builder: (context, state) => const AttendanceScreen(),
+      ),
+      // ============ STUDENT QUIZ ROUTES ============
+      GoRoute(
+        path: '/student/quizzes',
+        builder: (context, state) => const StudentQuizzesScreen(),
+      ),
+      GoRoute(
+        path: '/student/quiz-take',
+        builder: (context, state) {
+          final quiz = state.extra as quiz_models.QuizModel?;
+          if (quiz == null) {
+            return const Scaffold(body: Center(child: Text('Quiz not found')));
+          }
+          return StudentQuizTakerScreen(quiz: quiz);
+        },
+      ),
+      GoRoute(
+        path: '/student/quiz-result',
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            final quiz = extra['quiz'] as quiz_models.QuizModel?;
+            final attempt = extra['attempt'] as quiz_models.QuizAttemptModel?;
+            if (quiz != null && attempt != null) {
+              return StudentQuizResultScreen(quiz: quiz, attempt: attempt);
+            }
+          }
+          return const Scaffold(body: Center(child: Text('Result not found')));
+        },
       ),
       GoRoute(
         path: '/my-files',
@@ -923,6 +969,58 @@ class AppRouter {
         },
       ),
 
+      // ============ INSTRUCTOR QUIZ MANAGEMENT ============
+      GoRoute(
+        path: '/instructor/quiz-management',
+        builder: (context, state) => const InstructorQuizManagementScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/quiz-create',
+        builder: (context, state) => const InstructorQuizCreateScreen(),
+      ),
+      GoRoute(
+        path: '/instructor/quiz-edit',
+        builder: (context, state) {
+          final quiz = state.extra as quiz_models.QuizModel?;
+          if (quiz == null) {
+            return const Scaffold(body: Center(child: Text('Quiz not found')));
+          }
+          return InstructorQuizEditScreen(quiz: quiz);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/quiz-attempts',
+        builder: (context, state) {
+          final quiz = state.extra as quiz_models.QuizModel?;
+          if (quiz == null) {
+            return const Scaffold(body: Center(child: Text('Quiz not found')));
+          }
+          return InstructorQuizAttemptsScreen(quiz: quiz);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/quiz-grading',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final quiz = extra?['quiz'] as quiz_models.QuizModel?;
+          final attempt = extra?['attempt'] as quiz_models.QuizAttemptModel?;
+          if (quiz == null || attempt == null) {
+            return const Scaffold(body: Center(child: Text('Grading data not found')));
+          }
+          return InstructorQuizGradingScreen(quiz: quiz, attempt: attempt);
+        },
+      ),
+      GoRoute(
+        path: '/instructor/quiz-statistics',
+        builder: (context, state) {
+          final quiz = state.extra as quiz_models.QuizModel?;
+          if (quiz == null) {
+            return const Scaffold(body: Center(child: Text('Quiz not found')));
+          }
+          return InstructorQuizStatisticsScreen(quiz: quiz);
+        },
+      ),
+
       // ============ TA ROUTES (Placeholder) ============
       GoRoute(
         path: '/ta/dashboard',
@@ -948,6 +1046,57 @@ class AppRouter {
         builder: (context, state) {
           final labId = state.pathParameters['id'] ?? '1';
           return TALabDetailScreen(labId: labId);
+        },
+      ),
+      // ============ TA QUIZ MANAGEMENT ============
+      GoRoute(
+        path: '/ta/quiz-management',
+        builder: (context, state) => const TAQuizManagementScreen(),
+      ),
+      GoRoute(
+        path: '/ta/quiz-create',
+        builder: (context, state) => const TAQuizCreateScreen(),
+      ),
+      GoRoute(
+        path: '/ta/quiz-edit',
+        builder: (context, state) {
+          final quiz = state.extra as quiz_models.QuizModel?;
+          if (quiz == null) {
+            return const Scaffold(body: Center(child: Text('Quiz not found')));
+          }
+          return TAQuizEditScreen(quiz: quiz);
+        },
+      ),
+      GoRoute(
+        path: '/ta/quiz-attempts',
+        builder: (context, state) {
+          final quiz = state.extra as quiz_models.QuizModel?;
+          if (quiz == null) {
+            return const Scaffold(body: Center(child: Text('Quiz not found')));
+          }
+          return TAQuizAttemptsScreen(quiz: quiz);
+        },
+      ),
+      GoRoute(
+        path: '/ta/quiz-grading',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final quiz = extra?['quiz'] as quiz_models.QuizModel?;
+          final attempt = extra?['attempt'] as quiz_models.QuizAttemptModel?;
+          if (quiz == null || attempt == null) {
+            return const Scaffold(body: Center(child: Text('Grading data not found')));
+          }
+          return TAQuizGradingScreen(quiz: quiz, attempt: attempt);
+        },
+      ),
+      GoRoute(
+        path: '/ta/quiz-statistics',
+        builder: (context, state) {
+          final quiz = state.extra as quiz_models.QuizModel?;
+          if (quiz == null) {
+            return const Scaffold(body: Center(child: Text('Quiz not found')));
+          }
+          return TAQuizStatisticsScreen(quiz: quiz);
         },
       ),
       GoRoute(
