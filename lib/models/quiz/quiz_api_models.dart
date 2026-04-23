@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 // ──────────────────────────────────────────────────────────────────────────────
 // Quiz API Models — aligned 1:1 with the NestJS backend DTOs
 // ──────────────────────────────────────────────────────────────────────────────
@@ -299,22 +301,25 @@ class QuizModel {
       timeLimitMinutes: json['timeLimit'] != null
           ? _parseInt(json['timeLimit'])
           : (json['timeLimitMinutes'] != null
-              ? _parseInt(json['timeLimitMinutes'])
-              : null),
+                ? _parseInt(json['timeLimitMinutes'])
+                : null),
       maxAttempts: _parseInt(json['maxAttempts'], 1),
       passingScore: _parseDouble(json['passingScore'], 50.0),
-      randomizeQuestions: json['randomizeQuestions'] == true ||
-          json['randomizeQuestions'] == 1,
-      showCorrectAnswers: json['showCorrectAnswers'] == true ||
-          json['showCorrectAnswers'] == 1,
-      showAnswersAfter:
-          ShowAnswersAfterEnum.fromJson(json['showAnswersAfter'] as String?),
+      randomizeQuestions:
+          json['randomizeQuestions'] == true || json['randomizeQuestions'] == 1,
+      showCorrectAnswers:
+          json['showCorrectAnswers'] == true || json['showCorrectAnswers'] == 1,
+      showAnswersAfter: ShowAnswersAfterEnum.fromJson(
+        json['showAnswersAfter'] as String?,
+      ),
       availableFrom: _parseDate(json['availableFrom']),
       availableUntil: _parseDate(json['availableUntil']),
       weight: _parseDouble(json['weight'], 1.0),
       createdAt: _parseDate(json['createdAt']),
       updatedAt: _parseDate(json['updatedAt']),
-      createdBy: json['createdBy'] != null ? _parseInt(json['createdBy']) : null,
+      createdBy: json['createdBy'] != null
+          ? _parseInt(json['createdBy'])
+          : null,
       deletedAt: _parseDate(json['deletedAt']),
       course: json['course'] is Map<String, dynamic>
           ? json['course'] as Map<String, dynamic>
@@ -331,24 +336,24 @@ class QuizModel {
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'id': id,
-        if (courseId != null) 'courseId': courseId,
-        'title': title,
-        if (description != null) 'description': description,
-        if (instructions != null) 'instructions': instructions,
-        'quizType': quizType.toJson(),
-        if (timeLimitMinutes != null) 'timeLimit': timeLimitMinutes,
-        'maxAttempts': maxAttempts,
-        'passingScore': passingScore,
-        'randomizeQuestions': randomizeQuestions,
-        'showCorrectAnswers': showCorrectAnswers,
-        'showAnswersAfter': showAnswersAfter.toJson(),
-        if (availableFrom != null)
-          'availableFrom': availableFrom!.toIso8601String(),
-        if (availableUntil != null)
-          'availableUntil': availableUntil!.toIso8601String(),
-        'weight': weight,
-      };
+    'id': id,
+    if (courseId != null) 'courseId': courseId,
+    'title': title,
+    if (description != null) 'description': description,
+    if (instructions != null) 'instructions': instructions,
+    'quizType': quizType.toJson(),
+    if (timeLimitMinutes != null) 'timeLimit': timeLimitMinutes,
+    'maxAttempts': maxAttempts,
+    'passingScore': passingScore,
+    'randomizeQuestions': randomizeQuestions,
+    'showCorrectAnswers': showCorrectAnswers,
+    'showAnswersAfter': showAnswersAfter.toJson(),
+    if (availableFrom != null)
+      'availableFrom': availableFrom!.toIso8601String(),
+    if (availableUntil != null)
+      'availableUntil': availableUntil!.toIso8601String(),
+    'weight': weight,
+  };
 
   QuizModel copyWith({
     int? id,
@@ -443,6 +448,19 @@ class QuizQuestionModel {
         if (e is String) return <String, dynamic>{'text': e};
         return <String, dynamic>{};
       }).toList();
+    } else if (rawOpts is String && rawOpts.trim().isNotEmpty) {
+      try {
+        final decoded = jsonDecode(rawOpts);
+        if (decoded is List) {
+          options = decoded.map((e) {
+            if (e is Map<String, dynamic>) return e;
+            if (e is String) return <String, dynamic>{'text': e};
+            return <String, dynamic>{};
+          }).toList();
+        }
+      } catch (_) {
+        options = <Map<String, dynamic>>[];
+      }
     }
 
     List<Map<String, String>> matchingPairs = [];
@@ -457,13 +475,29 @@ class QuizQuestionModel {
         }
         return <String, String>{'left': '', 'right': ''};
       }).toList();
+    } else if (rawPairs is String && rawPairs.trim().isNotEmpty) {
+      try {
+        final decoded = jsonDecode(rawPairs);
+        if (decoded is List) {
+          matchingPairs = decoded.map((p) {
+            if (p is Map) {
+              return <String, String>{
+                'left': (p['left'] ?? '').toString(),
+                'right': (p['right'] ?? '').toString(),
+              };
+            }
+            return <String, String>{'left': '', 'right': ''};
+          }).toList();
+        }
+      } catch (_) {
+        matchingPairs = <Map<String, String>>[];
+      }
     }
 
     return QuizQuestionModel(
       id: _parseInt(json['id']),
       quizId: json['quizId'] != null ? _parseInt(json['quizId']) : null,
-      questionType:
-          QuestionTypeEnum.fromJson(json['questionType'] as String?),
+      questionType: QuestionTypeEnum.fromJson(json['questionType'] as String?),
       questionText: (json['questionText'] ?? json['text'] ?? '') as String,
       options: options,
       correctAnswer: json['correctAnswer'],
@@ -478,16 +512,16 @@ class QuizQuestionModel {
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'questionType': questionType.toJson(),
-        'questionText': questionText,
-        'options': options,
-        if (correctAnswer != null) 'correctAnswer': correctAnswer,
-        if (explanation != null) 'explanation': explanation,
-        'points': points,
-        if (difficultyLevelId != null) 'difficultyLevelId': difficultyLevelId,
-        'orderIndex': orderIndex,
-        if (matchingPairs.isNotEmpty) 'matchingPairs': matchingPairs,
-      };
+    'questionType': questionType.toJson(),
+    'questionText': questionText,
+    'options': options,
+    if (correctAnswer != null) 'correctAnswer': correctAnswer,
+    if (explanation != null) 'explanation': explanation,
+    'points': points,
+    if (difficultyLevelId != null) 'difficultyLevelId': difficultyLevelId,
+    'orderIndex': orderIndex,
+    if (matchingPairs.isNotEmpty) 'matchingPairs': matchingPairs,
+  };
 
   QuizQuestionModel copyWith({
     int? id,
@@ -565,12 +599,21 @@ class AttemptAnswerModel {
       }).toList();
     }
 
+    String? selectedOption;
+    final rawSelected = json['selectedOption'];
+    if (rawSelected is String) {
+      selectedOption = rawSelected;
+    } else if (rawSelected is List && rawSelected.isNotEmpty) {
+      selectedOption = rawSelected.first?.toString();
+    }
+
     return AttemptAnswerModel(
       id: json['id'] != null ? _parseInt(json['id']) : null,
-      attemptId:
-          json['attemptId'] != null ? _parseInt(json['attemptId']) : null,
+      attemptId: json['attemptId'] != null
+          ? _parseInt(json['attemptId'])
+          : null,
       questionId: _parseInt(json['questionId']),
-      selectedOption: json['selectedOption'] as String?,
+      selectedOption: selectedOption,
       answerText: json['answerText'] as String?,
       isCorrect: isCorrect,
       pointsEarned: json['pointsEarned'] != null
@@ -581,11 +624,11 @@ class AttemptAnswerModel {
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'questionId': questionId,
-        if (selectedOption != null) 'selectedOption': selectedOption,
-        if (answerText != null) 'answerText': answerText,
-        if (matchingAnswers.isNotEmpty) 'matchingAnswers': matchingAnswers,
-      };
+    'questionId': questionId,
+    if (selectedOption != null) 'selectedOption': [selectedOption],
+    if (answerText != null) 'answerText': answerText,
+    if (matchingAnswers.isNotEmpty) 'matchingAnswers': matchingAnswers,
+  };
 }
 
 // ── QuizAttemptModel ─────────────────────────────────────────────────────────
@@ -662,6 +705,15 @@ class QuizAttemptModel {
           .whereType<Map<String, dynamic>>()
           .map(QuizQuestionModel.fromJson)
           .toList();
+    } else if (json['quiz'] is Map<String, dynamic>) {
+      final nestedQuiz = json['quiz'] as Map<String, dynamic>;
+      final nestedQuestions = nestedQuiz['questions'];
+      if (nestedQuestions is List) {
+        questions = nestedQuestions
+            .whereType<Map<String, dynamic>>()
+            .map(QuizQuestionModel.fromJson)
+            .toList();
+      }
     }
 
     return QuizAttemptModel(
@@ -689,11 +741,11 @@ class QuizAttemptModel {
   }
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'id': id,
-        'quizId': quizId,
-        'status': status.toJson(),
-        'answers': answers.map((a) => a.toJson()).toList(),
-      };
+    'id': id,
+    'quizId': quizId,
+    'status': status.toJson(),
+    'answers': answers.map((a) => a.toJson()).toList(),
+  };
 }
 
 // ── AttemptResultModel ───────────────────────────────────────────────────────

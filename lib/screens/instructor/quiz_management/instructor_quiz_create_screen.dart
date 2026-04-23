@@ -1,5 +1,7 @@
 import 'dart:io';
-import 'package:edu_verse/bloc/quiz/quiz_management_state.dart';
+import 'package:edu_verse/bloc/instructor/instructor_courses_bloc.dart';
+import 'package:edu_verse/bloc/instructor/instructor_courses_event.dart';
+import 'package:edu_verse/bloc/instructor/instructor_courses_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +24,6 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
   final _formKey = GlobalKey<FormState>();
   int _step = 0; // 0 = details, 1 = questions
   bool _saving = false;
-  int? _createdQuizId;
 
   // Detail fields
   final _title = TextEditingController();
@@ -42,6 +43,7 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
 
   // Questions
   final List<_QuestionDraft> _questions = [];
+  final Set<int> _expandedQuestions = <int>{};
 
   // AI generation
   final QuizAiService _aiService = QuizAiService();
@@ -50,6 +52,17 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
   int _aiNumQuestions = 5;
   String _aiQuestionType = 'MCQ';
   String _aiDifficulty = 'medium';
+
+  @override
+  void initState() {
+    super.initState();
+    final coursesBloc = context.read<InstructorCoursesBloc>();
+    final coursesState = coursesBloc.state;
+    if (coursesState is! InstructorCoursesLoaded &&
+        coursesState is! InstructorCoursesLoading) {
+      coursesBloc.add(const LoadTeachingCourses());
+    }
+  }
 
   @override
   void dispose() {
@@ -179,6 +192,8 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
         ]),
         const SizedBox(height: 16),
         _card(dk, 'Settings', [
+          _buildCourseSelector(dk),
+          const SizedBox(height: 14),
           _dropdownRow(
             dk,
             'Quiz Type',
@@ -305,6 +320,22 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
           children: [
             ElevatedButton.icon(
               onPressed: () async {
+                if (_courseId == null) {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        'Select a course under Quiz Settings first — the AI service needs your course context.',
+                      ),
+                      backgroundColor: InstructorColors.error,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  );
+                  return;
+                }
                 final result = await FilePicker.platform.pickFiles(
                   type: FileType.custom,
                   allowedExtensions: ['pdf', 'docx', 'txt'],
@@ -348,6 +379,17 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
             ),
           ],
         ),
+        if (_courseId == null) ...[
+          const SizedBox(height: 10),
+          Text(
+            'Select a course under Quiz Settings first — the AI service needs your course context.',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: dk ? const Color(0xFFFDE68A) : const Color(0xFFB45309),
+            ),
+          ),
+        ],
         const SizedBox(height: 12),
         // Config row
         Row(
@@ -517,7 +559,7 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
         SizedBox(
           width: double.infinity,
           child: ElevatedButton.icon(
-            onPressed: (_aiLoading || _aiFile == null)
+            onPressed: (_aiLoading || _aiFile == null || _courseId == null)
                 ? null
                 : _generateAiQuestions,
             icon: _aiLoading
@@ -550,6 +592,21 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
   );
 
   Future<void> _generateAiQuestions() async {
+    if (_courseId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Select a course under Quiz Settings first — the AI service needs your course context.',
+          ),
+          backgroundColor: InstructorColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      return;
+    }
     if (_aiFile == null) return;
     setState(() => _aiLoading = true);
     try {
@@ -697,6 +754,14 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
 
   Widget _questionCard(bool dk, int idx) {
     final q = _questions[idx];
+    final isExpanded = _expandedQuestions.contains(idx);
+    final normalizedMcqAnswer = _resolveMcqCorrectAnswer(
+      q.correctAnswer,
+      q.options,
+    );
+    final mcqCorrectIndex = int.tryParse(normalizedMcqAnswer);
+    final trueFalseCorrect = _normalizeTrueFalseCorrectAnswer(q.correctAnswer);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(16),
@@ -759,6 +824,24 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
               const SizedBox(width: 6),
               IconButton(
                 icon: Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up_rounded
+                      : Icons.keyboard_arrow_down_rounded,
+                  size: 20,
+                  color: InstructorColors.textTertiaryColor(dk),
+                ),
+                onPressed: () {
+                  setState(() {
+                    if (isExpanded) {
+                      _expandedQuestions.remove(idx);
+                    } else {
+                      _expandedQuestions.add(idx);
+                    }
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(
                   Icons.edit_outlined,
                   size: 18,
                   color: InstructorColors.textTertiaryColor(dk),
@@ -771,10 +854,99 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
                   size: 18,
                   color: InstructorColors.error,
                 ),
-                onPressed: () => setState(() => _questions.removeAt(idx)),
+                onPressed: () {
+                  setState(() {
+                    _questions.removeAt(idx);
+                    _expandedQuestions.clear();
+                  });
+                },
               ),
             ],
           ),
+          if (isExpanded) ...[
+            const SizedBox(height: 12),
+            Text(
+              q.questionText.isEmpty ? 'Untitled Question' : q.questionText,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(dk),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (q.type == QuestionTypeEnum.multipleChoice) ...[
+              const SizedBox(height: 10),
+              ...q.options.asMap().entries.map((entry) {
+                final optionIndex = entry.key;
+                final optionText = (entry.value['text'] ?? '').toString();
+                final isCorrect = mcqCorrectIndex == optionIndex;
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isCorrect
+                        ? InstructorColors.success.withValues(alpha: 0.12)
+                        : (dk
+                              ? Colors.white.withValues(alpha: 0.03)
+                              : const Color(0xFFF8FAFC)),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isCorrect
+                          ? InstructorColors.success
+                          : InstructorColors.borderColor(
+                              dk,
+                            ).withValues(alpha: 0.5),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        isCorrect
+                            ? Icons.radio_button_checked_rounded
+                            : Icons.radio_button_unchecked_rounded,
+                        size: 16,
+                        color: isCorrect
+                            ? InstructorColors.success
+                            : InstructorColors.textTertiaryColor(dk),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          optionText.isEmpty
+                              ? 'Option ${optionIndex + 1}'
+                              : optionText,
+                          style: TextStyle(
+                            color: InstructorColors.textPrimaryColor(dk),
+                            fontSize: 13,
+                            fontWeight: isCorrect
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ],
+            if (q.type == QuestionTypeEnum.trueFalse) ...[
+              const SizedBox(height: 10),
+              _optionPreviewTile(dk, 'True', trueFalseCorrect == '0'),
+              _optionPreviewTile(dk, 'False', trueFalseCorrect == '1'),
+            ],
+            if (q.explanation.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Explanation: ${q.explanation}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: InstructorColors.textSecondaryColor(dk),
+                ),
+              ),
+            ],
+          ],
           const SizedBox(height: 8),
           Text(
             '${q.points} points',
@@ -872,6 +1044,82 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
       ],
     ),
   );
+
+  Widget _buildCourseSelector(bool dk) {
+    return BlocBuilder<InstructorCoursesBloc, InstructorCoursesState>(
+      builder: (context, state) {
+        if (state is InstructorCoursesLoading) {
+          return const LinearProgressIndicator(minHeight: 2);
+        }
+
+        if (state is! InstructorCoursesLoaded) {
+          return _dropdownRow(dk, 'Course *', '', const [
+            'Select course',
+          ], (_) {});
+        }
+
+        final items = state.courses
+            .map(
+              (c) => DropdownMenuItem<int>(
+                value: c.courseId,
+                child: Text(c.course.name, overflow: TextOverflow.ellipsis),
+              ),
+            )
+            .toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Course *',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: InstructorColors.textSecondaryColor(dk),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              decoration: BoxDecoration(
+                color: dk
+                    ? Colors.white.withValues(alpha: 0.04)
+                    : const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: InstructorColors.borderColor(
+                    dk,
+                  ).withValues(alpha: 0.5),
+                ),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<int>(
+                  value: items.any((i) => i.value == _courseId)
+                      ? _courseId
+                      : null,
+                  hint: Text(
+                    'Select course',
+                    style: TextStyle(
+                      color: InstructorColors.textTertiaryColor(dk),
+                      fontSize: 14,
+                    ),
+                  ),
+                  isExpanded: true,
+                  dropdownColor: InstructorColors.cardColor(dk),
+                  style: TextStyle(
+                    color: InstructorColors.textPrimaryColor(dk),
+                    fontSize: 14,
+                  ),
+                  items: items,
+                  onChanged: (v) => setState(() => _courseId = v),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   Widget _field(
     bool dk,
@@ -1129,6 +1377,11 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
     var type = initial.type;
     var options = List<Map<String, dynamic>>.from(initial.options);
     var correctAnswer = initial.correctAnswer;
+    if (type == QuestionTypeEnum.multipleChoice) {
+      correctAnswer = _resolveMcqCorrectAnswer(correctAnswer, options);
+    } else if (type == QuestionTypeEnum.trueFalse) {
+      correctAnswer = _normalizeTrueFalseCorrectAnswer(correctAnswer);
+    }
 
     showModalBottomSheet(
       context: context,
@@ -1239,9 +1492,10 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
                         _optionTile(
                           dk,
                           'True',
-                          correctAnswer == 'True',
+                          _normalizeTrueFalseCorrectAnswer(correctAnswer) ==
+                              '0',
                           () => setBS(() {
-                            correctAnswer = 'True';
+                            correctAnswer = '0';
                             options = [
                               {'text': 'True'},
                               {'text': 'False'},
@@ -1251,9 +1505,10 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
                         _optionTile(
                           dk,
                           'False',
-                          correctAnswer == 'False',
+                          _normalizeTrueFalseCorrectAnswer(correctAnswer) ==
+                              '1',
                           () => setBS(() {
-                            correctAnswer = 'False';
+                            correctAnswer = '1';
                             options = [
                               {'text': 'True'},
                               {'text': 'False'},
@@ -1271,12 +1526,15 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
                               children: [
                                 Radio<int>(
                                   value: i,
-                                  groupValue: options.indexWhere(
-                                    (o) => o['text'] == correctAnswer,
+                                  groupValue: int.tryParse(
+                                    _resolveMcqCorrectAnswer(
+                                      correctAnswer,
+                                      options,
+                                    ),
                                   ),
                                   activeColor: InstructorColors.primary,
                                   onChanged: (v) => setBS(
-                                    () => correctAnswer = options[v!]['text'],
+                                    () => correctAnswer = v?.toString() ?? '0',
                                   ),
                                 ),
                                 Expanded(
@@ -1391,6 +1649,77 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
     ),
   );
 
+  Widget _optionPreviewTile(bool dk, String label, bool selected) => Container(
+    margin: const EdgeInsets.only(bottom: 8),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    decoration: BoxDecoration(
+      color: selected
+          ? InstructorColors.success.withValues(alpha: 0.12)
+          : (dk
+                ? Colors.white.withValues(alpha: 0.03)
+                : const Color(0xFFF8FAFC)),
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(
+        color: selected
+            ? InstructorColors.success
+            : InstructorColors.borderColor(dk).withValues(alpha: 0.5),
+      ),
+    ),
+    child: Row(
+      children: [
+        Icon(
+          selected
+              ? Icons.radio_button_checked_rounded
+              : Icons.radio_button_unchecked_rounded,
+          size: 16,
+          color: selected
+              ? InstructorColors.success
+              : InstructorColors.textTertiaryColor(dk),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: InstructorColors.textPrimaryColor(dk),
+              fontSize: 13,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  String _resolveMcqCorrectAnswer(
+    dynamic correctAnswer,
+    List<Map<String, dynamic>> options,
+  ) {
+    final raw = correctAnswer?.toString().trim() ?? '';
+    if (raw.isEmpty) return '0';
+
+    final parsedIndex = int.tryParse(raw);
+    if (parsedIndex != null &&
+        parsedIndex >= 0 &&
+        parsedIndex < options.length) {
+      return parsedIndex.toString();
+    }
+
+    final byText = options.indexWhere(
+      (o) =>
+          (o['text'] ?? '').toString().trim().toLowerCase() ==
+          raw.toLowerCase(),
+    );
+    return byText >= 0 ? byText.toString() : '0';
+  }
+
+  String _normalizeTrueFalseCorrectAnswer(dynamic correctAnswer) {
+    final raw = correctAnswer?.toString().trim().toLowerCase() ?? '';
+    if (raw == 'true' || raw == '0') return '0';
+    if (raw == 'false' || raw == '1') return '1';
+    return '0';
+  }
+
   Future<void> _saveQuiz() async {
     if (_title.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1418,30 +1747,41 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
       );
       return;
     }
+    if (_courseId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please select a course'),
+          backgroundColor: InstructorColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      setState(() => _step = 0);
+      return;
+    }
 
     setState(() => _saving = true);
     final cubit = context.read<QuizManagementCubit>();
 
-    // Build quiz payload — matching web's QuizCreate.tsx format
     final data = <String, dynamic>{
       'title': _title.text.trim(),
       if (_desc.text.trim().isNotEmpty) 'description': _desc.text.trim(),
       if (_instructions.text.trim().isNotEmpty)
         'instructions': _instructions.text.trim(),
+      'courseId': _courseId,
       'quizType': _quizType.toJson(),
       if (_timeLimit.text.isNotEmpty)
         'timeLimitMinutes': int.tryParse(_timeLimit.text) ?? 0,
       'maxAttempts': int.tryParse(_maxAttempts.text) ?? 1,
-      // Backend expects passingScore as string
-      'passingScore': (double.tryParse(_passingScore.text) ?? 50).toString(),
-      'weight': (double.tryParse(_weight.text) ?? 1).toString(),
-      // Backend expects int (0/1) not bool
-      'randomizeQuestions': _randomize ? 1 : 0,
-      'showCorrectAnswers': _showCorrect ? 1 : 0,
+      'passingScore': double.tryParse(_passingScore.text) ?? 50,
+      'weight': double.tryParse(_weight.text) ?? 1,
+      'randomizeQuestions': _randomize,
+      'showCorrectAnswers': _showCorrect,
       'showAnswersAfter': _showAfter.toJson(),
       if (_availFrom != null) 'availableFrom': _availFrom!.toIso8601String(),
       if (_availUntil != null) 'availableUntil': _availUntil!.toIso8601String(),
-      if (_courseId != null) 'courseId': _courseId,
     };
 
     // Create quiz — returns the model with the new ID
@@ -1452,7 +1792,6 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
     }
 
     final quizId = createdQuiz.id;
-    _createdQuizId = quizId;
 
     // Add questions sequentially — matching web's QuizCreate.tsx handleSave
     for (var i = 0; i < _questions.length; i++) {
@@ -1460,26 +1799,26 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
       // Build question payload matching backend expectations
       final questionPayload = <String, dynamic>{
         'questionText': q.questionText,
-        'questionType': q.type.toJson(), // Now sends 'mcq' etc.
-        'points': q.points.toString(), // Backend expects string
+        'questionType': q.type.toJson(),
+        'points': q.points,
         if (q.explanation.isNotEmpty) 'explanation': q.explanation,
         'orderIndex': i,
       };
 
-      // Handle options & correct answer based on type
       if (q.type == QuestionTypeEnum.multipleChoice) {
-        // Send options as flat string list (backend expects string[])
         questionPayload['options'] = q.options
             .map((o) => (o['text'] ?? '').toString())
             .where((s) => s.isNotEmpty)
             .toList();
-        questionPayload['correctAnswer'] = q.correctAnswer?.toString() ?? '0';
+        questionPayload['correctAnswer'] = _resolveMcqCorrectAnswer(
+          q.correctAnswer,
+          q.options,
+        );
       } else if (q.type == QuestionTypeEnum.trueFalse) {
         questionPayload['options'] = ['True', 'False'];
-        // Convert 'True'/'False' to index
-        questionPayload['correctAnswer'] = q.correctAnswer == 'True'
-            ? '0'
-            : '1';
+        questionPayload['correctAnswer'] = _normalizeTrueFalseCorrectAnswer(
+          q.correctAnswer,
+        );
       } else if (q.type == QuestionTypeEnum.shortAnswer) {
         questionPayload['correctAnswer'] = q.correctAnswer?.toString() ?? '';
       } else if (q.type == QuestionTypeEnum.essay) {
@@ -1491,7 +1830,22 @@ class _CreateState extends State<InstructorQuizCreateScreen> {
         questionPayload['correctAnswer'] = null;
       }
 
-      await cubit.addQuestion(quizId, questionPayload);
+      final createdQuestion = await cubit.addQuestion(quizId, questionPayload);
+      if (createdQuestion == null) {
+        if (!mounted) return;
+        setState(() => _saving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add question ${i + 1}.'),
+            backgroundColor: InstructorColors.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+        return;
+      }
     }
 
     if (mounted) {

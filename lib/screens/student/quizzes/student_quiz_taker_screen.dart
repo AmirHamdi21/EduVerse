@@ -399,14 +399,37 @@ class _StudentQuizTakerScreenState extends State<StudentQuizTakerScreen> {
     QuizQuestionModel q,
     AttemptAnswerModel? answer,
   ) {
-    final options = q.options;
+    final options = q.options.isNotEmpty
+        ? q.options
+        : (q.questionType == QuestionTypeEnum.trueFalse
+              ? const <Map<String, dynamic>>[
+                  {'text': 'True'},
+                  {'text': 'False'},
+                ]
+              : const <Map<String, dynamic>>[]);
+
+    if (options.isEmpty) {
+      return Text(
+        'No options available for this question.',
+        style: TextStyle(
+          color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
+          fontSize: 13,
+        ),
+      );
+    }
+
     return Column(
       children: options.asMap().entries.map((entry) {
         final idx = entry.key;
         final opt = entry.value;
         final optText = opt['text'] ?? opt['label'] ?? 'Option ${idx + 1}';
-        final optId = (opt['id'] ?? idx).toString();
-        final isSelected = answer?.selectedOption == optId;
+        final optId = idx.toString();
+        final selected = answer?.selectedOption?.trim().toLowerCase();
+        final isSelected =
+            selected == optId ||
+            (q.questionType == QuestionTypeEnum.trueFalse &&
+                ((selected == 'true' && optId == '0') ||
+                    (selected == 'false' && optId == '1')));
 
         return Padding(
           padding: const EdgeInsets.only(bottom: 10),

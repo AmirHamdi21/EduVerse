@@ -21,9 +21,11 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
 
     final quizzesResult = await _service.getAll();
     if (quizzesResult.isFailure) {
-      emit(StudentQuizError(
-        quizzesResult.error?.message ?? 'Failed to load quizzes',
-      ));
+      emit(
+        StudentQuizError(
+          quizzesResult.error?.message ?? 'Failed to load quizzes',
+        ),
+      );
       return;
     }
 
@@ -37,10 +39,7 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
         .where((q) => q.status == QuizStatusEnum.published)
         .toList();
 
-    emit(StudentQuizzesLoaded(
-      quizzes: publishedQuizzes,
-      myAttempts: attempts,
-    ));
+    emit(StudentQuizzesLoaded(quizzes: publishedQuizzes, myAttempts: attempts));
   }
 
   // ── Filters ──────────────────────────────────────────────────────────────
@@ -69,9 +68,11 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
     // 1. Fetch full quiz with questions (the web always does this first)
     final quizResult = await _service.getById(quizId);
     if (quizResult.isFailure) {
-      emit(StudentQuizError(
-        quizResult.error?.message ?? 'Failed to load quiz details',
-      ));
+      emit(
+        StudentQuizError(
+          quizResult.error?.message ?? 'Failed to load quiz details',
+        ),
+      );
       return;
     }
     final fullQuiz = quizResult.data!;
@@ -85,6 +86,12 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
     if (ipResult.isSuccess && ipResult.data != null) {
       attempt = ipResult.data!;
 
+      // Fetch full attempt details to include questions + saved answers.
+      final detailedAttempt = await _service.getAttempt(attempt.id);
+      if (detailedAttempt.isSuccess && detailedAttempt.data != null) {
+        attempt = detailedAttempt.data!;
+      }
+
       // Check if the resumed attempt has expired
       final timeLimitMinutes = fullQuiz.timeLimitMinutes;
       if (timeLimitMinutes != null && attempt.startedAt != null) {
@@ -94,9 +101,11 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
           // Expired — start a new attempt instead
           final newResult = await _service.startAttempt(quizId);
           if (newResult.isFailure) {
-            emit(StudentQuizError(
-              newResult.error?.message ?? 'Failed to start new attempt',
-            ));
+            emit(
+              StudentQuizError(
+                newResult.error?.message ?? 'Failed to start new attempt',
+              ),
+            );
             return;
           }
           attempt = newResult.data!;
@@ -117,16 +126,18 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
       // 3. Start new attempt
       final startResult = await _service.startAttempt(quizId);
       if (startResult.isFailure) {
-        emit(StudentQuizError(
-          startResult.error?.message ?? 'Failed to start quiz',
-        ));
+        emit(
+          StudentQuizError(
+            startResult.error?.message ?? 'Failed to start quiz',
+          ),
+        );
         return;
       }
       attempt = startResult.data!;
     }
 
-    // Get questions: prefer attempt's questions, then quiz's, then fetch separately
-    var questions = attempt.questions ?? [];
+    // Get questions: prefer attempt payload, then full quiz payload, then fallback endpoint.
+    var questions = _extractQuestions(attempt);
     if (questions.isEmpty) {
       questions = fullQuiz.questions ?? [];
     }
@@ -139,21 +150,36 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
 
     // Guard: no questions available
     if (questions.isEmpty) {
-      emit(const StudentQuizError(
-        'This quiz has no questions yet. Please try again later.',
-      ));
+      emit(
+        const StudentQuizError(
+          'This quiz has no questions yet. Please try again later.',
+        ),
+      );
       return;
     }
 
-    emit(StudentQuizActive(
-      attempt: attempt,
-      questions: questions,
-      answers: savedAnswers,
-      timeLimitMinutes: fullQuiz.timeLimitMinutes,
-      startedAt: attempt.startedAt ?? DateTime.now(),
-    ));
+    emit(
+      StudentQuizActive(
+        attempt: attempt,
+        questions: questions,
+        answers: savedAnswers,
+        timeLimitMinutes: fullQuiz.timeLimitMinutes,
+        startedAt: attempt.startedAt ?? DateTime.now(),
+      ),
+    );
 
     _startAutoSave();
+  }
+
+  List<QuizQuestionModel> _extractQuestions(QuizAttemptModel attempt) {
+    if (attempt.questions != null && attempt.questions!.isNotEmpty) {
+      return attempt.questions!;
+    }
+    final nested = attempt.quiz?.questions;
+    if (nested != null && nested.isNotEmpty) {
+      return nested;
+    }
+    return <QuizQuestionModel>[];
   }
 
   // ── Navigation ───────────────────────────────────────────────────────────
@@ -161,18 +187,22 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
   void nextQuestion() {
     final current = state;
     if (current is StudentQuizActive && current.canGoNext) {
-      emit(current.copyWith(
-        currentQuestionIndex: current.currentQuestionIndex + 1,
-      ));
+      emit(
+        current.copyWith(
+          currentQuestionIndex: current.currentQuestionIndex + 1,
+        ),
+      );
     }
   }
 
   void previousQuestion() {
     final current = state;
     if (current is StudentQuizActive && current.canGoPrevious) {
-      emit(current.copyWith(
-        currentQuestionIndex: current.currentQuestionIndex - 1,
-      ));
+      emit(
+        current.copyWith(
+          currentQuestionIndex: current.currentQuestionIndex - 1,
+        ),
+      );
     }
   }
 
@@ -187,7 +217,8 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
 
   // ── Answering ────────────────────────────────────────────────────────────
 
-  void submitAnswer(int questionId, {
+  void submitAnswer(
+    int questionId, {
     String? selectedOption,
     String? text,
     List<Map<String, String>>? matchingAnswers,
@@ -251,16 +282,13 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
     );
 
     if (result.isFailure) {
-      emit(StudentQuizError(
-        result.error?.message ?? 'Failed to submit quiz',
-      ));
+      emit(StudentQuizError(result.error?.message ?? 'Failed to submit quiz'));
       return;
     }
 
-    emit(StudentQuizResultLoaded(
-      result: result.data!,
-      quiz: current.attempt.quiz,
-    ));
+    emit(
+      StudentQuizResultLoaded(result: result.data!, quiz: current.attempt.quiz),
+    );
   }
 
   // ── View past result ─────────────────────────────────────────────────────
@@ -270,24 +298,28 @@ class StudentQuizCubit extends Cubit<StudentQuizState> {
 
     final result = await _service.getAttempt(attemptId);
     if (result.isFailure) {
-      emit(StudentQuizError(
-        result.error?.message ?? 'Failed to load attempt result',
-      ));
+      emit(
+        StudentQuizError(
+          result.error?.message ?? 'Failed to load attempt result',
+        ),
+      );
       return;
     }
 
     final attempt = result.data!;
-    emit(StudentQuizResultLoaded(
-      result: AttemptResultModel(
-        attemptId: attempt.id,
-        quizId: attempt.quizId,
-        score: attempt.scoreObtained,
-        maxScore: attempt.maxScore,
-        percentage: attempt.scorePercentage,
-        passed: attempt.scorePercentage >= (attempt.quiz?.passingScore ?? 50),
+    emit(
+      StudentQuizResultLoaded(
+        result: AttemptResultModel(
+          attemptId: attempt.id,
+          quizId: attempt.quizId,
+          score: attempt.scoreObtained,
+          maxScore: attempt.maxScore,
+          percentage: attempt.scorePercentage,
+          passed: attempt.scorePercentage >= (attempt.quiz?.passingScore ?? 50),
+        ),
+        quiz: attempt.quiz,
       ),
-      quiz: attempt.quiz,
-    ));
+    );
   }
 
   // ── Back to list ─────────────────────────────────────────────────────────

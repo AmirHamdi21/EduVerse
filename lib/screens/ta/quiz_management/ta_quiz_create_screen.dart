@@ -1,5 +1,7 @@
 import 'dart:io';
-import 'package:edu_verse/bloc/quiz/quiz_management_state.dart';
+import 'package:edu_verse/bloc/ta/ta_courses_cubit.dart';
+import 'package:edu_verse/bloc/ta/ta_courses_state.dart';
+import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,7 +24,6 @@ class _CreateState extends State<TAQuizCreateScreen> {
   final _formKey = GlobalKey<FormState>();
   int _step = 0; // 0 = details, 1 = questions
   bool _saving = false;
-  int? _createdQuizId;
 
   // Detail fields
   final _title = TextEditingController();
@@ -42,6 +43,7 @@ class _CreateState extends State<TAQuizCreateScreen> {
 
   // Questions
   final List<_QuestionDraft> _questions = [];
+  final Set<int> _expandedQuestions = <int>{};
 
   // AI generation
   final QuizAiService _aiService = QuizAiService();
@@ -50,6 +52,17 @@ class _CreateState extends State<TAQuizCreateScreen> {
   int _aiNumQuestions = 5;
   String _aiQuestionType = 'MCQ';
   String _aiDifficulty = 'medium';
+
+  @override
+  void initState() {
+    super.initState();
+    final coursesCubit = context.read<TACoursesCubit>();
+    final status = coursesCubit.state.coursesStatus;
+    if (status is! TASubTabLoaded<List<TeachingCourseModel>> &&
+        status is! TASubTabLoading<List<TeachingCourseModel>>) {
+      coursesCubit.fetchTACourses();
+    }
+  }
 
   @override
   void dispose() {
@@ -179,6 +192,8 @@ class _CreateState extends State<TAQuizCreateScreen> {
         ]),
         const SizedBox(height: 16),
         _card(dk, 'Settings', [
+          _buildCourseSelector(dk),
+          const SizedBox(height: 14),
           _dropdownRow(
             dk,
             'Quiz Type',
@@ -271,117 +286,313 @@ class _CreateState extends State<TAQuizCreateScreen> {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          Icon(Icons.auto_awesome_rounded, size: 18, color: TAColors.primary),
-          const SizedBox(width: 8),
-          Text('Generate questions with AI', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: TAColors.textPrimaryColor(dk))),
-        ]),
+        Row(
+          children: [
+            Icon(Icons.auto_awesome_rounded, size: 18, color: TAColors.primary),
+            const SizedBox(width: 8),
+            Text(
+              'Generate questions with AI',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: TAColors.textPrimaryColor(dk),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 8),
-        Text('Upload a file (PDF, DOCX, TXT). AI-generated questions are added below and can be edited.',
-          style: TextStyle(fontSize: 12, color: TAColors.textSecondaryColor(dk))),
+        Text(
+          'Upload a file (PDF, DOCX, TXT). AI-generated questions are added below and can be edited.',
+          style: TextStyle(
+            fontSize: 12,
+            color: TAColors.textSecondaryColor(dk),
+          ),
+        ),
         const SizedBox(height: 12),
         // File picker
-        Row(children: [
-          ElevatedButton.icon(
-            onPressed: () async {
-              final result = await FilePicker.platform.pickFiles(
-                type: FileType.custom,
-                allowedExtensions: ['pdf', 'docx', 'txt'],
-              );
-              if (result != null && result.files.single.path != null) {
-                setState(() => _aiFile = File(result.files.single.path!));
-              }
-            },
-            icon: const Icon(Icons.upload_file_rounded, size: 16),
-            label: const Text('Choose File'),
+        Row(
+          children: [
+            ElevatedButton.icon(
+              onPressed: () async {
+                if (_courseId == null) {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        'Select a course under Quiz Settings first — the AI service needs your course context.',
+                      ),
+                      backgroundColor: TAColors.error,
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  );
+                  return;
+                }
+                final result = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['pdf', 'docx', 'txt'],
+                );
+                if (result != null && result.files.single.path != null) {
+                  setState(() => _aiFile = File(result.files.single.path!));
+                }
+              },
+              icon: const Icon(Icons.upload_file_rounded, size: 16),
+              label: const Text('Choose File'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: TAColors.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                _aiFile != null
+                    ? _aiFile!.path.split(Platform.pathSeparator).last
+                    : 'No file selected',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: _aiFile != null
+                      ? TAColors.textPrimaryColor(dk)
+                      : TAColors.textTertiaryColor(dk),
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+        if (_courseId == null) ...[
+          const SizedBox(height: 10),
+          Text(
+            'Select a course under Quiz Settings first — the AI service needs your course context.',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: dk ? const Color(0xFFFDE68A) : const Color(0xFFB45309),
+            ),
+          ),
+        ],
+        const SizedBox(height: 12),
+        // Config row
+        Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Count',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: TAColors.textSecondaryColor(dk),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: dk
+                          ? Colors.white.withValues(alpha: 0.04)
+                          : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: TAColors.borderColor(dk).withValues(alpha: 0.5),
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<int>(
+                        value: _aiNumQuestions,
+                        isExpanded: true,
+                        isDense: true,
+                        dropdownColor: TAColors.cardColor(dk),
+                        style: TextStyle(
+                          color: TAColors.textPrimaryColor(dk),
+                          fontSize: 13,
+                        ),
+                        items: [3, 5, 10, 15, 20]
+                            .map(
+                              (n) =>
+                                  DropdownMenuItem(value: n, child: Text('$n')),
+                            )
+                            .toList(),
+                        onChanged: (v) {
+                          if (v != null) setState(() => _aiNumQuestions = v);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Style',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: TAColors.textSecondaryColor(dk),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: dk
+                          ? Colors.white.withValues(alpha: 0.04)
+                          : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: TAColors.borderColor(dk).withValues(alpha: 0.5),
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _aiQuestionType,
+                        isExpanded: true,
+                        isDense: true,
+                        dropdownColor: TAColors.cardColor(dk),
+                        style: TextStyle(
+                          color: TAColors.textPrimaryColor(dk),
+                          fontSize: 13,
+                        ),
+                        items: QuizAiService.questionTypes
+                            .map(
+                              (t) => DropdownMenuItem(value: t, child: Text(t)),
+                            )
+                            .toList(),
+                        onChanged: (v) {
+                          if (v != null) setState(() => _aiQuestionType = v);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Difficulty',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: TAColors.textSecondaryColor(dk),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: dk
+                          ? Colors.white.withValues(alpha: 0.04)
+                          : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: TAColors.borderColor(dk).withValues(alpha: 0.5),
+                      ),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _aiDifficulty,
+                        isExpanded: true,
+                        isDense: true,
+                        dropdownColor: TAColors.cardColor(dk),
+                        style: TextStyle(
+                          color: TAColors.textPrimaryColor(dk),
+                          fontSize: 13,
+                        ),
+                        items: QuizAiService.difficulties
+                            .map(
+                              (d) => DropdownMenuItem(
+                                value: d,
+                                child: Text(
+                                  d[0].toUpperCase() + d.substring(1),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (v) {
+                          if (v != null) setState(() => _aiDifficulty = v);
+                        },
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        // Generate button
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton.icon(
+            onPressed: (_aiLoading || _aiFile == null || _courseId == null)
+                ? null
+                : _generateAiQuestions,
+            icon: _aiLoading
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  )
+                : const Icon(Icons.auto_awesome_rounded, size: 16),
+            label: Text(_aiLoading ? 'Generating...' : 'Generate & Add'),
             style: ElevatedButton.styleFrom(
               backgroundColor: TAColors.primary,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-              textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+              disabledBackgroundColor: TAColors.primary.withValues(alpha: 0.4),
+              disabledForegroundColor: Colors.white70,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 12),
             ),
           ),
-          const SizedBox(width: 10),
-          Expanded(child: Text(
-            _aiFile != null ? _aiFile!.path.split(Platform.pathSeparator).last : 'No file selected',
-            style: TextStyle(fontSize: 12, color: _aiFile != null ? TAColors.textPrimaryColor(dk) : TAColors.textTertiaryColor(dk)),
-            overflow: TextOverflow.ellipsis,
-          )),
-        ]),
-        const SizedBox(height: 12),
-        // Config row
-        Row(children: [
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Count', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: TAColors.textSecondaryColor(dk))),
-            const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(color: dk ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(10), border: Border.all(color: TAColors.borderColor(dk).withValues(alpha: 0.5))),
-              child: DropdownButtonHideUnderline(child: DropdownButton<int>(
-                value: _aiNumQuestions, isExpanded: true, isDense: true,
-                dropdownColor: TAColors.cardColor(dk),
-                style: TextStyle(color: TAColors.textPrimaryColor(dk), fontSize: 13),
-                items: [3,5,10,15,20].map((n) => DropdownMenuItem(value: n, child: Text('$n'))).toList(),
-                onChanged: (v) { if (v != null) setState(() => _aiNumQuestions = v); },
-              )),
-            ),
-          ])),
-          const SizedBox(width: 8),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Style', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: TAColors.textSecondaryColor(dk))),
-            const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(color: dk ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(10), border: Border.all(color: TAColors.borderColor(dk).withValues(alpha: 0.5))),
-              child: DropdownButtonHideUnderline(child: DropdownButton<String>(
-                value: _aiQuestionType, isExpanded: true, isDense: true,
-                dropdownColor: TAColors.cardColor(dk),
-                style: TextStyle(color: TAColors.textPrimaryColor(dk), fontSize: 13),
-                items: QuizAiService.questionTypes.map((t) => DropdownMenuItem(value: t, child: Text(t))).toList(),
-                onChanged: (v) { if (v != null) setState(() => _aiQuestionType = v); },
-              )),
-            ),
-          ])),
-          const SizedBox(width: 8),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text('Difficulty', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: TAColors.textSecondaryColor(dk))),
-            const SizedBox(height: 4),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(color: dk ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC), borderRadius: BorderRadius.circular(10), border: Border.all(color: TAColors.borderColor(dk).withValues(alpha: 0.5))),
-              child: DropdownButtonHideUnderline(child: DropdownButton<String>(
-                value: _aiDifficulty, isExpanded: true, isDense: true,
-                dropdownColor: TAColors.cardColor(dk),
-                style: TextStyle(color: TAColors.textPrimaryColor(dk), fontSize: 13),
-                items: QuizAiService.difficulties.map((d) => DropdownMenuItem(value: d, child: Text(d[0].toUpperCase() + d.substring(1)))).toList(),
-                onChanged: (v) { if (v != null) setState(() => _aiDifficulty = v); },
-              )),
-            ),
-          ])),
-        ]),
-        const SizedBox(height: 12),
-        // Generate button
-        SizedBox(width: double.infinity, child: ElevatedButton.icon(
-          onPressed: (_aiLoading || _aiFile == null) ? null : _generateAiQuestions,
-          icon: _aiLoading
-              ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-              : const Icon(Icons.auto_awesome_rounded, size: 16),
-          label: Text(_aiLoading ? 'Generating...' : 'Generate & Add'),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: TAColors.primary,
-            foregroundColor: Colors.white,
-            disabledBackgroundColor: TAColors.primary.withValues(alpha: 0.4),
-            disabledForegroundColor: Colors.white70,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            padding: const EdgeInsets.symmetric(vertical: 12),
-          ),
-        )),
+        ),
       ],
     ),
   );
 
   Future<void> _generateAiQuestions() async {
+    if (_courseId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            'Select a course under Quiz Settings first — the AI service needs your course context.',
+          ),
+          backgroundColor: TAColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      return;
+    }
     if (_aiFile == null) return;
     setState(() => _aiLoading = true);
     try {
@@ -394,34 +605,48 @@ class _CreateState extends State<TAQuizCreateScreen> {
       setState(() {
         for (final q in generated) {
           final options = q.type == 'MCQ'
-              ? q.paddedOptions.map((o) => <String, dynamic>{'text': o}).toList()
+              ? q.paddedOptions
+                    .map((o) => <String, dynamic>{'text': o})
+                    .toList()
               : <Map<String, dynamic>>[];
-          _questions.add(_QuestionDraft(
-            questionText: q.questionText,
-            type: q.mappedType,
-            options: options,
-            correctAnswer: q.type == 'MCQ' ? q.guessMcqAnswerIndex() : q.correctAnswer,
-            explanation: q.reference,
-            points: 1.0,
-          ));
+          _questions.add(
+            _QuestionDraft(
+              questionText: q.questionText,
+              type: q.mappedType,
+              options: options,
+              correctAnswer: q.type == 'MCQ'
+                  ? q.guessMcqAnswerIndex()
+                  : q.correctAnswer,
+              explanation: q.reference,
+              points: 1.0,
+            ),
+          );
         }
       });
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Added ${generated.length} AI-generated question(s)'),
-          backgroundColor: TAColors.success,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Added ${generated.length} AI-generated question(s)'),
+            backgroundColor: TAColors.success,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('AI generation failed: $e'),
-          backgroundColor: TAColors.error,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('AI generation failed: $e'),
+            backgroundColor: TAColors.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _aiLoading = false);
@@ -435,24 +660,48 @@ class _CreateState extends State<TAQuizCreateScreen> {
         physics: const BouncingScrollPhysics(),
         children: [
           _aiPanel(dk),
-          Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Icon(Icons.help_outline_rounded, size: 56, color: TAColors.textTertiaryColor(dk)),
-            const SizedBox(height: 16),
-            Text('No questions added yet', style: TextStyle(color: TAColors.textSecondaryColor(dk), fontSize: 16, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 8),
-            Text('Use AI above or add manually below', style: TextStyle(color: TAColors.textTertiaryColor(dk), fontSize: 13)),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: () => _addQuestion(dk),
-              icon: const Icon(Icons.add_rounded, size: 18),
-              label: const Text('Add Question'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: TAColors.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              ),
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.help_outline_rounded,
+                  size: 56,
+                  color: TAColors.textTertiaryColor(dk),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No questions added yet',
+                  style: TextStyle(
+                    color: TAColors.textSecondaryColor(dk),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Use AI above or add manually below',
+                  style: TextStyle(
+                    color: TAColors.textTertiaryColor(dk),
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: () => _addQuestion(dk),
+                  icon: const Icon(Icons.add_rounded, size: 18),
+                  label: const Text('Add Question'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: TAColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ])),
+          ),
         ],
       );
     }
@@ -461,7 +710,11 @@ class _CreateState extends State<TAQuizCreateScreen> {
       physics: const BouncingScrollPhysics(),
       itemCount: _questions.length + 2, // +1 for AI panel, +1 for add button
       itemBuilder: (_, i) {
-        if (i == 0) return Padding(padding: const EdgeInsets.only(bottom: 4), child: _aiPanel(dk));
+        if (i == 0)
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: _aiPanel(dk),
+          );
         if (i == _questions.length + 1) {
           return Padding(
             padding: const EdgeInsets.only(top: 12),
@@ -472,7 +725,9 @@ class _CreateState extends State<TAQuizCreateScreen> {
               style: OutlinedButton.styleFrom(
                 foregroundColor: TAColors.primary,
                 side: const BorderSide(color: TAColors.primary),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
             ),
@@ -483,10 +738,16 @@ class _CreateState extends State<TAQuizCreateScreen> {
     );
   }
 
-
-
   Widget _questionCard(bool dk, int idx) {
     final q = _questions[idx];
+    final isExpanded = _expandedQuestions.contains(idx);
+    final normalizedMcqAnswer = _resolveMcqCorrectAnswer(
+      q.correctAnswer,
+      q.options,
+    );
+    final mcqCorrectIndex = int.tryParse(normalizedMcqAnswer);
+    final trueFalseCorrect = _normalizeTrueFalseCorrectAnswer(q.correctAnswer);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(16),
@@ -549,6 +810,24 @@ class _CreateState extends State<TAQuizCreateScreen> {
               const SizedBox(width: 6),
               IconButton(
                 icon: Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up_rounded
+                      : Icons.keyboard_arrow_down_rounded,
+                  size: 20,
+                  color: TAColors.textTertiaryColor(dk),
+                ),
+                onPressed: () {
+                  setState(() {
+                    if (isExpanded) {
+                      _expandedQuestions.remove(idx);
+                    } else {
+                      _expandedQuestions.add(idx);
+                    }
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(
                   Icons.edit_outlined,
                   size: 18,
                   color: TAColors.textTertiaryColor(dk),
@@ -561,10 +840,97 @@ class _CreateState extends State<TAQuizCreateScreen> {
                   size: 18,
                   color: TAColors.error,
                 ),
-                onPressed: () => setState(() => _questions.removeAt(idx)),
+                onPressed: () {
+                  setState(() {
+                    _questions.removeAt(idx);
+                    _expandedQuestions.clear();
+                  });
+                },
               ),
             ],
           ),
+          if (isExpanded) ...[
+            const SizedBox(height: 12),
+            Text(
+              q.questionText.isEmpty ? 'Untitled Question' : q.questionText,
+              style: TextStyle(
+                color: TAColors.textPrimaryColor(dk),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            if (q.type == QuestionTypeEnum.multipleChoice) ...[
+              const SizedBox(height: 10),
+              ...q.options.asMap().entries.map((entry) {
+                final optionIndex = entry.key;
+                final optionText = (entry.value['text'] ?? '').toString();
+                final isCorrect = mcqCorrectIndex == optionIndex;
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isCorrect
+                        ? TAColors.success.withValues(alpha: 0.12)
+                        : (dk
+                              ? Colors.white.withValues(alpha: 0.03)
+                              : const Color(0xFFF8FAFC)),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: isCorrect
+                          ? TAColors.success
+                          : TAColors.borderColor(dk).withValues(alpha: 0.5),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        isCorrect
+                            ? Icons.radio_button_checked_rounded
+                            : Icons.radio_button_unchecked_rounded,
+                        size: 16,
+                        color: isCorrect
+                            ? TAColors.success
+                            : TAColors.textTertiaryColor(dk),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          optionText.isEmpty
+                              ? 'Option ${optionIndex + 1}'
+                              : optionText,
+                          style: TextStyle(
+                            color: TAColors.textPrimaryColor(dk),
+                            fontSize: 13,
+                            fontWeight: isCorrect
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ],
+            if (q.type == QuestionTypeEnum.trueFalse) ...[
+              const SizedBox(height: 10),
+              _optionPreviewTile(dk, 'True', trueFalseCorrect == '0'),
+              _optionPreviewTile(dk, 'False', trueFalseCorrect == '1'),
+            ],
+            if (q.explanation.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(
+                'Explanation: ${q.explanation}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: TAColors.textSecondaryColor(dk),
+                ),
+              ),
+            ],
+          ],
           const SizedBox(height: 8),
           Text(
             '${q.points} points',
@@ -583,9 +949,7 @@ class _CreateState extends State<TAQuizCreateScreen> {
     decoration: BoxDecoration(
       color: TAColors.cardColor(dk),
       border: Border(
-        top: BorderSide(
-          color: TAColors.borderColor(dk).withValues(alpha: 0.5),
-        ),
+        top: BorderSide(color: TAColors.borderColor(dk).withValues(alpha: 0.5)),
       ),
     ),
     child: Row(
@@ -663,6 +1027,81 @@ class _CreateState extends State<TAQuizCreateScreen> {
     ),
   );
 
+  Widget _buildCourseSelector(bool dk) {
+    return BlocBuilder<TACoursesCubit, TACoursesState>(
+      builder: (context, state) {
+        final coursesStatus = state.coursesStatus;
+        if (coursesStatus is TASubTabLoading<List<TeachingCourseModel>>) {
+          return const LinearProgressIndicator(minHeight: 2);
+        }
+
+        if (coursesStatus is! TASubTabLoaded<List<TeachingCourseModel>>) {
+          return _dropdownRow(dk, 'Course *', '', const [
+            'Select course',
+          ], (_) {});
+        }
+
+        final items = coursesStatus.data
+            .map(
+              (c) => DropdownMenuItem<int>(
+                value: c.courseId,
+                child: Text(c.course.name, overflow: TextOverflow.ellipsis),
+              ),
+            )
+            .toList();
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Course *',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: TAColors.textSecondaryColor(dk),
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14),
+              decoration: BoxDecoration(
+                color: dk
+                    ? Colors.white.withValues(alpha: 0.04)
+                    : const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: TAColors.borderColor(dk).withValues(alpha: 0.5),
+                ),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<int>(
+                  value: items.any((i) => i.value == _courseId)
+                      ? _courseId
+                      : null,
+                  hint: Text(
+                    'Select course',
+                    style: TextStyle(
+                      color: TAColors.textTertiaryColor(dk),
+                      fontSize: 14,
+                    ),
+                  ),
+                  isExpanded: true,
+                  dropdownColor: TAColors.cardColor(dk),
+                  style: TextStyle(
+                    color: TAColors.textPrimaryColor(dk),
+                    fontSize: 14,
+                  ),
+                  items: items,
+                  onChanged: (v) => setState(() => _courseId = v),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Widget _field(
     bool dk,
     String label,
@@ -687,10 +1126,7 @@ class _CreateState extends State<TAQuizCreateScreen> {
         maxLines: lines,
         validator: validator,
         keyboardType: num ? TextInputType.number : TextInputType.text,
-        style: TextStyle(
-          color: TAColors.textPrimaryColor(dk),
-          fontSize: 14,
-        ),
+        style: TextStyle(color: TAColors.textPrimaryColor(dk), fontSize: 14),
         decoration: InputDecoration(
           filled: true,
           fillColor: dk
@@ -708,10 +1144,7 @@ class _CreateState extends State<TAQuizCreateScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: TAColors.primary,
-              width: 1.5,
-            ),
+            borderSide: const BorderSide(color: TAColors.primary, width: 1.5),
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 14,
@@ -732,10 +1165,7 @@ class _CreateState extends State<TAQuizCreateScreen> {
       Expanded(
         child: Text(
           label,
-          style: TextStyle(
-            fontSize: 14,
-            color: TAColors.textPrimaryColor(dk),
-          ),
+          style: TextStyle(fontSize: 14, color: TAColors.textPrimaryColor(dk)),
         ),
       ),
       Switch.adaptive(
@@ -919,6 +1349,11 @@ class _CreateState extends State<TAQuizCreateScreen> {
     var type = initial.type;
     var options = List<Map<String, dynamic>>.from(initial.options);
     var correctAnswer = initial.correctAnswer;
+    if (type == QuestionTypeEnum.multipleChoice) {
+      correctAnswer = _resolveMcqCorrectAnswer(correctAnswer, options);
+    } else if (type == QuestionTypeEnum.trueFalse) {
+      correctAnswer = _normalizeTrueFalseCorrectAnswer(correctAnswer);
+    }
 
     showModalBottomSheet(
       context: context,
@@ -1029,9 +1464,10 @@ class _CreateState extends State<TAQuizCreateScreen> {
                         _optionTile(
                           dk,
                           'True',
-                          correctAnswer == 'True',
+                          _normalizeTrueFalseCorrectAnswer(correctAnswer) ==
+                              '0',
                           () => setBS(() {
-                            correctAnswer = 'True';
+                            correctAnswer = '0';
                             options = [
                               {'text': 'True'},
                               {'text': 'False'},
@@ -1041,9 +1477,10 @@ class _CreateState extends State<TAQuizCreateScreen> {
                         _optionTile(
                           dk,
                           'False',
-                          correctAnswer == 'False',
+                          _normalizeTrueFalseCorrectAnswer(correctAnswer) ==
+                              '1',
                           () => setBS(() {
-                            correctAnswer = 'False';
+                            correctAnswer = '1';
                             options = [
                               {'text': 'True'},
                               {'text': 'False'},
@@ -1061,12 +1498,15 @@ class _CreateState extends State<TAQuizCreateScreen> {
                               children: [
                                 Radio<int>(
                                   value: i,
-                                  groupValue: options.indexWhere(
-                                    (o) => o['text'] == correctAnswer,
+                                  groupValue: int.tryParse(
+                                    _resolveMcqCorrectAnswer(
+                                      correctAnswer,
+                                      options,
+                                    ),
                                   ),
                                   activeColor: TAColors.primary,
                                   onChanged: (v) => setBS(
-                                    () => correctAnswer = options[v!]['text'],
+                                    () => correctAnswer = v?.toString() ?? '0',
                                   ),
                                 ),
                                 Expanded(
@@ -1075,25 +1515,18 @@ class _CreateState extends State<TAQuizCreateScreen> {
                                     onChanged: (v) =>
                                         setBS(() => options[i] = {'text': v}),
                                     style: TextStyle(
-                                      color: TAColors.textPrimaryColor(
-                                        dk,
-                                      ),
+                                      color: TAColors.textPrimaryColor(dk),
                                       fontSize: 14,
                                     ),
                                     decoration: InputDecoration(
                                       hintText: 'Option ${i + 1}',
                                       hintStyle: TextStyle(
-                                        color:
-                                            TAColors.textTertiaryColor(
-                                              dk,
-                                            ),
+                                        color: TAColors.textTertiaryColor(dk),
                                       ),
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(10),
                                         borderSide: BorderSide(
-                                          color: TAColors.borderColor(
-                                            dk,
-                                          ),
+                                          color: TAColors.borderColor(dk),
                                         ),
                                       ),
                                       contentPadding:
@@ -1164,9 +1597,7 @@ class _CreateState extends State<TAQuizCreateScreen> {
           Icon(
             selected ? Icons.check_circle_rounded : Icons.circle_outlined,
             size: 20,
-            color: selected
-                ? TAColors.primary
-                : TAColors.textTertiaryColor(dk),
+            color: selected ? TAColors.primary : TAColors.textTertiaryColor(dk),
           ),
           const SizedBox(width: 10),
           Text(
@@ -1181,47 +1612,137 @@ class _CreateState extends State<TAQuizCreateScreen> {
     ),
   );
 
+  Widget _optionPreviewTile(bool dk, String label, bool selected) => Container(
+    margin: const EdgeInsets.only(bottom: 8),
+    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    decoration: BoxDecoration(
+      color: selected
+          ? TAColors.success.withValues(alpha: 0.12)
+          : (dk
+                ? Colors.white.withValues(alpha: 0.03)
+                : const Color(0xFFF8FAFC)),
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(
+        color: selected
+            ? TAColors.success
+            : TAColors.borderColor(dk).withValues(alpha: 0.5),
+      ),
+    ),
+    child: Row(
+      children: [
+        Icon(
+          selected
+              ? Icons.radio_button_checked_rounded
+              : Icons.radio_button_unchecked_rounded,
+          size: 16,
+          color: selected ? TAColors.success : TAColors.textTertiaryColor(dk),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              color: TAColors.textPrimaryColor(dk),
+              fontSize: 13,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+
+  String _resolveMcqCorrectAnswer(
+    dynamic correctAnswer,
+    List<Map<String, dynamic>> options,
+  ) {
+    final raw = correctAnswer?.toString().trim() ?? '';
+    if (raw.isEmpty) return '0';
+
+    final parsedIndex = int.tryParse(raw);
+    if (parsedIndex != null &&
+        parsedIndex >= 0 &&
+        parsedIndex < options.length) {
+      return parsedIndex.toString();
+    }
+
+    final byText = options.indexWhere(
+      (o) =>
+          (o['text'] ?? '').toString().trim().toLowerCase() ==
+          raw.toLowerCase(),
+    );
+    return byText >= 0 ? byText.toString() : '0';
+  }
+
+  String _normalizeTrueFalseCorrectAnswer(dynamic correctAnswer) {
+    final raw = correctAnswer?.toString().trim().toLowerCase() ?? '';
+    if (raw == 'true' || raw == '0') return '0';
+    if (raw == 'false' || raw == '1') return '1';
+    return '0';
+  }
+
   Future<void> _saveQuiz() async {
     if (_title.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('Quiz title is required'),
-        backgroundColor: TAColors.error,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Quiz title is required'),
+          backgroundColor: TAColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
       return;
     }
     if (_questions.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text('Add at least one question'),
-        backgroundColor: TAColors.error,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Add at least one question'),
+          backgroundColor: TAColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      return;
+    }
+    if (_courseId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please select a course'),
+          backgroundColor: TAColors.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+      setState(() => _step = 0);
       return;
     }
 
     setState(() => _saving = true);
     final cubit = context.read<QuizManagementCubit>();
 
-    // Build quiz payload — matching web's QuizCreate.tsx format
     final data = <String, dynamic>{
       'title': _title.text.trim(),
       if (_desc.text.trim().isNotEmpty) 'description': _desc.text.trim(),
       if (_instructions.text.trim().isNotEmpty)
         'instructions': _instructions.text.trim(),
+      'courseId': _courseId,
       'quizType': _quizType.toJson(),
       if (_timeLimit.text.isNotEmpty)
         'timeLimitMinutes': int.tryParse(_timeLimit.text) ?? 0,
       'maxAttempts': int.tryParse(_maxAttempts.text) ?? 1,
-      'passingScore': (double.tryParse(_passingScore.text) ?? 50).toString(),
-      'weight': (double.tryParse(_weight.text) ?? 1).toString(),
-      'randomizeQuestions': _randomize ? 1 : 0,
-      'showCorrectAnswers': _showCorrect ? 1 : 0,
+      'passingScore': double.tryParse(_passingScore.text) ?? 50,
+      'weight': double.tryParse(_weight.text) ?? 1,
+      'randomizeQuestions': _randomize,
+      'showCorrectAnswers': _showCorrect,
       'showAnswersAfter': _showAfter.toJson(),
       if (_availFrom != null) 'availableFrom': _availFrom!.toIso8601String(),
       if (_availUntil != null) 'availableUntil': _availUntil!.toIso8601String(),
-      if (_courseId != null) 'courseId': _courseId,
     };
 
     // Create quiz — returns the model with the new ID
@@ -1232,7 +1753,6 @@ class _CreateState extends State<TAQuizCreateScreen> {
     }
 
     final quizId = createdQuiz.id;
-    _createdQuizId = quizId;
 
     // Add questions sequentially — matching web's QuizCreate.tsx handleSave
     for (var i = 0; i < _questions.length; i++) {
@@ -1240,7 +1760,7 @@ class _CreateState extends State<TAQuizCreateScreen> {
       final questionPayload = <String, dynamic>{
         'questionText': q.questionText,
         'questionType': q.type.toJson(),
-        'points': q.points.toString(),
+        'points': q.points,
         if (q.explanation.isNotEmpty) 'explanation': q.explanation,
         'orderIndex': i,
       };
@@ -1250,11 +1770,15 @@ class _CreateState extends State<TAQuizCreateScreen> {
             .map((o) => (o['text'] ?? '').toString())
             .where((s) => s.isNotEmpty)
             .toList();
-        questionPayload['correctAnswer'] = q.correctAnswer?.toString() ?? '0';
+        questionPayload['correctAnswer'] = _resolveMcqCorrectAnswer(
+          q.correctAnswer,
+          q.options,
+        );
       } else if (q.type == QuestionTypeEnum.trueFalse) {
         questionPayload['options'] = ['True', 'False'];
-        questionPayload['correctAnswer'] =
-            q.correctAnswer == 'True' ? '0' : '1';
+        questionPayload['correctAnswer'] = _normalizeTrueFalseCorrectAnswer(
+          q.correctAnswer,
+        );
       } else if (q.type == QuestionTypeEnum.shortAnswer) {
         questionPayload['correctAnswer'] = q.correctAnswer?.toString() ?? '';
       } else if (q.type == QuestionTypeEnum.essay) {
@@ -1266,7 +1790,22 @@ class _CreateState extends State<TAQuizCreateScreen> {
         questionPayload['correctAnswer'] = null;
       }
 
-      await cubit.addQuestion(quizId, questionPayload);
+      final createdQuestion = await cubit.addQuestion(quizId, questionPayload);
+      if (createdQuestion == null) {
+        if (!mounted) return;
+        setState(() => _saving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to add question ${i + 1}.'),
+            backgroundColor: TAColors.error,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        );
+        return;
+      }
     }
 
     if (mounted) {
@@ -1303,4 +1842,3 @@ class _QuestionDraft {
     this.points = 1.0,
   });
 }
-
