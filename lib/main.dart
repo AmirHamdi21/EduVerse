@@ -13,6 +13,9 @@ import 'package:edu_verse/bloc/ai_notes/ai_notes_cubit.dart';
 import 'package:edu_verse/bloc/profile/profile_cubit.dart';
 import 'package:edu_verse/bloc/grades/grades_cubit.dart';
 import 'package:edu_verse/bloc/labs/labs_cubit.dart';
+import 'package:edu_verse/bloc/quiz/quiz_management_cubit.dart';
+import 'package:edu_verse/bloc/quiz/student_quiz_cubit.dart';
+import 'package:edu_verse/services/api/quiz_api_service.dart';
 import 'package:edu_verse/bloc/materials/materials_bloc.dart';
 import 'package:edu_verse/bloc/course_structure/course_structure_bloc.dart';
 import 'package:edu_verse/bloc/admin_course_management/course_list_bloc.dart'
@@ -113,6 +116,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late admin_course_list.CourseListBloc _adminCourseListBloc;
   late CourseWizardBloc _courseWizardBloc;
   late AdminEnrollmentBloc _adminEnrollmentBloc;
+  late QuizManagementCubit _quizManagementCubit;
+  late StudentQuizCubit _studentQuizCubit;
   late SectionService _sectionService;
   late ScheduleService _scheduleService;
   late CourseService _courseService;
@@ -264,6 +269,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       enrollmentService: _enrollmentService,
     );
 
+    final quizApiService = QuizApiService(coreApiClient: coreApiClient);
+    _quizManagementCubit = QuizManagementCubit(quizApiService: quizApiService);
+    _studentQuizCubit = StudentQuizCubit(quizApiService: quizApiService);
+
     // Initialize theme and language from storage
     _initializeTheme();
     _initializeLanguage();
@@ -322,6 +331,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _adminCourseListBloc.close();
     _courseWizardBloc.close();
     _adminEnrollmentBloc.close();
+    _quizManagementCubit.close();
+    _studentQuizCubit.close();
     _sessionExpirySubscription?.cancel();
     super.dispose();
   }
@@ -364,6 +375,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           BlocProvider.value(value: _adminCourseListBloc),
           BlocProvider.value(value: _courseWizardBloc),
           BlocProvider.value(value: _adminEnrollmentBloc),
+          BlocProvider.value(value: _quizManagementCubit),
+          BlocProvider.value(value: _studentQuizCubit),
         ],
         child: BlocBuilder<ThemeBloc, ThemeState>(
           builder: (context, themeState) {

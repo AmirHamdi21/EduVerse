@@ -320,6 +320,13 @@ class _StudentDrawerState extends State<StudentDrawer>
         category: 'main',
       ),
       _MenuItem(
+        icon: Icons.quiz_outlined,
+        activeIcon: Icons.quiz,
+        title: 'Quizzes',
+        route: '/student/quizzes',
+        category: 'main',
+      ),
+      _MenuItem(
         icon: Icons.folder_outlined,
         activeIcon: Icons.folder,
         title: l10n.myFiles,

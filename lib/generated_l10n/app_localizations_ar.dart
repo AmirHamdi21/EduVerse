@@ -685,7 +685,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get selectCourse => 'اختر المقرر';
 
   @override
-  String get quizType => 'اختبار قصير';
+  String get quizType => 'نوع الاختبار';
 
   @override
   String get mcq => 'اختيار متعدد';
@@ -746,7 +746,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get score => 'النتيجة';
 
   @override
-  String get quizCompleted => 'تم إكمال الاختبار';
+  String get quizCompleted => 'مكتمل';
 
   @override
   String get yourScore => 'درجتك';
@@ -12536,4 +12536,214 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminUseTimeFormat => 'استخدم تنسيق HH:mm للأوقات.';
+
+  @override
+  String get quizManagement => 'إدارة الاختبارات';
+
+  @override
+  String get quizCreate => 'إنشاء اختبار';
+
+  @override
+  String get quizEdit => 'تعديل الاختبار';
+
+  @override
+  String get quizDelete => 'حذف الاختبار';
+
+  @override
+  String get quizDeleteConfirm => 'هل أنت متأكد من حذف هذا الاختبار؟';
+
+  @override
+  String get quizTitle => 'عنوان الاختبار';
+
+  @override
+  String get quizDescription => 'الوصف';
+
+  @override
+  String get quizInstructions => 'التعليمات';
+
+  @override
+  String get quizTypePractice => 'تدريبي';
+
+  @override
+  String get quizTypeGraded => 'مُقيَّم';
+
+  @override
+  String get quizTypeSurvey => 'استبيان';
+
+  @override
+  String get quizTimeLimit => 'المدة (دقائق)';
+
+  @override
+  String get quizMaxAttempts => 'الحد الأقصى للمحاولات';
+
+  @override
+  String get quizPassingScore => 'درجة النجاح (%)';
+
+  @override
+  String get quizWeight => 'الوزن';
+
+  @override
+  String get quizRandomize => 'ترتيب عشوائي للأسئلة';
+
+  @override
+  String get quizShowCorrectAnswers => 'عرض الإجابات الصحيحة';
+
+  @override
+  String get quizShowAnswersAfter => 'عرض الإجابات بعد';
+
+  @override
+  String get quizAvailableFrom => 'متاح من';
+
+  @override
+  String get quizAvailableUntil => 'متاح حتى';
+
+  @override
+  String get quizStatusDraft => 'مسودة';
+
+  @override
+  String get quizStatusPublished => 'منشور';
+
+  @override
+  String get quizStatusClosed => 'مغلق';
+
+  @override
+  String get quizPublish => 'نشر';
+
+  @override
+  String get quizClose => 'إغلاق الاختبار';
+
+  @override
+  String get quizCreated => 'تم إنشاء الاختبار بنجاح!';
+
+  @override
+  String get quizUpdated => 'تم تحديث الاختبار بنجاح!';
+
+  @override
+  String get quizDeleted => 'تم حذف الاختبار.';
+
+  @override
+  String get quizGradesSubmitted => 'تم إرسال الدرجات بنجاح!';
+
+  @override
+  String get quizNoQuizzesYet => 'لا توجد اختبارات بعد';
+
+  @override
+  String get quizCreateToStart => 'اضغط \"إنشاء اختبار\" للبدء';
+
+  @override
+  String get quizSearchHint => 'البحث في الاختبارات...';
+
+  @override
+  String get quizAddQuestion => 'إضافة سؤال';
+
+  @override
+  String get quizNoQuestionsAdded => 'لم تتم إضافة أسئلة';
+
+  @override
+  String get quizQuestionText => 'نص السؤال';
+
+  @override
+  String get quizPoints => 'النقاط';
+
+  @override
+  String get quizSaveQuiz => 'حفظ الاختبار';
+
+  @override
+  String get quizSaveChanges => 'حفظ التغييرات';
+
+  @override
+  String get quizNextAddQuestions => 'التالي: إضافة الأسئلة';
+
+  @override
+  String get quizStepDetails => 'الخطوة 1: تفاصيل الاختبار';
+
+  @override
+  String get quizStepQuestions => 'الخطوة 2: إضافة الأسئلة';
+
+  @override
+  String get quizBasicInfo => 'معلومات أساسية';
+
+  @override
+  String get quizSettings => 'الإعدادات';
+
+  @override
+  String get quizAvailability => 'التوفر';
+
+  @override
+  String get quizStudentAttempts => 'محاولات الطلاب';
+
+  @override
+  String get quizViewAttempts => 'عرض المحاولات';
+
+  @override
+  String get quizGradeAttempt => 'تقييم المحاولة';
+
+  @override
+  String get quizGrading => 'التقييم';
+
+  @override
+  String get quizSubmitGrades => 'إرسال الدرجات';
+
+  @override
+  String get quizStatistics => 'إحصائيات الاختبار';
+
+  @override
+  String get quizTotalAttempts => 'إجمالي المحاولات';
+
+  @override
+  String get quizPassRate => 'نسبة النجاح';
+
+  @override
+  String get quizAverageScore => 'متوسط الدرجة';
+
+  @override
+  String get quizHighestScore => 'أعلى درجة';
+
+  @override
+  String get quizLowestScore => 'أدنى درجة';
+
+  @override
+  String get quizScoreOverview => 'نظرة عامة على الدرجات';
+
+  @override
+  String get quizPerQuestionBreakdown => 'تحليل كل سؤال';
+
+  @override
+  String get quizStudentQuizzes => 'الاختبارات';
+
+  @override
+  String get quizAvailable => 'متاح';
+
+  @override
+  String get quizUpcoming => 'قادم';
+
+  @override
+  String get quizStartQuiz => 'بدء الاختبار';
+
+  @override
+  String get quizContinue => 'متابعة';
+
+  @override
+  String get quizSubmit => 'تقديم الاختبار';
+
+  @override
+  String get quizTimeRemaining => 'الوقت المتبقي';
+
+  @override
+  String get quizResult => 'نتيجة الاختبار';
+
+  @override
+  String get quizScore => 'الدرجة';
+
+  @override
+  String get quizPassed => 'ناجح';
+
+  @override
+  String get quizFailed => 'راسب';
+
+  @override
+  String get quizRetryAvailable => 'إعادة المحاولة متاحة';
+
+  @override
+  String get quizAttemptHistory => 'سجل المحاولات';
 }

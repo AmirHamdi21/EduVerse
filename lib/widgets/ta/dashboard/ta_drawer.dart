@@ -310,6 +310,13 @@ class _TADrawerState extends State<TADrawer>
         category: 'main',
       ),
       _MenuItem(
+        icon: Icons.quiz_outlined,
+        activeIcon: Icons.quiz,
+        title: 'Quiz Management',
+        route: '/ta/quiz-management',
+        category: 'main',
+      ),
+      _MenuItem(
         icon: Icons.analytics_outlined,
         activeIcon: Icons.analytics,
         title: l10n.taStudentPerformance,

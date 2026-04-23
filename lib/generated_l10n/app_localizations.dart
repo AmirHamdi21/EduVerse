@@ -1421,7 +1421,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizType.
   ///
   /// In en, this message translates to:
-  /// **'Quiz'**
+  /// **'Quiz Type'**
   String get quizType;
 
   /// No description provided for @mcq.
@@ -1541,7 +1541,7 @@ abstract class AppLocalizations {
   /// No description provided for @quizCompleted.
   ///
   /// In en, this message translates to:
-  /// **'Quiz Completed'**
+  /// **'Completed'**
   String get quizCompleted;
 
   /// No description provided for @yourScore.
@@ -24550,6 +24550,426 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use HH:mm format for times.'**
   String get adminUseTimeFormat;
+
+  /// No description provided for @quizManagement.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Management'**
+  String get quizManagement;
+
+  /// No description provided for @quizCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Quiz'**
+  String get quizCreate;
+
+  /// No description provided for @quizEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Quiz'**
+  String get quizEdit;
+
+  /// No description provided for @quizDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Quiz'**
+  String get quizDelete;
+
+  /// No description provided for @quizDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this quiz?'**
+  String get quizDeleteConfirm;
+
+  /// No description provided for @quizTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Title'**
+  String get quizTitle;
+
+  /// No description provided for @quizDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get quizDescription;
+
+  /// No description provided for @quizInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions'**
+  String get quizInstructions;
+
+  /// No description provided for @quizTypePractice.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice'**
+  String get quizTypePractice;
+
+  /// No description provided for @quizTypeGraded.
+  ///
+  /// In en, this message translates to:
+  /// **'Graded'**
+  String get quizTypeGraded;
+
+  /// No description provided for @quizTypeSurvey.
+  ///
+  /// In en, this message translates to:
+  /// **'Survey'**
+  String get quizTypeSurvey;
+
+  /// No description provided for @quizTimeLimit.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Limit (min)'**
+  String get quizTimeLimit;
+
+  /// No description provided for @quizMaxAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Attempts'**
+  String get quizMaxAttempts;
+
+  /// No description provided for @quizPassingScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Passing Score (%)'**
+  String get quizPassingScore;
+
+  /// No description provided for @quizWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get quizWeight;
+
+  /// No description provided for @quizRandomize.
+  ///
+  /// In en, this message translates to:
+  /// **'Randomize Questions'**
+  String get quizRandomize;
+
+  /// No description provided for @quizShowCorrectAnswers.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Correct Answers'**
+  String get quizShowCorrectAnswers;
+
+  /// No description provided for @quizShowAnswersAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Answers After'**
+  String get quizShowAnswersAfter;
+
+  /// No description provided for @quizAvailableFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Available From'**
+  String get quizAvailableFrom;
+
+  /// No description provided for @quizAvailableUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Until'**
+  String get quizAvailableUntil;
+
+  /// No description provided for @quizStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get quizStatusDraft;
+
+  /// No description provided for @quizStatusPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get quizStatusPublished;
+
+  /// No description provided for @quizStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get quizStatusClosed;
+
+  /// No description provided for @quizPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish'**
+  String get quizPublish;
+
+  /// No description provided for @quizClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close Quiz'**
+  String get quizClose;
+
+  /// No description provided for @quizCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz created successfully!'**
+  String get quizCreated;
+
+  /// No description provided for @quizUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz updated successfully!'**
+  String get quizUpdated;
+
+  /// No description provided for @quizDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz deleted.'**
+  String get quizDeleted;
+
+  /// No description provided for @quizGradesSubmitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Grades submitted successfully!'**
+  String get quizGradesSubmitted;
+
+  /// No description provided for @quizNoQuizzesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No quizzes yet'**
+  String get quizNoQuizzesYet;
+
+  /// No description provided for @quizCreateToStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Create Quiz\" to get started'**
+  String get quizCreateToStart;
+
+  /// No description provided for @quizSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search quizzes...'**
+  String get quizSearchHint;
+
+  /// No description provided for @quizAddQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Question'**
+  String get quizAddQuestion;
+
+  /// No description provided for @quizNoQuestionsAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'No questions added'**
+  String get quizNoQuestionsAdded;
+
+  /// No description provided for @quizQuestionText.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Text'**
+  String get quizQuestionText;
+
+  /// No description provided for @quizPoints.
+  ///
+  /// In en, this message translates to:
+  /// **'Points'**
+  String get quizPoints;
+
+  /// No description provided for @quizSaveQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Quiz'**
+  String get quizSaveQuiz;
+
+  /// No description provided for @quizSaveChanges.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get quizSaveChanges;
+
+  /// No description provided for @quizNextAddQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Next: Add Questions'**
+  String get quizNextAddQuestions;
+
+  /// No description provided for @quizStepDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 1: Quiz Details'**
+  String get quizStepDetails;
+
+  /// No description provided for @quizStepQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Step 2: Add Questions'**
+  String get quizStepQuestions;
+
+  /// No description provided for @quizBasicInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Basic Info'**
+  String get quizBasicInfo;
+
+  /// No description provided for @quizSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get quizSettings;
+
+  /// No description provided for @quizAvailability.
+  ///
+  /// In en, this message translates to:
+  /// **'Availability'**
+  String get quizAvailability;
+
+  /// No description provided for @quizStudentAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Student Attempts'**
+  String get quizStudentAttempts;
+
+  /// No description provided for @quizViewAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'View Attempts'**
+  String get quizViewAttempts;
+
+  /// No description provided for @quizGradeAttempt.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade Attempt'**
+  String get quizGradeAttempt;
+
+  /// No description provided for @quizGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Grade'**
+  String get quizGrading;
+
+  /// No description provided for @quizSubmitGrades.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Grades'**
+  String get quizSubmitGrades;
+
+  /// No description provided for @quizStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Statistics'**
+  String get quizStatistics;
+
+  /// No description provided for @quizTotalAttempts.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Attempts'**
+  String get quizTotalAttempts;
+
+  /// No description provided for @quizPassRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Pass Rate'**
+  String get quizPassRate;
+
+  /// No description provided for @quizAverageScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg Score'**
+  String get quizAverageScore;
+
+  /// No description provided for @quizHighestScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest'**
+  String get quizHighestScore;
+
+  /// No description provided for @quizLowestScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Lowest'**
+  String get quizLowestScore;
+
+  /// No description provided for @quizScoreOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Score Overview'**
+  String get quizScoreOverview;
+
+  /// No description provided for @quizPerQuestionBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Per-Question Breakdown'**
+  String get quizPerQuestionBreakdown;
+
+  /// No description provided for @quizStudentQuizzes.
+  ///
+  /// In en, this message translates to:
+  /// **'Quizzes'**
+  String get quizStudentQuizzes;
+
+  /// No description provided for @quizAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Available'**
+  String get quizAvailable;
+
+  /// No description provided for @quizUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get quizUpcoming;
+
+  /// No description provided for @quizStartQuiz.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Quiz'**
+  String get quizStartQuiz;
+
+  /// No description provided for @quizContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get quizContinue;
+
+  /// No description provided for @quizSubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Quiz'**
+  String get quizSubmit;
+
+  /// No description provided for @quizTimeRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Time Remaining'**
+  String get quizTimeRemaining;
+
+  /// No description provided for @quizResult.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Result'**
+  String get quizResult;
+
+  /// No description provided for @quizScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get quizScore;
+
+  /// No description provided for @quizPassed.
+  ///
+  /// In en, this message translates to:
+  /// **'Passed'**
+  String get quizPassed;
+
+  /// No description provided for @quizFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get quizFailed;
+
+  /// No description provided for @quizRetryAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry Available'**
+  String get quizRetryAvailable;
+
+  /// No description provided for @quizAttemptHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt History'**
+  String get quizAttemptHistory;
 }
 
 class _AppLocalizationsDelegate
