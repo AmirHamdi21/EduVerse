@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'announcement_colors.dart';
 
-enum AnnouncementFilterType { all, published, scheduled, draft }
+enum AnnouncementFilterType { all, published, draft }
 
 class AnnouncementFilterChips extends StatelessWidget {
   final AnnouncementFilterType selectedFilter;
@@ -37,13 +37,6 @@ class AnnouncementFilterChips extends StatelessWidget {
             AnnouncementFilterType.published,
             Icons.check_circle_outline_rounded,
             'Published',
-          ),
-          const SizedBox(width: 10),
-          _buildFilterChip(
-            context,
-            AnnouncementFilterType.scheduled,
-            Icons.schedule_rounded,
-            'Scheduled',
           ),
           const SizedBox(width: 10),
           _buildFilterChip(
@@ -160,10 +153,6 @@ class AnnouncementFilterChips extends StatelessWidget {
         return isDark
             ? AnnouncementColors.published.withOpacity(0.2)
             : AnnouncementColors.publishedLight;
-      case AnnouncementFilterType.scheduled:
-        return isDark
-            ? AnnouncementColors.scheduled.withOpacity(0.2)
-            : AnnouncementColors.scheduledLight;
       case AnnouncementFilterType.draft:
         return isDark
             ? AnnouncementColors.draft.withOpacity(0.2)
@@ -177,8 +166,6 @@ class AnnouncementFilterChips extends StatelessWidget {
         return AnnouncementColors.primary;
       case AnnouncementFilterType.published:
         return AnnouncementColors.published;
-      case AnnouncementFilterType.scheduled:
-        return AnnouncementColors.scheduled;
       case AnnouncementFilterType.draft:
         return AnnouncementColors.draft;
     }

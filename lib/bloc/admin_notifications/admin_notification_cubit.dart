@@ -29,14 +29,11 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
         }
       }
 
-      // Announcements remain local-only (no backend endpoint for admin announcements)
-      final announcements = _generateMockAnnouncements();
-
       emit(
         state.copyWith(
           status: AdminNotificationLoadingStatus.loaded,
           notifications: notifications,
-          announcements: announcements,
+          announcements: const <AdminAnnouncementModel>[],
         ),
       );
     } catch (e) {
@@ -181,68 +178,5 @@ class AdminNotificationCubit extends Cubit<AdminNotificationState> {
   void addAnnouncement(AdminAnnouncementModel announcement) {
     final announcements = [announcement, ...state.announcements];
     emit(state.copyWith(announcements: announcements));
-  }
-
-  /// Announcements remain local-only (no backend endpoint exists)
-  List<AdminAnnouncementModel> _generateMockAnnouncements() {
-    final now = DateTime.now();
-    return [
-      AdminAnnouncementModel(
-        id: 'a1',
-        title: 'Welcome to Spring Semester 2025',
-        content:
-            'Dear Students and Faculty,\n\nWe are excited to welcome you to the Spring Semester 2025. Classes begin on January 15th. Please ensure all course registrations are completed by January 10th.\n\nBest regards,\nAdministration',
-        target: AnnouncementTarget.all,
-        priority: AdminNotificationPriority.high,
-        createdAt: now.subtract(const Duration(days: 1)),
-        isPinned: true,
-        createdBy: 'Admin',
-        viewCount: 1250,
-      ),
-      AdminAnnouncementModel(
-        id: 'a2',
-        title: 'System Maintenance Notice',
-        content:
-            'The EduVerse platform will undergo scheduled maintenance on Saturday, January 20th from 2:00 AM to 4:00 AM EST. During this time, the system will be unavailable.',
-        target: AnnouncementTarget.all,
-        priority: AdminNotificationPriority.urgent,
-        createdAt: now.subtract(const Duration(days: 2)),
-        createdBy: 'IT Admin',
-        viewCount: 890,
-      ),
-      AdminAnnouncementModel(
-        id: 'a3',
-        title: 'New Grading Policy Update',
-        content:
-            'Please review the updated grading policy effective Spring 2025. All instructors must adhere to the new guidelines.',
-        target: AnnouncementTarget.instructors,
-        priority: AdminNotificationPriority.high,
-        createdAt: now.subtract(const Duration(days: 3)),
-        createdBy: 'Academic Affairs',
-        viewCount: 156,
-      ),
-      AdminAnnouncementModel(
-        id: 'a4',
-        title: 'TA Training Workshop',
-        content:
-            'Mandatory training workshop for all Teaching Assistants on January 12th at 10:00 AM in Room 301.',
-        target: AnnouncementTarget.teachingAssistants,
-        priority: AdminNotificationPriority.normal,
-        createdAt: now.subtract(const Duration(days: 5)),
-        createdBy: 'HR Department',
-        viewCount: 45,
-      ),
-      AdminAnnouncementModel(
-        id: 'a5',
-        title: 'Student Resources Update',
-        content:
-            'New study resources and AI tutoring features are now available in the student portal.',
-        target: AnnouncementTarget.students,
-        priority: AdminNotificationPriority.normal,
-        createdAt: now.subtract(const Duration(days: 7)),
-        createdBy: 'Student Services',
-        viewCount: 2340,
-      ),
-    ];
   }
 }

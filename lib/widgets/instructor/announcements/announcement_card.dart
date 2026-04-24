@@ -8,7 +8,6 @@ class AnnouncementCard extends StatelessWidget {
   final bool isDark;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
-  final VoidCallback? onAnalytics;
   final VoidCallback? onPublish;
   final VoidCallback? onPin;
 
@@ -18,7 +17,6 @@ class AnnouncementCard extends StatelessWidget {
     required this.isDark,
     required this.onEdit,
     required this.onDelete,
-    this.onAnalytics,
     this.onPublish,
     this.onPin,
   });
@@ -60,10 +58,6 @@ class AnnouncementCard extends StatelessWidget {
                 _buildContent(),
                 const SizedBox(height: 16),
                 _buildMetadata(),
-                if (announcement.status == AnnouncementStatus.published) ...[
-                  const SizedBox(height: 16),
-                  _buildReadRate(),
-                ],
                 const SizedBox(height: 16),
                 _buildActions(),
               ],
@@ -474,51 +468,6 @@ class AnnouncementCard extends StatelessWidget {
     );
   }
 
-  Widget _buildReadRate() {
-    final percentage = announcement.readRate;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Read Rate',
-              style: TextStyle(
-                color: AnnouncementColors.textSecondaryColor(isDark),
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Text(
-              '${announcement.readCount}/${announcement.totalAudience} (${percentage.toStringAsFixed(0)}%)',
-              style: TextStyle(
-                color: AnnouncementColors.textPrimaryColor(isDark),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: percentage / 100,
-            backgroundColor: isDark
-                ? AnnouncementColors.darkSurface
-                : AnnouncementColors.surface,
-            valueColor: AlwaysStoppedAnimation<Color>(
-              AnnouncementColors.primary,
-            ),
-            minHeight: 6,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildActions() {
     return Row(
       children: [
@@ -530,17 +479,6 @@ class AnnouncementCard extends StatelessWidget {
             isPrimary: false,
           ),
         ),
-        if (announcement.status == AnnouncementStatus.published) ...[
-          const SizedBox(width: 10),
-          Expanded(
-            child: _buildActionButton(
-              icon: Icons.bar_chart_rounded,
-              label: 'Analytics',
-              onTap: onAnalytics ?? () {},
-              isPrimary: false,
-            ),
-          ),
-        ],
         const SizedBox(width: 10),
         _buildDeleteButton(),
       ],

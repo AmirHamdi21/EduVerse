@@ -381,6 +381,13 @@ class _StudentDrawerState extends State<StudentDrawer>
         category: 'communication',
       ),
       _MenuItem(
+        icon: Icons.campaign_outlined,
+        activeIcon: Icons.campaign_rounded,
+        title: l10n.announcements,
+        route: '/student/announcements',
+        category: 'communication',
+      ),
+      _MenuItem(
         icon: Icons.auto_awesome_outlined,
         activeIcon: Icons.auto_awesome,
         title: l10n.aiNotesSummaries,
