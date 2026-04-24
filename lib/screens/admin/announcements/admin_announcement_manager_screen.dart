@@ -125,8 +125,6 @@ class _AdminAnnouncementManagerScreenState
         switch (_selectedFilter) {
           case AnnouncementFilterType.published:
             return a.status == AnnouncementStatus.published;
-          case AnnouncementFilterType.scheduled:
-            return a.status == AnnouncementStatus.scheduled;
           case AnnouncementFilterType.draft:
             return a.status == AnnouncementStatus.draft;
           default:
@@ -153,9 +151,6 @@ class _AdminAnnouncementManagerScreenState
       AnnouncementFilterType.all: _announcements.length,
       AnnouncementFilterType.published: _announcements
           .where((a) => a.status == AnnouncementStatus.published)
-          .length,
-      AnnouncementFilterType.scheduled: _announcements
-          .where((a) => a.status == AnnouncementStatus.scheduled)
           .length,
       AnnouncementFilterType.draft: _announcements
           .where((a) => a.status == AnnouncementStatus.draft)
@@ -194,33 +189,6 @@ class _AdminAnnouncementManagerScreenState
           _addOrUpdateAnnouncement(updated, isDark);
         },
         onCancel: () => Navigator.pop(context),
-      ),
-    );
-  }
-
-  void _showAnalyticsDialog(AnnouncementItem announcement, bool isDark) {
-    final analytics = AnnouncementAnalytics(
-      announcementId: announcement.id,
-      announcementTitle: announcement.title,
-      totalViews: announcement.readCount,
-      readRate: announcement.readRate,
-      viewsOverTime: List.generate(
-        7,
-        (i) => ViewDataPoint(
-          date: DateTime.now().subtract(Duration(days: 6 - i)),
-          views: (announcement.readCount * (0.1 + i * 0.15)).toInt(),
-        ),
-      ),
-      aiInsight:
-          'Students are most active between 6-8 PM. Consider posting announcements during these times for maximum visibility.',
-    );
-
-    showDialog(
-      context: context,
-      builder: (context) => AnnouncementAnalyticsDialog(
-        analytics: analytics,
-        isDark: isDark,
-        onClose: () => Navigator.pop(context),
       ),
     );
   }
@@ -309,12 +277,6 @@ class _AdminAnnouncementManagerScreenState
 
         if (announcement.status == AnnouncementStatus.published) {
           await _communicationService.publishAnnouncement(announcement.id);
-        } else if (announcement.status == AnnouncementStatus.scheduled &&
-            announcement.scheduledAt != null) {
-          await _communicationService.scheduleAnnouncement(
-            announcement.id,
-            announcement.scheduledAt!,
-          );
         }
       } else {
         final created = await _communicationService.createAnnouncement({
@@ -329,12 +291,6 @@ class _AdminAnnouncementManagerScreenState
 
         if (announcement.status == AnnouncementStatus.published) {
           await _communicationService.publishAnnouncement(created.id);
-        } else if (announcement.status == AnnouncementStatus.scheduled &&
-            announcement.scheduledAt != null) {
-          await _communicationService.scheduleAnnouncement(
-            created.id,
-            announcement.scheduledAt!,
-          );
         }
       }
 
@@ -671,9 +627,6 @@ class _AdminAnnouncementManagerScreenState
                 isDark: isDark,
                 onEdit: () => _showEditDialog(announcement, isDark),
                 onDelete: () => _showDeleteConfirmation(announcement, isDark),
-                onAnalytics: announcement.status == AnnouncementStatus.published
-                    ? () => _showAnalyticsDialog(announcement, isDark)
-                    : null,
                 onPublish: () => _publishAnnouncement(announcement, isDark),
                 onPin: () => _pinAnnouncement(announcement, isDark),
               ),

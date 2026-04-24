@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../../../bloc/admin_notifications/admin_notification_cubit.dart';
 import '../../../bloc/admin_notifications/admin_notification_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
@@ -400,52 +401,64 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen>
     AppLocalizations l10n,
     AdminNotificationState state,
   ) {
-    if (state.filteredAnnouncements.isEmpty) {
-      return AdminNotificationEmptyState(
-        title: l10n.adminNoAnnouncements,
-        message: l10n.adminNoAnnouncementsMessage,
-        icon: Icons.campaign_outlined,
-        isDark: isDark,
-        onAction: () => _showCreateAnnouncementDialog(context, isDark),
-        actionLabel: l10n.adminCreateAnnouncement,
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: () async {
-        await context.read<AdminNotificationCubit>().loadNotifications();
-      },
-      color: AdminColors.primary,
-      child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.only(bottom: 100),
-        itemCount: state.filteredAnnouncements.length,
-        itemBuilder: (context, index) {
-          final announcement = state.filteredAnnouncements[index];
-          return AdminAnnouncementCard(
-            announcement: announcement,
-            isDark: isDark,
-            onTap: () =>
-                _showAnnouncementDetails(context, announcement, isDark, l10n),
-            onEdit: () {
-              // TODO: Implement edit functionality
-              _showSnackBar(context, 'Edit feature coming soon', isDark);
-            },
-            onDelete: () {
-              _showDeleteAnnouncementDialog(
-                context,
-                announcement.id,
-                isDark,
-                l10n,
-              );
-            },
-            onPin: () {
-              context.read<AdminNotificationCubit>().toggleAnnouncementPin(
-                announcement.id,
-              );
-            },
-          );
-        },
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: AdminColors.getCardColor(isDark),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.08)
+                  : Colors.black.withOpacity(0.06),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.campaign_rounded,
+                size: 46,
+                color: AdminColors.primary,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                l10n.adminAnnouncementsTab,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AdminColors.getTextColor(isDark),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Open the dedicated announcements manager to create, publish, and manage announcements with live backend data.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13.5,
+                  color: AdminColors.getTextSecondaryColor(isDark),
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () => context.push('/admin/announcements'),
+                icon: const Icon(Icons.open_in_new_rounded, size: 18),
+                label: const Text('Open Announcement Manager'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AdminColors.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -592,11 +605,11 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen>
         if (state.currentTab != 1) return const SizedBox();
 
         return FloatingActionButton.extended(
-          onPressed: () => _showCreateAnnouncementDialog(context, isDark),
+          onPressed: () => context.push('/admin/announcements'),
           backgroundColor: AdminColors.primary,
-          icon: const Icon(Icons.add_rounded, color: Colors.white),
+          icon: const Icon(Icons.open_in_new_rounded, color: Colors.white),
           label: const Text(
-            'New Announcement',
+            'Open Manager',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
           ),
         );
@@ -755,152 +768,6 @@ class _AdminNotificationsScreenState extends State<AdminNotificationsScreen>
                 ),
               ),
             ),
-        ],
-      ),
-    );
-  }
-
-  void _showAnnouncementDetails(
-    BuildContext context,
-    AdminAnnouncementModel announcement,
-    bool isDark,
-    AppLocalizations l10n,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        minChildSize: 0.4,
-        maxChildSize: 0.9,
-        builder: (_, controller) => Container(
-          decoration: BoxDecoration(
-            color: AdminColors.getCardColor(isDark),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          child: ListView(
-            controller: controller,
-            padding: const EdgeInsets.all(24),
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AdminColors.getTextTertiaryColor(isDark),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                announcement.title,
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AdminColors.getTextColor(isDark),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Icon(
-                    Icons.person_rounded,
-                    size: 14,
-                    color: AdminColors.getTextTertiaryColor(isDark),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    announcement.createdBy,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AdminColors.getTextTertiaryColor(isDark),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Icon(
-                    Icons.access_time_rounded,
-                    size: 14,
-                    color: AdminColors.getTextTertiaryColor(isDark),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    _formatDateTime(announcement.createdAt),
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: AdminColors.getTextTertiaryColor(isDark),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Text(
-                announcement.content,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: AdminColors.getTextSecondaryColor(isDark),
-                  height: 1.7,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showCreateAnnouncementDialog(BuildContext context, bool isDark) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AdminCreateAnnouncementDialog(
-        isDark: isDark,
-        onSubmit: (announcement) {
-          context.read<AdminNotificationCubit>().addAnnouncement(announcement);
-          _showSnackBar(context, 'Announcement published successfully', isDark);
-        },
-      ),
-    );
-  }
-
-  void _showDeleteAnnouncementDialog(
-    BuildContext context,
-    String announcementId,
-    bool isDark,
-    AppLocalizations l10n,
-  ) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AdminColors.getCardColor(isDark),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          l10n.adminDeleteAnnouncementTitle,
-          style: TextStyle(color: AdminColors.getTextColor(isDark)),
-        ),
-        content: Text(
-          l10n.adminDeleteAnnouncementMessage,
-          style: TextStyle(color: AdminColors.getTextSecondaryColor(isDark)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              context.read<AdminNotificationCubit>().deleteAnnouncement(
-                announcementId,
-              );
-              _showSnackBar(context, l10n.adminAnnouncementDeleted, isDark);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AdminColors.error,
-              foregroundColor: Colors.white,
-            ),
-            child: Text(l10n.delete),
-          ),
         ],
       ),
     );

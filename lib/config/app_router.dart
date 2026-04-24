@@ -38,6 +38,7 @@ import 'package:edu_verse/screens/student/grade_analysis_screen.dart';
 import 'package:edu_verse/screens/student/labs_screen.dart';
 import 'package:edu_verse/screens/student/my_files/my_files_screen.dart';
 import 'package:edu_verse/screens/student/notifications/notifications_screen.dart';
+import 'package:edu_verse/screens/student/announcements/student_announcements_screen.dart';
 import 'package:edu_verse/screens/student/quiz_questions_screen.dart';
 import 'package:edu_verse/screens/student/student_dashboard_screen.dart';
 import 'package:edu_verse/screens/student/course_details_screen.dart';
@@ -409,6 +410,10 @@ class AppRouter {
       GoRoute(
         path: '/notifications',
         builder: (context, state) => const NotificationsScreen(),
+      ),
+      GoRoute(
+        path: '/student/announcements',
+        builder: (context, state) => const StudentAnnouncementsScreen(),
       ),
       GoRoute(
         path: '/grades',

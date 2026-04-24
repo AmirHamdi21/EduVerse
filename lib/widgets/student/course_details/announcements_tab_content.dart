@@ -7,7 +7,7 @@ import '../../../features/courses/bloc/course_detail/course_detail_event.dart';
 import '../../../features/courses/bloc/course_detail/course_detail_state.dart';
 import '../../../models/materials/announcement_model.dart';
 
-class AnnouncementsTabContent extends StatelessWidget {
+class AnnouncementsTabContent extends StatefulWidget {
   final bool isDark;
   final int? courseId;
 
@@ -18,15 +18,27 @@ class AnnouncementsTabContent extends StatelessWidget {
   });
 
   @override
+  State<AnnouncementsTabContent> createState() =>
+      _AnnouncementsTabContentState();
+}
+
+class _AnnouncementsTabContentState extends State<AnnouncementsTabContent> {
+  final Set<String> _expandedIds = <String>{};
+
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<CourseDetailBloc, CourseDetailState>(
       builder: (context, state) {
         final announcements = List<AnnouncementModel>.from(state.announcements)
-          ..sort(
-            (a, b) => (b.publishedAt ?? b.createdAt).compareTo(
+          ..sort((a, b) {
+            final aPinned = a.isPinned == 1;
+            final bPinned = b.isPinned == 1;
+            if (aPinned && !bPinned) return -1;
+            if (!aPinned && bPinned) return 1;
+            return (b.publishedAt ?? b.createdAt).compareTo(
               a.publishedAt ?? a.createdAt,
-            ),
-          );
+            );
+          });
 
         if (state.isLoadingAnnouncements && announcements.isEmpty) {
           return _buildLoadingSkeleton();
@@ -58,20 +70,31 @@ class AnnouncementsTabContent extends StatelessWidget {
   }
 
   Widget _buildAnnouncementCard(AnnouncementModel announcement) {
-    final backgroundColor = isDark ? const Color(0xFF2D2D44) : Colors.white;
-    final textColor = isDark ? Colors.white : const Color(0xFF101828);
-    final secondaryColor = isDark
+    final backgroundColor = widget.isDark
+        ? const Color(0xFF2D2D44)
+        : Colors.white;
+    final textColor = widget.isDark ? Colors.white : const Color(0xFF101828);
+    final secondaryColor = widget.isDark
         ? const Color(0xFFB0B0B0)
         : const Color(0xFF4A5565);
     final priorityColor = _priorityColor(announcement.priority);
     final prioritySurface = _prioritySurfaceColor(announcement.priority);
+    final date = announcement.publishedAt ?? announcement.createdAt;
+    final isExpanded = _expandedIds.contains(announcement.id);
+    final content = announcement.content.trim();
+    final shouldCollapse = content.length > 220;
+    final visibleContent = shouldCollapse && !isExpanded
+        ? '${content.substring(0, 220)}...'
+        : content;
 
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: backgroundColor,
         border: Border.all(
-          color: isDark ? const Color(0xFF3D3D54) : const Color(0xFFE5E7EB),
+          color: widget.isDark
+              ? const Color(0xFF3D3D54)
+              : const Color(0xFFE5E7EB),
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -135,11 +158,43 @@ class AnnouncementsTabContent extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (announcement.isPinned == 1) ...[
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 9,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF3C7),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.push_pin_rounded,
+                          size: 12,
+                          color: Color(0xFF92400E),
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          'Pinned',
+                          style: TextStyle(
+                            color: Color(0xFF92400E),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
             const SizedBox(height: 12),
             Text(
-              announcement.content,
+              visibleContent,
               style: TextStyle(
                 color: secondaryColor,
                 fontSize: 14,
@@ -148,6 +203,38 @@ class AnnouncementsTabContent extends StatelessWidget {
                 height: 1.45,
               ),
             ),
+            if (shouldCollapse) ...[
+              const SizedBox(height: 8),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: () {
+                    setState(() {
+                      if (isExpanded) {
+                        _expandedIds.remove(announcement.id);
+                      } else {
+                        _expandedIds.add(announcement.id);
+                      }
+                    });
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFF155DFC),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  icon: Icon(
+                    isExpanded
+                        ? Icons.keyboard_arrow_up_rounded
+                        : Icons.keyboard_arrow_down_rounded,
+                    size: 16,
+                  ),
+                  label: Text(isExpanded ? 'Show less' : 'Read more'),
+                ),
+              ),
+            ],
             const SizedBox(height: 14),
             Wrap(
               spacing: 14,
@@ -163,7 +250,7 @@ class AnnouncementsTabContent extends StatelessWidget {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      'Published ${_formatDate(announcement.publishedAt ?? announcement.createdAt)}',
+                      'Published ${_formatDate(date)}',
                       style: TextStyle(
                         color: secondaryColor,
                         fontSize: 12,
@@ -172,18 +259,39 @@ class AnnouncementsTabContent extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (announcement.expiresAt != null)
+                if (announcement.viewCount > 0)
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                        Icons.event_busy_outlined,
+                        Icons.visibility_outlined,
                         size: 15,
                         color: secondaryColor,
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'Expires ${_formatDate(announcement.expiresAt!)}',
+                        '${announcement.viewCount} views',
+                        style: TextStyle(
+                          color: secondaryColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                if (announcement.author?.displayName != null &&
+                    announcement.author!.displayName.trim().isNotEmpty)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.person_outline_rounded,
+                        size: 15,
+                        color: secondaryColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        announcement.author!.displayName,
                         style: TextStyle(
                           color: secondaryColor,
                           fontSize: 12,
@@ -214,11 +322,17 @@ class AnnouncementsTabContent extends StatelessWidget {
   Color _prioritySurfaceColor(String priority) {
     switch (priority.trim().toLowerCase()) {
       case 'high':
-        return const Color(0xFFFEE4E2);
+        return widget.isDark
+            ? const Color(0xFF4C1D1D)
+            : const Color(0xFFFEE4E2);
       case 'medium':
-        return const Color(0xFFFFF4E5);
+        return widget.isDark
+            ? const Color(0xFF4A3418)
+            : const Color(0xFFFFF4E5);
       default:
-        return const Color(0xFFEFF6FF);
+        return widget.isDark
+            ? const Color(0xFF1E3A8A)
+            : const Color(0xFFEFF6FF);
     }
   }
 
@@ -242,7 +356,9 @@ class AnnouncementsTabContent extends StatelessWidget {
           margin: EdgeInsets.only(bottom: index == 2 ? 0 : 12),
           height: 132,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2D2D44) : const Color(0xFFF3F4F6),
+            color: widget.isDark
+                ? const Color(0xFF2D2D44)
+                : const Color(0xFFF3F4F6),
             borderRadius: BorderRadius.circular(14),
           ),
         ),
@@ -257,16 +373,16 @@ class AnnouncementsTabContent extends StatelessWidget {
           message,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isDark ? Colors.white70 : const Color(0xFF4A5565),
+            color: widget.isDark ? Colors.white70 : const Color(0xFF4A5565),
             fontSize: 13,
           ),
         ),
-        if (courseId != null && courseId! > 0) ...[
+        if (widget.courseId != null && widget.courseId! > 0) ...[
           const SizedBox(height: 10),
           OutlinedButton.icon(
             onPressed: () {
               context.read<CourseDetailBloc>().add(
-                LoadAnnouncements(courseId: courseId!),
+                LoadAnnouncements(courseId: widget.courseId!),
               );
             },
             icon: const Icon(Icons.refresh_rounded, size: 16),
@@ -282,16 +398,18 @@ class AnnouncementsTabContent extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF2D2D44) : Colors.white,
+        color: widget.isDark ? const Color(0xFF2D2D44) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isDark ? const Color(0xFF3D3D54) : const Color(0xFFE5E7EB),
+          color: widget.isDark
+              ? const Color(0xFF3D3D54)
+              : const Color(0xFFE5E7EB),
         ),
       ),
       child: Text(
         message,
         style: TextStyle(
-          color: isDark ? Colors.white70 : const Color(0xFF667085),
+          color: widget.isDark ? Colors.white70 : const Color(0xFF667085),
           fontSize: 14,
         ),
         textAlign: TextAlign.center,
