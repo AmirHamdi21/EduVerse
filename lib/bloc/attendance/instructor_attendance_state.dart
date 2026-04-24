@@ -6,14 +6,15 @@ import '../../models/attendance/ai_processing_result_model.dart';
 import '../../models/attendance/attendance_session_model.dart';
 import '../../models/instructor/teaching_course_model.dart';
 
-/// Matches the web's 3-step navigation: Classes grid → Section detail → Roster.
 enum InstructorAttendanceView { classes, section, roster }
+
+enum AttendanceUiMode { lecture, sessions }
 
 class RosterRow extends Equatable {
   final int userId;
   final String name;
   final String email;
-  final String status; // present | absent | late | excused
+  final String status;
   final String initialStatus;
   final double? aiConfidence;
   final bool isAiMarked;
@@ -29,6 +30,21 @@ class RosterRow extends Equatable {
   });
 
   bool get isDirty => status != initialStatus;
+
+  String get aiSuggestedStatus => isAiMarked ? 'present' : 'absent';
+
+  double? get aiConfidencePercent {
+    final confidence = aiConfidence;
+    if (confidence == null) {
+      return null;
+    }
+    return confidence <= 1 ? confidence * 100 : confidence;
+  }
+
+  bool get needsAiReview =>
+      aiSuggestedStatus != 'present' ||
+      aiConfidencePercent == null ||
+      aiConfidencePercent! < 85;
 
   RosterRow copyWith({
     int? userId,
@@ -51,7 +67,7 @@ class RosterRow extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
     userId,
     name,
     email,
@@ -62,24 +78,46 @@ class RosterRow extends Equatable {
   ];
 }
 
+class AiReviewRow extends Equatable {
+  final int userId;
+  final String name;
+  final String suggestedStatus;
+  final double? confidencePercent;
+  final bool needsReview;
+
+  const AiReviewRow({
+    required this.userId,
+    required this.name,
+    required this.suggestedStatus,
+    required this.confidencePercent,
+    required this.needsReview,
+  });
+
+  @override
+  List<Object?> get props => <Object?>[
+    userId,
+    name,
+    suggestedStatus,
+    confidencePercent,
+    needsReview,
+  ];
+}
+
 class InstructorAttendanceState extends Equatable {
   final InstructorAttendanceView view;
+  final AttendanceUiMode uiMode;
   final bool isLoading;
   final String? error;
-
   final List<TeachingCourseModel> teachingSections;
-
   final int? selectedSectionId;
   final TeachingCourseModel? selectedSection;
   final List<AttendanceSessionModel> sessions;
   final String newSessionDate;
   final String newSessionType;
-
   final AttendanceSessionModel? activeSession;
   final List<RosterRow> rosterRows;
   final bool isRosterReadOnly;
   final bool isRosterDirty;
-
   final bool isAiLoading;
   final String? aiError;
   final AiProcessingResultModel? aiResult;
@@ -88,6 +126,7 @@ class InstructorAttendanceState extends Equatable {
 
   const InstructorAttendanceState({
     this.view = InstructorAttendanceView.classes,
+    this.uiMode = AttendanceUiMode.lecture,
     this.isLoading = false,
     this.error,
     this.teachingSections = const <TeachingCourseModel>[],
@@ -107,8 +146,62 @@ class InstructorAttendanceState extends Equatable {
     this.aiPhoto,
   });
 
+  List<AttendanceSessionModel> get openSessions => sessions
+      .where((session) => session.status == 'scheduled' || session.status == 'in_progress')
+      .toList();
+
+  List<AiReviewRow> get aiReviewRows {
+    if (aiResult == null) {
+      return const <AiReviewRow>[];
+    }
+
+    return rosterRows
+        .map(
+          (row) => AiReviewRow(
+            userId: row.userId,
+            name: row.name,
+            suggestedStatus: row.aiSuggestedStatus,
+            confidencePercent: row.aiConfidencePercent,
+            needsReview: row.needsAiReview,
+          ),
+        )
+        .toList();
+  }
+
+  List<AiReviewRow> get aiNeedsReviewRows {
+    final rows = aiReviewRows.where((row) => row.needsReview).toList();
+    rows.sort((a, b) {
+      final left = a.confidencePercent ?? -1;
+      final right = b.confidencePercent ?? -1;
+      if (left != right) {
+        return left.compareTo(right);
+      }
+      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    });
+    return rows;
+  }
+
+  List<RosterRow> get displayedRosterRows {
+    if (aiResult == null || aiNeedsReviewRows.isEmpty) {
+      return rosterRows;
+    }
+
+    final reviewIds = aiNeedsReviewRows.map((row) => row.userId).toSet();
+    final rows = <RosterRow>[...rosterRows];
+    rows.sort((a, b) {
+      final leftPriority = reviewIds.contains(a.userId) ? 0 : 1;
+      final rightPriority = reviewIds.contains(b.userId) ? 0 : 1;
+      if (leftPriority != rightPriority) {
+        return leftPriority.compareTo(rightPriority);
+      }
+      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    });
+    return rows;
+  }
+
   InstructorAttendanceState copyWith({
     InstructorAttendanceView? view,
+    AttendanceUiMode? uiMode,
     bool? isLoading,
     String? error,
     bool clearError = false,
@@ -136,6 +229,7 @@ class InstructorAttendanceState extends Equatable {
   }) {
     return InstructorAttendanceState(
       view: view ?? this.view,
+      uiMode: uiMode ?? this.uiMode,
       isLoading: isLoading ?? this.isLoading,
       error: clearError ? null : error ?? this.error,
       teachingSections: teachingSections ?? this.teachingSections,
@@ -163,8 +257,9 @@ class InstructorAttendanceState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
     view,
+    uiMode,
     isLoading,
     error,
     teachingSections,

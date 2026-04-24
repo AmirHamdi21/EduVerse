@@ -17,9 +17,7 @@ class CommunicationService {
   /// GET /api/announcements
   Future<List<AnnouncementModel>> getAnnouncements() async {
     final response = await _client.dio.get('/announcements');
-    final List data = response.data is List
-        ? response.data as List
-        : (response.data['data'] as List?) ?? [];
+    final List data = _extractList(response.data);
     return data
         .map((e) => AnnouncementModel.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -34,9 +32,7 @@ class CommunicationService {
       queryParameters: <String, dynamic>{'courseId': courseId},
     );
 
-    final List data = response.data is List
-        ? response.data as List
-        : (response.data['data'] as List?) ?? [];
+    final List data = _extractList(response.data);
 
     return data
         .map((e) => AnnouncementModel.fromJson(e as Map<String, dynamic>))
@@ -48,19 +44,13 @@ class CommunicationService {
     Map<String, dynamic> body,
   ) async {
     final response = await _client.dio.post('/announcements', data: body);
-    final Map<String, dynamic> data = response.data is Map<String, dynamic>
-        ? response.data as Map<String, dynamic>
-        : (response.data['data'] as Map<String, dynamic>?) ?? {};
-    return AnnouncementModel.fromJson(data);
+    return AnnouncementModel.fromJson(_extractMap(response.data));
   }
 
   /// GET /api/announcements/{id}
   Future<AnnouncementModel> getAnnouncementById(dynamic id) async {
     final response = await _client.dio.get('/announcements/$id');
-    final Map<String, dynamic> data = response.data is Map<String, dynamic>
-        ? response.data as Map<String, dynamic>
-        : (response.data['data'] as Map<String, dynamic>?) ?? {};
-    return AnnouncementModel.fromJson(data);
+    return AnnouncementModel.fromJson(_extractMap(response.data));
   }
 
   /// PUT /api/announcements/{id}
@@ -69,10 +59,7 @@ class CommunicationService {
     Map<String, dynamic> body,
   ) async {
     final response = await _client.dio.put('/announcements/$id', data: body);
-    final Map<String, dynamic> data = response.data is Map<String, dynamic>
-        ? response.data as Map<String, dynamic>
-        : (response.data['data'] as Map<String, dynamic>?) ?? {};
-    return AnnouncementModel.fromJson(data);
+    return AnnouncementModel.fromJson(_extractMap(response.data));
   }
 
   /// DELETE /api/announcements/{id}
@@ -104,9 +91,7 @@ class CommunicationService {
   /// GET /api/announcements/{id}/analytics
   Future<Map<String, dynamic>> getAnnouncementAnalytics(dynamic id) async {
     final response = await _client.dio.get('/announcements/$id/analytics');
-    return response.data is Map<String, dynamic>
-        ? response.data as Map<String, dynamic>
-        : (response.data['data'] as Map<String, dynamic>?) ?? {};
+    return _extractMap(response.data);
   }
 
   // ── Assignments ───────────────────────────────────────────────────────
@@ -236,5 +221,34 @@ class CommunicationService {
   /// PATCH /api/discussions/{id}/lock
   Future<void> lockDiscussion(dynamic id) async {
     await _client.dio.patch('/discussions/$id/lock');
+  }
+
+  static Map<String, dynamic> _extractMap(dynamic payload) {
+    if (payload is Map<String, dynamic>) {
+      final data = payload['data'];
+      if (data is Map<String, dynamic>) {
+        return data;
+      }
+      return payload;
+    }
+    return <String, dynamic>{};
+  }
+
+  static List<dynamic> _extractList(dynamic payload) {
+    if (payload is List) {
+      return payload;
+    }
+    if (payload is Map<String, dynamic>) {
+      final data = payload['data'];
+      if (data is List) {
+        return data;
+      }
+      for (final value in payload.values) {
+        if (value is List) {
+          return value;
+        }
+      }
+    }
+    return <dynamic>[];
   }
 }

@@ -93,6 +93,11 @@ void main() {
                 'grade': 88.5,
                 'finalScore': 95.0,
                 'enrollmentDate': '2026-04-01T00:00:00Z',
+                'user': <String, dynamic>{
+                  'userId': 101,
+                  'fullName': 'Salma Mostafa',
+                  'email': 'salma.mostafa@eduverse.test',
+                },
                 'course': <String, dynamic>{
                   'id': 1,
                   'name': 'Computer Science 500',
@@ -122,7 +127,8 @@ void main() {
       expect(students.isSuccess, isTrue);
       expect(students.data, isNotNull);
       expect(students.data!.length, 1);
-      expect(students.data!.first.displayName, 'Student #101');
+      expect(students.data!.first.displayName, 'Salma Mostafa');
+      expect(students.data!.first.resolvedEmail, 'salma.mostafa@eduverse.test');
       expect(students.data!.first.grade, 88.5);
       expect(students.data!.first.finalScore, 95.0);
 

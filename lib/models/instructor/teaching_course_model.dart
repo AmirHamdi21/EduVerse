@@ -24,6 +24,7 @@ class TeachingCourseModel extends Equatable {
   final int userId;
   final int courseId;
   final String role;
+  final bool hasExplicitRole;
   final CourseModel course;
   final SectionModel section;
   final SemesterModel semester;
@@ -37,6 +38,7 @@ class TeachingCourseModel extends Equatable {
     this.userId = 0,
     required this.courseId,
     this.role = 'instructor',
+    this.hasExplicitRole = false,
     required this.course,
     required this.section,
     required this.semester,
@@ -55,11 +57,16 @@ class TeachingCourseModel extends Equatable {
         ? SectionModel.fromJson(rawSection)
         : SectionModel.fromJson(const <String, dynamic>{});
 
+    final roleValue = json['role']?.toString().trim();
+
     return TeachingCourseModel(
       sectionId: _toInt(json['sectionId']),
       userId: _toInt(json['userId']),
       courseId: _toInt(json['courseId']),
-      role: json['role']?.toString() ?? 'instructor',
+      role: (roleValue != null && roleValue.isNotEmpty)
+          ? roleValue
+          : 'instructor',
+      hasExplicitRole: roleValue != null && roleValue.isNotEmpty,
       course: rawCourse is Map<String, dynamic>
           ? CourseModel.fromJson(rawCourse)
           : CourseModel.fromJson(const <String, dynamic>{}),
@@ -98,6 +105,7 @@ class TeachingCourseModel extends Equatable {
       'userId': userId,
       'courseId': courseId,
       'role': role,
+      'hasExplicitRole': hasExplicitRole,
       'course': course.toJson(),
       'section': section.toJson(),
       'semester': semester.toJson(),
@@ -114,6 +122,7 @@ class TeachingCourseModel extends Equatable {
     userId,
     courseId,
     role,
+    hasExplicitRole,
     course,
     section,
     semester,

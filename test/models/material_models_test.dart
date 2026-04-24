@@ -224,6 +224,43 @@ void main() {
       final model = AnnouncementModel.fromJson(json);
       expect(model.expiresAt, isNull);
     });
+
+    test('fromJson tolerates stringified numeric fields from backend', () {
+      final json = {
+        'id': '3001',
+        'courseId': '44',
+        'title': 'Backend shape changed',
+        'content': 'Numbers are serialized as strings.',
+        'createdBy': '15',
+        'priority': 'urgent',
+        'isPublished': '1',
+        'isPinned': '0',
+        'viewCount': '12',
+        'createdAt': '2026-04-01T10:00:00.000Z',
+        'updatedAt': '2026-04-01T10:00:00.000Z',
+        'author': {
+          'userId': '15',
+          'firstName': 'Mona',
+          'lastName': 'Ali',
+          'email': 'mona@eduverse.test',
+        },
+        'course': {
+          'id': '44',
+          'name': 'Networks',
+          'code': 'CS330',
+        },
+      };
+
+      final model = AnnouncementModel.fromJson(json);
+
+      expect(model.createdBy, 15);
+      expect(model.isPublished, 1);
+      expect(model.isPinned, 0);
+      expect(model.viewCount, 12);
+      expect(model.author?.userId, 15);
+      expect(model.author?.displayName, 'Mona Ali');
+      expect(model.course?.displayLabel, 'Networks (CS330)');
+    });
   });
 
   group('DiscussionThreadModel', () {

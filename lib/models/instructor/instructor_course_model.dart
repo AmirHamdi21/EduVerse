@@ -192,9 +192,12 @@ class EngagementMetricsModel {
 
 class SectionStudentModel {
   final int userId;
+  final int? resolvedUserId;
   final String? firstName;
   final String? lastName;
+  final String? fullName;
   final String? email;
+  final String? profilePictureUrl;
   final String status;
   final double? grade;
   final double? finalScore;
@@ -205,9 +208,12 @@ class SectionStudentModel {
 
   const SectionStudentModel({
     required this.userId,
+    this.resolvedUserId,
     this.firstName,
     this.lastName,
+    this.fullName,
     this.email,
+    this.profilePictureUrl,
     required this.status,
     this.grade,
     this.finalScore,
@@ -217,24 +223,65 @@ class SectionStudentModel {
     this.courseName,
   });
 
-  /// Display name with fallback to "Student #userId" when names unavailable
+  String get studentIdLabel => 'Student #${resolvedUserId ?? userId}';
+
+  String get resolvedEmail {
+    final value = email?.trim() ?? '';
+    return value.isNotEmpty ? value : '';
+  }
+
+  /// Display name with fallback to resolved email then "Student #userId"
   String get displayName {
-    if (firstName != null || lastName != null) {
-      return '$firstName $lastName'.trim();
+    final nestedFullName = fullName?.trim() ?? '';
+    if (nestedFullName.isNotEmpty) {
+      return nestedFullName;
     }
-    return 'Student #$userId';
+
+    final nestedOrFlatName = [
+      firstName?.trim(),
+      lastName?.trim(),
+    ].where((part) => part != null && part.isNotEmpty).join(' ');
+    if (nestedOrFlatName.isNotEmpty) {
+      return nestedOrFlatName;
+    }
+
+    if (resolvedEmail.isNotEmpty) {
+      return resolvedEmail;
+    }
+
+    return studentIdLabel;
   }
 
   factory SectionStudentModel.fromJson(Map<String, dynamic> json) {
     // Extract nested course and section data
     final courseData = json['course'] as Map<String, dynamic>?;
     final sectionData = json['section'] as Map<String, dynamic>?;
+    final userData = json['user'] as Map<String, dynamic>?;
+
+    final resolvedUserId =
+        int.tryParse(
+          userData?['userId']?.toString() ??
+              userData?['id']?.toString() ??
+              json['userId']?.toString() ??
+              '',
+        ) ??
+        0;
+
+    final nestedFirstName = userData?['firstName']?.toString();
+    final nestedLastName = userData?['lastName']?.toString();
+    final flatFirstName = json['firstName']?.toString();
+    final flatLastName = json['lastName']?.toString();
 
     return SectionStudentModel(
-      userId: int.tryParse(json['userId']?.toString() ?? '') ?? 0,
-      firstName: json['firstName']?.toString(),
-      lastName: json['lastName']?.toString(),
-      email: json['email']?.toString(),
+      userId: resolvedUserId,
+      resolvedUserId: resolvedUserId,
+      firstName: nestedFirstName ?? flatFirstName,
+      lastName: nestedLastName ?? flatLastName,
+      fullName: userData?['fullName']?.toString() ?? json['fullName']?.toString(),
+      email: userData?['email']?.toString() ?? json['email']?.toString(),
+      profilePictureUrl:
+          userData?['profilePictureUrl']?.toString() ??
+          json['profilePictureUrl']?.toString(),
       status: json['status']?.toString() ?? 'enrolled',
       grade: double.tryParse(json['grade']?.toString() ?? ''),
       finalScore: double.tryParse(json['finalScore']?.toString() ?? ''),

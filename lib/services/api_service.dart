@@ -431,7 +431,7 @@ class ApiService {
         throw Exception(message);
       }
     } catch (e) {
-      throw Exception('${e.toString()}');
+      throw Exception(e.toString());
     }
   }
 
@@ -461,7 +461,7 @@ class ApiService {
         throw Exception(message);
       }
     } catch (e) {
-      throw Exception('${e.toString()}');
+      throw Exception(e.toString());
     }
   }
 
@@ -487,7 +487,7 @@ class ApiService {
         throw Exception(message);
       }
     } catch (e) {
-      throw Exception('${e.toString()}');
+      throw Exception(e.toString());
     }
   }
 }
