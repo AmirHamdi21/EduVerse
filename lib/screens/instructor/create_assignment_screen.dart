@@ -19,12 +19,14 @@ class CreateAssignmentScreen extends StatelessWidget {
     this.assignmentId,
     this.assignmentService,
     this.enrollmentService,
+    this.preferredCourseId,
   });
 
   final AssignmentModel? assignment;
   final int? assignmentId;
   final AssignmentService? assignmentService;
   final EnrollmentService? enrollmentService;
+  final int? preferredCourseId;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +40,7 @@ class CreateAssignmentScreen extends StatelessWidget {
       create: (_) => InstructorAssignmentsCubit(
         assignmentService: resolvedAssignmentService,
         enrollmentService: resolvedEnrollmentService,
-      )..loadTeachingCourses(),
+      )..loadTeachingCourses(preferredCourseId: preferredCourseId),
       child: _CreateAssignmentView(
         assignment: assignment,
         assignmentId: assignmentId,
@@ -183,6 +185,8 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
     AssignmentFormData? initialData,
   ) async {
     final cubit = context.read<InstructorAssignmentsCubit>();
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
     final editId = _activeAssignmentId ?? widget.assignment?.assignmentId ?? 0;
     final isEdit = editId > 0;
 
@@ -246,7 +250,7 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
     if (failedCount > 0) {
       final failedPreview = failedFileNames.take(2).join(', ');
       final suffix = failedPreview.isEmpty ? '' : ': $failedPreview';
-      ScaffoldMessenger.of(context).showSnackBar(
+      messenger.showSnackBar(
         SnackBar(
           content: Text(
             'Assignment saved, but $failedCount instruction file(s) failed to upload$suffix. Use Retry in the file list.',
@@ -262,10 +266,8 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
         ? '$baseMessage with $uploadedCount instruction file(s)'
         : baseMessage;
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(successMessage)));
-    Navigator.of(context).pop(true);
+    messenger.showSnackBar(SnackBar(content: Text(successMessage)));
+    navigator.pop(true);
   }
 
   int _resolveCreatedAssignmentId(
@@ -309,6 +311,9 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
       title: assignment.title,
       description: assignment.description,
       instructions: assignment.instructionsText,
+      availableFrom: assignment.availableFrom?.isUtc == true
+          ? assignment.availableFrom!.toLocal()
+          : assignment.availableFrom,
       dueDate: localDueDate,
       maxScore: assignment.maxGrade,
       weight: assignment.weight,

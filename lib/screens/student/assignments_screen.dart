@@ -11,6 +11,7 @@ import '../../common/utils/responsive.dart';
 import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/assignments/assignment_model.dart';
+import '../../widgets/student/academic/academic_list_skeleton.dart';
 import '../../widgets/student/assignments/assignment_card.dart';
 import '../../widgets/student/assignments/assignments_filter_sheet.dart';
 import 'assignment_detail_screen.dart';
@@ -137,6 +138,16 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
               child: Column(
                 children: [
                   _buildHeader(context, isDark, l10n, responsive),
+                  BlocBuilder<AssignmentBloc, AssignmentState>(
+                    builder: (context, state) {
+                      return _buildCourseSelector(
+                        context,
+                        state,
+                        isDark,
+                        responsive,
+                      );
+                    },
+                  ),
                   _buildTabBar(context, isDark, l10n, responsive),
                   Expanded(
                     child: BlocConsumer<AssignmentBloc, AssignmentState>(
@@ -156,12 +167,17 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
                         }
                       },
                       builder: (context, state) {
-                        if (state.isLoading && state.assignments.isEmpty) {
+                        if (state.isListLoading) {
                           return _buildLoadingState(isDark);
+                        }
+                        if (state.enrolledCourses.isEmpty) {
+                          return _buildNoCoursesState(isDark, responsive);
                         }
                         if (state.error != null && state.assignments.isEmpty) {
                           return _buildErrorState(
                             context,
+                            state.selectedCourseId ??
+                                widget.preselectedCourseId,
                             state.error!,
                             isDark,
                             l10n,
@@ -184,6 +200,91 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
           ),
         );
       },
+    );
+  }
+
+  Widget _buildCourseSelector(
+    BuildContext context,
+    AssignmentState state,
+    bool isDark,
+    ResponsiveUtil responsive,
+  ) {
+    if (state.enrolledCourses.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    final selectedCourseId =
+        state.selectedCourseId ?? state.enrolledCourses.first.id;
+
+    return Container(
+      margin: EdgeInsets.fromLTRB(
+        responsive.p16,
+        responsive.p4,
+        responsive.p16,
+        responsive.p8,
+      ),
+      padding: EdgeInsets.symmetric(
+        horizontal: responsive.p12,
+        vertical: responsive.p4,
+      ),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.grey.shade800.withValues(alpha: 0.3)
+            : Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(responsive.radius12),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.school_rounded,
+            color: const Color(0xFF3B82F6),
+            size: responsive.fontSize18,
+          ),
+          SizedBox(width: responsive.p8),
+          Expanded(
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<int>(
+                value: selectedCourseId,
+                isExpanded: true,
+                dropdownColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+                icon: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+                ),
+                style: TextStyle(
+                  fontSize: responsive.fontSize13,
+                  color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  fontWeight: FontWeight.w600,
+                ),
+                items: state.enrolledCourses
+                    .map(
+                      (course) => DropdownMenuItem<int>(
+                        value: course.id,
+                        child: Text('${course.code} • ${course.name}'),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value == null || value == state.selectedCourseId) {
+                    return;
+                  }
+                  context.read<AssignmentBloc>().add(
+                    FetchAssignments(courseId: value),
+                  );
+                },
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () => context.read<AssignmentBloc>().add(
+              RefreshAssignments(courseId: state.selectedCourseId),
+            ),
+            splashRadius: responsive.p20,
+            icon: const Icon(Icons.refresh_rounded),
+            color: isDark ? Colors.grey.shade300 : Colors.grey.shade700,
+          ),
+        ],
+      ),
     );
   }
 
@@ -541,17 +642,12 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
   }
 
   Widget _buildLoadingState(bool isDark) {
-    return Center(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(
-          isDark ? Colors.white : const Color(0xFF3B82F6),
-        ),
-      ),
-    );
+    return AcademicListSkeleton(isDark: isDark);
   }
 
   Widget _buildErrorState(
     BuildContext context,
+    int? courseId,
     String message,
     bool isDark,
     AppLocalizations l10n,
@@ -589,7 +685,7 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
             SizedBox(height: responsive.p24),
             ElevatedButton.icon(
               onPressed: () => context.read<AssignmentBloc>().add(
-                FetchAssignments(courseId: widget.preselectedCourseId),
+                FetchAssignments(courseId: courseId),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF3B82F6),
@@ -702,10 +798,54 @@ class _AssignmentsScreenState extends State<AssignmentsScreen>
     );
   }
 
+  Widget _buildNoCoursesState(bool isDark, ResponsiveUtil responsive) {
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.all(responsive.p24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: responsive.p80,
+              height: responsive.p80,
+              decoration: BoxDecoration(
+                color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.school_outlined,
+                size: responsive.fontSize40,
+                color: const Color(0xFF3B82F6),
+              ),
+            ),
+            SizedBox(height: responsive.p20),
+            Text(
+              'No enrolled courses found',
+              style: TextStyle(
+                fontSize: responsive.fontSize18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : const Color(0xFF1E293B),
+              ),
+            ),
+            SizedBox(height: responsive.p8),
+            Text(
+              'Enroll in a course to view available assignments.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: responsive.fontSize14,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _refreshAssignments(BuildContext context) async {
     final bloc = context.read<AssignmentBloc>();
-    bloc.add(RefreshAssignments(courseId: widget.preselectedCourseId));
-    await bloc.stream.firstWhere((state) => !state.isLoading);
+    bloc.add(RefreshAssignments(courseId: bloc.state.selectedCourseId));
+    await bloc.stream.firstWhere((state) => !state.isListLoading);
   }
 
   void _showFilterSheet(

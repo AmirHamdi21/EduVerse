@@ -39,16 +39,6 @@ class _TADrawerState extends State<TADrawer>
     super.dispose();
   }
 
-  int _getSelectedIndexFromRoute(List<_MenuItem> items) {
-    if (widget.currentRoute == null) return 0;
-    for (int i = 0; i < items.length; i++) {
-      if (items[i].route == widget.currentRoute) {
-        return i;
-      }
-    }
-    return 0;
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
@@ -307,6 +297,13 @@ class _TADrawerState extends State<TADrawer>
         activeIcon: Icons.science,
         title: l10n.taLabsTitle,
         route: '/ta/labs',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.assignment_outlined,
+        activeIcon: Icons.assignment,
+        title: 'Assignments',
+        route: '/ta/assignments',
         category: 'main',
       ),
       _MenuItem(

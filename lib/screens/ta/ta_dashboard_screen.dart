@@ -286,7 +286,7 @@ class _TADashboardScreenState extends State<TADashboardScreen> {
                       _showSnackBar('Opening task: ${task.title}'),
                   onStartTask: (task) =>
                       _showSnackBar('Starting: ${task.title}'),
-                  onViewAll: () => context.push('/ta/tasks'),
+                  onViewAll: () => context.push('/ta/assignments'),
                 ),
                 const SizedBox(height: 24),
               ]),

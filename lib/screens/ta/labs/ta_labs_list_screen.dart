@@ -194,6 +194,8 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     // Wrap in BlocBuilder to get TA's assigned courses for filtering
     return BlocBuilder<TACoursesCubit, TACoursesState>(
       builder: (context, coursesState) {
+        final cachedLabs = context.read<TALabsCubit>().cachedLabs;
+
         // Get TA's assigned course IDs and models
         List<TeachingCourseModel> assignedCourses = [];
         if (coursesState.coursesStatus
@@ -209,11 +211,18 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
 
         // Handle full loading (no cache) - only on initial load
         if (state is TALabsLoading) {
-          return SliverFillRemaining(
-            child: Center(
-              child: CircularProgressIndicator(color: TAColors.primary),
-            ),
-          );
+          if (cachedLabs.isNotEmpty) {
+            return _buildLabsList(
+              isDark,
+              l10n,
+              cachedLabs,
+              assignedCourses,
+              assignedCourseIds,
+              showRefreshIndicator: true,
+            );
+          }
+
+          return _buildLoadingSkeleton(isDark);
         }
 
         if (state is TALabsError) {
@@ -256,12 +265,29 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
           );
         }
 
+        if (state is TALabDetailLoading ||
+            state is TALabDetailLoaded ||
+            state is TALabDetailError ||
+            state is TALabAttendanceRefreshing ||
+            state is TALabGrading ||
+            state is TALabGradeSuccess ||
+            state is TALabGradeError) {
+          if (cachedLabs.isNotEmpty) {
+            return _buildLabsList(
+              isDark,
+              l10n,
+              cachedLabs,
+              assignedCourses,
+              assignedCourseIds,
+              showRefreshIndicator: true,
+            );
+          }
+
+          return _buildLoadingSkeleton(isDark);
+        }
+
         // Initial state - show loading if no courses loaded yet
-        return SliverFillRemaining(
-          child: Center(
-            child: CircularProgressIndicator(color: TAColors.primary),
-          ),
-        );
+        return _buildLoadingSkeleton(isDark);
       },
     );
   }
@@ -292,7 +318,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
       return SliverFillRemaining(child: _buildEmptyState(isDark, l10n));
     }
 
-    return SliverPadding(
+    final labsSliver = SliverPadding(
       padding: const EdgeInsets.all(16),
       sliver: SliverList(
         delegate: SliverChildBuilderDelegate((context, index) {
@@ -306,6 +332,120 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
             assignedCourses,
           );
         }, childCount: courseIds.length),
+      ),
+    );
+
+    if (!showRefreshIndicator) {
+      return labsSliver;
+    }
+
+    return SliverMainAxisGroup(
+      slivers: [
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: LinearProgressIndicator(
+              minHeight: 3,
+              color: TAColors.primary,
+            ),
+          ),
+        ),
+        labsSliver,
+      ],
+    );
+  }
+
+  Widget _buildLoadingSkeleton(bool isDark) {
+    return SliverPadding(
+      padding: const EdgeInsets.all(16),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return _buildSkeletonCourseCard(isDark);
+        }, childCount: 3),
+      ),
+    );
+  }
+
+  Widget _buildSkeletonCourseCard(bool isDark) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: TAColors.cardColor(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              _skeletonBox(isDark, width: 48, height: 48, radius: 12),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _skeletonBox(isDark, width: 72, height: 12, radius: 4),
+                    const SizedBox(height: 8),
+                    _skeletonBox(isDark, width: 180, height: 16, radius: 5),
+                  ],
+                ),
+              ),
+              _skeletonBox(isDark, width: 64, height: 24, radius: 8),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...List<Widget>.generate(
+            2,
+            (_) => Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: Row(
+                children: [
+                  _skeletonBox(isDark, width: 40, height: 40, radius: 10),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _skeletonBox(
+                          isDark,
+                          width: double.infinity,
+                          height: 14,
+                          radius: 4,
+                        ),
+                        const SizedBox(height: 8),
+                        _skeletonBox(isDark, width: 140, height: 12, radius: 4),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  _skeletonBox(isDark, width: 52, height: 22, radius: 6),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _skeletonBox(
+    bool isDark, {
+    required double width,
+    required double height,
+    required double radius,
+  }) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.08)
+            : const Color(0xFFE2E8F0),
+        borderRadius: BorderRadius.circular(radius),
       ),
     );
   }

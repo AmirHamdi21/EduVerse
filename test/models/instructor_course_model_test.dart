@@ -103,13 +103,19 @@ void main() {
   });
 
   group('SectionStudentModel.fromJson', () {
-    test('parses grade and finalScore from backend response', () {
+    test('parses nested user identity with grade and finalScore', () {
       final student = SectionStudentModel.fromJson(<String, dynamic>{
         'userId': 101,
         'status': 'enrolled',
         'grade': 88.5,
         'finalScore': 96.2,
         'enrollmentDate': '2026-04-01T00:00:00Z',
+        'user': <String, dynamic>{
+          'userId': 101,
+          'fullName': 'Noura Adel',
+          'email': 'noura.adel@eduverse.test',
+          'profilePictureUrl': 'https://cdn.test/noura.png',
+        },
         'course': <String, dynamic>{
           'id': 1,
           'name': 'Computer Science 101',
@@ -119,9 +125,35 @@ void main() {
       });
 
       expect(student.userId, 101);
-      expect(student.displayName, 'Student #101');
+      expect(student.displayName, 'Noura Adel');
+      expect(student.resolvedEmail, 'noura.adel@eduverse.test');
       expect(student.grade, 88.5);
       expect(student.finalScore, 96.2);
+      expect(student.profilePictureUrl, 'https://cdn.test/noura.png');
+    });
+
+    test('falls back from flat names to email to Student #id', () {
+      final withNames = SectionStudentModel.fromJson(<String, dynamic>{
+        'userId': 7,
+        'firstName': 'Mona',
+        'lastName': 'Ali',
+        'status': 'enrolled',
+      });
+      expect(withNames.displayName, 'Mona Ali');
+
+      final withEmail = SectionStudentModel.fromJson(<String, dynamic>{
+        'userId': 8,
+        'email': 'student8@eduverse.test',
+        'status': 'enrolled',
+      });
+      expect(withEmail.displayName, 'student8@eduverse.test');
+      expect(withEmail.studentIdLabel, 'Student #8');
+
+      final fallback = SectionStudentModel.fromJson(<String, dynamic>{
+        'userId': 9,
+        'status': 'enrolled',
+      });
+      expect(fallback.displayName, 'Student #9');
     });
   });
 }

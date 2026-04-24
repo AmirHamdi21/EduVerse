@@ -10,6 +10,7 @@ class AssignmentFormData extends Equatable {
   final String? description;
   final String? instructions;
   final List<DriveFileModel> instructionFiles;
+  final DateTime? availableFrom;
   final DateTime? dueDate;
   final double maxScore;
   final double? weight;
@@ -25,6 +26,7 @@ class AssignmentFormData extends Equatable {
     this.description,
     this.instructions,
     this.instructionFiles = const <DriveFileModel>[],
+    this.availableFrom,
     this.dueDate,
     required this.maxScore,
     this.weight,
@@ -42,6 +44,7 @@ class AssignmentFormData extends Equatable {
       description: _nullableText(json['description']),
       instructions: _nullableText(json['instructions']),
       instructionFiles: _parseInstructionFiles(json['instructionFiles']),
+      availableFrom: _parseDateTime(json['availableFrom']),
       dueDate: _parseDateTime(json['dueDate']),
       maxScore: _parseDouble(json['maxScore'], fallback: 100),
       weight: _parseNullableDouble(json['weight']),
@@ -65,6 +68,8 @@ class AssignmentFormData extends Equatable {
         'description': description!.trim(),
       if (_nullableText(instructions) != null)
         'instructions': instructions!.trim(),
+      if (availableFrom != null)
+        'availableFrom': availableFrom!.toIso8601String(),
       if (dueDate != null) 'dueDate': dueDate!.toIso8601String(),
       'maxScore': maxScore,
       if (weight != null) 'weight': weight,
@@ -83,6 +88,7 @@ class AssignmentFormData extends Equatable {
     String? description,
     String? instructions,
     List<DriveFileModel>? instructionFiles,
+    DateTime? availableFrom,
     DateTime? dueDate,
     double? maxScore,
     double? weight,
@@ -98,6 +104,7 @@ class AssignmentFormData extends Equatable {
       description: description ?? this.description,
       instructions: instructions ?? this.instructions,
       instructionFiles: instructionFiles ?? this.instructionFiles,
+      availableFrom: availableFrom ?? this.availableFrom,
       dueDate: dueDate ?? this.dueDate,
       maxScore: maxScore ?? this.maxScore,
       weight: weight ?? this.weight,
@@ -218,6 +225,7 @@ class AssignmentFormData extends Equatable {
     description,
     instructions,
     instructionFiles,
+    availableFrom,
     dueDate,
     maxScore,
     weight,

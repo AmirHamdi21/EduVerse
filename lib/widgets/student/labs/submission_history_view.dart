@@ -163,7 +163,10 @@ class _SubmissionCard extends StatelessWidget {
           if (submission.driveFile != null) ...[
             SizedBox(height: responsive.p10),
             InkWell(
-              onTap: () => _openExternal(submission.driveFile!.downloadUrl),
+              onTap: () => _openDriveFile(
+                submission.driveFile!.webViewLink,
+                submission.driveFile!.downloadUrl,
+              ),
               borderRadius: BorderRadius.circular(responsive.radius8),
               child: Padding(
                 padding: EdgeInsets.symmetric(
@@ -190,13 +193,34 @@ class _SubmissionCard extends StatelessWidget {
                       ),
                     ),
                     const Icon(
-                      Icons.download_rounded,
+                      Icons.open_in_new_rounded,
                       color: Color(0xFF3B82F6),
                       size: 18,
                     ),
                   ],
                 ),
               ),
+            ),
+            SizedBox(height: responsive.p4),
+            Wrap(
+              spacing: responsive.p8,
+              runSpacing: responsive.p4,
+              children: [
+                if (submission.driveFile!.webViewLink.isNotEmpty)
+                  TextButton.icon(
+                    onPressed: () =>
+                        _openExternal(submission.driveFile!.webViewLink),
+                    icon: const Icon(Icons.open_in_new_rounded, size: 16),
+                    label: const Text('Open in Drive'),
+                  ),
+                if (submission.driveFile!.downloadUrl.isNotEmpty)
+                  TextButton.icon(
+                    onPressed: () =>
+                        _openExternal(submission.driveFile!.downloadUrl),
+                    icon: const Icon(Icons.download_rounded, size: 16),
+                    label: const Text('Download'),
+                  ),
+              ],
             ),
           ],
         ],
@@ -294,5 +318,14 @@ class _SubmissionCard extends StatelessWidget {
     }
 
     await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  Future<void> _openDriveFile(String webViewLink, String downloadUrl) async {
+    final preferredUrl = webViewLink.isNotEmpty ? webViewLink : downloadUrl;
+    if (preferredUrl.isEmpty) {
+      return;
+    }
+
+    await _openExternal(preferredUrl);
   }
 }

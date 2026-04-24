@@ -1,7 +1,8 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import '../../models/auth_models.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -329,14 +330,12 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _showErrorDialog(String message) {
-    AwesomeDialog(
-      context: context,
-      dialogType: DialogType.error,
-      animType: AnimType.scale,
+    _showModernDialog(
       title: AppLocalizations.of(context).error,
-      desc: message,
-      btnOkOnPress: () {},
-    ).show();
+      message: message,
+      icon: Icons.error_outline_rounded,
+      accentColors: const [Color(0xFFFF5F6D), Color(0xFFFFA24D)],
+    );
   }
 
   void _showWarningDialog(
@@ -344,28 +343,61 @@ class _LoginScreenState extends State<LoginScreen>
     String message, {
     VoidCallback? onRetry,
   }) {
-    AwesomeDialog(
-      context: context,
-      dialogType: DialogType.warning,
-      animType: AnimType.scale,
+    _showModernDialog(
       title: title,
-      desc: message,
-      btnOkText: AppLocalizations.of(context).tryAgain,
-      btnOkOnPress: onRetry ?? () {},
-      btnCancelText: AppLocalizations.of(context).cancel,
-      btnCancelOnPress: () {},
-    ).show();
+      message: message,
+      icon: Icons.mark_email_unread_outlined,
+      accentColors: const [Color(0xFFFFB347), Color(0xFFFF7A59)],
+      primaryLabel: AppLocalizations.of(context).tryAgain,
+      onPrimary: onRetry,
+      secondaryLabel: AppLocalizations.of(context).cancel,
+    );
   }
 
-  void _showInfoDialog(String title, String message) {
-    AwesomeDialog(
+  Future<void> _showModernDialog({
+    required String title,
+    required String message,
+    required IconData icon,
+    required List<Color> accentColors,
+    String? primaryLabel,
+    VoidCallback? onPrimary,
+    String? secondaryLabel,
+  }) {
+    final materialLocalizations = MaterialLocalizations.of(context);
+
+    return showGeneralDialog<void>(
       context: context,
-      dialogType: DialogType.info,
-      animType: AnimType.scale,
-      title: title,
-      desc: message,
-      btnOkOnPress: () {},
-    ).show();
+      barrierDismissible: true,
+      barrierLabel: materialLocalizations.modalBarrierDismissLabel,
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      transitionDuration: const Duration(milliseconds: 240),
+      pageBuilder: (dialogContext, _, __) {
+        return _LoginStatusDialog(
+          title: title,
+          message: message,
+          icon: icon,
+          accentColors: accentColors,
+          primaryLabel: primaryLabel ?? materialLocalizations.okButtonLabel,
+          onPrimary: onPrimary,
+          secondaryLabel: secondaryLabel,
+        );
+      },
+      transitionBuilder: (dialogContext, animation, _, child) {
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+
+        return FadeTransition(
+          opacity: curvedAnimation,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.92, end: 1).animate(curvedAnimation),
+            child: child,
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -387,31 +419,19 @@ class _LoginScreenState extends State<LoginScreen>
           context.go(route);
         } else if (state is AuthError) {
           if (state.message.toLowerCase().contains('verify')) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: const Color(0xFFFB923C),
-                behavior: SnackBarBehavior.floating,
-                action: SnackBarAction(
-                  label: l.tryAgain,
-                  onPressed: () {
-                    context.read<AuthBloc>().add(
-                      ResendVerificationEmailRequested(
-                        _emailController.text.trim(),
-                      ),
-                    );
-                  },
-                ),
-              ),
+            _showWarningDialog(
+              l.emailNotVerified,
+              state.message,
+              onRetry: () {
+                context.read<AuthBloc>().add(
+                  ResendVerificationEmailRequested(
+                    _emailController.text.trim(),
+                  ),
+                );
+              },
             );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: const Color(0xFFEF4444),
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            _showErrorDialog(state.message);
           }
         }
       },
@@ -1197,6 +1217,266 @@ class _LoginScreenState extends State<LoginScreen>
             );
           }).toList(),
         ],
+      ),
+    );
+  }
+}
+
+class _LoginStatusDialog extends StatelessWidget {
+  const _LoginStatusDialog({
+    required this.title,
+    required this.message,
+    required this.icon,
+    required this.accentColors,
+    required this.primaryLabel,
+    this.onPrimary,
+    this.secondaryLabel,
+  });
+
+  final String title;
+  final String message;
+  final IconData icon;
+  final List<Color> accentColors;
+  final String primaryLabel;
+  final VoidCallback? onPrimary;
+  final String? secondaryLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final responsive = context.responsive;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark
+        ? const Color(0xFF111827)
+        : const Color(0xFFFDFEFF);
+    final titleColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final bodyColor = isDark
+        ? const Color(0xFFD1D5DB)
+        : const Color(0xFF475569);
+    final secondaryColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : const Color(0xFFF1F5F9);
+
+    return SafeArea(
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: responsive.p24),
+          child: Material(
+            color: Colors.transparent,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(responsive.radius24),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  decoration: BoxDecoration(
+                    color: backgroundColor.withValues(
+                      alpha: isDark ? 0.94 : 0.98,
+                    ),
+                    borderRadius: BorderRadius.circular(responsive.radius24),
+                    border: Border.all(
+                      color: Colors.white.withValues(
+                        alpha: isDark ? 0.12 : 0.8,
+                      ),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: accentColors.first.withValues(alpha: 0.20),
+                        blurRadius: 32,
+                        offset: const Offset(0, 18),
+                      ),
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top: -32,
+                        right: -18,
+                        child: _DialogGlow(
+                          color: accentColors.last.withValues(alpha: 0.22),
+                          size: 120,
+                        ),
+                      ),
+                      Positioned(
+                        left: -24,
+                        bottom: -42,
+                        child: _DialogGlow(
+                          color: accentColors.first.withValues(alpha: 0.16),
+                          size: 128,
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(responsive.p24),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 6,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(999),
+                                gradient: LinearGradient(colors: accentColors),
+                              ),
+                            ),
+                            SizedBox(height: responsive.p20),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: responsive.p56,
+                                  height: responsive.p56,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: accentColors,
+                                    ),
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  child: Icon(
+                                    icon,
+                                    color: Colors.white,
+                                    size: responsive.iconLarge,
+                                  ),
+                                ),
+                                SizedBox(width: responsive.p16),
+                                Expanded(
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                      top: responsive.p4,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          title,
+                                          style: TextStyle(
+                                            fontSize: responsive.fontSize20,
+                                            fontWeight: FontWeight.w800,
+                                            color: titleColor,
+                                          ),
+                                        ),
+                                        SizedBox(height: responsive.p10),
+                                        Text(
+                                          message,
+                                          style: TextStyle(
+                                            fontSize: responsive.fontSize14,
+                                            height: 1.45,
+                                            color: bodyColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: responsive.p24),
+                            Row(
+                              children: [
+                                if (secondaryLabel != null) ...[
+                                  Expanded(
+                                    child: TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: titleColor,
+                                        backgroundColor: secondaryColor,
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: responsive.p14,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            responsive.radius16,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        secondaryLabel!,
+                                        style: TextStyle(
+                                          fontSize: responsive.fontSize14,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: responsive.p12),
+                                ],
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      onPrimary?.call();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 0,
+                                      shadowColor: Colors.transparent,
+                                      foregroundColor: Colors.white,
+                                      backgroundColor: accentColors.first,
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: responsive.p14,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          responsive.radius16,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Ink(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: accentColors,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          responsive.radius16,
+                                        ),
+                                      ),
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        constraints: BoxConstraints(
+                                          minHeight: responsive.p24,
+                                        ),
+                                        child: Text(
+                                          primaryLabel,
+                                          style: TextStyle(
+                                            fontSize: responsive.fontSize14,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DialogGlow extends StatelessWidget {
+  const _DialogGlow({required this.color, required this.size});
+
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(shape: BoxShape.circle, color: color),
       ),
     );
   }

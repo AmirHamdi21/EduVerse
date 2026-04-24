@@ -9,6 +9,7 @@ class AttendanceRecordModel extends Equatable {
   final double? confidenceScore; // 0.0–1.0 from AI, null for manual
   final String? notes;
   final String? checkinTime;
+  final String? fullName;
   final String? firstName;
   final String? lastName;
   final String? email;
@@ -20,6 +21,7 @@ class AttendanceRecordModel extends Equatable {
     this.confidenceScore,
     this.notes,
     this.checkinTime,
+    this.fullName,
     this.firstName,
     this.lastName,
     this.email,
@@ -35,6 +37,7 @@ class AttendanceRecordModel extends Equatable {
       confidenceScore: (json['confidenceScore'] as num?)?.toDouble(),
       notes: json['notes']?.toString(),
       checkinTime: json['checkinTime']?.toString(),
+      fullName: user?['fullName']?.toString() ?? json['fullName']?.toString(),
       firstName:
           user?['firstName']?.toString() ?? json['firstName']?.toString(),
       lastName: user?['lastName']?.toString() ?? json['lastName']?.toString(),
@@ -43,6 +46,9 @@ class AttendanceRecordModel extends Equatable {
   }
 
   String get displayName {
+    final resolvedFullName = fullName?.trim() ?? '';
+    if (resolvedFullName.isNotEmpty) return resolvedFullName;
+
     final parts = [
       firstName,
       lastName,
@@ -71,6 +77,7 @@ class AttendanceRecordModel extends Equatable {
     confidenceScore,
     notes,
     checkinTime,
+    fullName,
     firstName,
     lastName,
     email,

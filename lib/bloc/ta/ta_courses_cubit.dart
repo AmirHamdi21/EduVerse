@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../models/assignments/assignment_model.dart';
 import '../../models/assignments/assignment_submission_model.dart';
+import '../../models/core/enums/assignment_enums.dart' as api;
 import '../../models/core/enums/lab_enums.dart';
 import '../../models/instructor/teaching_course_model.dart';
 import '../../models/materials/course_material_model.dart';
@@ -505,6 +506,27 @@ class TACoursesCubit extends Cubit<TACoursesState> {
     }
 
     // Refresh the assignments list after successful deletion.
+    await fetchCourseAssignments(courseId);
+  }
+
+  Future<void> updateAssignmentStatus(
+    int courseId,
+    int assignmentId,
+    api.AssignmentStatus status,
+  ) async {
+    final result = await _assignmentService.updateStatus(assignmentId, status);
+
+    if (!result.isSuccess) {
+      emit(
+        state.copyWith(
+          assignmentsData: TASubTabError<List<AssignmentModel>>(
+            result.error?.message ?? 'Failed to update assignment status',
+          ),
+        ),
+      );
+      return;
+    }
+
     await fetchCourseAssignments(courseId);
   }
 }

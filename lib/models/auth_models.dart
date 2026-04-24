@@ -211,7 +211,10 @@ class RoleModel {
   const RoleModel({required this.roleId, required this.roleName});
 
   factory RoleModel.fromJson(Map<String, dynamic> json) =>
-      RoleModel(roleId: json['roleId'] ?? 0, roleName: json['roleName'] ?? '');
+      RoleModel(
+        roleId: _parseInt(json['roleId'] ?? json['id']),
+        roleName: _parseString(json['roleName'] ?? json['name']),
+      );
 
   Map<String, dynamic> toJson() => {'roleId': roleId, 'roleName': roleName};
 
@@ -246,8 +249,8 @@ class RegistrationResponse {
   factory RegistrationResponse.fromJson(Map<String, dynamic> json) =>
       RegistrationResponse(
         user: UserDto.fromJson(json['user']),
-        accessToken: json['accessToken'] ?? '',
-        refreshToken: json['refreshToken'] ?? '',
+        accessToken: _parseString(json['accessToken']),
+        refreshToken: _parseString(json['refreshToken']),
       );
 }
 
@@ -266,9 +269,9 @@ class AuthResponse {
   });
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) => AuthResponse(
-    accessToken: json['accessToken'],
-    refreshToken: json['refreshToken'],
-    expiresIn: json['expiresIn'],
+    accessToken: _parseString(json['accessToken']),
+    refreshToken: _parseString(json['refreshToken']),
+    expiresIn: _parseNullableInt(json['expiresIn']),
     user: UserDto.fromJson(json['user']),
   );
 }
@@ -288,9 +291,9 @@ class TokenRefreshResponse {
 
   factory TokenRefreshResponse.fromJson(Map<String, dynamic> json) =>
       TokenRefreshResponse(
-        accessToken: json['accessToken'],
-        refreshToken: json['refreshToken'],
-        expiresIn: json['expiresIn'],
+        accessToken: _parseString(json['accessToken']),
+        refreshToken: _parseString(json['refreshToken']),
+        expiresIn: _parseNullableInt(json['expiresIn']),
       );
 }
 
@@ -328,29 +331,37 @@ class UserDto {
   factory UserDto.fromJson(Map<String, dynamic> json) {
     // Parse roles: backend sends [{roleId, roleName}] objects
     List<RoleModel> parsedRoles = [];
-    if (json['roles'] != null) {
-      parsedRoles = (json['roles'] as List).map((r) {
+    final rawRoles = json['roles'];
+    if (rawRoles is List) {
+      parsedRoles = rawRoles.map((r) {
         if (r is Map<String, dynamic>) {
           return RoleModel.fromJson(r);
         }
-        // Fallback: if the backend still sends a plain string in some edge case
         return RoleModel(roleId: 0, roleName: r.toString());
       }).toList();
+    } else if (rawRoles is Map<String, dynamic>) {
+      parsedRoles = <RoleModel>[RoleModel.fromJson(rawRoles)];
+    } else if (rawRoles != null) {
+      parsedRoles = <RoleModel>[
+        RoleModel(roleId: 0, roleName: rawRoles.toString()),
+      ];
     }
 
     return UserDto(
-      userId: json['userId'] ?? 0,
-      email: json['email'] ?? '',
-      firstName: json['firstName'] ?? '',
-      lastName: json['lastName'] ?? '',
-      fullName: json['fullName'],
-      phone: json['phone'],
-      profilePictureUrl: json['profilePictureUrl'],
-      campusId: json['campusId'],
-      status: json['status'] ?? 'active',
-      emailVerified: json['emailVerified'] ?? json['isEmailVerified'] ?? false,
-      lastLoginAt: json['lastLoginAt'],
-      createdAt: json['createdAt'] ?? '',
+      userId: _parseInt(json['userId'] ?? json['id']),
+      email: _parseString(json['email']),
+      firstName: _parseString(json['firstName']),
+      lastName: _parseString(json['lastName']),
+      fullName: _parseNullableString(json['fullName']),
+      phone: _parseNullableString(json['phone']),
+      profilePictureUrl: _parseNullableString(json['profilePictureUrl']),
+      campusId: _parseNullableInt(json['campusId']),
+      status: _parseString(json['status'], fallback: 'active'),
+      emailVerified: _parseBool(
+        json['emailVerified'] ?? json['isEmailVerified'],
+      ),
+      lastLoginAt: _parseNullableString(json['lastLoginAt']),
+      createdAt: _parseString(json['createdAt']),
       roles: parsedRoles,
     );
   }
@@ -393,7 +404,69 @@ class MessageResponse {
 
   factory MessageResponse.fromJson(Map<String, dynamic> json) =>
       MessageResponse(
-        message: json['message'] ?? '',
-        success: json['success'] ?? true,
+        message: _parseString(json['message']),
+        success: _parseBool(json['success'], fallback: true),
       );
+}
+
+int _parseInt(dynamic value, {int fallback = 0}) {
+  if (value is int) {
+    return value;
+  }
+  if (value is num) {
+    return value.toInt();
+  }
+  if (value is String) {
+    return int.tryParse(value.trim()) ?? fallback;
+  }
+  return fallback;
+}
+
+int? _parseNullableInt(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+
+  if (value is String && value.trim().isEmpty) {
+    return null;
+  }
+
+  return _parseInt(value, fallback: 0);
+}
+
+String _parseString(dynamic value, {String fallback = ''}) {
+  if (value == null) {
+    return fallback;
+  }
+
+  final parsed = value.toString();
+  return parsed.isEmpty ? fallback : parsed;
+}
+
+String? _parseNullableString(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+
+  final parsed = value.toString().trim();
+  return parsed.isEmpty ? null : parsed;
+}
+
+bool _parseBool(dynamic value, {bool fallback = false}) {
+  if (value is bool) {
+    return value;
+  }
+  if (value is num) {
+    return value != 0;
+  }
+  if (value is String) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized == 'true' || normalized == '1') {
+      return true;
+    }
+    if (normalized == 'false' || normalized == '0') {
+      return false;
+    }
+  }
+  return fallback;
 }

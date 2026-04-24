@@ -1,8 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/attendance/instructor_attendance_cubit.dart';
 import 'package:edu_verse/bloc/attendance/instructor_attendance_state.dart';
 import 'package:edu_verse/common/service_error.dart';
+import 'package:edu_verse/models/attendance/ai_processing_result_model.dart';
 import 'package:edu_verse/models/attendance/attendance_record_model.dart';
 import 'package:edu_verse/models/attendance/attendance_session_model.dart';
 import 'package:edu_verse/models/instructor/instructor_course_model.dart';
@@ -20,6 +23,21 @@ class _FakeAttendanceService implements AttendanceService {
   ServiceResult<AttendanceSessionModel>? sessionDetailsResult;
   ServiceResult<void> batchResult = ServiceResult<void>.success(null);
   ServiceResult<void> closeResult = ServiceResult<void>.success(null);
+  ServiceResult<void> deleteResult = ServiceResult<void>.success(null);
+  ServiceResult<AttendanceSessionModel>? updateSessionResult;
+  ServiceResult<AiProcessingResultModel> uploadAiPhotoResult =
+      ServiceResult<AiProcessingResultModel>.success(
+        const AiProcessingResultModel(processingId: 10, status: 'pending'),
+      );
+  ServiceResult<AiProcessingResultModel> pollAiResultResult =
+      ServiceResult<AiProcessingResultModel>.success(
+        const AiProcessingResultModel(
+          processingId: 10,
+          status: 'completed',
+          matchedStudentsCount: 1,
+          unmatchedFacesCount: 1,
+        ),
+      );
 
   @override
   Future<ServiceResult<List<AttendanceSessionModel>>> getSessions({
@@ -86,6 +104,38 @@ class _FakeAttendanceService implements AttendanceService {
   Future<ServiceResult<void>> closeSession(int id) async => closeResult;
 
   @override
+  Future<ServiceResult<AiProcessingResultModel>> uploadAiPhoto({
+    required int sessionId,
+    required File photo,
+  }) async => uploadAiPhotoResult;
+
+  @override
+  Future<ServiceResult<AiProcessingResultModel>> pollAiResult(
+    int processingId, {
+    Duration timeout = const Duration(seconds: 120),
+    Duration interval = const Duration(milliseconds: 2500),
+  }) async => pollAiResultResult;
+
+  @override
+  Future<ServiceResult<void>> deleteSession(int id) async => deleteResult;
+
+  @override
+  Future<ServiceResult<AttendanceSessionModel>> updateSession(
+    int id,
+    Map<String, dynamic> data,
+  ) async =>
+      updateSessionResult ??
+      ServiceResult<AttendanceSessionModel>.success(
+        AttendanceSessionModel.fromJson(<String, dynamic>{
+          'id': id,
+          'sectionId': 10,
+          'sessionDate': data['sessionDate'],
+          'sessionType': data['sessionType'],
+          'status': 'scheduled',
+        }),
+      );
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
@@ -94,10 +144,43 @@ class _FakeEnrollmentService implements EnrollmentService {
       ServiceResult<List<TeachingCourseModel>>.success(const []);
 
   ServiceResult<List<SectionStudentModel>>? sectionStudentsResult;
+  ServiceResult<List<TeachingCourseModel>> teachingSectionsResult =
+      ServiceResult<List<TeachingCourseModel>>.success(
+        <TeachingCourseModel>[
+          TeachingCourseModel.fromJson(<String, dynamic>{
+            'sectionId': 10,
+            'courseId': 50,
+            'course': <String, dynamic>{
+              'id': 50,
+              'departmentId': 1,
+              'code': 'CS401',
+              'name': 'Compiler Design',
+              'credits': 3,
+              'level': 'senior',
+              'status': 'active',
+            },
+            'section': <String, dynamic>{
+              'id': 10,
+              'courseId': 50,
+              'semesterId': 1,
+              'sectionNumber': 'A1',
+              'maxCapacity': 40,
+              'currentEnrollment': 2,
+              'status': 'active',
+            },
+            'semester': <String, dynamic>{
+              'id': 1,
+              'name': 'Spring 2026',
+              'term': 'spring',
+              'year': 2026,
+            },
+          }),
+        ],
+      );
 
   @override
   Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async =>
-      teachingResult;
+      teachingSectionsResult;
 
   @override
   Future<ServiceResult<List<SectionStudentModel>>> getSectionStudentsLite(
@@ -136,7 +219,7 @@ void main() {
     });
 
     test('loadTeachingSections populates sections', () async {
-      fakeEnrollment.teachingResult =
+      fakeEnrollment.teachingSectionsResult =
           ServiceResult<List<TeachingCourseModel>>.failure(
             const ServiceError(
               type: ServiceErrorType.network,
@@ -240,6 +323,93 @@ void main() {
 
       cubit.updateNewSessionType('lab');
       expect(cubit.state.newSessionType, 'lab');
+    });
+
+    test('setUiMode switches to session table mode and selects the first section', () async {
+      await cubit.loadTeachingSections();
+
+      cubit.setUiMode(AttendanceUiMode.sessions);
+
+      expect(cubit.state.uiMode, AttendanceUiMode.sessions);
+      expect(cubit.state.selectedSectionId, 10);
+    });
+
+    test('loadRosterData prefers section student identity over fallback ids', () async {
+      fakeEnrollment.sectionStudentsResult =
+          ServiceResult<List<SectionStudentModel>>.success(
+            <SectionStudentModel>[
+              SectionStudentModel.fromJson(<String, dynamic>{
+                'userId': 1,
+                'status': 'enrolled',
+                'user': <String, dynamic>{
+                  'userId': 1,
+                  'fullName': 'Mariam Ali',
+                  'email': 'mariam@eduverse.test',
+                },
+              }),
+            ],
+          );
+
+      await cubit.openSection(fakeEnrollment.teachingSectionsResult.data!.first, 10);
+      await cubit.loadRosterData(5, false);
+
+      expect(cubit.state.rosterRows.first.name, 'Mariam Ali');
+      expect(cubit.state.rosterRows.first.email, 'mariam@eduverse.test');
+    });
+
+    test('applyAiResultsToRoster updates statuses from AI suggestions', () async {
+      fakeAttendance.sessionDetailsResult =
+          ServiceResult<AttendanceSessionModel>.success(
+            AttendanceSessionModel.fromJson(<String, dynamic>{
+              'id': 5,
+              'sectionId': 10,
+              'status': 'in_progress',
+              'records': <Map<String, dynamic>>[
+                {
+                  'userId': 1,
+                  'attendanceStatus': 'present',
+                  'markedBy': 'ai',
+                  'confidenceScore': 0.92,
+                  'user': <String, dynamic>{'fullName': 'Ali Hassan'},
+                },
+                {
+                  'userId': 2,
+                  'attendanceStatus': 'absent',
+                  'markedBy': 'manual',
+                  'user': <String, dynamic>{'fullName': 'Sara Ahmed'},
+                },
+              ],
+            }),
+          );
+      fakeEnrollment.sectionStudentsResult =
+          ServiceResult<List<SectionStudentModel>>.success(
+            <SectionStudentModel>[
+              SectionStudentModel.fromJson(<String, dynamic>{
+                'userId': 1,
+                'status': 'enrolled',
+                'user': <String, dynamic>{'fullName': 'Ali Hassan'},
+              }),
+              SectionStudentModel.fromJson(<String, dynamic>{
+                'userId': 2,
+                'status': 'enrolled',
+                'user': <String, dynamic>{'fullName': 'Sara Ahmed'},
+              }),
+            ],
+          );
+
+      await cubit.openSection(fakeEnrollment.teachingSectionsResult.data!.first, 10);
+      await cubit.loadRosterData(5, false);
+      cubit.applyStatus(1, 'late');
+
+      expect(cubit.state.isRosterDirty, isTrue);
+
+      cubit.setAiFile(File('fake_attendance.jpg'));
+      await cubit.runAiAttendance();
+      cubit.applyAiResultsToRoster();
+
+      expect(cubit.state.rosterRows.first.status, 'present');
+      expect(cubit.state.isRosterDirty, isTrue);
+      expect(cubit.state.aiUnknownCount, 1);
     });
   });
 }

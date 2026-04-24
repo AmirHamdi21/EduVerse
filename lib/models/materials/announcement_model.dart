@@ -17,11 +17,11 @@ class AnnouncementAuthor extends Equatable {
 
   factory AnnouncementAuthor.fromJson(Map<String, dynamic> json) {
     return AnnouncementAuthor(
-      userId: json['userId'] as int?,
-      firstName: json['firstName'] as String?,
-      lastName: json['lastName'] as String?,
-      email: json['email'] as String?,
-      profilePictureUrl: json['profilePictureUrl'] as String?,
+      userId: _toNullableInt(json['userId']),
+      firstName: json['firstName']?.toString(),
+      lastName: json['lastName']?.toString(),
+      email: json['email']?.toString(),
+      profilePictureUrl: json['profilePictureUrl']?.toString(),
     );
   }
 
@@ -44,8 +44,8 @@ class AnnouncementCourse extends Equatable {
   factory AnnouncementCourse.fromJson(Map<String, dynamic> json) {
     return AnnouncementCourse(
       id: json['id']?.toString(),
-      name: json['name'] as String?,
-      code: json['code'] as String?,
+      name: json['name']?.toString(),
+      code: json['code']?.toString(),
     );
   }
 
@@ -105,19 +105,17 @@ class AnnouncementModel extends Equatable {
     return AnnouncementModel(
       id: json['id']?.toString() ?? '',
       courseId: json['courseId']?.toString(),
-      createdBy: json['createdBy'] as int?,
-      title: json['title'] as String? ?? '',
-      content: json['content'] as String? ?? '',
-      announcementType: json['announcementType'] as String?,
-      priority: json['priority'] as String? ?? 'medium',
-      targetAudience: json['targetAudience'] as String?,
-      isPublished: json['isPublished'] is bool
-          ? (json['isPublished'] as bool ? 1 : 0)
-          : (json['isPublished'] as int? ?? 0),
-      isPinned: json['isPinned'] is bool
-          ? (json['isPinned'] as bool ? 1 : 0)
-          : json['isPinned'] as int?,
-      viewCount: json['viewCount'] as int? ?? 0,
+      createdBy: _toNullableInt(json['createdBy']),
+      title: json['title']?.toString() ?? '',
+      content: json['content']?.toString() ?? '',
+      announcementType: json['announcementType']?.toString(),
+      priority: json['priority']?.toString() ?? 'medium',
+      targetAudience: json['targetAudience']?.toString(),
+      isPublished: _toBoolInt(json['isPublished']),
+      isPinned: json.containsKey('isPinned')
+          ? _toNullableBoolInt(json['isPinned'])
+          : null,
+      viewCount: _toNullableInt(json['viewCount']) ?? 0,
       attachmentFileId: json['attachmentFileId']?.toString(),
       publishedAt: json['publishedAt'] != null
           ? DateTime.tryParse(json['publishedAt'].toString())
@@ -159,4 +157,44 @@ class AnnouncementModel extends Equatable {
 
   @override
   List<Object?> get props => [id, title, isPublished, isPinned, updatedAt];
+}
+
+int? _toNullableInt(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+  if (value is int) {
+    return value;
+  }
+  if (value is num) {
+    return value.toInt();
+  }
+  return int.tryParse(value.toString());
+}
+
+int _toBoolInt(dynamic value) {
+  if (value is bool) {
+    return value ? 1 : 0;
+  }
+
+  final parsed = _toNullableInt(value);
+  if (parsed != null) {
+    return parsed == 0 ? 0 : 1;
+  }
+
+  final normalized = value?.toString().trim().toLowerCase();
+  if (normalized == 'true') {
+    return 1;
+  }
+  if (normalized == 'false') {
+    return 0;
+  }
+  return 0;
+}
+
+int? _toNullableBoolInt(dynamic value) {
+  if (value == null) {
+    return null;
+  }
+  return _toBoolInt(value);
 }

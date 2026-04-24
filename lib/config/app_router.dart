@@ -73,6 +73,7 @@ import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_edit_screen.dart';
 import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_attempts_screen.dart';
 import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_grading_screen.dart';
 import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_statistics_screen.dart';
+import 'package:edu_verse/screens/ta/assignments/ta_assignments_screen.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart' as quiz_models;
 // Instructor screens
 import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_screen.dart';
@@ -1033,6 +1034,10 @@ class AppRouter {
       GoRoute(
         path: '/ta/courses',
         builder: (context, state) => const TACoursesListScreen(),
+      ),
+      GoRoute(
+        path: '/ta/assignments',
+        builder: (context, state) => const TAAssignmentsScreen(),
       ),
       GoRoute(
         path: '/ta/course/:id',

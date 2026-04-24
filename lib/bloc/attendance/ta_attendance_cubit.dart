@@ -35,9 +35,7 @@ class TAAttendanceCubit extends Cubit<TAAttendanceState> {
       return;
     }
 
-    final all = result.data!;
-    final taOnly = all.where((e) => e.role.toLowerCase() == 'ta').toList();
-    final available = taOnly.isNotEmpty ? taOnly : all;
+    final available = result.data!;
     final first = available.isNotEmpty ? available.first : null;
 
     emit(

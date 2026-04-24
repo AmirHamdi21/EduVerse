@@ -173,6 +173,7 @@ void main() {
         'userId': 43,
         'attendanceStatus': 'late',
         'user': <String, dynamic>{
+          'fullName': 'Jane Smith',
           'firstName': 'Jane',
           'lastName': 'Smith',
           'email': 'jane@example.com',
@@ -181,9 +182,11 @@ void main() {
 
       final model = AttendanceRecordModel.fromJson(json);
 
+      expect(model.fullName, 'Jane Smith');
       expect(model.firstName, 'Jane');
       expect(model.lastName, 'Smith');
       expect(model.email, 'jane@example.com');
+      expect(model.displayName, 'Jane Smith');
     });
 
     test('displayName falls back to email then Student #id', () {
