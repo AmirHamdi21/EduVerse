@@ -416,7 +416,7 @@ void main() {
       expect(selectedSort, 'credits_asc');
     });
 
-    testWidgets('join course button keeps navigation behavior unchanged', (
+    testWidgets('join course button navigates to registration route', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -433,7 +433,8 @@ void main() {
               create: (_) => ThemeBloc(storageService: StorageService()),
               child: const Scaffold(body: JoinCourseButton()),
             ),
-            '/courses': (_) => const Scaffold(body: Text('Courses Route')),
+            '/registration': (_) =>
+                const Scaffold(body: Text('Registration Route')),
           },
         ),
       );
@@ -441,7 +442,7 @@ void main() {
       await tester.tap(find.text('Join Course'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Courses Route'), findsOneWidget);
+      expect(find.text('Registration Route'), findsOneWidget);
     });
 
     testWidgets(

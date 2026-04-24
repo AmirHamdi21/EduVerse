@@ -51,8 +51,11 @@ import 'package:edu_verse/screens/student/gamification/gamification_screen.dart'
 import 'package:edu_verse/screens/student/ai_chat/ai_chat_screen.dart';
 import 'package:edu_verse/screens/student/search/overall_search_screen.dart';
 import 'package:edu_verse/screens/student/calendar/calendar_screen.dart';
+import 'package:edu_verse/screens/student/student_registration_screen.dart';
 import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
+import 'package:edu_verse/bloc/student_registration/student_registration_cubit.dart';
+import 'package:edu_verse/services/api/enrollment_service.dart';
 // Quiz screens
 import 'package:edu_verse/screens/student/quizzes/student_quizzes_screen.dart';
 import 'package:edu_verse/screens/student/quizzes/student_quiz_taker_screen.dart';
@@ -191,6 +194,7 @@ import 'package:edu_verse/screens/shared/discussion_screen.dart';
 import 'package:edu_verse/screens/shared/chat/new_conversation_screen.dart';
 import 'package:edu_verse/screens/shared/chat/user_profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
 import 'package:edu_verse/screens/onBoarding/onboarding_screen.dart';
@@ -253,6 +257,15 @@ class AppRouter {
       GoRoute(
         path: '/courses',
         builder: (context, state) => const CoursesScreen(),
+      ),
+      GoRoute(
+        path: '/registration',
+        builder: (context, state) => BlocProvider<StudentRegistrationCubit>(
+          create: (context) => StudentRegistrationCubit(
+            enrollmentService: context.read<EnrollmentService>(),
+          ),
+          child: const StudentRegistrationScreen(),
+        ),
       ),
       GoRoute(
         path: '/flashcards',
@@ -989,7 +1002,9 @@ class AppRouter {
           final quiz = extra?['quiz'] as quiz_models.QuizModel?;
           final attempt = extra?['attempt'] as quiz_models.QuizAttemptModel?;
           if (quiz == null || attempt == null) {
-            return const Scaffold(body: Center(child: Text('Grading data not found')));
+            return const Scaffold(
+              body: Center(child: Text('Grading data not found')),
+            );
           }
           return InstructorQuizGradingScreen(quiz: quiz, attempt: attempt);
         },
@@ -1068,7 +1083,9 @@ class AppRouter {
           final quiz = extra?['quiz'] as quiz_models.QuizModel?;
           final attempt = extra?['attempt'] as quiz_models.QuizAttemptModel?;
           if (quiz == null || attempt == null) {
-            return const Scaffold(body: Center(child: Text('Grading data not found')));
+            return const Scaffold(
+              body: Center(child: Text('Grading data not found')),
+            );
           }
           return TAQuizGradingScreen(quiz: quiz, attempt: attempt);
         },

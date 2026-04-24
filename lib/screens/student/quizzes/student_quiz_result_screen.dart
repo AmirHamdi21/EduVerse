@@ -26,7 +26,9 @@ class StudentQuizResultScreen extends StatelessWidget {
             if (state is StudentQuizLoading) {
               return Scaffold(
                 backgroundColor: bg,
-                body: const Center(child: CircularProgressIndicator(color: Color(0xFF2B7FFF))),
+                body: const Center(
+                  child: CircularProgressIndicator(color: Color(0xFF2B7FFF)),
+                ),
               );
             }
             return Scaffold(
@@ -44,9 +46,16 @@ class StudentQuizResultScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildResultUI(BuildContext context, bool isDark, Color bg, AttemptResultModel result) {
+  Widget _buildResultUI(
+    BuildContext context,
+    bool isDark,
+    Color bg,
+    AttemptResultModel result,
+  ) {
     final passed = result.passed;
-    final gradeColor = passed ? const Color(0xFF10B981) : const Color(0xFFEF4444);
+    final gradeColor = passed
+        ? const Color(0xFF10B981)
+        : const Color(0xFFEF4444);
 
     return Scaffold(
       backgroundColor: bg,
@@ -86,19 +95,30 @@ class StudentQuizResultScreen extends StatelessWidget {
                               color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(Icons.arrow_back_ios_rounded, color: Colors.white, size: 18),
+                            child: const Icon(
+                              Icons.arrow_back_ios_rounded,
+                              color: Colors.white,
+                              size: 18,
+                            ),
                           ),
                         ),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
                             passed ? '🎉 PASSED' : '❌ FAILED',
-                            style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w700),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ],
@@ -110,14 +130,23 @@ class StudentQuizResultScreen extends StatelessWidget {
                   _ScoreCircle(percentage: result.percentage, passed: passed),
                   const SizedBox(height: 16),
                   Text(
-                    result.quizTitle.isNotEmpty ? result.quizTitle : 'Quiz Result',
-                    style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w700),
+                    result.quizTitle.isNotEmpty
+                        ? result.quizTitle
+                        : 'Quiz Result',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 6),
                   Text(
                     '${result.score.toStringAsFixed(1)} / ${result.maxScore.toStringAsFixed(1)} points',
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 14),
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.85),
+                      fontSize: 14,
+                    ),
                   ),
                   const SizedBox(height: 30),
 
@@ -130,8 +159,11 @@ class StudentQuizResultScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
-                          blurRadius: 20, offset: const Offset(0, 8),
+                          color: Colors.black.withValues(
+                            alpha: isDark ? 0.3 : 0.08,
+                          ),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
                         ),
                       ],
                     ),
@@ -139,11 +171,26 @@ class StudentQuizResultScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            _statBox(isDark, '${result.correctCount}', 'Correct', const Color(0xFF10B981)),
+                            _statBox(
+                              isDark,
+                              '${result.correctCount}',
+                              'Correct',
+                              const Color(0xFF10B981),
+                            ),
                             const SizedBox(width: 12),
-                            _statBox(isDark, '${result.wrongCount}', 'Wrong', const Color(0xFFEF4444)),
+                            _statBox(
+                              isDark,
+                              '${result.wrongCount}',
+                              'Wrong',
+                              const Color(0xFFEF4444),
+                            ),
                             const SizedBox(width: 12),
-                            _statBox(isDark, '${result.skippedCount}', 'Skipped', const Color(0xFFF59E0B)),
+                            _statBox(
+                              isDark,
+                              '${result.skippedCount}',
+                              'Skipped',
+                              const Color(0xFFF59E0B),
+                            ),
                           ],
                         ),
                         if (result.timeTakenMinutes != null) ...[
@@ -151,20 +198,30 @@ class StudentQuizResultScreen extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: isDark ? Colors.white.withValues(alpha: 0.04) : const Color(0xFFF8FAFC),
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.04)
+                                  : const Color(0xFFF8FAFC),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.timer_outlined, size: 18,
-                                  color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B)),
+                                Icon(
+                                  Icons.timer_outlined,
+                                  size: 18,
+                                  color: isDark
+                                      ? const Color(0xFF94A3B8)
+                                      : const Color(0xFF64748B),
+                                ),
                                 const SizedBox(width: 6),
                                 Text(
                                   'Time taken: ${result.timeTakenMinutes} min',
                                   style: TextStyle(
-                                    color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
-                                    fontSize: 13, fontWeight: FontWeight.w500,
+                                    color: isDark
+                                        ? const Color(0xFF94A3B8)
+                                        : const Color(0xFF64748B),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
@@ -216,16 +273,36 @@ class StudentQuizResultScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(value, style: TextStyle(color: color, fontSize: 22, fontWeight: FontWeight.w800)),
+            Text(
+              value,
+              style: TextStyle(
+                color: color,
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
             const SizedBox(height: 4),
-            Text(label, style: TextStyle(color: color.withValues(alpha: 0.8), fontSize: 12, fontWeight: FontWeight.w500)),
+            Text(
+              label,
+              style: TextStyle(
+                color: color.withValues(alpha: 0.8),
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBtn(String label, IconData icon, bool isDark, bool primary, VoidCallback onTap) {
+  Widget _buildBtn(
+    String label,
+    IconData icon,
+    bool isDark,
+    bool primary,
+    VoidCallback onTap,
+  ) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -234,20 +311,46 @@ class StudentQuizResultScreen extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            gradient: primary ? const LinearGradient(colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)]) : null,
-            color: primary ? null : (isDark ? const Color(0xFF1E293B) : Colors.white),
+            gradient: primary
+                ? const LinearGradient(
+                    colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
+                  )
+                : null,
+            color: primary
+                ? null
+                : (isDark ? const Color(0xFF1E293B) : Colors.white),
             borderRadius: BorderRadius.circular(14),
-            border: primary ? null : Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : const Color(0xFFE2E8F0)),
+            border: primary
+                ? null
+                : Border.all(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : const Color(0xFFE2E8F0),
+                  ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: primary ? Colors.white : (isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B)), size: 18),
+              Icon(
+                icon,
+                color: primary
+                    ? Colors.white
+                    : (isDark
+                          ? const Color(0xFF94A3B8)
+                          : const Color(0xFF64748B)),
+                size: 18,
+              ),
               const SizedBox(width: 8),
-              Text(label, style: TextStyle(
-                color: primary ? Colors.white : (isDark ? Colors.white : const Color(0xFF1E293B)),
-                fontSize: 14, fontWeight: FontWeight.w600,
-              )),
+              Text(
+                label,
+                style: TextStyle(
+                  color: primary
+                      ? Colors.white
+                      : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ],
           ),
         ),
@@ -266,13 +369,18 @@ class _ScoreCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 140, height: 140,
+      width: 140,
+      height: 140,
       child: CustomPaint(
         painter: _ScoreCirclePainter(percentage: percentage, passed: passed),
         child: Center(
           child: Text(
             '${percentage.toStringAsFixed(0)}%',
-            style: const TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.w800),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 36,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
       ),
@@ -292,16 +400,21 @@ class _ScoreCirclePainter extends CustomPainter {
     final radius = size.width / 2 - 8;
 
     // Background
-    canvas.drawCircle(center, radius, Paint()
-      ..color = Colors.white.withValues(alpha: 0.2)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 10);
+    canvas.drawCircle(
+      center,
+      radius,
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.2)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 10,
+    );
 
     // Progress
     final sweep = (percentage / 100) * 2 * math.pi;
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
-      -math.pi / 2, sweep,
+      -math.pi / 2,
+      sweep,
       false,
       Paint()
         ..color = Colors.white

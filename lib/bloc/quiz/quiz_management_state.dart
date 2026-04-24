@@ -39,15 +39,16 @@ class QuizMgmtLoaded extends QuizManagementState {
 
   List<QuizModel> get filteredQuizzes {
     return quizzes.where((q) {
-      final matchesSearch = searchQuery.isEmpty ||
+      final matchesSearch =
+          searchQuery.isEmpty ||
           q.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
           q.courseName.toLowerCase().contains(searchQuery.toLowerCase());
 
-      final matchesStatus = statusFilter == 'all' ||
-          q.status.toJson() == statusFilter;
+      final matchesStatus =
+          statusFilter == 'all' || q.status.toJson() == statusFilter;
 
-      final matchesCourse = courseFilter == 'all' ||
-          q.courseName == courseFilter;
+      final matchesCourse =
+          courseFilter == 'all' || q.courseName == courseFilter;
 
       return matchesSearch && matchesStatus && matchesCourse;
     }).toList();

@@ -29,12 +29,13 @@ class StudentQuizzesLoaded extends StudentQuizState {
 
   List<QuizModel> get filteredQuizzes {
     return quizzes.where((q) {
-      final matchesSearch = searchQuery.isEmpty ||
+      final matchesSearch =
+          searchQuery.isEmpty ||
           q.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
           q.courseName.toLowerCase().contains(searchQuery.toLowerCase());
 
-      final matchesStatus = statusFilter == 'all' ||
-          q.status.toJson() == statusFilter;
+      final matchesStatus =
+          statusFilter == 'all' || q.status.toJson() == statusFilter;
 
       return matchesSearch && matchesStatus;
     }).toList();

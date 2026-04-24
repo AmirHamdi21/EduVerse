@@ -298,6 +298,13 @@ class _StudentDrawerState extends State<StudentDrawer>
         category: 'main',
       ),
       _MenuItem(
+        icon: Icons.app_registration_rounded,
+        activeIcon: Icons.app_registration,
+        title: l10n.registration,
+        route: '/registration',
+        category: 'main',
+      ),
+      _MenuItem(
         icon: Icons.calendar_month_outlined,
         activeIcon: Icons.calendar_month,
         title: l10n.calendar,

@@ -125,10 +125,10 @@ class _JoinCourseButtonState extends State<JoinCourseButton>
 
     final GoRouter? router = GoRouter.maybeOf(context);
     if (router != null) {
-      context.push('/courses');
+      context.push('/registration');
       return;
     }
 
-    Navigator.of(context).pushNamed('/courses');
+    Navigator.of(context).pushNamed('/registration');
   }
 }

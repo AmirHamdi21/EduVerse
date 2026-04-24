@@ -12746,4 +12746,61 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get quizAttemptHistory => 'سجل المحاولات';
+
+  @override
+  String get registration => 'التسجيل';
+
+  @override
+  String get courseRegistration => 'تسجيل المقررات';
+
+  @override
+  String get browseCourses => 'تصفح المقررات المتاحة وسجل فيها';
+
+  @override
+  String get creditsEnrolled => 'الساعات المسجلة';
+
+  @override
+  String get coursesRegistered => 'المقررات المسجلة';
+
+  @override
+  String get onWaitlist => 'قائمة الانتظار';
+
+  @override
+  String get availableCourses => 'المقررات المتاحة';
+
+  @override
+  String get myRegisteredCourses => 'مقرراتي المسجلة';
+
+  @override
+  String get searchCoursePlaceholder => 'ابحث باسم المقرر أو الكود أو القسم';
+
+  @override
+  String get confirmEnrollment => 'تأكيد التسجيل';
+
+  @override
+  String get registrationWindow => 'فترة التسجيل';
+
+  @override
+  String get registrationUpcoming => 'قادم';
+
+  @override
+  String get prerequisitesRequired => 'المتطلبات السابقة مطلوبة';
+
+  @override
+  String get noAvailableCourses => 'لا توجد مقررات متاحة';
+
+  @override
+  String get noRegisteredCourses => 'لا توجد مقررات مسجلة بعد';
+
+  @override
+  String get enrollNow => 'سجل الآن';
+
+  @override
+  String get droppingCourse => 'جارٍ الحذف...';
+
+  @override
+  String get enrollingCourse => 'جارٍ التسجيل...';
+
+  @override
+  String get drop => 'حذف';
 }
