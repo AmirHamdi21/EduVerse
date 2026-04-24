@@ -44,6 +44,8 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
   late final TextEditingController _latePenaltyController;
 
   int? _courseId;
+  DateTime? _availableFromDate;
+  TimeOfDay? _availableFromTime;
   DateTime? _dueDate;
   TimeOfDay? _dueTime;
   api.SubmissionType _submissionType = api.SubmissionType.file;
@@ -84,6 +86,14 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
     _courseId =
         initial?.courseId ??
         (widget.courses.isNotEmpty ? widget.courses.first.courseId : null);
+    _availableFromDate =
+        initial?.availableFrom ?? DateTime.now().add(const Duration(hours: 1));
+    if (_availableFromDate != null) {
+      _availableFromTime = TimeOfDay(
+        hour: _availableFromDate!.hour,
+        minute: _availableFromDate!.minute,
+      );
+    }
     _dueDate = initial?.dueDate;
     if (_dueDate != null) {
       _dueTime = TimeOfDay(hour: _dueDate!.hour, minute: _dueDate!.minute);
@@ -156,12 +166,31 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
           const SizedBox(height: 12),
           _courseDropdown(),
           const SizedBox(height: 12),
-          Row(
-            children: <Widget>[
-              Expanded(child: _dateButton(context)),
-              const SizedBox(width: 8),
-              Expanded(child: _timeButton(context)),
-            ],
+          _scheduleSection(
+            context: context,
+            label: 'Available From',
+            dateValue: _availableFromDate,
+            timeValue: _availableFromTime,
+            defaultDate: DateTime.now().add(const Duration(hours: 1)),
+            onDateChanged: (value) =>
+                setState(() => _availableFromDate = value),
+            onTimeChanged: (value) =>
+                setState(() => _availableFromTime = value),
+          ),
+          const SizedBox(height: 12),
+          _scheduleSection(
+            context: context,
+            label: 'Due Date',
+            dateValue: _dueDate,
+            timeValue: _dueTime,
+            defaultDate: DateTime.now().add(const Duration(days: 7)),
+            onDateChanged: (value) => setState(() => _dueDate = value),
+            onTimeChanged: (value) => setState(() => _dueTime = value),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Available From controls when students first see and can access the assignment.',
+            style: Theme.of(context).textTheme.bodySmall,
           ),
           const SizedBox(height: 12),
           Row(
@@ -273,7 +302,7 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
 
   Widget _courseDropdown() {
     return DropdownButtonFormField<int>(
-      value: _courseId,
+      initialValue: _courseId,
       decoration: const InputDecoration(
         labelText: 'Course *',
         border: OutlineInputBorder(),
@@ -291,45 +320,103 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
     );
   }
 
-  Widget _dateButton(BuildContext context) {
-    final dateLabel = _dueDate == null
+  Widget _scheduleSection({
+    required BuildContext context,
+    required String label,
+    required DateTime? dateValue,
+    required TimeOfDay? timeValue,
+    required DateTime defaultDate,
+    required ValueChanged<DateTime> onDateChanged,
+    required ValueChanged<TimeOfDay> onTimeChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          label,
+          style: Theme.of(
+            context,
+          ).textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: _dateButton(
+                context,
+                dateValue: dateValue,
+                defaultDate: defaultDate,
+                labelPrefix: label,
+                onChanged: onDateChanged,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _timeButton(
+                context,
+                timeValue: timeValue,
+                labelPrefix: label,
+                onChanged: onTimeChanged,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _dateButton(
+    BuildContext context, {
+    required DateTime? dateValue,
+    required DateTime defaultDate,
+    required String labelPrefix,
+    required ValueChanged<DateTime> onChanged,
+  }) {
+    final dateLabel = dateValue == null
         ? 'Select Due Date'
-        : DateFormat('yyyy-MM-dd').format(_dueDate!);
+        : DateFormat('yyyy-MM-dd').format(dateValue);
+    final now = DateTime.now();
+    final firstDate = _earlierDate(dateValue, now);
 
     return OutlinedButton.icon(
       onPressed: () async {
         final picked = await showDatePicker(
           context: context,
-          firstDate: DateTime.now(),
+          firstDate: DateTime(firstDate.year, firstDate.month, firstDate.day),
           lastDate: DateTime.now().add(const Duration(days: 3650)),
-          initialDate: _dueDate ?? DateTime.now().add(const Duration(days: 7)),
+          initialDate: dateValue ?? defaultDate,
         );
         if (picked != null) {
-          setState(() => _dueDate = picked);
+          onChanged(picked);
         }
       },
       icon: const Icon(Icons.calendar_today_rounded),
-      label: Text(dateLabel),
+      label: Text(dateValue == null ? '$labelPrefix Date' : dateLabel),
     );
   }
 
-  Widget _timeButton(BuildContext context) {
-    final timeLabel = _dueTime == null
+  Widget _timeButton(
+    BuildContext context, {
+    required TimeOfDay? timeValue,
+    required String labelPrefix,
+    required ValueChanged<TimeOfDay> onChanged,
+  }) {
+    final timeLabel = timeValue == null
         ? 'Select Due Time'
-        : _dueTime!.format(context);
+        : timeValue.format(context);
 
     return OutlinedButton.icon(
       onPressed: () async {
         final picked = await showTimePicker(
           context: context,
-          initialTime: _dueTime ?? const TimeOfDay(hour: 23, minute: 59),
+          initialTime: timeValue ?? const TimeOfDay(hour: 23, minute: 59),
         );
         if (picked != null) {
-          setState(() => _dueTime = picked);
+          onChanged(picked);
         }
       },
       icon: const Icon(Icons.access_time_rounded),
-      label: Text(timeLabel),
+      label: Text(timeValue == null ? '$labelPrefix Time' : timeLabel),
     );
   }
 
@@ -358,6 +445,8 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
           <api.AssignmentStatus>[
                 api.AssignmentStatus.draft,
                 api.AssignmentStatus.published,
+                api.AssignmentStatus.closed,
+                api.AssignmentStatus.archived,
               ]
               .map(
                 (status) => ChoiceChip(
@@ -397,27 +486,27 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
       ).showSnackBar(const SnackBar(content: Text('Due date is required')));
       return;
     }
+    if (_availableFromDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Available from is required')),
+      );
+      return;
+    }
 
+    final availableFromTime =
+        _availableFromTime ?? TimeOfDay.fromDateTime(_availableFromDate!);
+    final availableFromDateTime = _combineDateAndTime(
+      _availableFromDate!,
+      availableFromTime,
+    );
     final dueTime = _dueTime ?? const TimeOfDay(hour: 23, minute: 59);
-    final selectedDate = _dueDate!;
-    late final DateTime dueDateTime;
-    if (selectedDate.isUtc) {
-      final localDate = selectedDate.toLocal();
-      dueDateTime = DateTime(
-        localDate.year,
-        localDate.month,
-        localDate.day,
-        dueTime.hour,
-        dueTime.minute,
+    final dueDateTime = _combineDateAndTime(_dueDate!, dueTime);
+
+    if (!dueDateTime.isAfter(availableFromDateTime)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Due date must be after available from')),
       );
-    } else {
-      dueDateTime = DateTime(
-        selectedDate.year,
-        selectedDate.month,
-        selectedDate.day,
-        dueTime.hour,
-        dueTime.minute,
-      );
+      return;
     }
 
     final maxScore = double.parse(_maxScoreController.text.trim());
@@ -440,6 +529,7 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
         instructions: _instructionsController.text.trim().isEmpty
             ? null
             : _instructionsController.text.trim(),
+        availableFrom: availableFromDateTime.toUtc(),
         dueDate: dueDateTime.toUtc(),
         maxScore: maxScore,
         weight: weight,
@@ -481,5 +571,23 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
       case api.AssignmentStatus.unknown:
         return 'Unknown';
     }
+  }
+
+  static DateTime _earlierDate(DateTime? first, DateTime second) {
+    if (first == null) {
+      return second;
+    }
+    return first.isBefore(second) ? first : second;
+  }
+
+  static DateTime _combineDateAndTime(DateTime date, TimeOfDay time) {
+    final normalized = date.isUtc ? date.toLocal() : date;
+    return DateTime(
+      normalized.year,
+      normalized.month,
+      normalized.day,
+      time.hour,
+      time.minute,
+    );
   }
 }

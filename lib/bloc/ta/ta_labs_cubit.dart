@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../models/labs/lab_model.dart';
 import '../../services/api/lab_service.dart';
 import 'ta_labs_state.dart';
 
@@ -13,6 +14,9 @@ class TALabsCubit extends Cubit<TALabsState> {
       super(const TALabsInitial());
 
   final LabService _labService;
+  List<LabModel> _cachedLabs = const <LabModel>[];
+
+  List<LabModel> get cachedLabs => List<LabModel>.unmodifiable(_cachedLabs);
 
   // ── Labs List ────────────────────────────────────────────────
 
@@ -24,11 +28,8 @@ class TALabsCubit extends Cubit<TALabsState> {
   /// Preserves previously loaded labs during refresh to avoid showing
   /// a full-screen loading spinner when the user navigates back.
   Future<void> fetchTALabs({int? courseId}) async {
-    final currentState = state;
-
-    // If we have previous data, emit loading-with-cache instead of full loading
-    if (currentState is TALabsLoaded && currentState.labs.isNotEmpty) {
-      emit(TALabsLoadingWithCache(currentState.labs));
+    if (_cachedLabs.isNotEmpty) {
+      emit(TALabsLoadingWithCache(_cachedLabs));
     } else {
       emit(const TALabsLoading());
     }
@@ -36,16 +37,16 @@ class TALabsCubit extends Cubit<TALabsState> {
     final result = await _labService.getAll(courseId: courseId);
 
     if (!result.isSuccess || result.data == null) {
-      // If loading fails but we have cache, restore cached data
-      if (currentState is TALabsLoaded && currentState.labs.isNotEmpty) {
-        emit(TALabsLoaded(currentState.labs));
+      if (_cachedLabs.isNotEmpty) {
+        emit(TALabsLoaded(_cachedLabs));
       } else {
         emit(TALabsError(result.error?.message ?? 'Failed to load labs'));
       }
       return;
     }
 
-    emit(TALabsLoaded(result.data!));
+    _cachedLabs = List<LabModel>.from(result.data!);
+    emit(TALabsLoaded(_cachedLabs));
   }
 
   // ── Lab Detail ───────────────────────────────────────────────
@@ -152,6 +153,7 @@ class TALabsCubit extends Cubit<TALabsState> {
     String? feedback,
     String status,
   ) async {
+    final currentState = state;
     emit(const TALabGrading());
 
     final result = await _labService.gradeSubmission(
@@ -174,7 +176,11 @@ class TALabsCubit extends Cubit<TALabsState> {
     // Emit success FIRST so BlocListener can show toast.
     emit(const TALabGradeSuccess());
 
-    // Then refresh submissions list.
-    await refreshLabSubmissions(labId);
+    if (currentState is TALabDetailLoaded) {
+      await fetchLabDetail(labId);
+      return;
+    }
+
+    await fetchTALabs();
   }
 }

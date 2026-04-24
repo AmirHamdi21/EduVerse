@@ -8,22 +8,19 @@ import '../../../bloc/theme/theme_event.dart';
 import '../../../bloc/ta/ta_courses_cubit.dart';
 import '../../../bloc/ta/ta_courses_state.dart';
 import '../../../models/assignments/assignment_model.dart';
-import '../../../models/assignments/assignment_form_data.dart';
 import '../../../models/instructor/teaching_course_model.dart';
-import '../../../models/instructor/instructor_course_model.dart'
-    show SectionStudentModel;
 import '../../../services/api/assignment_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/storage_service.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/courses/ta_courses_barrel.dart';
-import '../../../widgets/instructor/assignments/assignment_create_form.dart';
 import '../../../models/materials/course_material_model.dart';
 import '../../../models/instructor/instructor_course_model.dart'
     show MaterialModel, SectionStudentModel;
 import '../../../screens/instructor/materials/material_preview_screen.dart';
 import '../../../screens/instructor/video/instructor_video_player_screen.dart';
+import '../../instructor/create_assignment_screen.dart';
 import '../assignments/ta_assignment_submissions_screen.dart';
 
 class TACourseDetailScreen extends StatefulWidget {
@@ -1050,10 +1047,6 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     AssignmentModel? existing,
   }) async {
     final cubit = context.read<TACoursesCubit>();
-    final status = cubit.state.coursesStatus;
-    final courses = status is TASubTabLoaded<List<TeachingCourseModel>>
-        ? status.data
-        : <TeachingCourseModel>[tc];
 
     // T017: Resolve AssignmentService — try provider tree, fallback to local instance
     AssignmentService assignmentService;
@@ -1064,100 +1057,22 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
       assignmentService = AssignmentService(coreApiClient: coreApiClient);
     }
 
-    // If editing, fetch fresh assignment from API to get instructionFiles (matches instructor pattern)
-    AssignmentModel? assignmentToEdit = existing;
-    if (existing != null) {
-      // Show loading dialog
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) =>
-            Center(child: CircularProgressIndicator(color: TAColors.primary)),
-      );
-
-      final result = await assignmentService.getById(existing.assignmentId);
-      if (mounted) {
-        Navigator.of(context).pop(); // Dismiss loading
-      }
-
-      if (result.isSuccess && result.data != null) {
-        assignmentToEdit = result.data;
-      }
-    }
-
-    AssignmentFormData? initialData;
-    if (assignmentToEdit != null) {
-      // Fix: Convert UTC dueDate to local time for display (matches instructor pattern)
-      DateTime localDueDate;
-      if (assignmentToEdit.dueDate.isUtc) {
-        localDueDate = assignmentToEdit.dueDate.toLocal();
-      } else {
-        localDueDate = assignmentToEdit.dueDate;
-      }
-
-      initialData = AssignmentFormData(
-        title: assignmentToEdit.title,
-        description: assignmentToEdit.description,
-        instructions: assignmentToEdit.instructionsText,
-        dueDate: localDueDate,
-        maxScore: assignmentToEdit.maxGrade,
-        weight: assignmentToEdit.weight,
-        submissionType: assignmentToEdit.submissionType,
-        maxFileSizeMb: assignmentToEdit.maxFileSizeMb,
-        allowedFileTypes: assignmentToEdit.allowedFileTypes ?? const [],
-        latePenaltyPercent: assignmentToEdit.latePenaltyPercent,
-        status: assignmentToEdit.apiStatus,
-        courseId: assignmentToEdit.courseId,
-        instructionFiles: assignmentToEdit.instructionFiles ?? const [],
-      );
-    }
-
     if (!mounted) return;
 
-    Navigator.of(context).push(
+    final result = await Navigator.of(context).push<bool>(
       MaterialPageRoute(
-        builder: (_) => Scaffold(
-          appBar: AppBar(
-            title: Text(
-              assignmentToEdit != null
-                  ? 'Edit Assignment'
-                  : 'Create Assignment',
-            ),
-          ),
-          body: AssignmentCreateForm(
-            courses: courses,
-            assignmentService: assignmentService,
-            initialData: initialData,
-            assignmentId: assignmentToEdit?.assignmentId,
-            onSubmit: (formData) async {
-              try {
-                if (assignmentToEdit != null) {
-                  await assignmentService.update(
-                    assignmentToEdit.assignmentId,
-                    formData.toJson(),
-                  );
-                } else {
-                  await assignmentService.create(formData.toJson());
-                }
-                if (mounted) {
-                  Navigator.of(context).pop();
-                  cubit.fetchCourseAssignments(tc.courseId);
-                }
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: $e'),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                }
-              }
-            },
-          ),
+        builder: (_) => CreateAssignmentScreen(
+          assignment: existing,
+          assignmentId: existing?.assignmentId,
+          assignmentService: assignmentService,
+          preferredCourseId: tc.courseId,
         ),
       ),
     );
+
+    if (result == true && mounted) {
+      await cubit.fetchCourseAssignments(tc.courseId);
+    }
   }
 
   // T019: Delete assignment with confirmation dialog

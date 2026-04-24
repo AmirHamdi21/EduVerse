@@ -2,17 +2,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../models/assignments/assignment_model.dart';
 import '../../models/assignments/assignment_submission_model.dart';
+import '../../models/core/course_model.dart';
 import '../../models/core/enums/assignment_enums.dart' as api;
 import '../../services/api/assignment_service.dart';
+import '../../services/api/enrollment_service.dart';
+import '../../models/core/enrollment_model.dart';
+import '../../models/core/enums/enrollment_enums.dart';
 import 'assignment_event.dart';
 import 'assignment_state.dart';
 
 class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
   final AssignmentService _assignmentService;
+  final EnrollmentService? _enrollmentService;
 
-  AssignmentBloc({required AssignmentService assignmentService})
-    : _assignmentService = assignmentService,
-      super(const AssignmentState()) {
+  AssignmentBloc({
+    required AssignmentService assignmentService,
+    EnrollmentService? enrollmentService,
+  }) : _assignmentService = assignmentService,
+       _enrollmentService = enrollmentService,
+       super(const AssignmentState()) {
     on<FetchAssignments>(_onFetchAssignments);
     on<RefreshAssignments>(_onRefreshAssignments);
     on<SelectAssignment>(_onSelectAssignment);
@@ -55,7 +63,7 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
         selectedAssignment: event.assignment,
         clearSubmission: true,
         clearSubmitError: true,
-        isLoading: true,
+        isDetailLoading: true,
         clearError: true,
       ),
     );
@@ -84,7 +92,7 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
       emit(
         state.copyWith(
           selectedAssignment: selectedAssignment,
-          isLoading: false,
+          isDetailLoading: false,
           error: submissionResult.error?.message ?? 'Failed to load submission',
         ),
       );
@@ -96,7 +104,7 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
         selectedAssignment: selectedAssignment,
         mySubmission: submission,
         clearSubmission: submission == null,
-        isLoading: false,
+        isDetailLoading: false,
         clearError: true,
       ),
     );
@@ -243,16 +251,30 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
     required bool showLoading,
     int? courseId,
   }) async {
+    final prepared = await _prepareCourses(
+      emit: emit,
+      requestedCourseId: courseId,
+      showLoading: showLoading,
+    );
+
+    if (prepared == null) {
+      return;
+    }
+
+    final selectedCourseId = prepared.$1;
+    final selectedCourse = prepared.$2;
+
     emit(
       state.copyWith(
-        isLoading: true,
+        isListLoading: true,
         clearError: true,
-        selectedCourseId: courseId,
+        selectedCourseId: selectedCourseId,
+        selectedCourse: selectedCourse,
       ),
     );
 
     final result = await _assignmentService.getAll(
-      courseId: courseId,
+      courseId: selectedCourseId,
       sortBy: 'dueDate',
       sortOrder: 'ASC',
       limit: 100,
@@ -261,7 +283,7 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
     if (!result.isSuccess || result.data == null) {
       emit(
         state.copyWith(
-          isLoading: false,
+          isListLoading: false,
           error: result.error?.message ?? 'Failed to load assignments',
         ),
       );
@@ -291,7 +313,8 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
 
     emit(
       state.copyWith(
-        selectedCourseId: courseId,
+        selectedCourseId: selectedCourseId,
+        selectedCourse: selectedCourse,
         assignments: enrichedAssignments,
         selectedAssignment: updatedSelected,
         mySubmission: updatedSelected?.submission == null
@@ -300,7 +323,7 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
                 updatedSelected!.submission!,
                 updatedSelected.maxGrade,
               ),
-        isLoading: false,
+        isListLoading: false,
         totalCount: enrichedAssignments.length,
         submittedCount: counters.submitted,
         pendingCount: counters.pending,
@@ -308,6 +331,84 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
         clearError: true,
       ),
     );
+  }
+
+  Future<(int?, CourseModel?)?> _prepareCourses({
+    required Emitter<AssignmentState> emit,
+    required int? requestedCourseId,
+    required bool showLoading,
+  }) async {
+    final existingCourses = state.enrolledCourses;
+    if (existingCourses.isNotEmpty) {
+      final selectedCourseId = _resolveSelectedCourseId(
+        existingCourses,
+        requestedCourseId: requestedCourseId,
+      );
+      final selectedCourse = existingCourses.firstWhere(
+        (course) => course.id == selectedCourseId,
+      );
+      return (selectedCourseId, selectedCourse);
+    }
+
+    if (showLoading) {
+      emit(state.copyWith(isListLoading: true, clearError: true));
+    }
+
+    if (_enrollmentService == null) {
+      return (
+        requestedCourseId ?? state.selectedCourseId,
+        state.selectedCourse,
+      );
+    }
+
+    final coursesResult = await _enrollmentService.getMyCourses();
+    if (!coursesResult.isSuccess || coursesResult.data == null) {
+      emit(
+        state.copyWith(
+          isListLoading: false,
+          error: coursesResult.error?.message ?? 'Failed to load courses',
+        ),
+      );
+      return null;
+    }
+
+    final courses = _extractEnrolledCourses(coursesResult.data!);
+    if (courses.isEmpty) {
+      emit(
+        state.copyWith(
+          enrolledCourses: const <CourseModel>[],
+          assignments: const <AssignmentModel>[],
+          totalCount: 0,
+          submittedCount: 0,
+          pendingCount: 0,
+          overdueCount: 0,
+          isListLoading: false,
+          clearError: true,
+          clearSelectedCourseId: true,
+          clearSelectedCourse: true,
+        ),
+      );
+      return null;
+    }
+
+    final selectedCourseId = _resolveSelectedCourseId(
+      courses,
+      requestedCourseId: requestedCourseId,
+    );
+    final selectedCourse = courses.firstWhere(
+      (course) => course.id == selectedCourseId,
+    );
+
+    emit(
+      state.copyWith(
+        enrolledCourses: courses,
+        selectedCourseId: selectedCourseId,
+        selectedCourse: selectedCourse,
+        clearError: true,
+      ),
+    );
+
+    return (selectedCourseId, selectedCourse);
   }
 
   Future<List<AssignmentModel>> _enrichAssignments(
@@ -473,6 +574,45 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
       }
     }
     return null;
+  }
+
+  int _resolveSelectedCourseId(
+    List<CourseModel> courses, {
+    int? requestedCourseId,
+  }) {
+    if (requestedCourseId != null &&
+        courses.any((course) => course.id == requestedCourseId)) {
+      return requestedCourseId;
+    }
+
+    final current = state.selectedCourseId;
+    if (current != null && courses.any((course) => course.id == current)) {
+      return current;
+    }
+
+    return courses.first.id;
+  }
+
+  List<CourseModel> _extractEnrolledCourses(
+    List<CourseEnrollmentModel> enrollments,
+  ) {
+    final byId = <int, CourseModel>{};
+    for (final enrollment in enrollments) {
+      if (enrollment.enrollmentStatus != EnrollmentStatus.enrolled) {
+        continue;
+      }
+
+      final course = enrollment.course;
+      if (course == null) {
+        continue;
+      }
+
+      byId[course.id] = course;
+    }
+
+    final courses = byId.values.toList();
+    courses.sort((a, b) => a.name.compareTo(b.name));
+    return courses;
   }
 
   String? _resolveFileType(String? fileName) {

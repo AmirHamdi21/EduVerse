@@ -2,18 +2,22 @@ import 'package:equatable/equatable.dart';
 
 import '../../models/assignments/assignment_model.dart';
 import '../../models/assignments/assignment_submission_model.dart';
+import '../../models/core/course_model.dart';
 
 enum AssignmentFilterStatus { all, submitted, pending, overdue }
 
 class AssignmentState extends Equatable {
+  final List<CourseModel> enrolledCourses;
   final int? selectedCourseId;
+  final CourseModel? selectedCourse;
   final List<AssignmentModel> assignments;
   final AssignmentModel? selectedAssignment;
   final AssignmentSubmissionModel? mySubmission;
   final bool isSubmitting;
   final double submitProgress;
   final String? submitError;
-  final bool isLoading;
+  final bool isListLoading;
+  final bool isDetailLoading;
   final String? error;
   final AssignmentFilterStatus filterStatus;
   final String searchQuery;
@@ -23,14 +27,17 @@ class AssignmentState extends Equatable {
   final int overdueCount;
 
   const AssignmentState({
+    this.enrolledCourses = const <CourseModel>[],
     this.selectedCourseId,
+    this.selectedCourse,
     this.assignments = const <AssignmentModel>[],
     this.selectedAssignment,
     this.mySubmission,
     this.isSubmitting = false,
     this.submitProgress = 0,
     this.submitError,
-    this.isLoading = false,
+    this.isListLoading = false,
+    this.isDetailLoading = false,
     this.error,
     this.filterStatus = AssignmentFilterStatus.all,
     this.searchQuery = '',
@@ -40,15 +47,20 @@ class AssignmentState extends Equatable {
     this.overdueCount = 0,
   });
 
+  bool get isLoading => isListLoading || isDetailLoading;
+
   AssignmentState copyWith({
+    List<CourseModel>? enrolledCourses,
     int? selectedCourseId,
+    CourseModel? selectedCourse,
     List<AssignmentModel>? assignments,
     AssignmentModel? selectedAssignment,
     AssignmentSubmissionModel? mySubmission,
     bool? isSubmitting,
     double? submitProgress,
     String? submitError,
-    bool? isLoading,
+    bool? isListLoading,
+    bool? isDetailLoading,
     String? error,
     AssignmentFilterStatus? filterStatus,
     String? searchQuery,
@@ -61,11 +73,16 @@ class AssignmentState extends Equatable {
     bool clearSelectedAssignment = false,
     bool clearSubmission = false,
     bool clearSelectedCourseId = false,
+    bool clearSelectedCourse = false,
   }) {
     return AssignmentState(
+      enrolledCourses: enrolledCourses ?? this.enrolledCourses,
       selectedCourseId: clearSelectedCourseId
           ? null
           : (selectedCourseId ?? this.selectedCourseId),
+      selectedCourse: clearSelectedCourse
+          ? null
+          : (selectedCourse ?? this.selectedCourse),
       assignments: assignments ?? this.assignments,
       selectedAssignment: clearSelectedAssignment
           ? null
@@ -76,7 +93,8 @@ class AssignmentState extends Equatable {
       isSubmitting: isSubmitting ?? this.isSubmitting,
       submitProgress: submitProgress ?? this.submitProgress,
       submitError: clearSubmitError ? null : (submitError ?? this.submitError),
-      isLoading: isLoading ?? this.isLoading,
+      isListLoading: isListLoading ?? this.isListLoading,
+      isDetailLoading: isDetailLoading ?? this.isDetailLoading,
       error: clearError ? null : (error ?? this.error),
       filterStatus: filterStatus ?? this.filterStatus,
       searchQuery: searchQuery ?? this.searchQuery,
@@ -132,14 +150,17 @@ class AssignmentState extends Equatable {
 
   @override
   List<Object?> get props => <Object?>[
+    enrolledCourses,
     selectedCourseId,
+    selectedCourse,
     assignments,
     selectedAssignment,
     mySubmission,
     isSubmitting,
     submitProgress,
     submitError,
-    isLoading,
+    isListLoading,
+    isDetailLoading,
     error,
     filterStatus,
     searchQuery,

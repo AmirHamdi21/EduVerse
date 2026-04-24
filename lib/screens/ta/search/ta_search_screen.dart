@@ -23,7 +23,7 @@ class _TASearchScreenState extends State<TASearchScreen>
 
   String _selectedCategory = 'all';
   List<Map<String, dynamic>> _searchResults = [];
-  List<String> _recentSearches = [
+  final List<String> _recentSearches = [
     'Assignment 3',
     'John Smith',
     'Lab 5',
@@ -474,7 +474,7 @@ class _TASearchScreenState extends State<TASearchScreen>
       {
         'icon': Icons.grading_rounded,
         'label': l10n.pendingGrading,
-        'route': '/ta/ai-grading',
+        'route': '/ta/grading',
         'color': TAColors.warning,
       },
       {
@@ -890,7 +890,7 @@ class _TASearchScreenState extends State<TASearchScreen>
         context.push('/ta/labs');
         break;
       case 'submission':
-        context.push('/ta/ai-grading');
+        context.push('/ta/grading');
         break;
       case 'material':
         context.push('/ta/lab-resources');

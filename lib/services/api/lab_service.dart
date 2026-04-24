@@ -232,7 +232,9 @@ class LabService {
         data: formData,
         onSendProgress: onSendProgress,
       );
-      return LabSubmissionModel.fromJson(_extractMap(response.data));
+      return LabSubmissionModel.fromJson(
+        _extractSubmissionPayload(response.data),
+      );
     }, fallbackMessage: 'Failed to upload lab submission file');
   }
 
@@ -355,6 +357,15 @@ class LabService {
       return payload;
     }
     return <String, dynamic>{};
+  }
+
+  static Map<String, dynamic> _extractSubmissionPayload(dynamic payload) {
+    final data = _extractMap(payload);
+    final submission = data['submission'];
+    if (submission is Map<String, dynamic>) {
+      return submission;
+    }
+    return data;
   }
 
   static List<dynamic> _extractList(dynamic payload) {

@@ -6,6 +6,8 @@ import '../../../bloc/theme/theme_state.dart';
 import '../../../models/assignments/assignment_model.dart';
 import '../../../models/assignments/assignment_submission_model.dart';
 import '../../../services/api/assignment_service.dart';
+import '../../../services/api/core_api_client.dart';
+import '../../../services/storage_service.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/instructor/assignments/grading_panel.dart';
 
@@ -18,10 +20,18 @@ class TAAssignmentSubmissionsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AssignmentService assignmentService;
+    try {
+      assignmentService = context.read<AssignmentService>();
+    } catch (_) {
+      final coreApiClient = CoreApiClient(storageService: StorageService());
+      assignmentService = AssignmentService(coreApiClient: coreApiClient);
+    }
+
     return BlocProvider(
-      create: (ctx) => TAAssignmentSubmissionsCubit(
-        assignmentService: ctx.read<AssignmentService>(),
-      )..fetchSubmissions(assignment.assignmentId),
+      create: (ctx) =>
+          TAAssignmentSubmissionsCubit(assignmentService: assignmentService)
+            ..fetchSubmissions(assignment.assignmentId),
       child: _TASubmissionsBody(assignment: assignment),
     );
   }

@@ -80,7 +80,7 @@ class _AssignmentDetailScreenState extends State<AssignmentDetailScreen> {
                   ? state.selectedAssignment!
                   : widget.assignment;
 
-              if (state.isLoading && state.selectedAssignment == null) {
+              if (state.isDetailLoading && state.selectedAssignment == null) {
                 return const Center(
                   child: CircularProgressIndicator(color: Color(0xFF3B82F6)),
                 );

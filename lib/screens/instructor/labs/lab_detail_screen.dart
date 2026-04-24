@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -43,6 +46,7 @@ class LabDetailScreen extends StatelessWidget {
       child: _LabDetailView(
         labId: labId,
         initialTab: initialTab,
+        labService: resolvedLabService,
         storageService: resolvedStorage,
       ),
     );
@@ -53,11 +57,13 @@ class _LabDetailView extends StatefulWidget {
   const _LabDetailView({
     required this.labId,
     required this.initialTab,
+    required this.labService,
     required this.storageService,
   });
 
   final String labId;
   final int initialTab;
+  final LabService labService;
   final StorageService storageService;
 
   @override
@@ -70,6 +76,7 @@ class _LabDetailViewState extends State<_LabDetailView>
 
   bool _roleCheckDone = false;
   bool _canManage = false;
+  bool _uploadingTaMaterial = false;
 
   @override
   void initState() {
@@ -213,6 +220,24 @@ class _LabDetailViewState extends State<_LabDetailView>
         return Scaffold(
           appBar: AppBar(
             title: Text(loaded.lab.title),
+            actions: <Widget>[
+              if (_roleCheckDone && _canManage)
+                IconButton(
+                  tooltip: _uploadingTaMaterial
+                      ? 'Uploading TA material'
+                      : 'Upload TA material',
+                  onPressed: _uploadingTaMaterial
+                      ? null
+                      : () => _pickAndUploadTaMaterial(context),
+                  icon: _uploadingTaMaterial
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.upload_file_rounded),
+                ),
+            ],
             bottom: TabBar(
               controller: _tabController,
               tabs: const <Tab>[
@@ -229,11 +254,25 @@ class _LabDetailViewState extends State<_LabDetailView>
                   ? const Center(child: CircularProgressIndicator())
                   : SingleChildScrollView(
                       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                      child: InstructionManager(
-                        labId: widget.labId,
-                        instructions: loaded.instructions!,
-                        canManage: _roleCheckDone && _canManage,
-                        isUpdating: state is LabInstructionUpdating,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          if (_roleCheckDone && _canManage) ...<Widget>[
+                            _TaMaterialUploadCard(
+                              isUploading: _uploadingTaMaterial,
+                              onUpload: _uploadingTaMaterial
+                                  ? null
+                                  : () => _pickAndUploadTaMaterial(context),
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                          InstructionManager(
+                            labId: widget.labId,
+                            instructions: loaded.instructions!,
+                            canManage: _roleCheckDone && _canManage,
+                            isUpdating: state is LabInstructionUpdating,
+                          ),
+                        ],
                       ),
                     ),
               loaded.submissions == null
@@ -265,6 +304,47 @@ class _LabDetailViewState extends State<_LabDetailView>
           ),
         );
       },
+    );
+  }
+
+  Future<void> _pickAndUploadTaMaterial(BuildContext context) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final result = await FilePicker.platform.pickFiles(withData: false);
+    final filePath = result == null || result.files.isEmpty
+        ? null
+        : result.files.first.path;
+    if (filePath == null) {
+      return;
+    }
+
+    setState(() => _uploadingTaMaterial = true);
+    final uploadResult = await widget.labService.uploadTaMaterial(
+      widget.labId,
+      File(filePath),
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() => _uploadingTaMaterial = false);
+    if (!uploadResult.isSuccess || uploadResult.data == null) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            uploadResult.error?.message ?? 'Failed to upload TA material',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text('TA material uploaded: ${uploadResult.data!.fileName}'),
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 
@@ -335,6 +415,56 @@ class _LabDetailViewState extends State<_LabDetailView>
           ),
         );
       },
+    );
+  }
+}
+
+class _TaMaterialUploadCard extends StatelessWidget {
+  const _TaMaterialUploadCard({
+    required this.isUploading,
+    required this.onUpload,
+  });
+
+  final bool isUploading;
+  final VoidCallback? onUpload;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            const Row(
+              children: <Widget>[
+                Icon(Icons.folder_shared_outlined),
+                SizedBox(width: 8),
+                Text(
+                  'TA Materials',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Upload TA-only support files for this lab. Flutter currently supports upload here, but it does not list previously uploaded TA materials yet.',
+            ),
+            const SizedBox(height: 12),
+            FilledButton.icon(
+              onPressed: onUpload,
+              icon: isUploading
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.upload_file_rounded),
+              label: Text(isUploading ? 'Uploading...' : 'Upload TA Material'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

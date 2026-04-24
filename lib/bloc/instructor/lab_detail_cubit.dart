@@ -255,24 +255,17 @@ class LabDetailCubit extends Cubit<LabDetailState> {
     );
 
     if (!result.isSuccess || result.data == null) {
-      final fallbackSucceeded = await _fallbackUpdateInstruction(
-        labId,
-        instructionId,
-        text,
-      );
-      if (!fallbackSucceeded) {
-        final refreshed = _loadedOrNull;
-        if (refreshed != null) {
-          emit(
-            refreshed.copyWith(
-              errorMessage:
-                  result.error?.message ?? 'Failed to update instruction',
-              clearMessage: true,
-            ),
-          );
-        }
-        return;
+      final refreshed = _loadedOrNull;
+      if (refreshed != null) {
+        emit(
+          refreshed.copyWith(
+            errorMessage:
+                result.error?.message ?? 'Failed to update instruction',
+            clearMessage: true,
+          ),
+        );
       }
+      return;
     }
 
     await loadInstructions(labId);
@@ -297,23 +290,17 @@ class LabDetailCubit extends Cubit<LabDetailState> {
 
     final result = await _labService.deleteInstruction(labId, instructionId);
     if (!result.isSuccess) {
-      final fallbackSucceeded = await _fallbackDeleteInstruction(
-        labId,
-        instructionId,
-      );
-      if (!fallbackSucceeded) {
-        final refreshed = _loadedOrNull;
-        if (refreshed != null) {
-          emit(
-            refreshed.copyWith(
-              errorMessage:
-                  result.error?.message ?? 'Failed to delete instruction',
-              clearMessage: true,
-            ),
-          );
-        }
-        return;
+      final refreshed = _loadedOrNull;
+      if (refreshed != null) {
+        emit(
+          refreshed.copyWith(
+            errorMessage:
+                result.error?.message ?? 'Failed to delete instruction',
+            clearMessage: true,
+          ),
+        );
       }
+      return;
     }
 
     await loadInstructions(labId);
@@ -371,43 +358,20 @@ class LabDetailCubit extends Cubit<LabDetailState> {
     }
 
     if (failedCount > 0) {
-      final fallbackResult = await _labService.update(labId, <String, dynamic>{
-        'instructions': reordered
-            .asMap()
-            .entries
-            .map(
-              (entry) => <String, dynamic>{
-                'id': entry.value.id,
-                'orderIndex': entry.key,
-                'instructionText': entry.value.instructionText,
-                'fileId': entry.value.fileId,
-              },
-            )
-            .toList(growable: false),
-      });
-
-      if (!fallbackResult.isSuccess) {
-        final refreshed = _loadedOrNull;
-        if (refreshed != null) {
-          emit(
-            refreshed.copyWith(
-              errorMessage:
-                  'Failed to reorder some instructions. Please retry.',
-              clearMessage: true,
-            ),
-          );
-        }
-        return;
+      final refreshed = _loadedOrNull;
+      if (refreshed != null) {
+        emit(
+          refreshed.copyWith(
+            errorMessage: 'Failed to reorder some instructions. Please retry.',
+            clearMessage: true,
+          ),
+        );
       }
+      return;
     }
 
     await loadInstructions(labId);
-
-    if (failedCount == 0) {
-      _emitMessage('Instruction order updated.');
-    } else {
-      _emitMessage('Instruction order applied with partial fallback recovery.');
-    }
+    _emitMessage('Instruction order updated.');
   }
 
   Future<void> gradeSubmission(
@@ -554,82 +518,6 @@ class LabDetailCubit extends Cubit<LabDetailState> {
     }
 
     emit(current.copyWith(clearMessage: true, clearErrorMessage: true));
-  }
-
-  Future<bool> _fallbackUpdateInstruction(
-    String labId,
-    String instructionId,
-    String text,
-  ) async {
-    final current = _loadedOrNull;
-    final instructions = current?.instructions;
-    if (current == null || instructions == null) {
-      return false;
-    }
-
-    final updatedInstructions = instructions
-        .map((item) {
-          if (item.id.toString() != instructionId) {
-            return item;
-          }
-          return LabInstructionModel(
-            id: item.id,
-            labId: item.labId,
-            instructionText: text,
-            fileId: item.fileId,
-            file: item.file,
-            orderIndex: item.orderIndex,
-            createdAt: item.createdAt,
-          );
-        })
-        .toList(growable: false);
-
-    final result = await _labService.update(labId, <String, dynamic>{
-      'instructions': updatedInstructions
-          .map(
-            (item) => <String, dynamic>{
-              'id': item.id,
-              'instructionText': item.instructionText,
-              'fileId': item.fileId,
-              'orderIndex': item.orderIndex,
-            },
-          )
-          .toList(growable: false),
-    });
-
-    return result.isSuccess;
-  }
-
-  Future<bool> _fallbackDeleteInstruction(
-    String labId,
-    String instructionId,
-  ) async {
-    final current = _loadedOrNull;
-    final instructions = current?.instructions;
-    if (current == null || instructions == null) {
-      return false;
-    }
-
-    final filtered = instructions
-        .where((item) => item.id.toString() != instructionId)
-        .toList(growable: false);
-
-    final result = await _labService.update(labId, <String, dynamic>{
-      'instructions': filtered
-          .asMap()
-          .entries
-          .map(
-            (entry) => <String, dynamic>{
-              'id': entry.value.id,
-              'instructionText': entry.value.instructionText,
-              'fileId': entry.value.fileId,
-              'orderIndex': entry.key,
-            },
-          )
-          .toList(growable: false),
-    });
-
-    return result.isSuccess;
   }
 
   void _emitMessage(String message) {

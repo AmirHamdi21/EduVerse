@@ -28,20 +28,6 @@ class LabSubmissionSheet extends StatefulWidget {
 }
 
 class _LabSubmissionSheetState extends State<LabSubmissionSheet> {
-  static const int _maxUploadBytes = 50 * 1024 * 1024;
-  static const Set<String> _allowedExtensions = <String>{
-    'pdf',
-    'doc',
-    'docx',
-    'ppt',
-    'pptx',
-    'xls',
-    'xlsx',
-    'txt',
-    'md',
-    'zip',
-  };
-
   final TextEditingController _textController = TextEditingController();
   PlatformFile? _selectedFile;
   String? _validationError;
@@ -62,268 +48,271 @@ class _LabSubmissionSheetState extends State<LabSubmissionSheet> {
   Widget build(BuildContext context) {
     final responsive = context.responsive;
 
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-      ),
-      decoration: BoxDecoration(
-        color: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(responsive.radius24),
+    return PopScope(
+      canPop: !widget.isSubmitting,
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.9,
         ),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Column(
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              margin: EdgeInsets.only(top: responsive.p12),
-              decoration: BoxDecoration(
-                color: widget.isDark
-                    ? Colors.grey.shade700
-                    : Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(2),
+        decoration: BoxDecoration(
+          color: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(responsive.radius24),
+          ),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: EdgeInsets.only(top: responsive.p12),
+                decoration: BoxDecoration(
+                  color: widget.isDark
+                      ? Colors.grey.shade700
+                      : Colors.grey.shade300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(responsive.p16),
-              child: Row(
-                children: [
-                  Text(
-                    'Submit Work',
-                    style: TextStyle(
-                      fontSize: responsive.fontSize18,
-                      fontWeight: FontWeight.bold,
-                      color: widget.isDark
-                          ? Colors.white
-                          : const Color(0xFF1E293B),
-                    ),
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    onPressed: widget.isSubmitting
-                        ? null
-                        : () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close_rounded),
-                  ),
-                ],
-              ),
-            ),
-            if (widget.lab.isPastDue) _buildLateWarning(context),
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: responsive.p16),
-                child: Column(
+              Padding(
+                padding: EdgeInsets.all(responsive.p16),
+                child: Row(
                   children: [
-                    ExpansionTile(
-                      initiallyExpanded: true,
-                      title: Text(
-                        'Text Submission',
-                        style: TextStyle(
-                          fontSize: responsive.fontSize14,
-                          fontWeight: FontWeight.w700,
-                          color: widget.isDark
-                              ? Colors.white
-                              : const Color(0xFF1E293B),
-                        ),
+                    Text(
+                      'Submit Work',
+                      style: TextStyle(
+                        fontSize: responsive.fontSize18,
+                        fontWeight: FontWeight.bold,
+                        color: widget.isDark
+                            ? Colors.white
+                            : const Color(0xFF1E293B),
                       ),
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: responsive.p8,
-                            right: responsive.p8,
-                            bottom: responsive.p12,
-                          ),
-                          child: TextFormField(
-                            controller: _textController,
-                            maxLines: 6,
-                            enabled: !widget.isSubmitting,
-                            onChanged: (_) {
-                              if (_validationError != null) {
-                                setState(() {
-                                  _validationError = null;
-                                });
-                              }
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Write your submission notes here...',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                  responsive.radius12,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
-                    ExpansionTile(
-                      initiallyExpanded: false,
-                      title: Text(
-                        'File Upload',
-                        style: TextStyle(
-                          fontSize: responsive.fontSize14,
-                          fontWeight: FontWeight.w700,
-                          color: widget.isDark
-                              ? Colors.white
-                              : const Color(0xFF1E293B),
-                        ),
-                      ),
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: responsive.p8,
-                            right: responsive.p8,
-                            bottom: responsive.p12,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              OutlinedButton.icon(
-                                onPressed: widget.isSubmitting
-                                    ? null
-                                    : _pickFile,
-                                icon: const Icon(Icons.upload_file_rounded),
-                                label: const Text('Choose File'),
-                              ),
-                              if (_selectedFile != null) ...[
-                                SizedBox(height: responsive.p8),
-                                Container(
-                                  width: double.infinity,
-                                  padding: EdgeInsets.all(responsive.p10),
-                                  decoration: BoxDecoration(
-                                    color: const Color(
-                                      0xFF3B82F6,
-                                    ).withValues(alpha: 0.08),
-                                    borderRadius: BorderRadius.circular(
-                                      responsive.radius10,
-                                    ),
-                                    border: Border.all(
-                                      color: const Color(
-                                        0xFF3B82F6,
-                                      ).withValues(alpha: 0.2),
-                                    ),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.insert_drive_file_rounded,
-                                        color: Color(0xFF3B82F6),
-                                      ),
-                                      SizedBox(width: responsive.p8),
-                                      Expanded(
-                                        child: Text(
-                                          '${_selectedFile!.name} (${_formatFileSize(_selectedFile!.size)})',
-                                          style: TextStyle(
-                                            fontSize: responsive.fontSize12,
-                                            fontWeight: FontWeight.w600,
-                                            color: widget.isDark
-                                                ? Colors.white
-                                                : const Color(0xFF1E293B),
-                                          ),
-                                        ),
-                                      ),
-                                      IconButton(
-                                        onPressed: widget.isSubmitting
-                                            ? null
-                                            : () {
-                                                setState(() {
-                                                  _selectedFile = null;
-                                                });
-                                              },
-                                        icon: const Icon(Icons.close_rounded),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                              SizedBox(height: responsive.p8),
-                              Text(
-                                'Supported: pdf, doc, docx, ppt, pptx, xls, xlsx, txt, md, zip (max 50MB)',
-                                style: TextStyle(
-                                  fontSize: responsive.fontSize11,
-                                  color: widget.isDark
-                                      ? Colors.grey.shade400
-                                      : Colors.grey.shade600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                    const Spacer(),
+                    IconButton(
+                      onPressed: widget.isSubmitting
+                          ? null
+                          : () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close_rounded),
                     ),
                   ],
                 ),
               ),
-            ),
-            if (_validationError != null)
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: responsive.p16),
-                child: Text(
-                  _validationError!,
-                  style: TextStyle(
-                    color: const Color(0xFFEF4444),
-                    fontSize: responsive.fontSize12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            if (widget.isSubmitting)
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  responsive.p16,
-                  responsive.p8,
-                  responsive.p16,
-                  0,
-                ),
-                child: LinearProgressIndicator(
-                  value: widget.submitProgress > 0
-                      ? widget.submitProgress.clamp(0, 1)
-                      : null,
-                  minHeight: 6,
-                  backgroundColor: widget.isDark
-                      ? Colors.grey.shade700
-                      : Colors.grey.shade200,
-                  color: const Color(0xFF3B82F6),
-                ),
-              ),
-            Padding(
-              padding: EdgeInsets.all(responsive.p16),
-              child: SizedBox(
-                width: double.infinity,
-                height: responsive.p48,
-                child: ElevatedButton.icon(
-                  onPressed: (!_canSubmit || widget.isSubmitting)
-                      ? null
-                      : _submit,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF3B82F6),
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: Colors.grey.shade500,
-                  ),
-                  icon: widget.isSubmitting
-                      ? SizedBox(
-                          width: responsive.p16,
-                          height: responsive.p16,
-                          child: const CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
+              if (widget.lab.isPastDue) _buildLateWarning(context),
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: responsive.p16),
+                  child: Column(
+                    children: [
+                      ExpansionTile(
+                        initiallyExpanded: true,
+                        title: Text(
+                          'Text Submission',
+                          style: TextStyle(
+                            fontSize: responsive.fontSize14,
+                            fontWeight: FontWeight.w700,
+                            color: widget.isDark
+                                ? Colors.white
+                                : const Color(0xFF1E293B),
                           ),
-                        )
-                      : const Icon(Icons.send_rounded),
-                  label: Text(
-                    widget.isSubmitting ? 'Submitting...' : 'Submit',
+                        ),
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: responsive.p8,
+                              right: responsive.p8,
+                              bottom: responsive.p12,
+                            ),
+                            child: TextFormField(
+                              controller: _textController,
+                              maxLines: 6,
+                              enabled: !widget.isSubmitting,
+                              onChanged: (_) {
+                                if (_validationError != null) {
+                                  setState(() {
+                                    _validationError = null;
+                                  });
+                                }
+                              },
+                              decoration: InputDecoration(
+                                hintText: 'Write your submission notes here...',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    responsive.radius12,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      ExpansionTile(
+                        initiallyExpanded: false,
+                        title: Text(
+                          'File Upload',
+                          style: TextStyle(
+                            fontSize: responsive.fontSize14,
+                            fontWeight: FontWeight.w700,
+                            color: widget.isDark
+                                ? Colors.white
+                                : const Color(0xFF1E293B),
+                          ),
+                        ),
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: responsive.p8,
+                              right: responsive.p8,
+                              bottom: responsive.p12,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                OutlinedButton.icon(
+                                  onPressed: widget.isSubmitting
+                                      ? null
+                                      : _pickFile,
+                                  icon: const Icon(Icons.upload_file_rounded),
+                                  label: const Text('Choose File'),
+                                ),
+                                if (_selectedFile != null) ...[
+                                  SizedBox(height: responsive.p8),
+                                  Container(
+                                    width: double.infinity,
+                                    padding: EdgeInsets.all(responsive.p10),
+                                    decoration: BoxDecoration(
+                                      color: const Color(
+                                        0xFF3B82F6,
+                                      ).withValues(alpha: 0.08),
+                                      borderRadius: BorderRadius.circular(
+                                        responsive.radius10,
+                                      ),
+                                      border: Border.all(
+                                        color: const Color(
+                                          0xFF3B82F6,
+                                        ).withValues(alpha: 0.2),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.insert_drive_file_rounded,
+                                          color: Color(0xFF3B82F6),
+                                        ),
+                                        SizedBox(width: responsive.p8),
+                                        Expanded(
+                                          child: Text(
+                                            '${_selectedFile!.name} (${_formatFileSize(_selectedFile!.size)})',
+                                            style: TextStyle(
+                                              fontSize: responsive.fontSize12,
+                                              fontWeight: FontWeight.w600,
+                                              color: widget.isDark
+                                                  ? Colors.white
+                                                  : const Color(0xFF1E293B),
+                                            ),
+                                          ),
+                                        ),
+                                        IconButton(
+                                          onPressed: widget.isSubmitting
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    _selectedFile = null;
+                                                  });
+                                                },
+                                          icon: const Icon(Icons.close_rounded),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                                SizedBox(height: responsive.p8),
+                                Text(
+                                  _buildSupportedFilesText(),
+                                  style: TextStyle(
+                                    fontSize: responsive.fontSize11,
+                                    color: widget.isDark
+                                        ? Colors.grey.shade400
+                                        : Colors.grey.shade600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (_validationError != null)
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: responsive.p16),
+                  child: Text(
+                    _validationError!,
                     style: TextStyle(
-                      fontSize: responsive.fontSize14,
-                      fontWeight: FontWeight.w700,
+                      color: const Color(0xFFEF4444),
+                      fontSize: responsive.fontSize12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              if (widget.isSubmitting)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    responsive.p16,
+                    responsive.p8,
+                    responsive.p16,
+                    0,
+                  ),
+                  child: LinearProgressIndicator(
+                    value: widget.submitProgress > 0
+                        ? widget.submitProgress.clamp(0, 1)
+                        : null,
+                    minHeight: 6,
+                    backgroundColor: widget.isDark
+                        ? Colors.grey.shade700
+                        : Colors.grey.shade200,
+                    color: const Color(0xFF3B82F6),
+                  ),
+                ),
+              Padding(
+                padding: EdgeInsets.all(responsive.p16),
+                child: SizedBox(
+                  width: double.infinity,
+                  height: responsive.p48,
+                  child: ElevatedButton.icon(
+                    onPressed: (!_canSubmit || widget.isSubmitting)
+                        ? null
+                        : _submit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF3B82F6),
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: Colors.grey.shade500,
+                    ),
+                    icon: widget.isSubmitting
+                        ? SizedBox(
+                            width: responsive.p16,
+                            height: responsive.p16,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : const Icon(Icons.send_rounded),
+                    label: Text(
+                      widget.isSubmitting ? 'Submitting...' : 'Submit',
+                      style: TextStyle(
+                        fontSize: responsive.fontSize14,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -388,16 +377,56 @@ class _LabSubmissionSheetState extends State<LabSubmissionSheet> {
       return 'Unable to read selected file path.';
     }
 
-    if (file.size > _maxUploadBytes) {
-      return 'File is too large. Maximum size is 50MB.';
+    final maxFileSizeMb = widget.lab.maxFileSizeMb;
+    if (maxFileSizeMb != null && maxFileSizeMb > 0) {
+      final maxUploadBytes = (maxFileSizeMb * 1024 * 1024).round();
+      if (file.size > maxUploadBytes) {
+        return 'File is too large. Maximum size is ${_formatMaxFileSize(maxFileSizeMb)}.';
+      }
     }
 
     final extension = file.extension?.toLowerCase();
-    if (extension == null || !_allowedExtensions.contains(extension)) {
-      return 'Unsupported file type. Please upload a supported document format.';
+    final allowedExtensions = _normalizedAllowedExtensions();
+    if (allowedExtensions.isNotEmpty &&
+        (extension == null || !allowedExtensions.contains(extension))) {
+      return 'Unsupported file type. Allowed: ${allowedExtensions.join(', ')}.';
     }
 
     return null;
+  }
+
+  Set<String> _normalizedAllowedExtensions() {
+    final raw = widget.lab.allowedFileTypes?.trim();
+    if (raw == null || raw.isEmpty) {
+      return <String>{};
+    }
+
+    return raw
+        .split(',')
+        .map((item) => item.trim().replaceAll('.', '').toLowerCase())
+        .where((item) => item.isNotEmpty)
+        .toSet();
+  }
+
+  String _buildSupportedFilesText() {
+    final allowedExtensions = _normalizedAllowedExtensions();
+    final maxFileSizeMb = widget.lab.maxFileSizeMb;
+
+    final fileTypeText = allowedExtensions.isEmpty
+        ? 'All file types'
+        : allowedExtensions.join(', ');
+    final sizeText = maxFileSizeMb == null || maxFileSizeMb <= 0
+        ? 'no size limit specified'
+        : 'max ${_formatMaxFileSize(maxFileSizeMb)}';
+
+    return 'Supported: $fileTypeText ($sizeText)';
+  }
+
+  String _formatMaxFileSize(double value) {
+    final rounded = value % 1 == 0
+        ? value.toStringAsFixed(0)
+        : value.toStringAsFixed(1);
+    return '${rounded}MB';
   }
 
   Future<void> _submit() async {

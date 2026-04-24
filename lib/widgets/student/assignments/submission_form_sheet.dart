@@ -10,7 +10,6 @@ import '../../../../bloc/assignments/assignment_state.dart';
 import '../../../../common/utils/responsive.dart';
 import '../../../../models/assignments/assignment_model.dart';
 import '../../../../models/core/enums/assignment_enums.dart' as api;
-import 'drive_file_picker.dart';
 
 enum _SubmissionTab { text, link, file }
 
@@ -31,6 +30,8 @@ class SubmissionFormSheet extends StatefulWidget {
   }) {
     return showModalBottomSheet<void>(
       context: context,
+      isDismissible: false,
+      enableDrag: false,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => Padding(
@@ -56,7 +57,6 @@ class _SubmissionFormSheetState extends State<SubmissionFormSheet>
   late final TabController _tabController;
 
   File? _localFile;
-  DriveFileSelection? _driveFile;
   String? _validationError;
   bool _submitAttempted = false;
 
@@ -81,6 +81,7 @@ class _SubmissionFormSheetState extends State<SubmissionFormSheet>
     final responsive = context.responsive;
     final lateBlocked = _isLateBlocked();
     final lateWarning = _isLateAllowedWithWarning();
+    final submissionState = context.watch<AssignmentBloc>().state;
 
     return BlocListener<AssignmentBloc, AssignmentState>(
       listenWhen: (previous, current) {
@@ -112,156 +113,162 @@ class _SubmissionFormSheetState extends State<SubmissionFormSheet>
         );
         Navigator.of(context).pop();
       },
-      child: Container(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.9,
-        ),
-        decoration: BoxDecoration(
-          color: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(responsive.radius24),
+      child: PopScope(
+        canPop: !submissionState.isSubmitting,
+        child: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.9,
           ),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Column(
-            children: [
-              Container(
-                width: 40,
-                height: 4,
-                margin: EdgeInsets.only(top: responsive.p12),
-                decoration: BoxDecoration(
-                  color: widget.isDark
-                      ? Colors.grey.shade700
-                      : Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(2),
+          decoration: BoxDecoration(
+            color: widget.isDark ? const Color(0xFF1E293B) : Colors.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(responsive.radius24),
+            ),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: EdgeInsets.only(top: responsive.p12),
+                  decoration: BoxDecoration(
+                    color: widget.isDark
+                        ? Colors.grey.shade700
+                        : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(responsive.p16),
-                child: Row(
-                  children: [
-                    Text(
-                      'Submit Assignment',
+                Padding(
+                  padding: EdgeInsets.all(responsive.p16),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Submit Assignment',
+                        style: TextStyle(
+                          fontSize: responsive.fontSize18,
+                          fontWeight: FontWeight.bold,
+                          color: widget.isDark
+                              ? Colors.white
+                              : const Color(0xFF1E293B),
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: submissionState.isSubmitting
+                            ? null
+                            : () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close_rounded),
+                      ),
+                    ],
+                  ),
+                ),
+                if (lateBlocked) _buildLateBlockedBanner(context),
+                if (!lateBlocked && lateWarning)
+                  _buildLateWarningBanner(context),
+                if (_tabs.length > 1)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: responsive.p16),
+                    child: TabBar(
+                      controller: _tabController,
+                      indicatorColor: const Color(0xFF3B82F6),
+                      labelColor: const Color(0xFF3B82F6),
+                      unselectedLabelColor: widget.isDark
+                          ? Colors.grey.shade400
+                          : Colors.grey.shade700,
+                      tabs: _tabs
+                          .map((tab) => Tab(text: _labelForTab(tab)))
+                          .toList(),
+                    ),
+                  ),
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.all(responsive.p16),
+                    child: _tabs.length == 1
+                        ? _buildTabContent(context, _tabs.first)
+                        : TabBarView(
+                            controller: _tabController,
+                            children: _tabs
+                                .map((tab) => _buildTabContent(context, tab))
+                                .toList(),
+                          ),
+                  ),
+                ),
+                if (_validationError != null)
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: responsive.p16),
+                    child: Text(
+                      _validationError!,
                       style: TextStyle(
-                        fontSize: responsive.fontSize18,
-                        fontWeight: FontWeight.bold,
-                        color: widget.isDark
-                            ? Colors.white
-                            : const Color(0xFF1E293B),
+                        color: const Color(0xFFEF4444),
+                        fontSize: responsive.fontSize12,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const Spacer(),
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close_rounded),
-                    ),
-                  ],
-                ),
-              ),
-              if (lateBlocked) _buildLateBlockedBanner(context),
-              if (!lateBlocked && lateWarning) _buildLateWarningBanner(context),
-              if (_tabs.length > 1)
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: responsive.p16),
-                  child: TabBar(
-                    controller: _tabController,
-                    indicatorColor: const Color(0xFF3B82F6),
-                    labelColor: const Color(0xFF3B82F6),
-                    unselectedLabelColor: widget.isDark
-                        ? Colors.grey.shade400
-                        : Colors.grey.shade700,
-                    tabs: _tabs
-                        .map((tab) => Tab(text: _labelForTab(tab)))
-                        .toList(),
                   ),
-                ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(responsive.p16),
-                  child: _tabs.length == 1
-                      ? _buildTabContent(context, _tabs.first)
-                      : TabBarView(
-                          controller: _tabController,
-                          children: _tabs
-                              .map((tab) => _buildTabContent(context, tab))
-                              .toList(),
-                        ),
-                ),
-              ),
-              if (_validationError != null)
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: responsive.p16),
-                  child: Text(
-                    _validationError!,
-                    style: TextStyle(
-                      color: const Color(0xFFEF4444),
-                      fontSize: responsive.fontSize12,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              BlocBuilder<AssignmentBloc, AssignmentState>(
-                builder: (context, state) {
-                  return Column(
-                    children: [
-                      if (state.isSubmitting)
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: responsive.p16,
-                          ),
-                          child: LinearProgressIndicator(
-                            value: state.submitProgress > 0
-                                ? state.submitProgress.clamp(0, 1)
-                                : null,
-                            minHeight: 6,
-                            backgroundColor: widget.isDark
-                                ? Colors.grey.shade700
-                                : Colors.grey.shade200,
-                            color: const Color(0xFF3B82F6),
-                          ),
-                        ),
-                      Padding(
-                        padding: EdgeInsets.all(responsive.p16),
-                        child: SizedBox(
-                          width: double.infinity,
-                          height: responsive.p48,
-                          child: ElevatedButton.icon(
-                            onPressed: lateBlocked || state.isSubmitting
-                                ? null
-                                : _submit,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF3B82F6),
-                              foregroundColor: Colors.white,
-                              disabledBackgroundColor: Colors.grey.shade500,
+                BlocBuilder<AssignmentBloc, AssignmentState>(
+                  builder: (context, state) {
+                    return Column(
+                      children: [
+                        if (state.isSubmitting)
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: responsive.p16,
                             ),
-                            icon: state.isSubmitting
-                                ? SizedBox(
-                                    width: responsive.p16,
-                                    height: responsive.p16,
-                                    child: const CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Icon(Icons.send_rounded),
-                            label: Text(
-                              state.isSubmitting
-                                  ? 'Submitting...'
-                                  : 'Submit Assignment',
-                              style: TextStyle(
-                                fontSize: responsive.fontSize14,
-                                fontWeight: FontWeight.w700,
+                            child: LinearProgressIndicator(
+                              value: state.submitProgress > 0
+                                  ? state.submitProgress.clamp(0, 1)
+                                  : null,
+                              minHeight: 6,
+                              backgroundColor: widget.isDark
+                                  ? Colors.grey.shade700
+                                  : Colors.grey.shade200,
+                              color: const Color(0xFF3B82F6),
+                            ),
+                          ),
+                        Padding(
+                          padding: EdgeInsets.all(responsive.p16),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: responsive.p48,
+                            child: ElevatedButton.icon(
+                              onPressed: lateBlocked || state.isSubmitting
+                                  ? null
+                                  : _submit,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF3B82F6),
+                                foregroundColor: Colors.white,
+                                disabledBackgroundColor: Colors.grey.shade500,
+                              ),
+                              icon: state.isSubmitting
+                                  ? SizedBox(
+                                      width: responsive.p16,
+                                      height: responsive.p16,
+                                      child: const CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : const Icon(Icons.send_rounded),
+                              label: Text(
+                                state.isSubmitting
+                                    ? 'Submitting...'
+                                    : 'Submit Assignment',
+                                style: TextStyle(
+                                  fontSize: responsive.fontSize14,
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -284,13 +291,10 @@ class _SubmissionFormSheetState extends State<SubmissionFormSheet>
         return FileSubmissionTab(
           isDark: widget.isDark,
           localFile: _localFile,
-          driveFile: _driveFile,
           onPickLocal: _pickLocalFile,
-          onPickDrive: _pickDriveFile,
           onClearSelection: () {
             setState(() {
               _localFile = null;
-              _driveFile = null;
             });
           },
           notesController: _noteController,
@@ -423,21 +427,6 @@ class _SubmissionFormSheetState extends State<SubmissionFormSheet>
 
     setState(() {
       _localFile = File(path);
-      _driveFile = null;
-      _validationError = null;
-    });
-  }
-
-  Future<void> _pickDriveFile() async {
-    final selected = await DriveFilePicker.show(context, isDark: widget.isDark);
-
-    if (selected == null) {
-      return;
-    }
-
-    setState(() {
-      _driveFile = selected;
-      _localFile = null;
       _validationError = null;
     });
   }
@@ -517,9 +506,9 @@ class _SubmissionFormSheetState extends State<SubmissionFormSheet>
         );
         return;
       case _SubmissionTab.file:
-        if (_localFile == null && _driveFile == null) {
+        if (_localFile == null) {
           setState(() {
-            _validationError = 'Please choose a file from device or Drive';
+            _validationError = 'Please choose a file from your device';
           });
           return;
         }
@@ -536,20 +525,7 @@ class _SubmissionFormSheetState extends State<SubmissionFormSheet>
                   : _noteController.text.trim(),
             ),
           );
-          return;
         }
-
-        // Backend accepts structured text/link submissions, so Drive selection
-        // is submitted as a link when a local file is not provided.
-        context.read<AssignmentBloc>().add(
-          SubmitTextAssignment(
-            assignmentId: assignmentId,
-            submissionText: _noteController.text.trim().isEmpty
-                ? null
-                : _noteController.text.trim(),
-            submissionLink: _driveFile!.webViewLink,
-          ),
-        );
         return;
     }
   }
@@ -623,9 +599,7 @@ class LinkSubmissionTab extends StatelessWidget {
 class FileSubmissionTab extends StatelessWidget {
   final bool isDark;
   final File? localFile;
-  final DriveFileSelection? driveFile;
   final VoidCallback onPickLocal;
-  final VoidCallback onPickDrive;
   final VoidCallback onClearSelection;
   final TextEditingController notesController;
 
@@ -633,9 +607,7 @@ class FileSubmissionTab extends StatelessWidget {
     super.key,
     required this.isDark,
     required this.localFile,
-    required this.driveFile,
     required this.onPickLocal,
-    required this.onPickDrive,
     required this.onClearSelection,
     required this.notesController,
   });
@@ -648,27 +620,16 @@ class FileSubmissionTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: onPickLocal,
-                  icon: const Icon(Icons.folder_open_rounded),
-                  label: const Text('From Device'),
-                ),
-              ),
-              SizedBox(width: responsive.p8),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: onPickDrive,
-                  icon: const Icon(Icons.cloud_rounded),
-                  label: const Text('From Drive'),
-                ),
-              ),
-            ],
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: onPickLocal,
+              icon: const Icon(Icons.folder_open_rounded),
+              label: const Text('Choose File'),
+            ),
           ),
           SizedBox(height: responsive.p12),
-          if (localFile != null || driveFile != null)
+          if (localFile != null)
             Container(
               width: double.infinity,
               padding: EdgeInsets.all(responsive.p12),
@@ -686,9 +647,7 @@ class FileSubmissionTab extends StatelessWidget {
                   ),
                   Expanded(
                     child: Text(
-                      localFile != null
-                          ? localFile!.path.split(Platform.pathSeparator).last
-                          : driveFile!.fileName,
+                      localFile!.path.split(Platform.pathSeparator).last,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

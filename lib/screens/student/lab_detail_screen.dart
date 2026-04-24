@@ -49,7 +49,6 @@ class LabDetailScreen extends StatelessWidget {
 
         cubit.loadLab(labId).then((_) {
           cubit.loadInstructions(labId);
-          cubit.loadAttendance(labId);
           cubit.loadMySubmissions(labId);
         });
 
@@ -188,6 +187,8 @@ class LabDetailScreen extends StatelessWidget {
   ) async {
     await showModalBottomSheet<void>(
       context: context,
+      isDismissible: false,
+      enableDrag: false,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) {
@@ -320,7 +321,11 @@ class _LabDetailBody extends StatelessWidget {
         SizedBox(height: responsive.p8),
         if (state.isLoadingInstructions)
           const LinearProgressIndicator(color: Color(0xFF3B82F6)),
-        InstructionViewer(instructions: state.instructions, isDark: isDark),
+        InstructionViewer(
+          instructions: state.instructions,
+          attachmentFiles: state.lab.instructionFiles,
+          isDark: isDark,
+        ),
         SizedBox(height: responsive.p16),
         ExpansionTile(
           initiallyExpanded: hasGradedSubmission,

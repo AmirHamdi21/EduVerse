@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../../common/utils/responsive.dart';
 import '../../../../models/assignments/assignment_model.dart';
 import '../../../../models/assignments/assignment_submission_model.dart';
 import '../../../../models/core/drive_file_model.dart';
 import '../../../../models/core/enums/assignment_enums.dart' as api;
+import '../shared/drive_file_preview_screen.dart';
 import 'my_submission_view.dart';
 
 class AssignmentDetailBody extends StatelessWidget {
@@ -271,7 +271,7 @@ class AssignmentDetailBody extends StatelessWidget {
 
     return Column(
       children: files
-          .map((file) => _DrivePreviewCard(file: file, isDark: isDark))
+          .map((file) => _DriveActionCard(file: file, isDark: isDark))
           .toList(),
     );
   }
@@ -412,38 +412,11 @@ class AssignmentDetailBody extends StatelessWidget {
   }
 }
 
-class _DrivePreviewCard extends StatefulWidget {
+class _DriveActionCard extends StatelessWidget {
   final DriveFileModel file;
   final bool isDark;
 
-  const _DrivePreviewCard({required this.file, required this.isDark});
-
-  @override
-  State<_DrivePreviewCard> createState() => _DrivePreviewCardState();
-}
-
-class _DrivePreviewCardState extends State<_DrivePreviewCard> {
-  late final WebViewController _controller;
-  bool _failed = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onWebResourceError: (_) {
-            if (mounted) {
-              setState(() {
-                _failed = true;
-              });
-            }
-          },
-        ),
-      )
-      ..loadRequest(Uri.parse(widget.file.iframeUrl));
-  }
+  const _DriveActionCard({required this.file, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -453,7 +426,7 @@ class _DrivePreviewCardState extends State<_DrivePreviewCard> {
       margin: EdgeInsets.only(bottom: responsive.p12),
       padding: EdgeInsets.all(responsive.p10),
       decoration: BoxDecoration(
-        color: widget.isDark
+        color: isDark
             ? Colors.grey.shade800.withValues(alpha: 0.35)
             : Colors.grey.shade100,
         borderRadius: BorderRadius.circular(responsive.radius12),
@@ -461,42 +434,47 @@ class _DrivePreviewCardState extends State<_DrivePreviewCard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.file.fileName,
-            style: TextStyle(
-              fontSize: responsive.fontSize13,
-              fontWeight: FontWeight.w700,
-              color: widget.isDark ? Colors.white : const Color(0xFF1E293B),
-            ),
-          ),
-          SizedBox(height: responsive.p8),
-          SizedBox(
-            height: 180,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(responsive.radius10),
-              child: _failed
-                  ? Center(
-                      child: TextButton.icon(
-                        onPressed: () => _openExternal(widget.file.webViewLink),
-                        icon: const Icon(Icons.open_in_new_rounded),
-                        label: const Text('Open in Drive'),
-                      ),
-                    )
-                  : WebViewWidget(controller: _controller),
-            ),
-          ),
-          SizedBox(height: responsive.p6),
           Row(
             children: [
+              const Icon(Icons.description_rounded, color: Color(0xFF3B82F6)),
+              SizedBox(width: responsive.p8),
+              Expanded(
+                child: Text(
+                  file.fileName,
+                  style: TextStyle(
+                    fontSize: responsive.fontSize13,
+                    fontWeight: FontWeight.w700,
+                    color: isDark ? Colors.white : const Color(0xFF1E293B),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: responsive.p10),
+          Wrap(
+            spacing: responsive.p8,
+            runSpacing: responsive.p8,
+            children: [
               TextButton.icon(
-                onPressed: () => _openExternal(widget.file.webViewLink),
+                onPressed: () => _openExternal(file.webViewLink),
                 icon: const Icon(Icons.open_in_new_rounded),
                 label: const Text('Open in Drive'),
               ),
               TextButton.icon(
-                onPressed: () => _openExternal(widget.file.downloadUrl),
+                onPressed: file.downloadUrl.isEmpty
+                    ? null
+                    : () => _openExternal(file.downloadUrl),
                 icon: const Icon(Icons.download_rounded),
                 label: const Text('Download'),
+              ),
+              TextButton.icon(
+                onPressed: () => openDriveFilePreviewScreen(
+                  context,
+                  file: file,
+                  isDark: isDark,
+                ),
+                icon: const Icon(Icons.visibility_rounded),
+                label: const Text('Preview'),
               ),
             ],
           ),

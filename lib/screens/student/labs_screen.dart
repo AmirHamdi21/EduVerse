@@ -11,6 +11,7 @@ import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../models/core/course_model.dart';
 import '../../models/labs/lab_model.dart';
+import '../../widgets/student/academic/academic_list_skeleton.dart';
 import '../../widgets/student/labs/lab_card.dart';
 import '../../widgets/student/labs/labs_filter_sheet.dart';
 import 'lab_detail_screen.dart';
@@ -121,9 +122,7 @@ class _LabsScreenState extends State<LabsScreen>
                         }
                       },
                       builder: (context, state) {
-                        if (state.isLoading &&
-                            state.labs.isEmpty &&
-                            state.enrolledCourses.isEmpty) {
+                        if (state.isLoading) {
                           return _buildLoadingState(isDark);
                         }
 
@@ -538,13 +537,7 @@ class _LabsScreenState extends State<LabsScreen>
   }
 
   Widget _buildLoadingState(bool isDark) {
-    return Center(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(
-          isDark ? Colors.white : const Color(0xFF3B82F6),
-        ),
-      ),
-    );
+    return AcademicListSkeleton(isDark: isDark);
   }
 
   Widget _buildErrorState(

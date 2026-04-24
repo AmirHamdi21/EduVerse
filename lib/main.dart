@@ -217,8 +217,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       labService: _labService,
     )..loadEnrolledCourses();
 
-    _assignmentBloc = AssignmentBloc(assignmentService: _assignmentService)
-      ..add(const FetchAssignments(courseId: null));
+    _assignmentBloc = AssignmentBloc(
+      assignmentService: _assignmentService,
+      enrollmentService: _enrollmentService,
+    )..add(const FetchAssignments(courseId: null));
 
     _coursesBloc = CoursesBloc(
       courseService: _courseService,
