@@ -210,11 +210,10 @@ class RoleModel {
 
   const RoleModel({required this.roleId, required this.roleName});
 
-  factory RoleModel.fromJson(Map<String, dynamic> json) =>
-      RoleModel(
-        roleId: _parseInt(json['roleId'] ?? json['id']),
-        roleName: _parseString(json['roleName'] ?? json['name']),
-      );
+  factory RoleModel.fromJson(Map<String, dynamic> json) => RoleModel(
+    roleId: _parseInt(json['roleId'] ?? json['id']),
+    roleName: _parseString(json['roleName'] ?? json['name']),
+  );
 
   Map<String, dynamic> toJson() => {'roleId': roleId, 'roleName': roleName};
 

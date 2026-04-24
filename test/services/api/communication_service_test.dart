@@ -87,36 +87,40 @@ void main() {
   });
 
   group('CommunicationService announcement payload compatibility', () {
-    test('getAnnouncements unwraps data envelope with stringified numeric fields', () async {
-      final service = _buildService((options) {
-        return <String, dynamic>{
-          'statusCode': 200,
-          'data': <String, dynamic>{
-            'data': <Map<String, dynamic>>[
-              <String, dynamic>{
-                'id': '3001',
-                'courseId': '44',
-                'title': 'API compatibility',
-                'content': 'The backend now serializes bigint values as strings.',
-                'createdBy': '15',
-                'isPublished': '1',
-                'viewCount': '12',
-                'createdAt': '2026-04-01T10:00:00.000Z',
-                'updatedAt': '2026-04-01T10:00:00.000Z',
-              },
-            ],
-            'meta': <String, dynamic>{'total': 1},
-          },
-        };
-      });
+    test(
+      'getAnnouncements unwraps data envelope with stringified numeric fields',
+      () async {
+        final service = _buildService((options) {
+          return <String, dynamic>{
+            'statusCode': 200,
+            'data': <String, dynamic>{
+              'data': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': '3001',
+                  'courseId': '44',
+                  'title': 'API compatibility',
+                  'content':
+                      'The backend now serializes bigint values as strings.',
+                  'createdBy': '15',
+                  'isPublished': '1',
+                  'viewCount': '12',
+                  'createdAt': '2026-04-01T10:00:00.000Z',
+                  'updatedAt': '2026-04-01T10:00:00.000Z',
+                },
+              ],
+              'meta': <String, dynamic>{'total': 1},
+            },
+          };
+        });
 
-      final result = await service.getAnnouncements();
+        final result = await service.getAnnouncements();
 
-      expect(result, hasLength(1));
-      expect(result.first.createdBy, 15);
-      expect(result.first.isPublished, 1);
-      expect(result.first.viewCount, 12);
-    });
+        expect(result, hasLength(1));
+        expect(result.first.createdBy, 15);
+        expect(result.first.isPublished, 1);
+        expect(result.first.viewCount, 12);
+      },
+    );
 
     test('getAnnouncementById unwraps a nested data object', () async {
       final service = _buildService((options) {

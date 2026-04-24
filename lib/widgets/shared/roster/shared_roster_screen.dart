@@ -811,11 +811,12 @@ class _StudentsMeta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sortedByLabel = 'Sorted by ${switch (state.sortField) {
-      RosterSortField.studentId => 'student ID',
-      RosterSortField.enrollmentDate => 'enrollment date',
-      RosterSortField.status => 'status',
-    }}';
+    final sortedByLabel =
+        'Sorted by ${switch (state.sortField) {
+          RosterSortField.studentId => 'student ID',
+          RosterSortField.enrollmentDate => 'enrollment date',
+          RosterSortField.status => 'status',
+        }}';
 
     final countPill = Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -864,10 +865,7 @@ class _StudentsMeta extends StatelessWidget {
               countPill,
               const SizedBox(width: 12),
               Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: sortText,
-                ),
+                child: Align(alignment: Alignment.centerRight, child: sortText),
               ),
             ],
           );

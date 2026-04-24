@@ -244,11 +244,7 @@ void main() {
           'lastName': 'Ali',
           'email': 'mona@eduverse.test',
         },
-        'course': {
-          'id': '44',
-          'name': 'Networks',
-          'code': 'CS330',
-        },
+        'course': {'id': '44', 'name': 'Networks', 'code': 'CS330'},
       };
 
       final model = AnnouncementModel.fromJson(json);

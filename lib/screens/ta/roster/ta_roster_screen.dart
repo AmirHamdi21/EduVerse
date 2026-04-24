@@ -25,8 +25,7 @@ class TARosterScreen extends StatelessWidget {
             theme: SharedRosterTheme(
               title: 'Student Roster',
               emptyCoursesTitle: 'No Courses Assigned',
-              emptyCoursesSubtitle:
-                  'You are not assigned to any sections yet.',
+              emptyCoursesSubtitle: 'You are not assigned to any sections yet.',
               headerTitle: 'TA Student Roster',
               headerSubtitle:
                   'Review your section students, grades, and course roster details',

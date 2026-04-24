@@ -86,7 +86,9 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     if (uiMode == AttendanceUiMode.sessions) {
       final section =
           state.selectedSection ??
-          (state.teachingSections.isNotEmpty ? state.teachingSections.first : null);
+          (state.teachingSections.isNotEmpty
+              ? state.teachingSections.first
+              : null);
       if (section != null) {
         selectSectionForSessions(section.sectionId);
       }
@@ -186,10 +188,10 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     required String sessionType,
   }) async {
     emit(state.copyWith(isLoading: true, clearError: true));
-    final result = await _attendanceService.updateSession(sessionId, <String, dynamic>{
-      'sessionDate': sessionDate,
-      'sessionType': sessionType,
-    });
+    final result = await _attendanceService.updateSession(
+      sessionId,
+      <String, dynamic>{'sessionDate': sessionDate, 'sessionType': sessionType},
+    );
 
     if (!result.isSuccess) {
       emit(
@@ -299,10 +301,9 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
           final status = AttendanceRecordModel.normalizeStatus(
             matched?.attendanceStatus,
           );
-          final fallbackName =
-              matched?.displayName.isNotEmpty == true
-                  ? matched!.displayName
-                  : student.studentIdLabel;
+          final fallbackName = matched?.displayName.isNotEmpty == true
+              ? matched!.displayName
+              : student.studentIdLabel;
           final resolvedName = student.displayName == student.studentIdLabel
               ? fallbackName
               : student.displayName;
@@ -548,7 +549,11 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
 
   void applyAiResultsToRoster() {
     if (state.isRosterReadOnly) {
-      emit(state.copyWith(aiError: 'Session is closed - open an active session to apply.'));
+      emit(
+        state.copyWith(
+          aiError: 'Session is closed - open an active session to apply.',
+        ),
+      );
       return;
     }
 

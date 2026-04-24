@@ -277,7 +277,8 @@ class SectionStudentModel {
       resolvedUserId: resolvedUserId,
       firstName: nestedFirstName ?? flatFirstName,
       lastName: nestedLastName ?? flatLastName,
-      fullName: userData?['fullName']?.toString() ?? json['fullName']?.toString(),
+      fullName:
+          userData?['fullName']?.toString() ?? json['fullName']?.toString(),
       email: userData?['email']?.toString() ?? json['email']?.toString(),
       profilePictureUrl:
           userData?['profilePictureUrl']?.toString() ??

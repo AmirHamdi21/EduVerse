@@ -101,7 +101,8 @@ class RosterState extends Equatable {
     return notesByKey[_noteKey(sectionId, userId)];
   }
 
-  static String noteKeyFor(int sectionId, int userId) => _noteKey(sectionId, userId);
+  static String noteKeyFor(int sectionId, int userId) =>
+      _noteKey(sectionId, userId);
 
   static String _noteKey(int sectionId, int userId) => '$sectionId:$userId';
 

@@ -32,10 +32,7 @@ class RosterCubit extends Cubit<RosterState> {
     }
 
     _emitSafely(
-      state.copyWith(
-        coursesStatus: RosterStatus.loading,
-        clearError: true,
-      ),
+      state.copyWith(coursesStatus: RosterStatus.loading, clearError: true),
     );
 
     try {
@@ -190,17 +187,11 @@ class RosterCubit extends Cubit<RosterState> {
         : RosterSortDirection.asc;
 
     _emitSafely(
-      state.copyWith(
-        sortField: sortField,
-        sortDirection: nextDirection,
-      ),
+      state.copyWith(sortField: sortField, sortDirection: nextDirection),
     );
   }
 
-  Future<void> updateNote({
-    required int userId,
-    required String note,
-  }) async {
+  Future<void> updateNote({required int userId, required String note}) async {
     final sectionId = state.selectedSectionId;
     if (sectionId == null) {
       return;

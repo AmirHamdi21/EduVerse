@@ -25,8 +25,7 @@ class InstructorRosterScreen extends StatelessWidget {
             theme: SharedRosterTheme(
               title: 'Roster',
               emptyCoursesTitle: 'No Courses Found',
-              emptyCoursesSubtitle:
-                  'You are not assigned to any courses yet.',
+              emptyCoursesSubtitle: 'You are not assigned to any courses yet.',
               headerTitle: 'Student Roster',
               headerSubtitle:
                   'Manage enrolled students, view grades, and track roster details',

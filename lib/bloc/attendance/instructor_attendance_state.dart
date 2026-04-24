@@ -147,7 +147,10 @@ class InstructorAttendanceState extends Equatable {
   });
 
   List<AttendanceSessionModel> get openSessions => sessions
-      .where((session) => session.status == 'scheduled' || session.status == 'in_progress')
+      .where(
+        (session) =>
+            session.status == 'scheduled' || session.status == 'in_progress',
+      )
       .toList();
 
   List<AiReviewRow> get aiReviewRows {

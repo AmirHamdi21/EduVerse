@@ -145,38 +145,36 @@ class _FakeEnrollmentService implements EnrollmentService {
 
   ServiceResult<List<SectionStudentModel>>? sectionStudentsResult;
   ServiceResult<List<TeachingCourseModel>> teachingSectionsResult =
-      ServiceResult<List<TeachingCourseModel>>.success(
-        <TeachingCourseModel>[
-          TeachingCourseModel.fromJson(<String, dynamic>{
-            'sectionId': 10,
+      ServiceResult<List<TeachingCourseModel>>.success(<TeachingCourseModel>[
+        TeachingCourseModel.fromJson(<String, dynamic>{
+          'sectionId': 10,
+          'courseId': 50,
+          'course': <String, dynamic>{
+            'id': 50,
+            'departmentId': 1,
+            'code': 'CS401',
+            'name': 'Compiler Design',
+            'credits': 3,
+            'level': 'senior',
+            'status': 'active',
+          },
+          'section': <String, dynamic>{
+            'id': 10,
             'courseId': 50,
-            'course': <String, dynamic>{
-              'id': 50,
-              'departmentId': 1,
-              'code': 'CS401',
-              'name': 'Compiler Design',
-              'credits': 3,
-              'level': 'senior',
-              'status': 'active',
-            },
-            'section': <String, dynamic>{
-              'id': 10,
-              'courseId': 50,
-              'semesterId': 1,
-              'sectionNumber': 'A1',
-              'maxCapacity': 40,
-              'currentEnrollment': 2,
-              'status': 'active',
-            },
-            'semester': <String, dynamic>{
-              'id': 1,
-              'name': 'Spring 2026',
-              'term': 'spring',
-              'year': 2026,
-            },
-          }),
-        ],
-      );
+            'semesterId': 1,
+            'sectionNumber': 'A1',
+            'maxCapacity': 40,
+            'currentEnrollment': 2,
+            'status': 'active',
+          },
+          'semester': <String, dynamic>{
+            'id': 1,
+            'name': 'Spring 2026',
+            'term': 'spring',
+            'year': 2026,
+          },
+        }),
+      ]);
 
   @override
   Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async =>
@@ -325,91 +323,106 @@ void main() {
       expect(cubit.state.newSessionType, 'lab');
     });
 
-    test('setUiMode switches to session table mode and selects the first section', () async {
-      await cubit.loadTeachingSections();
+    test(
+      'setUiMode switches to session table mode and selects the first section',
+      () async {
+        await cubit.loadTeachingSections();
 
-      cubit.setUiMode(AttendanceUiMode.sessions);
+        cubit.setUiMode(AttendanceUiMode.sessions);
 
-      expect(cubit.state.uiMode, AttendanceUiMode.sessions);
-      expect(cubit.state.selectedSectionId, 10);
-    });
+        expect(cubit.state.uiMode, AttendanceUiMode.sessions);
+        expect(cubit.state.selectedSectionId, 10);
+      },
+    );
 
-    test('loadRosterData prefers section student identity over fallback ids', () async {
-      fakeEnrollment.sectionStudentsResult =
-          ServiceResult<List<SectionStudentModel>>.success(
-            <SectionStudentModel>[
-              SectionStudentModel.fromJson(<String, dynamic>{
-                'userId': 1,
-                'status': 'enrolled',
-                'user': <String, dynamic>{
+    test(
+      'loadRosterData prefers section student identity over fallback ids',
+      () async {
+        fakeEnrollment.sectionStudentsResult =
+            ServiceResult<List<SectionStudentModel>>.success(
+              <SectionStudentModel>[
+                SectionStudentModel.fromJson(<String, dynamic>{
                   'userId': 1,
-                  'fullName': 'Mariam Ali',
-                  'email': 'mariam@eduverse.test',
-                },
-              }),
-            ],
-          );
-
-      await cubit.openSection(fakeEnrollment.teachingSectionsResult.data!.first, 10);
-      await cubit.loadRosterData(5, false);
-
-      expect(cubit.state.rosterRows.first.name, 'Mariam Ali');
-      expect(cubit.state.rosterRows.first.email, 'mariam@eduverse.test');
-    });
-
-    test('applyAiResultsToRoster updates statuses from AI suggestions', () async {
-      fakeAttendance.sessionDetailsResult =
-          ServiceResult<AttendanceSessionModel>.success(
-            AttendanceSessionModel.fromJson(<String, dynamic>{
-              'id': 5,
-              'sectionId': 10,
-              'status': 'in_progress',
-              'records': <Map<String, dynamic>>[
-                {
-                  'userId': 1,
-                  'attendanceStatus': 'present',
-                  'markedBy': 'ai',
-                  'confidenceScore': 0.92,
-                  'user': <String, dynamic>{'fullName': 'Ali Hassan'},
-                },
-                {
-                  'userId': 2,
-                  'attendanceStatus': 'absent',
-                  'markedBy': 'manual',
-                  'user': <String, dynamic>{'fullName': 'Sara Ahmed'},
-                },
+                  'status': 'enrolled',
+                  'user': <String, dynamic>{
+                    'userId': 1,
+                    'fullName': 'Mariam Ali',
+                    'email': 'mariam@eduverse.test',
+                  },
+                }),
               ],
-            }),
-          );
-      fakeEnrollment.sectionStudentsResult =
-          ServiceResult<List<SectionStudentModel>>.success(
-            <SectionStudentModel>[
-              SectionStudentModel.fromJson(<String, dynamic>{
-                'userId': 1,
-                'status': 'enrolled',
-                'user': <String, dynamic>{'fullName': 'Ali Hassan'},
+            );
+
+        await cubit.openSection(
+          fakeEnrollment.teachingSectionsResult.data!.first,
+          10,
+        );
+        await cubit.loadRosterData(5, false);
+
+        expect(cubit.state.rosterRows.first.name, 'Mariam Ali');
+        expect(cubit.state.rosterRows.first.email, 'mariam@eduverse.test');
+      },
+    );
+
+    test(
+      'applyAiResultsToRoster updates statuses from AI suggestions',
+      () async {
+        fakeAttendance.sessionDetailsResult =
+            ServiceResult<AttendanceSessionModel>.success(
+              AttendanceSessionModel.fromJson(<String, dynamic>{
+                'id': 5,
+                'sectionId': 10,
+                'status': 'in_progress',
+                'records': <Map<String, dynamic>>[
+                  {
+                    'userId': 1,
+                    'attendanceStatus': 'present',
+                    'markedBy': 'ai',
+                    'confidenceScore': 0.92,
+                    'user': <String, dynamic>{'fullName': 'Ali Hassan'},
+                  },
+                  {
+                    'userId': 2,
+                    'attendanceStatus': 'absent',
+                    'markedBy': 'manual',
+                    'user': <String, dynamic>{'fullName': 'Sara Ahmed'},
+                  },
+                ],
               }),
-              SectionStudentModel.fromJson(<String, dynamic>{
-                'userId': 2,
-                'status': 'enrolled',
-                'user': <String, dynamic>{'fullName': 'Sara Ahmed'},
-              }),
-            ],
-          );
+            );
+        fakeEnrollment.sectionStudentsResult =
+            ServiceResult<List<SectionStudentModel>>.success(
+              <SectionStudentModel>[
+                SectionStudentModel.fromJson(<String, dynamic>{
+                  'userId': 1,
+                  'status': 'enrolled',
+                  'user': <String, dynamic>{'fullName': 'Ali Hassan'},
+                }),
+                SectionStudentModel.fromJson(<String, dynamic>{
+                  'userId': 2,
+                  'status': 'enrolled',
+                  'user': <String, dynamic>{'fullName': 'Sara Ahmed'},
+                }),
+              ],
+            );
 
-      await cubit.openSection(fakeEnrollment.teachingSectionsResult.data!.first, 10);
-      await cubit.loadRosterData(5, false);
-      cubit.applyStatus(1, 'late');
+        await cubit.openSection(
+          fakeEnrollment.teachingSectionsResult.data!.first,
+          10,
+        );
+        await cubit.loadRosterData(5, false);
+        cubit.applyStatus(1, 'late');
 
-      expect(cubit.state.isRosterDirty, isTrue);
+        expect(cubit.state.isRosterDirty, isTrue);
 
-      cubit.setAiFile(File('fake_attendance.jpg'));
-      await cubit.runAiAttendance();
-      cubit.applyAiResultsToRoster();
+        cubit.setAiFile(File('fake_attendance.jpg'));
+        await cubit.runAiAttendance();
+        cubit.applyAiResultsToRoster();
 
-      expect(cubit.state.rosterRows.first.status, 'present');
-      expect(cubit.state.isRosterDirty, isTrue);
-      expect(cubit.state.aiUnknownCount, 1);
-    });
+        expect(cubit.state.rosterRows.first.status, 'present');
+        expect(cubit.state.isRosterDirty, isTrue);
+        expect(cubit.state.aiUnknownCount, 1);
+      },
+    );
   });
 }

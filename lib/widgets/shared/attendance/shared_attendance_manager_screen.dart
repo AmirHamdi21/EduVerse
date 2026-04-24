@@ -58,48 +58,69 @@ class SharedAttendanceManagerScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.background(isDark),
       body: SafeArea(
-        child: BlocConsumer<InstructorAttendanceCubit, InstructorAttendanceState>(
-          listener: (context, state) {
-            if (state.error != null && state.error!.isNotEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.error!),
-                  backgroundColor: theme.error,
-                ),
-              );
-            } else if (state.aiError != null && state.aiError!.isNotEmpty) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.aiError!),
-                  backgroundColor: theme.warning,
-                ),
-              );
-            }
-          },
-          builder: (context, state) {
-            if (state.isLoading && state.teachingSections.isEmpty) {
-              return const Center(child: CircularProgressIndicator());
-            }
+        child:
+            BlocConsumer<InstructorAttendanceCubit, InstructorAttendanceState>(
+              listener: (context, state) {
+                if (state.error != null && state.error!.isNotEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.error!),
+                      backgroundColor: theme.error,
+                    ),
+                  );
+                } else if (state.aiError != null && state.aiError!.isNotEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.aiError!),
+                      backgroundColor: theme.warning,
+                    ),
+                  );
+                }
+              },
+              builder: (context, state) {
+                if (state.isLoading && state.teachingSections.isEmpty) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            if (state.view == InstructorAttendanceView.roster) {
-              return _RosterView(isDark: isDark, theme: theme, state: state);
-            }
+                if (state.view == InstructorAttendanceView.roster) {
+                  return _RosterView(
+                    isDark: isDark,
+                    theme: theme,
+                    state: state,
+                  );
+                }
 
-            return Column(
-              children: <Widget>[
-                _PageHeader(isDark: isDark, theme: theme, title: theme.title),
-                _ModeToggle(isDark: isDark, theme: theme, state: state),
-                Expanded(
-                  child: state.uiMode == AttendanceUiMode.lecture
-                      ? (state.view == InstructorAttendanceView.section
-                            ? _LectureSectionView(isDark: isDark, theme: theme, state: state)
-                            : _ClassesView(isDark: isDark, theme: theme, state: state))
-                      : _SessionsModeView(isDark: isDark, theme: theme, state: state),
-                ),
-              ],
-            );
-          },
-        ),
+                return Column(
+                  children: <Widget>[
+                    _PageHeader(
+                      isDark: isDark,
+                      theme: theme,
+                      title: theme.title,
+                    ),
+                    _ModeToggle(isDark: isDark, theme: theme, state: state),
+                    Expanded(
+                      child: state.uiMode == AttendanceUiMode.lecture
+                          ? (state.view == InstructorAttendanceView.section
+                                ? _LectureSectionView(
+                                    isDark: isDark,
+                                    theme: theme,
+                                    state: state,
+                                  )
+                                : _ClassesView(
+                                    isDark: isDark,
+                                    theme: theme,
+                                    state: state,
+                                  ))
+                          : _SessionsModeView(
+                              isDark: isDark,
+                              theme: theme,
+                              state: state,
+                            ),
+                    ),
+                  ],
+                );
+              },
+            ),
       ),
     );
   }
@@ -179,7 +200,8 @@ class _ModeToggle extends StatelessWidget {
                 : 'Session Table';
             return Expanded(
               child: InkWell(
-                onTap: () => context.read<InstructorAttendanceCubit>().setUiMode(mode),
+                onTap: () =>
+                    context.read<InstructorAttendanceCubit>().setUiMode(mode),
                 borderRadius: BorderRadius.circular(16),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
@@ -192,7 +214,9 @@ class _ModeToggle extends StatelessWidget {
                     child: Text(
                       label,
                       style: TextStyle(
-                        color: selected ? Colors.white : theme.textPrimary(isDark),
+                        color: selected
+                            ? Colors.white
+                            : theme.textPrimary(isDark),
                         fontWeight: FontWeight.w700,
                         fontSize: 13,
                       ),
@@ -236,7 +260,8 @@ class _ClassesView extends StatelessWidget {
       itemCount: state.teachingSections.length,
       itemBuilder: (context, index) {
         final section = state.teachingSections[index];
-        final colors = theme.sectionGradients[index % theme.sectionGradients.length];
+        final colors =
+            theme.sectionGradients[index % theme.sectionGradients.length];
         return GestureDetector(
           onTap: () => cubit.openSection(section, section.sectionId),
           child: Container(
@@ -259,7 +284,9 @@ class _ClassesView extends StatelessWidget {
                   height: 4,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(colors: colors),
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
                   ),
                 ),
                 Padding(
@@ -272,7 +299,10 @@ class _ClassesView extends StatelessWidget {
                           gradient: LinearGradient(colors: colors),
                           borderRadius: BorderRadius.circular(14),
                         ),
-                        child: const Icon(Icons.school_rounded, color: Colors.white),
+                        child: const Icon(
+                          Icons.school_rounded,
+                          color: Colors.white,
+                        ),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -308,7 +338,10 @@ class _ClassesView extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Icon(Icons.chevron_right_rounded, color: theme.textSecondary(isDark)),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        color: theme.textSecondary(isDark),
+                      ),
                     ],
                   ),
                 ),
@@ -380,11 +413,7 @@ class _SessionsModeView extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: <Widget>[
         if (state.teachingSections.isNotEmpty)
-          _SessionsSectionSelector(
-            isDark: isDark,
-            theme: theme,
-            state: state,
-          ),
+          _SessionsSectionSelector(isDark: isDark, theme: theme, state: state),
         if (selectedSection != null) ...<Widget>[
           const SizedBox(height: 12),
           _SectionSummaryCard(
@@ -399,16 +428,10 @@ class _SessionsModeView extends StatelessWidget {
             isDark: isDark,
             theme: theme,
             state: state,
-            onEditSession: (session) => _showEditSessionSheet(
-              context,
-              cubit,
-              session,
-            ),
-            onDeleteSession: (session) => _confirmDeleteSession(
-              context,
-              cubit,
-              session,
-            ),
+            onEditSession: (session) =>
+                _showEditSessionSheet(context, cubit, session),
+            onDeleteSession: (session) =>
+                _confirmDeleteSession(context, cubit, session),
           ),
         ] else
           Center(
@@ -429,7 +452,9 @@ class _SessionsModeView extends StatelessWidget {
     InstructorAttendanceCubit cubit,
     AttendanceSessionModel session,
   ) async {
-    final typeNotifier = ValueNotifier<String>(session.sessionType ?? 'lecture');
+    final typeNotifier = ValueNotifier<String>(
+      session.sessionType ?? 'lecture',
+    );
     var selectedDate = session.sessionDate;
 
     await showModalBottomSheet<void>(
@@ -491,9 +516,15 @@ class _SessionsModeView extends StatelessWidget {
                       return DropdownButtonFormField<String>(
                         initialValue: value,
                         items: const <DropdownMenuItem<String>>[
-                          DropdownMenuItem(value: 'lecture', child: Text('Lecture')),
+                          DropdownMenuItem(
+                            value: 'lecture',
+                            child: Text('Lecture'),
+                          ),
                           DropdownMenuItem(value: 'lab', child: Text('Lab')),
-                          DropdownMenuItem(value: 'tutorial', child: Text('Tutorial')),
+                          DropdownMenuItem(
+                            value: 'tutorial',
+                            child: Text('Tutorial'),
+                          ),
                           DropdownMenuItem(value: 'exam', child: Text('Exam')),
                         ],
                         onChanged: (next) {
@@ -621,7 +652,9 @@ class _SessionsSectionSelector extends StatelessWidget {
         }).toList(),
         onChanged: (value) {
           if (value != null) {
-            context.read<InstructorAttendanceCubit>().selectSectionForSessions(value);
+            context.read<InstructorAttendanceCubit>().selectSectionForSessions(
+              value,
+            );
           }
         },
       ),
@@ -666,9 +699,15 @@ class _SectionSummaryCard extends StatelessWidget {
             runSpacing: 8,
             children: <Widget>[
               _MetaPill(color: theme.primary, label: section.course.courseCode),
-              _MetaPill(color: theme.accent, label: 'Section ${section.section.sectionNumber}'),
+              _MetaPill(
+                color: theme.accent,
+                label: 'Section ${section.section.sectionNumber}',
+              ),
               _MetaPill(color: theme.info, label: section.semester.name),
-              _MetaPill(color: theme.success, label: '${section.enrolledCount} students'),
+              _MetaPill(
+                color: theme.success,
+                label: '${section.enrolledCount} students',
+              ),
             ],
           ),
         ],
@@ -681,10 +720,7 @@ class _MetaPill extends StatelessWidget {
   final Color color;
   final String label;
 
-  const _MetaPill({
-    required this.color,
-    required this.label,
-  });
+  const _MetaPill({required this.color, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -731,7 +767,11 @@ class _OpenSessionsCard extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Icon(Icons.pending_actions_rounded, color: theme.primary, size: 20),
+              Icon(
+                Icons.pending_actions_rounded,
+                color: theme.primary,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Open Sessions',
@@ -761,7 +801,9 @@ class _OpenSessionsCard extends StatelessWidget {
                 isDark: isDark,
                 theme: theme,
                 session: session,
-                onOpen: () => context.read<InstructorAttendanceCubit>().openRosterFromSession(session),
+                onOpen: () => context
+                    .read<InstructorAttendanceCubit>()
+                    .openRosterFromSession(session),
               ),
             ),
         ],
@@ -796,7 +838,11 @@ class _CreateSessionCard extends StatelessWidget {
         children: <Widget>[
           Row(
             children: <Widget>[
-              Icon(Icons.add_circle_outline_rounded, color: theme.success, size: 20),
+              Icon(
+                Icons.add_circle_outline_rounded,
+                color: theme.success,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Text(
                 'Start New Attendance Session',
@@ -912,7 +958,9 @@ class _SessionTableCard extends StatelessWidget {
                 isDark: isDark,
                 theme: theme,
                 session: session,
-                onOpen: () => context.read<InstructorAttendanceCubit>().openRosterFromSession(session),
+                onOpen: () => context
+                    .read<InstructorAttendanceCubit>()
+                    .openRosterFromSession(session),
                 onEdit: () => onEditSession(session),
                 onDelete: () => onDeleteSession(session),
               ),
@@ -938,7 +986,9 @@ class _SessionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = session.status == 'in_progress' ? theme.warning : theme.primary;
+    final statusColor = session.status == 'in_progress'
+        ? theme.warning
+        : theme.primary;
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -978,7 +1028,10 @@ class _SessionTile extends StatelessWidget {
                 ),
                 Text(
                   '${session.sessionType ?? 'lecture'} • Session ${session.id}',
-                  style: TextStyle(color: theme.textSecondary(isDark), fontSize: 11),
+                  style: TextStyle(
+                    color: theme.textSecondary(isDark),
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
@@ -1016,18 +1069,22 @@ class _SessionTableRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final total = session.presentCount +
+    final total =
+        session.presentCount +
         session.absentCount +
         session.lateCount +
         session.excusedCount;
-    final attendancePercent =
-        total == 0 ? 0 : ((session.presentCount + session.lateCount) / total) * 100;
+    final attendancePercent = total == 0
+        ? 0
+        : ((session.presentCount + session.lateCount) / total) * 100;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(color: theme.borderColor(isDark).withValues(alpha: 0.55)),
+          top: BorderSide(
+            color: theme.borderColor(isDark).withValues(alpha: 0.55),
+          ),
         ),
       ),
       child: Row(
@@ -1113,7 +1170,10 @@ class _SectionIntro extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style: TextStyle(color: theme.textSecondary(isDark), fontSize: 12),
+                style: TextStyle(
+                  color: theme.textSecondary(isDark),
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -1177,24 +1237,28 @@ class _RosterView extends StatelessWidget {
                     onTap: state.isRosterReadOnly
                         ? null
                         : () => _confirmBulkStatus(
-                              context,
-                              cubit: cubit,
-                              status: 'present',
-                            ),
+                            context,
+                            cubit: cubit,
+                            status: 'present',
+                          ),
                   ),
                   _ActionButton(
                     label: 'Everyone Absent',
-                    color: isDark ? const Color(0xFF475569) : const Color(0xFF94A3B8),
+                    color: isDark
+                        ? const Color(0xFF475569)
+                        : const Color(0xFF94A3B8),
                     onTap: state.isRosterReadOnly
                         ? null
                         : () => _confirmBulkStatus(
-                              context,
-                              cubit: cubit,
-                              status: 'absent',
-                            ),
+                            context,
+                            cubit: cubit,
+                            status: 'absent',
+                          ),
                   ),
                   _ActionButton(
-                    label: state.isRosterDirty ? 'Save Attendance*' : 'Save Attendance',
+                    label: state.isRosterDirty
+                        ? 'Save Attendance*'
+                        : 'Save Attendance',
                     color: theme.success,
                     onTap: state.isRosterReadOnly ? null : cubit.saveBatch,
                   ),
@@ -1218,7 +1282,9 @@ class _RosterView extends StatelessWidget {
                   child: Text(
                     'You have unsaved attendance changes. Save before leaving or closing the session.',
                     style: TextStyle(
-                      color: isDark ? const Color(0xFFFDE68A) : const Color(0xFF92400E),
+                      color: isDark
+                          ? const Color(0xFFFDE68A)
+                          : const Color(0xFF92400E),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -1231,12 +1297,16 @@ class _RosterView extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: theme.warning.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: theme.warning.withValues(alpha: 0.25)),
+                    border: Border.all(
+                      color: theme.warning.withValues(alpha: 0.25),
+                    ),
                   ),
                   child: Text(
                     'This session is closed (view only). Open another session to edit.',
                     style: TextStyle(
-                      color: isDark ? const Color(0xFFFDE68A) : const Color(0xFF92400E),
+                      color: isDark
+                          ? const Color(0xFFFDE68A)
+                          : const Color(0xFF92400E),
                     ),
                   ),
                 ),
@@ -1260,8 +1330,12 @@ class _RosterView extends StatelessWidget {
                     isDark: isDark,
                     theme: theme,
                     row: row,
-                    aiRow: state.aiReviewRows.where((item) => item.userId == row.userId).firstOrNull,
-                    isHighlighted: state.aiNeedsReviewRows.any((item) => item.userId == row.userId),
+                    aiRow: state.aiReviewRows
+                        .where((item) => item.userId == row.userId)
+                        .firstOrNull,
+                    isHighlighted: state.aiNeedsReviewRows.any(
+                      (item) => item.userId == row.userId,
+                    ),
                   ),
                 ),
             ],
@@ -1406,7 +1480,10 @@ class _AiReviewPanel extends StatelessWidget {
               ),
               Text(
                 'Uses saved face references',
-                style: TextStyle(color: theme.textSecondary(isDark), fontSize: 12),
+                style: TextStyle(
+                  color: theme.textSecondary(isDark),
+                  fontSize: 12,
+                ),
               ),
             ],
           ),
@@ -1415,7 +1492,9 @@ class _AiReviewPanel extends StatelessWidget {
             onTap: (state.isRosterReadOnly || state.isAiLoading)
                 ? null
                 : () async {
-                    final result = await FilePicker.platform.pickFiles(type: FileType.image);
+                    final result = await FilePicker.platform.pickFiles(
+                      type: FileType.image,
+                    );
                     final path = result?.files.single.path;
                     if (path != null && path.isNotEmpty) {
                       cubit.setAiFile(File(path));
@@ -1425,7 +1504,9 @@ class _AiReviewPanel extends StatelessWidget {
             child: Container(
               height: 180,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF0F172A) : const Color(0xFFF8FAFC),
+                color: isDark
+                    ? const Color(0xFF0F172A)
+                    : const Color(0xFFF8FAFC),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: theme.borderColor(isDark)),
               ),
@@ -1434,11 +1515,16 @@ class _AiReviewPanel extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Icon(Icons.add_a_photo_rounded, color: theme.textSecondary(isDark)),
+                          Icon(
+                            Icons.add_a_photo_rounded,
+                            color: theme.textSecondary(isDark),
+                          ),
                           const SizedBox(height: 8),
                           Text(
                             'Pick attendance photo',
-                            style: TextStyle(color: theme.textSecondary(isDark)),
+                            style: TextStyle(
+                              color: theme.textSecondary(isDark),
+                            ),
                           ),
                         ],
                       ),
@@ -1455,7 +1541,10 @@ class _AiReviewPanel extends StatelessWidget {
             runSpacing: 8,
             children: <Widget>[
               ElevatedButton.icon(
-                onPressed: (state.isRosterReadOnly || state.isAiLoading || state.aiPhoto == null)
+                onPressed:
+                    (state.isRosterReadOnly ||
+                        state.isAiLoading ||
+                        state.aiPhoto == null)
                     ? null
                     : cubit.runAiAttendance,
                 icon: state.isAiLoading
@@ -1472,7 +1561,8 @@ class _AiReviewPanel extends StatelessWidget {
                 ),
               ),
               OutlinedButton.icon(
-                onPressed: (state.isRosterReadOnly || state.aiReviewRows.isEmpty)
+                onPressed:
+                    (state.isRosterReadOnly || state.aiReviewRows.isEmpty)
                     ? null
                     : cubit.applyAiResultsToRoster,
                 icon: const Icon(Icons.playlist_add_check_rounded),
@@ -1484,7 +1574,11 @@ class _AiReviewPanel extends StatelessWidget {
             const SizedBox(height: 14),
             Row(
               children: <Widget>[
-                _MetricCard(label: 'On roster', value: '${state.aiReviewRows.length}', color: theme.primary),
+                _MetricCard(
+                  label: 'On roster',
+                  value: '${state.aiReviewRows.length}',
+                  color: theme.primary,
+                ),
                 const SizedBox(width: 8),
                 _MetricCard(
                   label: 'Flagged',
@@ -1608,7 +1702,10 @@ class _RosterRowCard extends StatelessWidget {
                         if (isHighlighted) ...<Widget>[
                           const SizedBox(width: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: theme.warning.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(999),
@@ -1638,7 +1735,10 @@ class _RosterRowCard extends StatelessWidget {
               ),
               if (row.isAiMarked)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.info.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(999),
@@ -1660,7 +1760,10 @@ class _RosterRowCard extends StatelessWidget {
           StatusToggleWidget(
             currentStatus: row.status,
             isDark: isDark,
-            isDisabled: context.read<InstructorAttendanceCubit>().state.isRosterReadOnly,
+            isDisabled: context
+                .read<InstructorAttendanceCubit>()
+                .state
+                .isRosterReadOnly,
             onChanged: (status) => cubit.applyStatus(row.userId, status),
           ),
           const SizedBox(height: 10),
@@ -1668,12 +1771,9 @@ class _RosterRowCard extends StatelessWidget {
             aiRow == null
                 ? 'Not run yet. Choose a photo and click Run AI.'
                 : aiRow!.confidencePercent != null
-                    ? 'AI suggested ${aiRow!.suggestedStatus} • ${aiRow!.confidencePercent!.toStringAsFixed(0)}% confidence'
-                    : 'AI suggested ${aiRow!.suggestedStatus} • No confidence score',
-            style: TextStyle(
-              color: theme.textSecondary(isDark),
-              fontSize: 12,
-            ),
+                ? 'AI suggested ${aiRow!.suggestedStatus} • ${aiRow!.confidencePercent!.toStringAsFixed(0)}% confidence'
+                : 'AI suggested ${aiRow!.suggestedStatus} • No confidence score',
+            style: TextStyle(color: theme.textSecondary(isDark), fontSize: 12),
           ),
         ],
       ),
