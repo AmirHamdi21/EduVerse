@@ -23,10 +23,9 @@ class QuizApiService {
         queryParameters: query.isEmpty ? null : query,
       );
 
-      return _extractList(response.data)
-          .whereType<Map<String, dynamic>>()
-          .map(QuizModel.fromJson)
-          .toList();
+      return _extractList(
+        response.data,
+      ).whereType<Map<String, dynamic>>().map(QuizModel.fromJson).toList();
     }, fallbackMessage: 'Failed to load quizzes');
   }
 
@@ -74,7 +73,6 @@ class QuizApiService {
           .toList();
     }, fallbackMessage: 'Failed to load quiz questions');
   }
-
 
   Future<ServiceResult<QuizQuestionModel>> addQuestion(
     dynamic quizId,
@@ -150,16 +148,12 @@ class QuizApiService {
 
   Future<ServiceResult<QuizAttemptModel>> getAttempt(dynamic attemptId) {
     return RetryHelper.execute<QuizAttemptModel>(() async {
-      final response = await _client.dio.get(
-        '/quizzes/attempts/$attemptId',
-      );
+      final response = await _client.dio.get('/quizzes/attempts/$attemptId');
       return QuizAttemptModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to load attempt');
   }
 
-  Future<ServiceResult<List<QuizAttemptModel>>> getMyAttempts({
-    int? quizId,
-  }) {
+  Future<ServiceResult<List<QuizAttemptModel>>> getMyAttempts({int? quizId}) {
     return RetryHelper.execute<List<QuizAttemptModel>>(() async {
       final query = <String, dynamic>{};
       if (quizId != null) query['quizId'] = quizId;
@@ -188,9 +182,9 @@ class QuizApiService {
         },
       );
 
-      final list = _extractList(response.data)
-          .whereType<Map<String, dynamic>>()
-          .toList();
+      final list = _extractList(
+        response.data,
+      ).whereType<Map<String, dynamic>>().toList();
       if (list.isEmpty) return null;
       return QuizAttemptModel.fromJson(list.first);
     }, fallbackMessage: 'Failed to check in-progress attempt');
@@ -212,9 +206,7 @@ class QuizApiService {
 
   // ── Attempts (Instructor / TA) ───────────────────────────────────────────
 
-  Future<ServiceResult<List<QuizAttemptModel>>> getAllAttempts({
-    int? quizId,
-  }) {
+  Future<ServiceResult<List<QuizAttemptModel>>> getAllAttempts({int? quizId}) {
     return RetryHelper.execute<List<QuizAttemptModel>>(() async {
       final query = <String, dynamic>{};
       if (quizId != null) query['quizId'] = quizId;

@@ -24970,6 +24970,120 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Attempt History'**
   String get quizAttemptHistory;
+
+  /// No description provided for @registration.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration'**
+  String get registration;
+
+  /// No description provided for @courseRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Registration'**
+  String get courseRegistration;
+
+  /// No description provided for @browseCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse and enroll in available courses'**
+  String get browseCourses;
+
+  /// No description provided for @creditsEnrolled.
+  ///
+  /// In en, this message translates to:
+  /// **'Credits Enrolled'**
+  String get creditsEnrolled;
+
+  /// No description provided for @coursesRegistered.
+  ///
+  /// In en, this message translates to:
+  /// **'Courses Registered'**
+  String get coursesRegistered;
+
+  /// No description provided for @onWaitlist.
+  ///
+  /// In en, this message translates to:
+  /// **'On Waitlist'**
+  String get onWaitlist;
+
+  /// No description provided for @availableCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Courses'**
+  String get availableCourses;
+
+  /// No description provided for @myRegisteredCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'My Registered Courses'**
+  String get myRegisteredCourses;
+
+  /// No description provided for @searchCoursePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by course title, code, or department'**
+  String get searchCoursePlaceholder;
+
+  /// No description provided for @confirmEnrollment.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Enrollment'**
+  String get confirmEnrollment;
+
+  /// No description provided for @registrationWindow.
+  ///
+  /// In en, this message translates to:
+  /// **'Registration Window'**
+  String get registrationWindow;
+
+  /// No description provided for @registrationUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get registrationUpcoming;
+
+  /// No description provided for @prerequisitesRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Prerequisites Required'**
+  String get prerequisitesRequired;
+
+  /// No description provided for @noAvailableCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'No available courses found'**
+  String get noAvailableCourses;
+
+  /// No description provided for @noRegisteredCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'No registered courses yet'**
+  String get noRegisteredCourses;
+
+  /// No description provided for @enrollNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Enroll Now'**
+  String get enrollNow;
+
+  /// No description provided for @droppingCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Dropping...'**
+  String get droppingCourse;
+
+  /// No description provided for @enrollingCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrolling...'**
+  String get enrollingCourse;
+
+  /// No description provided for @drop.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop'**
+  String get drop;
 }
 
 class _AppLocalizationsDelegate

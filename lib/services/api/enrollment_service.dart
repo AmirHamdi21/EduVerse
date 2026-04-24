@@ -1,7 +1,9 @@
 import 'core_api_client.dart';
 import '../../common/retry_helper.dart';
 import '../../common/service_error.dart';
+import '../../models/admin/admin_periods_models.dart';
 import '../../models/core/enrollment_model.dart';
+import '../../models/registration/registration_available_course_model.dart';
 import '../../models/instructor/teaching_course_model.dart';
 import '../../models/instructor/instructor_course_model.dart';
 import '../../models/courses/instructor_assignment_model.dart';
@@ -60,14 +62,53 @@ class EnrollmentService {
   }
 
   /// GET /api/enrollments/available
-  Future<ServiceResult<List<CourseEnrollmentModel>>> getAvailableCourses() {
-    return RetryHelper.execute<List<CourseEnrollmentModel>>(() async {
-      final response = await _client.dio.get('/enrollments/available');
+  Future<ServiceResult<List<RegistrationAvailableCourseModel>>>
+  getAvailableCourses({
+    int? departmentId,
+    int? semesterId,
+    String? search,
+    String? level,
+    int page = 1,
+    int limit = 20,
+  }) {
+    return RetryHelper.execute<List<RegistrationAvailableCourseModel>>(
+      () async {
+        final query = <String, dynamic>{'page': page, 'limit': limit};
+        if (departmentId != null && departmentId > 0) {
+          query['departmentId'] = departmentId;
+        }
+        if (semesterId != null && semesterId > 0) {
+          query['semesterId'] = semesterId;
+        }
+        if (search != null && search.trim().isNotEmpty) {
+          query['search'] = search.trim();
+        }
+        if (level != null && level.trim().isNotEmpty) {
+          query['level'] = level.trim();
+        }
+
+        final response = await _client.dio.get(
+          '/enrollments/available',
+          queryParameters: query,
+        );
+        return _extractList(response.data)
+            .whereType<Map<String, dynamic>>()
+            .map(RegistrationAvailableCourseModel.fromJson)
+            .toList();
+      },
+      fallbackMessage: 'Failed to load available courses',
+    );
+  }
+
+  /// GET /api/enrollments/periods
+  Future<ServiceResult<List<EnrollmentPeriodModel>>> getEnrollmentPeriods() {
+    return RetryHelper.execute<List<EnrollmentPeriodModel>>(() async {
+      final response = await _client.dio.get('/enrollments/periods');
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
-          .map(CourseEnrollmentModel.fromJson)
+          .map(EnrollmentPeriodModel.fromSemesterJson)
           .toList();
-    }, fallbackMessage: 'Failed to load available courses');
+    }, fallbackMessage: 'Failed to load enrollment periods');
   }
 
   /// GET /api/enrollments/{enrollmentId}
@@ -223,12 +264,30 @@ class EnrollmentService {
   }
 
   /// POST /api/enrollments/register
+  Future<ServiceResult<CourseEnrollmentModel>> registerForSection({
+    required int sectionId,
+  }) {
+    return RetryHelper.execute<CourseEnrollmentModel>(() async {
+      final response = await _client.dio.post(
+        '/enrollments/register',
+        data: <String, dynamic>{'sectionId': sectionId},
+      );
+      return CourseEnrollmentModel.fromJson(_extractMap(response.data));
+    }, fallbackMessage: 'Failed to register enrollment');
+  }
+
+  /// POST /api/enrollments/register
   Future<ServiceResult<CourseEnrollmentModel>> register(
     dynamic sectionId,
     Map<String, dynamic> data,
   ) {
+    final int parsedSectionId = _parseInt(sectionId);
+    if (data.isEmpty) {
+      return registerForSection(sectionId: parsedSectionId);
+    }
+
     return RetryHelper.execute<CourseEnrollmentModel>(() async {
-      final body = <String, dynamic>{'sectionId': sectionId, ...data};
+      final body = <String, dynamic>{'sectionId': parsedSectionId, ...data};
       final response = await _client.dio.post(
         '/enrollments/register',
         data: body,
@@ -435,5 +494,15 @@ class EnrollmentService {
       }
     }
     return <dynamic>[];
+  }
+
+  static int _parseInt(dynamic value) {
+    if (value is int) {
+      return value;
+    }
+    if (value is num) {
+      return value.toInt();
+    }
+    return int.tryParse(value?.toString() ?? '') ?? 0;
   }
 }

@@ -27,10 +27,12 @@ class QuizAiService {
   /// Difficulty levels accepted by the FastAPI endpoint.
   static const List<String> difficulties = ['easy', 'medium', 'hard'];
 
-  final Dio _dio = Dio(BaseOptions(
-    connectTimeout: const Duration(seconds: 30),
-    receiveTimeout: const Duration(seconds: 120),
-  ));
+  final Dio _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 120),
+    ),
+  );
 
   // ═══════════════════════════════════════════════════════════════════════════
   // Step 1: Upload file
@@ -197,19 +199,21 @@ class QuizAiService {
       final type = (q['type'] ?? 'MCQ') as String;
       final question = (q['question'] ?? '') as String;
       final rawOpts = q['options'];
-      final options =
-          rawOpts is List ? rawOpts.map((e) => e.toString()).toList() : <String>[];
-      final answer =
-          (ans?['correctAnswer'] ?? ans?['answer'] ?? '') as String;
+      final options = rawOpts is List
+          ? rawOpts.map((e) => e.toString()).toList()
+          : <String>[];
+      final answer = (ans?['correctAnswer'] ?? ans?['answer'] ?? '') as String;
       final reference = (ans?['reference'] ?? '') as String;
 
-      result.add(AiGeneratedQuestion(
-        type: type,
-        questionText: question,
-        options: options,
-        correctAnswer: answer,
-        reference: reference,
-      ));
+      result.add(
+        AiGeneratedQuestion(
+          type: type,
+          questionText: question,
+          options: options,
+          correctAnswer: answer,
+          reference: reference,
+        ),
+      );
     }
     return result;
   }
@@ -345,8 +349,18 @@ class AiGeneratedQuestion {
     final cleaned = correctAnswer.trim().toUpperCase();
 
     // Direct letter match: A→0, B→1, C→2, D→3
-    const letterMap = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7};
-    if (letterMap.containsKey(cleaned) && letterMap[cleaned]! < options.length) {
+    const letterMap = {
+      'A': 0,
+      'B': 1,
+      'C': 2,
+      'D': 3,
+      'E': 4,
+      'F': 5,
+      'G': 6,
+      'H': 7,
+    };
+    if (letterMap.containsKey(cleaned) &&
+        letterMap[cleaned]! < options.length) {
       return letterMap[cleaned]!.toString();
     }
 
@@ -359,7 +373,8 @@ class AiGeneratedQuestion {
 
     // Fallback: try exact text match
     for (var i = 0; i < options.length; i++) {
-      if (options[i].trim().toLowerCase() == correctAnswer.trim().toLowerCase()) {
+      if (options[i].trim().toLowerCase() ==
+          correctAnswer.trim().toLowerCase()) {
         return i.toString();
       }
     }

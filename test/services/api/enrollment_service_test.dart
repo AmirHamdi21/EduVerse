@@ -166,7 +166,205 @@ void main() {
     });
   });
 
+  group('EnrollmentService registration catalog contracts', () {
+    test('parses available courses using registration model shape', () async {
+      final EnrollmentService service = _buildService((RequestOptions options) {
+        if (options.path.contains('/enrollments/available')) {
+          return <String, dynamic>{
+            'statusCode': 200,
+            'data': <Map<String, dynamic>>[
+              <String, dynamic>{
+                'id': 77,
+                'name': 'Data Structures',
+                'code': 'CS201',
+                'description': 'Core data structures and analysis',
+                'credits': 3,
+                'level': 'sophomore',
+                'departmentId': 1,
+                'departmentName': 'Computer Science',
+                'canEnroll': true,
+                'enrollmentStatus': null,
+                'prerequisites': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'id': 4,
+                    'courseId': 77,
+                    'prerequisiteCourseId': 12,
+                    'courseCode': 'CS101',
+                    'courseName': 'Programming Fundamentals',
+                    'isMandatory': true,
+                  },
+                ],
+                'sections': <Map<String, dynamic>>[
+                  <String, dynamic>{
+                    'id': 31,
+                    'sectionNumber': 'A',
+                    'maxCapacity': 40,
+                    'currentEnrollment': 32,
+                    'availableSeats': 8,
+                    'location': 'B-201',
+                    'semesterId': 2,
+                    'semesterName': 'Fall 2026',
+                  },
+                ],
+              },
+            ],
+          };
+        }
+        return <String, dynamic>{
+          'statusCode': 404,
+          'data': <String, dynamic>{},
+        };
+      });
+
+      final result = await service.getAvailableCourses();
+
+      expect(result.isSuccess, isTrue);
+      expect(result.data, isNotNull);
+      expect(result.data!.length, 1);
+      expect(result.data!.first.code, 'CS201');
+      expect(result.data!.first.sections.first.availableSeats, 8);
+      expect(result.data!.first.prerequisites.first.courseCode, 'CS101');
+    });
+
+    test(
+      'missing enrollmentStatus is normalized to not_enrolled safely',
+      () async {
+        final EnrollmentService service = _buildService((
+          RequestOptions options,
+        ) {
+          if (options.path.contains('/enrollments/available')) {
+            return <String, dynamic>{
+              'statusCode': 200,
+              'data': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 88,
+                  'name': 'Algorithms',
+                  'code': 'CS301',
+                  'description': '',
+                  'credits': 3,
+                  'level': 'junior',
+                  'departmentId': 1,
+                  'departmentName': 'Unknown',
+                  'canEnroll': false,
+                  'sections': <Map<String, dynamic>>[],
+                  'prerequisites': <Map<String, dynamic>>[],
+                },
+              ],
+            };
+          }
+          return <String, dynamic>{
+            'statusCode': 404,
+            'data': <String, dynamic>{},
+          };
+        });
+
+        final result = await service.getAvailableCourses();
+
+        expect(result.isSuccess, isTrue);
+        expect(result.data, isNotNull);
+        expect(result.data!.first.enrollmentStatus, isNull);
+        expect(result.data!.first.normalizedEnrollmentStatus, 'not_enrolled');
+        expect(result.data!.first.isAlreadyEnrolled, isFalse);
+      },
+    );
+
+    test('passes registration filters as query parameters', () async {
+      Map<String, dynamic>? observedQuery;
+
+      final EnrollmentService service = _buildService((RequestOptions options) {
+        if (options.path.contains('/enrollments/available')) {
+          observedQuery = options.queryParameters;
+          return <String, dynamic>{'statusCode': 200, 'data': <dynamic>[]};
+        }
+        return <String, dynamic>{
+          'statusCode': 404,
+          'data': <String, dynamic>{},
+        };
+      });
+
+      final result = await service.getAvailableCourses(
+        departmentId: 3,
+        semesterId: 2,
+        search: 'data',
+        level: 'sophomore',
+        page: 2,
+        limit: 10,
+      );
+
+      expect(result.isSuccess, isTrue);
+      expect(observedQuery, isNotNull);
+      expect(observedQuery!['departmentId'], 3);
+      expect(observedQuery!['semesterId'], 2);
+      expect(observedQuery!['search'], 'data');
+      expect(observedQuery!['level'], 'sophomore');
+      expect(observedQuery!['page'], 2);
+      expect(observedQuery!['limit'], 10);
+    });
+  });
+
+  group('EnrollmentService enrollment periods', () {
+    test('loads periods from /enrollments/periods', () async {
+      final EnrollmentService service = _buildService((RequestOptions options) {
+        if (options.path.contains('/enrollments/periods')) {
+          return <String, dynamic>{
+            'statusCode': 200,
+            'data': <Map<String, dynamic>>[
+              <String, dynamic>{
+                'id': 2,
+                'semesterName': 'Fall 2026',
+                'semesterCode': 'FALL2026',
+                'registrationStart': '2026-07-20',
+                'registrationEnd': '2026-08-10',
+                'semesterStart': '2026-08-15',
+                'semesterEnd': '2026-12-20',
+                'status': 'upcoming',
+              },
+            ],
+          };
+        }
+        return <String, dynamic>{
+          'statusCode': 404,
+          'data': <String, dynamic>{},
+        };
+      });
+
+      final result = await service.getEnrollmentPeriods();
+
+      expect(result.isSuccess, isTrue);
+      expect(result.data, isNotNull);
+      expect(result.data!.length, 1);
+      expect(result.data!.first.id, 2);
+      expect(result.data!.first.semester, 'Fall 2026');
+      expect(result.data!.first.status, 'upcoming');
+      expect(result.data!.first.registrationStart, isNotNull);
+    });
+  });
+
   group('EnrollmentService register parity', () {
+    test('registerForSection sends section-only payload', () async {
+      Map<String, dynamic>? sentBody;
+
+      final EnrollmentService service = _buildService((RequestOptions options) {
+        if (options.path.contains('/enrollments/register')) {
+          sentBody = Map<String, dynamic>.from(options.data as Map);
+          return <String, dynamic>{
+            'statusCode': 201,
+            'data': _sampleEnrollmentJson(),
+          };
+        }
+        return <String, dynamic>{
+          'statusCode': 404,
+          'data': <String, dynamic>{},
+        };
+      });
+
+      final result = await service.registerForSection(sectionId: 5);
+
+      expect(result.isSuccess, isTrue);
+      expect(sentBody, isNotNull);
+      expect(sentBody, <String, dynamic>{'sectionId': 5});
+    });
+
     test('register preserves sectionId and extra payload keys', () async {
       Map<String, dynamic>? sentBody;
 

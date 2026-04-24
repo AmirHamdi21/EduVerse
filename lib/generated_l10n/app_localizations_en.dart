@@ -12795,4 +12795,62 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quizAttemptHistory => 'Attempt History';
+
+  @override
+  String get registration => 'Registration';
+
+  @override
+  String get courseRegistration => 'Course Registration';
+
+  @override
+  String get browseCourses => 'Browse and enroll in available courses';
+
+  @override
+  String get creditsEnrolled => 'Credits Enrolled';
+
+  @override
+  String get coursesRegistered => 'Courses Registered';
+
+  @override
+  String get onWaitlist => 'On Waitlist';
+
+  @override
+  String get availableCourses => 'Available Courses';
+
+  @override
+  String get myRegisteredCourses => 'My Registered Courses';
+
+  @override
+  String get searchCoursePlaceholder =>
+      'Search by course title, code, or department';
+
+  @override
+  String get confirmEnrollment => 'Confirm Enrollment';
+
+  @override
+  String get registrationWindow => 'Registration Window';
+
+  @override
+  String get registrationUpcoming => 'Upcoming';
+
+  @override
+  String get prerequisitesRequired => 'Prerequisites Required';
+
+  @override
+  String get noAvailableCourses => 'No available courses found';
+
+  @override
+  String get noRegisteredCourses => 'No registered courses yet';
+
+  @override
+  String get enrollNow => 'Enroll Now';
+
+  @override
+  String get droppingCourse => 'Dropping...';
+
+  @override
+  String get enrollingCourse => 'Enrolling...';
+
+  @override
+  String get drop => 'Drop';
 }

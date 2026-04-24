@@ -157,9 +157,7 @@ class StudentQuizCard extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
             child: Row(
               children: [
-                Expanded(
-                  child: _buildPrimaryButton(canStart, hasInProgress),
-                ),
+                Expanded(child: _buildPrimaryButton(canStart, hasInProgress)),
                 if (onViewHistory != null) ...[
                   const SizedBox(width: 10),
                   _buildSecondaryButton(),
@@ -206,9 +204,7 @@ class StudentQuizCard extends StatelessWidget {
           Icon(
             icon,
             size: 14,
-            color: isDark
-                ? const Color(0xFF94A3B8)
-                : const Color(0xFF64748B),
+            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
           ),
           const SizedBox(width: 4),
           Text(
@@ -216,9 +212,7 @@ class StudentQuizCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: isDark
-                  ? const Color(0xFF94A3B8)
-                  : const Color(0xFF64748B),
+              color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
           ),
         ],
@@ -230,9 +224,7 @@ class StudentQuizCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: canStart
-            ? (hasInProgress ? onResume : onStart)
-            : null,
+        onTap: canStart ? (hasInProgress ? onResume : onStart) : null,
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -245,8 +237,8 @@ class StudentQuizCard extends StatelessWidget {
             color: canStart
                 ? null
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.06)
-                    : const Color(0xFFF1F5F9)),
+                      ? Colors.white.withValues(alpha: 0.06)
+                      : const Color(0xFFF1F5F9)),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
@@ -259,8 +251,8 @@ class StudentQuizCard extends StatelessWidget {
                 color: canStart
                     ? Colors.white
                     : (isDark
-                        ? const Color(0xFF64748B)
-                        : const Color(0xFF94A3B8)),
+                          ? const Color(0xFF64748B)
+                          : const Color(0xFF94A3B8)),
                 size: 18,
               ),
               const SizedBox(width: 6),
@@ -272,8 +264,8 @@ class StudentQuizCard extends StatelessWidget {
                   color: canStart
                       ? Colors.white
                       : (isDark
-                          ? const Color(0xFF64748B)
-                          : const Color(0xFF94A3B8)),
+                            ? const Color(0xFF64748B)
+                            : const Color(0xFF94A3B8)),
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -301,9 +293,7 @@ class StudentQuizCard extends StatelessWidget {
           ),
           child: Icon(
             Icons.history_rounded,
-            color: isDark
-                ? const Color(0xFF94A3B8)
-                : const Color(0xFF64748B),
+            color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             size: 18,
           ),
         ),
