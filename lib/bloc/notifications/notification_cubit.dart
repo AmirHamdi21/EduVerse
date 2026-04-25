@@ -1,66 +1,85 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../models/notifications/api_notification_model.dart';
 import '../../models/notifications/notification_model.dart';
 import '../../services/api/notification_api_service.dart';
+import '../../services/notifications/notification_socket_service.dart';
 import 'notification_state.dart';
 
 class NotificationCubit extends Cubit<NotificationState> {
-  final NotificationApiService? _notificationApiService;
+  NotificationCubit({
+    required NotificationApiService notificationApiService,
+    required NotificationSocketService notificationSocketService,
+  }) : _notificationApiService = notificationApiService,
+       _notificationSocketService = notificationSocketService,
+       super(const NotificationState()) {
+    _notificationSubscription = _notificationSocketService.notifications.listen(
+      _handleIncomingNotification,
+    );
+    _unreadCountSubscription = _notificationSocketService.unreadCounts.listen(
+      _handleUnreadCountUpdate,
+    );
+    _connectionSubscription = _notificationSocketService.connectionChanges.listen(
+      (connected) {
+        emit(state.copyWith(isRealtimeConnected: connected));
+      },
+    );
+  }
 
-  NotificationCubit({NotificationApiService? notificationApiService})
-    : _notificationApiService = notificationApiService,
-      super(const NotificationState());
+  final NotificationApiService _notificationApiService;
+  final NotificationSocketService _notificationSocketService;
 
-  /// Load notifications from the backend API.
+  final StreamController<NotificationModel> _incomingNotificationController =
+      StreamController<NotificationModel>.broadcast();
+  Stream<NotificationModel> get incomingNotifications =>
+      _incomingNotificationController.stream;
+
+  StreamSubscription<NotificationModel>? _notificationSubscription;
+  StreamSubscription<int>? _unreadCountSubscription;
+  StreamSubscription<bool>? _connectionSubscription;
+
+  Future<void> initializeRealtime() async {
+    await _notificationSocketService.connect();
+  }
+
   Future<void> loadNotifications() async {
     emit(state.copyWith(status: NotificationLoadingStatus.loading));
 
     try {
-      if (_notificationApiService == null) {
-        // Fallback to empty state when no service injected
+      final result = await _notificationApiService.getAll(limit: 100, page: 1);
+      if (!result.isSuccess || result.data == null) {
         emit(
           state.copyWith(
-            status: NotificationLoadingStatus.loaded,
-            notifications: [],
-            aiInsights: _generateSampleAIInsights(),
-            systemAlerts: _generateSampleSystemAlerts(),
-            unreadCount: 0,
+            status: NotificationLoadingStatus.error,
+            errorMessage: result.error?.message ?? 'Failed to load notifications',
           ),
         );
         return;
       }
 
-      // Fetch notifications from API
-      final result = await _notificationApiService.getAll(limit: 100);
+      final notifications = result.data!
+          .map(ApiNotificationModel.fromJson)
+          .map((api) => api.toNotificationModel())
+          .toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-      List<NotificationModel> notifications = [];
-      if (result.isSuccess && result.data != null) {
-        notifications = result.data!
-            .map((json) => ApiNotificationModel.fromJson(json))
-            .map((api) => api.toNotificationModel())
-            .toList();
-      }
-
-      // Fetch unread count from API
-      int unreadCount = notifications.where((n) => !n.isRead).length;
+      var unreadCount = notifications.where((n) => !n.isRead).length;
       final countResult = await _notificationApiService.getUnreadCount();
       if (countResult.isSuccess && countResult.data != null) {
         unreadCount = countResult.data!;
       }
 
-      // AI Insights and System Alerts remain local-only (no backend endpoints)
-      final aiInsights = _generateSampleAIInsights();
-      final systemAlerts = _generateSampleSystemAlerts();
-
       emit(
         state.copyWith(
           status: NotificationLoadingStatus.loaded,
           notifications: notifications,
-          aiInsights: aiInsights,
-          systemAlerts: systemAlerts,
           unreadCount: unreadCount,
+          errorMessage: null,
         ),
       );
+      await initializeRealtime();
     } catch (e) {
       emit(
         state.copyWith(
@@ -71,196 +90,148 @@ class NotificationCubit extends Cubit<NotificationState> {
     }
   }
 
-  /// Mark a notification as read (optimistic UI + API call)
-  void markAsRead(String id) {
-    final updatedNotifications = state.notifications.map((n) {
-      if (n.id == id) {
-        return n.copyWith(isRead: true);
-      }
-      return n;
-    }).toList();
+  Future<void> markAsRead(String id) async {
+    final current = state.notifications;
+    final index = current.indexWhere((n) => n.id == id);
+    if (index == -1 || current[index].isRead || !current[index].allowsReadMutation) {
+      return;
+    }
 
-    final unreadCount = updatedNotifications.where((n) => !n.isRead).length;
-
-    emit(
-      state.copyWith(
-        notifications: updatedNotifications,
-        unreadCount: unreadCount,
-      ),
-    );
-
-    // Fire-and-forget API call
-    _notificationApiService?.markAsRead(id);
-  }
-
-  /// Mark a notification as unread
-  void markAsUnread(String id) {
-    final updatedNotifications = state.notifications.map((n) {
-      if (n.id == id) {
-        return n.copyWith(isRead: false);
-      }
-      return n;
-    }).toList();
-
-    final unreadCount = updatedNotifications.where((n) => !n.isRead).length;
-
-    emit(
-      state.copyWith(
-        notifications: updatedNotifications,
-        unreadCount: unreadCount,
-      ),
-    );
-  }
-
-  /// Mark all notifications as read (optimistic UI + API call)
-  void markAllAsRead() {
-    final updatedNotifications = state.notifications.map((n) {
-      return n.copyWith(isRead: true);
-    }).toList();
-
-    emit(state.copyWith(notifications: updatedNotifications, unreadCount: 0));
-
-    // Fire-and-forget API call
-    _notificationApiService?.markAllAsRead();
-  }
-
-  /// Toggle bookmark status (local-only)
-  void toggleBookmark(String id) {
-    final updatedNotifications = state.notifications.map((n) {
-      if (n.id == id) {
-        return n.copyWith(isBookmarked: !n.isBookmarked);
-      }
-      return n;
-    }).toList();
-
-    emit(state.copyWith(notifications: updatedNotifications));
-  }
-
-  /// Delete a notification (optimistic UI + API call)
-  void deleteNotification(String id) {
-    final updatedNotifications = state.notifications
-        .where((n) => n.id != id)
+    final updated = current
+        .map((n) => n.id == id ? n.copyWith(isRead: true, readAt: DateTime.now()) : n)
         .toList();
-    final unreadCount = updatedNotifications.where((n) => !n.isRead).length;
-
     emit(
       state.copyWith(
-        notifications: updatedNotifications,
-        unreadCount: unreadCount,
+        notifications: updated,
+        unreadCount: _calculateUnreadCount(updated, fallback: state.unreadCount - 1),
       ),
     );
 
-    // Fire-and-forget API call
-    _notificationApiService?.deleteNotification(id);
+    final result = await _notificationApiService.markAsRead(id);
+    if (!result.isSuccess) {
+      await loadNotifications();
+    }
   }
 
-  /// Clear all notifications (local-only since backend has no clear-all endpoint)
-  void clearAllNotifications() {
-    emit(state.copyWith(notifications: [], unreadCount: 0));
-  }
-
-  /// Clear read notifications (optimistic UI + API call)
-  void clearReadNotifications() {
-    final updatedNotifications = state.notifications
-        .where((n) => !n.isRead)
+  Future<void> markAllAsRead() async {
+    final previous = state.notifications;
+    final updated = previous
+        .map((n) => n.allowsReadMutation ? n.copyWith(isRead: true, readAt: DateTime.now()) : n)
         .toList();
-    emit(state.copyWith(notifications: updatedNotifications));
+    emit(state.copyWith(notifications: updated, unreadCount: 0));
 
-    // Fire-and-forget API call
-    _notificationApiService?.clearRead();
+    final result = await _notificationApiService.markAllAsRead();
+    if (!result.isSuccess) {
+      emit(state.copyWith(notifications: previous));
+      await loadNotifications();
+    }
   }
 
-  /// Set filter category
+  Future<void> deleteNotification(String id) async {
+    final previous = state.notifications;
+    final targetIndex = previous.indexWhere((notification) => notification.id == id);
+    if (targetIndex == -1) {
+      return;
+    }
+
+    final target = previous[targetIndex];
+    if (!target.allowsDeleteMutation) {
+      return;
+    }
+
+    final updated = previous.where((n) => n.id != id).toList();
+    emit(
+      state.copyWith(
+        notifications: updated,
+        unreadCount: _calculateUnreadCount(updated),
+      ),
+    );
+
+    final result = await _notificationApiService.deleteNotification(id);
+    if (!result.isSuccess) {
+      emit(state.copyWith(notifications: previous));
+      await loadNotifications();
+    }
+  }
+
+  Future<void> clearAllNotifications() async {
+    final previous = state.notifications;
+    emit(state.copyWith(notifications: const [], unreadCount: 0));
+    final result = await _notificationApiService.clearAll();
+    if (!result.isSuccess) {
+      emit(state.copyWith(notifications: previous));
+      await loadNotifications();
+    }
+  }
+
+  Future<void> clearReadNotifications() async {
+    final previous = state.notifications;
+    final updated = previous.where((n) => !n.isRead).toList();
+    emit(
+      state.copyWith(
+        notifications: updated,
+        unreadCount: _calculateUnreadCount(updated),
+      ),
+    );
+
+    final result = await _notificationApiService.clearRead();
+    if (!result.isSuccess) {
+      emit(state.copyWith(notifications: previous));
+      await loadNotifications();
+    }
+  }
+
   void setCategory(NotificationCategory category) {
     emit(state.copyWith(selectedCategory: category));
   }
 
-  /// Set search query
   void setSearchQuery(String query) {
     emit(state.copyWith(searchQuery: query));
   }
 
-  /// Toggle search mode
   void toggleSearchMode() {
+    final willSearch = !state.isSearching;
     emit(
       state.copyWith(
-        isSearching: !state.isSearching,
-        searchQuery: state.isSearching ? '' : state.searchQuery,
+        isSearching: willSearch,
+        searchQuery: willSearch ? state.searchQuery : '',
       ),
     );
   }
 
-  /// Dismiss AI insight
-  void dismissAIInsight(String id) {
-    final updatedInsights = state.aiInsights.map((i) {
-      if (i.id == id) {
-        return i.copyWith(isDismissed: true);
-      }
-      return i;
-    }).toList();
+  void _handleIncomingNotification(NotificationModel notification) {
+    final withoutDuplicate = state.notifications.where((n) => n.id != notification.id).toList();
+    final updated = [notification, ...withoutDuplicate]
+      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-    emit(state.copyWith(aiInsights: updatedInsights));
+    emit(
+      state.copyWith(
+        notifications: updated,
+        unreadCount: state.unreadCount + (notification.isRead ? 0 : 1),
+      ),
+    );
+    _incomingNotificationController.add(notification);
   }
 
-  /// Dismiss system alert
-  void dismissSystemAlert(String id) {
-    final updatedAlerts = state.systemAlerts.map((a) {
-      if (a.id == id) {
-        return a.copyWith(isDismissed: true);
-      }
-      return a;
-    }).toList();
-
-    emit(state.copyWith(systemAlerts: updatedAlerts));
+  void _handleUnreadCountUpdate(int count) {
+    emit(state.copyWith(unreadCount: count));
   }
 
-  // ── Local-only features (no backend endpoints) ──────────────────
-
-  /// Generate sample AI insights (no backend endpoint exists for these)
-  List<AIInsightModel> _generateSampleAIInsights() {
-    final now = DateTime.now();
-    return [
-      AIInsightModel(
-        id: 'ai1',
-        title: 'Performance Alert',
-        message:
-            'Your quiz performance dropped this week — review Chapter 2 again for better understanding.',
-        insightType: AIInsightType.performanceAlert,
-        actionText: 'Take Action',
-        createdAt: now.subtract(const Duration(hours: 1)),
-      ),
-      AIInsightModel(
-        id: 'ai2',
-        title: 'AI Recommendation',
-        message:
-            'AI recommends revising "Data Structures" before the next lab session for optimal performance.',
-        insightType: AIInsightType.recommendation,
-        actionText: 'View Recommendations',
-        createdAt: now.subtract(const Duration(hours: 3)),
-      ),
-    ];
+  int _calculateUnreadCount(List<NotificationModel> notifications, {int? fallback}) {
+    final count = notifications.where((n) => !n.isRead).length;
+    if (count == 0 && fallback != null && fallback > 0) {
+      return fallback;
+    }
+    return count;
   }
 
-  /// Generate sample system alerts (no backend endpoint exists for these)
-  List<SystemAlertModel> _generateSampleSystemAlerts() {
-    final now = DateTime.now();
-    return [
-      SystemAlertModel(
-        id: 'sys1',
-        title: 'New Version Available',
-        message:
-            'EduVerse v2.1 is live with new features and improvements. Update now!',
-        alertType: SystemAlertType.update,
-        createdAt: now.subtract(const Duration(hours: 2)),
-      ),
-      SystemAlertModel(
-        id: 'sys2',
-        title: 'Scheduled Maintenance',
-        message:
-            'System will be temporarily unavailable Sunday at 2 AM for scheduled maintenance.',
-        alertType: SystemAlertType.maintenance,
-        createdAt: now.subtract(const Duration(days: 1)),
-      ),
-    ];
+  @override
+  Future<void> close() async {
+    await _notificationSubscription?.cancel();
+    await _unreadCountSubscription?.cancel();
+    await _connectionSubscription?.cancel();
+    await _incomingNotificationController.close();
+    await _notificationSocketService.disconnect();
+    return super.close();
   }
 }

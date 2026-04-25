@@ -108,13 +108,45 @@ class QuizManagementCubit extends Cubit<QuizManagementState> {
   }
 
   Future<bool> publishQuiz(int id) async {
-    final now = DateTime.now().toIso8601String();
-    return updateQuiz(id, {'availableFrom': now});
+    final prev = state;
+    emit(const QuizMgmtOperating('publishing'));
+
+    final result = await _service.updateStatus(id, QuizStatusEnum.published);
+    if (result.isFailure || result.data == null) {
+      emit(QuizMgmtError(result.error?.message ?? 'Failed to publish quiz'));
+      return false;
+    }
+
+    if (prev is QuizMgmtLoaded) {
+      final updated = prev.quizzes.map((q) {
+        return q.id == id ? result.data! : q;
+      }).toList();
+      emit(prev.copyWith(quizzes: updated));
+    } else {
+      await loadQuizzes();
+    }
+    return true;
   }
 
   Future<bool> closeQuiz(int id) async {
-    final now = DateTime.now().toIso8601String();
-    return updateQuiz(id, {'availableUntil': now});
+    final prev = state;
+    emit(const QuizMgmtOperating('closing'));
+
+    final result = await _service.updateStatus(id, QuizStatusEnum.closed);
+    if (result.isFailure || result.data == null) {
+      emit(QuizMgmtError(result.error?.message ?? 'Failed to close quiz'));
+      return false;
+    }
+
+    if (prev is QuizMgmtLoaded) {
+      final updated = prev.quizzes.map((q) {
+        return q.id == id ? result.data! : q;
+      }).toList();
+      emit(prev.copyWith(quizzes: updated));
+    } else {
+      await loadQuizzes();
+    }
+    return true;
   }
 
   // ── Question Management ──────────────────────────────────────────────────

@@ -119,16 +119,19 @@ class _State extends State<TAQuizManagementScreen>
                             >(
                               builder: (_, s) {
                                 if (s is QuizMgmtLoading ||
-                                    s is QuizMgmtOperating)
+                                    s is QuizMgmtOperating) {
                                   return const Center(
                                     child: CircularProgressIndicator(
                                       color: TAColors.primary,
                                     ),
                                   );
-                                if (s is QuizMgmtError)
+                                }
+                                if (s is QuizMgmtError) {
                                   return _errView(dk, s.message);
-                                if (s is QuizMgmtLoaded)
+                                }
+                                if (s is QuizMgmtLoaded) {
                                   return _listView(dk, s, r);
+                                }
                                 return const SizedBox.shrink();
                               },
                             ),
@@ -299,7 +302,7 @@ class _State extends State<TAQuizManagementScreen>
 
   Widget _listView(bool dk, QuizMgmtLoaded st, ResponsiveUtil r) {
     final q = st.filteredQuizzes;
-    if (q.isEmpty)
+    if (q.isEmpty) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -329,6 +332,7 @@ class _State extends State<TAQuizManagementScreen>
           ],
         ),
       );
+    }
     return RefreshIndicator(
       onRefresh: () => context.read<QuizManagementCubit>().loadQuizzes(),
       color: TAColors.primary,
@@ -599,9 +603,20 @@ class _Card extends StatelessWidget {
       );
 
   Widget _pubBtn(BuildContext ctx) => GestureDetector(
-    onTap: () {
+    onTap: () async {
       HapticFeedback.mediumImpact();
-      ctx.read<QuizManagementCubit>().publishQuiz(quiz.id);
+      final ok = await ctx.read<QuizManagementCubit>().publishQuiz(quiz.id);
+      if (!ctx.mounted) return;
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        SnackBar(
+          content: Text(
+            ok
+                ? 'Quiz published. Enrolled students can now receive quiz notifications.'
+                : 'Failed to publish quiz.',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     },
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
@@ -630,9 +645,16 @@ class _Card extends StatelessWidget {
   );
 
   Widget _clsBtn(BuildContext ctx) => GestureDetector(
-    onTap: () {
+    onTap: () async {
       HapticFeedback.mediumImpact();
-      ctx.read<QuizManagementCubit>().closeQuiz(quiz.id);
+      final ok = await ctx.read<QuizManagementCubit>().closeQuiz(quiz.id);
+      if (!ctx.mounted) return;
+      ScaffoldMessenger.of(ctx).showSnackBar(
+        SnackBar(
+          content: Text(ok ? 'Quiz closed successfully.' : 'Failed to close quiz.'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     },
     child: Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),

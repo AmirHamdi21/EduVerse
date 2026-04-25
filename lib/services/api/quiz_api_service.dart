@@ -59,6 +59,19 @@ class QuizApiService {
     }, fallbackMessage: 'Failed to delete quiz');
   }
 
+  Future<ServiceResult<QuizModel>> updateStatus(
+    dynamic id,
+    QuizStatusEnum status,
+  ) {
+    return RetryHelper.execute<QuizModel>(() async {
+      final response = await _client.dio.patch(
+        '/quizzes/$id/status',
+        data: <String, dynamic>{'status': status.toJson()},
+      );
+      return QuizModel.fromJson(_extractMap(response.data));
+    }, fallbackMessage: 'Failed to update quiz status');
+  }
+
   // ── Questions ────────────────────────────────────────────────────────────
 
   /// Fetches all questions for a quiz (used when attempt response lacks them).

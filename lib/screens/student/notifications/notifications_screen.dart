@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
 import '../../../bloc/notifications/notification_cubit.dart';
 import '../../../bloc/notifications/notification_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
@@ -8,10 +10,10 @@ import '../../../bloc/theme/theme_state.dart';
 import '../../../config/app_theme.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/notifications/notification_model.dart';
-import '../../../widgets/student/notifications/ai_insight_card.dart';
+import '../../../utils/notifications/notification_action_resolver.dart';
+import '../../../widgets/shared/loading/notification_screen_skeleton.dart';
 import '../../../widgets/student/notifications/notification_filter_chips.dart';
 import '../../../widgets/student/notifications/notification_tile.dart';
-import '../../../widgets/student/notifications/system_alert_card.dart';
 import 'notification_swipe_settings_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -21,9 +23,7 @@ class NotificationsScreen extends StatefulWidget {
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _NotificationsScreenState extends State<NotificationsScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _showElevation = false;
@@ -31,13 +31,17 @@ class _NotificationsScreenState extends State<NotificationsScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
     _scrollController.addListener(_onScroll);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      context.read<NotificationCubit>().loadNotifications();
+    });
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
     _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
@@ -51,9 +55,12 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     }
   }
 
+  Future<void> _refreshAll(BuildContext context) async {
+    await context.read<NotificationCubit>().loadNotifications();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Use the global NotificationCubit instead of creating a new one
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDarkMode = themeState.isDark;
@@ -66,22 +73,18 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           body: SafeArea(
             child: Column(
               children: [
-                // Header
                 _buildHeader(context, isDarkMode, l10n),
-                // Content
                 Expanded(
                   child: BlocBuilder<NotificationCubit, NotificationState>(
                     builder: (context, state) {
+                      final filtered = _applyFilters(state, state.notifications);
+
                       if (state.status == NotificationLoadingStatus.loading) {
-                        return _buildLoadingState(isDarkMode);
+                        return NotificationScreenSkeleton(isDark: isDarkMode);
                       }
 
                       return RefreshIndicator(
-                        onRefresh: () async {
-                          await context
-                              .read<NotificationCubit>()
-                              .loadNotifications();
-                        },
+                        onRefresh: () => _refreshAll(context),
                         color: AppTheme.primaryColor,
                         backgroundColor: isDarkMode
                             ? AppTheme.darkCardColor
@@ -90,7 +93,6 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                           controller: _scrollController,
                           physics: const AlwaysScrollableScrollPhysics(),
                           slivers: [
-                            // Search bar
                             if (state.isSearching)
                               SliverToBoxAdapter(
                                 child: _buildSearchBar(
@@ -100,12 +102,9 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                                   state,
                                 ),
                               ),
-                            // Filter chips
                             SliverToBoxAdapter(
                               child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 12),
                                 child: NotificationFilterChips(
                                   selectedCategory: state.selectedCategory,
                                   onCategoryChanged: (category) {
@@ -117,18 +116,15 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                                 ),
                               ),
                             ),
-
-                            // Notifications section header
                             SliverToBoxAdapter(
                               child: _buildNotificationHeader(
-                                context,
                                 isDarkMode,
                                 l10n,
-                                state,
+                                filtered.length,
+                                state.isRealtimeConnected,
                               ),
                             ),
-                            // Notification list or empty state
-                            if (state.filteredNotifications.isEmpty)
+                            if (filtered.isEmpty)
                               SliverFillRemaining(
                                 hasScrollBody: false,
                                 child: _buildEmptyState(
@@ -143,29 +139,8 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                                 context,
                                 isDarkMode,
                                 l10n,
-                                state,
+                                filtered,
                               ),
-                            // AI Insights Section (collapsed by default)
-                            if (state.activeAIInsights.isNotEmpty)
-                              SliverToBoxAdapter(
-                                child: _buildAIInsightsSection(
-                                  context,
-                                  isDarkMode,
-                                  l10n,
-                                  state,
-                                ),
-                              ),
-                            // System Alerts Section (collapsed by default)
-                            if (state.activeSystemAlerts.isNotEmpty)
-                              SliverToBoxAdapter(
-                                child: _buildSystemAlertsSection(
-                                  context,
-                                  isDarkMode,
-                                  l10n,
-                                  state,
-                                ),
-                              ),
-                            // Bottom padding
                             const SliverPadding(
                               padding: EdgeInsets.only(bottom: 20),
                             ),
@@ -181,6 +156,30 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         );
       },
     );
+  }
+
+  List<NotificationModel> _applyFilters(
+    NotificationState state,
+    List<NotificationModel> notifications,
+  ) {
+    var filtered = notifications;
+    if (state.selectedCategory != NotificationCategory.all) {
+      filtered = filtered
+          .where((notification) => notification.category == state.selectedCategory)
+          .toList();
+    }
+
+    if (state.searchQuery.isNotEmpty) {
+      final query = state.searchQuery.toLowerCase();
+      filtered = filtered.where((notification) {
+        return notification.title.toLowerCase().contains(query) ||
+            notification.message.toLowerCase().contains(query) ||
+            (notification.courseName?.toLowerCase().contains(query) ?? false) ||
+            (notification.instructorName?.toLowerCase().contains(query) ?? false);
+      }).toList();
+    }
+
+    return filtered;
   }
 
   Widget _buildHeader(
@@ -206,86 +205,78 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-            child: Column(
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    // Back button
-                    _buildIconButton(
-                      icon: Icons.arrow_back_ios_new,
-                      onTap: () => Navigator.of(context).pop(),
-                      isDarkMode: isDarkMode,
-                    ),
-                    const SizedBox(width: 12),
-                    // Title and subtitle
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                _buildIconButton(
+                  icon: Icons.arrow_back_ios_new,
+                  onTap: () => Navigator.of(context).pop(),
+                  isDarkMode: isDarkMode,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                l10n.notificationsTitle,
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: isDarkMode
-                                      ? AppTheme.darkTextPrimary
-                                      : AppTheme.textDark,
-                                ),
-                              ),
-                              if (state.unreadCount > 0) ...[
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 3,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.errorColor,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    '${state.unreadCount}',
-                                    style: const TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ],
-                          ),
-                          const SizedBox(height: 2),
                           Text(
-                            l10n.notificationSubtitle,
+                            l10n.notificationsTitle,
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                               color: isDarkMode
-                                  ? AppTheme.darkTextSecondary
-                                  : AppTheme.textLight,
+                                  ? AppTheme.darkTextPrimary
+                                  : AppTheme.textDark,
                             ),
                           ),
+                          if (state.unreadCount > 0) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppTheme.errorColor,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                '${state.unreadCount}',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
                       ),
-                    ),
-                    // Search button
-                    _buildIconButton(
-                      icon: state.isSearching ? Icons.close : Icons.search,
-                      onTap: () {
-                        context.read<NotificationCubit>().toggleSearchMode();
-                        if (!state.isSearching) {
-                          _searchController.clear();
-                        }
-                      },
-                      isDarkMode: isDarkMode,
-                    ),
-                    const SizedBox(width: 8),
-                    // More menu
-                    _buildMoreMenu(context, isDarkMode, l10n, state),
-                  ],
+                      const SizedBox(height: 2),
+                      Text(
+                        l10n.notificationSubtitle,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDarkMode
+                              ? AppTheme.darkTextSecondary
+                              : AppTheme.textLight,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+                _buildIconButton(
+                  icon: state.isSearching ? Icons.close : Icons.search,
+                  onTap: () {
+                    context.read<NotificationCubit>().toggleSearchMode();
+                    if (state.isSearching) {
+                      _searchController.clear();
+                    }
+                  },
+                  isDarkMode: isDarkMode,
+                ),
+                const SizedBox(width: 8),
+                _buildMoreMenu(context, isDarkMode, l10n, state),
               ],
             ),
           ),
@@ -298,7 +289,6 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     required IconData icon,
     required VoidCallback onTap,
     required bool isDarkMode,
-    Color? color,
   }) {
     return GestureDetector(
       onTap: () {
@@ -317,9 +307,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
         child: Icon(
           icon,
           size: 20,
-          color:
-              color ??
-              (isDarkMode ? AppTheme.darkTextPrimary : AppTheme.textDark),
+          color: isDarkMode ? AppTheme.darkTextPrimary : AppTheme.textDark,
         ),
       ),
     );
@@ -428,10 +416,7 @@ class _NotificationsScreenState extends State<NotificationsScreen>
                 builder: (context) => const NotificationSwipeSettingsScreen(),
               ),
             )
-            .then((_) {
-              // Force rebuild to reload swipe settings
-              if (mounted) setState(() {});
-            });
+            .then((_) => setState(() {}));
         break;
       case 'mark_all_read':
         context.read<NotificationCubit>().markAllAsRead();
@@ -527,74 +512,12 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     );
   }
 
-  Widget _buildAIInsightsSection(
-    BuildContext context,
-    bool isDarkMode,
-    AppLocalizations l10n,
-    NotificationState state,
-  ) {
-    return _CollapsibleSection(
-      title: l10n.notificationSmartAIInsights,
-      icon: Icons.auto_awesome,
-      iconColor: const Color(0xFFFF6B35),
-      isDarkMode: isDarkMode,
-      initiallyExpanded: true,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: state.activeAIInsights.map((insight) {
-            return AIInsightCard(
-              insight: insight,
-              isDarkMode: isDarkMode,
-              onAction: () {
-                // Handle action
-              },
-              onDismiss: () {
-                context.read<NotificationCubit>().dismissAIInsight(insight.id);
-              },
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSystemAlertsSection(
-    BuildContext context,
-    bool isDarkMode,
-    AppLocalizations l10n,
-    NotificationState state,
-  ) {
-    return _CollapsibleSection(
-      title: l10n.notificationSystemAlerts,
-      icon: Icons.info_outline,
-      iconColor: AppTheme.primaryColor,
-      isDarkMode: isDarkMode,
-      initiallyExpanded: false,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: state.activeSystemAlerts.map((alert) {
-            return SystemAlertCard(
-              alert: alert,
-              isDarkMode: isDarkMode,
-              onDismiss: () {
-                context.read<NotificationCubit>().dismissSystemAlert(alert.id);
-              },
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
   Widget _buildNotificationHeader(
-    BuildContext context,
     bool isDarkMode,
     AppLocalizations l10n,
-    NotificationState state,
+    int count,
+    bool isRealtimeConnected,
   ) {
-    final count = state.filteredNotifications.length;
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
       child: Row(
@@ -627,6 +550,16 @@ class _NotificationsScreenState extends State<NotificationsScreen>
               ),
             ),
           ),
+          const Spacer(),
+          Icon(
+            isRealtimeConnected
+                ? Icons.wifi_tethering_rounded
+                : Icons.wifi_tethering_error_rounded,
+            size: 16,
+            color: isRealtimeConnected
+                ? const Color(0xFF10B981)
+                : AppTheme.warningColor,
+          ),
         ],
       ),
     );
@@ -636,35 +569,61 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     BuildContext context,
     bool isDarkMode,
     AppLocalizations l10n,
-    NotificationState state,
+    List<NotificationModel> notifications,
   ) {
-    final todayNotifications = state.todayNotifications;
-    final thisWeekNotifications = state.thisWeekNotifications;
-    final earlierNotifications = state.earlierNotifications;
+    final now = DateTime.now();
+    final startOfDay = DateTime(now.year, now.month, now.day);
+    final startOfWeek = startOfDay.subtract(const Duration(days: 7));
+
+    final todayNotifications = notifications
+        .where((n) => !n.createdAt.isBefore(startOfDay))
+        .toList();
+    final thisWeekNotifications = notifications
+        .where(
+          (n) =>
+              n.createdAt.isBefore(startOfDay) &&
+              !n.createdAt.isBefore(startOfWeek),
+        )
+        .toList();
+    final earlierNotifications = notifications
+        .where((n) => n.createdAt.isBefore(startOfWeek))
+        .toList();
 
     return SliverPadding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
-          // Today
           if (todayNotifications.isNotEmpty) ...[
             _buildSectionLabel(l10n.notificationToday, isDarkMode),
             ...todayNotifications.map(
-              (n) => _buildNotificationItem(context, n, isDarkMode, l10n),
+              (notification) => _buildNotificationItem(
+                context,
+                notification,
+                isDarkMode,
+                l10n,
+              ),
             ),
           ],
-          // This Week
           if (thisWeekNotifications.isNotEmpty) ...[
             _buildSectionLabel(l10n.notificationThisWeek, isDarkMode),
             ...thisWeekNotifications.map(
-              (n) => _buildNotificationItem(context, n, isDarkMode, l10n),
+              (notification) => _buildNotificationItem(
+                context,
+                notification,
+                isDarkMode,
+                l10n,
+              ),
             ),
           ],
-          // Earlier
           if (earlierNotifications.isNotEmpty) ...[
             _buildSectionLabel(l10n.notificationEarlier, isDarkMode),
             ...earlierNotifications.map(
-              (n) => _buildNotificationItem(context, n, isDarkMode, l10n),
+              (notification) => _buildNotificationItem(
+                context,
+                notification,
+                isDarkMode,
+                l10n,
+              ),
             ),
           ],
         ]),
@@ -688,34 +647,81 @@ class _NotificationsScreenState extends State<NotificationsScreen>
 
   Widget _buildNotificationItem(
     BuildContext context,
-    NotificationModel n,
+    NotificationModel notification,
     bool isDarkMode,
     AppLocalizations l10n,
   ) {
+    final cubit = context.read<NotificationCubit>();
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final router = GoRouter.of(context);
+
     return NotificationTile(
-      notification: n,
+      notification: notification,
       isDarkMode: isDarkMode,
-      onTap: () {
-        context.read<NotificationCubit>().markAsRead(n.id);
-        // Handle navigation based on notification type
-      },
-      onBookmark: () {
-        context.read<NotificationCubit>().toggleBookmark(n.id);
-      },
-      onDelete: () {
-        context.read<NotificationCubit>().deleteNotification(n.id);
-        _showSnackBar(context, l10n.notificationDeleted, isDarkMode);
-      },
-      onMarkRead: () {
-        if (n.isRead) {
-          context.read<NotificationCubit>().markAsUnread(n.id);
-          _showSnackBar(context, l10n.notificationMarkedUnread, isDarkMode);
-        } else {
-          context.read<NotificationCubit>().markAsRead(n.id);
-          _showSnackBar(context, l10n.notificationMarkedRead, isDarkMode);
-        }
-      },
+      onTap: () => _handleNotificationTap(
+        notification,
+        isDarkMode,
+        l10n,
+        cubit,
+        scaffoldMessenger,
+        router,
+      ),
+      onDelete: notification.allowsDeleteMutation
+          ? () async {
+              await cubit.deleteNotification(notification.id);
+              if (mounted) {
+                _showSnackBarWithMessenger(
+                  scaffoldMessenger,
+                  l10n.notificationDeleted,
+                  isDarkMode,
+                );
+              }
+            }
+          : null,
+      onMarkRead: notification.allowsReadMutation && !notification.isRead
+          ? () async {
+              await cubit.markAsRead(notification.id);
+              if (mounted) {
+                _showSnackBarWithMessenger(
+                  scaffoldMessenger,
+                  l10n.notificationMarkedRead,
+                  isDarkMode,
+                );
+              }
+            }
+          : null,
     );
+  }
+
+  Future<void> _handleNotificationTap(
+    NotificationModel notification,
+    bool isDarkMode,
+    AppLocalizations l10n,
+    NotificationCubit cubit,
+    ScaffoldMessengerState scaffoldMessenger,
+    GoRouter router,
+  ) async {
+    if (notification.allowsReadMutation && !notification.isRead) {
+      await cubit.markAsRead(notification.id);
+    }
+
+    final route = NotificationActionResolver.resolveRoute(
+      notification,
+      rolePrefix: '/student',
+    );
+    if (!mounted || route == null) {
+      return;
+    }
+
+    try {
+      router.push(route);
+    } catch (_) {
+      _showSnackBarWithMessenger(
+        scaffoldMessenger,
+        l10n.notificationMarkedRead,
+        isDarkMode,
+      );
+    }
   }
 
   Widget _buildEmptyState(
@@ -824,35 +830,20 @@ class _NotificationsScreenState extends State<NotificationsScreen>
     );
   }
 
-  Widget _buildLoadingState(bool isDarkMode) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 40,
-            height: 40,
-            child: CircularProgressIndicator(
-              strokeWidth: 3,
-              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Loading notifications...',
-            style: TextStyle(
-              color: isDarkMode
-                  ? AppTheme.darkTextSecondary
-                  : AppTheme.textLight,
-            ),
-          ),
-        ],
-      ),
+  void _showSnackBar(BuildContext context, String message, bool isDarkMode) {
+    _showSnackBarWithMessenger(
+      ScaffoldMessenger.of(context),
+      message,
+      isDarkMode,
     );
   }
 
-  void _showSnackBar(BuildContext context, String message, bool isDarkMode) {
-    ScaffoldMessenger.of(context).showSnackBar(
+  void _showSnackBarWithMessenger(
+    ScaffoldMessengerState scaffoldMessenger,
+    String message,
+    bool isDarkMode,
+  ) {
+    scaffoldMessenger.showSnackBar(
       SnackBar(
         content: Text(message, style: const TextStyle(color: Colors.white)),
         behavior: SnackBarBehavior.floating,
@@ -922,129 +913,6 @@ class _NotificationsScreenState extends State<NotificationsScreen>
           ),
         ],
       ),
-    );
-  }
-}
-
-/// Collapsible section widget for AI Insights and System Alerts
-class _CollapsibleSection extends StatefulWidget {
-  final String title;
-  final IconData icon;
-  final Color iconColor;
-  final bool isDarkMode;
-  final bool initiallyExpanded;
-  final Widget child;
-
-  const _CollapsibleSection({
-    required this.title,
-    required this.icon,
-    required this.iconColor,
-    required this.isDarkMode,
-    required this.initiallyExpanded,
-    required this.child,
-  });
-
-  @override
-  State<_CollapsibleSection> createState() => _CollapsibleSectionState();
-}
-
-class _CollapsibleSectionState extends State<_CollapsibleSection>
-    with SingleTickerProviderStateMixin {
-  late bool _isExpanded;
-  late AnimationController _controller;
-  late Animation<double> _heightFactor;
-
-  @override
-  void initState() {
-    super.initState();
-    _isExpanded = widget.initiallyExpanded;
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 200),
-      vsync: this,
-    );
-    _heightFactor = _controller.drive(CurveTween(curve: Curves.easeInOut));
-    if (_isExpanded) {
-      _controller.value = 1.0;
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _toggleExpanded() {
-    HapticFeedback.lightImpact();
-    setState(() {
-      _isExpanded = !_isExpanded;
-      if (_isExpanded) {
-        _controller.forward();
-      } else {
-        _controller.reverse();
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Header
-        GestureDetector(
-          onTap: _toggleExpanded,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-            child: Row(
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  decoration: BoxDecoration(
-                    color: widget.iconColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(widget.icon, color: widget.iconColor, size: 18),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    widget.title,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: widget.isDarkMode
-                          ? AppTheme.darkTextPrimary
-                          : AppTheme.textDark,
-                    ),
-                  ),
-                ),
-                AnimatedRotation(
-                  duration: const Duration(milliseconds: 200),
-                  turns: _isExpanded ? 0.5 : 0,
-                  child: Icon(
-                    Icons.keyboard_arrow_down,
-                    color: widget.isDarkMode
-                        ? AppTheme.darkTextSecondary
-                        : AppTheme.textLight,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        // Content
-        ClipRect(
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return Align(heightFactor: _heightFactor.value, child: child);
-            },
-            child: widget.child,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -134,8 +134,8 @@ class _NotificationSwipeSettingsScreenState
               height: 44,
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.white.withOpacity(0.08)
-                    : Colors.black.withOpacity(0.04),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
@@ -181,7 +181,7 @@ class _NotificationSwipeSettingsScreenState
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: const Color(0xFF3B82F6).withOpacity(0.1),
+                color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
@@ -281,12 +281,12 @@ class _NotificationSwipeSettingsScreenState
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.08)
-              : Colors.black.withOpacity(0.05),
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.05),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.08),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -324,7 +324,7 @@ class _NotificationSwipeSettingsScreenState
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withOpacity(0.05)
+                  ? Colors.white.withValues(alpha: 0.05)
                   : Colors.grey.shade100,
               borderRadius: BorderRadius.circular(14),
             ),
@@ -336,8 +336,8 @@ class _NotificationSwipeSettingsScreenState
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        const Color(0xFF3B82F6).withOpacity(0.2),
-                        const Color(0xFF8B5CF6).withOpacity(0.2),
+                        const Color(0xFF3B82F6).withValues(alpha: 0.2),
+                        const Color(0xFF8B5CF6).withValues(alpha: 0.2),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(12),
@@ -384,7 +384,7 @@ class _NotificationSwipeSettingsScreenState
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: const Color(0xFF3B82F6).withOpacity(0.1),
+              color: const Color(0xFF3B82F6).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -446,7 +446,7 @@ class _NotificationSwipeSettingsScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: action.color.withOpacity(0.12),
+        color: action.color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(mainAxisSize: MainAxisSize.min, children: children),
@@ -460,7 +460,11 @@ class _NotificationSwipeSettingsScreenState
     required AppLocalizations l10n,
     required Color highlightColor,
   }) {
-    final actions = SwipeAction.values;
+    final actions = const [
+      SwipeAction.delete,
+      SwipeAction.markRead,
+      SwipeAction.none,
+    ];
 
     return Container(
       decoration: BoxDecoration(
@@ -468,12 +472,12 @@ class _NotificationSwipeSettingsScreenState
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.08)
-              : Colors.black.withOpacity(0.05),
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.05),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -505,7 +509,7 @@ class _NotificationSwipeSettingsScreenState
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? action.color.withOpacity(0.08)
+                          ? action.color.withValues(alpha: 0.08)
                           : Colors.transparent,
                       borderRadius: BorderRadius.vertical(
                         top: isFirst ? const Radius.circular(20) : Radius.zero,
@@ -523,9 +527,9 @@ class _NotificationSwipeSettingsScreenState
                           height: 42,
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? action.color.withOpacity(0.15)
+                                ? action.color.withValues(alpha: 0.15)
                                 : (isDark
-                                      ? Colors.white.withOpacity(0.05)
+                                      ? Colors.white.withValues(alpha: 0.05)
                                       : Colors.grey.shade100),
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -586,7 +590,7 @@ class _NotificationSwipeSettingsScreenState
                               color: isSelected
                                   ? action.color
                                   : (isDark
-                                        ? Colors.white.withOpacity(0.2)
+                                        ? Colors.white.withValues(alpha: 0.2)
                                         : Colors.grey.shade300),
                               width: 2,
                             ),
@@ -610,7 +614,7 @@ class _NotificationSwipeSettingsScreenState
                   indent: 74,
                   endIndent: 18,
                   color: isDark
-                      ? Colors.white.withOpacity(0.06)
+                      ? Colors.white.withValues(alpha: 0.06)
                       : Colors.grey.shade200,
                 ),
             ],
@@ -627,12 +631,12 @@ class _NotificationSwipeSettingsScreenState
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.08)
-              : Colors.black.withOpacity(0.05),
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.05),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
+            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -650,8 +654,8 @@ class _NotificationSwipeSettingsScreenState
             trailing: Switch(
               value: _settings.confirmBeforeAction,
               onChanged: _updateConfirmation,
-              activeColor: const Color(0xFF3B82F6),
-              activeTrackColor: const Color(0xFF3B82F6).withOpacity(0.3),
+              activeThumbColor: const Color(0xFF3B82F6),
+              activeTrackColor: const Color(0xFF3B82F6).withValues(alpha: 0.3),
               inactiveThumbColor: isDark
                   ? Colors.grey.shade600
                   : Colors.grey.shade400,
@@ -666,7 +670,7 @@ class _NotificationSwipeSettingsScreenState
             indent: 74,
             endIndent: 18,
             color: isDark
-                ? Colors.white.withOpacity(0.06)
+                ? Colors.white.withValues(alpha: 0.06)
                 : Colors.grey.shade200,
           ),
           // Sensitivity slider
@@ -693,7 +697,7 @@ class _NotificationSwipeSettingsScreenState
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.12),
+              color: iconColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(icon, color: iconColor, size: 22),
@@ -742,7 +746,7 @@ class _NotificationSwipeSettingsScreenState
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5CF6).withOpacity(0.12),
+                  color: const Color(0xFF8B5CF6).withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -797,10 +801,10 @@ class _NotificationSwipeSettingsScreenState
                   data: SliderThemeData(
                     activeTrackColor: const Color(0xFF8B5CF6),
                     inactiveTrackColor: isDark
-                        ? Colors.white.withOpacity(0.1)
+                        ? Colors.white.withValues(alpha: 0.1)
                         : Colors.grey.shade200,
                     thumbColor: const Color(0xFF8B5CF6),
-                    overlayColor: const Color(0xFF8B5CF6).withOpacity(0.2),
+                    overlayColor: const Color(0xFF8B5CF6).withValues(alpha: 0.2),
                     trackHeight: 4,
                     thumbShape: const RoundSliderThumbShape(
                       enabledThumbRadius: 8,

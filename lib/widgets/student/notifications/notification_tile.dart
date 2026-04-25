@@ -82,14 +82,8 @@ class _NotificationTileState extends State<NotificationTile>
         widget.onMarkRead?.call();
         break;
       case SwipeAction.markUnread:
-        widget.onMarkRead?.call();
-        break;
       case SwipeAction.archive:
-        widget.onArchive?.call();
-        break;
       case SwipeAction.bookmark:
-        widget.onBookmark?.call();
-        break;
       case SwipeAction.none:
         break;
     }
@@ -111,11 +105,11 @@ class _NotificationTileState extends State<NotificationTile>
               onCancel: () => Navigator.of(ctx).pop(false),
               onDelete: () => Navigator.of(ctx).pop(true),
             )
-          : _ArchiveNotificationDialog(
+          : _DeleteNotificationDialog(
               isDark: widget.isDarkMode,
               l10n: l10n,
               onCancel: () => Navigator.of(ctx).pop(false),
-              onArchive: () => Navigator.of(ctx).pop(true),
+              onDelete: () => Navigator.of(ctx).pop(true),
             ),
     );
     return result ?? false;
@@ -126,7 +120,7 @@ class _NotificationTileState extends State<NotificationTile>
       case SwipeAction.delete:
         return l10n.delete;
       case SwipeAction.markRead:
-        return widget.notification.isRead ? l10n.markAsUnread : l10n.markAsRead;
+        return l10n.markAsRead;
       case SwipeAction.markUnread:
         return l10n.markAsUnread;
       case SwipeAction.archive:
@@ -143,9 +137,7 @@ class _NotificationTileState extends State<NotificationTile>
       case SwipeAction.delete:
         return Icons.delete_outline_rounded;
       case SwipeAction.markRead:
-        return widget.notification.isRead
-            ? Icons.mark_email_unread_outlined
-            : Icons.mark_email_read_outlined;
+        return Icons.mark_email_read_outlined;
       case SwipeAction.markUnread:
         return Icons.mark_email_unread_outlined;
       case SwipeAction.archive:
@@ -334,26 +326,7 @@ class _NotificationTileState extends State<NotificationTile>
                         ),
                       ),
                       const SizedBox(width: 8),
-                      // Bookmark button
-                      GestureDetector(
-                        onTap: () {
-                          HapticFeedback.lightImpact();
-                          widget.onBookmark?.call();
-                        },
-                        child: Icon(
-                          widget.notification.isBookmarked
-                              ? Icons.bookmark
-                              : Icons.bookmark_outline,
-                          size: 20,
-                          color: widget.notification.isBookmarked
-                              ? AppTheme.primaryColor
-                              : (widget.isDarkMode
-                                    ? AppTheme.darkTextSecondary
-                                    : AppTheme.textLight),
-                        ),
-                      ),
-                      if (!widget.notification.isRead) ...[
-                        const SizedBox(width: 8),
+                      if (!widget.notification.isRead)
                         Container(
                           width: 8,
                           height: 8,
@@ -364,7 +337,6 @@ class _NotificationTileState extends State<NotificationTile>
                             shape: BoxShape.circle,
                           ),
                         ),
-                      ],
                     ],
                   ),
                   const SizedBox(height: 6),
@@ -381,6 +353,14 @@ class _NotificationTileState extends State<NotificationTile>
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
+                  if (_buildDetailChips().isNotEmpty) ...[
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: _buildDetailChips(),
+                    ),
+                  ],
                   const SizedBox(height: 10),
                   // Footer row
                   _buildFooterRow(l10n),
@@ -509,53 +489,278 @@ class _NotificationTileState extends State<NotificationTile>
     );
   }
 
+  List<Widget> _buildDetailChips() {
+    final chips = <Widget>[];
+
+    if (widget.notification.courseName != null &&
+        widget.notification.courseName!.trim().isNotEmpty) {
+      chips.add(
+        _buildInfoChip(
+          icon: Icons.school_outlined,
+          label: widget.notification.courseName!,
+        ),
+      );
+    }
+
+    final entityLabel = _entityLabel();
+    if (entityLabel != null) {
+      chips.add(
+        _buildInfoChip(
+          icon: _entityIcon(),
+          label: entityLabel,
+          tint: _getTypeColor(widget.notification.type),
+        ),
+      );
+    }
+
+    final actionHint = _actionHint();
+    if (actionHint != null) {
+      chips.add(
+        _buildInfoChip(
+          icon: Icons.open_in_new_rounded,
+          label: actionHint,
+        ),
+      );
+    }
+
+    chips.add(
+      _buildInfoChip(
+        icon: Icons.label_outline_rounded,
+        label: _displayTypeLabel(),
+        tint: _getTypeColor(widget.notification.type),
+      ),
+    );
+
+    chips.add(
+      _buildInfoChip(
+        icon: Icons.priority_high_rounded,
+        label: _priorityLabel(widget.notification.priority),
+        tint: _getPriorityColor(widget.notification.priority),
+      ),
+    );
+
+    return chips;
+  }
+
+  Widget _buildInfoChip({
+    required IconData icon,
+    required String label,
+    Color? tint,
+  }) {
+    final baseColor = tint ?? (widget.isDarkMode ? Colors.white70 : Colors.black54);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: BoxDecoration(
+        color: baseColor.withValues(alpha: widget.isDarkMode ? 0.14 : 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: baseColor.withValues(alpha: 0.14)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: baseColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w600,
+              color: baseColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _displayTypeLabel() {
+    switch (widget.notification.type) {
+      case NotificationType.assignment:
+        return 'Assignment';
+      case NotificationType.lab:
+        return 'Lab';
+      case NotificationType.quiz:
+        return 'Quiz';
+      case NotificationType.grade:
+        return 'Grade';
+      case NotificationType.material:
+        return 'Material';
+      case NotificationType.message:
+        return 'Message';
+      case NotificationType.deadline:
+        return 'Deadline';
+      case NotificationType.system:
+        return 'System';
+      case NotificationType.community:
+        return 'Community';
+      case NotificationType.discussion:
+        return 'Discussion';
+      case NotificationType.enrollment:
+        return 'Enrollment';
+      case NotificationType.schedule:
+        return 'Schedule';
+      case NotificationType.officeHours:
+        return 'Office Hours';
+      case NotificationType.announcement:
+        return 'Announcement';
+      case NotificationType.unknown:
+        final rawType = widget.notification.rawType.trim();
+        return rawType.isEmpty ? 'Notification' : rawType;
+    }
+  }
+
+  String _priorityLabel(NotificationPriority priority) {
+    switch (priority) {
+      case NotificationPriority.low:
+        return 'Low';
+      case NotificationPriority.normal:
+        return 'Normal';
+      case NotificationPriority.high:
+        return 'High';
+      case NotificationPriority.urgent:
+        return 'Urgent';
+    }
+  }
+
+  String? _entityLabel() {
+    final type = widget.notification.relatedEntityType?.trim();
+    final id = widget.notification.relatedEntityId?.trim();
+    if ((type == null || type.isEmpty) && (id == null || id.isEmpty)) {
+      return null;
+    }
+
+    final label = switch ((type ?? '').toLowerCase()) {
+      'assignment' => 'Assignment',
+      'lab' => 'Lab',
+      'quiz' => 'Quiz',
+      'discussion' => 'Discussion',
+      'material' => 'Material',
+      'exam_schedule' => 'Exam',
+      'campus_event' => 'Event',
+      _ => type ?? 'Item',
+    };
+
+    if (id == null || id.isEmpty) {
+      return label;
+    }
+    return '$label #$id';
+  }
+
+  IconData _entityIcon() {
+    switch ((widget.notification.relatedEntityType ?? '').trim().toLowerCase()) {
+      case 'assignment':
+        return Icons.assignment_outlined;
+      case 'lab':
+        return Icons.science_outlined;
+      case 'quiz':
+        return Icons.quiz_outlined;
+      case 'discussion':
+        return Icons.forum_outlined;
+      case 'material':
+        return Icons.menu_book_outlined;
+      case 'exam_schedule':
+        return Icons.event_note_outlined;
+      case 'campus_event':
+        return Icons.event_available_outlined;
+      default:
+        return Icons.link_outlined;
+    }
+  }
+
+  String? _actionHint() {
+    final actionUrl = widget.notification.actionUrl?.trim();
+    if (actionUrl == null || actionUrl.isEmpty) {
+      return null;
+    }
+
+    if (actionUrl.contains('/submissions')) {
+      return 'Open submissions';
+    }
+    if (actionUrl.contains('/grading')) {
+      return 'Open grading';
+    }
+    if (actionUrl.contains('/assignments/')) {
+      return 'Open assignments';
+    }
+    if (actionUrl.contains('/labs/')) {
+      return 'Open labs';
+    }
+    if (actionUrl.contains('/quizzes/')) {
+      return 'Open quizzes';
+    }
+    if (actionUrl.contains('/schedule')) {
+      return 'Open schedule';
+    }
+    return 'Open details';
+  }
+
   IconData _getTypeIcon(NotificationType type) {
     switch (type) {
-      case NotificationType.assignment:
-        return Icons.assignment_outlined;
-      case NotificationType.lecture:
-        return Icons.menu_book_outlined;
-      case NotificationType.message:
-        return Icons.mail_outline;
-      case NotificationType.exam:
-        return Icons.quiz_outlined;
-      case NotificationType.course:
-        return Icons.school_outlined;
-      case NotificationType.lab:
-        return Icons.science_outlined;
-      case NotificationType.aiInsight:
-        return Icons.auto_awesome;
-      case NotificationType.aiRecommendation:
-        return Icons.lightbulb_outline;
-      case NotificationType.system:
-        return Icons.info_outline;
       case NotificationType.announcement:
         return Icons.campaign_outlined;
+      case NotificationType.grade:
+        return Icons.grading_outlined;
+      case NotificationType.assignment:
+        return Icons.assignment_outlined;
+      case NotificationType.message:
+        return Icons.mail_outline;
+      case NotificationType.deadline:
+        return Icons.schedule_outlined;
+      case NotificationType.system:
+        return Icons.info_outline;
+      case NotificationType.lab:
+        return Icons.science_outlined;
+      case NotificationType.quiz:
+        return Icons.quiz_outlined;
+      case NotificationType.material:
+        return Icons.menu_book_outlined;
+      case NotificationType.community:
+        return Icons.groups_outlined;
+      case NotificationType.discussion:
+        return Icons.forum_outlined;
+      case NotificationType.enrollment:
+        return Icons.school_outlined;
+      case NotificationType.schedule:
+        return Icons.event_outlined;
+      case NotificationType.officeHours:
+        return Icons.support_agent_outlined;
+      case NotificationType.unknown:
+        return Icons.notifications_outlined;
     }
   }
 
   Color _getTypeColor(NotificationType type) {
     switch (type) {
-      case NotificationType.assignment:
-        return const Color(0xFFFF6B6B);
-      case NotificationType.lecture:
-        return AppTheme.primaryColor;
-      case NotificationType.message:
-        return const Color(0xFF9B59B6);
-      case NotificationType.exam:
-        return const Color(0xFFFF9800);
-      case NotificationType.course:
-        return AppTheme.accentColor;
-      case NotificationType.lab:
-        return const Color(0xFF4CAF50);
-      case NotificationType.aiInsight:
-        return const Color(0xFFFF6B35);
-      case NotificationType.aiRecommendation:
-        return const Color(0xFF3498DB);
-      case NotificationType.system:
-        return const Color(0xFF607D8B);
       case NotificationType.announcement:
         return const Color(0xFF673AB7);
+      case NotificationType.grade:
+        return const Color(0xFF1D4ED8);
+      case NotificationType.assignment:
+        return const Color(0xFFFF6B6B);
+      case NotificationType.message:
+        return const Color(0xFF9B59B6);
+      case NotificationType.deadline:
+        return AppTheme.warningColor;
+      case NotificationType.system:
+        return const Color(0xFF607D8B);
+      case NotificationType.lab:
+        return const Color(0xFF4CAF50);
+      case NotificationType.quiz:
+        return const Color(0xFFFF9800);
+      case NotificationType.material:
+        return AppTheme.primaryColor;
+      case NotificationType.community:
+        return const Color(0xFFEC4899);
+      case NotificationType.discussion:
+        return const Color(0xFF059669);
+      case NotificationType.enrollment:
+        return AppTheme.accentColor;
+      case NotificationType.schedule:
+        return const Color(0xFF0EA5E9);
+      case NotificationType.officeHours:
+        return const Color(0xFF8B5CF6);
+      case NotificationType.unknown:
+        return const Color(0xFF64748B);
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../models/core/enums/lab_enums.dart' as api;
 import '../../models/labs/lab_model.dart';
 import '../../services/api/lab_service.dart';
 import 'ta_labs_state.dart';
@@ -135,6 +136,38 @@ class TALabsCubit extends Cubit<TALabsState> {
 
     // Refresh the labs list after successful deletion.
     await fetchTALabs();
+  }
+
+  Future<String?> createLab(Map<String, dynamic> data) async {
+    final result = await _labService.create(data);
+
+    if (!result.isSuccess || result.data == null) {
+      return result.error?.message ?? 'Failed to create lab';
+    }
+
+    _cachedLabs = <LabModel>[result.data!, ..._cachedLabs];
+    emit(TALabsLoaded(_cachedLabs));
+    return null;
+  }
+
+  Future<String?> updateLabStatus(dynamic labId, api.LabStatus status) async {
+    final result = await _labService.updateStatus(labId, status);
+
+    if (!result.isSuccess || result.data == null) {
+      return result.error?.message ?? 'Failed to update lab status';
+    }
+
+    _cachedLabs = _cachedLabs
+        .map((lab) {
+          if (lab.id == labId.toString() || lab.labId == labId) {
+            return result.data!;
+          }
+          return lab;
+        })
+        .toList(growable: false);
+
+    emit(TALabsLoaded(_cachedLabs));
+    return null;
   }
 
   // ── Lab Submission Grading (Principle I) ─────────────────────

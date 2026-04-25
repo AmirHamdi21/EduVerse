@@ -651,16 +651,16 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
               // ),
               // const SizedBox(height: 16),
               // Stats dashboard
-              FadeTransition(
-                opacity: _statsAnimation,
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.2),
-                    end: Offset.zero,
-                  ).animate(_statsAnimation),
-                  child: _isLoading
-                      ? StatsSkeletonDashboard(isDark: isDark)
-                      : StatsDashboard(
+              _isLoading
+                  ? StatsSkeletonDashboard(isDark: isDark)
+                  : FadeTransition(
+                      opacity: _statsAnimation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0, 0.2),
+                          end: Offset.zero,
+                        ).animate(_statsAnimation),
+                        child: StatsDashboard(
                           pendingCount: _pendingCount,
                           gradedCount: _gradedCount,
                           lateCount: _lateCount,
@@ -680,8 +680,8 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
                             }
                           },
                         ),
-                ),
-              ),
+                      ),
+                    ),
             ],
           ),
         ],

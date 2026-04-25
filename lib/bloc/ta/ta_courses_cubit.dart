@@ -509,7 +509,7 @@ class TACoursesCubit extends Cubit<TACoursesState> {
     await fetchCourseAssignments(courseId);
   }
 
-  Future<void> updateAssignmentStatus(
+  Future<String?> updateAssignmentStatus(
     int courseId,
     int assignmentId,
     api.AssignmentStatus status,
@@ -524,9 +524,21 @@ class TACoursesCubit extends Cubit<TACoursesState> {
           ),
         ),
       );
-      return;
+      return result.error?.message ?? 'Failed to update assignment status';
     }
 
     await fetchCourseAssignments(courseId);
+    switch (status) {
+      case api.AssignmentStatus.published:
+        return 'Assignment published. Enrolled students can now receive assignment notifications.';
+      case api.AssignmentStatus.closed:
+        return 'Assignment closed successfully.';
+      case api.AssignmentStatus.archived:
+        return 'Assignment archived successfully.';
+      case api.AssignmentStatus.draft:
+        return 'Assignment moved to draft.';
+      case api.AssignmentStatus.unknown:
+        return 'Assignment status updated.';
+    }
   }
 }

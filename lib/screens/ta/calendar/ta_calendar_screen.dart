@@ -12,6 +12,7 @@ import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/api/office_hours_service.dart';
 import 'package:edu_verse/services/api/schedule_api_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/widgets/shared/loading/calendar_screen_skeleton.dart';
 import 'package:edu_verse/widgets/ta/dashboard/ta_drawer.dart';
 import 'package:edu_verse/widgets/ta/shared/ta_colors.dart';
 
@@ -86,59 +87,52 @@ class _TACalendarScreenState extends State<TACalendarScreen>
                 drawer: const TADrawer(currentRoute: '/ta/calendar'),
                 body: FadeTransition(
                   opacity: _fadeAnimation,
-                  child: Stack(
-                    children: [
-                      CustomScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        slivers: [
-                          _buildAppBar(l10n, isDark),
-                          SliverToBoxAdapter(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildViewSelector(
-                                    isDark,
-                                    l10n,
-                                    calendarState,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  _buildFilterChips(
-                                    isDark,
-                                    l10n,
-                                    calendarState,
-                                  ),
-                                  const SizedBox(height: 20),
-                                  _buildCalendarCard(isDark, calendarState),
-                                  const SizedBox(height: 24),
-                                  _buildEventsForDay(
-                                    isDark,
-                                    l10n,
-                                    calendarState,
-                                  ),
-                                  const SizedBox(height: 24),
-                                  _buildUpcomingEvents(
-                                    isDark,
-                                    l10n,
-                                    calendarState,
-                                  ),
-                                  const SizedBox(height: 32),
-                                ],
+                  child: CustomScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    slivers: [
+                      _buildAppBar(l10n, isDark),
+                      SliverToBoxAdapter(
+                        child: calendarState.isLoading
+                            ? CalendarScreenSkeleton(
+                                isDark: isDark,
+                                showHeroHeader: false,
+                                scrollable: false,
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildViewSelector(
+                                      isDark,
+                                      l10n,
+                                      calendarState,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    _buildFilterChips(
+                                      isDark,
+                                      l10n,
+                                      calendarState,
+                                    ),
+                                    const SizedBox(height: 20),
+                                    _buildCalendarCard(isDark, calendarState),
+                                    const SizedBox(height: 24),
+                                    _buildEventsForDay(
+                                      isDark,
+                                      l10n,
+                                      calendarState,
+                                    ),
+                                    const SizedBox(height: 24),
+                                    _buildUpcomingEvents(
+                                      isDark,
+                                      l10n,
+                                      calendarState,
+                                    ),
+                                    const SizedBox(height: 32),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ),
-                        ],
                       ),
-                      if (calendarState.isLoading)
-                        Positioned.fill(
-                          child: Container(
-                            color: Colors.black.withValues(alpha: 0.08),
-                            child: const Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          ),
-                        ),
                     ],
                   ),
                 ),

@@ -15,6 +15,7 @@ import 'package:edu_verse/widgets/student/calendar/upcoming_events_section.dart'
 import 'package:edu_verse/widgets/student/calendar/add_event_sheet.dart';
 import 'package:edu_verse/widgets/student/calendar/event_details_sheet.dart';
 import 'package:edu_verse/widgets/student/calendar/date_events_sheet.dart';
+import 'package:edu_verse/widgets/shared/loading/calendar_screen_skeleton.dart';
 import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/storage_service.dart';
 import 'package:edu_verse/services/api/schedule_api_service.dart';
@@ -93,33 +94,38 @@ class _CalendarView extends StatelessWidget {
                           _showAddEventSheet(context, isDark, l10n),
                     ),
                     Expanded(
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const CalendarHeader(),
-                            CalendarFilterDropdown(
-                              filter: state.filter,
-                              isVisible: state.isFilterVisible,
-                              onToggle: () => context
-                                  .read<CalendarCubit>()
-                                  .toggleFilterVisibility(),
-                              onFilterChanged: (type) => context
-                                  .read<CalendarCubit>()
-                                  .toggleFilterType(type),
+                      child: state.isLoading
+                          ? CalendarScreenSkeleton(isDark: isDark)
+                          : SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const CalendarHeader(),
+                                  CalendarFilterDropdown(
+                                    filter: state.filter,
+                                    isVisible: state.isFilterVisible,
+                                    onToggle: () => context
+                                        .read<CalendarCubit>()
+                                        .toggleFilterVisibility(),
+                                    onFilterChanged: (type) => context
+                                        .read<CalendarCubit>()
+                                        .toggleFilterType(type),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildCalendarCard(context, state, isDark),
+                                  const SizedBox(height: 24),
+                                  UpcomingEventsSection(
+                                    onEventTap: (event) => _showEventDetails(
+                                      context,
+                                      event,
+                                      isDark,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 100),
+                                ],
+                              ),
                             ),
-                            const SizedBox(height: 16),
-                            _buildCalendarCard(context, state, isDark),
-                            const SizedBox(height: 24),
-                            UpcomingEventsSection(
-                              onEventTap: (event) =>
-                                  _showEventDetails(context, event, isDark),
-                            ),
-                            const SizedBox(height: 100),
-                          ],
-                        ),
-                      ),
                     ),
                   ],
                 ),

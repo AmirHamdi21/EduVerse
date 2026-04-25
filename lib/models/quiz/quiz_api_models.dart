@@ -213,6 +213,7 @@ class QuizModel {
   final DateTime? availableFrom;
   final DateTime? availableUntil;
   final double weight;
+  final QuizStatusEnum? backendStatus;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final int? createdBy;
@@ -227,8 +228,10 @@ class QuizModel {
   final int questionCount;
   final double maxScore;
 
-  // Derived status based on availability dates (mirrors web's deriveQuizStatus)
+  // Prefer backend status because notification triggers depend on explicit
+  // status transitions. Fall back to date-derived status for older payloads.
   QuizStatusEnum get status {
+    if (backendStatus != null) return backendStatus!;
     if (deletedAt != null) return QuizStatusEnum.archived;
     final now = DateTime.now();
     if (availableFrom == null && availableUntil == null) {
@@ -271,6 +274,7 @@ class QuizModel {
     this.availableFrom,
     this.availableUntil,
     this.weight = 1.0,
+    this.backendStatus,
     this.createdAt,
     this.updatedAt,
     this.createdBy,
@@ -320,6 +324,9 @@ class QuizModel {
       availableFrom: _parseDate(json['availableFrom']),
       availableUntil: _parseDate(json['availableUntil']),
       weight: _parseDouble(json['weight'], 1.0),
+      backendStatus: json['status'] != null
+          ? QuizStatusEnum.fromJson(json['status'] as String?)
+          : null,
       createdAt: _parseDate(json['createdAt']),
       updatedAt: _parseDate(json['updatedAt']),
       createdBy: json['createdBy'] != null
@@ -358,6 +365,7 @@ class QuizModel {
     if (availableUntil != null)
       'availableUntil': availableUntil!.toIso8601String(),
     'weight': weight,
+    'status': status.toJson(),
   };
 
   QuizModel copyWith({
@@ -376,6 +384,7 @@ class QuizModel {
     DateTime? availableFrom,
     DateTime? availableUntil,
     double? weight,
+    QuizStatusEnum? backendStatus,
     DateTime? createdAt,
     DateTime? updatedAt,
     int? createdBy,
@@ -402,6 +411,7 @@ class QuizModel {
       availableFrom: availableFrom ?? this.availableFrom,
       availableUntil: availableUntil ?? this.availableUntil,
       weight: weight ?? this.weight,
+      backendStatus: backendStatus ?? this.backendStatus,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       createdBy: createdBy ?? this.createdBy,

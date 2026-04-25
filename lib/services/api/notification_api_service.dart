@@ -1,28 +1,18 @@
 import '../../common/retry_helper.dart';
 import '../../common/service_error.dart';
+import '../../models/notifications/notification_preference_model.dart';
 import 'core_api_client.dart';
 
-/// API service for notification operations.
-///
-/// Maps to the backend NestJS `NotificationsController` endpoints:
-///   - GET    /api/notifications          – list (paginated)
-///   - GET    /api/notifications/unread-count
-///   - PATCH  /api/notifications/:id/read – mark single as read
-///   - PATCH  /api/notifications/read-all – mark all as read
-///   - DELETE /api/notifications/clear-read
-///   - DELETE /api/notifications/:id
+/// API service for backend notification operations.
 class NotificationApiService {
   final CoreApiClient _client;
 
   NotificationApiService({required CoreApiClient coreApiClient})
     : _client = coreApiClient;
 
-  // ── Helpers ────────────────────────────────────────────────────
-
   List<dynamic> _extractList(dynamic data) {
     if (data is List) return data;
     if (data is Map<String, dynamic>) {
-      // Backend may wrap in { data: [...] } or { notifications: [...] }
       if (data['data'] is List) return data['data'] as List;
       if (data['notifications'] is List) return data['notifications'] as List;
       if (data['items'] is List) return data['items'] as List;
@@ -35,22 +25,22 @@ class NotificationApiService {
     return <String, dynamic>{};
   }
 
-  // ── Read operations ────────────────────────────────────────────
-
-  /// GET /api/notifications
-  ///
-  /// Returns the raw list of notification JSON maps from the backend.
-  /// Callers should normalize these into their role-specific models.
   Future<ServiceResult<List<Map<String, dynamic>>>> getAll({
+    int? page,
     int? limit,
-    int? offset,
     String? type,
+    String? priority,
+    bool? isRead,
   }) {
     return RetryHelper.execute<List<Map<String, dynamic>>>(() async {
       final queryParams = <String, dynamic>{};
+      if (page != null) queryParams['page'] = page;
       if (limit != null) queryParams['limit'] = limit;
-      if (offset != null) queryParams['offset'] = offset;
       if (type != null && type.isNotEmpty) queryParams['type'] = type;
+      if (priority != null && priority.isNotEmpty) {
+        queryParams['priority'] = priority;
+      }
+      if (isRead != null) queryParams['isRead'] = isRead;
 
       final response = await _client.dio.get(
         '/notifications',
@@ -63,49 +53,72 @@ class NotificationApiService {
     }, fallbackMessage: 'Failed to load notifications');
   }
 
-  /// GET /api/notifications/unread-count
   Future<ServiceResult<int>> getUnreadCount() {
     return RetryHelper.execute<int>(() async {
       final response = await _client.dio.get('/notifications/unread-count');
       final payload = _extractMap(response.data);
-      // Backend may return { count: N } or { unreadCount: N }
-      return (payload['count'] as int?) ??
-          (payload['unreadCount'] as int?) ??
+      return _parseInt(payload['count']) ??
+          _parseInt(payload['unreadCount']) ??
           0;
     }, fallbackMessage: 'Failed to get unread count');
   }
 
-  // ── Write operations ───────────────────────────────────────────
+  Future<ServiceResult<NotificationPreferenceModel>> getPreferences() {
+    return RetryHelper.execute<NotificationPreferenceModel>(() async {
+      final response = await _client.dio.get('/notifications/preferences');
+      return NotificationPreferenceModel.fromJson(_extractMap(response.data));
+    }, fallbackMessage: 'Failed to load notification preferences');
+  }
 
-  /// PATCH /api/notifications/:id/read
+  Future<ServiceResult<NotificationPreferenceModel>> updatePreferences(
+    NotificationPreferenceModel preferences,
+  ) {
+    return RetryHelper.execute<NotificationPreferenceModel>(() async {
+      final response = await _client.dio.put(
+        '/notifications/preferences',
+        data: preferences.toJson(),
+      );
+      return NotificationPreferenceModel.fromJson(_extractMap(response.data));
+    }, fallbackMessage: 'Failed to save notification preferences');
+  }
+
   Future<ServiceResult<void>> markAsRead(dynamic id) {
     return RetryHelper.executeVoid(() async {
       await _client.dio.patch('/notifications/$id/read');
     }, fallbackMessage: 'Failed to mark notification as read');
   }
 
-  /// PATCH /api/notifications/read-all
   Future<ServiceResult<void>> markAllAsRead() {
     return RetryHelper.executeVoid(() async {
       await _client.dio.patch('/notifications/read-all');
     }, fallbackMessage: 'Failed to mark all notifications as read');
   }
 
-  /// DELETE /api/notifications/clear-read
-  ///
-  /// Returns the number of deleted notifications on success.
+  Future<ServiceResult<int>> clearAll() {
+    return RetryHelper.execute<int>(() async {
+      final response = await _client.dio.delete('/notifications/clear-all');
+      final payload = _extractMap(response.data);
+      return _parseInt(payload['affected']) ?? _parseInt(payload['count']) ?? 0;
+    }, fallbackMessage: 'Failed to clear all notifications');
+  }
+
   Future<ServiceResult<int>> clearRead() {
     return RetryHelper.execute<int>(() async {
       final response = await _client.dio.delete('/notifications/clear-read');
       final payload = _extractMap(response.data);
-      return (payload['affected'] as int?) ?? (payload['count'] as int?) ?? 0;
+      return _parseInt(payload['affected']) ?? _parseInt(payload['count']) ?? 0;
     }, fallbackMessage: 'Failed to clear read notifications');
   }
 
-  /// DELETE /api/notifications/:id
   Future<ServiceResult<void>> deleteNotification(dynamic id) {
     return RetryHelper.executeVoid(() async {
       await _client.dio.delete('/notifications/$id');
     }, fallbackMessage: 'Failed to delete notification');
   }
+}
+
+int? _parseInt(dynamic value) {
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  return int.tryParse(value?.toString() ?? '');
 }

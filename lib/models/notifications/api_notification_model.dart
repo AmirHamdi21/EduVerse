@@ -1,15 +1,8 @@
-import '../instructor/instrucor_notification_model.dart';
 import '../admin/admin_notification_model.dart';
+import '../instructor/instrucor_notification_model.dart';
 import 'notification_model.dart';
 
-/// Lightweight model that maps 1:1 to the backend notification JSON shape.
-///
-/// Handles the normalizer logic from the web frontend:
-///   - `id` / `notificationId` aliasing
-///   - `body` / `message` aliasing
-///   - `isRead` as int(0|1) → bool
-///   - `notificationType` string → enum
-///   - `priority` string → enum
+/// Normalized backend notification transport model.
 class ApiNotificationModel {
   final String id;
   final int? userId;
@@ -19,8 +12,12 @@ class ApiNotificationModel {
   final bool isRead;
   final String priority;
   final String? actionUrl;
+  final String? relatedEntityType;
+  final String? relatedEntityId;
+  final String? announcementId;
   final DateTime createdAt;
-  final DateTime? updatedAt;
+  final DateTime? readAt;
+  final Map<String, dynamic>? rawData;
 
   const ApiNotificationModel({
     required this.id,
@@ -31,144 +28,175 @@ class ApiNotificationModel {
     required this.isRead,
     this.priority = 'medium',
     this.actionUrl,
+    this.relatedEntityType,
+    this.relatedEntityId,
+    this.announcementId,
     required this.createdAt,
-    this.updatedAt,
+    this.readAt,
+    this.rawData,
   });
 
-  /// Normalizer factory — handles all the field aliasing the web frontend does.
   factory ApiNotificationModel.fromJson(Map<String, dynamic> json) {
-    // ID normalization: 'id' or 'notificationId'
     final rawId = json['id'] ?? json['notificationId'] ?? '';
-    final id = rawId.toString();
-
-    // Body normalization: 'body' or 'message'
     final body =
         (json['body'] as String?) ?? (json['message'] as String?) ?? '';
 
-    // isRead normalization: bool or int(0|1)
     final rawIsRead = json['isRead'];
-    bool isRead;
-    if (rawIsRead is bool) {
-      isRead = rawIsRead;
-    } else if (rawIsRead is int) {
-      isRead = rawIsRead != 0;
-    } else {
-      isRead = false;
-    }
+    final isRead = rawIsRead is bool
+        ? rawIsRead
+        : rawIsRead is num
+        ? rawIsRead != 0
+        : json['read'] == true;
 
-    // Type normalization
     final type =
         (json['notificationType'] as String?) ??
         (json['type'] as String?) ??
         'system';
 
-    // Priority normalization
     final priority = (json['priority'] as String?) ?? 'medium';
 
-    // Date parsing
-    DateTime createdAt;
-    try {
-      createdAt = DateTime.parse(json['createdAt'].toString());
-    } catch (_) {
-      createdAt = DateTime.now();
-    }
-
-    DateTime? updatedAt;
-    if (json['updatedAt'] != null) {
-      try {
-        updatedAt = DateTime.parse(json['updatedAt'].toString());
-      } catch (_) {
-        updatedAt = null;
-      }
-    }
+    final createdAt =
+        DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+        DateTime.now();
+    final readAt = json['readAt'] != null
+        ? DateTime.tryParse(json['readAt'].toString())
+        : null;
 
     return ApiNotificationModel(
-      id: id,
-      userId: json['userId'] is int ? json['userId'] as int : null,
+      id: rawId.toString(),
+      userId: _parseNullableInt(json['userId']),
       type: type,
       title: (json['title'] as String?) ?? 'Notification',
       body: body,
       isRead: isRead,
       priority: priority,
-      actionUrl: json['actionUrl'] as String?,
+      actionUrl: json['actionUrl']?.toString(),
+      relatedEntityType: json['relatedEntityType']?.toString(),
+      relatedEntityId: json['relatedEntityId']?.toString(),
+      announcementId: json['announcementId']?.toString(),
       createdAt: createdAt,
-      updatedAt: updatedAt,
+      readAt: readAt,
+      rawData: json,
     );
   }
 
-  // ── Converters to role-specific models ──────────────────────────
-
-  /// Convert to the Student `NotificationModel`.
   NotificationModel toNotificationModel() {
+    final rawType = type.trim().toLowerCase();
+    final resolvedType = _mapToNotificationType(rawType);
     return NotificationModel(
       id: id,
+      userId: userId,
       title: title,
       message: body,
-      type: _mapToNotificationType(type),
-      category: _mapToNotificationCategory(type),
+      type: resolvedType,
+      rawType: rawType,
       priority: _mapToNotificationPriority(priority),
+      category: _mapToNotificationCategory(resolvedType),
       createdAt: createdAt,
+      readAt: readAt,
       isRead: isRead,
       actionUrl: actionUrl,
+      relatedEntityType: relatedEntityType,
+      relatedEntityId: relatedEntityId,
+      announcementId: announcementId,
+      courseId: _extractString(rawData?['courseId']),
+      courseName: _extractCourseName(rawData),
+      instructorName: _extractInstructorName(rawData),
+      source: NotificationSource.backendNotification,
+      allowsReadMutation: true,
+      allowsDeleteMutation: true,
     );
   }
 
-  /// Convert to the Instructor `InstructorNotificationModel`.
   InstructorNotificationModel toInstructorNotification() {
+    final notification = toNotificationModel();
     return InstructorNotificationModel(
-      id: id,
-      title: title,
-      message: body,
-      type: _mapToInstructorType(type),
-      timestamp: createdAt,
-      isRead: isRead,
+      id: notification.id,
+      title: notification.title,
+      message: notification.message,
+      type: _mapToInstructorType(notification.type),
+      timestamp: notification.createdAt,
+      isRead: notification.isRead,
+      studentName: null,
+      courseName: notification.courseName,
+      metadata: <String, dynamic>{
+        'rawType': notification.rawType,
+        'actionUrl': notification.actionUrl,
+        'relatedEntityType': notification.relatedEntityType,
+        'relatedEntityId': notification.relatedEntityId,
+      },
     );
   }
 
-  /// Convert to the Admin `AdminNotificationModel`.
   AdminNotificationModel toAdminNotificationModel() {
+    final notification = toNotificationModel();
     return AdminNotificationModel(
-      id: id,
-      title: title,
-      message: body,
-      type: _mapToAdminType(type),
-      priority: _mapToAdminPriority(priority),
-      category: _mapToAdminCategory(type),
-      createdAt: createdAt,
-      isRead: isRead,
+      id: notification.id,
+      title: notification.title,
+      message: notification.message,
+      type: _mapToAdminType(notification.type),
+      priority: _mapToAdminPriority(notification.priority),
+      category: _mapToAdminCategory(notification.type),
+      createdAt: notification.createdAt,
+      isRead: notification.isRead,
     );
   }
-
-  // ── Private mapping helpers ─────────────────────────────────────
 
   static NotificationType _mapToNotificationType(String type) {
-    switch (type.toLowerCase()) {
-      case 'assignment':
-        return NotificationType.assignment;
-      case 'grade':
-        return NotificationType.course;
+    switch (type) {
       case 'announcement':
         return NotificationType.announcement;
-      case 'enrollment':
-        return NotificationType.course;
+      case 'grade':
+        return NotificationType.grade;
+      case 'assignment':
+        return NotificationType.assignment;
+      case 'message':
+        return NotificationType.message;
+      case 'deadline':
+        return NotificationType.deadline;
       case 'system':
-      default:
         return NotificationType.system;
+      case 'lab':
+        return NotificationType.lab;
+      case 'quiz':
+        return NotificationType.quiz;
+      case 'material':
+        return NotificationType.material;
+      case 'community':
+        return NotificationType.community;
+      case 'discussion':
+        return NotificationType.discussion;
+      case 'enrollment':
+        return NotificationType.enrollment;
+      case 'schedule':
+        return NotificationType.schedule;
+      case 'office_hours':
+        return NotificationType.officeHours;
+      default:
+        return NotificationType.unknown;
     }
   }
 
-  static NotificationCategory _mapToNotificationCategory(String type) {
-    switch (type.toLowerCase()) {
-      case 'assignment':
+  static NotificationCategory _mapToNotificationCategory(NotificationType type) {
+    switch (type) {
+      case NotificationType.assignment:
+      case NotificationType.lab:
+      case NotificationType.quiz:
+      case NotificationType.material:
+      case NotificationType.enrollment:
+      case NotificationType.grade:
+        return NotificationCategory.courses;
+      case NotificationType.deadline:
+      case NotificationType.schedule:
+      case NotificationType.officeHours:
         return NotificationCategory.deadlines;
-      case 'grade':
-        return NotificationCategory.courses;
-      case 'announcement':
-        return NotificationCategory.system;
-      case 'enrollment':
-        return NotificationCategory.courses;
-      case 'system':
-      default:
+      case NotificationType.message:
+      case NotificationType.community:
+      case NotificationType.discussion:
+      case NotificationType.announcement:
+        return NotificationCategory.messages;
+      case NotificationType.system:
+      case NotificationType.unknown:
         return NotificationCategory.system;
     }
   }
@@ -187,64 +215,132 @@ class ApiNotificationModel {
     }
   }
 
-  static InstructorNotificationType _mapToInstructorType(String type) {
-    switch (type.toLowerCase()) {
-      case 'assignment':
+  static InstructorNotificationType _mapToInstructorType(
+    NotificationType type,
+  ) {
+    switch (type) {
+      case NotificationType.assignment:
+      case NotificationType.lab:
+      case NotificationType.quiz:
         return InstructorNotificationType.submission;
-      case 'grade':
+      case NotificationType.grade:
         return InstructorNotificationType.grading;
-      case 'announcement':
+      case NotificationType.message:
+      case NotificationType.community:
+      case NotificationType.discussion:
+        return InstructorNotificationType.message;
+      case NotificationType.deadline:
+      case NotificationType.schedule:
+      case NotificationType.officeHours:
+        return InstructorNotificationType.deadline;
+      case NotificationType.announcement:
         return InstructorNotificationType.announcement;
-      case 'enrollment':
+      case NotificationType.enrollment:
         return InstructorNotificationType.attendance;
-      case 'system':
-      default:
+      case NotificationType.material:
+      case NotificationType.system:
+      case NotificationType.unknown:
         return InstructorNotificationType.system;
     }
   }
 
-  static AdminNotificationType _mapToAdminType(String type) {
-    switch (type.toLowerCase()) {
-      case 'assignment':
+  static AdminNotificationType _mapToAdminType(NotificationType type) {
+    switch (type) {
+      case NotificationType.assignment:
+      case NotificationType.lab:
+      case NotificationType.quiz:
         return AdminNotificationType.approval;
-      case 'grade':
+      case NotificationType.grade:
         return AdminNotificationType.report;
-      case 'announcement':
+      case NotificationType.announcement:
+      case NotificationType.system:
+      case NotificationType.schedule:
+      case NotificationType.officeHours:
+      case NotificationType.deadline:
         return AdminNotificationType.systemAlert;
-      case 'enrollment':
+      case NotificationType.enrollment:
+      case NotificationType.message:
+      case NotificationType.community:
+      case NotificationType.discussion:
+      case NotificationType.material:
+      case NotificationType.unknown:
         return AdminNotificationType.userActivity;
-      case 'system':
-      default:
-        return AdminNotificationType.maintenance;
     }
   }
 
-  static AdminNotificationPriority _mapToAdminPriority(String priority) {
-    switch (priority.toLowerCase()) {
-      case 'urgent':
+  static AdminNotificationPriority _mapToAdminPriority(
+    NotificationPriority priority,
+  ) {
+    switch (priority) {
+      case NotificationPriority.urgent:
         return AdminNotificationPriority.urgent;
-      case 'high':
+      case NotificationPriority.high:
         return AdminNotificationPriority.high;
-      case 'low':
+      case NotificationPriority.low:
         return AdminNotificationPriority.low;
-      case 'medium':
-      default:
+      case NotificationPriority.normal:
         return AdminNotificationPriority.normal;
     }
   }
 
-  static AdminNotificationCategory _mapToAdminCategory(String type) {
-    switch (type.toLowerCase()) {
-      case 'assignment':
-      case 'grade':
+  static AdminNotificationCategory _mapToAdminCategory(NotificationType type) {
+    switch (type) {
+      case NotificationType.assignment:
+      case NotificationType.lab:
+      case NotificationType.quiz:
+      case NotificationType.grade:
+      case NotificationType.material:
         return AdminNotificationCategory.courses;
-      case 'announcement':
-      case 'system':
-        return AdminNotificationCategory.system;
-      case 'enrollment':
+      case NotificationType.enrollment:
+      case NotificationType.message:
+      case NotificationType.community:
+      case NotificationType.discussion:
         return AdminNotificationCategory.users;
-      default:
+      case NotificationType.announcement:
+      case NotificationType.system:
+      case NotificationType.deadline:
+      case NotificationType.schedule:
+      case NotificationType.officeHours:
+      case NotificationType.unknown:
         return AdminNotificationCategory.system;
     }
   }
+}
+
+int? _parseNullableInt(dynamic value) {
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  return int.tryParse(value?.toString() ?? '');
+}
+
+String? _extractString(dynamic value) {
+  final text = value?.toString();
+  if (text == null || text.trim().isEmpty) return null;
+  return text;
+}
+
+String? _extractCourseName(Map<String, dynamic>? json) {
+  if (json == null) return null;
+  final course = json['course'];
+  if (course is Map<String, dynamic>) {
+    final code = _extractString(course['code']);
+    final name = _extractString(course['name']);
+    final combined = [if (code != null) code, if (name != null) name].join(' - ');
+    return combined.isEmpty ? name : combined;
+  }
+  return _extractString(json['courseName']);
+}
+
+String? _extractInstructorName(Map<String, dynamic>? json) {
+  if (json == null) return null;
+  final author = json['author'];
+  if (author is Map<String, dynamic>) {
+    final firstName = _extractString(author['firstName']);
+    final lastName = _extractString(author['lastName']);
+    final fullName = [if (firstName != null) firstName, if (lastName != null) lastName]
+        .join(' ')
+        .trim();
+    if (fullName.isNotEmpty) return fullName;
+  }
+  return _extractString(json['instructorName']);
 }

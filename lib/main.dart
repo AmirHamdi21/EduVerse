@@ -53,6 +53,8 @@ import 'package:edu_verse/services/api/office_hours_service.dart';
 import 'package:edu_verse/services/api/grades_service.dart';
 import 'package:edu_verse/services/api/student_stats_service.dart';
 import 'package:edu_verse/services/api/notification_api_service.dart';
+import 'package:edu_verse/services/notifications/device_notification_preferences_service.dart';
+import 'package:edu_verse/services/notifications/notification_socket_service.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -131,7 +133,10 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late OfficeHoursService _officeHoursService;
   late StudentStatsService _studentStatsService;
   late NotificationApiService _notificationApiService;
+  late NotificationSocketService _notificationSocketService;
+  late DeviceNotificationPreferencesService _deviceNotificationPreferencesService;
   StreamSubscription<String>? _sessionExpirySubscription;
+  StreamSubscription<dynamic>? _incomingNotificationSubscription;
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
@@ -163,9 +168,15 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _notificationApiService = NotificationApiService(
       coreApiClient: coreApiClient,
     );
+    _notificationSocketService = NotificationSocketService(
+      storageService: _storageService,
+    );
+    _deviceNotificationPreferencesService =
+        DeviceNotificationPreferencesService();
 
     _notificationCubit = NotificationCubit(
       notificationApiService: _notificationApiService,
+      notificationSocketService: _notificationSocketService,
     )..loadNotifications();
     _tasksCubit = TasksCubit()..loadTasks();
     _gradesCubit = GradesCubit(
@@ -209,6 +220,38 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           );
       });
     });
+
+    _incomingNotificationSubscription = _notificationCubit.incomingNotifications
+        .listen((notification) async {
+          if (!mounted) return;
+          final devicePreferences =
+              await _deviceNotificationPreferencesService.load();
+          if (!devicePreferences.foregroundAlertsEnabled) {
+            return;
+          }
+
+          if (devicePreferences.vibrationEnabled) {
+            HapticFeedback.mediumImpact();
+          }
+          if (devicePreferences.soundEnabled) {
+            SystemSound.play(SystemSoundType.click);
+          }
+
+          final content = devicePreferences.showPreview &&
+                  notification.message.trim().isNotEmpty
+              ? '${notification.title}: ${notification.message}'
+              : notification.title;
+
+          _scaffoldMessengerKey.currentState
+            ?..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(content),
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+        });
 
     // ── Course API layer (Phase 1+) ────────────────────────
 
@@ -336,6 +379,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _quizManagementCubit.close();
     _studentQuizCubit.close();
     _sessionExpirySubscription?.cancel();
+    _incomingNotificationSubscription?.cancel();
     super.dispose();
   }
 
