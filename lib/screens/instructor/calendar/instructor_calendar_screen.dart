@@ -14,6 +14,7 @@ import '../../../widgets/instructor/calendar/instructor_day_view_calendar.dart';
 import '../../../widgets/instructor/calendar/instructor_upcoming_events_section.dart';
 import '../../../widgets/instructor/calendar/instructor_add_event_sheet.dart';
 import '../../../widgets/instructor/calendar/instructor_event_details_sheet.dart';
+import '../../../widgets/shared/loading/calendar_screen_skeleton.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/storage_service.dart';
 import '../../../services/api/schedule_api_service.dart';
@@ -99,37 +100,43 @@ class _InstructorCalendarView extends StatelessWidget {
                           _showAddEventSheet(context, isDark, l10n),
                     ),
                     Expanded(
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const InstructorCalendarHeader(),
-                            InstructorCalendarFilterDropdown(
-                              filter: state.filter,
-                              isVisible: state.isFilterVisible,
-                              onToggle: () => context
-                                  .read<InstructorCalendarCubit>()
-                                  .toggleFilterVisibility(),
-                              onFilterChanged: (type) => context
-                                  .read<InstructorCalendarCubit>()
-                                  .toggleFilterType(type),
-                              campusSource: state.campusSource,
-                              onCampusSourceChanged: (source) => context
-                                  .read<InstructorCalendarCubit>()
-                                  .setCampusSource(source),
+                      child: state.isLoading
+                          ? CalendarScreenSkeleton(isDark: isDark)
+                          : SingleChildScrollView(
+                              physics: const BouncingScrollPhysics(),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const InstructorCalendarHeader(),
+                                  InstructorCalendarFilterDropdown(
+                                    filter: state.filter,
+                                    isVisible: state.isFilterVisible,
+                                    onToggle: () => context
+                                        .read<InstructorCalendarCubit>()
+                                        .toggleFilterVisibility(),
+                                    onFilterChanged: (type) => context
+                                        .read<InstructorCalendarCubit>()
+                                        .toggleFilterType(type),
+                                    campusSource: state.campusSource,
+                                    onCampusSourceChanged: (source) => context
+                                        .read<InstructorCalendarCubit>()
+                                        .setCampusSource(source),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildCalendarCard(context, state, isDark),
+                                  const SizedBox(height: 24),
+                                  InstructorUpcomingEventsSection(
+                                    onEventTap: (event) =>
+                                        _showEventDetails(
+                                          context,
+                                          event,
+                                          isDark,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 100),
+                                ],
+                              ),
                             ),
-                            const SizedBox(height: 16),
-                            _buildCalendarCard(context, state, isDark),
-                            const SizedBox(height: 24),
-                            InstructorUpcomingEventsSection(
-                              onEventTap: (event) =>
-                                  _showEventDetails(context, event, isDark),
-                            ),
-                            const SizedBox(height: 100),
-                          ],
-                        ),
-                      ),
                     ),
                   ],
                 ),

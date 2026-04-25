@@ -406,15 +406,25 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
             onEdit: () =>
                 _openAssignmentEditor(context, assignment: assignment),
             onDelete: () => _confirmDelete(context, assignment),
-            onStatusChange: (status) {
+            onStatusChange: (status) async {
               final courseId = _selectedCourseId;
               if (courseId == null) {
                 return;
               }
-              context.read<TACoursesCubit>().updateAssignmentStatus(
+              final messenger = ScaffoldMessenger.of(context);
+              final message = await context.read<TACoursesCubit>().updateAssignmentStatus(
                 courseId,
                 assignment.assignmentId,
                 status,
+              );
+              if (!mounted || message == null) {
+                return;
+              }
+              messenger.showSnackBar(
+                SnackBar(
+                  content: Text(message),
+                  behavior: SnackBarBehavior.floating,
+                ),
               );
             },
           );

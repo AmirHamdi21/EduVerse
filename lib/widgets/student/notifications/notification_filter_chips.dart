@@ -45,9 +45,9 @@ class NotificationFilterChips extends StatelessWidget {
         color: const Color(0xFF9B59B6),
       ),
       _CategoryItem(
-        category: NotificationCategory.aiInsights,
-        label: l10n.notificationAIInsights,
-        icon: Icons.auto_awesome,
+        category: NotificationCategory.system,
+        label: l10n.system,
+        icon: Icons.settings_outlined,
         color: const Color(0xFFFF6B35),
       ),
     ];

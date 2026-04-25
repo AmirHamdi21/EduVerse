@@ -8,15 +8,13 @@ import '../../../bloc/ta/ta_labs_cubit.dart';
 import '../../../bloc/ta/ta_labs_state.dart';
 import '../../../bloc/ta/ta_courses_cubit.dart';
 import '../../../bloc/ta/ta_courses_state.dart';
+import '../../../models/core/enums/lab_enums.dart' as api;
 import '../../../models/labs/lab_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/dashboard/ta_drawer.dart';
 import '../../../widgets/instructor/labs/lab_create_form.dart';
-import '../../../services/api/lab_service.dart';
-import '../../../services/api/core_api_client.dart';
-import '../../../services/storage_service.dart';
 
 /// T029: TA Labs List Screen — fully refactored from mock data to TALabsCubit.
 /// All mock model classes (TACourseWithLabs, TALabListItem) removed.
@@ -755,11 +753,50 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
                 onSelected: (value) {
-                  if (value == 'delete') {
-                    _confirmDeleteLab(lab);
-                  }
-                },
+                if (value == 'delete') {
+                  _confirmDeleteLab(lab);
+                } else if (value == 'publish') {
+                  _updateLabStatus(lab, api.LabStatus.published);
+                } else if (value == 'close') {
+                  _updateLabStatus(lab, api.LabStatus.closed);
+                } else if (value == 'archive') {
+                  _updateLabStatus(lab, api.LabStatus.archived);
+                }
+              },
                 itemBuilder: (ctx) => [
+                  if (lab.status == api.LabStatus.draft)
+                    const PopupMenuItem(
+                      value: 'publish',
+                      child: Row(
+                        children: [
+                          Icon(Icons.publish_rounded, size: 18),
+                          SizedBox(width: 8),
+                          Text('Publish'),
+                        ],
+                      ),
+                    ),
+                  if (lab.status == api.LabStatus.published)
+                    const PopupMenuItem(
+                      value: 'close',
+                      child: Row(
+                        children: [
+                          Icon(Icons.lock_outline_rounded, size: 18),
+                          SizedBox(width: 8),
+                          Text('Close'),
+                        ],
+                      ),
+                    ),
+                  if (lab.status == api.LabStatus.closed)
+                    const PopupMenuItem(
+                      value: 'archive',
+                      child: Row(
+                        children: [
+                          Icon(Icons.archive_outlined, size: 18),
+                          SizedBox(width: 8),
+                          Text('Archive'),
+                        ],
+                      ),
+                    ),
                   PopupMenuItem(
                     value: 'delete',
                     child: Row(
@@ -885,38 +922,29 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
               courses: courses,
               onCancel: () => Navigator.of(ctx).pop(),
               onSubmit: (data) async {
-                Navigator.of(ctx).pop();
-                try {
-                  // T031: Resolve LabService — try provider tree, fallback to local instance
-                  LabService labService;
-                  try {
-                    labService = context.read<LabService>();
-                  } catch (_) {
-                    final coreApiClient = CoreApiClient(
-                      storageService: StorageService(),
-                    );
-                    labService = LabService(coreApiClient: coreApiClient);
-                  }
+                final messenger = ScaffoldMessenger.of(context);
+                final cubit = context.read<TALabsCubit>();
+                final message = await cubit.createLab(data);
 
-                  await labService.create(data);
-                  if (mounted) {
-                    context.read<TALabsCubit>().fetchTALabs();
-                  }
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          e.toString().contains('403')
-                              ? "You don't have permission to create labs for this course"
-                              : 'Failed to create lab: $e',
-                        ),
-                        backgroundColor: TAColors.error,
-                        behavior: SnackBarBehavior.fixed,
-                      ),
-                    );
-                  }
+                if (!mounted) {
+                  return;
                 }
+
+                if (!ctx.mounted) {
+                  return;
+                }
+
+                Navigator.of(ctx).pop();
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      message ?? _labSavedMessage(data['status']?.toString()),
+                    ),
+                    backgroundColor:
+                        message == null ? TAColors.success : TAColors.error,
+                    behavior: SnackBarBehavior.fixed,
+                  ),
+                );
               },
             );
           },
@@ -950,5 +978,47 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _updateLabStatus(LabModel lab, api.LabStatus status) async {
+    final message = await context.read<TALabsCubit>().updateLabStatus(
+      lab.id.isNotEmpty ? (int.tryParse(lab.id) ?? lab.id) : lab.labId,
+      status,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message ?? _labStatusSuccessMessage(status)),
+        backgroundColor: message == null ? TAColors.success : TAColors.error,
+        behavior: SnackBarBehavior.fixed,
+      ),
+    );
+  }
+
+  String _labSavedMessage(String? rawStatus) {
+    final status = api.LabStatus.fromString(rawStatus ?? '');
+    if (status == api.LabStatus.published) {
+      return 'Lab created as published. Enrolled students can now receive lab notifications.';
+    }
+    return 'Lab created as draft. Publish it to notify enrolled students.';
+  }
+
+  String _labStatusSuccessMessage(api.LabStatus status) {
+    switch (status) {
+      case api.LabStatus.published:
+        return 'Lab published. Enrolled students can now receive lab notifications.';
+      case api.LabStatus.closed:
+        return 'Lab closed successfully.';
+      case api.LabStatus.archived:
+        return 'Lab archived successfully.';
+      case api.LabStatus.draft:
+        return 'Lab moved to draft.';
+      case api.LabStatus.unknown:
+        return 'Lab status updated.';
+    }
   }
 }

@@ -6,6 +6,7 @@ import '../../bloc/instructor/instructor_assignments_state.dart';
 import '../../models/assignments/assignment_form_data.dart';
 import '../../models/assignments/assignment_model.dart';
 import '../../models/core/drive_file_model.dart';
+import '../../models/core/enums/assignment_enums.dart' as api;
 import '../../services/api/assignment_service.dart';
 import '../../services/api/core_api_client.dart';
 import '../../services/api/enrollment_service.dart';
@@ -261,7 +262,7 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
       return;
     }
 
-    final baseMessage = isEdit ? 'Assignment updated' : 'Assignment created';
+    final baseMessage = _assignmentSavedMessage(data.status, isEdit: isEdit);
     final successMessage = uploadedCount > 0
         ? '$baseMessage with $uploadedCount instruction file(s)'
         : baseMessage;
@@ -293,6 +294,32 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
       return first.assignmentId;
     }
     return int.tryParse(first.id) ?? 0;
+  }
+
+  String _assignmentSavedMessage(
+    api.AssignmentStatus status, {
+    required bool isEdit,
+  }) {
+    switch (status) {
+      case api.AssignmentStatus.published:
+        return isEdit
+            ? 'Assignment updated and published. Enrolled students can now receive assignment notifications.'
+            : 'Assignment created as published. Enrolled students can now receive assignment notifications.';
+      case api.AssignmentStatus.draft:
+        return isEdit
+            ? 'Assignment updated as draft. Publish it to notify enrolled students.'
+            : 'Assignment created as draft. Publish it to notify enrolled students.';
+      case api.AssignmentStatus.closed:
+        return isEdit
+            ? 'Assignment updated as closed. Reopen or publish it if students still need access.'
+            : 'Assignment created as closed. Students will not receive publish notifications until it is published.';
+      case api.AssignmentStatus.archived:
+        return isEdit
+            ? 'Assignment updated as archived.'
+            : 'Assignment created as archived.';
+      case api.AssignmentStatus.unknown:
+        return isEdit ? 'Assignment updated.' : 'Assignment created.';
+    }
   }
 
   static AssignmentFormData? _toInitialData(AssignmentModel? assignment) {

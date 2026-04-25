@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../bloc/instructor/instructor_labs_cubit.dart';
 import '../../../bloc/instructor/instructor_labs_state.dart';
+import '../../../models/core/enums/lab_enums.dart' as api;
 import '../../../models/labs/lab_model.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
@@ -307,6 +308,32 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
                                 onDelete: _resolvedCanManage
                                     ? () => _confirmDelete(context, lab)
                                     : null,
+                                onStatusChange: _resolvedCanManage
+                                    ? (status) async {
+                                        final messenger =
+                                            ScaffoldMessenger.of(context);
+                                        final message = await cubit.updateStatus(
+                                          lab.id.isNotEmpty
+                                              ? lab.id
+                                              : lab.labId.toString(),
+                                          status,
+                                        );
+
+                                        if (!mounted) {
+                                          return;
+                                        }
+
+                                        messenger.showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              message ??
+                                                  _labStatusSuccessMessage(status),
+                                            ),
+                                            behavior: SnackBarBehavior.floating,
+                                          ),
+                                        );
+                                      }
+                                    : null,
                               ),
                             if (loaded.hasMorePages)
                               Padding(
@@ -398,8 +425,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
                       SnackBar(
                         content: Text(
                           isEdit
-                              ? 'Lab updated successfully.'
-                              : 'Lab created successfully.',
+                              ? _labSavedMessage(payload['status']?.toString())
+                              : _labSavedMessage(payload['status']?.toString()),
                         ),
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -412,6 +439,29 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
         );
       },
     );
+  }
+
+  String _labSavedMessage(String? rawStatus) {
+    final status = api.LabStatus.fromString(rawStatus ?? '');
+    if (status == api.LabStatus.published) {
+      return 'Lab saved as published. Enrolled students can now receive lab notifications.';
+    }
+    return 'Lab saved as draft. Publish it to notify enrolled students.';
+  }
+
+  String _labStatusSuccessMessage(api.LabStatus status) {
+    switch (status) {
+      case api.LabStatus.published:
+        return 'Lab published. Enrolled students can now receive lab notifications.';
+      case api.LabStatus.closed:
+        return 'Lab closed successfully.';
+      case api.LabStatus.archived:
+        return 'Lab archived successfully.';
+      case api.LabStatus.draft:
+        return 'Lab moved to draft.';
+      case api.LabStatus.unknown:
+        return 'Lab status updated.';
+    }
   }
 
   Future<void> _confirmDelete(BuildContext context, LabModel lab) async {

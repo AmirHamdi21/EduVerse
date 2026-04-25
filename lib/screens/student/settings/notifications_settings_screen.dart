@@ -2,8 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../bloc/theme/theme_bloc.dart';
+import '../../../common/service_error.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../models/notifications/device_notification_preferences.dart';
+import '../../../models/notifications/notification_preference_model.dart';
+import '../../../services/api/notification_api_service.dart';
+import '../../../services/notifications/device_notification_preferences_service.dart';
 
 class NotificationsSettingsScreen extends StatefulWidget {
   const NotificationsSettingsScreen({super.key});
@@ -15,16 +21,69 @@ class NotificationsSettingsScreen extends StatefulWidget {
 
 class _NotificationsSettingsScreenState
     extends State<NotificationsSettingsScreen> {
-  bool _pushEnabled = true;
-  bool _courseUpdates = true;
-  bool _assignmentReminders = true;
-  bool _gradeNotifications = true;
-  bool _messageAlerts = true;
-  bool _aiSuggestions = true;
-  bool _systemAlerts = true;
-  bool _soundEnabled = true;
-  bool _vibrationEnabled = true;
-  bool _showPreview = true;
+  final DeviceNotificationPreferencesService _devicePreferencesService =
+      DeviceNotificationPreferencesService();
+
+  NotificationPreferenceModel _serverPreferences =
+      const NotificationPreferenceModel();
+  DeviceNotificationPreferences _devicePreferences =
+      const DeviceNotificationPreferences();
+
+  bool _isLoading = true;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  Future<void> _loadSettings() async {
+    setState(() => _isLoading = true);
+    final api = context.read<NotificationApiService>();
+
+    try {
+      final preferenceResult =
+          await api.getPreferences();
+      final devicePreferences = await _devicePreferencesService.load();
+
+      if (!mounted) return;
+      setState(() {
+        if (preferenceResult.isSuccess && preferenceResult.data != null) {
+          _serverPreferences = preferenceResult.data!;
+        }
+        _devicePreferences = devicePreferences;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _saveSettings() async {
+    setState(() => _isSaving = true);
+    HapticFeedback.mediumImpact();
+
+    final api = context.read<NotificationApiService>();
+    final ServiceResult<NotificationPreferenceModel> saveResult =
+        await api.updatePreferences(_serverPreferences);
+    await _devicePreferencesService.save(_devicePreferences);
+
+    if (!mounted) return;
+    setState(() => _isSaving = false);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          saveResult.isSuccess
+              ? 'Notification settings saved'
+              : 'Saved local settings, but server preferences failed to update',
+        ),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +95,7 @@ class _NotificationsSettingsScreenState
           ? const Color(0xFF0F172A)
           : const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: isDark
-            ? const Color(0xFF0F172A)
-            : const Color(0xFFF8FAFC),
+        backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
@@ -56,213 +113,276 @@ class _NotificationsSettingsScreenState
             color: isDark ? Colors.white : Colors.black87,
           ),
         ),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        physics: const BouncingScrollPhysics(),
-        children: [
-          // Master Toggle
-          _buildMasterToggle(isDark, l10n),
-          const SizedBox(height: 24),
-
-          // Notification Categories
-          _buildSectionTitle('Notification Categories', isDark),
-          const SizedBox(height: 12),
-          _buildSettingsCard(isDark, [
-            _buildToggleItem(
-              isDark,
-              icon: Icons.school_rounded,
-              title: 'Course Updates',
-              subtitle: 'New content, announcements',
-              value: _courseUpdates,
-              onChanged: (v) => setState(() => _courseUpdates = v),
-              enabled: _pushEnabled,
-            ),
-            _buildDivider(isDark),
-            _buildToggleItem(
-              isDark,
-              icon: Icons.assignment_rounded,
-              title: 'Assignment Reminders',
-              subtitle: 'Due dates, submissions',
-              value: _assignmentReminders,
-              onChanged: (v) => setState(() => _assignmentReminders = v),
-              enabled: _pushEnabled,
-            ),
-            _buildDivider(isDark),
-            _buildToggleItem(
-              isDark,
-              icon: Icons.grade_rounded,
-              title: 'Grade Notifications',
-              subtitle: 'New grades, feedback',
-              value: _gradeNotifications,
-              onChanged: (v) => setState(() => _gradeNotifications = v),
-              enabled: _pushEnabled,
-            ),
-            _buildDivider(isDark),
-            _buildToggleItem(
-              isDark,
-              icon: Icons.chat_bubble_rounded,
-              title: 'Message Alerts',
-              subtitle: 'Chat messages, discussions',
-              value: _messageAlerts,
-              onChanged: (v) => setState(() => _messageAlerts = v),
-              enabled: _pushEnabled,
-            ),
-            _buildDivider(isDark),
-            _buildToggleItem(
-              isDark,
-              icon: Icons.auto_awesome_rounded,
-              title: 'AI Suggestions',
-              subtitle: 'Study tips, recommendations',
-              value: _aiSuggestions,
-              onChanged: (v) => setState(() => _aiSuggestions = v),
-              enabled: _pushEnabled,
-            ),
-            _buildDivider(isDark),
-            _buildToggleItem(
-              isDark,
-              icon: Icons.settings_rounded,
-              title: 'System Alerts',
-              subtitle: 'App updates, maintenance',
-              value: _systemAlerts,
-              onChanged: (v) => setState(() => _systemAlerts = v),
-              enabled: _pushEnabled,
-            ),
-          ]),
-          const SizedBox(height: 24),
-
-          // Sound & Vibration
-          _buildSectionTitle('Sound & Vibration', isDark),
-          const SizedBox(height: 12),
-          _buildSettingsCard(isDark, [
-            _buildToggleItem(
-              isDark,
-              icon: Icons.volume_up_rounded,
-              title: 'Notification Sound',
-              subtitle: 'Play sound for notifications',
-              value: _soundEnabled,
-              onChanged: (v) => setState(() => _soundEnabled = v),
-              enabled: _pushEnabled,
-            ),
-            _buildDivider(isDark),
-            _buildToggleItem(
-              isDark,
-              icon: Icons.vibration_rounded,
-              title: 'Vibration',
-              subtitle: 'Vibrate for notifications',
-              value: _vibrationEnabled,
-              onChanged: (v) => setState(() => _vibrationEnabled = v),
-              enabled: _pushEnabled,
-            ),
-          ]),
-          const SizedBox(height: 24),
-
-          // Privacy
-          _buildSectionTitle('Privacy', isDark),
-          const SizedBox(height: 12),
-          _buildSettingsCard(isDark, [
-            _buildToggleItem(
-              isDark,
-              icon: Icons.preview_rounded,
-              title: 'Show Preview',
-              subtitle: 'Display message content in notifications',
-              value: _showPreview,
-              onChanged: (v) => setState(() => _showPreview = v),
-              enabled: _pushEnabled,
-            ),
-          ]),
-          const SizedBox(height: 32),
+        actions: [
+          TextButton(
+            onPressed: _isLoading || _isSaving ? null : _saveSettings,
+            child: _isSaving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('Save'),
+          ),
         ],
       ),
-    );
-  }
-
-  Widget _buildMasterToggle(bool isDark, AppLocalizations l10n) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: _pushEnabled
-              ? [const Color(0xFF3B82F6), const Color(0xFF2563EB)]
-              : isDark
-              ? [const Color(0xFF1E293B), const Color(0xFF334155)]
-              : [const Color(0xFFE2E8F0), const Color(0xFFCBD5E1)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: _pushEnabled
-            ? [
-                BoxShadow(
-                  color: const Color(0xFF3B82F6).withValues(alpha: 0.3),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : null,
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: _pushEnabled ? 0.2 : 0.1),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Icon(
-              Icons.notifications_active_rounded,
-              color: _pushEnabled
-                  ? Colors.white
-                  : (isDark ? Colors.white54 : Colors.black45),
-              size: 28,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView(
+              padding: const EdgeInsets.all(16),
+              physics: const BouncingScrollPhysics(),
               children: [
-                Text(
-                  l10n.pushNotifications,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: _pushEnabled
-                        ? Colors.white
-                        : (isDark ? Colors.white : Colors.black87),
-                  ),
+                _buildSectionHeader('Account Notification Preferences', isDark),
+                const SizedBox(height: 12),
+                _buildSettingsCard(
+                  isDark,
+                  children: [
+                    _buildToggleItem(
+                      isDark,
+                      title: 'Email Notifications',
+                      subtitle: 'Allow email delivery for supported notification types',
+                      value: _serverPreferences.emailEnabled,
+                      onChanged: (value) => setState(
+                        () => _serverPreferences =
+                            _serverPreferences.copyWith(emailEnabled: value),
+                      ),
+                    ),
+                    _buildDivider(isDark),
+                    _buildToggleItem(
+                      isDark,
+                      title: 'Push Preference',
+                      subtitle: 'Store your push delivery preference on the server',
+                      value: _serverPreferences.pushEnabled,
+                      onChanged: (value) => setState(
+                        () => _serverPreferences =
+                            _serverPreferences.copyWith(pushEnabled: value),
+                      ),
+                    ),
+                    _buildDivider(isDark),
+                    _buildToggleItem(
+                      isDark,
+                      title: 'SMS Notifications',
+                      subtitle: 'Allow SMS notifications when supported',
+                      value: _serverPreferences.smsEnabled,
+                      onChanged: (value) => setState(
+                        () => _serverPreferences =
+                            _serverPreferences.copyWith(smsEnabled: value),
+                      ),
+                    ),
+                    _buildDivider(isDark),
+                    _buildToggleItem(
+                      isDark,
+                      title: 'Announcement Emails',
+                      subtitle: 'Receive announcement notifications by email',
+                      value: _serverPreferences.announcementEmail,
+                      onChanged: (value) => setState(
+                        () => _serverPreferences = _serverPreferences.copyWith(
+                          announcementEmail: value,
+                        ),
+                      ),
+                    ),
+                    _buildDivider(isDark),
+                    _buildToggleItem(
+                      isDark,
+                      title: 'Grade Emails',
+                      subtitle: 'Receive grade and grading-related emails',
+                      value: _serverPreferences.gradeEmail,
+                      onChanged: (value) => setState(
+                        () => _serverPreferences =
+                            _serverPreferences.copyWith(gradeEmail: value),
+                      ),
+                    ),
+                    _buildDivider(isDark),
+                    _buildToggleItem(
+                      isDark,
+                      title: 'Assignment Emails',
+                      subtitle: 'Receive assignment and deadline emails',
+                      value: _serverPreferences.assignmentEmail,
+                      onChanged: (value) => setState(
+                        () => _serverPreferences =
+                            _serverPreferences.copyWith(assignmentEmail: value),
+                      ),
+                    ),
+                    _buildDivider(isDark),
+                    _buildToggleItem(
+                      isDark,
+                      title: 'Message Emails',
+                      subtitle: 'Receive message and discussion emails',
+                      value: _serverPreferences.messageEmail,
+                      onChanged: (value) => setState(
+                        () => _serverPreferences =
+                            _serverPreferences.copyWith(messageEmail: value),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  _pushEnabled ? 'Enabled' : 'Disabled',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: _pushEnabled
-                        ? Colors.white.withValues(alpha: 0.8)
-                        : (isDark ? Colors.white54 : Colors.black45),
-                  ),
+                const SizedBox(height: 24),
+                _buildSectionHeader('Reminders & Quiet Hours', isDark),
+                const SizedBox(height: 12),
+                _buildSettingsCard(
+                  isDark,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Deadline reminder days',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          DropdownButtonFormField<int>(
+                            initialValue: _serverPreferences.deadlineReminderDays,
+                            decoration: const InputDecoration(
+                              border: OutlineInputBorder(),
+                            ),
+                            items: const [0, 1, 2, 3, 5, 7]
+                                .map(
+                                  (days) => DropdownMenuItem<int>(
+                                    value: days,
+                                    child: Text('$days day(s)'),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) {
+                              if (value == null) return;
+                              setState(
+                                () => _serverPreferences =
+                                    _serverPreferences.copyWith(
+                                      deadlineReminderDays: value,
+                                    ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildTimeField(
+                                  isDark,
+                                  title: 'Quiet hours start',
+                                  value: _serverPreferences.quietHoursStart,
+                                  onChanged: (value) => setState(
+                                    () => _serverPreferences =
+                                        _serverPreferences.copyWith(
+                                          quietHoursStart: value,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _buildTimeField(
+                                  isDark,
+                                  title: 'Quiet hours end',
+                                  value: _serverPreferences.quietHoursEnd,
+                                  onChanged: (value) => setState(
+                                    () => _serverPreferences =
+                                        _serverPreferences.copyWith(
+                                          quietHoursEnd: value,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 24),
+                _buildSectionHeader('In-App Device Preferences', isDark),
+                const SizedBox(height: 12),
+                _buildSettingsCard(
+                  isDark,
+                  children: [
+                    _buildToggleItem(
+                      isDark,
+                      title: 'Foreground alerts',
+                      subtitle: 'Show an in-app alert when new notifications arrive',
+                      value: _devicePreferences.foregroundAlertsEnabled,
+                      onChanged: (value) => setState(
+                        () => _devicePreferences = _devicePreferences.copyWith(
+                          foregroundAlertsEnabled: value,
+                        ),
+                      ),
+                    ),
+                    _buildDivider(isDark),
+                    _buildToggleItem(
+                      isDark,
+                      title: 'Notification sound',
+                      subtitle: 'Play an in-app sound when alerts arrive',
+                      value: _devicePreferences.soundEnabled,
+                      onChanged: (value) => setState(
+                        () => _devicePreferences =
+                            _devicePreferences.copyWith(soundEnabled: value),
+                      ),
+                    ),
+                    _buildDivider(isDark),
+                    _buildToggleItem(
+                      isDark,
+                      title: 'Vibration / haptic feedback',
+                      subtitle: 'Use haptic feedback for incoming in-app alerts',
+                      value: _devicePreferences.vibrationEnabled,
+                      onChanged: (value) => setState(
+                        () => _devicePreferences =
+                            _devicePreferences.copyWith(vibrationEnabled: value),
+                      ),
+                    ),
+                    _buildDivider(isDark),
+                    _buildToggleItem(
+                      isDark,
+                      title: 'Show preview',
+                      subtitle: 'Show notification body in foreground alerts',
+                      value: _devicePreferences.showPreview,
+                      onChanged: (value) => setState(
+                        () => _devicePreferences =
+                            _devicePreferences.copyWith(showPreview: value),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
               ],
             ),
-          ),
-          Transform.scale(
-            scale: 1.1,
-            child: Switch.adaptive(
-              value: _pushEnabled,
-              onChanged: (v) {
-                HapticFeedback.mediumImpact();
-                setState(() => _pushEnabled = v);
-              },
-              activeColor: Colors.white,
-              activeTrackColor: Colors.white.withValues(alpha: 0.3),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
-  Widget _buildSectionTitle(String title, bool isDark) {
+  Widget _buildTimeField(
+    bool isDark, {
+    required String title,
+    required String? value,
+    required ValueChanged<String?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: isDark ? Colors.white : Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextFormField(
+          initialValue: value,
+          decoration: const InputDecoration(
+            hintText: 'HH:mm:ss',
+            border: OutlineInputBorder(),
+          ),
+          onChanged: onChanged,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: Text(
@@ -270,14 +390,17 @@ class _NotificationsSettingsScreenState
         style: TextStyle(
           fontSize: 14,
           fontWeight: FontWeight.w600,
-          color: isDark ? Colors.white54 : Colors.black45,
-          letterSpacing: 0.5,
+          color: isDark ? Colors.white54 : Colors.black54,
+          letterSpacing: 0.3,
         ),
       ),
     );
   }
 
-  Widget _buildSettingsCard(bool isDark, List<Widget> children) {
+  Widget _buildSettingsCard(
+    bool isDark, {
+    required List<Widget> children,
+  }) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
@@ -296,71 +419,47 @@ class _NotificationsSettingsScreenState
 
   Widget _buildToggleItem(
     bool isDark, {
-    required IconData icon,
     required String title,
     required String subtitle,
     required bool value,
     required ValueChanged<bool> onChanged,
-    bool enabled = true,
   }) {
-    return Opacity(
-      opacity: enabled ? 1.0 : 0.5,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? const Color(0xFF0F172A)
-                    : const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                icon,
-                size: 20,
-                color: value && enabled
-                    ? const Color(0xFF3B82F6)
-                    : (isDark ? Colors.white38 : Colors.black26),
-              ),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDark ? Colors.white54 : Colors.black45,
-                    ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.white54 : Colors.black45,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            Switch.adaptive(
-              value: value,
-              onChanged: enabled
-                  ? (v) {
-                      HapticFeedback.selectionClick();
-                      onChanged(v);
-                    }
-                  : null,
-              activeColor: const Color(0xFF3B82F6),
-            ),
-          ],
-        ),
+          ),
+          Switch.adaptive(
+            value: value,
+            onChanged: (newValue) {
+              HapticFeedback.selectionClick();
+              onChanged(newValue);
+            },
+            activeThumbColor: const Color(0xFF3B82F6),
+          ),
+        ],
       ),
     );
   }
@@ -369,7 +468,8 @@ class _NotificationsSettingsScreenState
     return Divider(
       color: isDark ? Colors.white12 : Colors.black12,
       height: 1,
-      indent: 60,
+      indent: 16,
+      endIndent: 16,
     );
   }
 }

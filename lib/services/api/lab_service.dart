@@ -7,6 +7,7 @@ import '../../common/service_error.dart';
 import '../../models/core/drive_file_model.dart';
 import '../../models/core/lab_attendance_model.dart';
 import '../../models/core/lab_instruction_model.dart';
+import '../../models/core/enums/lab_enums.dart' as api;
 import '../../models/core/paginated_response.dart';
 import '../../models/labs/lab_model.dart';
 import '../../models/labs/lab_submission_model.dart';
@@ -98,6 +99,16 @@ class LabService {
     return RetryHelper.executeVoid(() async {
       await _client.dio.delete('/labs/$id');
     }, fallbackMessage: 'Failed to delete lab');
+  }
+
+  Future<ServiceResult<LabModel>> updateStatus(dynamic id, api.LabStatus status) {
+    return RetryHelper.execute<LabModel>(() async {
+      final response = await _client.dio.patch(
+        '/labs/$id/status',
+        data: <String, dynamic>{'status': status.toJson()},
+      );
+      return LabModel.fromJson(_extractMap(response.data));
+    }, fallbackMessage: 'Failed to update lab status');
   }
 
   Future<ServiceResult<List<LabInstructionModel>>> getInstructions(

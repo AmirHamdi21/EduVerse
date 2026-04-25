@@ -25,7 +25,7 @@ class NotificationSwipeSettingsService {
     if (settingsJson != null) {
       try {
         final map = json.decode(settingsJson) as Map<String, dynamic>;
-        _cachedSettings = NotificationSwipeSettings.fromMap(map);
+        _cachedSettings = _sanitize(NotificationSwipeSettings.fromMap(map));
         return _cachedSettings!;
       } catch (_) {
         _cachedSettings = const NotificationSwipeSettings();
@@ -39,9 +39,10 @@ class NotificationSwipeSettingsService {
 
   Future<void> saveSwipeSettings(NotificationSwipeSettings settings) async {
     final prefs = await SharedPreferences.getInstance();
-    final settingsJson = json.encode(settings.toMap());
+    final sanitized = _sanitize(settings);
+    final settingsJson = json.encode(sanitized.toMap());
     await prefs.setString(_swipeSettingsKey, settingsJson);
-    _cachedSettings = settings;
+    _cachedSettings = sanitized;
   }
 
   Future<void> setLeftAction(SwipeAction action) async {
@@ -66,5 +67,25 @@ class NotificationSwipeSettingsService {
 
   void clearCache() {
     _cachedSettings = null;
+  }
+
+  NotificationSwipeSettings _sanitize(NotificationSwipeSettings settings) {
+    SwipeAction normalize(SwipeAction action) {
+      switch (action) {
+        case SwipeAction.delete:
+        case SwipeAction.markRead:
+        case SwipeAction.none:
+          return action;
+        case SwipeAction.markUnread:
+        case SwipeAction.archive:
+        case SwipeAction.bookmark:
+          return SwipeAction.none;
+      }
+    }
+
+    return settings.copyWith(
+      leftAction: normalize(settings.leftAction),
+      rightAction: normalize(settings.rightAction),
+    );
   }
 }

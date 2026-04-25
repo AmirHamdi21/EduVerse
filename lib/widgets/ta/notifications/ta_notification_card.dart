@@ -5,12 +5,14 @@ import '../shared/ta_colors.dart';
 enum TANotificationType {
   question,
   submission,
-  plagiarism,
-  aiAlert,
+  discussion,
   system,
   deadline,
   grade,
   announcement,
+  material,
+  schedule,
+  officeHours,
 }
 
 class TANotificationCard extends StatelessWidget {
@@ -37,9 +39,7 @@ class TANotificationCard extends StatelessWidget {
         return TAColors.primary;
       case TANotificationType.submission:
         return TAColors.teal;
-      case TANotificationType.plagiarism:
-        return TAColors.warning;
-      case TANotificationType.aiAlert:
+      case TANotificationType.discussion:
         return TAColors.info;
       case TANotificationType.system:
         return TAColors.textSecondaryColor(isDark);
@@ -49,6 +49,12 @@ class TANotificationCard extends StatelessWidget {
         return TAColors.success;
       case TANotificationType.announcement:
         return TAColors.primary;
+      case TANotificationType.material:
+        return TAColors.warning;
+      case TANotificationType.schedule:
+        return TAColors.info;
+      case TANotificationType.officeHours:
+        return TAColors.teal;
     }
   }
 
@@ -58,10 +64,8 @@ class TANotificationCard extends StatelessWidget {
         return Icons.help_outline_rounded;
       case TANotificationType.submission:
         return Icons.upload_file_rounded;
-      case TANotificationType.plagiarism:
-        return Icons.security_rounded;
-      case TANotificationType.aiAlert:
-        return Icons.auto_awesome;
+      case TANotificationType.discussion:
+        return Icons.forum_rounded;
       case TANotificationType.system:
         return Icons.settings_rounded;
       case TANotificationType.deadline:
@@ -70,6 +74,12 @@ class TANotificationCard extends StatelessWidget {
         return Icons.grading_rounded;
       case TANotificationType.announcement:
         return Icons.campaign_rounded;
+      case TANotificationType.material:
+        return Icons.menu_book_rounded;
+      case TANotificationType.schedule:
+        return Icons.event_note_rounded;
+      case TANotificationType.officeHours:
+        return Icons.support_agent_rounded;
     }
   }
 
@@ -162,6 +172,29 @@ class TANotificationCard extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                            if (notification.secondaryBadge != null) ...[
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: TAColors.surfaceColor(
+                                    isDark,
+                                  ).withValues(alpha: 0.8),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  notification.secondaryBadge!,
+                                  style: TextStyle(
+                                    color: TAColors.textSecondaryColor(isDark),
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                         const SizedBox(height: 2),
@@ -275,6 +308,28 @@ class TANotificationCard extends StatelessWidget {
                                 ),
                               ),
                             ],
+                            ),
+                          ),
+                      if (notification.actionHint != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.open_in_new_rounded,
+                                size: 14,
+                                color: TAColors.teal,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                notification.actionHint!,
+                                style: const TextStyle(
+                                  color: TAColors.teal,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       Text(
@@ -354,6 +409,8 @@ class TANotificationItem {
   final int replyCount;
   final String? fullContent;
   final String? relatedTo;
+  final String? secondaryBadge;
+  final String? actionHint;
 
   TANotificationItem({
     required this.id,
@@ -368,5 +425,7 @@ class TANotificationItem {
     this.replyCount = 0,
     this.fullContent,
     this.relatedTo,
+    this.secondaryBadge,
+    this.actionHint,
   });
 }

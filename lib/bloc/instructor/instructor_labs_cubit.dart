@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../models/instructor/teaching_course_model.dart';
+import '../../models/core/enums/lab_enums.dart' as api;
 import '../../models/labs/lab_model.dart';
 import '../../services/api/enrollment_service.dart';
 import '../../services/api/lab_service.dart';
@@ -196,6 +197,22 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
 
     _labs = _labs
         .where((lab) => !_matchesLabId(lab, labId))
+        .toList(growable: false);
+    _emitLoaded();
+
+    return null;
+  }
+
+  Future<String?> updateStatus(String labId, api.LabStatus status) async {
+    final id = int.tryParse(labId) ?? labId;
+    final result = await _labService.updateStatus(id, status);
+    if (!result.isSuccess || result.data == null) {
+      return result.error?.message ?? 'Failed to update lab status';
+    }
+
+    final updated = result.data!;
+    _labs = _labs
+        .map((lab) => _matchesLabId(lab, labId) ? updated : lab)
         .toList(growable: false);
     _emitLoaded();
 
