@@ -1,21 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../services/api/user_profile_service.dart';
 import 'profile_models.dart';
 import 'profile_state.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
-  ProfileCubit() : super(const ProfileInitial());
+  final UserProfileService _userProfileService;
 
-  Future<void> loadProfile() async {
-    emit(const ProfileLoading());
+  ProfileCubit({required UserProfileService userProfileService})
+    : _userProfileService = userProfileService,
+      super(const ProfileInitial());
+
+  Future<void> loadProfile({bool force = false}) async {
+    if (!force && state is ProfileLoading) {
+      return;
+    }
+
+    final previousState = state;
+    if (previousState is! ProfileLoaded) {
+      emit(const ProfileLoading());
+    } else {
+      emit(previousState.copyWith(isSaving: true, clearError: true));
+    }
 
     try {
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      final profile = _generateSampleProfile();
-      final settings = const AppSettings();
-      final devices = _generateSampleDevices();
+      final profile = await _userProfileService.getProfile();
+      final settings = previousState is ProfileLoaded
+          ? previousState.settings
+          : const AppSettings();
+      final devices = previousState is ProfileLoaded
+          ? previousState.connectedDevices
+          : _generateSampleDevices();
 
       emit(
         ProfileLoaded(
@@ -25,7 +42,16 @@ class ProfileCubit extends Cubit<ProfileState> {
         ),
       );
     } catch (e) {
-      emit(ProfileError(message: e.toString()));
+      if (previousState is ProfileLoaded) {
+        emit(
+          previousState.copyWith(
+            isSaving: false,
+            error: 'Failed to load profile: ${_formatError(e)}',
+          ),
+        );
+      } else {
+        emit(ProfileError(message: _formatError(e)));
+      }
     }
   }
 
@@ -43,30 +69,61 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(currentState.copyWith(isEditing: false));
   }
 
-  Future<void> updateProfile(UserProfile updatedProfile) async {
+  Future<bool> updateProfile(UpdateUserProfileRequest request) async {
     final currentState = state;
-    if (currentState is! ProfileLoaded) return;
+    if (currentState is! ProfileLoaded) return false;
 
-    emit(currentState.copyWith(isSaving: true));
+    emit(currentState.copyWith(isSaving: true, clearError: true));
     HapticFeedback.mediumImpact();
 
     try {
-      await Future.delayed(const Duration(seconds: 1));
-
+      final updatedProfile = await _userProfileService.updateProfile(request);
       emit(
         currentState.copyWith(
-          profile: updatedProfile.copyWith(updatedAt: DateTime.now()),
+          profile: updatedProfile,
           isEditing: false,
           isSaving: false,
+          clearError: true,
         ),
       );
+      return true;
     } catch (e) {
       emit(
         currentState.copyWith(
           isSaving: false,
-          error: 'Failed to update profile: ${e.toString()}',
+          error: 'Failed to update profile: ${_formatError(e)}',
         ),
       );
+      return false;
+    }
+  }
+
+  Future<bool> changePassword(
+    String currentPassword,
+    String newPassword,
+  ) async {
+    final currentState = state;
+    if (currentState is! ProfileLoaded) return false;
+
+    emit(currentState.copyWith(isSaving: true, clearError: true));
+
+    try {
+      await _userProfileService.changePassword(
+        ChangePasswordRequest(
+          currentPassword: currentPassword,
+          newPassword: newPassword,
+        ),
+      );
+      emit(currentState.copyWith(isSaving: false, clearError: true));
+      return true;
+    } catch (e) {
+      emit(
+        currentState.copyWith(
+          isSaving: false,
+          error: 'Failed to change password: ${_formatError(e)}',
+        ),
+      );
+      return false;
     }
   }
 
@@ -187,51 +244,21 @@ class ProfileCubit extends Cubit<ProfileState> {
     HapticFeedback.mediumImpact();
 
     final updatedDevices = currentState.connectedDevices
-        .where((d) => d.id != deviceId)
+        .where((device) => device.id != deviceId)
         .toList();
 
     emit(currentState.copyWith(connectedDevices: updatedDevices));
-  }
-
-  Future<void> changePassword(
-    String currentPassword,
-    String newPassword,
-  ) async {
-    final currentState = state;
-    if (currentState is! ProfileLoaded) return;
-
-    emit(currentState.copyWith(isSaving: true));
-
-    try {
-      await Future.delayed(const Duration(seconds: 1));
-      emit(currentState.copyWith(isSaving: false));
-    } catch (e) {
-      emit(
-        currentState.copyWith(
-          isSaving: false,
-          error: 'Failed to change password: ${e.toString()}',
-        ),
-      );
-    }
   }
 
   Future<void> exportData() async {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(currentState.copyWith(isSaving: true));
+    emit(currentState.copyWith(isSaving: true, clearError: true));
 
-    try {
-      await Future.delayed(const Duration(seconds: 2));
-      emit(currentState.copyWith(isSaving: false));
-    } catch (e) {
-      emit(
-        currentState.copyWith(
-          isSaving: false,
-          error: 'Failed to export data: ${e.toString()}',
-        ),
-      );
-    }
+    await Future<void>.delayed(const Duration(milliseconds: 600));
+
+    emit(currentState.copyWith(isSaving: false, clearError: true));
   }
 
   void clearError() {
@@ -241,65 +268,27 @@ class ProfileCubit extends Cubit<ProfileState> {
     emit(currentState.copyWith(clearError: true));
   }
 
-  UserProfile _generateSampleProfile() {
-    return UserProfile(
-      id: 'user_001',
-      firstName: 'Alex',
-      lastName: 'Doe',
-      email: 'alex.doe@university.edu',
-      phoneNumber: '+1 234 567 890',
-      avatarUrl: null,
-      coverUrl: null,
-      role: 'Undergraduate - Computer Engineering',
-      studentId: 'ID: 12345678',
-      university: 'MIT',
-      major: 'Computer Engineering',
-      minor: 'Mathematics',
-      level: 'Undergraduate',
-      year: '3rd Year',
-      expectedGraduation: '2026',
-      dateOfBirth: DateTime(2002, 5, 15),
-      location: 'New York, USA',
-      bio:
-          'Passionate about AI and machine learning. Love building innovative solutions.',
-      gpa: 3.8,
-      rank: 125,
-      coursesEnrolled: 12,
-      assignmentsCompleted: 48,
-      socialLinks: const SocialLinks(
-        personalWebsite: 'https://alexdoe.dev',
-        github: 'github.com/alexdoe',
-        linkedin: 'linkedin.com/in/alex-doe',
-        twitter: '@alexdoe',
-      ),
-      createdAt: DateTime.now().subtract(const Duration(days: 365)),
-      updatedAt: DateTime.now(),
-    );
+  String _formatError(Object error) {
+    final raw = error.toString().replaceAll('Exception: ', '').trim();
+    return raw.isEmpty ? 'Unknown error' : raw;
   }
 
   List<ConnectedDevice> _generateSampleDevices() {
-    return [
+    return <ConnectedDevice>[
       ConnectedDevice(
         id: 'device_1',
-        name: 'MacBook Pro - Current',
+        name: 'Current Device',
         type: 'Laptop',
-        location: 'New York, USA',
+        location: 'Current Session',
         lastActive: DateTime.now(),
         isCurrentDevice: true,
       ),
       ConnectedDevice(
         id: 'device_2',
-        name: 'iPhone 12',
-        type: 'iPhone',
-        location: 'New York, USA',
-        lastActive: DateTime.now().subtract(const Duration(hours: 2)),
-      ),
-      ConnectedDevice(
-        id: 'device_3',
-        name: 'iPad Air',
-        type: 'iPad',
-        location: 'New York, USA',
-        lastActive: DateTime.now().subtract(const Duration(days: 3)),
+        name: 'Mobile App',
+        type: 'Phone',
+        location: 'Recent Session',
+        lastActive: DateTime.now().subtract(const Duration(hours: 3)),
       ),
     ];
   }

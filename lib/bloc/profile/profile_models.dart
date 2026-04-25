@@ -1,121 +1,152 @@
 import 'package:flutter/material.dart';
 
-/// User profile model
+import '../../models/auth_models.dart';
+
 class UserProfile {
-  final String id;
+  final int userId;
+  final String email;
   final String firstName;
   final String lastName;
-  final String email;
-  final String? phoneNumber;
-  final String? avatarUrl;
-  final String? coverUrl;
-  final String role;
-  final String? studentId;
-  final String? university;
-  final String? major;
-  final String? minor;
-  final String? level;
-  final String? year;
-  final String? expectedGraduation;
-  final DateTime? dateOfBirth;
-  final String? location;
+  final String? _fullName;
+  final String? phone;
+  final String? profilePictureUrl;
   final String? bio;
-  final double gpa;
-  final int rank;
-  final int coursesEnrolled;
-  final int assignmentsCompleted;
-  final SocialLinks? socialLinks;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final SocialLinks socialLinks;
+  final List<String> academicInterests;
+  final List<String> skills;
+  final List<RoleModel> roles;
+  final String status;
+  final bool emailVerified;
+  final String createdAt;
+  final double profileCompleteness;
 
   const UserProfile({
-    required this.id,
+    required this.userId,
+    required this.email,
     required this.firstName,
     required this.lastName,
-    required this.email,
-    this.phoneNumber,
-    this.avatarUrl,
-    this.coverUrl,
-    this.role = 'Student',
-    this.studentId,
-    this.university,
-    this.major,
-    this.minor,
-    this.level,
-    this.year,
-    this.expectedGraduation,
-    this.dateOfBirth,
-    this.location,
+    String? fullName,
+    this.phone,
+    this.profilePictureUrl,
     this.bio,
-    this.gpa = 0.0,
-    this.rank = 0,
-    this.coursesEnrolled = 0,
-    this.assignmentsCompleted = 0,
-    this.socialLinks,
-    required this.createdAt,
-    required this.updatedAt,
-  });
+    this.socialLinks = const SocialLinks(),
+    this.academicInterests = const <String>[],
+    this.skills = const <String>[],
+    this.roles = const <RoleModel>[],
+    this.status = 'active',
+    this.emailVerified = false,
+    this.createdAt = '',
+    this.profileCompleteness = 0,
+  }) : _fullName = fullName;
 
-  String get fullName => '$firstName $lastName';
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] is Map<String, dynamic>
+        ? json['data'] as Map<String, dynamic>
+        : json;
+
+    return UserProfile(
+      userId: _parseInt(data['userId'] ?? data['id']),
+      email: _parseString(data['email']),
+      firstName: _parseString(data['firstName']),
+      lastName: _parseString(data['lastName']),
+      fullName: _parseNullableString(data['fullName']),
+      phone: _parseNullableString(data['phone']),
+      profilePictureUrl: _parseNullableString(data['profilePictureUrl']),
+      bio: _parseNullableString(data['bio']),
+      socialLinks: SocialLinks.fromJson(data['socialLinks']),
+      academicInterests: _parseStringList(data['academicInterests']),
+      skills: _parseStringList(data['skills']),
+      roles: _parseRoles(data['roles']),
+      status: _parseString(data['status'], fallback: 'active'),
+      emailVerified: _parseBool(data['emailVerified']),
+      createdAt: _parseString(data['createdAt']),
+      profileCompleteness: _parseDouble(data['profileCompleteness']),
+    );
+  }
+
+  String get displayName {
+    final resolved = _fullName?.trim();
+    if (resolved != null && resolved.isNotEmpty) {
+      return resolved;
+    }
+    final combined = '$firstName $lastName'.trim();
+    return combined.isEmpty ? email : combined;
+  }
+
+  String get initials {
+    final resolved = displayName.trim();
+    if (resolved.isEmpty) {
+      return 'U';
+    }
+
+    final parts = resolved
+        .split(RegExp(r'\s+'))
+        .where((part) => part.trim().isNotEmpty)
+        .toList();
+
+    if (parts.isEmpty) {
+      return 'U';
+    }
+
+    final first = parts.first.substring(0, 1);
+    final second = parts.length > 1 ? parts.last.substring(0, 1) : '';
+    return '$first$second'.toUpperCase();
+  }
+
+  String get primaryRoleName =>
+      roles.isNotEmpty ? roles.first.roleName : 'student';
+
+  String get primaryRoleLabel => _formatRoleLabel(primaryRoleName);
+
+  String get fullNameValue => displayName;
+
+  String get fullName => displayName;
+
+  String? get phoneNumber => phone;
+
+  String? get avatarUrl => profilePictureUrl;
+
+  String get role => primaryRoleLabel;
 
   UserProfile copyWith({
-    String? id,
+    int? userId,
+    String? email,
     String? firstName,
     String? lastName,
-    String? email,
-    String? phoneNumber,
-    String? avatarUrl,
-    String? coverUrl,
-    String? role,
-    String? studentId,
-    String? university,
-    String? major,
-    String? minor,
-    String? level,
-    String? year,
-    String? expectedGraduation,
-    DateTime? dateOfBirth,
-    String? location,
+    String? fullName,
+    String? phone,
+    String? profilePictureUrl,
     String? bio,
-    double? gpa,
-    int? rank,
-    int? coursesEnrolled,
-    int? assignmentsCompleted,
     SocialLinks? socialLinks,
-    DateTime? createdAt,
-    DateTime? updatedAt,
+    List<String>? academicInterests,
+    List<String>? skills,
+    List<RoleModel>? roles,
+    String? status,
+    bool? emailVerified,
+    String? createdAt,
+    double? profileCompleteness,
   }) {
     return UserProfile(
-      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      email: email ?? this.email,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
-      email: email ?? this.email,
-      phoneNumber: phoneNumber ?? this.phoneNumber,
-      avatarUrl: avatarUrl ?? this.avatarUrl,
-      coverUrl: coverUrl ?? this.coverUrl,
-      role: role ?? this.role,
-      studentId: studentId ?? this.studentId,
-      university: university ?? this.university,
-      major: major ?? this.major,
-      minor: minor ?? this.minor,
-      level: level ?? this.level,
-      year: year ?? this.year,
-      expectedGraduation: expectedGraduation ?? this.expectedGraduation,
-      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
-      location: location ?? this.location,
+      fullName: fullName ?? _fullName,
+      phone: phone ?? this.phone,
+      profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
       bio: bio ?? this.bio,
-      gpa: gpa ?? this.gpa,
-      rank: rank ?? this.rank,
-      coursesEnrolled: coursesEnrolled ?? this.coursesEnrolled,
-      assignmentsCompleted: assignmentsCompleted ?? this.assignmentsCompleted,
       socialLinks: socialLinks ?? this.socialLinks,
+      academicInterests: academicInterests ?? this.academicInterests,
+      skills: skills ?? this.skills,
+      roles: roles ?? this.roles,
+      status: status ?? this.status,
+      emailVerified: emailVerified ?? this.emailVerified,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      profileCompleteness: profileCompleteness ?? this.profileCompleteness,
     );
   }
 }
 
-/// Social links model
 class SocialLinks {
   final String? personalWebsite;
   final String? github;
@@ -128,6 +159,58 @@ class SocialLinks {
     this.linkedin,
     this.twitter,
   });
+
+  factory SocialLinks.fromJson(dynamic json) {
+    if (json is! Map) {
+      return const SocialLinks();
+    }
+
+    String? pick(List<String> keys) {
+      for (final key in keys) {
+        final value = _parseNullableString(json[key]);
+        if (value != null && value.isNotEmpty) {
+          return value;
+        }
+      }
+      return null;
+    }
+
+    return SocialLinks(
+      personalWebsite: pick(const <String>['personalWebsite', 'website']),
+      github: pick(const <String>['github']),
+      linkedin: pick(const <String>['linkedin']),
+      twitter: pick(const <String>['twitter', 'x']),
+    );
+  }
+
+  bool get hasAny =>
+      personalWebsite != null ||
+      github != null ||
+      linkedin != null ||
+      twitter != null;
+
+  Map<String, String> toJson() {
+    return <String, String>{
+      if (personalWebsite != null && personalWebsite!.trim().isNotEmpty)
+        'personalWebsite': personalWebsite!.trim(),
+      if (github != null && github!.trim().isNotEmpty) 'github': github!.trim(),
+      if (linkedin != null && linkedin!.trim().isNotEmpty)
+        'linkedin': linkedin!.trim(),
+      if (twitter != null && twitter!.trim().isNotEmpty)
+        'twitter': twitter!.trim(),
+    };
+  }
+
+  List<MapEntry<String, String>> get entries => <MapEntry<String, String>>[
+    if (personalWebsite != null && personalWebsite!.trim().isNotEmpty)
+      MapEntry<String, String>('Website', personalWebsite!.trim()),
+    if (github != null && github!.trim().isNotEmpty)
+      MapEntry<String, String>('GitHub', github!.trim()),
+    if (linkedin != null && linkedin!.trim().isNotEmpty)
+      MapEntry<String, String>('LinkedIn', linkedin!.trim()),
+    if (twitter != null && twitter!.trim().isNotEmpty)
+      MapEntry<String, String>('Twitter', twitter!.trim()),
+  ];
 
   SocialLinks copyWith({
     String? personalWebsite,
@@ -144,7 +227,78 @@ class SocialLinks {
   }
 }
 
-/// App settings model
+class UpdateUserProfileRequest {
+  final String firstName;
+  final String lastName;
+  final String? phone;
+  final String? profilePictureUrl;
+  final String? bio;
+  final SocialLinks socialLinks;
+  final List<String> academicInterests;
+  final List<String> skills;
+
+  const UpdateUserProfileRequest({
+    required this.firstName,
+    required this.lastName,
+    this.phone,
+    this.profilePictureUrl,
+    this.bio,
+    this.socialLinks = const SocialLinks(),
+    this.academicInterests = const <String>[],
+    this.skills = const <String>[],
+  });
+
+  factory UpdateUserProfileRequest.fromProfile(UserProfile profile) {
+    return UpdateUserProfileRequest(
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      phone: profile.phone,
+      profilePictureUrl: profile.profilePictureUrl,
+      bio: profile.bio,
+      socialLinks: profile.socialLinks,
+      academicInterests: profile.academicInterests,
+      skills: profile.skills,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final payload = <String, dynamic>{
+      'firstName': firstName.trim(),
+      'lastName': lastName.trim(),
+      'academicInterests': academicInterests
+          .map((value) => value.trim())
+          .where((value) => value.isNotEmpty)
+          .toList(),
+      'skills': skills
+          .map((value) => value.trim())
+          .where((value) => value.isNotEmpty)
+          .toList(),
+      'socialLinks': socialLinks.toJson(),
+    };
+
+    payload['phone'] = (phone ?? '').trim();
+    payload['profilePictureUrl'] = (profilePictureUrl ?? '').trim();
+    payload['bio'] = (bio ?? '').trim();
+
+    return payload;
+  }
+}
+
+class ChangePasswordRequest {
+  final String currentPassword;
+  final String newPassword;
+
+  const ChangePasswordRequest({
+    required this.currentPassword,
+    required this.newPassword,
+  });
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'currentPassword': currentPassword,
+    'newPassword': newPassword,
+  };
+}
+
 class AppSettings {
   final bool pushNotifications;
   final bool emailAlerts;
@@ -194,7 +348,6 @@ class AppSettings {
   }
 }
 
-/// Accent color options
 enum AccentColor { blue, purple, green, orange, pink, teal }
 
 extension AccentColorExtension on AccentColor {
@@ -233,7 +386,6 @@ extension AccentColorExtension on AccentColor {
   }
 }
 
-/// Connected device model
 class ConnectedDevice {
   final String id;
   final String name;
@@ -252,7 +404,6 @@ class ConnectedDevice {
   });
 }
 
-/// Device type icons
 extension DeviceTypeExtension on String {
   IconData get deviceIcon {
     switch (toLowerCase()) {
@@ -272,5 +423,123 @@ extension DeviceTypeExtension on String {
       default:
         return Icons.devices_rounded;
     }
+  }
+}
+
+List<RoleModel> _parseRoles(dynamic rawRoles) {
+  if (rawRoles is List) {
+    return rawRoles.map<RoleModel>((role) {
+      if (role is Map<String, dynamic>) {
+        return RoleModel.fromJson(role);
+      }
+
+      return RoleModel(roleId: 0, roleName: role.toString());
+    }).toList();
+  }
+
+  if (rawRoles is Map<String, dynamic>) {
+    return <RoleModel>[RoleModel.fromJson(rawRoles)];
+  }
+
+  if (rawRoles != null) {
+    return <RoleModel>[RoleModel(roleId: 0, roleName: rawRoles.toString())];
+  }
+
+  return const <RoleModel>[];
+}
+
+List<String> _parseStringList(dynamic rawList) {
+  if (rawList is List) {
+    return rawList
+        .map((value) => value.toString().trim())
+        .where((value) => value.isNotEmpty)
+        .toList();
+  }
+
+  return const <String>[];
+}
+
+int _parseInt(dynamic value, {int fallback = 0}) {
+  if (value is int) {
+    return value;
+  }
+  if (value is num) {
+    return value.toInt();
+  }
+  if (value is String) {
+    return int.tryParse(value.trim()) ?? fallback;
+  }
+  return fallback;
+}
+
+double _parseDouble(dynamic value, {double fallback = 0}) {
+  if (value is double) {
+    return value;
+  }
+  if (value is num) {
+    return value.toDouble();
+  }
+  if (value is String) {
+    return double.tryParse(value.trim()) ?? fallback;
+  }
+  return fallback;
+}
+
+String _parseString(dynamic value, {String fallback = ''}) {
+  final parsed = value?.toString().trim() ?? '';
+  return parsed.isEmpty ? fallback : parsed;
+}
+
+String? _parseNullableString(dynamic value) {
+  final parsed = value?.toString().trim() ?? '';
+  return parsed.isEmpty ? null : parsed;
+}
+
+bool _parseBool(dynamic value, {bool fallback = false}) {
+  if (value is bool) {
+    return value;
+  }
+  if (value is num) {
+    return value != 0;
+  }
+  if (value is String) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized == 'true' || normalized == '1') {
+      return true;
+    }
+    if (normalized == 'false' || normalized == '0') {
+      return false;
+    }
+  }
+  return fallback;
+}
+
+String _formatRoleLabel(String rawRole) {
+  switch (rawRole.trim().toLowerCase()) {
+    case 'student':
+      return 'Student';
+    case 'instructor':
+      return 'Instructor';
+    case 'ta':
+    case 'teaching_assistant':
+      return 'Teaching Assistant';
+    case 'admin':
+      return 'Administrator';
+    case 'it_admin':
+      return 'IT Administrator';
+    default:
+      if (rawRole.trim().isEmpty) {
+        return 'Student';
+      }
+
+      return rawRole
+          .replaceAll('_', ' ')
+          .split(' ')
+          .where((part) => part.trim().isNotEmpty)
+          .map(
+            (part) =>
+                '${part[0].toUpperCase()}${part.substring(1).toLowerCase()}',
+          )
+          .join(' ');
   }
 }

@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../bloc/auth/auth_bloc.dart';
 import '../../../bloc/notifications/notification_cubit.dart';
 import '../../../bloc/notifications/notification_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../shared/current_user_identity.dart';
 
 class InstructorAppBar extends StatelessWidget {
   const InstructorAppBar({super.key});
@@ -34,6 +36,10 @@ class InstructorAppBar extends StatelessWidget {
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
+        final identity = CurrentUserIdentity.fromAuthState(
+          context.watch<AuthBloc>().state,
+          fallbackName: 'Instructor',
+        );
 
         SystemChrome.setSystemUIOverlayStyle(
           isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
@@ -166,8 +172,8 @@ class InstructorAppBar extends StatelessWidget {
                                             const Color(0xFF334155),
                                           ],
                                   ).createShader(bounds),
-                                  child: const Text(
-                                    'Dr. Ahmed',
+                                  child: Text(
+                                    identity.displayName,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 28,
@@ -180,7 +186,7 @@ class InstructorAppBar extends StatelessWidget {
                               ],
                             ),
                           ),
-                          _buildProfileAvatar(isDark, context),
+                          _buildProfileAvatar(isDark, context, identity),
                         ],
                       ),
                     ],
@@ -325,7 +331,11 @@ class InstructorAppBar extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileAvatar(bool isDark, BuildContext context) {
+  Widget _buildProfileAvatar(
+    bool isDark,
+    BuildContext context,
+    CurrentUserIdentity identity,
+  ) {
     return GestureDetector(
       onTap: () {
         context.push('/instructor/profile');
@@ -354,10 +364,10 @@ class InstructorAppBar extends StatelessWidget {
             ),
           ],
         ),
-        child: const Center(
+        child: Center(
           child: Text(
-            'D',
-            style: TextStyle(
+            identity.initials,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.w700,

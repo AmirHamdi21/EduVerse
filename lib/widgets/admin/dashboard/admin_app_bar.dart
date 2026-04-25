@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../bloc/auth/auth_bloc.dart';
 import '../../../bloc/notifications/notification_cubit.dart';
 import '../../../bloc/notifications/notification_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../shared/current_user_identity.dart';
 import '../shared/admin_colors.dart';
 
 class AdminAppBar extends StatelessWidget {
@@ -35,6 +37,10 @@ class AdminAppBar extends StatelessWidget {
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
+        final identity = CurrentUserIdentity.fromAuthState(
+          context.watch<AuthBloc>().state,
+          fallbackName: 'Administrator',
+        );
 
         SystemChrome.setSystemUIOverlayStyle(
           isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
@@ -161,7 +167,7 @@ class AdminAppBar extends StatelessWidget {
                                           ],
                                   ).createShader(bounds),
                                   child: Text(
-                                    l10n.admin,
+                                    identity.displayName,
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 28,
@@ -174,7 +180,7 @@ class AdminAppBar extends StatelessWidget {
                               ],
                             ),
                           ),
-                          _buildProfileAvatar(isDark, context),
+                          _buildProfileAvatar(isDark, context, identity),
                         ],
                       ),
                     ],
@@ -292,7 +298,11 @@ class AdminAppBar extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileAvatar(bool isDark, BuildContext context) {
+  Widget _buildProfileAvatar(
+    bool isDark,
+    BuildContext context,
+    CurrentUserIdentity identity,
+  ) {
     return GestureDetector(
       onTap: () => context.push('/admin/profile'),
       child: Container(
@@ -315,11 +325,14 @@ class AdminAppBar extends StatelessWidget {
             ),
           ],
         ),
-        child: const Center(
-          child: Icon(
-            Icons.admin_panel_settings_rounded,
-            color: Colors.white,
-            size: 28,
+        child: Center(
+          child: Text(
+            identity.initials,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ),
       ),

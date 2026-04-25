@@ -7,6 +7,7 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../shared/current_user_identity.dart';
 import '../shared/admin_colors.dart';
 
 class AdminDrawer extends StatefulWidget {
@@ -76,6 +77,11 @@ class _AdminDrawerState extends State<AdminDrawer>
   }
 
   Widget _buildProfileHeader(bool isDark, AppLocalizations l10n) {
+    final identity = CurrentUserIdentity.fromAuthState(
+      context.watch<AuthBloc>().state,
+      fallbackName: 'Administrator',
+    );
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       child: Row(
@@ -134,7 +140,7 @@ class _AdminDrawerState extends State<AdminDrawer>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n.admin,
+                  identity.displayName,
                   style: TextStyle(
                     color: AdminColors.getTextColor(isDark),
                     fontSize: 17,
