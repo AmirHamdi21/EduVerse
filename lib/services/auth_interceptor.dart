@@ -110,6 +110,11 @@ class AuthInterceptor extends Interceptor {
   }
 
   Future<void> _handleSessionExpired() async {
+    final hadStoredSession = await _storage.hasStoredSession();
+    if (!hadStoredSession) {
+      return;
+    }
+
     try {
       await _storage.clearAll();
       await _storage.clearChatCache();

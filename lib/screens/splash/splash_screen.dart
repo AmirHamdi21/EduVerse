@@ -7,8 +7,8 @@ import 'package:go_router/go_router.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/config/app_theme.dart';
+import 'package:edu_verse/services/auth_role_resolver.dart';
 import '../../bloc/auth/auth_bloc.dart';
-import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../common/utils/responsive.dart';
 import '../../generated_l10n/app_localizations.dart';
@@ -39,8 +39,6 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     _setupAnimations();
     _startAnimationSequence();
-    // Trigger auth check when splash screen loads
-    context.read<AuthBloc>().add(const AuthCheckRequested());
   }
 
   void _setupAnimations() {
@@ -156,16 +154,9 @@ class _SplashScreenState extends State<SplashScreen>
 
         _fadeController.forward().then((_) {
           if (state is AuthAuthenticated) {
-            // context.go('/dashboard');
-            context.go('/login');
-            // context.go('/instructor/dashboard');
-            // context.go('/it-admin/dashboard');
+            context.go(AuthRoleResolver.dashboardRouteForUser(state.user));
           } else if (state is AuthUnauthenticated) {
-            // context.go('/onboarding');
-            // context.go('/dashboard');
-            // context.go('/instructor/dashboard');
             context.go('/login');
-            // context.go('/it-admin/dashboard');
           }
         });
       },
@@ -240,7 +231,7 @@ class _SplashScreenState extends State<SplashScreen>
                           _buildTextSection(
                             isDark,
                             responsive,
-                            l!,
+                            l,
                             textColor,
                             textSecondaryColor,
                           ),

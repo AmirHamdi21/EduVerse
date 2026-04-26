@@ -50,6 +50,13 @@ class StorageService {
     return token != null;
   }
 
+  Future<bool> hasStoredSession() async {
+    final accessToken = await getAccessToken();
+    final refreshToken = await getRefreshToken();
+    return (accessToken != null && accessToken.isNotEmpty) ||
+        (refreshToken != null && refreshToken.isNotEmpty);
+  }
+
   // Clear all data (logout)
   Future<void> clearAll() async {
     await _storage.delete(key: _accessTokenKey);

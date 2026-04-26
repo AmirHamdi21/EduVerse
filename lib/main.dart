@@ -35,6 +35,7 @@ import 'package:edu_verse/bloc/theme/theme_state.dart';
 import 'package:edu_verse/bloc/instructor/instructor_courses_bloc.dart';
 import 'package:edu_verse/bloc/ta/ta_courses_cubit.dart';
 import 'package:edu_verse/bloc/ta/ta_labs_cubit.dart';
+import 'package:edu_verse/config/auth_route_notifier.dart';
 import 'package:edu_verse/config/app_router.dart';
 import 'package:edu_verse/config/app_theme.dart';
 import 'package:edu_verse/services/api_service.dart';
@@ -155,6 +156,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       apiService: ApiService(),
       storageService: _storageService,
     );
+    _authBloc.add(const AuthCheckRequested());
     _languageCubit = LanguageCubit();
 
     final coreApiClient = CoreApiClient(storageService: _storageService);
@@ -197,8 +199,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _chatBloc = ChatBloc();
     _discussionBloc = DiscussionBloc();
     _aiNoteCubit = AINoteCubit();
-    _profileCubit = ProfileCubit(userProfileService: _userProfileService)
-      ..loadProfile();
+    _profileCubit = ProfileCubit(userProfileService: _userProfileService);
     _searchCubit = SearchCubit();
     _adminNotificationCubit = AdminNotificationCubit(
       notificationApiService: _notificationApiService,
@@ -440,11 +441,14 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
                   previous.user.userId != current.user.userId),
           listener: (context, authState) {
             if (authState is AuthAuthenticated) {
+              authRouteNotifier.setAuthenticated(authState.user);
+              _profileCubit.loadProfile(force: true);
               _chatBloc.add(ChatSessionStarted(authState.user.userId));
               return;
             }
 
             if (authState is AuthUnauthenticated) {
+              authRouteNotifier.setUnauthenticated();
               _chatBloc.add(const ChatSessionEnded());
             }
           },

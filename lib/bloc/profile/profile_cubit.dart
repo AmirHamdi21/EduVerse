@@ -27,9 +27,13 @@ class ProfileCubit extends Cubit<ProfileState> {
 
     try {
       final profile = await _userProfileService.getProfile();
-      final settings = previousState is ProfileLoaded
-          ? previousState.settings
-          : const AppSettings();
+      final preferences = await _userProfileService.getPreferences();
+      final settings = _mergePreferencesIntoSettings(
+        previousState is ProfileLoaded
+            ? previousState.settings
+            : const AppSettings(),
+        preferences,
+      );
       final devices = previousState is ProfileLoaded
           ? previousState.connectedDevices
           : _generateSampleDevices();
@@ -127,33 +131,31 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  void updateSettings(AppSettings newSettings) {
+  Future<void> updateSettings(AppSettings newSettings) async {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
     HapticFeedback.selectionClick();
-    emit(currentState.copyWith(settings: newSettings));
+    await _persistPreferences(currentState, newSettings);
   }
 
-  void togglePushNotifications(bool value) {
+  Future<void> togglePushNotifications(bool value) async {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(
-      currentState.copyWith(
-        settings: currentState.settings.copyWith(pushNotifications: value),
-      ),
+    await _persistPreferences(
+      currentState,
+      currentState.settings.copyWith(pushNotifications: value),
     );
   }
 
-  void toggleEmailAlerts(bool value) {
+  Future<void> toggleEmailAlerts(bool value) async {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(
-      currentState.copyWith(
-        settings: currentState.settings.copyWith(emailAlerts: value),
-      ),
+    await _persistPreferences(
+      currentState,
+      currentState.settings.copyWith(emailAlerts: value),
     );
   }
 
@@ -192,14 +194,13 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
-  void setThemeMode(ThemeMode mode) {
+  Future<void> setThemeMode(ThemeMode mode) async {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(
-      currentState.copyWith(
-        settings: currentState.settings.copyWith(themeMode: mode),
-      ),
+    await _persistPreferences(
+      currentState,
+      currentState.settings.copyWith(themeMode: mode),
     );
   }
 
@@ -226,14 +227,13 @@ class ProfileCubit extends Cubit<ProfileState> {
     );
   }
 
-  void setLanguage(String languageCode) {
+  Future<void> setLanguage(String languageCode) async {
     final currentState = state;
     if (currentState is! ProfileLoaded) return;
 
-    emit(
-      currentState.copyWith(
-        settings: currentState.settings.copyWith(languageCode: languageCode),
-      ),
+    await _persistPreferences(
+      currentState,
+      currentState.settings.copyWith(languageCode: languageCode),
     );
   }
 
@@ -271,6 +271,66 @@ class ProfileCubit extends Cubit<ProfileState> {
   String _formatError(Object error) {
     final raw = error.toString().replaceAll('Exception: ', '').trim();
     return raw.isEmpty ? 'Unknown error' : raw;
+  }
+
+  Future<void> _persistPreferences(
+    ProfileLoaded currentState,
+    AppSettings nextSettings,
+  ) async {
+    emit(
+      currentState.copyWith(
+        settings: nextSettings,
+        isSaving: true,
+        clearError: true,
+      ),
+    );
+
+    try {
+      final savedPreferences = await _userProfileService.updatePreferences(
+        _preferencesFromSettings(nextSettings),
+      );
+
+      emit(
+        currentState.copyWith(
+          settings: _mergePreferencesIntoSettings(
+            nextSettings,
+            savedPreferences,
+          ),
+          isSaving: false,
+          clearError: true,
+        ),
+      );
+    } catch (e) {
+      emit(
+        currentState.copyWith(
+          isSaving: false,
+          error: 'Failed to update preferences: ${_formatError(e)}',
+        ),
+      );
+    }
+  }
+
+  AppSettings _mergePreferencesIntoSettings(
+    AppSettings baseSettings,
+    UserPreferences preferences,
+  ) {
+    return baseSettings.copyWith(
+      pushNotifications: preferences.pushNotifications,
+      emailAlerts: preferences.emailNotifications,
+      themeMode: preferences.theme.toLowerCase() == 'dark'
+          ? ThemeMode.dark
+          : ThemeMode.light,
+      languageCode: preferences.language,
+    );
+  }
+
+  UpdateUserPreferencesRequest _preferencesFromSettings(AppSettings settings) {
+    return UpdateUserPreferencesRequest(
+      language: settings.languageCode,
+      theme: settings.themeMode == ThemeMode.dark ? 'dark' : 'light',
+      emailNotifications: settings.emailAlerts,
+      pushNotifications: settings.pushNotifications,
+    );
   }
 
   List<ConnectedDevice> _generateSampleDevices() {

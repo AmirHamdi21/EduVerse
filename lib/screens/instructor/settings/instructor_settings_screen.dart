@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../bloc/auth/auth_bloc.dart';
+import '../../../bloc/auth/auth_event.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
@@ -808,6 +810,7 @@ class _InstructorSettingsScreenState extends State<InstructorSettingsScreen> {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
+              context.read<AuthBloc>().add(const LogoutRequested());
               context.go('/login');
             },
             style: ElevatedButton.styleFrom(

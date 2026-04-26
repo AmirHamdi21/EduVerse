@@ -26,6 +26,23 @@ class UserProfileService {
     await _client.dio.patch('/users/password', data: request.toJson());
   }
 
+  Future<UserPreferences> getPreferences() async {
+    final response = await _client.dio.get('/users/preferences');
+    final payload = _extractMap(response.data);
+    return UserPreferences.fromJson(payload);
+  }
+
+  Future<UserPreferences> updatePreferences(
+    UpdateUserPreferencesRequest request,
+  ) async {
+    final response = await _client.dio.put(
+      '/users/preferences',
+      data: request.toJson(),
+    );
+    final payload = _extractMap(response.data);
+    return UserPreferences.fromJson(payload);
+  }
+
   Map<String, dynamic> _extractMap(dynamic payload) {
     if (payload is Map<String, dynamic>) {
       return payload;

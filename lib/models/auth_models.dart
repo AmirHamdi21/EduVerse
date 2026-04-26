@@ -233,23 +233,20 @@ class RoleModel {
 }
 
 /// Response from POST /api/auth/register
-/// The new backend returns user + tokens upon registration.
+/// The backend returns a success message plus the created user.
 class RegistrationResponse {
+  final String message;
   final UserDto user;
-  final String accessToken;
-  final String refreshToken;
 
-  RegistrationResponse({
-    required this.user,
-    required this.accessToken,
-    required this.refreshToken,
-  });
+  RegistrationResponse({required this.message, required this.user});
 
   factory RegistrationResponse.fromJson(Map<String, dynamic> json) =>
       RegistrationResponse(
+        message: _parseString(
+          json['message'],
+          fallback: 'Registration successful!',
+        ),
         user: UserDto.fromJson(json['user']),
-        accessToken: _parseString(json['accessToken']),
-        refreshToken: _parseString(json['refreshToken']),
       );
 }
 
