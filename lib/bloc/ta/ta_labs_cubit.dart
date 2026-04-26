@@ -170,6 +170,16 @@ class TALabsCubit extends Cubit<TALabsState> {
     return null;
   }
 
+  /// Restores the list state after navigating back from lab detail.
+  void restoreLabsList() {
+    if (_cachedLabs.isEmpty) {
+      emit(const TALabsInitial());
+      return;
+    }
+
+    emit(TALabsLoaded(_cachedLabs));
+  }
+
   // ── Lab Submission Grading (Principle I) ─────────────────────
 
   /// Grades a lab submission.

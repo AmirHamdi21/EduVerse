@@ -5960,6 +5960,29 @@ class AppLocalizationsAr extends AppLocalizations {
   String get taLabsTitle => 'المختبرات';
 
   @override
+  String get taLabsCreateLab => 'إنشاء مختبر';
+
+  @override
+  String get taLabsLoadMore => 'تحميل المزيد';
+
+  @override
+  String get taLabsHeaderTitle => 'نظرة سريعة على مختبرات المعيد';
+
+  @override
+  String get taLabsHeaderSubtitle =>
+      'تابع تقدم المختبرات مباشرة، راقب تغيّر الحالات بسرعة، وانتقل إلى المقرر المناسب بدون فقدان السياق.';
+
+  @override
+  String get instructorLabsHeaderTitle => 'نظرة سريعة على مختبرات المدرس';
+
+  @override
+  String get instructorLabsHeaderSubtitle =>
+      'راجع نشاط المختبرات، وتنقل بسرعة بين المقررات التي تدرّسها، واحتفظ بسير عمل المختبر في مكان واحد.';
+
+  @override
+  String get taLabsAllStates => 'كل الحالات';
+
+  @override
   String get taLabFilterAll => 'كل المختبرات';
 
   @override
@@ -5978,6 +6001,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get taLabNoLabsDesc => 'ستظهر المختبرات هنا عند توفرها';
 
   @override
+  String get taLabNoDueDate => 'لا يوجد موعد نهائي';
+
+  @override
   String get taLabActive => 'نشط';
 
   @override
@@ -5985,6 +6011,23 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get taLabPendingReview => 'معلق';
+
+  @override
+  String get taLabDelete => 'حذف المختبر';
+
+  @override
+  String get taLabDeleteConfirm =>
+      'هل أنت متأكد أنك تريد حذف هذا المختبر؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get taLabDeleteWithSubmissionsConfirm =>
+      'يحتوي هذا المختبر على تسليمات طلاب موجودة. سيؤدي حذفه إلى إزالة جميع بيانات التسليم نهائياً. هل تريد المتابعة؟';
+
+  @override
+  String get taLabDeleteAnyway => 'حذف على أي حال';
+
+  @override
+  String get taLabDeletedSuccess => 'تم حذف المختبر بنجاح.';
 
   @override
   String get taLabOverview => 'نظرة عامة';
@@ -6015,6 +6058,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get taLabDue => 'الموعد النهائي';
+
+  @override
+  String get taLabInformation => 'معلومات المختبر';
+
+  @override
+  String get taLabMaxScore => 'الدرجة العظمى';
+
+  @override
+  String get taLabRegrade => 'إعادة التصحيح';
+
+  @override
+  String get taLabPermissionEditDenied => 'ليست لديك صلاحية لتعديل هذا المختبر';
+
+  @override
+  String get instructorLabNotFound => 'لم يتم العثور على المختبر';
+
+  @override
+  String get instructorLabUploadMaterial => 'رفع مواد المعيد';
+
+  @override
+  String get instructorLabUploadFailed => 'فشل رفع مواد المعيد';
+
+  @override
+  String get instructorLabUploadSuccess => 'تم رفع مواد المعيد';
+
+  @override
+  String get instructorLabMaterialTitle => 'مواد المعيد';
+
+  @override
+  String get instructorLabMaterialSubtitle =>
+      'ارفع ملفات دعم خاصة بالمعيد لهذا المختبر. يدعم Flutter حالياً الرفع من هنا، لكنه لا يعرض مواد المعيد التي تم رفعها سابقاً حتى الآن.';
 
   @override
   String get taLabUpload => 'رفع';
@@ -6235,6 +6309,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get taLabSubmitReview => 'إرسال المراجعة';
+
+  @override
+  String get taLabsCoursesLoading =>
+      'لا تزال المقررات قيد التحميل. حاول مرة أخرى بعد قليل.';
+
+  @override
+  String get taLabsCreatedPublished =>
+      'تم إنشاء المختبر كمنشور. يمكن الآن للطلاب المسجلين استلام إشعارات المختبر.';
+
+  @override
+  String get taLabsCreatedDraft =>
+      'تم إنشاء المختبر كمسودة. انشره لإخطار الطلاب المسجلين.';
+
+  @override
+  String get taLabsPublishedSuccess =>
+      'تم نشر المختبر بنجاح. يمكن الآن للطلاب المسجلين استلام إشعارات المختبر.';
+
+  @override
+  String get taLabsClosedSuccess => 'تم إغلاق المختبر بنجاح.';
+
+  @override
+  String get taLabsArchivedSuccess => 'تمت أرشفة المختبر بنجاح.';
+
+  @override
+  String get taLabsMovedToDraft => 'تم نقل المختبر إلى المسودة.';
+
+  @override
+  String get taLabsStatusUpdated => 'تم تحديث حالة المختبر.';
 
   @override
   String get taPerformanceTitle => 'أداء الطلاب';

@@ -5981,6 +5981,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taLabsTitle => 'Labs';
 
   @override
+  String get taLabsCreateLab => 'Create Lab';
+
+  @override
+  String get taLabsLoadMore => 'Load More';
+
+  @override
+  String get taLabsHeaderTitle => 'TA Lab Snapshot';
+
+  @override
+  String get taLabsHeaderSubtitle =>
+      'Track live lab progress, spot status changes quickly, and jump into the right course without losing context.';
+
+  @override
+  String get instructorLabsHeaderTitle => 'Instructor Lab Snapshot';
+
+  @override
+  String get instructorLabsHeaderSubtitle =>
+      'Review lab activity, switch between teaching courses quickly, and keep your lab workflow focused in one place.';
+
+  @override
+  String get taLabsAllStates => 'All States';
+
+  @override
   String get taLabFilterAll => 'All Labs';
 
   @override
@@ -5999,6 +6022,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taLabNoLabsDesc => 'Labs will appear here when available';
 
   @override
+  String get taLabNoDueDate => 'No due date';
+
+  @override
   String get taLabActive => 'Active';
 
   @override
@@ -6006,6 +6032,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taLabPendingReview => 'pending';
+
+  @override
+  String get taLabDelete => 'Delete Lab';
+
+  @override
+  String get taLabDeleteConfirm =>
+      'Are you sure you want to delete this lab? This action cannot be undone.';
+
+  @override
+  String get taLabDeleteWithSubmissionsConfirm =>
+      'This lab has existing student submissions. Deleting it will permanently remove all submission data. Continue?';
+
+  @override
+  String get taLabDeleteAnyway => 'Delete Anyway';
+
+  @override
+  String get taLabDeletedSuccess => 'Lab deleted successfully.';
 
   @override
   String get taLabOverview => 'Overview';
@@ -6036,6 +6079,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taLabDue => 'Due';
+
+  @override
+  String get taLabInformation => 'Lab Information';
+
+  @override
+  String get taLabMaxScore => 'Max Score';
+
+  @override
+  String get taLabRegrade => 'Re-grade';
+
+  @override
+  String get taLabPermissionEditDenied =>
+      'You don\'t have permission to edit this lab';
+
+  @override
+  String get instructorLabNotFound => 'Lab not found';
+
+  @override
+  String get instructorLabUploadMaterial => 'Upload TA Material';
+
+  @override
+  String get instructorLabUploadFailed => 'Failed to upload TA material';
+
+  @override
+  String get instructorLabUploadSuccess => 'TA material uploaded';
+
+  @override
+  String get instructorLabMaterialTitle => 'TA Materials';
+
+  @override
+  String get instructorLabMaterialSubtitle =>
+      'Upload TA-only support files for this lab. Flutter currently supports uploading here, but it does not list previously uploaded TA materials yet.';
 
   @override
   String get taLabUpload => 'Upload';
@@ -6255,6 +6330,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taLabSubmitReview => 'Submit Review';
+
+  @override
+  String get taLabsCoursesLoading =>
+      'Courses are still loading. Please try again.';
+
+  @override
+  String get taLabsCreatedPublished =>
+      'Lab created as published. Enrolled students can now receive lab notifications.';
+
+  @override
+  String get taLabsCreatedDraft =>
+      'Lab created as draft. Publish it to notify enrolled students.';
+
+  @override
+  String get taLabsPublishedSuccess =>
+      'Lab published. Enrolled students can now receive lab notifications.';
+
+  @override
+  String get taLabsClosedSuccess => 'Lab closed successfully.';
+
+  @override
+  String get taLabsArchivedSuccess => 'Lab archived successfully.';
+
+  @override
+  String get taLabsMovedToDraft => 'Lab moved to draft.';
+
+  @override
+  String get taLabsStatusUpdated => 'Lab status updated.';
 
   @override
   String get taPerformanceTitle => 'Student Performance';

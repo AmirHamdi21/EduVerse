@@ -11678,6 +11678,48 @@ abstract class AppLocalizations {
   /// **'Labs'**
   String get taLabsTitle;
 
+  /// No description provided for @taLabsCreateLab.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Lab'**
+  String get taLabsCreateLab;
+
+  /// No description provided for @taLabsLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load More'**
+  String get taLabsLoadMore;
+
+  /// No description provided for @taLabsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'TA Lab Snapshot'**
+  String get taLabsHeaderTitle;
+
+  /// No description provided for @taLabsHeaderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track live lab progress, spot status changes quickly, and jump into the right course without losing context.'**
+  String get taLabsHeaderSubtitle;
+
+  /// No description provided for @instructorLabsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Lab Snapshot'**
+  String get instructorLabsHeaderTitle;
+
+  /// No description provided for @instructorLabsHeaderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review lab activity, switch between teaching courses quickly, and keep your lab workflow focused in one place.'**
+  String get instructorLabsHeaderSubtitle;
+
+  /// No description provided for @taLabsAllStates.
+  ///
+  /// In en, this message translates to:
+  /// **'All States'**
+  String get taLabsAllStates;
+
   /// No description provided for @taLabFilterAll.
   ///
   /// In en, this message translates to:
@@ -11714,6 +11756,12 @@ abstract class AppLocalizations {
   /// **'Labs will appear here when available'**
   String get taLabNoLabsDesc;
 
+  /// No description provided for @taLabNoDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No due date'**
+  String get taLabNoDueDate;
+
   /// No description provided for @taLabActive.
   ///
   /// In en, this message translates to:
@@ -11731,6 +11779,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'pending'**
   String get taLabPendingReview;
+
+  /// No description provided for @taLabDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Lab'**
+  String get taLabDelete;
+
+  /// No description provided for @taLabDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this lab? This action cannot be undone.'**
+  String get taLabDeleteConfirm;
+
+  /// No description provided for @taLabDeleteWithSubmissionsConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This lab has existing student submissions. Deleting it will permanently remove all submission data. Continue?'**
+  String get taLabDeleteWithSubmissionsConfirm;
+
+  /// No description provided for @taLabDeleteAnyway.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Anyway'**
+  String get taLabDeleteAnyway;
+
+  /// No description provided for @taLabDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab deleted successfully.'**
+  String get taLabDeletedSuccess;
 
   /// No description provided for @taLabOverview.
   ///
@@ -11791,6 +11869,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Due'**
   String get taLabDue;
+
+  /// No description provided for @taLabInformation.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Information'**
+  String get taLabInformation;
+
+  /// No description provided for @taLabMaxScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Score'**
+  String get taLabMaxScore;
+
+  /// No description provided for @taLabRegrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-grade'**
+  String get taLabRegrade;
+
+  /// No description provided for @taLabPermissionEditDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have permission to edit this lab'**
+  String get taLabPermissionEditDenied;
+
+  /// No description provided for @instructorLabNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab not found'**
+  String get instructorLabNotFound;
+
+  /// No description provided for @instructorLabUploadMaterial.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload TA Material'**
+  String get instructorLabUploadMaterial;
+
+  /// No description provided for @instructorLabUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload TA material'**
+  String get instructorLabUploadFailed;
+
+  /// No description provided for @instructorLabUploadSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'TA material uploaded'**
+  String get instructorLabUploadSuccess;
+
+  /// No description provided for @instructorLabMaterialTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'TA Materials'**
+  String get instructorLabMaterialTitle;
+
+  /// No description provided for @instructorLabMaterialSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload TA-only support files for this lab. Flutter currently supports uploading here, but it does not list previously uploaded TA materials yet.'**
+  String get instructorLabMaterialSubtitle;
 
   /// No description provided for @taLabUpload.
   ///
@@ -12229,6 +12367,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Submit Review'**
   String get taLabSubmitReview;
+
+  /// No description provided for @taLabsCoursesLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Courses are still loading. Please try again.'**
+  String get taLabsCoursesLoading;
+
+  /// No description provided for @taLabsCreatedPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab created as published. Enrolled students can now receive lab notifications.'**
+  String get taLabsCreatedPublished;
+
+  /// No description provided for @taLabsCreatedDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab created as draft. Publish it to notify enrolled students.'**
+  String get taLabsCreatedDraft;
+
+  /// No description provided for @taLabsPublishedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab published. Enrolled students can now receive lab notifications.'**
+  String get taLabsPublishedSuccess;
+
+  /// No description provided for @taLabsClosedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab closed successfully.'**
+  String get taLabsClosedSuccess;
+
+  /// No description provided for @taLabsArchivedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab archived successfully.'**
+  String get taLabsArchivedSuccess;
+
+  /// No description provided for @taLabsMovedToDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab moved to draft.'**
+  String get taLabsMovedToDraft;
+
+  /// No description provided for @taLabsStatusUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab status updated.'**
+  String get taLabsStatusUpdated;
 
   /// No description provided for @taPerformanceTitle.
   ///
