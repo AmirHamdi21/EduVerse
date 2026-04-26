@@ -26104,6 +26104,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Updated'**
   String get instructorDiscussionUpdatedLabel;
+
+  /// No description provided for @studentDiscussionHubTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Pulse'**
+  String get studentDiscussionHubTitle;
+
+  /// No description provided for @studentDiscussionHubSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore course conversations, find active questions, and jump into the discussions that matter to your learning.'**
+  String get studentDiscussionHubSubtitle;
+
+  /// No description provided for @studentDiscussionNoCoursesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No enrolled courses found'**
+  String get studentDiscussionNoCoursesTitle;
+
+  /// No description provided for @studentDiscussionNoCoursesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current courses will appear here once your enrollment is active.'**
+  String get studentDiscussionNoCoursesSubtitle;
+
+  /// No description provided for @studentDiscussionNoMatchingCoursesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No courses match these filters'**
+  String get studentDiscussionNoMatchingCoursesTitle;
+
+  /// No description provided for @studentDiscussionNoMatchingCoursesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another discussion state or sorting option.'**
+  String get studentDiscussionNoMatchingCoursesSubtitle;
+
+  /// No description provided for @studentCourseDiscussionHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Community'**
+  String get studentCourseDiscussionHeaderTitle;
+
+  /// No description provided for @studentCourseDiscussionHeaderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask questions, share ideas, and learn together with your classmates.'**
+  String get studentCourseDiscussionHeaderSubtitle;
+
+  /// No description provided for @studentDiscussionNoPostsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No discussion posts yet'**
+  String get studentDiscussionNoPostsTitle;
+
+  /// No description provided for @studentDiscussionNoPostsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to start a conversation for this course.'**
+  String get studentDiscussionNoPostsSubtitle;
+
+  /// No description provided for @studentDiscussionTabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Community'**
+  String get studentDiscussionTabTitle;
+
+  /// No description provided for @studentDiscussionTabSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the full discussion space for this course to browse posts, ask questions, and reply.'**
+  String get studentDiscussionTabSubtitle;
+
+  /// No description provided for @studentDiscussionTabOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open discussions'**
+  String get studentDiscussionTabOpen;
+
+  /// No description provided for @studentDiscussionUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion is unavailable because the active course ID is missing.'**
+  String get studentDiscussionUnavailable;
 }
 
 class _AppLocalizationsDelegate

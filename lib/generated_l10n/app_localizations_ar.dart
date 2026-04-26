@@ -13350,4 +13350,53 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get instructorDiscussionUpdatedLabel => 'آخر تحديث';
+
+  @override
+  String get studentDiscussionHubTitle => 'نبض المجتمع';
+
+  @override
+  String get studentDiscussionHubSubtitle =>
+      'استكشف محادثات المقررات، واعثر على الأسئلة النشطة، وانتقل سريعًا إلى المناقشات التي تدعم تعلّمك.';
+
+  @override
+  String get studentDiscussionNoCoursesTitle => 'لا توجد مقررات مسجل بها';
+
+  @override
+  String get studentDiscussionNoCoursesSubtitle =>
+      'ستظهر مقرراتك الحالية هنا بمجرد تفعيل تسجيلك.';
+
+  @override
+  String get studentDiscussionNoMatchingCoursesTitle =>
+      'لا توجد مقررات تطابق هذه الفلاتر';
+
+  @override
+  String get studentDiscussionNoMatchingCoursesSubtitle =>
+      'جرّب حالة مناقشة أو ترتيبًا مختلفًا.';
+
+  @override
+  String get studentCourseDiscussionHeaderTitle => 'مجتمع المقرر';
+
+  @override
+  String get studentCourseDiscussionHeaderSubtitle =>
+      'اطرح الأسئلة، وشارك الأفكار، وتعلّم مع زملائك من خلال الحوار.';
+
+  @override
+  String get studentDiscussionNoPostsTitle => 'لا توجد منشورات مناقشة بعد';
+
+  @override
+  String get studentDiscussionNoPostsSubtitle => 'ابدأ أول محادثة لهذا المقرر.';
+
+  @override
+  String get studentDiscussionTabTitle => 'مجتمع المقرر';
+
+  @override
+  String get studentDiscussionTabSubtitle =>
+      'افتح مساحة النقاش الكاملة لهذا المقرر لتصفح المنشورات وطرح الأسئلة وإضافة الردود.';
+
+  @override
+  String get studentDiscussionTabOpen => 'فتح المناقشات';
+
+  @override
+  String get studentDiscussionUnavailable =>
+      'المناقشة غير متاحة لأن معرّف المقرر النشط مفقود.';
 }

@@ -5264,5 +5264,19 @@
   "instructorDiscussionSectionLabel": "الشعبة",
   "instructorDiscussionSemesterLabel": "الفصل الدراسي",
   "instructorDiscussionCreatedLabel": "تاريخ الإنشاء",
-  "instructorDiscussionUpdatedLabel": "آخر تحديث"
+  "instructorDiscussionUpdatedLabel": "آخر تحديث",
+  "studentDiscussionHubTitle": "نبض المجتمع",
+  "studentDiscussionHubSubtitle": "استكشف محادثات المقررات، واعثر على الأسئلة النشطة، وانتقل سريعًا إلى المناقشات التي تدعم تعلّمك.",
+  "studentDiscussionNoCoursesTitle": "لا توجد مقررات مسجل بها",
+  "studentDiscussionNoCoursesSubtitle": "ستظهر مقرراتك الحالية هنا بمجرد تفعيل تسجيلك.",
+  "studentDiscussionNoMatchingCoursesTitle": "لا توجد مقررات تطابق هذه الفلاتر",
+  "studentDiscussionNoMatchingCoursesSubtitle": "جرّب حالة مناقشة أو ترتيبًا مختلفًا.",
+  "studentCourseDiscussionHeaderTitle": "مجتمع المقرر",
+  "studentCourseDiscussionHeaderSubtitle": "اطرح الأسئلة، وشارك الأفكار، وتعلّم مع زملائك من خلال الحوار.",
+  "studentDiscussionNoPostsTitle": "لا توجد منشورات مناقشة بعد",
+  "studentDiscussionNoPostsSubtitle": "ابدأ أول محادثة لهذا المقرر.",
+  "studentDiscussionTabTitle": "مجتمع المقرر",
+  "studentDiscussionTabSubtitle": "افتح مساحة النقاش الكاملة لهذا المقرر لتصفح المنشورات وطرح الأسئلة وإضافة الردود.",
+  "studentDiscussionTabOpen": "فتح المناقشات",
+  "studentDiscussionUnavailable": "المناقشة غير متاحة لأن معرّف المقرر النشط مفقود."
 }

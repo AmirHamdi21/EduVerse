@@ -13404,4 +13404,54 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get instructorDiscussionUpdatedLabel => 'Updated';
+
+  @override
+  String get studentDiscussionHubTitle => 'Community Pulse';
+
+  @override
+  String get studentDiscussionHubSubtitle =>
+      'Explore course conversations, find active questions, and jump into the discussions that matter to your learning.';
+
+  @override
+  String get studentDiscussionNoCoursesTitle => 'No enrolled courses found';
+
+  @override
+  String get studentDiscussionNoCoursesSubtitle =>
+      'Your current courses will appear here once your enrollment is active.';
+
+  @override
+  String get studentDiscussionNoMatchingCoursesTitle =>
+      'No courses match these filters';
+
+  @override
+  String get studentDiscussionNoMatchingCoursesSubtitle =>
+      'Try another discussion state or sorting option.';
+
+  @override
+  String get studentCourseDiscussionHeaderTitle => 'Course Community';
+
+  @override
+  String get studentCourseDiscussionHeaderSubtitle =>
+      'Ask questions, share ideas, and learn together with your classmates.';
+
+  @override
+  String get studentDiscussionNoPostsTitle => 'No discussion posts yet';
+
+  @override
+  String get studentDiscussionNoPostsSubtitle =>
+      'Be the first to start a conversation for this course.';
+
+  @override
+  String get studentDiscussionTabTitle => 'Course Community';
+
+  @override
+  String get studentDiscussionTabSubtitle =>
+      'Open the full discussion space for this course to browse posts, ask questions, and reply.';
+
+  @override
+  String get studentDiscussionTabOpen => 'Open discussions';
+
+  @override
+  String get studentDiscussionUnavailable =>
+      'Discussion is unavailable because the active course ID is missing.';
 }

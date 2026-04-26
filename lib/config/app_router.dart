@@ -53,6 +53,9 @@ import 'package:edu_verse/screens/student/ai_chat/ai_chat_screen.dart';
 import 'package:edu_verse/screens/student/search/overall_search_screen.dart';
 import 'package:edu_verse/screens/student/calendar/calendar_screen.dart';
 import 'package:edu_verse/screens/student/student_registration_screen.dart';
+import 'package:edu_verse/screens/student/discussions/student_discussions_screen.dart';
+import 'package:edu_verse/screens/student/discussions/student_course_discussions_screen.dart';
+import 'package:edu_verse/screens/student/discussions/student_discussion_post_detail_screen.dart';
 import 'package:edu_verse/widgets/student/ai_quiz/quiz_widgets/quiz_result_screen.dart';
 import 'package:edu_verse/widgets/student/courses/courses_barrel.dart';
 import 'package:edu_verse/bloc/student_registration/student_registration_cubit.dart';
@@ -552,22 +555,57 @@ class AppRouter {
             );
           }
 
-          return DiscussionScreen(
+          CourseEnrollmentModel? course;
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            final rawCourse = extra['course'];
+            if (rawCourse is CourseEnrollmentModel) {
+              course = rawCourse;
+            }
+          }
+
+          return StudentCourseDiscussionsScreen(
             courseId: courseId,
-            accentColor: const Color(0xFF3B82F6),
-            title: 'Course Discussions',
-            leadingIcon: Icons.arrow_back_ios_new_rounded,
-            onLeadingPressed: () => Navigator.of(context).maybePop(),
+            initialCourse: course,
           );
         },
       ),
       GoRoute(
         path: '/discussions',
-        builder: (context, state) => const DiscussionScreen(
-          accentColor: Color(0xFF3B82F6),
-          title: 'Discussions',
-          leadingIcon: Icons.arrow_back_ios_new_rounded,
-        ),
+        builder: (context, state) => const StudentDiscussionsScreen(),
+      ),
+      GoRoute(
+        path: '/course/:courseId/discussions/:threadId',
+        builder: (context, state) {
+          final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
+          final threadId = int.tryParse(state.pathParameters['threadId'] ?? '');
+          if (courseId == null || courseId <= 0 || threadId == null || threadId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid discussion post route')),
+            );
+          }
+
+          CourseEnrollmentModel? course;
+          DiscussionThread? thread;
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            final rawCourse = extra['course'];
+            final rawThread = extra['thread'];
+            if (rawCourse is CourseEnrollmentModel) {
+              course = rawCourse;
+            }
+            if (rawThread is DiscussionThread) {
+              thread = rawThread;
+            }
+          }
+
+          return StudentDiscussionPostDetailScreen(
+            courseId: courseId,
+            threadId: threadId,
+            initialCourse: course,
+            initialThread: thread,
+          );
+        },
       ),
       GoRoute(
         path: '/messages/new',

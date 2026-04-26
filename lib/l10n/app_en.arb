@@ -5267,5 +5267,19 @@
   "instructorDiscussionSectionLabel": "Section",
   "instructorDiscussionSemesterLabel": "Semester",
   "instructorDiscussionCreatedLabel": "Created",
-  "instructorDiscussionUpdatedLabel": "Updated"
+  "instructorDiscussionUpdatedLabel": "Updated",
+  "studentDiscussionHubTitle": "Community Pulse",
+  "studentDiscussionHubSubtitle": "Explore course conversations, find active questions, and jump into the discussions that matter to your learning.",
+  "studentDiscussionNoCoursesTitle": "No enrolled courses found",
+  "studentDiscussionNoCoursesSubtitle": "Your current courses will appear here once your enrollment is active.",
+  "studentDiscussionNoMatchingCoursesTitle": "No courses match these filters",
+  "studentDiscussionNoMatchingCoursesSubtitle": "Try another discussion state or sorting option.",
+  "studentCourseDiscussionHeaderTitle": "Course Community",
+  "studentCourseDiscussionHeaderSubtitle": "Ask questions, share ideas, and learn together with your classmates.",
+  "studentDiscussionNoPostsTitle": "No discussion posts yet",
+  "studentDiscussionNoPostsSubtitle": "Be the first to start a conversation for this course.",
+  "studentDiscussionTabTitle": "Course Community",
+  "studentDiscussionTabSubtitle": "Open the full discussion space for this course to browse posts, ask questions, and reply.",
+  "studentDiscussionTabOpen": "Open discussions",
+  "studentDiscussionUnavailable": "Discussion is unavailable because the active course ID is missing."
 }
