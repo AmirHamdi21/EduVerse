@@ -10,7 +10,9 @@ import '../../../widgets/shared/chat/contact_list_item.dart';
 import '../../../widgets/shared/chat/frequently_contacted_section.dart';
 
 class NewConversationScreen extends StatefulWidget {
-  const NewConversationScreen({super.key});
+  final ChatUserModel? preselectedUser;
+
+  const NewConversationScreen({super.key, this.preselectedUser});
 
   @override
   State<NewConversationScreen> createState() => _NewConversationScreenState();
@@ -25,6 +27,14 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
   void initState() {
     super.initState();
     context.read<ChatBloc>().add(const ChatNewConversationDialogReset());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final preselectedUser = widget.preselectedUser;
+      if (preselectedUser != null && mounted) {
+        context.read<ChatBloc>().add(
+          ChatDirectParticipantSelected(preselectedUser),
+        );
+      }
+    });
   }
 
   @override
@@ -35,17 +45,8 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
     super.dispose();
   }
 
-  void _startDirectConversation(ChatUserModel user) {
-    context.read<ChatBloc>().add(
-      ChatStartConversationRequested(
-        participantIds: <int>[user.userId],
-        selectedParticipants: <ChatUserModel>[user],
-        type: 'direct',
-        initialMessage: _messageController.text.trim().isEmpty
-            ? null
-            : _messageController.text.trim(),
-      ),
-    );
+  void _selectDirectConversationRecipient(ChatUserModel user) {
+    context.read<ChatBloc>().add(ChatDirectParticipantSelected(user));
   }
 
   void _toggleGroupParticipant(ChatState state, ChatUserModel user) {
@@ -72,9 +73,25 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
         selectedParticipants: state.selectedParticipants,
         type: 'group',
         groupName: _groupNameController.text.trim(),
-        initialMessage: _messageController.text.trim().isEmpty
-            ? null
-            : _messageController.text.trim(),
+        initialMessage: _messageController.text.trim(),
+      ),
+    );
+  }
+
+  void _startDirectConversation(ChatState state) {
+    final selectedUser = state.selectedParticipants.isNotEmpty
+        ? state.selectedParticipants.first
+        : null;
+    if (selectedUser == null) {
+      return;
+    }
+
+    context.read<ChatBloc>().add(
+      ChatStartConversationRequested(
+        participantIds: <int>[selectedUser.userId],
+        selectedParticipants: <ChatUserModel>[selectedUser],
+        type: 'direct',
+        initialMessage: _messageController.text.trim(),
       ),
     );
   }
@@ -122,16 +139,29 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
 
               final availableResults = state.contactSearchResults
                   .where((user) {
+                    if (!isGroup) {
+                      return true;
+                    }
                     return !state.selectedParticipants.any(
                       (selected) => selected.userId == user.userId,
                     );
                   })
                   .toList(growable: false);
 
+              final selectedDirectUser =
+                  !isGroup && state.selectedParticipants.isNotEmpty
+                  ? state.selectedParticipants.first
+                  : null;
+              final canCreateDirect =
+                  !isGroup &&
+                  selectedDirectUser != null &&
+                  _messageController.text.trim().isNotEmpty &&
+                  !state.creatingConversation;
               final canCreateGroup =
                   isGroup &&
                   state.selectedParticipants.length >= 2 &&
                   _groupNameController.text.trim().isNotEmpty &&
+                  _messageController.text.trim().isNotEmpty &&
                   !state.creatingConversation;
 
               return Column(
@@ -240,6 +270,36 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
                       ),
                     ),
                   const SizedBox(height: 8),
+                  if (!isGroup && selectedDirectUser != null)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                      child: Card(
+                        child: ListTile(
+                          leading: const CircleAvatar(
+                            child: Icon(Icons.person_outline),
+                          ),
+                          title: Text(selectedDirectUser.displayName),
+                          subtitle: Text(
+                            (selectedDirectUser.email ?? '').trim().isNotEmpty
+                                ? selectedDirectUser.email!
+                                : 'Selected recipient',
+                          ),
+                          trailing: IconButton(
+                            tooltip: 'Change recipient',
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              context.read<ChatBloc>().add(
+                                const ChatNewConversationDialogReset(),
+                              );
+                              if (widget.preselectedUser != null) {
+                                _searchController.clear();
+                              }
+                              setState(() {});
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
                   Expanded(
                     child: showSearchResults
                         ? _buildSearchResults(
@@ -255,14 +315,42 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
                       controller: _messageController,
                       maxLines: 2,
                       decoration: InputDecoration(
-                        hintText: 'First message (optional)',
+                        hintText: 'First message',
                         prefixIcon: const Icon(Icons.message_outlined),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
+                      onChanged: (_) => setState(() {}),
                     ),
                   ),
+                  if (!isGroup)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: canCreateDirect
+                              ? () => _startDirectConversation(state)
+                              : null,
+                          icon: state.creatingConversation
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Icon(Icons.send_outlined),
+                          label: Text(
+                            state.creatingConversation
+                                ? 'Starting...'
+                                : 'Start Conversation',
+                          ),
+                        ),
+                      ),
+                    ),
                   if (isGroup)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -310,7 +398,7 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
             if (isGroup) {
               _toggleGroupParticipant(state, user);
             } else {
-              _startDirectConversation(user);
+              _selectDirectConversationRecipient(user);
             }
           },
           onAvatarTap: (user) {
@@ -366,7 +454,7 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
             if (isGroup) {
               _toggleGroupParticipant(state, user);
             } else {
-              _startDirectConversation(user);
+              _selectDirectConversationRecipient(user);
             }
           },
         );

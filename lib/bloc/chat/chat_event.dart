@@ -13,6 +13,23 @@ class LoadConversations extends ChatEvent {
   const LoadConversations();
 }
 
+class ChatSessionStarted extends ChatEvent {
+  final int userId;
+
+  const ChatSessionStarted(this.userId);
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+class ChatSessionEnded extends ChatEvent {
+  const ChatSessionEnded();
+}
+
+class ChatReconnectRequested extends ChatEvent {
+  const ChatReconnectRequested();
+}
+
 /// Explicitly request an online users refresh from the socket backend.
 class RefreshOnlineUsersRequested extends ChatEvent {
   const RefreshOnlineUsersRequested();
@@ -130,6 +147,21 @@ class DeleteMessage extends ChatEvent {
   List<Object?> get props => [messageId, forEveryone, conversationId];
 }
 
+class EditMessage extends ChatEvent {
+  final int messageId;
+  final int conversationId;
+  final String text;
+
+  const EditMessage({
+    required this.messageId,
+    required this.conversationId,
+    required this.text,
+  });
+
+  @override
+  List<Object?> get props => [messageId, conversationId, text];
+}
+
 class DeleteConversation extends ChatEvent {
   final int conversationId;
 
@@ -191,6 +223,15 @@ class HideMessageLocally extends ChatEvent {
 
   @override
   List<Object?> get props => [messageId];
+}
+
+class ChatDirectParticipantSelected extends ChatEvent {
+  final ChatUserModel user;
+
+  const ChatDirectParticipantSelected(this.user);
+
+  @override
+  List<Object?> get props => [user];
 }
 
 // ============ New Conversation Dialog Events (Phase 5) ============

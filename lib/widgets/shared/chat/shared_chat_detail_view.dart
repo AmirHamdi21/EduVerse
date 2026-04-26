@@ -246,6 +246,55 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
     });
   }
 
+  Future<void> _editMessage(ChatMessageModel message) async {
+    final controller = TextEditingController(text: message.text);
+    final nextText = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Edit message'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            maxLines: 4,
+            minLines: 1,
+            decoration: const InputDecoration(hintText: 'Update your message'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop(controller.text.trim());
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+
+    controller.dispose();
+
+    if (!mounted || nextText == null) {
+      return;
+    }
+
+    if (nextText.trim().isEmpty || nextText.trim() == message.text.trim()) {
+      return;
+    }
+
+    context.read<ChatBloc>().add(
+      EditMessage(
+        messageId: message.id,
+        conversationId: message.conversationId,
+        text: nextText,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ChatBloc, ChatState>(
@@ -299,7 +348,7 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
 
         return Scaffold(
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight + 40),
+            preferredSize: const Size.fromHeight(kToolbarHeight + 10),
             child: _ConversationHeader(
               conversation: widget.conversation,
               connectionStatus: state.connectionStatus,
@@ -341,7 +390,11 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
                       onTapReplyContext: _scrollToMessage,
                       onDeleteForMe: (messageId) {
                         context.read<ChatBloc>().add(
-                          HideMessageLocally(messageId),
+                          DeleteMessage(
+                            messageId: messageId,
+                            forEveryone: false,
+                            conversationId: widget.conversation.conversationId,
+                          ),
                         );
                       },
                       onDeleteForEveryone: (messageId) {
@@ -353,6 +406,7 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
                           ),
                         );
                       },
+                      onEdit: _editMessage,
                       onRetry: (messageId) {
                         context.read<ChatBloc>().add(
                           RetryFailedMessage(messageId),
@@ -667,6 +721,7 @@ class _MessageList extends StatelessWidget {
   final void Function(int) onTapReplyContext;
   final void Function(int) onDeleteForMe;
   final void Function(int) onDeleteForEveryone;
+  final void Function(ChatMessageModel message) onEdit;
   final void Function(int) onRetry;
   final VoidCallback onRetryLoad;
 
@@ -685,6 +740,7 @@ class _MessageList extends StatelessWidget {
     required this.onTapReplyContext,
     required this.onDeleteForMe,
     required this.onDeleteForEveryone,
+    required this.onEdit,
     required this.onRetry,
     required this.onRetryLoad,
   });
@@ -795,7 +851,14 @@ class _MessageList extends StatelessWidget {
             isMe &&
             !message.isDeleted &&
             message.status != 'pending' &&
+            message.status != 'sending' &&
             DateTime.now().difference(message.sentAt).inHours < 24;
+        final canEdit =
+            isMe &&
+            !message.isDeleted &&
+            message.status != 'pending' &&
+            message.status != 'sending' &&
+            !message.isFailed;
 
         return KeyedSubtree(
           key: bubbleKey,
@@ -809,7 +872,9 @@ class _MessageList extends StatelessWidget {
             accentColor: accentColor,
             isDark: isDark,
             canDeleteForEveryone: canDeleteForEveryone,
+            canEdit: canEdit,
             onReply: () => onReply(message),
+            onEdit: () => onEdit(message),
             onDeleteForMe: () => onDeleteForMe(message.id),
             onDeleteForEveryone: () => onDeleteForEveryone(message.id),
             onTapReplyContext: message.replyToId == null

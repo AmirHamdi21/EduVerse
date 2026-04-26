@@ -20,13 +20,13 @@ abstract class IChatSocketService {
 
   Stream<UserTypingEvent> get typingStream;
 
-  Stream<int> get messageDeletedStream;
+  Stream<MessageDeletedEvent> get messageDeletedStream;
 
   Stream<ChatMessageModel> get messageEditedStream;
 
   Stream<Map<String, dynamic>> get userStatusStream;
 
-  Stream<int> get deleteConfirmedStream;
+  Stream<MessageDeletedEvent> get deleteConfirmedStream;
 
   Stream<MessageReadEvent> get messageReadStream;
 
@@ -164,14 +164,14 @@ class ChatSocketService implements IChatSocketService {
       StreamController<ChatMessageModel>.broadcast();
   final StreamController<UserTypingEvent> _typingController =
       StreamController<UserTypingEvent>.broadcast();
-  final StreamController<int> _messageDeletedController =
-      StreamController<int>.broadcast();
+  final StreamController<MessageDeletedEvent> _messageDeletedController =
+      StreamController<MessageDeletedEvent>.broadcast();
   final StreamController<ChatMessageModel> _messageEditedController =
       StreamController<ChatMessageModel>.broadcast();
   final StreamController<Map<String, dynamic>> _userStatusController =
       StreamController<Map<String, dynamic>>.broadcast();
-  final StreamController<int> _deleteConfirmedController =
-      StreamController<int>.broadcast();
+  final StreamController<MessageDeletedEvent> _deleteConfirmedController =
+      StreamController<MessageDeletedEvent>.broadcast();
   final StreamController<MessageReadEvent> _messageReadController =
       StreamController<MessageReadEvent>.broadcast();
 
@@ -233,7 +233,8 @@ class ChatSocketService implements IChatSocketService {
   Stream<UserTypingEvent> get typingStream => _typingController.stream;
 
   @override
-  Stream<int> get messageDeletedStream => _messageDeletedController.stream;
+  Stream<MessageDeletedEvent> get messageDeletedStream =>
+      _messageDeletedController.stream;
 
   @override
   Stream<ChatMessageModel> get messageEditedStream =>
@@ -244,7 +245,8 @@ class ChatSocketService implements IChatSocketService {
       _userStatusController.stream;
 
   @override
-  Stream<int> get deleteConfirmedStream => _deleteConfirmedController.stream;
+  Stream<MessageDeletedEvent> get deleteConfirmedStream =>
+      _deleteConfirmedController.stream;
 
   @override
   Stream<MessageReadEvent> get messageReadStream =>
@@ -296,7 +298,7 @@ class ChatSocketService implements IChatSocketService {
 
   @override
   void requestOnlineUsers() {
-    _emit('get_online_users', <String, dynamic>{});
+    // Presence snapshots are loaded through the REST API.
   }
 
   @override
@@ -350,7 +352,6 @@ class ChatSocketService implements IChatSocketService {
   void _registerCoreListeners(ChatSocketClient socket) {
     socket.onConnect((_) {
       _setConnectionStatus(ChatConnectionStatus.connected);
-      requestOnlineUsers();
     });
 
     socket.onDisconnect((_) {
@@ -404,16 +405,16 @@ class ChatSocketService implements IChatSocketService {
     });
 
     socket.on('message_deleted', (data) {
-      final messageId = _extractMessageId(data);
-      if (messageId > 0) {
-        _messageDeletedController.add(messageId);
+      final event = _extractMessageDeletedEvent(data);
+      if (event.messageId > 0) {
+        _messageDeletedController.add(event);
       }
     });
 
     socket.on('delete_confirmed', (data) {
-      final messageId = _extractMessageId(data);
-      if (messageId > 0) {
-        _deleteConfirmedController.add(messageId);
+      final event = _extractMessageDeletedEvent(data);
+      if (event.messageId > 0) {
+        _deleteConfirmedController.add(event);
       }
     });
 
@@ -528,6 +529,14 @@ class ChatSocketService implements IChatSocketService {
   int _extractMessageId(dynamic payload) {
     final map = _unwrapPayload(payload);
     return _parseInt(map['messageId'] ?? map['id']);
+  }
+
+  MessageDeletedEvent _extractMessageDeletedEvent(dynamic payload) {
+    final map = _unwrapPayload(payload);
+    if (map.isEmpty) {
+      return MessageDeletedEvent(messageId: _extractMessageId(payload));
+    }
+    return MessageDeletedEvent.fromJson(map);
   }
 
   int _parseInt(dynamic value, {int fallback = 0}) {

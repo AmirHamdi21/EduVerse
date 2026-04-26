@@ -124,12 +124,6 @@ void main() {
         expect(capturedToken, 'jwt-token-123');
         expect(states, contains(ChatConnectionStatus.reconnecting));
         expect(states, contains(ChatConnectionStatus.connected));
-        expect(
-          fakeSocket.emittedEvents.any(
-            (event) => event.event == 'get_online_users',
-          ),
-          isTrue,
-        );
 
         await sub.cancel();
         ChatSocketService.resetInstanceForTest();
@@ -172,7 +166,6 @@ void main() {
       expect(names, contains('leave_conversation'));
       expect(names, contains('send_message'));
       expect(names, contains('typing'));
-      expect(names, contains('get_online_users'));
       expect(names, contains('mark_read'));
       expect(names, contains('edit_message'));
       expect(names, contains('delete_message'));
@@ -211,10 +204,10 @@ void main() {
       final notifications = <ChatMessageModel>[];
       final typing = <UserTypingEvent>[];
       final onlineUsersLists = <Set<int>>[];
-      final deletedIds = <int>[];
+      final deletedEvents = <MessageDeletedEvent>[];
       final editedMessages = <ChatMessageModel>[];
       final statusEvents = <Map<String, dynamic>>[];
-      final deleteConfirmedIds = <int>[];
+      final deleteConfirmedEvents = <MessageDeletedEvent>[];
       final readEvents = <MessageReadEvent>[];
 
       final subs = [
@@ -222,10 +215,10 @@ void main() {
         service.newMessageNotificationStream.listen(notifications.add),
         service.typingStream.listen(typing.add),
         service.onlineUsersListStream.listen(onlineUsersLists.add),
-        service.messageDeletedStream.listen(deletedIds.add),
+        service.messageDeletedStream.listen(deletedEvents.add),
         service.messageEditedStream.listen(editedMessages.add),
         service.userStatusStream.listen(statusEvents.add),
-        service.deleteConfirmedStream.listen(deleteConfirmedIds.add),
+        service.deleteConfirmedStream.listen(deleteConfirmedEvents.add),
         service.messageReadStream.listen(readEvents.add),
       ];
 
@@ -299,8 +292,8 @@ void main() {
       expect(typing, hasLength(1));
       expect(typing.first.userId, 7);
       expect(typing.first.isTyping, isTrue);
-      expect(deletedIds, [31]);
-      expect(deleteConfirmedIds, [32]);
+      expect(deletedEvents.map((event) => event.messageId), [31]);
+      expect(deleteConfirmedEvents.map((event) => event.messageId), [32]);
       expect(editedMessages, hasLength(1));
       expect(editedMessages.first.id, 45);
       expect(statusEvents, hasLength(1));

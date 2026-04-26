@@ -38,6 +38,9 @@ class SharedMessageBubble extends StatelessWidget {
   /// Callback when "Delete for everyone" action is selected
   final VoidCallback? onDeleteForEveryone;
 
+  /// Callback when "Edit" action is selected
+  final VoidCallback? onEdit;
+
   /// Callback when retry button is tapped (for failed messages)
   final VoidCallback? onRetry;
 
@@ -46,6 +49,9 @@ class SharedMessageBubble extends StatelessWidget {
 
   /// Whether "Delete for everyone" should be shown (24h window + own message)
   final bool canDeleteForEveryone;
+
+  /// Whether the current user can edit the message
+  final bool canEdit;
 
   const SharedMessageBubble({
     super.key,
@@ -60,9 +66,11 @@ class SharedMessageBubble extends StatelessWidget {
     this.onReply,
     this.onDeleteForMe,
     this.onDeleteForEveryone,
+    this.onEdit,
     this.onRetry,
     this.onTapReplyContext,
     this.canDeleteForEveryone = false,
+    this.canEdit = false,
   });
 
   @override
@@ -178,7 +186,9 @@ class SharedMessageBubble extends StatelessWidget {
 
   Widget _buildMessageBubble() {
     final isFailed = message.status.toLowerCase() == 'failed';
-    final isPending = message.status.toLowerCase() == 'pending';
+    final normalizedStatus = message.status.toLowerCase();
+    final isPending =
+        normalizedStatus == 'pending' || normalizedStatus == 'sending';
 
     Color bgColor;
     if (message.isDeleted) {
@@ -230,6 +240,19 @@ class SharedMessageBubble extends StatelessWidget {
                       : (isDark ? Colors.grey[500] : Colors.grey[600]),
                 ),
               ),
+              if (message.editedAt != null && !message.isDeleted) ...[
+                const SizedBox(width: 4),
+                Text(
+                  'edited',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: isMe
+                        ? Colors.white.withOpacity(0.7)
+                        : (isDark ? Colors.grey[500] : Colors.grey[600]),
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
               if (isMe) ...[
                 const SizedBox(width: 4),
                 _buildStatusIcon(isPending, isFailed),
@@ -289,6 +312,15 @@ class SharedMessageBubble extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     onReply!();
+                  },
+                ),
+              if (canEdit && onEdit != null)
+                ListTile(
+                  leading: const Icon(Icons.edit_outlined),
+                  title: const Text('Edit message'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    onEdit!();
                   },
                 ),
               if (onDeleteForMe != null)

@@ -93,6 +93,7 @@ class _FakeStorageService extends StorageService {
 class _FakeChatService implements IChatService {
   List<ConversationModel> conversations = [];
   final Map<int, List<ChatMessageModel>> messagesByConversation = {};
+  OnlineUsersSnapshot onlineUsersSnapshot = const OnlineUsersSnapshot();
 
   bool throwOnSearch = false;
   bool throwOnStartConversation = false;
@@ -175,6 +176,12 @@ class _FakeChatService implements IChatService {
   }
 
   @override
+  Future<OnlineUsersSnapshot> getOnlineUsers() async => onlineUsersSnapshot;
+
+  @override
+  Future<int> getUnreadCount() async => 0;
+
+  @override
   Future<void> markRead(int messageId) async {}
 
   @override
@@ -208,14 +215,14 @@ class _FakeSocketService implements IChatSocketService {
       StreamController<ChatMessageModel>.broadcast();
   final StreamController<UserTypingEvent> _typingController =
       StreamController<UserTypingEvent>.broadcast();
-  final StreamController<int> _messageDeletedController =
-      StreamController<int>.broadcast();
+  final StreamController<MessageDeletedEvent> _messageDeletedController =
+      StreamController<MessageDeletedEvent>.broadcast();
   final StreamController<ChatMessageModel> _messageEditedController =
       StreamController<ChatMessageModel>.broadcast();
   final StreamController<Map<String, dynamic>> _statusController =
       StreamController<Map<String, dynamic>>.broadcast();
-  final StreamController<int> _deleteConfirmedController =
-      StreamController<int>.broadcast();
+  final StreamController<MessageDeletedEvent> _deleteConfirmedController =
+      StreamController<MessageDeletedEvent>.broadcast();
   final StreamController<MessageReadEvent> _messageReadController =
       StreamController<MessageReadEvent>.broadcast();
 
@@ -240,7 +247,8 @@ class _FakeSocketService implements IChatSocketService {
   Stream<UserTypingEvent> get typingStream => _typingController.stream;
 
   @override
-  Stream<int> get messageDeletedStream => _messageDeletedController.stream;
+  Stream<MessageDeletedEvent> get messageDeletedStream =>
+      _messageDeletedController.stream;
 
   @override
   Stream<ChatMessageModel> get messageEditedStream =>
@@ -250,7 +258,8 @@ class _FakeSocketService implements IChatSocketService {
   Stream<Map<String, dynamic>> get userStatusStream => _statusController.stream;
 
   @override
-  Stream<int> get deleteConfirmedStream => _deleteConfirmedController.stream;
+  Stream<MessageDeletedEvent> get deleteConfirmedStream =>
+      _deleteConfirmedController.stream;
 
   @override
   Stream<MessageReadEvent> get messageReadStream =>
@@ -488,6 +497,7 @@ void main() {
           participantIds: [42],
           selectedParticipants: [_targetUser],
           type: 'direct',
+          initialMessage: 'Retry me',
         ),
       );
       await _settle();
@@ -501,6 +511,7 @@ void main() {
           participantIds: [42],
           selectedParticipants: [_targetUser],
           type: 'direct',
+          initialMessage: 'Retry me again',
         ),
       );
       await _settle();
@@ -570,6 +581,7 @@ void main() {
           participantIds: [42],
           selectedParticipants: [_targetUser],
           type: 'direct',
+          initialMessage: 'Hello after reopen',
         ),
       );
       await _settle();
@@ -639,6 +651,7 @@ void main() {
           participantIds: [42],
           selectedParticipants: [_targetUser],
           type: 'direct',
+          initialMessage: 'Navigate to created chat',
         ),
       );
       await _settle();
@@ -708,6 +721,7 @@ void main() {
           participantIds: [42],
           selectedParticipants: [_targetUser],
           type: 'direct',
+          initialMessage: 'Realtime test',
         ),
       );
       await _settle();
@@ -1054,6 +1068,7 @@ void main() {
           participantIds: [42],
           selectedParticipants: [_targetUser],
           type: 'direct',
+          initialMessage: 'Reset test direct chat',
         ),
       );
       await _settle();
