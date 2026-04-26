@@ -25486,6 +25486,708 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No courses available'**
   String get noCoursesAvailable;
+
+  /// No description provided for @instructorDiscussionHubTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion Pulse'**
+  String get instructorDiscussionHubTitle;
+
+  /// No description provided for @instructorDiscussionHubSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track course conversations, spot unanswered questions, and jump into the discussions that need you most.'**
+  String get instructorDiscussionHubSubtitle;
+
+  /// No description provided for @instructorDiscussionPostsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Posts'**
+  String get instructorDiscussionPostsLabel;
+
+  /// No description provided for @instructorDiscussionRepliesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Replies'**
+  String get instructorDiscussionRepliesLabel;
+
+  /// No description provided for @instructorDiscussionPinnedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get instructorDiscussionPinnedLabel;
+
+  /// No description provided for @instructorDiscussionLockedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked'**
+  String get instructorDiscussionLockedLabel;
+
+  /// No description provided for @instructorDiscussionViewsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Views'**
+  String get instructorDiscussionViewsLabel;
+
+  /// No description provided for @instructorDiscussionAnswersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Answers'**
+  String get instructorDiscussionAnswersLabel;
+
+  /// No description provided for @instructorDiscussionVisibleCoursesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'courses visible'**
+  String get instructorDiscussionVisibleCoursesLabel;
+
+  /// No description provided for @instructorDiscussionVisiblePostsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'posts visible'**
+  String get instructorDiscussionVisiblePostsLabel;
+
+  /// No description provided for @instructorDiscussionFilterState.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion state'**
+  String get instructorDiscussionFilterState;
+
+  /// No description provided for @instructorDiscussionSortBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Sort by'**
+  String get instructorDiscussionSortBy;
+
+  /// No description provided for @instructorDiscussionFilterAllCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'All courses'**
+  String get instructorDiscussionFilterAllCourses;
+
+  /// No description provided for @instructorDiscussionFilterWithPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'With posts'**
+  String get instructorDiscussionFilterWithPosts;
+
+  /// No description provided for @instructorDiscussionFilterNeedsReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs replies'**
+  String get instructorDiscussionFilterNeedsReplies;
+
+  /// No description provided for @instructorDiscussionFilterPinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Has pinned'**
+  String get instructorDiscussionFilterPinned;
+
+  /// No description provided for @instructorDiscussionFilterLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Has locked'**
+  String get instructorDiscussionFilterLocked;
+
+  /// No description provided for @instructorDiscussionFilterQuiet.
+  ///
+  /// In en, this message translates to:
+  /// **'No posts'**
+  String get instructorDiscussionFilterQuiet;
+
+  /// No description provided for @instructorDiscussionSortLatestActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest activity'**
+  String get instructorDiscussionSortLatestActivity;
+
+  /// No description provided for @instructorDiscussionSortMostPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Most posts'**
+  String get instructorDiscussionSortMostPosts;
+
+  /// No description provided for @instructorDiscussionSortMostReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Most replies'**
+  String get instructorDiscussionSortMostReplies;
+
+  /// No description provided for @instructorDiscussionSortMostViews.
+  ///
+  /// In en, this message translates to:
+  /// **'Most views'**
+  String get instructorDiscussionSortMostViews;
+
+  /// No description provided for @instructorDiscussionSortCourseCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Course code'**
+  String get instructorDiscussionSortCourseCode;
+
+  /// No description provided for @instructorDiscussionSortTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get instructorDiscussionSortTitle;
+
+  /// No description provided for @instructorDiscussionSearchCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Search courses or latest discussion...'**
+  String get instructorDiscussionSearchCourses;
+
+  /// No description provided for @instructorDiscussionSearchPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Search posts by title, content, or author...'**
+  String get instructorDiscussionSearchPosts;
+
+  /// No description provided for @instructorDiscussionOpenCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Open course'**
+  String get instructorDiscussionOpenCourse;
+
+  /// No description provided for @instructorDiscussionOpenThread.
+  ///
+  /// In en, this message translates to:
+  /// **'Open thread'**
+  String get instructorDiscussionOpenThread;
+
+  /// No description provided for @instructorDiscussionLatestPostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Latest post'**
+  String get instructorDiscussionLatestPostLabel;
+
+  /// No description provided for @instructorDiscussionNoPostsCardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No discussion posts yet'**
+  String get instructorDiscussionNoPostsCardTitle;
+
+  /// No description provided for @instructorDiscussionNoPostsCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This course is ready for its first class conversation.'**
+  String get instructorDiscussionNoPostsCardSubtitle;
+
+  /// No description provided for @instructorDiscussionNeedsRepliesShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs replies'**
+  String get instructorDiscussionNeedsRepliesShort;
+
+  /// No description provided for @instructorDiscussionNoCoursesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No teaching courses found'**
+  String get instructorDiscussionNoCoursesTitle;
+
+  /// No description provided for @instructorDiscussionNoCoursesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your assigned courses will appear here once they are available.'**
+  String get instructorDiscussionNoCoursesSubtitle;
+
+  /// No description provided for @instructorDiscussionNoMatchingCoursesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No courses match these filters'**
+  String get instructorDiscussionNoMatchingCoursesTitle;
+
+  /// No description provided for @instructorDiscussionNoMatchingCoursesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another discussion state or sorting option.'**
+  String get instructorDiscussionNoMatchingCoursesSubtitle;
+
+  /// No description provided for @instructorDiscussionLoadFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion data could not be loaded'**
+  String get instructorDiscussionLoadFailedTitle;
+
+  /// No description provided for @instructorCourseDiscussionHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Discussions'**
+  String get instructorCourseDiscussionHeaderTitle;
+
+  /// No description provided for @instructorCourseDiscussionHeaderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Guide the conversation, surface strong answers, and keep students aligned with the course flow.'**
+  String get instructorCourseDiscussionHeaderSubtitle;
+
+  /// No description provided for @instructorDiscussionCreatePost.
+  ///
+  /// In en, this message translates to:
+  /// **'Create post'**
+  String get instructorDiscussionCreatePost;
+
+  /// No description provided for @instructorDiscussionPostCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Post created successfully.'**
+  String get instructorDiscussionPostCreated;
+
+  /// No description provided for @instructorDiscussionPostUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Post updated successfully.'**
+  String get instructorDiscussionPostUpdated;
+
+  /// No description provided for @instructorDiscussionPostDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Post deleted successfully.'**
+  String get instructorDiscussionPostDeleted;
+
+  /// No description provided for @instructorDiscussionThreadPinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Thread pinned successfully.'**
+  String get instructorDiscussionThreadPinned;
+
+  /// No description provided for @instructorDiscussionThreadUnpinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Thread unpinned successfully.'**
+  String get instructorDiscussionThreadUnpinned;
+
+  /// No description provided for @instructorDiscussionThreadLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Thread locked successfully.'**
+  String get instructorDiscussionThreadLocked;
+
+  /// No description provided for @instructorDiscussionThreadUnlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Thread unlocked successfully.'**
+  String get instructorDiscussionThreadUnlocked;
+
+  /// No description provided for @instructorDiscussionPostFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All posts'**
+  String get instructorDiscussionPostFilterAll;
+
+  /// No description provided for @instructorDiscussionPostFilterUnanswered.
+  ///
+  /// In en, this message translates to:
+  /// **'Unanswered'**
+  String get instructorDiscussionPostFilterUnanswered;
+
+  /// No description provided for @instructorDiscussionNoPostsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No discussion posts yet'**
+  String get instructorDiscussionNoPostsTitle;
+
+  /// No description provided for @instructorDiscussionNoPostsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start the first discussion for this course to set the tone for the conversation.'**
+  String get instructorDiscussionNoPostsSubtitle;
+
+  /// No description provided for @instructorDiscussionPostDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion Details'**
+  String get instructorDiscussionPostDetailsTitle;
+
+  /// No description provided for @instructorDiscussionThreadMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'This discussion post is no longer available.'**
+  String get instructorDiscussionThreadMissing;
+
+  /// No description provided for @instructorDiscussionConversationTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversation'**
+  String get instructorDiscussionConversationTab;
+
+  /// No description provided for @instructorDiscussionPinnedAnswerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned answer'**
+  String get instructorDiscussionPinnedAnswerTitle;
+
+  /// No description provided for @instructorDiscussionPostOverviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Post overview'**
+  String get instructorDiscussionPostOverviewTitle;
+
+  /// No description provided for @instructorDiscussionHighlightedAnswerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Highlighted answer'**
+  String get instructorDiscussionHighlightedAnswerTitle;
+
+  /// No description provided for @instructorDiscussionNoHighlightedAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'No highlighted answer has been selected yet.'**
+  String get instructorDiscussionNoHighlightedAnswer;
+
+  /// No description provided for @instructorDiscussionActivitySummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity snapshot'**
+  String get instructorDiscussionActivitySummaryTitle;
+
+  /// No description provided for @instructorDiscussionLockedBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'This post is locked, so new replies are currently disabled.'**
+  String get instructorDiscussionLockedBanner;
+
+  /// No description provided for @instructorDiscussionNoRepliesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No replies yet'**
+  String get instructorDiscussionNoRepliesTitle;
+
+  /// No description provided for @instructorDiscussionNoRepliesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The first reply will appear here as soon as the conversation starts.'**
+  String get instructorDiscussionNoRepliesSubtitle;
+
+  /// No description provided for @instructorDiscussionReplyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a reply...'**
+  String get instructorDiscussionReplyHint;
+
+  /// No description provided for @instructorDiscussionRepliesDisabledHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Replies are disabled for this post'**
+  String get instructorDiscussionRepliesDisabledHint;
+
+  /// No description provided for @instructorDiscussionReplyPosted.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply posted successfully.'**
+  String get instructorDiscussionReplyPosted;
+
+  /// No description provided for @instructorDiscussionReplyUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply updated successfully.'**
+  String get instructorDiscussionReplyUpdated;
+
+  /// No description provided for @instructorDiscussionReplyDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply deleted successfully.'**
+  String get instructorDiscussionReplyDeleted;
+
+  /// No description provided for @instructorDiscussionUpvoteAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply upvoted.'**
+  String get instructorDiscussionUpvoteAdded;
+
+  /// No description provided for @instructorDiscussionUpvoteRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply upvote removed.'**
+  String get instructorDiscussionUpvoteRemoved;
+
+  /// No description provided for @instructorDiscussionAnswerMarked.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer marked successfully.'**
+  String get instructorDiscussionAnswerMarked;
+
+  /// No description provided for @instructorDiscussionAnswerUnmarked.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer mark removed successfully.'**
+  String get instructorDiscussionAnswerUnmarked;
+
+  /// No description provided for @instructorDiscussionReplyEndorsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply endorsed successfully.'**
+  String get instructorDiscussionReplyEndorsed;
+
+  /// No description provided for @instructorDiscussionReplyUnendorsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply endorsement removed successfully.'**
+  String get instructorDiscussionReplyUnendorsed;
+
+  /// No description provided for @instructorDiscussionDeletePostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete discussion post?'**
+  String get instructorDiscussionDeletePostTitle;
+
+  /// No description provided for @instructorDiscussionDeletePostMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone. Do you want to delete this discussion post?'**
+  String get instructorDiscussionDeletePostMessage;
+
+  /// No description provided for @instructorDiscussionDeleteReplyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete reply?'**
+  String get instructorDiscussionDeleteReplyTitle;
+
+  /// No description provided for @instructorDiscussionDeleteReplyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone. Do you want to delete this reply?'**
+  String get instructorDiscussionDeleteReplyMessage;
+
+  /// No description provided for @instructorDiscussionNewPostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create discussion post'**
+  String get instructorDiscussionNewPostTitle;
+
+  /// No description provided for @instructorDiscussionEditPostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit discussion post'**
+  String get instructorDiscussionEditPostTitle;
+
+  /// No description provided for @instructorDiscussionPostTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Post title'**
+  String get instructorDiscussionPostTitleLabel;
+
+  /// No description provided for @instructorDiscussionPostDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Post details'**
+  String get instructorDiscussionPostDescriptionLabel;
+
+  /// No description provided for @instructorDiscussionPostTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Post title is required.'**
+  String get instructorDiscussionPostTitleRequired;
+
+  /// No description provided for @instructorDiscussionPostTitleMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Title should be at least 4 characters.'**
+  String get instructorDiscussionPostTitleMin;
+
+  /// No description provided for @instructorDiscussionPostDescriptionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Post details are required.'**
+  String get instructorDiscussionPostDescriptionRequired;
+
+  /// No description provided for @instructorDiscussionPostDescriptionMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Post details should be at least 10 characters.'**
+  String get instructorDiscussionPostDescriptionMin;
+
+  /// No description provided for @instructorDiscussionEditReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit reply'**
+  String get instructorDiscussionEditReply;
+
+  /// No description provided for @instructorDiscussionReplyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply text is required.'**
+  String get instructorDiscussionReplyRequired;
+
+  /// No description provided for @instructorDiscussionReplyMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply should be at least 2 characters.'**
+  String get instructorDiscussionReplyMin;
+
+  /// No description provided for @instructorDiscussionPinThread.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin thread'**
+  String get instructorDiscussionPinThread;
+
+  /// No description provided for @instructorDiscussionUnpinThread.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin thread'**
+  String get instructorDiscussionUnpinThread;
+
+  /// No description provided for @instructorDiscussionLockThread.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock thread'**
+  String get instructorDiscussionLockThread;
+
+  /// No description provided for @instructorDiscussionUnlockThread.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock thread'**
+  String get instructorDiscussionUnlockThread;
+
+  /// No description provided for @instructorDiscussionMarkAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as answer'**
+  String get instructorDiscussionMarkAnswer;
+
+  /// No description provided for @instructorDiscussionUnmarkAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmark answer'**
+  String get instructorDiscussionUnmarkAnswer;
+
+  /// No description provided for @instructorDiscussionEndorseReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Endorse reply'**
+  String get instructorDiscussionEndorseReply;
+
+  /// No description provided for @instructorDiscussionRemoveEndorse.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove endorsement'**
+  String get instructorDiscussionRemoveEndorse;
+
+  /// No description provided for @instructorDiscussionAnswerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer'**
+  String get instructorDiscussionAnswerLabel;
+
+  /// No description provided for @instructorDiscussionEndorsedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Endorsed'**
+  String get instructorDiscussionEndorsedLabel;
+
+  /// No description provided for @instructorDiscussionAuthorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Author'**
+  String get instructorDiscussionAuthorLabel;
+
+  /// No description provided for @instructorDiscussionSectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Section'**
+  String get instructorDiscussionSectionLabel;
+
+  /// No description provided for @instructorDiscussionSemesterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Semester'**
+  String get instructorDiscussionSemesterLabel;
+
+  /// No description provided for @instructorDiscussionCreatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get instructorDiscussionCreatedLabel;
+
+  /// No description provided for @instructorDiscussionUpdatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get instructorDiscussionUpdatedLabel;
+
+  /// No description provided for @studentDiscussionHubTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Community Pulse'**
+  String get studentDiscussionHubTitle;
+
+  /// No description provided for @studentDiscussionHubSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore course conversations, find active questions, and jump into the discussions that matter to your learning.'**
+  String get studentDiscussionHubSubtitle;
+
+  /// No description provided for @studentDiscussionNoCoursesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No enrolled courses found'**
+  String get studentDiscussionNoCoursesTitle;
+
+  /// No description provided for @studentDiscussionNoCoursesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your current courses will appear here once your enrollment is active.'**
+  String get studentDiscussionNoCoursesSubtitle;
+
+  /// No description provided for @studentDiscussionNoMatchingCoursesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No courses match these filters'**
+  String get studentDiscussionNoMatchingCoursesTitle;
+
+  /// No description provided for @studentDiscussionNoMatchingCoursesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another discussion state or sorting option.'**
+  String get studentDiscussionNoMatchingCoursesSubtitle;
+
+  /// No description provided for @studentCourseDiscussionHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Community'**
+  String get studentCourseDiscussionHeaderTitle;
+
+  /// No description provided for @studentCourseDiscussionHeaderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask questions, share ideas, and learn together with your classmates.'**
+  String get studentCourseDiscussionHeaderSubtitle;
+
+  /// No description provided for @studentDiscussionNoPostsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No discussion posts yet'**
+  String get studentDiscussionNoPostsTitle;
+
+  /// No description provided for @studentDiscussionNoPostsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to start a conversation for this course.'**
+  String get studentDiscussionNoPostsSubtitle;
+
+  /// No description provided for @studentDiscussionTabTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Course Community'**
+  String get studentDiscussionTabTitle;
+
+  /// No description provided for @studentDiscussionTabSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the full discussion space for this course to browse posts, ask questions, and reply.'**
+  String get studentDiscussionTabSubtitle;
+
+  /// No description provided for @studentDiscussionTabOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open discussions'**
+  String get studentDiscussionTabOpen;
+
+  /// No description provided for @studentDiscussionUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Discussion is unavailable because the active course ID is missing.'**
+  String get studentDiscussionUnavailable;
 }
 
 class _AppLocalizationsDelegate

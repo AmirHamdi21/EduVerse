@@ -444,6 +444,7 @@ mixin _$DiscussionReply {
   int? get parentMessageId => throw _privateConstructorUsedError;
   bool get isAnswer => throw _privateConstructorUsedError;
   bool get isEndorsed => throw _privateConstructorUsedError;
+  int get upvoteCount => throw _privateConstructorUsedError;
   int? get endorsedBy => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
@@ -474,6 +475,7 @@ abstract class $DiscussionReplyCopyWith<$Res> {
     int? parentMessageId,
     bool isAnswer,
     bool isEndorsed,
+    int upvoteCount,
     int? endorsedBy,
     DateTime createdAt,
     DateTime? updatedAt,
@@ -503,6 +505,7 @@ class _$DiscussionReplyCopyWithImpl<$Res, $Val extends DiscussionReply>
     Object? parentMessageId = freezed,
     Object? isAnswer = null,
     Object? isEndorsed = null,
+    Object? upvoteCount = null,
     Object? endorsedBy = freezed,
     Object? createdAt = null,
     Object? updatedAt = freezed,
@@ -541,6 +544,10 @@ class _$DiscussionReplyCopyWithImpl<$Res, $Val extends DiscussionReply>
                 ? _value.isEndorsed
                 : isEndorsed // ignore: cast_nullable_to_non_nullable
                       as bool,
+            upvoteCount: null == upvoteCount
+                ? _value.upvoteCount
+                : upvoteCount // ignore: cast_nullable_to_non_nullable
+                      as int,
             endorsedBy: freezed == endorsedBy
                 ? _value.endorsedBy
                 : endorsedBy // ignore: cast_nullable_to_non_nullable
@@ -577,6 +584,7 @@ abstract class _$$DiscussionReplyImplCopyWith<$Res>
     int? parentMessageId,
     bool isAnswer,
     bool isEndorsed,
+    int upvoteCount,
     int? endorsedBy,
     DateTime createdAt,
     DateTime? updatedAt,
@@ -605,6 +613,7 @@ class __$$DiscussionReplyImplCopyWithImpl<$Res>
     Object? parentMessageId = freezed,
     Object? isAnswer = null,
     Object? isEndorsed = null,
+    Object? upvoteCount = null,
     Object? endorsedBy = freezed,
     Object? createdAt = null,
     Object? updatedAt = freezed,
@@ -643,6 +652,10 @@ class __$$DiscussionReplyImplCopyWithImpl<$Res>
             ? _value.isEndorsed
             : isEndorsed // ignore: cast_nullable_to_non_nullable
                   as bool,
+        upvoteCount: null == upvoteCount
+            ? _value.upvoteCount
+            : upvoteCount // ignore: cast_nullable_to_non_nullable
+                  as int,
         endorsedBy: freezed == endorsedBy
             ? _value.endorsedBy
             : endorsedBy // ignore: cast_nullable_to_non_nullable
@@ -672,6 +685,7 @@ class _$DiscussionReplyImpl implements _DiscussionReply {
     this.parentMessageId,
     this.isAnswer = false,
     this.isEndorsed = false,
+    this.upvoteCount = 0,
     this.endorsedBy,
     required this.createdAt,
     this.updatedAt,
@@ -700,6 +714,9 @@ class _$DiscussionReplyImpl implements _DiscussionReply {
   @JsonKey()
   final bool isEndorsed;
   @override
+  @JsonKey()
+  final int upvoteCount;
+  @override
   final int? endorsedBy;
   @override
   final DateTime createdAt;
@@ -708,7 +725,7 @@ class _$DiscussionReplyImpl implements _DiscussionReply {
 
   @override
   String toString() {
-    return 'DiscussionReply(id: $id, threadId: $threadId, userId: $userId, userName: $userName, messageText: $messageText, parentMessageId: $parentMessageId, isAnswer: $isAnswer, isEndorsed: $isEndorsed, endorsedBy: $endorsedBy, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'DiscussionReply(id: $id, threadId: $threadId, userId: $userId, userName: $userName, messageText: $messageText, parentMessageId: $parentMessageId, isAnswer: $isAnswer, isEndorsed: $isEndorsed, upvoteCount: $upvoteCount, endorsedBy: $endorsedBy, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -730,6 +747,8 @@ class _$DiscussionReplyImpl implements _DiscussionReply {
                 other.isAnswer == isAnswer) &&
             (identical(other.isEndorsed, isEndorsed) ||
                 other.isEndorsed == isEndorsed) &&
+            (identical(other.upvoteCount, upvoteCount) ||
+                other.upvoteCount == upvoteCount) &&
             (identical(other.endorsedBy, endorsedBy) ||
                 other.endorsedBy == endorsedBy) &&
             (identical(other.createdAt, createdAt) ||
@@ -750,6 +769,7 @@ class _$DiscussionReplyImpl implements _DiscussionReply {
     parentMessageId,
     isAnswer,
     isEndorsed,
+    upvoteCount,
     endorsedBy,
     createdAt,
     updatedAt,
@@ -782,6 +802,7 @@ abstract class _DiscussionReply implements DiscussionReply {
     final int? parentMessageId,
     final bool isAnswer,
     final bool isEndorsed,
+    final int upvoteCount,
     final int? endorsedBy,
     required final DateTime createdAt,
     final DateTime? updatedAt,
@@ -806,6 +827,8 @@ abstract class _DiscussionReply implements DiscussionReply {
   bool get isAnswer;
   @override
   bool get isEndorsed;
+  @override
+  int get upvoteCount;
   @override
   int? get endorsedBy;
   @override

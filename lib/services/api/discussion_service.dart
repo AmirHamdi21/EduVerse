@@ -55,6 +55,8 @@ abstract class IDiscussionService {
   Future<void> markAnswer(int replyId);
 
   Future<void> endorseReply(int replyId);
+
+  Future<String> toggleMessageUpvote(int replyId);
 }
 
 class DiscussionService implements IDiscussionService {
@@ -231,6 +233,18 @@ class DiscussionService implements IDiscussionService {
     await _client.dio.patch('/discussions/replies/$replyId/endorse');
   }
 
+  @override
+  Future<String> toggleMessageUpvote(int replyId) async {
+    final response = await _client.dio.post('/discussions/replies/$replyId/upvote');
+    final payload = _asMap(response.data);
+    final data = _asMap(payload['data']);
+    final action =
+        data['action']?.toString() ??
+        payload['action']?.toString() ??
+        'added';
+    return action;
+  }
+
   List<DiscussionThread> _sortPinnedFirst(List<DiscussionThread> threads) {
     final sorted = [...threads];
     sorted.sort((a, b) {
@@ -374,18 +388,20 @@ class DiscussionService implements IDiscussionService {
 
     final createdBy = normalized['createdBy'];
     if (createdBy is Map<String, dynamic>) {
-      normalized['createdByName'] =
-          createdBy['fullName'] ??
-          createdBy['name'] ??
-          createdBy['displayName'] ??
-          createdBy['email'];
+      normalized['createdByName'] = _extractDisplayName(createdBy);
       normalized['createdBy'] = createdBy['userId'] ?? createdBy['id'] ?? 0;
+    }
+
+    final creator = _asMap(normalized['creator']);
+    if (creator.isNotEmpty) {
+      normalized['createdByName'] = _extractDisplayName(creator);
+      normalized['createdBy'] =
+          creator['userId'] ?? creator['id'] ?? normalized['createdBy'] ?? 0;
     }
 
     if (!normalized.containsKey('createdByName')) {
       final user = _asMap(normalized['user']);
-      normalized['createdByName'] =
-          user['fullName'] ?? user['name'] ?? user['displayName'] ?? '';
+      normalized['createdByName'] = _extractDisplayName(user);
     }
 
     // Coerce all numeric fields that freezed expects as num/int.
@@ -437,22 +453,30 @@ class DiscussionService implements IDiscussionService {
     if (author.isNotEmpty) {
       normalized['userId'] =
           author['userId'] ?? author['id'] ?? normalized['userId'];
-      normalized['userName'] =
-          author['fullName'] ??
-          author['name'] ??
-          author['displayName'] ??
-          normalized['userName'];
+      normalized['userName'] = _extractDisplayName(
+        author,
+        fallback: normalized['userName']?.toString() ?? '',
+      );
     }
 
     final createdBy = normalized['createdBy'];
     if (createdBy is Map<String, dynamic>) {
       normalized['userId'] =
           createdBy['userId'] ?? createdBy['id'] ?? normalized['userId'];
-      normalized['userName'] =
-          createdBy['fullName'] ??
-          createdBy['name'] ??
-          createdBy['displayName'] ??
-          normalized['userName'];
+      normalized['userName'] = _extractDisplayName(
+        createdBy,
+        fallback: normalized['userName']?.toString() ?? '',
+      );
+    }
+
+    final user = _asMap(normalized['user']);
+    if (user.isNotEmpty) {
+      normalized['userId'] =
+          user['userId'] ?? user['id'] ?? normalized['userId'];
+      normalized['userName'] = _extractDisplayName(
+        user,
+        fallback: normalized['userName']?.toString() ?? '',
+      );
     }
 
     // Coerce all numeric fields that freezed expects as num/int.
@@ -461,6 +485,7 @@ class DiscussionService implements IDiscussionService {
       'threadId',
       'userId',
       'parentMessageId',
+      'upvoteCount',
       'endorsedBy',
     ]) {
       if (normalized.containsKey(key)) {
@@ -476,6 +501,49 @@ class DiscussionService implements IDiscussionService {
     }
 
     return normalized;
+  }
+
+  String _extractDisplayName(
+    Map<String, dynamic> source, {
+    String fallback = '',
+  }) {
+    if (source.isEmpty) {
+      return fallback;
+    }
+
+    final fullName = source['fullName']?.toString().trim() ?? '';
+    if (fullName.isNotEmpty) {
+      return fullName;
+    }
+
+    final name = source['name']?.toString().trim() ?? '';
+    if (name.isNotEmpty) {
+      return name;
+    }
+
+    final displayName = source['displayName']?.toString().trim() ?? '';
+    if (displayName.isNotEmpty) {
+      return displayName;
+    }
+
+    final firstName = source['firstName']?.toString().trim() ?? '';
+    final lastName = source['lastName']?.toString().trim() ?? '';
+    final combined = '$firstName $lastName'.trim();
+    if (combined.isNotEmpty) {
+      return combined;
+    }
+
+    final username = source['username']?.toString().trim() ?? '';
+    if (username.isNotEmpty) {
+      return username;
+    }
+
+    final email = source['email']?.toString().trim() ?? '';
+    if (email.isNotEmpty) {
+      return email;
+    }
+
+    return fallback;
   }
 
   Map<String, dynamic> _asMap(dynamic value) {

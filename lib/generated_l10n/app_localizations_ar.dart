@@ -13017,4 +13017,386 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noCoursesAvailable => 'لا توجد مقررات متاحة';
+
+  @override
+  String get instructorDiscussionHubTitle => 'نبض المناقشات';
+
+  @override
+  String get instructorDiscussionHubSubtitle =>
+      'تابع محادثات المقررات، واكتشف الأسئلة غير المجابة، وانتقل سريعًا إلى المناقشات التي تحتاج تدخلك.';
+
+  @override
+  String get instructorDiscussionPostsLabel => 'منشورات';
+
+  @override
+  String get instructorDiscussionRepliesLabel => 'ردود';
+
+  @override
+  String get instructorDiscussionPinnedLabel => 'مثبّتة';
+
+  @override
+  String get instructorDiscussionLockedLabel => 'مقفلة';
+
+  @override
+  String get instructorDiscussionViewsLabel => 'مشاهدات';
+
+  @override
+  String get instructorDiscussionAnswersLabel => 'إجابات';
+
+  @override
+  String get instructorDiscussionVisibleCoursesLabel => 'مقررات ظاهرة';
+
+  @override
+  String get instructorDiscussionVisiblePostsLabel => 'منشورات ظاهرة';
+
+  @override
+  String get instructorDiscussionFilterState => 'حالة المناقشة';
+
+  @override
+  String get instructorDiscussionSortBy => 'الترتيب حسب';
+
+  @override
+  String get instructorDiscussionFilterAllCourses => 'كل المقررات';
+
+  @override
+  String get instructorDiscussionFilterWithPosts => 'بها منشورات';
+
+  @override
+  String get instructorDiscussionFilterNeedsReplies => 'تحتاج ردودًا';
+
+  @override
+  String get instructorDiscussionFilterPinned => 'بها تثبيت';
+
+  @override
+  String get instructorDiscussionFilterLocked => 'بها قفل';
+
+  @override
+  String get instructorDiscussionFilterQuiet => 'بدون منشورات';
+
+  @override
+  String get instructorDiscussionSortLatestActivity => 'أحدث نشاط';
+
+  @override
+  String get instructorDiscussionSortMostPosts => 'الأكثر منشورات';
+
+  @override
+  String get instructorDiscussionSortMostReplies => 'الأكثر ردودًا';
+
+  @override
+  String get instructorDiscussionSortMostViews => 'الأكثر مشاهدة';
+
+  @override
+  String get instructorDiscussionSortCourseCode => 'كود المقرر';
+
+  @override
+  String get instructorDiscussionSortTitle => 'العنوان';
+
+  @override
+  String get instructorDiscussionSearchCourses =>
+      'ابحث في المقررات أو أحدث مناقشة...';
+
+  @override
+  String get instructorDiscussionSearchPosts =>
+      'ابحث في المنشورات بالعنوان أو المحتوى أو الكاتب...';
+
+  @override
+  String get instructorDiscussionOpenCourse => 'فتح المقرر';
+
+  @override
+  String get instructorDiscussionOpenThread => 'فتح المناقشة';
+
+  @override
+  String get instructorDiscussionLatestPostLabel => 'أحدث منشور';
+
+  @override
+  String get instructorDiscussionNoPostsCardTitle =>
+      'لا توجد منشورات مناقشة بعد';
+
+  @override
+  String get instructorDiscussionNoPostsCardSubtitle =>
+      'هذا المقرر جاهز لبدء أول نقاش داخل الصف.';
+
+  @override
+  String get instructorDiscussionNeedsRepliesShort => 'تحتاج ردودًا';
+
+  @override
+  String get instructorDiscussionNoCoursesTitle => 'لا توجد مقررات تدريسية';
+
+  @override
+  String get instructorDiscussionNoCoursesSubtitle =>
+      'ستظهر مقرراتك المكلّف بها هنا عند توفرها.';
+
+  @override
+  String get instructorDiscussionNoMatchingCoursesTitle =>
+      'لا توجد مقررات مطابقة للفلاتر';
+
+  @override
+  String get instructorDiscussionNoMatchingCoursesSubtitle =>
+      'جرّب حالة مناقشة أو ترتيبًا مختلفًا.';
+
+  @override
+  String get instructorDiscussionLoadFailedTitle =>
+      'تعذر تحميل بيانات المناقشات';
+
+  @override
+  String get instructorCourseDiscussionHeaderTitle => 'مناقشات المقرر';
+
+  @override
+  String get instructorCourseDiscussionHeaderSubtitle =>
+      'وجّه الحوار، أبرز الإجابات القوية، وأبقِ الطلاب على نفس مسار المقرر.';
+
+  @override
+  String get instructorDiscussionCreatePost => 'إنشاء منشور';
+
+  @override
+  String get instructorDiscussionPostCreated => 'تم إنشاء المنشور بنجاح.';
+
+  @override
+  String get instructorDiscussionPostUpdated => 'تم تحديث المنشور بنجاح.';
+
+  @override
+  String get instructorDiscussionPostDeleted => 'تم حذف المنشور بنجاح.';
+
+  @override
+  String get instructorDiscussionThreadPinned => 'تم تثبيت المناقشة بنجاح.';
+
+  @override
+  String get instructorDiscussionThreadUnpinned =>
+      'تم إلغاء تثبيت المناقشة بنجاح.';
+
+  @override
+  String get instructorDiscussionThreadLocked => 'تم قفل المناقشة بنجاح.';
+
+  @override
+  String get instructorDiscussionThreadUnlocked => 'تم فتح قفل المناقشة بنجاح.';
+
+  @override
+  String get instructorDiscussionPostFilterAll => 'كل المنشورات';
+
+  @override
+  String get instructorDiscussionPostFilterUnanswered => 'غير مجابة';
+
+  @override
+  String get instructorDiscussionNoPostsTitle => 'لا توجد منشورات مناقشة بعد';
+
+  @override
+  String get instructorDiscussionNoPostsSubtitle =>
+      'ابدأ أول منشور لهذا المقرر لتهيئة نبرة الحوار داخل الصف.';
+
+  @override
+  String get instructorDiscussionPostDetailsTitle => 'تفاصيل المناقشة';
+
+  @override
+  String get instructorDiscussionThreadMissing => 'لم تعد هذه المناقشة متاحة.';
+
+  @override
+  String get instructorDiscussionConversationTab => 'المحادثة';
+
+  @override
+  String get instructorDiscussionPinnedAnswerTitle => 'الإجابة المثبتة';
+
+  @override
+  String get instructorDiscussionPostOverviewTitle => 'نظرة عامة على المنشور';
+
+  @override
+  String get instructorDiscussionHighlightedAnswerTitle => 'الإجابة المميزة';
+
+  @override
+  String get instructorDiscussionNoHighlightedAnswer =>
+      'لم يتم اختيار إجابة مميزة بعد.';
+
+  @override
+  String get instructorDiscussionActivitySummaryTitle => 'ملخص النشاط';
+
+  @override
+  String get instructorDiscussionLockedBanner =>
+      'هذه المناقشة مقفلة حاليًا، لذلك تم تعطيل الردود الجديدة.';
+
+  @override
+  String get instructorDiscussionNoRepliesTitle => 'لا توجد ردود بعد';
+
+  @override
+  String get instructorDiscussionNoRepliesSubtitle =>
+      'سيظهر أول رد هنا بمجرد بدء الحوار.';
+
+  @override
+  String get instructorDiscussionReplyHint => 'اكتب ردًا...';
+
+  @override
+  String get instructorDiscussionRepliesDisabledHint =>
+      'الردود معطلة لهذه المناقشة';
+
+  @override
+  String get instructorDiscussionReplyPosted => 'تم إرسال الرد بنجاح.';
+
+  @override
+  String get instructorDiscussionReplyUpdated => 'تم تحديث الرد بنجاح.';
+
+  @override
+  String get instructorDiscussionReplyDeleted => 'تم حذف الرد بنجاح.';
+
+  @override
+  String get instructorDiscussionUpvoteAdded => 'تم رفع التصويت للرد.';
+
+  @override
+  String get instructorDiscussionUpvoteRemoved => 'تمت إزالة التصويت من الرد.';
+
+  @override
+  String get instructorDiscussionAnswerMarked => 'تم تحديد الإجابة بنجاح.';
+
+  @override
+  String get instructorDiscussionAnswerUnmarked =>
+      'تم إلغاء تحديد الإجابة بنجاح.';
+
+  @override
+  String get instructorDiscussionReplyEndorsed => 'تم اعتماد الرد بنجاح.';
+
+  @override
+  String get instructorDiscussionReplyUnendorsed =>
+      'تمت إزالة اعتماد الرد بنجاح.';
+
+  @override
+  String get instructorDiscussionDeletePostTitle => 'حذف منشور المناقشة؟';
+
+  @override
+  String get instructorDiscussionDeletePostMessage =>
+      'لا يمكن التراجع عن هذا الإجراء. هل تريد حذف منشور المناقشة؟';
+
+  @override
+  String get instructorDiscussionDeleteReplyTitle => 'حذف الرد؟';
+
+  @override
+  String get instructorDiscussionDeleteReplyMessage =>
+      'لا يمكن التراجع عن هذا الإجراء. هل تريد حذف هذا الرد؟';
+
+  @override
+  String get instructorDiscussionNewPostTitle => 'إنشاء منشور مناقشة';
+
+  @override
+  String get instructorDiscussionEditPostTitle => 'تعديل منشور المناقشة';
+
+  @override
+  String get instructorDiscussionPostTitleLabel => 'عنوان المنشور';
+
+  @override
+  String get instructorDiscussionPostDescriptionLabel => 'تفاصيل المنشور';
+
+  @override
+  String get instructorDiscussionPostTitleRequired => 'عنوان المنشور مطلوب.';
+
+  @override
+  String get instructorDiscussionPostTitleMin =>
+      'يجب أن يكون العنوان 4 أحرف على الأقل.';
+
+  @override
+  String get instructorDiscussionPostDescriptionRequired =>
+      'تفاصيل المنشور مطلوبة.';
+
+  @override
+  String get instructorDiscussionPostDescriptionMin =>
+      'يجب أن تكون التفاصيل 10 أحرف على الأقل.';
+
+  @override
+  String get instructorDiscussionEditReply => 'تعديل الرد';
+
+  @override
+  String get instructorDiscussionReplyRequired => 'نص الرد مطلوب.';
+
+  @override
+  String get instructorDiscussionReplyMin =>
+      'يجب أن يكون الرد حرفين على الأقل.';
+
+  @override
+  String get instructorDiscussionPinThread => 'تثبيت المناقشة';
+
+  @override
+  String get instructorDiscussionUnpinThread => 'إلغاء تثبيت المناقشة';
+
+  @override
+  String get instructorDiscussionLockThread => 'قفل المناقشة';
+
+  @override
+  String get instructorDiscussionUnlockThread => 'فتح قفل المناقشة';
+
+  @override
+  String get instructorDiscussionMarkAnswer => 'تحديد كإجابة';
+
+  @override
+  String get instructorDiscussionUnmarkAnswer => 'إلغاء تحديد الإجابة';
+
+  @override
+  String get instructorDiscussionEndorseReply => 'اعتماد الرد';
+
+  @override
+  String get instructorDiscussionRemoveEndorse => 'إزالة الاعتماد';
+
+  @override
+  String get instructorDiscussionAnswerLabel => 'إجابة';
+
+  @override
+  String get instructorDiscussionEndorsedLabel => 'معتمد';
+
+  @override
+  String get instructorDiscussionAuthorLabel => 'الكاتب';
+
+  @override
+  String get instructorDiscussionSectionLabel => 'الشعبة';
+
+  @override
+  String get instructorDiscussionSemesterLabel => 'الفصل الدراسي';
+
+  @override
+  String get instructorDiscussionCreatedLabel => 'تاريخ الإنشاء';
+
+  @override
+  String get instructorDiscussionUpdatedLabel => 'آخر تحديث';
+
+  @override
+  String get studentDiscussionHubTitle => 'نبض المجتمع';
+
+  @override
+  String get studentDiscussionHubSubtitle =>
+      'استكشف محادثات المقررات، واعثر على الأسئلة النشطة، وانتقل سريعًا إلى المناقشات التي تدعم تعلّمك.';
+
+  @override
+  String get studentDiscussionNoCoursesTitle => 'لا توجد مقررات مسجل بها';
+
+  @override
+  String get studentDiscussionNoCoursesSubtitle =>
+      'ستظهر مقرراتك الحالية هنا بمجرد تفعيل تسجيلك.';
+
+  @override
+  String get studentDiscussionNoMatchingCoursesTitle =>
+      'لا توجد مقررات تطابق هذه الفلاتر';
+
+  @override
+  String get studentDiscussionNoMatchingCoursesSubtitle =>
+      'جرّب حالة مناقشة أو ترتيبًا مختلفًا.';
+
+  @override
+  String get studentCourseDiscussionHeaderTitle => 'مجتمع المقرر';
+
+  @override
+  String get studentCourseDiscussionHeaderSubtitle =>
+      'اطرح الأسئلة، وشارك الأفكار، وتعلّم مع زملائك من خلال الحوار.';
+
+  @override
+  String get studentDiscussionNoPostsTitle => 'لا توجد منشورات مناقشة بعد';
+
+  @override
+  String get studentDiscussionNoPostsSubtitle => 'ابدأ أول محادثة لهذا المقرر.';
+
+  @override
+  String get studentDiscussionTabTitle => 'مجتمع المقرر';
+
+  @override
+  String get studentDiscussionTabSubtitle =>
+      'افتح مساحة النقاش الكاملة لهذا المقرر لتصفح المنشورات وطرح الأسئلة وإضافة الردود.';
+
+  @override
+  String get studentDiscussionTabOpen => 'فتح المناقشات';
+
+  @override
+  String get studentDiscussionUnavailable =>
+      'المناقشة غير متاحة لأن معرّف المقرر النشط مفقود.';
 }

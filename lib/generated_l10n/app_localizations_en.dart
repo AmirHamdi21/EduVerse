@@ -13069,4 +13069,389 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noCoursesAvailable => 'No courses available';
+
+  @override
+  String get instructorDiscussionHubTitle => 'Discussion Pulse';
+
+  @override
+  String get instructorDiscussionHubSubtitle =>
+      'Track course conversations, spot unanswered questions, and jump into the discussions that need you most.';
+
+  @override
+  String get instructorDiscussionPostsLabel => 'Posts';
+
+  @override
+  String get instructorDiscussionRepliesLabel => 'Replies';
+
+  @override
+  String get instructorDiscussionPinnedLabel => 'Pinned';
+
+  @override
+  String get instructorDiscussionLockedLabel => 'Locked';
+
+  @override
+  String get instructorDiscussionViewsLabel => 'Views';
+
+  @override
+  String get instructorDiscussionAnswersLabel => 'Answers';
+
+  @override
+  String get instructorDiscussionVisibleCoursesLabel => 'courses visible';
+
+  @override
+  String get instructorDiscussionVisiblePostsLabel => 'posts visible';
+
+  @override
+  String get instructorDiscussionFilterState => 'Discussion state';
+
+  @override
+  String get instructorDiscussionSortBy => 'Sort by';
+
+  @override
+  String get instructorDiscussionFilterAllCourses => 'All courses';
+
+  @override
+  String get instructorDiscussionFilterWithPosts => 'With posts';
+
+  @override
+  String get instructorDiscussionFilterNeedsReplies => 'Needs replies';
+
+  @override
+  String get instructorDiscussionFilterPinned => 'Has pinned';
+
+  @override
+  String get instructorDiscussionFilterLocked => 'Has locked';
+
+  @override
+  String get instructorDiscussionFilterQuiet => 'No posts';
+
+  @override
+  String get instructorDiscussionSortLatestActivity => 'Latest activity';
+
+  @override
+  String get instructorDiscussionSortMostPosts => 'Most posts';
+
+  @override
+  String get instructorDiscussionSortMostReplies => 'Most replies';
+
+  @override
+  String get instructorDiscussionSortMostViews => 'Most views';
+
+  @override
+  String get instructorDiscussionSortCourseCode => 'Course code';
+
+  @override
+  String get instructorDiscussionSortTitle => 'Title';
+
+  @override
+  String get instructorDiscussionSearchCourses =>
+      'Search courses or latest discussion...';
+
+  @override
+  String get instructorDiscussionSearchPosts =>
+      'Search posts by title, content, or author...';
+
+  @override
+  String get instructorDiscussionOpenCourse => 'Open course';
+
+  @override
+  String get instructorDiscussionOpenThread => 'Open thread';
+
+  @override
+  String get instructorDiscussionLatestPostLabel => 'Latest post';
+
+  @override
+  String get instructorDiscussionNoPostsCardTitle => 'No discussion posts yet';
+
+  @override
+  String get instructorDiscussionNoPostsCardSubtitle =>
+      'This course is ready for its first class conversation.';
+
+  @override
+  String get instructorDiscussionNeedsRepliesShort => 'Needs replies';
+
+  @override
+  String get instructorDiscussionNoCoursesTitle => 'No teaching courses found';
+
+  @override
+  String get instructorDiscussionNoCoursesSubtitle =>
+      'Your assigned courses will appear here once they are available.';
+
+  @override
+  String get instructorDiscussionNoMatchingCoursesTitle =>
+      'No courses match these filters';
+
+  @override
+  String get instructorDiscussionNoMatchingCoursesSubtitle =>
+      'Try another discussion state or sorting option.';
+
+  @override
+  String get instructorDiscussionLoadFailedTitle =>
+      'Discussion data could not be loaded';
+
+  @override
+  String get instructorCourseDiscussionHeaderTitle => 'Course Discussions';
+
+  @override
+  String get instructorCourseDiscussionHeaderSubtitle =>
+      'Guide the conversation, surface strong answers, and keep students aligned with the course flow.';
+
+  @override
+  String get instructorDiscussionCreatePost => 'Create post';
+
+  @override
+  String get instructorDiscussionPostCreated => 'Post created successfully.';
+
+  @override
+  String get instructorDiscussionPostUpdated => 'Post updated successfully.';
+
+  @override
+  String get instructorDiscussionPostDeleted => 'Post deleted successfully.';
+
+  @override
+  String get instructorDiscussionThreadPinned => 'Thread pinned successfully.';
+
+  @override
+  String get instructorDiscussionThreadUnpinned =>
+      'Thread unpinned successfully.';
+
+  @override
+  String get instructorDiscussionThreadLocked => 'Thread locked successfully.';
+
+  @override
+  String get instructorDiscussionThreadUnlocked =>
+      'Thread unlocked successfully.';
+
+  @override
+  String get instructorDiscussionPostFilterAll => 'All posts';
+
+  @override
+  String get instructorDiscussionPostFilterUnanswered => 'Unanswered';
+
+  @override
+  String get instructorDiscussionNoPostsTitle => 'No discussion posts yet';
+
+  @override
+  String get instructorDiscussionNoPostsSubtitle =>
+      'Start the first discussion for this course to set the tone for the conversation.';
+
+  @override
+  String get instructorDiscussionPostDetailsTitle => 'Discussion Details';
+
+  @override
+  String get instructorDiscussionThreadMissing =>
+      'This discussion post is no longer available.';
+
+  @override
+  String get instructorDiscussionConversationTab => 'Conversation';
+
+  @override
+  String get instructorDiscussionPinnedAnswerTitle => 'Pinned answer';
+
+  @override
+  String get instructorDiscussionPostOverviewTitle => 'Post overview';
+
+  @override
+  String get instructorDiscussionHighlightedAnswerTitle => 'Highlighted answer';
+
+  @override
+  String get instructorDiscussionNoHighlightedAnswer =>
+      'No highlighted answer has been selected yet.';
+
+  @override
+  String get instructorDiscussionActivitySummaryTitle => 'Activity snapshot';
+
+  @override
+  String get instructorDiscussionLockedBanner =>
+      'This post is locked, so new replies are currently disabled.';
+
+  @override
+  String get instructorDiscussionNoRepliesTitle => 'No replies yet';
+
+  @override
+  String get instructorDiscussionNoRepliesSubtitle =>
+      'The first reply will appear here as soon as the conversation starts.';
+
+  @override
+  String get instructorDiscussionReplyHint => 'Write a reply...';
+
+  @override
+  String get instructorDiscussionRepliesDisabledHint =>
+      'Replies are disabled for this post';
+
+  @override
+  String get instructorDiscussionReplyPosted => 'Reply posted successfully.';
+
+  @override
+  String get instructorDiscussionReplyUpdated => 'Reply updated successfully.';
+
+  @override
+  String get instructorDiscussionReplyDeleted => 'Reply deleted successfully.';
+
+  @override
+  String get instructorDiscussionUpvoteAdded => 'Reply upvoted.';
+
+  @override
+  String get instructorDiscussionUpvoteRemoved => 'Reply upvote removed.';
+
+  @override
+  String get instructorDiscussionAnswerMarked => 'Answer marked successfully.';
+
+  @override
+  String get instructorDiscussionAnswerUnmarked =>
+      'Answer mark removed successfully.';
+
+  @override
+  String get instructorDiscussionReplyEndorsed =>
+      'Reply endorsed successfully.';
+
+  @override
+  String get instructorDiscussionReplyUnendorsed =>
+      'Reply endorsement removed successfully.';
+
+  @override
+  String get instructorDiscussionDeletePostTitle => 'Delete discussion post?';
+
+  @override
+  String get instructorDiscussionDeletePostMessage =>
+      'This action cannot be undone. Do you want to delete this discussion post?';
+
+  @override
+  String get instructorDiscussionDeleteReplyTitle => 'Delete reply?';
+
+  @override
+  String get instructorDiscussionDeleteReplyMessage =>
+      'This action cannot be undone. Do you want to delete this reply?';
+
+  @override
+  String get instructorDiscussionNewPostTitle => 'Create discussion post';
+
+  @override
+  String get instructorDiscussionEditPostTitle => 'Edit discussion post';
+
+  @override
+  String get instructorDiscussionPostTitleLabel => 'Post title';
+
+  @override
+  String get instructorDiscussionPostDescriptionLabel => 'Post details';
+
+  @override
+  String get instructorDiscussionPostTitleRequired => 'Post title is required.';
+
+  @override
+  String get instructorDiscussionPostTitleMin =>
+      'Title should be at least 4 characters.';
+
+  @override
+  String get instructorDiscussionPostDescriptionRequired =>
+      'Post details are required.';
+
+  @override
+  String get instructorDiscussionPostDescriptionMin =>
+      'Post details should be at least 10 characters.';
+
+  @override
+  String get instructorDiscussionEditReply => 'Edit reply';
+
+  @override
+  String get instructorDiscussionReplyRequired => 'Reply text is required.';
+
+  @override
+  String get instructorDiscussionReplyMin =>
+      'Reply should be at least 2 characters.';
+
+  @override
+  String get instructorDiscussionPinThread => 'Pin thread';
+
+  @override
+  String get instructorDiscussionUnpinThread => 'Unpin thread';
+
+  @override
+  String get instructorDiscussionLockThread => 'Lock thread';
+
+  @override
+  String get instructorDiscussionUnlockThread => 'Unlock thread';
+
+  @override
+  String get instructorDiscussionMarkAnswer => 'Mark as answer';
+
+  @override
+  String get instructorDiscussionUnmarkAnswer => 'Unmark answer';
+
+  @override
+  String get instructorDiscussionEndorseReply => 'Endorse reply';
+
+  @override
+  String get instructorDiscussionRemoveEndorse => 'Remove endorsement';
+
+  @override
+  String get instructorDiscussionAnswerLabel => 'Answer';
+
+  @override
+  String get instructorDiscussionEndorsedLabel => 'Endorsed';
+
+  @override
+  String get instructorDiscussionAuthorLabel => 'Author';
+
+  @override
+  String get instructorDiscussionSectionLabel => 'Section';
+
+  @override
+  String get instructorDiscussionSemesterLabel => 'Semester';
+
+  @override
+  String get instructorDiscussionCreatedLabel => 'Created';
+
+  @override
+  String get instructorDiscussionUpdatedLabel => 'Updated';
+
+  @override
+  String get studentDiscussionHubTitle => 'Community Pulse';
+
+  @override
+  String get studentDiscussionHubSubtitle =>
+      'Explore course conversations, find active questions, and jump into the discussions that matter to your learning.';
+
+  @override
+  String get studentDiscussionNoCoursesTitle => 'No enrolled courses found';
+
+  @override
+  String get studentDiscussionNoCoursesSubtitle =>
+      'Your current courses will appear here once your enrollment is active.';
+
+  @override
+  String get studentDiscussionNoMatchingCoursesTitle =>
+      'No courses match these filters';
+
+  @override
+  String get studentDiscussionNoMatchingCoursesSubtitle =>
+      'Try another discussion state or sorting option.';
+
+  @override
+  String get studentCourseDiscussionHeaderTitle => 'Course Community';
+
+  @override
+  String get studentCourseDiscussionHeaderSubtitle =>
+      'Ask questions, share ideas, and learn together with your classmates.';
+
+  @override
+  String get studentDiscussionNoPostsTitle => 'No discussion posts yet';
+
+  @override
+  String get studentDiscussionNoPostsSubtitle =>
+      'Be the first to start a conversation for this course.';
+
+  @override
+  String get studentDiscussionTabTitle => 'Course Community';
+
+  @override
+  String get studentDiscussionTabSubtitle =>
+      'Open the full discussion space for this course to browse posts, ask questions, and reply.';
+
+  @override
+  String get studentDiscussionTabOpen => 'Open discussions';
+
+  @override
+  String get studentDiscussionUnavailable =>
+      'Discussion is unavailable because the active course ID is missing.';
 }

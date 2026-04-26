@@ -35,6 +35,7 @@ class DiscussionReply with _$DiscussionReply {
     int? parentMessageId,
     @Default(false) bool isAnswer,
     @Default(false) bool isEndorsed,
+    @Default(0) int upvoteCount,
     int? endorsedBy,
     required DateTime createdAt,
     DateTime? updatedAt,

@@ -53,6 +53,7 @@ _$DiscussionReplyImpl _$$DiscussionReplyImplFromJson(
   parentMessageId: (json['parentMessageId'] as num?)?.toInt(),
   isAnswer: json['isAnswer'] as bool? ?? false,
   isEndorsed: json['isEndorsed'] as bool? ?? false,
+  upvoteCount: (json['upvoteCount'] as num?)?.toInt() ?? 0,
   endorsedBy: (json['endorsedBy'] as num?)?.toInt(),
   createdAt: DateTime.parse(json['createdAt'] as String),
   updatedAt: json['updatedAt'] == null
@@ -71,6 +72,7 @@ Map<String, dynamic> _$$DiscussionReplyImplToJson(
   'parentMessageId': instance.parentMessageId,
   'isAnswer': instance.isAnswer,
   'isEndorsed': instance.isEndorsed,
+  'upvoteCount': instance.upvoteCount,
   'endorsedBy': instance.endorsedBy,
   'createdAt': instance.createdAt.toIso8601String(),
   'updatedAt': instance.updatedAt?.toIso8601String(),
