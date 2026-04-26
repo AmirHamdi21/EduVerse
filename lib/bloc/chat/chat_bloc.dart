@@ -31,14 +31,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
   StreamSubscription<Set<int>>? _onlineUsersListSubscription;
   StreamSubscription<ChatMessageModel>? _notificationMessageSubscription;
   StreamSubscription<UserTypingEvent>? _typingSubscription;
-  StreamSubscription<int>? _messageDeletedSubscription;
+  StreamSubscription<MessageDeletedEvent>? _messageDeletedSubscription;
   StreamSubscription<ChatMessageModel>? _messageEditedSubscription;
   StreamSubscription<Map<String, dynamic>>? _userStatusSubscription;
-  StreamSubscription<int>? _deleteConfirmedSubscription;
+  StreamSubscription<MessageDeletedEvent>? _deleteConfirmedSubscription;
   StreamSubscription<MessageReadEvent>? _messageReadSubscription;
 
   Timer? _typingDebounceTimer;
   bool _hasLifecycleObserver = false;
+  int? _sessionUserId;
 
   final Map<int, _PendingMessage> _failedMessages = <int, _PendingMessage>{};
   int _tempIdCounter = -1;
@@ -80,6 +81,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     _registerLifecycleObserver();
 
     on<LoadConversations>(_onLoadConversations);
+    on<ChatSessionStarted>(_onChatSessionStarted);
+    on<ChatSessionEnded>(_onChatSessionEnded);
+    on<ChatReconnectRequested>(_onChatReconnectRequested);
     on<RefreshOnlineUsersRequested>(_onRefreshOnlineUsersRequested);
     on<SelectConversation>(_onSelectConversation);
     on<DeselectConversation>(_onDeselectConversation);
@@ -91,6 +95,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     on<FilterConversations>(_onFilterConversations);
     on<StartNewConversation>(_onStartNewConversation);
     on<DeleteMessage>(_onDeleteMessage);
+    on<EditMessage>(_onEditMessage);
     on<DeleteConversation>(_onDeleteConversation);
     on<MarkRead>(_onMarkRead);
     on<TypingChanged>(_onTypingChanged);
@@ -105,6 +110,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
       _onChatSearchUsersRequested,
       transformer: debounce(const Duration(milliseconds: 300)),
     );
+    on<ChatDirectParticipantSelected>(_onChatDirectParticipantSelected);
     on<ChatParticipantAdded>(_onChatParticipantAdded);
     on<ChatParticipantRemoved>(_onChatParticipantRemoved);
     on<ChatConversationModeChanged>(_onChatConversationModeChanged);
@@ -112,7 +118,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     on<ChatNewConversationDialogReset>(_onChatNewConversationDialogReset);
 
     _subscribeToSocketStreams();
-    unawaited(_connectSocket());
   }
 
   void _registerLifecycleObserver() {
@@ -207,6 +212,46 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     ) {
       add(WebSocketEventReceived(eventName: 'message_read', payload: event));
     });
+  }
+
+  Future<void> _onChatSessionStarted(
+    ChatSessionStarted event,
+    Emitter<ChatState> emit,
+  ) async {
+    final shouldReconnect =
+        _sessionUserId != event.userId ||
+        state.connectionStatus != ConnectionStatus.live;
+
+    _sessionUserId = event.userId;
+
+    if (!shouldReconnect) {
+      add(const RefreshOnlineUsersRequested());
+      return;
+    }
+
+    _chatSocketService.disconnect();
+    await _connectSocket();
+  }
+
+  Future<void> _onChatSessionEnded(
+    ChatSessionEnded event,
+    Emitter<ChatState> emit,
+  ) async {
+    _sessionUserId = null;
+    _chatSocketService.disconnect();
+    emit(const ChatState());
+  }
+
+  Future<void> _onChatReconnectRequested(
+    ChatReconnectRequested event,
+    Emitter<ChatState> emit,
+  ) async {
+    if (_sessionUserId == null) {
+      return;
+    }
+
+    await _connectSocket();
+    add(const RefreshOnlineUsersRequested());
   }
 
   Future<void> _onLoadConversations(
@@ -308,7 +353,24 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     RefreshOnlineUsersRequested event,
     Emitter<ChatState> emit,
   ) async {
-    _chatSocketService.requestOnlineUsers();
+    try {
+      final snapshot = await _chatService.getOnlineUsers();
+      final nextLastSeen = Map<int, DateTime>.from(state.userLastSeen)
+        ..addAll(snapshot.lastSeenByUserId);
+
+      for (final onlineUserId in snapshot.onlineUserIds) {
+        nextLastSeen.remove(onlineUserId);
+      }
+
+      emit(
+        state.copyWith(
+          onlineUsers: snapshot.onlineUserIds,
+          userLastSeen: nextLastSeen,
+        ),
+      );
+    } catch (_) {
+      // Keep the existing presence state if the snapshot request fails.
+    }
   }
 
   Future<void> _onSelectConversation(
@@ -526,7 +588,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
       sentAt: DateTime.now().toUtc(),
       replyToId: event.replyToId,
       conversationId: event.conversationId,
-      status: 'sending',
+      status: 'pending',
     );
 
     final pendingMessage = _PendingMessage(
@@ -765,18 +827,101 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
         throw Exception('Unable to delete message ${event.messageId}.');
       }
 
-      _chatSocketService.deleteMessage(
-        event.messageId,
-        forEveryone: event.forEveryone,
-      );
+      if (event.forEveryone &&
+          state.connectionStatus == ConnectionStatus.live) {
+        _chatSocketService.deleteMessage(
+          event.messageId,
+          forEveryone: event.forEveryone,
+        );
+      }
 
-      final updatedMessages = state.activeConversationMessages
-          .where((message) => message.id != event.messageId)
-          .toList(growable: false);
+      final updatedMessages = event.forEveryone
+          ? _markMessageDeletedInList(
+              state.activeConversationMessages,
+              event.messageId,
+            )
+          : state.activeConversationMessages
+                .where((message) => message.id != event.messageId)
+                .toList(growable: false);
+
+      final updatedConversations = event.forEveryone
+          ? _applyDeletedMessageToConversations(
+              state.conversations,
+              event.messageId,
+            )
+          : state.conversations;
+
+      final updatedHiddenIds = event.forEveryone
+          ? state.hiddenMessageIds
+          : (Set<int>.from(state.hiddenMessageIds)..add(event.messageId));
 
       emit(
         state.copyWith(
-          activeConversationMessages: updatedMessages,
+          activeConversationMessages: _sortMessages(updatedMessages),
+          conversations: _sortConversations(updatedConversations),
+          hiddenMessageIds: updatedHiddenIds,
+          status: ChatStatus.success,
+          clearErrorMessage: true,
+        ),
+      );
+    } catch (error) {
+      emit(
+        state.copyWith(
+          status: ChatStatus.failure,
+          errorMessage: error.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onEditMessage(
+    EditMessage event,
+    Emitter<ChatState> emit,
+  ) async {
+    final trimmedText = event.text.trim();
+    if (trimmedText.isEmpty) {
+      emit(
+        state.copyWith(
+          status: ChatStatus.failure,
+          errorMessage: 'Message text cannot be empty.',
+        ),
+      );
+      return;
+    }
+
+    try {
+      final editedMessage = await _chatService.editMessage(
+        event.messageId,
+        trimmedText,
+      );
+
+      if (state.connectionStatus == ConnectionStatus.live) {
+        _chatSocketService.editMessage(event.messageId, trimmedText);
+      }
+
+      final normalizedEditedMessage = editedMessage.copyWith(
+        conversationId: editedMessage.conversationId > 0
+            ? editedMessage.conversationId
+            : event.conversationId,
+        text: trimmedText,
+        editedAt: editedMessage.editedAt ?? DateTime.now().toUtc(),
+        status: 'sent',
+      );
+
+      final updatedMessages = _replaceById(
+        state.activeConversationMessages,
+        normalizedEditedMessage,
+      );
+      final updatedConversations = _upsertConversationWithMessage(
+        state.conversations,
+        normalizedEditedMessage,
+        incrementUnread: false,
+      );
+
+      emit(
+        state.copyWith(
+          activeConversationMessages: _sortMessages(updatedMessages),
+          conversations: _sortConversations(updatedConversations),
           status: ChatStatus.success,
           clearErrorMessage: true,
         ),
@@ -890,6 +1035,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
         final nextStatus = _mapConnectionStatus(event.payload);
         emit(state.copyWith(connectionStatus: nextStatus));
         if (nextStatus == ConnectionStatus.live) {
+          if (state.activeConversationId != null) {
+            _chatSocketService.joinConversation(state.activeConversationId!);
+          }
           add(const RefreshOnlineUsersRequested());
         }
         return;
@@ -951,18 +1099,41 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
         return;
       case 'message_deleted':
       case 'delete_confirmed':
-        final messageId = _extractMessageId(event.payload);
-        if (messageId <= 0) {
+        final deletedEvent = event.payload is MessageDeletedEvent
+            ? event.payload as MessageDeletedEvent
+            : MessageDeletedEvent.fromJson(
+                Map<String, dynamic>.from(event.payload as Map),
+              );
+        if (deletedEvent.messageId <= 0) {
           return;
         }
 
-        final updatedMessages = state.activeConversationMessages
-            .where((message) => message.id != messageId)
-            .toList(growable: false);
+        final updatedMessages = deletedEvent.forEveryone
+            ? _markMessageDeletedInList(
+                state.activeConversationMessages,
+                deletedEvent.messageId,
+              )
+            : state.activeConversationMessages
+                  .where((message) => message.id != deletedEvent.messageId)
+                  .toList(growable: false);
+
+        final updatedConversations = deletedEvent.forEveryone
+            ? _applyDeletedMessageToConversations(
+                state.conversations,
+                deletedEvent.messageId,
+              )
+            : state.conversations;
+
+        final updatedHiddenIds = deletedEvent.forEveryone
+            ? state.hiddenMessageIds
+            : (Set<int>.from(state.hiddenMessageIds)
+                ..add(deletedEvent.messageId));
 
         emit(
           state.copyWith(
-            activeConversationMessages: updatedMessages,
+            activeConversationMessages: _sortMessages(updatedMessages),
+            conversations: _sortConversations(updatedConversations),
+            hiddenMessageIds: updatedHiddenIds,
             status: ChatStatus.success,
           ),
         );
@@ -1066,17 +1237,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
                 Map<String, dynamic>.from(event.payload as Map),
               );
 
-        final updatedMessages = state.activeConversationMessages
-            .map(
-              (message) => message.id == readEvent.messageId
-                  ? message.copyWith(status: 'read')
-                  : message,
-            )
-            .toList(growable: false);
+        final updatedMessages = _markConversationMessagesRead(
+          state.activeConversationMessages,
+          readEvent,
+        );
 
         emit(
           state.copyWith(
-            activeConversationMessages: updatedMessages,
+            activeConversationMessages: _sortMessages(updatedMessages),
             status: ChatStatus.success,
           ),
         );
@@ -1354,6 +1522,49 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     return copy;
   }
 
+  List<ConversationModel> _applyDeletedMessageToConversations(
+    List<ConversationModel> conversations,
+    int messageId,
+  ) {
+    return conversations
+        .map((conversation) {
+          final lastMessage = conversation.lastMessageInfo;
+          if (lastMessage == null || lastMessage.id != messageId) {
+            return conversation;
+          }
+
+          final deletedMessage = _markMessageDeleted(lastMessage);
+          return conversation.copyWith(
+            lastMessage: deletedMessage.deletedText,
+            lastMessageInfo: deletedMessage,
+            lastMessageAt: deletedMessage.sentAt,
+          );
+        })
+        .toList(growable: false);
+  }
+
+  List<ChatMessageModel> _markMessageDeletedInList(
+    List<ChatMessageModel> messages,
+    int messageId,
+  ) {
+    return messages
+        .map(
+          (message) =>
+              message.id == messageId ? _markMessageDeleted(message) : message,
+        )
+        .toList(growable: false);
+  }
+
+  ChatMessageModel _markMessageDeleted(ChatMessageModel message) {
+    return message.copyWith(
+      text: ChatMessageModel.defaultDeletedText,
+      isDeleted: true,
+      deletedText: ChatMessageModel.defaultDeletedText,
+      status: 'deleted',
+      clearEditedAt: true,
+    );
+  }
+
   List<ChatMessageModel> _replaceById(
     List<ChatMessageModel> messages,
     ChatMessageModel nextMessage,
@@ -1385,6 +1596,36 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     return _replaceById(messages, nextMessage);
   }
 
+  List<ChatMessageModel> _markConversationMessagesRead(
+    List<ChatMessageModel> messages,
+    MessageReadEvent readEvent,
+  ) {
+    final readAt = readEvent.readAt;
+
+    return messages
+        .map((message) {
+          if (message.conversationId != readEvent.conversationId) {
+            return message;
+          }
+
+          if (message.senderId == readEvent.userId || message.isDeleted) {
+            return message;
+          }
+
+          if (readEvent.messageId != null &&
+              message.id == readEvent.messageId) {
+            return message.copyWith(status: 'read');
+          }
+
+          if (readAt != null && message.sentAt.isAfter(readAt)) {
+            return message;
+          }
+
+          return message.copyWith(status: 'read');
+        })
+        .toList(growable: false);
+  }
+
   List<ChatMessageModel> _mergeIncomingWithOptimistic(
     List<ChatMessageModel> messages,
     ChatMessageModel incoming,
@@ -1403,7 +1644,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
           message.id < 0 &&
           message.conversationId == incoming.conversationId &&
           message.text == incoming.text &&
-          (message.status == 'sending' || message.status == 'sent'),
+          (message.status == 'pending' ||
+              message.status == 'sending' ||
+              message.status == 'sent'),
     );
 
     if (optimisticIndex != -1) {
@@ -1442,25 +1685,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     return null;
   }
 
-  int _extractMessageId(dynamic payload) {
-    if (payload is int) {
-      return payload;
-    }
-
-    if (payload is Map<String, dynamic>) {
-      return _parseInt(payload['messageId'] ?? payload['id']);
-    }
-
-    if (payload is Map) {
-      final casted = payload.map(
-        (key, value) => MapEntry(key.toString(), value),
-      );
-      return _parseInt(casted['messageId'] ?? casted['id']);
-    }
-
-    return 0;
-  }
-
   int _nextTempMessageId() {
     _tempIdCounter -= 1;
     return _tempIdCounter;
@@ -1469,7 +1693,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      add(const RefreshOnlineUsersRequested());
+      add(const ChatReconnectRequested());
     }
   }
 
@@ -1613,6 +1837,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
   }
 
   /// Handle adding a participant to selected list
+  void _onChatDirectParticipantSelected(
+    ChatDirectParticipantSelected event,
+    Emitter<ChatState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        selectedParticipants: <ChatUserModel>[event.user],
+        conversationMode: 'direct',
+        clearCreateConversationError: true,
+      ),
+    );
+  }
+
+  /// Handle adding a participant to selected list
   void _onChatParticipantAdded(
     ChatParticipantAdded event,
     Emitter<ChatState> emit,
@@ -1655,8 +1893,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
     ChatConversationModeChanged event,
     Emitter<ChatState> emit,
   ) {
+    final selectedParticipants =
+        event.mode == 'direct' && state.selectedParticipants.length > 1
+        ? <ChatUserModel>[state.selectedParticipants.first]
+        : state.selectedParticipants;
+
     emit(
       state.copyWith(
+        selectedParticipants: selectedParticipants,
         conversationMode: event.mode,
         clearCreateConversationError: true,
       ),
@@ -1682,6 +1926,17 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
       emit(
         state.copyWith(
           createConversationError: 'At least one participant required',
+        ),
+      );
+      return;
+    }
+
+    final initialMessage = (event.initialMessage ?? '').trim();
+    if (initialMessage.isEmpty) {
+      emit(
+        state.copyWith(
+          createConversationError:
+              'First message is required to start a conversation',
         ),
       );
       return;
@@ -1738,6 +1993,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
             newlyCreatedConversationId: existingConversation.conversationId,
           ),
         );
+        add(
+          SendMessage(
+            conversationId: existingConversation.conversationId,
+            text: initialMessage,
+          ),
+        );
         return;
       }
     }
@@ -1755,7 +2016,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
         participantIds: event.participantIds,
         type: event.type,
         groupName: event.groupName,
-        text: event.initialMessage,
+        text: initialMessage,
       );
 
       // Enhance conversation with directDisplayUser if missing for direct chats
@@ -1778,11 +2039,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> with WidgetsBindingObserver {
 
       // Set lastMessage if an initial message was provided and it's not already set
       if (event.initialMessage != null &&
-          event.initialMessage!.trim().isNotEmpty &&
+          initialMessage.isNotEmpty &&
           (enhancedConversation.lastMessage == null ||
               enhancedConversation.lastMessage!.isEmpty)) {
         enhancedConversation = enhancedConversation.copyWith(
-          lastMessage: event.initialMessage,
+          lastMessage: initialMessage,
           lastMessageAt: DateTime.now().toUtc(),
         );
       }

@@ -31,6 +31,7 @@ class _FakeChatService implements IChatService {
   List<ConversationModel> conversations = <ConversationModel>[];
   final Map<int, List<ChatMessageModel>> messagesByConversation =
       <int, List<ChatMessageModel>>{};
+  OnlineUsersSnapshot onlineUsersSnapshot = const OnlineUsersSnapshot();
 
   bool throwOnSend = false;
   int sendCalls = 0;
@@ -111,6 +112,12 @@ class _FakeChatService implements IChatService {
   }
 
   @override
+  Future<OnlineUsersSnapshot> getOnlineUsers() async => onlineUsersSnapshot;
+
+  @override
+  Future<int> getUnreadCount() async => 0;
+
+  @override
   Future<void> markRead(int messageId) async {}
 
   @override
@@ -144,14 +151,14 @@ class _FakeSocketService implements IChatSocketService {
       StreamController<ChatMessageModel>.broadcast();
   final StreamController<UserTypingEvent> _typingController =
       StreamController<UserTypingEvent>.broadcast();
-  final StreamController<int> _messageDeletedController =
-      StreamController<int>.broadcast();
+  final StreamController<MessageDeletedEvent> _messageDeletedController =
+      StreamController<MessageDeletedEvent>.broadcast();
   final StreamController<ChatMessageModel> _messageEditedController =
       StreamController<ChatMessageModel>.broadcast();
   final StreamController<Map<String, dynamic>> _statusController =
       StreamController<Map<String, dynamic>>.broadcast();
-  final StreamController<int> _deleteConfirmedController =
-      StreamController<int>.broadcast();
+  final StreamController<MessageDeletedEvent> _deleteConfirmedController =
+      StreamController<MessageDeletedEvent>.broadcast();
   final StreamController<MessageReadEvent> _messageReadController =
       StreamController<MessageReadEvent>.broadcast();
 
@@ -180,7 +187,8 @@ class _FakeSocketService implements IChatSocketService {
   Stream<UserTypingEvent> get typingStream => _typingController.stream;
 
   @override
-  Stream<int> get messageDeletedStream => _messageDeletedController.stream;
+  Stream<MessageDeletedEvent> get messageDeletedStream =>
+      _messageDeletedController.stream;
 
   @override
   Stream<ChatMessageModel> get messageEditedStream =>
@@ -190,7 +198,8 @@ class _FakeSocketService implements IChatSocketService {
   Stream<Map<String, dynamic>> get userStatusStream => _statusController.stream;
 
   @override
-  Stream<int> get deleteConfirmedStream => _deleteConfirmedController.stream;
+  Stream<MessageDeletedEvent> get deleteConfirmedStream =>
+      _deleteConfirmedController.stream;
 
   @override
   Stream<MessageReadEvent> get messageReadStream =>
@@ -261,8 +270,10 @@ class _FakeSocketService implements IChatSocketService {
     _onlineUsersListController.add(onlineUsers);
   }
 
-  void emitDeleteConfirmed(int messageId) {
-    _deleteConfirmedController.add(messageId);
+  void emitDeleteConfirmed(int messageId, {bool forEveryone = true}) {
+    _deleteConfirmedController.add(
+      MessageDeletedEvent(messageId: messageId, forEveryone: forEveryone),
+    );
   }
 
   void emitMessageEdited(ChatMessageModel message) {
@@ -517,7 +528,13 @@ void main() {
         await _settle();
         expect(
           bloc.state.activeConversationMessages.any((m) => m.id == 2),
-          isFalse,
+          isTrue,
+        );
+        expect(
+          bloc.state.activeConversationMessages
+              .firstWhere((message) => message.id == 2)
+              .isDeleted,
+          isTrue,
         );
       },
     );
@@ -550,15 +567,14 @@ void main() {
     test(
       'requests online users when explicit refresh event is dispatched',
       () async {
-        final baselineCalls = socketService.requestOnlineUsersCalls;
+        chatService.onlineUsersSnapshot = const OnlineUsersSnapshot(
+          onlineUserIds: <int>{77, 88},
+        );
 
         bloc.add(const RefreshOnlineUsersRequested());
         await _settle();
 
-        expect(
-          socketService.requestOnlineUsersCalls,
-          greaterThanOrEqualTo(baselineCalls + 1),
-        );
+        expect(bloc.state.onlineUsers, containsAll(<int>{77, 88}));
       },
     );
   });

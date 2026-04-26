@@ -20,90 +20,71 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-  bool _waitingForConversation = false;
-
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ChatBloc, ChatState>(
-      listenWhen: (previous, current) =>
-          previous.newlyCreatedConversationId !=
-          current.newlyCreatedConversationId,
-      listener: (context, state) {
-        if (!_waitingForConversation) {
-          return;
-        }
+    return Scaffold(
+      appBar: AppBar(title: const Text('Profile')),
+      body: BlocBuilder<ChatBloc, ChatState>(
+        builder: (context, state) {
+          final user = _resolveUser(state, widget.userId);
+          if (user == null) {
+            return const Center(child: Text('User data not found.'));
+          }
 
-        final conversationId = state.newlyCreatedConversationId;
-        if (conversationId == null || conversationId <= 0) {
-          return;
-        }
+          final commonGroups = state.conversations
+              .where(
+                (conversation) =>
+                    conversation.type == ConversationType.group &&
+                    (conversation.participants.contains(widget.userId) ||
+                        conversation.participantUsers.any(
+                          (participant) => participant.userId == widget.userId,
+                        )),
+              )
+              .toList(growable: false);
 
-        _waitingForConversation = false;
-        final bloc = context.read<ChatBloc>();
-        bloc.add(SelectConversation(conversationId));
-        bloc.add(MarkRead(conversationId));
-        bloc.add(const ChatNewConversationDialogReset());
+          final profile = UserProfileContext(
+            userId: user.userId,
+            firstName: _resolveFirstName(user),
+            lastName: _resolveLastName(user),
+            fullName: user.displayName,
+            email: _resolveEmail(user),
+            role: _resolveRole(user),
+            isOnline: state.onlineUsers.contains(user.userId),
+            lastSeen: state.userLastSeen[user.userId],
+            commonGroups: commonGroups,
+          );
 
-        if (context.mounted) {
-          context.pop();
-        }
-      },
-      child: Scaffold(
-        appBar: AppBar(title: const Text('Profile')),
-        body: BlocBuilder<ChatBloc, ChatState>(
-          builder: (context, state) {
-            final user = _resolveUser(state, widget.userId);
-            if (user == null) {
-              return const Center(child: Text('User data not found.'));
-            }
+          return ListView(
+            children: [
+              ProfileHeader(
+                profile: profile,
+                accentColor: Theme.of(context).colorScheme.primary,
+              ),
+              ProfileInfoSection(
+                profile: profile,
+                onSendMessage: () async {
+                  final router = GoRouter.of(context);
+                  final navigator = Navigator.of(context);
+                  final chatBloc = context.read<ChatBloc>();
 
-            final commonGroups = state.conversations
-                .where(
-                  (conversation) =>
-                      conversation.type == ConversationType.group &&
-                      (conversation.participants.contains(widget.userId) ||
-                          conversation.participantUsers.any(
-                            (participant) =>
-                                participant.userId == widget.userId,
-                          )),
-                )
-                .toList(growable: false);
+                  final conversationId = await router.push<int>(
+                    '/messages/new',
+                    extra: user,
+                  );
+                  if (!mounted ||
+                      conversationId == null ||
+                      conversationId <= 0) {
+                    return;
+                  }
 
-            final profile = UserProfileContext(
-              userId: user.userId,
-              firstName: _resolveFirstName(user),
-              lastName: _resolveLastName(user),
-              fullName: user.displayName,
-              email: _resolveEmail(user),
-              role: _resolveRole(user),
-              isOnline: state.onlineUsers.contains(user.userId),
-              lastSeen: state.userLastSeen[user.userId],
-              commonGroups: commonGroups,
-            );
-
-            return ListView(
-              children: [
-                ProfileHeader(
-                  profile: profile,
-                  accentColor: Theme.of(context).colorScheme.primary,
-                ),
-                ProfileInfoSection(
-                  profile: profile,
-                  onSendMessage: () {
-                    _waitingForConversation = true;
-                    context.read<ChatBloc>().add(
-                      ChatStartConversationRequested(
-                        participantIds: <int>[user.userId],
-                        selectedParticipants: <ChatUserModel>[user],
-                        type: 'direct',
-                      ),
-                    );
-                  },
-                ),
-              ],
-            );
-          },
-        ),
+                  chatBloc.add(SelectConversation(conversationId));
+                  chatBloc.add(MarkRead(conversationId));
+                  navigator.pop();
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }

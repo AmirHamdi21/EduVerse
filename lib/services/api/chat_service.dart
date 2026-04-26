@@ -33,6 +33,10 @@ abstract class IChatService {
 
   Future<List<ChatUserModel>> searchUsers(String query, {int limit = 20});
 
+  Future<OnlineUsersSnapshot> getOnlineUsers();
+
+  Future<int> getUnreadCount();
+
   Future<void> markRead(int messageId);
 
   Future<ChatMessageModel> editMessage(int messageId, String text);
@@ -185,6 +189,71 @@ class ChatService implements IChatService {
 
     final users = _extractList(response.data);
     return users.map(ChatUserModel.fromJson).toList();
+  }
+
+  @override
+  Future<OnlineUsersSnapshot> getOnlineUsers() async {
+    final response = await _request(
+      method: 'GET',
+      path: '/messages/online-users',
+    );
+    final payload = _asMap(response.data);
+    final list = payload['data'] is List
+        ? payload['data'] as List
+        : (payload['onlineUsers'] is List
+              ? payload['onlineUsers'] as List
+              : (response.data is List
+                    ? response.data as List
+                    : const <dynamic>[]));
+
+    final onlineUserIds = <int>{};
+    final lastSeenByUserId = <int, DateTime>{};
+
+    for (final entry in list) {
+      if (entry is! Map && entry is! Map<String, dynamic>) {
+        final userId = _parseInt(entry);
+        if (userId > 0) {
+          onlineUserIds.add(userId);
+        }
+        continue;
+      }
+
+      final map = _asMap(entry);
+      final userId = _parseInt(map['userId'] ?? map['id']);
+      if (userId <= 0) {
+        continue;
+      }
+
+      final isOnline = _parseBoolOrNull(map['isOnline']) ?? true;
+      if (isOnline) {
+        onlineUserIds.add(userId);
+      }
+
+      final lastSeen = _parseDateTime(map['lastSeen'] ?? map['updatedAt']);
+      if (lastSeen != null) {
+        lastSeenByUserId[userId] = lastSeen;
+      }
+    }
+
+    return OnlineUsersSnapshot(
+      onlineUserIds: onlineUserIds,
+      lastSeenByUserId: lastSeenByUserId,
+    );
+  }
+
+  @override
+  Future<int> getUnreadCount() async {
+    final response = await _request(
+      method: 'GET',
+      path: '/messages/unread-count',
+    );
+    final payload = _asMap(response.data);
+    return _parseInt(
+      payload['count'] ??
+          payload['unreadCount'] ??
+          payload['total'] ??
+          payload['data'],
+    );
   }
 
   @override
@@ -496,6 +565,36 @@ class ChatService implements IChatService {
       return int.tryParse(value) ?? fallback;
     }
     return fallback;
+  }
+
+  bool? _parseBoolOrNull(dynamic value) {
+    if (value == null) {
+      return null;
+    }
+    if (value is bool) {
+      return value;
+    }
+    if (value is num) {
+      return value != 0;
+    }
+    if (value is String) {
+      final normalized = value.trim().toLowerCase();
+      if (normalized.isEmpty) {
+        return null;
+      }
+      return normalized == '1' || normalized == 'true' || normalized == 'yes';
+    }
+    return null;
+  }
+
+  DateTime? _parseDateTime(dynamic value) {
+    if (value is DateTime) {
+      return value.toUtc();
+    }
+    if (value is String && value.trim().isNotEmpty) {
+      return DateTime.tryParse(value)?.toUtc();
+    }
+    return null;
   }
 
   void dispose() {

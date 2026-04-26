@@ -455,35 +455,113 @@ class UserTypingEvent extends Equatable {
   List<Object?> get props => [conversationId, userId, isTyping];
 }
 
-class MessageReadEvent extends Equatable {
+class MessageDeletedEvent extends Equatable {
   final int messageId;
-  final int conversationId;
-  final int userId;
+  final int? conversationId;
+  final bool forEveryone;
 
-  const MessageReadEvent({
+  const MessageDeletedEvent({
     required this.messageId,
-    required this.conversationId,
-    required this.userId,
+    this.conversationId,
+    this.forEveryone = true,
   });
 
-  factory MessageReadEvent.fromJson(Map<String, dynamic> json) {
-    return MessageReadEvent(
-      messageId: _parseInt(json['messageId'] ?? json['id']),
-      conversationId: _parseInt(json['conversationId']),
-      userId: _parseInt(json['userId']),
+  factory MessageDeletedEvent.fromJson(Map<String, dynamic> json) {
+    final parsedMessageId = _parseInt(
+      json['messageId'] ?? json['id'] ?? json['deletedMessageId'],
+    );
+    final parsedConversationId = _parseIntOrNull(
+      json['conversationId'] ?? json['chatId'],
+    );
+    final parsedForEveryone = _parseBoolOrNull(
+      json['forEveryone'] ??
+          json['deleteForEveryone'] ??
+          json['deletedForEveryone'] ??
+          json['isDeletedForEveryone'],
+    );
+
+    return MessageDeletedEvent(
+      messageId: parsedMessageId,
+      conversationId: parsedConversationId,
+      forEveryone: parsedForEveryone ?? true,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'messageId': messageId,
-      'conversationId': conversationId,
-      'userId': userId,
+      if (conversationId != null) 'conversationId': conversationId,
+      'forEveryone': forEveryone,
     };
   }
 
   @override
-  List<Object?> get props => [messageId, conversationId, userId];
+  List<Object?> get props => [messageId, conversationId, forEveryone];
+}
+
+class MessageReadEvent extends Equatable {
+  final int? messageId;
+  final int conversationId;
+  final int userId;
+  final DateTime? readAt;
+  final bool markedRead;
+
+  const MessageReadEvent({
+    this.messageId,
+    required this.conversationId,
+    required this.userId,
+    this.readAt,
+    this.markedRead = true,
+  });
+
+  factory MessageReadEvent.fromJson(Map<String, dynamic> json) {
+    return MessageReadEvent(
+      messageId: _parseIntOrNull(json['messageId'] ?? json['id']),
+      conversationId: _parseInt(json['conversationId']),
+      userId: _parseInt(json['userId']),
+      readAt: _parseDateTime(json['readAt'] ?? json['updatedAt']),
+      markedRead:
+          _parseBoolOrNull(json['markedRead'] ?? json['isRead']) ?? true,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      if (messageId != null) 'messageId': messageId,
+      'conversationId': conversationId,
+      'userId': userId,
+      if (readAt != null) 'readAt': readAt!.toIso8601String(),
+      'markedRead': markedRead,
+    };
+  }
+
+  @override
+  List<Object?> get props => [
+    messageId,
+    conversationId,
+    userId,
+    readAt,
+    markedRead,
+  ];
+}
+
+class OnlineUsersSnapshot extends Equatable {
+  final Set<int> onlineUserIds;
+  final Map<int, DateTime> lastSeenByUserId;
+
+  const OnlineUsersSnapshot({
+    this.onlineUserIds = const <int>{},
+    this.lastSeenByUserId = const <int, DateTime>{},
+  });
+
+  @override
+  List<Object?> get props => [
+    onlineUserIds.toList()..sort(),
+    lastSeenByUserId.entries
+        .map((entry) => '${entry.key}:${entry.value.toUtc().toIso8601String()}')
+        .toList(growable: false)
+      ..sort(),
+  ];
 }
 
 Map<String, dynamic> _normalizeMessagePayload(dynamic payload) {

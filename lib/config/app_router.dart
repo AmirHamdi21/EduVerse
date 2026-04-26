@@ -195,6 +195,7 @@ import 'package:edu_verse/screens/shared/shared_chat_screen.dart';
 import 'package:edu_verse/screens/shared/discussion_screen.dart';
 import 'package:edu_verse/screens/shared/chat/new_conversation_screen.dart';
 import 'package:edu_verse/screens/shared/chat/user_profile_screen.dart';
+import 'package:edu_verse/bloc/chat/chat_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -508,7 +509,11 @@ class AppRouter {
       ),
       GoRoute(
         path: '/messages/new',
-        builder: (context, state) => const NewConversationScreen(),
+        builder: (context, state) => NewConversationScreen(
+          preselectedUser: state.extra is ChatUserModel
+              ? state.extra as ChatUserModel
+              : null,
+        ),
       ),
       GoRoute(
         path: '/messages/profile/:userId',

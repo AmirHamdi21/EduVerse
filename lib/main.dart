@@ -7,7 +7,9 @@ import 'package:edu_verse/bloc/assignments/assignment_event.dart';
 import 'package:edu_verse/bloc/attendance/attendance_cubit.dart';
 import 'package:edu_verse/bloc/auth/auth_bloc.dart';
 import 'package:edu_verse/bloc/auth/auth_event.dart';
+import 'package:edu_verse/bloc/auth/auth_state.dart';
 import 'package:edu_verse/bloc/chat/chat_bloc.dart';
+import 'package:edu_verse/bloc/chat/chat_event.dart';
 import 'package:edu_verse/bloc/discussions/discussion_bloc.dart';
 import 'package:edu_verse/bloc/ai_notes/ai_notes_cubit.dart';
 import 'package:edu_verse/bloc/profile/profile_cubit.dart';
@@ -136,7 +138,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late StudentStatsService _studentStatsService;
   late NotificationApiService _notificationApiService;
   late NotificationSocketService _notificationSocketService;
-  late DeviceNotificationPreferencesService _deviceNotificationPreferencesService;
+  late DeviceNotificationPreferencesService
+  _deviceNotificationPreferencesService;
   StreamSubscription<String>? _sessionExpirySubscription;
   StreamSubscription<dynamic>? _incomingNotificationSubscription;
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
@@ -194,8 +197,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _chatBloc = ChatBloc();
     _discussionBloc = DiscussionBloc();
     _aiNoteCubit = AINoteCubit();
-    _profileCubit =
-        ProfileCubit(userProfileService: _userProfileService)..loadProfile();
+    _profileCubit = ProfileCubit(userProfileService: _userProfileService)
+      ..loadProfile();
     _searchCubit = SearchCubit();
     _adminNotificationCubit = AdminNotificationCubit(
       notificationApiService: _notificationApiService,
@@ -228,8 +231,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _incomingNotificationSubscription = _notificationCubit.incomingNotifications
         .listen((notification) async {
           if (!mounted) return;
-          final devicePreferences =
-              await _deviceNotificationPreferencesService.load();
+          final devicePreferences = await _deviceNotificationPreferencesService
+              .load();
           if (!devicePreferences.foregroundAlertsEnabled) {
             return;
           }
@@ -241,7 +244,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             SystemSound.play(SystemSoundType.click);
           }
 
-          final content = devicePreferences.showPreview &&
+          final content =
+              devicePreferences.showPreview &&
                   notification.message.trim().isNotEmpty
               ? '${notification.title}: ${notification.message}'
               : notification.title;
@@ -428,32 +432,49 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           BlocProvider.value(value: _quizManagementCubit),
           BlocProvider.value(value: _studentQuizCubit),
         ],
-        child: BlocBuilder<ThemeBloc, ThemeState>(
-          builder: (context, themeState) {
-            return BlocBuilder<LanguageCubit, Locale>(
-              builder: (context, locale) {
-                return MaterialApp.router(
-                  title: 'EduVerse App',
-                  debugShowCheckedModeBanner: false,
-                  scaffoldMessengerKey: _scaffoldMessengerKey,
-                  locale: locale,
-                  supportedLocales: const [Locale('en'), Locale('ar')],
-                  localizationsDelegates: [
-                    AppLocalizations.delegate,
-                    GlobalMaterialLocalizations.delegate,
-                    GlobalWidgetsLocalizations.delegate,
-                    GlobalCupertinoLocalizations.delegate,
-                  ],
-                  theme: AppTheme.lightTheme,
-                  darkTheme: AppTheme.darkTheme,
-                  themeMode: themeState.isDark
-                      ? ThemeMode.dark
-                      : ThemeMode.light,
-                  routerConfig: AppRouter.router,
-                );
-              },
-            );
+        child: BlocListener<AuthBloc, AuthState>(
+          listenWhen: (previous, current) =>
+              previous.runtimeType != current.runtimeType ||
+              (previous is AuthAuthenticated &&
+                  current is AuthAuthenticated &&
+                  previous.user.userId != current.user.userId),
+          listener: (context, authState) {
+            if (authState is AuthAuthenticated) {
+              _chatBloc.add(ChatSessionStarted(authState.user.userId));
+              return;
+            }
+
+            if (authState is AuthUnauthenticated) {
+              _chatBloc.add(const ChatSessionEnded());
+            }
           },
+          child: BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, themeState) {
+              return BlocBuilder<LanguageCubit, Locale>(
+                builder: (context, locale) {
+                  return MaterialApp.router(
+                    title: 'EduVerse App',
+                    debugShowCheckedModeBanner: false,
+                    scaffoldMessengerKey: _scaffoldMessengerKey,
+                    locale: locale,
+                    supportedLocales: const [Locale('en'), Locale('ar')],
+                    localizationsDelegates: [
+                      AppLocalizations.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                    ],
+                    theme: AppTheme.lightTheme,
+                    darkTheme: AppTheme.darkTheme,
+                    themeMode: themeState.isDark
+                        ? ThemeMode.dark
+                        : ThemeMode.light,
+                    routerConfig: AppRouter.router,
+                  );
+                },
+              );
+            },
+          ),
         ),
       ),
     );
