@@ -143,7 +143,7 @@ class InstructorQuickAccessGrid extends StatelessWidget {
               ),
               _buildQuickAccessItem(
                 context,
-                title: 'Discussions',
+                title: l10n.discussions,
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
