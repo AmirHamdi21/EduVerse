@@ -348,7 +348,7 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
 
         return Scaffold(
           appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight + 40),
+            preferredSize: const Size.fromHeight(kToolbarHeight + 10),
             child: _ConversationHeader(
               conversation: widget.conversation,
               connectionStatus: state.connectionStatus,
