@@ -13,7 +13,6 @@ import '../../bloc/language/language_cubit.dart';
 import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../common/utils/responsive.dart';
-import '../../services/api_service.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -31,12 +30,9 @@ class _RegisterScreenState extends State<RegisterScreen>
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  String? _selectedRole;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _agreeToTerms = false;
-
-  final List<String> _roles = ['student', 'instructor', 'ta', 'admin'];
 
   late AnimationController _logoController;
   late AnimationController _titleController;
@@ -339,31 +335,12 @@ class _RegisterScreenState extends State<RegisterScreen>
       password: password,
       firstName: _firstNameController.text.trim(),
       lastName: _lastNameController.text.trim(),
+      phone: _phoneController.text.trim().isEmpty
+          ? null
+          : _phoneController.text.trim(),
     );
 
-    // Try to register - backend will handle email already exists check
-    try {
-      final apiService = ApiService();
-      await apiService.registerAndCheckEmail(request);
-
-      if (!mounted) return;
-
-      // If registration succeeds, proceed with BLoC
-      if (mounted) {
-        context.read<AuthBloc>().add(RegisterRequested(request));
-        _formKey.currentState!.save();
-      }
-    } catch (e) {
-      if (!mounted) return;
-
-      final errorMsg = e.toString();
-
-      if (errorMsg.contains('Email already registered')) {
-        _showErrorDialog(l.emailAlreadyRegistered);
-      } else {
-        _showErrorDialog(l.operationFailed);
-      }
-    }
+    context.read<AuthBloc>().add(RegisterRequested(request));
   }
 
   void _showErrorDialog(String message) {
@@ -372,17 +349,6 @@ class _RegisterScreenState extends State<RegisterScreen>
       dialogType: DialogType.error,
       animType: AnimType.scale,
       title: AppLocalizations.of(context).error,
-      desc: message,
-      btnOkOnPress: () {},
-    ).show();
-  }
-
-  void _showInfoDialog(String title, String message) {
-    AwesomeDialog(
-      context: context,
-      dialogType: DialogType.info,
-      animType: AnimType.scale,
-      title: title,
       desc: message,
       btnOkOnPress: () {},
     ).show();
@@ -402,11 +368,7 @@ class _RegisterScreenState extends State<RegisterScreen>
               backgroundColor: const Color(0xFF10B981),
             ),
           );
-          Future.delayed(const Duration(milliseconds: 500), () {
-            if (mounted) {
-              context.go('/verify-email', extra: _emailController.text.trim());
-            }
-          });
+          context.go('/login');
         } else if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -991,75 +953,50 @@ class _RegisterScreenState extends State<RegisterScreen>
     AppLocalizations l,
   ) {
     final responsive = context.responsive;
-    final fillColor = isDark ? AppTheme.darkCardColor : const Color(0xFFF9FAFB);
-    final borderColor = isDark
-        ? const Color(0xFF404756)
-        : const Color(0xFFE5E7EB);
-
-    final roleLabels = {
-      'student': l.student,
-      'instructor': l.instructor,
-      'ta': l.ta,
-      'admin': l.admin,
-    };
-
-    return DropdownButtonFormField<String>(
-      value: _selectedRole,
-      onChanged: (value) {
-        setState(() {
-          _selectedRole = value;
-        });
-      },
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return l.fieldRequired;
-        }
-        return null;
-      },
-      items: _roles.map((role) {
-        return DropdownMenuItem(
-          value: role,
-          child: Text(
-            roleLabels[role] ?? role,
-            style: TextStyle(color: textColor, fontSize: responsive.fontSize16),
-          ),
-        );
-      }).toList(),
-      decoration: InputDecoration(
-        labelText: l.selectRole,
-        labelStyle: TextStyle(
-          color: textSecondaryColor,
-          fontSize: responsive.fontSize16,
-        ),
-        prefixIcon: Icon(
-          Icons.school_outlined,
-          color: textSecondaryColor,
-          size: responsive.iconSmall,
-        ),
-        filled: true,
-        fillColor: fillColor,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(responsive.radius12),
-          borderSide: BorderSide(color: borderColor),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(responsive.radius12),
-          borderSide: BorderSide(color: borderColor),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(responsive.radius12),
-          borderSide: const BorderSide(color: Color(0xFF2B7FFF), width: 2),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(responsive.radius12),
-          borderSide: const BorderSide(color: Color(0xFFEF4444)),
-        ),
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: responsive.p16,
-          vertical: responsive.p16,
+    return Container(
+      padding: EdgeInsets.all(responsive.p16),
+      decoration: BoxDecoration(
+        color: isDark ? AppTheme.darkCardColor : const Color(0xFFF9FAFB),
+        borderRadius: BorderRadius.circular(responsive.radius12),
+        border: Border.all(
+          color: isDark ? const Color(0xFF404756) : const Color(0xFFE5E7EB),
         ),
       ),
-      dropdownColor: isDark ? AppTheme.darkCardColor : Colors.white,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            Icons.school_outlined,
+            color: textSecondaryColor,
+            size: responsive.iconSmall,
+          ),
+          SizedBox(width: responsive.p12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Student account',
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: responsive.fontSize16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: responsive.p4),
+                Text(
+                  'Public registration creates a student account. Instructor, TA, admin, and IT roles must be assigned by authorized staff.',
+                  style: TextStyle(
+                    color: textSecondaryColor,
+                    fontSize: responsive.fontSize13,
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1149,33 +1086,6 @@ class _RegisterScreenState extends State<RegisterScreen>
             color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF354152),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTopIcon(IconData icon, bool isDark) {
-    return Container(
-      width: 50,
-      height: 50,
-      decoration: BoxDecoration(
-        color: isDark ? AppTheme.darkCardColor : Colors.white.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(1000),
-        border: Border.all(
-          color: isDark ? const Color(0xFF404756) : const Color(0xFFE5E7EB),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Icon(
-        icon,
-        size: 20,
-        color: isDark ? AppTheme.darkTextPrimary : const Color(0xFF354152),
       ),
     );
   }

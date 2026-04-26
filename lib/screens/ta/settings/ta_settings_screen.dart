@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../bloc/auth/auth_bloc.dart';
+import '../../../bloc/auth/auth_event.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
@@ -1503,6 +1505,7 @@ class _TASettingsScreenState extends State<TASettingsScreen>
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
+              context.read<AuthBloc>().add(const LogoutRequested());
               context.go('/login');
             },
             style: ElevatedButton.styleFrom(backgroundColor: TAColors.error),

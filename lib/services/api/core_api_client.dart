@@ -150,6 +150,11 @@ class CoreApiClient {
   }
 
   Future<void> _handleSessionExpired() async {
+    final hadStoredSession = await _storageService?.hasStoredSession() ?? false;
+    if (!hadStoredSession) {
+      return;
+    }
+
     try {
       await _storageService?.clearAll();
       await _storageService?.clearChatCache();

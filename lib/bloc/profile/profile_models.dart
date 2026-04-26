@@ -299,6 +299,64 @@ class ChangePasswordRequest {
   };
 }
 
+class UserPreferences {
+  final String language;
+  final String theme;
+  final bool emailNotifications;
+  final bool pushNotifications;
+
+  const UserPreferences({
+    this.language = 'en',
+    this.theme = 'light',
+    this.emailNotifications = true,
+    this.pushNotifications = true,
+  });
+
+  factory UserPreferences.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] is Map<String, dynamic>
+        ? json['data'] as Map<String, dynamic>
+        : json;
+
+    return UserPreferences(
+      language: _parseString(data['language'], fallback: 'en'),
+      theme: _parseString(data['theme'], fallback: 'light'),
+      emailNotifications: _parseBool(
+        data['emailNotifications'],
+        fallback: true,
+      ),
+      pushNotifications: _parseBool(data['pushNotifications'], fallback: true),
+    );
+  }
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'language': language,
+    'theme': theme,
+    'emailNotifications': emailNotifications,
+    'pushNotifications': pushNotifications,
+  };
+}
+
+class UpdateUserPreferencesRequest {
+  final String language;
+  final String theme;
+  final bool emailNotifications;
+  final bool pushNotifications;
+
+  const UpdateUserPreferencesRequest({
+    required this.language,
+    required this.theme,
+    required this.emailNotifications,
+    required this.pushNotifications,
+  });
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+    'language': language,
+    'theme': theme,
+    'emailNotifications': emailNotifications,
+    'pushNotifications': pushNotifications,
+  };
+}
+
 class AppSettings {
   final bool pushNotifications;
   final bool emailAlerts;

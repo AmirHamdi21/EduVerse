@@ -262,18 +262,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     try {
-      final isLoggedIn = await _storageService.isLoggedIn();
-      if (isLoggedIn) {
-        final user = await _storageService.getUserData();
-        if (user != null) {
-          emit(AuthAuthenticated(user));
-        } else {
-          emit(const AuthUnauthenticated());
-        }
-      } else {
+      final hasStoredSession = await _storageService.hasStoredSession();
+      if (!hasStoredSession) {
         emit(const AuthUnauthenticated());
+        return;
       }
+
+      final user = await _apiService.getCurrentUser();
+      await _storageService.saveUserData(user);
+      emit(AuthAuthenticated(user));
     } catch (e) {
+      await _storageService.clearAll();
+      await _storageService.clearChatCache();
       emit(const AuthUnauthenticated());
     }
   }
@@ -309,11 +309,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthLoading());
     try {
       final response = await _apiService.register(event.request);
-
-      // After registration, user needs to verify email before login
-      // Backend returns user with emailVerified = false and status = PENDING
-      // Do NOT save tokens - user must verify email first
-      emit(AuthEmailVerificationNeeded(response.user));
+      emit(AuthOperationSuccess(response.message));
+      emit(const AuthUnauthenticated());
     } catch (e) {
       emit(AuthError(e.toString().replaceAll('Exception: ', '')));
       emit(const AuthUnauthenticated());
@@ -349,24 +346,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final response = await _apiService.forgotPassword(event.email);
       emit(AuthOperationSuccess(response.message));
-
-      // Return to previous state after showing success
-      final currentUser = await _storageService.getUserData();
-      if (currentUser != null) {
-        emit(AuthAuthenticated(currentUser));
-      } else {
-        emit(const AuthUnauthenticated());
-      }
+      await _restoreStoredAuthState(emit);
     } catch (e) {
       emit(AuthError(e.toString().replaceAll('Exception: ', '')));
-
-      // Return to previous state
-      final currentUser = await _storageService.getUserData();
-      if (currentUser != null) {
-        emit(AuthAuthenticated(currentUser));
-      } else {
-        emit(const AuthUnauthenticated());
-      }
+      await _restoreStoredAuthState(emit);
     }
   }
 
@@ -394,26 +377,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     VerifyEmailRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(const AuthLoading());
-    try {
-      final response = await _apiService.verifyEmail(event.token);
-
-      // After verification, refresh user data from server
-      final user = await _apiService.getCurrentUser();
-      await _storageService.saveUserData(user);
-
-      emit(AuthOperationSuccess(response.message));
-      emit(AuthAuthenticated(user));
-    } catch (e) {
-      emit(AuthError(e.toString().replaceAll('Exception: ', '')));
-
-      final currentUser = await _storageService.getUserData();
-      if (currentUser != null) {
-        emit(AuthAuthenticated(currentUser));
-      } else {
-        emit(const AuthUnauthenticated());
-      }
-    }
+    emit(
+      const AuthError(
+        'Email verification is not required. New EduVerse accounts are active immediately after registration.',
+      ),
+    );
+    await _restoreStoredAuthState(emit);
   }
 
   // Resend Verification Email
@@ -421,15 +390,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     ResendVerificationEmailRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(const AuthLoading());
-    try {
-      final response = await _apiService.resendVerificationEmail(event.email);
-      emit(AuthOperationSuccess(response.message));
-      emit(const AuthUnauthenticated());
-    } catch (e) {
-      emit(AuthError(e.toString().replaceAll('Exception: ', '')));
-      emit(const AuthUnauthenticated());
-    }
+    emit(
+      const AuthError(
+        'Email verification is not required. You can sign in immediately after registration.',
+      ),
+    );
+    await _restoreStoredAuthState(emit);
   }
 
   // Refresh User Data
@@ -470,5 +436,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _storageService.clearAll();
       emit(const AuthUnauthenticated());
     }
+  }
+
+  Future<void> _restoreStoredAuthState(Emitter<AuthState> emit) async {
+    final currentUser = await _storageService.getUserData();
+    if (currentUser != null) {
+      emit(AuthAuthenticated(currentUser));
+      return;
+    }
+
+    emit(const AuthUnauthenticated());
   }
 }

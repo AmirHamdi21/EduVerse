@@ -14,8 +14,7 @@ import '../../bloc/language/language_cubit.dart';
 import '../../config/app_theme.dart';
 import '../../generated_l10n/app_localizations.dart';
 import '../../common/utils/responsive.dart';
-import '../../services/api_service.dart';
-import '../../services/demo_credentials.dart';
+import '../../services/auth_role_resolver.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -30,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen>
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _rememberMe = true;
 
   late AnimationController _logoController;
   late AnimationController _titleController;
@@ -260,73 +260,13 @@ class _LoginScreenState extends State<LoginScreen>
       return;
     }
 
-    // Check for demo credentials first (development mode)
-    final demoRole = DemoCredentials.validateDemoCredentials(email, password);
-    if (demoRole != null) {
-      // Demo login - bypass API and navigate directly
-      final demoUser = DemoCredentials.getDemoUser(demoRole);
-      final route = DemoCredentials.getDashboardRouteForUser(demoUser);
+    final request = LoginRequest(
+      email: email,
+      password: password,
+      rememberMe: _rememberMe,
+    );
 
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${l.success} (Demo: $demoRole)'),
-          backgroundColor: const Color(0xFF10B981),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-
-      context.go(route);
-      return;
-    }
-
-    // Check if it's a demo email with wrong password
-    if (DemoCredentials.isDemoEmail(email)) {
-      _showErrorDialog('Invalid demo password. Check credentials.');
-      return;
-    }
-
-    // Pre-check: Try to authenticate to see if email is verified
-    try {
-      final apiService = ApiService();
-      // This will throw if email is not verified or doesn't exist
-      await apiService.isEmailVerifiedAndExists(email, password);
-
-      if (!mounted) return;
-
-      // If we reach here, email is verified and credentials are correct
-      // Proceed with normal login through BLoC
-      final request = LoginRequest(
-        email: email,
-        password: password,
-        rememberMe: false,
-      );
-
-      if (mounted) {
-        context.read<AuthBloc>().add(LoginRequested(request));
-      }
-    } catch (e) {
-      if (!mounted) return;
-
-      final errorMsg = e.toString();
-
-      if (errorMsg.contains('Email not verified')) {
-        // Email is not verified - show verification warning
-        _showWarningDialog(
-          l.emailNotVerified,
-          l.emailNotVerified,
-          onRetry: () {
-            context.read<AuthBloc>().add(
-              ResendVerificationEmailRequested(email),
-            );
-          },
-        );
-      } else {
-        // Generic error - could be invalid credentials, server error, etc
-        _showErrorDialog(l.operationFailed);
-      }
-    }
+    context.read<AuthBloc>().add(LoginRequested(request));
   }
 
   void _showErrorDialog(String message) {
@@ -335,22 +275,6 @@ class _LoginScreenState extends State<LoginScreen>
       message: message,
       icon: Icons.error_outline_rounded,
       accentColors: const [Color(0xFFFF5F6D), Color(0xFFFFA24D)],
-    );
-  }
-
-  void _showWarningDialog(
-    String title,
-    String message, {
-    VoidCallback? onRetry,
-  }) {
-    _showModernDialog(
-      title: title,
-      message: message,
-      icon: Icons.mark_email_unread_outlined,
-      accentColors: const [Color(0xFFFFB347), Color(0xFFFF7A59)],
-      primaryLabel: AppLocalizations.of(context).tryAgain,
-      onPrimary: onRetry,
-      secondaryLabel: AppLocalizations.of(context).cancel,
     );
   }
 
@@ -414,25 +338,10 @@ class _LoginScreenState extends State<LoginScreen>
               backgroundColor: const Color(0xFF10B981),
             ),
           );
-          // Navigate based on user role
-          final route = DemoCredentials.getDashboardRouteForUser(state.user);
+          final route = AuthRoleResolver.dashboardRouteForUser(state.user);
           context.go(route);
         } else if (state is AuthError) {
-          if (state.message.toLowerCase().contains('verify')) {
-            _showWarningDialog(
-              l.emailNotVerified,
-              state.message,
-              onRetry: () {
-                context.read<AuthBloc>().add(
-                  ResendVerificationEmailRequested(
-                    _emailController.text.trim(),
-                  ),
-                );
-              },
-            );
-          } else {
-            _showErrorDialog(state.message);
-          }
+          _showErrorDialog(state.message);
         }
       },
       child: BlocBuilder<ThemeBloc, ThemeState>(
@@ -719,19 +628,56 @@ class _LoginScreenState extends State<LoginScreen>
                                     opacity: _forgotFadeAnimation,
                                     child: SlideTransition(
                                       position: _forgotSlideAnimation,
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: TextButton(
-                                          onPressed: () =>
-                                              context.push('/forgot-password'),
-                                          child: Text(
-                                            l.forgotPassword,
-                                            style: TextStyle(
-                                              color: Color(0xFF2B7FFF),
-                                              fontSize: responsive.fontSize14,
+                                      child: Row(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              setState(() {
+                                                _rememberMe = !_rememberMe;
+                                              });
+                                            },
+                                            borderRadius: BorderRadius.circular(
+                                              responsive.radius12,
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                Checkbox(
+                                                  value: _rememberMe,
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      _rememberMe =
+                                                          value ?? _rememberMe;
+                                                    });
+                                                  },
+                                                  activeColor: const Color(
+                                                    0xFF2B7FFF,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  'Remember me',
+                                                  style: TextStyle(
+                                                    color: textSecondaryColor,
+                                                    fontSize:
+                                                        responsive.fontSize14,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                        ),
+                                          const Spacer(),
+                                          TextButton(
+                                            onPressed: () => context.push(
+                                              '/forgot-password',
+                                            ),
+                                            child: Text(
+                                              l.forgotPassword,
+                                              style: TextStyle(
+                                                color: const Color(0xFF2B7FFF),
+                                                fontSize: responsive.fontSize14,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -845,9 +791,6 @@ class _LoginScreenState extends State<LoginScreen>
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: responsive.p16),
-                                  // Demo Credentials
-                                  _buildDemoCredentials(context, isDark),
                                 ],
                               ),
                             ),
@@ -1110,113 +1053,6 @@ class _LoginScreenState extends State<LoginScreen>
           horizontal: responsive.p16,
           vertical: responsive.p16,
         ),
-      ),
-    );
-  }
-
-  Widget _buildDemoCredentials(BuildContext context, bool isDark) {
-    final responsive = context.responsive;
-    final textColor = isDark
-        ? AppTheme.darkTextPrimary
-        : const Color(0xFF1E293B);
-    final textSecondaryColor = isDark
-        ? AppTheme.darkTextSecondary
-        : const Color(0xFF697282);
-    final cardColor = isDark ? AppTheme.darkCardColor : Colors.white;
-
-    return Container(
-      margin: EdgeInsets.only(top: responsive.p24),
-      padding: EdgeInsets.all(responsive.p16),
-      decoration: BoxDecoration(
-        color: cardColor.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(responsive.radius12),
-        border: Border.all(
-          color: isDark ? const Color(0xFF404756) : const Color(0xFFE5E7EB),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.info_outline,
-                size: responsive.iconSmall,
-                color: const Color(0xFF2B7FFF),
-              ),
-              SizedBox(width: responsive.p8),
-              Text(
-                'Demo Credentials',
-                style: TextStyle(
-                  fontSize: responsive.fontSize14,
-                  fontWeight: FontWeight.w600,
-                  color: textColor,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: responsive.p12),
-          ...DemoCredentials.getAllCredentials().map((cred) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: responsive.p8),
-              child: InkWell(
-                onTap: () {
-                  _emailController.text = cred['email']!;
-                  _passwordController.text = cred['password']!;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('${cred['role']} credentials loaded'),
-                      duration: const Duration(seconds: 1),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                },
-                borderRadius: BorderRadius.circular(responsive.radius8),
-                child: Container(
-                  padding: EdgeInsets.all(responsive.p8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(responsive.radius8),
-                    color: isDark
-                        ? const Color(0xFF1E2530).withOpacity(0.5)
-                        : const Color(0xFFF9FAFB),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              cred['role']!,
-                              style: TextStyle(
-                                fontSize: responsive.fontSize12,
-                                fontWeight: FontWeight.w600,
-                                color: textColor,
-                              ),
-                            ),
-                            SizedBox(height: responsive.p4),
-                            Text(
-                              cred['email']!,
-                              style: TextStyle(
-                                fontSize: responsive.fontSize11,
-                                color: textSecondaryColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: responsive.iconSmall * 0.7,
-                        color: textSecondaryColor,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ],
       ),
     );
   }

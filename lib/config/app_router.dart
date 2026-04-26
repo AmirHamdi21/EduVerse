@@ -199,8 +199,11 @@ import 'package:edu_verse/bloc/chat/chat_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:edu_verse/config/auth_route_notifier.dart';
 import 'package:edu_verse/screens/auth/email_verification_screen.dart';
+import 'package:edu_verse/screens/auth/reset_password_screen.dart';
 import 'package:edu_verse/screens/onBoarding/onboarding_screen.dart';
+import 'package:edu_verse/services/auth_role_resolver.dart';
 import '../screens/splash/splash_screen.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/register_screen.dart';
@@ -209,6 +212,16 @@ import '../models/core/enrollment_model.dart';
 import '../models/core/course_model.dart' as core_models;
 
 class AppRouter {
+  static const Set<String> _publicRoutes = <String>{
+    '/',
+    '/onboarding',
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+    '/verify-email',
+  };
+
   static int? _parsePositiveInt(dynamic value) {
     final parsed = value is int ? value : int.tryParse(value?.toString() ?? '');
     if (parsed == null || parsed <= 0) {
@@ -229,8 +242,42 @@ class AppRouter {
     return _parsePositiveInt(state.uri.queryParameters['courseId']);
   }
 
+  static String? _handleRedirect(GoRouterState state) {
+    final location = state.uri.path;
+
+    if (location == '/') {
+      return null;
+    }
+
+    final isPublicRoute = _publicRoutes.contains(location);
+
+    switch (authRouteNotifier.status) {
+      case AuthRouteStatus.unknown:
+        return '/';
+      case AuthRouteStatus.unauthenticated:
+        return isPublicRoute ? null : '/login';
+      case AuthRouteStatus.authenticated:
+        final user = authRouteNotifier.user;
+        if (user == null) {
+          return '/login';
+        }
+
+        if (isPublicRoute) {
+          return AuthRoleResolver.dashboardRouteForUser(user);
+        }
+
+        if (!AuthRoleResolver.canAccessRoute(user, location)) {
+          return AuthRoleResolver.dashboardRouteForUser(user);
+        }
+
+        return null;
+    }
+  }
+
   static final GoRouter router = GoRouter(
     initialLocation: '/',
+    refreshListenable: authRouteNotifier,
+    redirect: (context, state) => _handleRedirect(state),
     routes: [
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
       GoRoute(
@@ -252,6 +299,12 @@ class AppRouter {
       GoRoute(
         path: '/forgot-password',
         builder: (context, state) => const ForgotPasswordScreen(),
+      ),
+      GoRoute(
+        path: '/reset-password',
+        builder: (context, state) => ResetPasswordScreen(
+          initialToken: state.uri.queryParameters['token'],
+        ),
       ),
       GoRoute(
         path: '/dashboard',

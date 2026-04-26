@@ -3,12 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../bloc/auth/auth_bloc.dart';
+import '../../../bloc/auth/auth_event.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../widgets/it_admin/shared/it_colors.dart';
-import '../../../widgets/it_admin/shared/it_drawer.dart';
 import '../../../widgets/it_admin/it_settings/it_settings_barrel.dart';
 
 class ITSettingsScreen extends StatefulWidget {
@@ -1226,6 +1227,7 @@ class _ITSettingsScreenState extends State<ITSettingsScreen>
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
+              context.read<AuthBloc>().add(const LogoutRequested());
               context.go('/login');
             },
             style: ElevatedButton.styleFrom(backgroundColor: ITColors.error),
