@@ -51,6 +51,7 @@ class _InstructorCourseDiscussionsScreenState
   List<DiscussionThread> _threads = const <DiscussionThread>[];
   _PostFilter _selectedFilter = _PostFilter.all;
   _PostSort _selectedSort = _PostSort.latest;
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -134,7 +135,17 @@ class _InstructorCourseDiscussionsScreenState
   }
 
   List<DiscussionThread> _visibleThreads() {
+    final normalizedSearch = _searchQuery.trim().toLowerCase();
     final filtered = _threads.where((thread) {
+      final matchesSearch =
+          normalizedSearch.isEmpty ||
+          thread.title.toLowerCase().contains(normalizedSearch) ||
+          thread.description.toLowerCase().contains(normalizedSearch) ||
+          thread.createdByName.toLowerCase().contains(normalizedSearch);
+      if (!matchesSearch) {
+        return false;
+      }
+
       switch (_selectedFilter) {
         case _PostFilter.all:
           return true;
@@ -567,6 +578,14 @@ class _InstructorCourseDiscussionsScreenState
     return InstructorDiscussionFilterPanel(
       isDark: isDark,
       badgeLabel: '$visibleCount ${l10n.instructorDiscussionVisiblePostsLabel}',
+      footer: InstructorDiscussionSearchField(
+        isDark: isDark,
+        hintText: l10n.instructorDiscussionSearchPosts,
+        value: _searchQuery,
+        onChanged: (value) {
+          setState(() => _searchQuery = value);
+        },
+      ),
       children: <Widget>[
         Expanded(
           child: InstructorDiscussionDropdown<_PostFilter>(

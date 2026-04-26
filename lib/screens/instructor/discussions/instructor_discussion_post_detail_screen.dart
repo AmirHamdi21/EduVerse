@@ -58,6 +58,8 @@ class _InstructorDiscussionPostDetailScreenState
   int _currentReplyPage = 1;
   bool _hasMoreReplies = true;
   DiscussionReply? _replyingTo;
+  int? _knownAuthorId;
+  String _knownAuthorName = '';
 
   @override
   void initState() {
@@ -70,6 +72,8 @@ class _InstructorDiscussionPostDetailScreenState
         widget.enrollmentService ?? EnrollmentService(coreApiClient: client);
     _course = widget.initialCourse;
     _thread = widget.initialThread;
+    _knownAuthorId = widget.initialThread?.createdBy;
+    _knownAuthorName = widget.initialThread?.createdByName.trim() ?? '';
     _tabController = TabController(length: 3, vsync: this);
     _repliesScrollController = ScrollController()
       ..addListener(_handleRepliesScroll);
@@ -92,6 +96,36 @@ class _InstructorDiscussionPostDetailScreenState
         _repliesScrollController.position.maxScrollExtent - 160) {
       _loadMoreReplies();
     }
+  }
+
+  DiscussionThread _normalizeThreadAuthor(DiscussionThread incoming) {
+    final incomingName = incoming.createdByName.trim();
+    if (incomingName.isNotEmpty) {
+      _knownAuthorId = incoming.createdBy;
+      _knownAuthorName = incomingName;
+      return incoming;
+    }
+
+    if (_knownAuthorId == incoming.createdBy && _knownAuthorName.isNotEmpty) {
+      return incoming.copyWith(createdByName: _knownAuthorName);
+    }
+
+    final previousName = _thread?.createdByName.trim() ?? '';
+    if ((_thread?.createdBy == incoming.createdBy) && previousName.isNotEmpty) {
+      _knownAuthorId = incoming.createdBy;
+      _knownAuthorName = previousName;
+      return incoming.copyWith(createdByName: previousName);
+    }
+
+    final initialName = widget.initialThread?.createdByName.trim() ?? '';
+    if ((widget.initialThread?.createdBy == incoming.createdBy) &&
+        initialName.isNotEmpty) {
+      _knownAuthorId = incoming.createdBy;
+      _knownAuthorName = initialName;
+      return incoming.copyWith(createdByName: initialName);
+    }
+
+    return incoming;
   }
 
   Future<void> _loadData({required bool showLoader}) async {
@@ -122,12 +156,13 @@ class _InstructorDiscussionPostDetailScreenState
       }
 
       final detail = await _discussionService.getThreadDetail(widget.threadId);
+      final resolvedThread = _normalizeThreadAuthor(detail.thread);
       if (!mounted) {
         return;
       }
 
       setState(() {
-        _thread = detail.thread;
+        _thread = resolvedThread;
         _replies = detail.replies.data;
         _currentReplyPage = detail.replies.meta.page;
         _hasMoreReplies = detail.replies.meta.hasMore;
@@ -155,6 +190,7 @@ class _InstructorDiscussionPostDetailScreenState
         widget.threadId,
         page: _currentReplyPage + 1,
       );
+      final resolvedThread = _normalizeThreadAuthor(detail.thread);
       if (!mounted) {
         return;
       }
@@ -165,7 +201,7 @@ class _InstructorDiscussionPostDetailScreenState
       }
 
       setState(() {
-        _thread = detail.thread;
+        _thread = resolvedThread;
         _replies = merged.values.toList(growable: false)
           ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
         _currentReplyPage = detail.replies.meta.page;
@@ -318,43 +354,6 @@ class _InstructorDiscussionPostDetailScreenState
     }
   }
 
-  Future<void> _editReply(DiscussionReply reply) async {
-    final l10n = AppLocalizations.of(context);
-    final updatedText = await showInstructorDiscussionReplyEditor(
-      context,
-      initialValue: reply.messageText,
-    );
-    if (updatedText == null) {
-      return;
-    }
-
-    await _runAction(
-      () => _discussionService.updateReply(
-        replyId: reply.id,
-        messageText: updatedText,
-      ),
-      successMessage: l10n.instructorDiscussionReplyUpdated,
-    );
-  }
-
-  Future<void> _deleteReply(DiscussionReply reply) async {
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await showInstructorDiscussionConfirmDialog(
-      context,
-      title: l10n.instructorDiscussionDeleteReplyTitle,
-      message: l10n.instructorDiscussionDeleteReplyMessage,
-      confirmLabel: l10n.delete,
-    );
-    if (!confirmed) {
-      return;
-    }
-
-    await _runAction(
-      () => _discussionService.deleteReply(reply.id),
-      successMessage: l10n.instructorDiscussionReplyDeleted,
-    );
-  }
-
   Future<void> _markAnswer(DiscussionReply reply) async {
     await _runAction(
       () => _discussionService.markAnswer(reply.id),
@@ -371,6 +370,39 @@ class _InstructorDiscussionPostDetailScreenState
           ? AppLocalizations.of(context).instructorDiscussionReplyUnendorsed
           : AppLocalizations.of(context).instructorDiscussionReplyEndorsed,
     );
+  }
+
+  Future<void> _toggleReplyUpvote(DiscussionReply reply) async {
+    final l10n = AppLocalizations.of(context);
+    try {
+      final action = await _discussionService.toggleMessageUpvote(reply.id);
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _replies = _replies.map((item) {
+          if (item.id != reply.id) {
+            return item;
+          }
+          final nextCount = action == 'added'
+              ? item.upvoteCount + 1
+              : (item.upvoteCount > 0 ? item.upvoteCount - 1 : 0);
+          return item.copyWith(upvoteCount: nextCount);
+        }).toList(growable: false);
+      });
+
+      _showSnack(
+        action == 'added'
+            ? l10n.instructorDiscussionUpvoteAdded
+            : l10n.instructorDiscussionUpvoteRemoved,
+      );
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+      _showSnack(error.toString().replaceFirst('Exception: ', ''));
+    }
   }
 
   Future<void> _runAction(
@@ -984,6 +1016,13 @@ class _InstructorDiscussionPostDetailScreenState
     InstructorDiscussionViewerContext viewer,
   ) {
     final roots = _buildReplyTree();
+    DiscussionReply? pinnedAnswer;
+    for (final reply in _replies) {
+      if (reply.isAnswer) {
+        pinnedAnswer = reply;
+        break;
+      }
+    }
 
     return Column(
       children: <Widget>[
@@ -1039,9 +1078,31 @@ class _InstructorDiscussionPostDetailScreenState
                 : ListView.builder(
                     controller: _repliesScrollController,
                     padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-                    itemCount: roots.length + (_loadingMore ? 1 : 0),
+                    itemCount:
+                        roots.length +
+                        (_loadingMore ? 1 : 0) +
+                        (pinnedAnswer == null ? 0 : 1),
                     itemBuilder: (context, index) {
-                      if (index >= roots.length) {
+                      if (pinnedAnswer != null && index == 0) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: _buildSectionCard(
+                            isDark,
+                            title: l10n.instructorDiscussionPinnedAnswerTitle,
+                            icon: Icons.verified_rounded,
+                            child: _buildHighlightedReply(
+                              context,
+                              isDark,
+                              pinnedAnswer,
+                            ),
+                          ),
+                        );
+                      }
+
+                      final adjustedIndex =
+                          pinnedAnswer == null ? index : index - 1;
+
+                      if (adjustedIndex >= roots.length) {
                         return const Padding(
                           padding: EdgeInsets.symmetric(vertical: 12),
                           child: Center(child: CircularProgressIndicator()),
@@ -1049,7 +1110,7 @@ class _InstructorDiscussionPostDetailScreenState
                       }
                       return _buildReplyNode(
                         context,
-                        roots[index],
+                        roots[adjustedIndex],
                         isDark,
                         l10n,
                         viewer,
@@ -1261,18 +1322,38 @@ class _InstructorDiscussionPostDetailScreenState
 
     final roots = (childrenByParent[null] ?? const <DiscussionReply>[])
         .toList(growable: false)
-      ..sort((a, b) => a.createdAt.compareTo(b.createdAt));
+      ..sort(_replyComparator);
 
     List<_ReplyNode> buildNodes(List<DiscussionReply> replies) {
       return replies.map((reply) {
         final children = (childrenByParent[reply.id] ?? const <DiscussionReply>[])
             .toList(growable: false);
-        children.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+        children.sort(_replyComparator);
         return _ReplyNode(reply: reply, children: buildNodes(children));
       }).toList(growable: false);
     }
 
     return buildNodes(roots);
+  }
+
+  int _replyComparator(DiscussionReply a, DiscussionReply b) {
+    final answerCompare = (b.isAnswer ? 1 : 0).compareTo(a.isAnswer ? 1 : 0);
+    if (answerCompare != 0) {
+      return answerCompare;
+    }
+
+    final endorsementCompare =
+        (b.isEndorsed ? 1 : 0).compareTo(a.isEndorsed ? 1 : 0);
+    if (endorsementCompare != 0) {
+      return endorsementCompare;
+    }
+
+    final upvoteCompare = b.upvoteCount.compareTo(a.upvoteCount);
+    if (upvoteCompare != 0) {
+      return upvoteCompare;
+    }
+
+    return a.createdAt.compareTo(b.createdAt);
   }
 
   Widget _buildReplyNode(
@@ -1360,12 +1441,6 @@ class _InstructorDiscussionPostDetailScreenState
                         case 'reply':
                           setState(() => _replyingTo = reply);
                           break;
-                        case 'edit':
-                          _editReply(reply);
-                          break;
-                        case 'delete':
-                          _deleteReply(reply);
-                          break;
                         case 'answer':
                           _markAnswer(reply);
                           break;
@@ -1378,10 +1453,6 @@ class _InstructorDiscussionPostDetailScreenState
                       PopupMenuItem<String>(
                         value: 'reply',
                         child: Text(l10n.reply),
-                      ),
-                      PopupMenuItem<String>(
-                        value: 'edit',
-                        child: Text(l10n.edit),
                       ),
                       if (viewer.canModerate)
                         PopupMenuItem<String>(
@@ -1401,13 +1472,6 @@ class _InstructorDiscussionPostDetailScreenState
                                 : l10n.instructorDiscussionEndorseReply,
                           ),
                         ),
-                      PopupMenuItem<String>(
-                        value: 'delete',
-                        child: Text(
-                          l10n.delete,
-                          style: const TextStyle(color: InstructorColors.error),
-                        ),
-                      ),
                     ],
                   ),
               ],
@@ -1426,6 +1490,17 @@ class _InstructorDiscussionPostDetailScreenState
               spacing: 8,
               runSpacing: 8,
               children: <Widget>[
+                TextButton.icon(
+                  onPressed: () => _toggleReplyUpvote(reply),
+                  style: TextButton.styleFrom(
+                    foregroundColor: InstructorColors.accent,
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(0, 32),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  icon: const Icon(Icons.arrow_upward_rounded, size: 16),
+                  label: Text('${reply.upvoteCount}'),
+                ),
                 TextButton.icon(
                   onPressed: () => setState(() => _replyingTo = reply),
                   style: TextButton.styleFrom(

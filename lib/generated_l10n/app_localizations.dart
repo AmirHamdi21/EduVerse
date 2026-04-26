@@ -25631,6 +25631,18 @@ abstract class AppLocalizations {
   /// **'Title'**
   String get instructorDiscussionSortTitle;
 
+  /// No description provided for @instructorDiscussionSearchCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Search courses or latest discussion...'**
+  String get instructorDiscussionSearchCourses;
+
+  /// No description provided for @instructorDiscussionSearchPosts.
+  ///
+  /// In en, this message translates to:
+  /// **'Search posts by title, content, or author...'**
+  String get instructorDiscussionSearchPosts;
+
   /// No description provided for @instructorDiscussionOpenCourse.
   ///
   /// In en, this message translates to:
@@ -25799,6 +25811,12 @@ abstract class AppLocalizations {
   /// **'Conversation'**
   String get instructorDiscussionConversationTab;
 
+  /// No description provided for @instructorDiscussionPinnedAnswerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned answer'**
+  String get instructorDiscussionPinnedAnswerTitle;
+
   /// No description provided for @instructorDiscussionPostOverviewTitle.
   ///
   /// In en, this message translates to:
@@ -25870,6 +25888,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reply deleted successfully.'**
   String get instructorDiscussionReplyDeleted;
+
+  /// No description provided for @instructorDiscussionUpvoteAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply upvoted.'**
+  String get instructorDiscussionUpvoteAdded;
+
+  /// No description provided for @instructorDiscussionUpvoteRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply upvote removed.'**
+  String get instructorDiscussionUpvoteRemoved;
 
   /// No description provided for @instructorDiscussionAnswerMarked.
   ///

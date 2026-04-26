@@ -13144,6 +13144,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get instructorDiscussionSortTitle => 'Title';
 
   @override
+  String get instructorDiscussionSearchCourses =>
+      'Search courses or latest discussion...';
+
+  @override
+  String get instructorDiscussionSearchPosts =>
+      'Search posts by title, content, or author...';
+
+  @override
   String get instructorDiscussionOpenCourse => 'Open course';
 
   @override
@@ -13238,6 +13246,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get instructorDiscussionConversationTab => 'Conversation';
 
   @override
+  String get instructorDiscussionPinnedAnswerTitle => 'Pinned answer';
+
+  @override
   String get instructorDiscussionPostOverviewTitle => 'Post overview';
 
   @override
@@ -13276,6 +13287,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get instructorDiscussionReplyDeleted => 'Reply deleted successfully.';
+
+  @override
+  String get instructorDiscussionUpvoteAdded => 'Reply upvoted.';
+
+  @override
+  String get instructorDiscussionUpvoteRemoved => 'Reply upvote removed.';
 
   @override
   String get instructorDiscussionAnswerMarked => 'Answer marked successfully.';

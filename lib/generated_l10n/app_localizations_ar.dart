@@ -13092,6 +13092,14 @@ class AppLocalizationsAr extends AppLocalizations {
   String get instructorDiscussionSortTitle => 'العنوان';
 
   @override
+  String get instructorDiscussionSearchCourses =>
+      'ابحث في المقررات أو أحدث مناقشة...';
+
+  @override
+  String get instructorDiscussionSearchPosts =>
+      'ابحث في المنشورات بالعنوان أو المحتوى أو الكاتب...';
+
+  @override
   String get instructorDiscussionOpenCourse => 'فتح المقرر';
 
   @override
@@ -13185,6 +13193,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get instructorDiscussionConversationTab => 'المحادثة';
 
   @override
+  String get instructorDiscussionPinnedAnswerTitle => 'الإجابة المثبتة';
+
+  @override
   String get instructorDiscussionPostOverviewTitle => 'نظرة عامة على المنشور';
 
   @override
@@ -13223,6 +13234,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get instructorDiscussionReplyDeleted => 'تم حذف الرد بنجاح.';
+
+  @override
+  String get instructorDiscussionUpvoteAdded => 'تم رفع التصويت للرد.';
+
+  @override
+  String get instructorDiscussionUpvoteRemoved => 'تمت إزالة التصويت من الرد.';
 
   @override
   String get instructorDiscussionAnswerMarked => 'تم تحديد الإجابة بنجاح.';

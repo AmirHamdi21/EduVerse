@@ -360,11 +360,13 @@ class InstructorDiscussionFilterPanel extends StatelessWidget {
     required this.isDark,
     required this.badgeLabel,
     required this.children,
+    this.footer,
   });
 
   final bool isDark;
   final String badgeLabel;
   final List<Widget> children;
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -411,7 +413,66 @@ class InstructorDiscussionFilterPanel extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: children,
             ),
+            if (footer != null) ...<Widget>[
+              const SizedBox(height: 14),
+              footer!,
+            ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class InstructorDiscussionSearchField extends StatelessWidget {
+  const InstructorDiscussionSearchField({
+    super.key,
+    required this.isDark,
+    required this.hintText,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final bool isDark;
+  final String hintText;
+  final String value;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: TextEditingController(text: value)
+        ..selection = TextSelection.collapsed(offset: value.length),
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        hintText: hintText,
+        prefixIcon: const Icon(Icons.search_rounded, size: 18),
+        filled: true,
+        fillColor: isDark
+            ? InstructorColors.surfaceColor(isDark).withValues(alpha: 0.75)
+            : InstructorColors.surfaceColor(isDark),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(
+            color: InstructorColors.borderColor(isDark).withValues(alpha: 0.9),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(
+            color: InstructorColors.borderColor(isDark).withValues(alpha: 0.9),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(
+            color: InstructorColors.primary,
+            width: 1.4,
+          ),
         ),
       ),
     );

@@ -46,6 +46,7 @@ class _InstructorDiscussionsScreenState
   List<DiscussionThread> _threads = const <DiscussionThread>[];
   _CourseFilter _selectedFilter = _CourseFilter.all;
   _CourseSort _selectedSort = _CourseSort.latestActivity;
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -117,6 +118,7 @@ class _InstructorDiscussionsScreenState
   }
 
   List<_CourseSummary> _buildSummaries() {
+    final normalizedSearch = _searchQuery.trim().toLowerCase();
     final threadsByCourse = <int, List<DiscussionThread>>{};
     for (final thread in _threads) {
       final courseId = thread.courseId;
@@ -144,6 +146,20 @@ class _InstructorDiscussionsScreenState
     }).toList(growable: false);
 
     final filtered = summaries.where((summary) {
+      final matchesSearch =
+          normalizedSearch.isEmpty ||
+          summary.course.course.name.toLowerCase().contains(normalizedSearch) ||
+          summary.course.course.code.toLowerCase().contains(normalizedSearch) ||
+          (summary.latestThread?.title.toLowerCase().contains(normalizedSearch) ??
+              false) ||
+          (summary.latestThread?.description
+                  .toLowerCase()
+                  .contains(normalizedSearch) ??
+              false);
+      if (!matchesSearch) {
+        return false;
+      }
+
       switch (_selectedFilter) {
         case _CourseFilter.all:
           return true;
@@ -420,6 +436,14 @@ class _InstructorDiscussionsScreenState
       isDark: isDark,
       badgeLabel:
           '$visibleCount ${l10n.instructorDiscussionVisibleCoursesLabel}',
+      footer: InstructorDiscussionSearchField(
+        isDark: isDark,
+        hintText: l10n.instructorDiscussionSearchCourses,
+        value: _searchQuery,
+        onChanged: (value) {
+          setState(() => _searchQuery = value);
+        },
+      ),
       children: <Widget>[
         Expanded(
           child: InstructorDiscussionDropdown<_CourseFilter>(
