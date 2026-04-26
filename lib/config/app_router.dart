@@ -133,6 +133,9 @@ import 'package:edu_verse/screens/ta/attendance/ta_attendance_screen.dart';
 import 'package:edu_verse/screens/ta/announcements/ta_announcement_manager_screen.dart';
 import 'package:edu_verse/screens/ta/roster/ta_roster_screen.dart';
 import 'package:edu_verse/screens/ta/ai_assistant/ta_ai_assistant_screen.dart';
+import 'package:edu_verse/screens/ta/discussions/ta_discussions_screen.dart';
+import 'package:edu_verse/screens/ta/discussions/ta_course_discussions_screen.dart';
+import 'package:edu_verse/screens/ta/discussions/ta_discussion_post_detail_screen.dart';
 import 'package:edu_verse/screens/admin/admin_dashboard_screen.dart';
 import 'package:edu_verse/screens/admin/announcements/admin_announcement_manager_screen.dart';
 import 'package:edu_verse/screens/admin/users/admin_user_management_screen.dart';
@@ -1263,18 +1266,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '/ta/discussions',
-        builder: (context, state) {
-          final courseId = int.tryParse(
-            state.uri.queryParameters['courseId'] ?? '',
-          );
-          return DiscussionScreen(
-            courseId: courseId,
-            accentColor: const Color(0xFF4F46E5),
-            title: 'TA Discussions',
-            leadingIcon: Icons.arrow_back_ios_new_rounded,
-            onLeadingPressed: () => Navigator.of(context).maybePop(),
-          );
-        },
+        builder: (context, state) => const TADiscussionsScreen(),
       ),
       GoRoute(
         path: '/ta/course/:courseId/discussions',
@@ -1285,12 +1277,50 @@ class AppRouter {
               body: Center(child: Text('Invalid TA discussion route')),
             );
           }
-          return DiscussionScreen(
+          TeachingCourseModel? course;
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            final rawCourse = extra['course'];
+            if (rawCourse is TeachingCourseModel) {
+              course = rawCourse;
+            }
+          }
+          return TACourseDiscussionsScreen(
             courseId: courseId,
-            accentColor: const Color(0xFF4F46E5),
-            title: 'Course Discussions',
-            leadingIcon: Icons.arrow_back_ios_new_rounded,
-            onLeadingPressed: () => Navigator.of(context).maybePop(),
+            initialCourse: course,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/ta/course/:courseId/discussions/:threadId',
+        builder: (context, state) {
+          final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
+          final threadId = int.tryParse(state.pathParameters['threadId'] ?? '');
+          if (courseId == null || courseId <= 0 || threadId == null || threadId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid TA discussion post route')),
+            );
+          }
+
+          TeachingCourseModel? course;
+          DiscussionThread? thread;
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            final rawCourse = extra['course'];
+            final rawThread = extra['thread'];
+            if (rawCourse is TeachingCourseModel) {
+              course = rawCourse;
+            }
+            if (rawThread is DiscussionThread) {
+              thread = rawThread;
+            }
+          }
+
+          return TADiscussionPostDetailScreen(
+            courseId: courseId,
+            threadId: threadId,
+            initialCourse: course,
+            initialThread: thread,
           );
         },
       ),
