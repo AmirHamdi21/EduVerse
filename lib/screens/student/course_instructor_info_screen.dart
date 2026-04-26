@@ -92,8 +92,8 @@ class _CourseInstructorInfoScreenState
           },
           builder: (context, state) {
             final profile = state.selectedProfile;
-            final title = (profile?.fullName.trim().isNotEmpty ?? false)
-                ? profile!.fullName
+            final title = (profile?.displayName.trim().isNotEmpty ?? false)
+                ? profile!.displayName
                 : widget.instructorName;
 
             return CustomScrollView(
@@ -163,10 +163,42 @@ class _CourseInstructorInfoScreenState
                                       ),
                                       shape: BoxShape.circle,
                                     ),
-                                    child: const Icon(
-                                      Icons.person_rounded,
-                                      color: Colors.white,
-                                      size: 30,
+                                    child: ClipOval(
+                                      child:
+                                          profile?.profilePictureUrl != null &&
+                                              profile!
+                                                  .profilePictureUrl!
+                                                  .trim()
+                                                  .isNotEmpty
+                                          ? Image.network(
+                                              profile.profilePictureUrl!,
+                                              fit: BoxFit.cover,
+                                            )
+                                          : Center(
+                                              child: Text(
+                                                profile?.initials ??
+                                                    widget.instructorName
+                                                        .trim()
+                                                        .split(' ')
+                                                        .where(
+                                                          (part) => part
+                                                              .trim()
+                                                              .isNotEmpty,
+                                                        )
+                                                        .take(2)
+                                                        .map(
+                                                          (part) =>
+                                                              part.substring(0, 1),
+                                                        )
+                                                        .join()
+                                                        .toUpperCase(),
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                            ),
                                     ),
                                   ),
                                   const SizedBox(width: 14),
@@ -185,7 +217,7 @@ class _CourseInstructorInfoScreenState
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          profile?.role ??
+                                          profile?.primaryRoleLabel ??
                                               widget.staffRoleLabel ??
                                               'Course Instructor',
                                           style: TextStyle(
@@ -222,17 +254,6 @@ class _CourseInstructorInfoScreenState
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    if (profile.officeLocation != null &&
-                                        profile.officeLocation!.isNotEmpty) ...[
-                                      const SizedBox(height: 6),
-                                      Text(
-                                        'Office: ${profile.officeLocation!}',
-                                        style: const TextStyle(
-                                          color: Color(0xFF475569),
-                                          fontSize: 13,
-                                        ),
-                                      ),
-                                    ],
                                     if (profile.bio != null &&
                                         profile.bio!.isNotEmpty) ...[
                                       const SizedBox(height: 8),
@@ -243,6 +264,39 @@ class _CourseInstructorInfoScreenState
                                           fontSize: 13,
                                           height: 1.4,
                                         ),
+                                      ),
+                                    ],
+                                    if (profile.socialLinks.hasAny) ...[
+                                      const SizedBox(height: 10),
+                                      Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
+                                        children: profile.socialLinks.entries
+                                            .map(
+                                              (entry) => Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 6,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: const Color(
+                                                    0xFFE2E8F0,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(999),
+                                                ),
+                                                child: Text(
+                                                  '${entry.key}: ${entry.value}',
+                                                  style: const TextStyle(
+                                                    color: Color(0xFF334155),
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
                                       ),
                                     ],
                                   ],

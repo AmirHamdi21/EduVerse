@@ -7,6 +7,7 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../shared/current_user_identity.dart';
 import '../shared/ta_colors.dart';
 
 class TADrawer extends StatefulWidget {
@@ -81,6 +82,11 @@ class _TADrawerState extends State<TADrawer>
   }
 
   Widget _buildProfileHeader(bool isDark, AppLocalizations l10n) {
+    final identity = CurrentUserIdentity.fromAuthState(
+      context.watch<AuthBloc>().state,
+      fallbackName: 'Teaching Assistant',
+    );
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       child: Row(
@@ -106,10 +112,10 @@ class _TADrawerState extends State<TADrawer>
                       ),
                     ],
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'S',
-                      style: TextStyle(
+                      identity.initials,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
@@ -142,7 +148,7 @@ class _TADrawerState extends State<TADrawer>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Sarah Anderson',
+                  identity.displayName,
                   style: TextStyle(
                     color: isDark ? Colors.white : const Color(0xFF1E293B),
                     fontSize: 17,

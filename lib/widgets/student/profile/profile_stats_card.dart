@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../bloc/profile/profile_models.dart';
-import '../../../generated_l10n/app_localizations.dart';
 
 class ProfileStatsCard extends StatelessWidget {
   final UserProfile profile;
@@ -14,8 +13,6 @@ class ProfileStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -33,23 +30,23 @@ class ProfileStatsCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildStatItem(
-            icon: Icons.school_rounded,
-            value: profile.coursesEnrolled.toString(),
-            label: l10n.coursesEnrolled,
+            icon: Icons.interests_outlined,
+            value: profile.academicInterests.length.toString(),
+            label: 'Interests',
             color: const Color(0xFF3B82F6),
           ),
           _buildDivider(),
           _buildStatItem(
-            icon: Icons.assignment_turned_in_rounded,
-            value: profile.assignmentsCompleted.toString(),
-            label: l10n.assignmentsCompleted,
+            icon: Icons.build_circle_outlined,
+            value: profile.skills.length.toString(),
+            label: 'Skills',
             color: const Color(0xFF10B981),
           ),
           _buildDivider(),
           _buildStatItem(
             icon: Icons.grade_rounded,
-            value: profile.gpa.toStringAsFixed(1),
-            label: l10n.gpa,
+            value: '${profile.profileCompleteness.toStringAsFixed(0)}%',
+            label: 'Complete',
             color: const Color(0xFFF59E0B),
           ),
         ],

@@ -127,7 +127,7 @@ class ProfileHeader extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      profile.studentId ?? '',
+                      profile.email,
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.white.withValues(alpha: 0.8),
@@ -135,27 +135,6 @@ class ProfileHeader extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 16),
-
-          // GPA and Rank badges
-          Row(
-            children: [
-              _buildBadge(
-                icon: Icons.star_rounded,
-                label: 'GPA',
-                value: profile.gpa.toStringAsFixed(1),
-                color: const Color(0xFFFBBF24),
-              ),
-              const SizedBox(width: 12),
-              _buildBadge(
-                icon: Icons.leaderboard_rounded,
-                label: 'Rank',
-                value: '#${profile.rank}',
-                color: const Color(0xFF10B981),
               ),
             ],
           ),
@@ -168,49 +147,5 @@ class ProfileHeader extends StatelessWidget {
     final first = profile.firstName.isNotEmpty ? profile.firstName[0] : '';
     final last = profile.lastName.isNotEmpty ? profile.lastName[0] : '';
     return '$first$last'.toUpperCase();
-  }
-
-  Widget _buildBadge({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Color color,
-  }) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 20),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.white.withValues(alpha: 0.8),
-                  ),
-                ),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

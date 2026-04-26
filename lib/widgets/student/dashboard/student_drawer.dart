@@ -7,6 +7,7 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../shared/current_user_identity.dart';
 
 class StudentDrawer extends StatefulWidget {
   const StudentDrawer({super.key});
@@ -84,6 +85,11 @@ class _StudentDrawerState extends State<StudentDrawer>
   }
 
   Widget _buildProfileHeader(bool isDark, AppLocalizations l10n) {
+    final identity = CurrentUserIdentity.fromAuthState(
+      context.watch<AuthBloc>().state,
+      fallbackName: 'Student',
+    );
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       child: Row(
@@ -108,16 +114,16 @@ class _StudentDrawerState extends State<StudentDrawer>
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF6366F1).withOpacity(0.3),
+                        color: const Color(0xFF6366F1).withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'S',
-                      style: TextStyle(
+                      identity.initials,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
@@ -151,7 +157,7 @@ class _StudentDrawerState extends State<StudentDrawer>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Student User',
+                  identity.displayName,
                   style: TextStyle(
                     color: isDark ? Colors.white : const Color(0xFF1E293B),
                     fontSize: 17,
@@ -165,7 +171,7 @@ class _StudentDrawerState extends State<StudentDrawer>
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF10B981).withOpacity(0.1),
+                    color: const Color(0xFF10B981).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Text(
@@ -190,8 +196,8 @@ class _StudentDrawerState extends State<StudentDrawer>
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? Colors.white.withOpacity(0.05)
-                      : Colors.black.withOpacity(0.03),
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -224,8 +230,8 @@ class _StudentDrawerState extends State<StudentDrawer>
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.black.withOpacity(0.03),
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.03),
         ),
       ),
       child: Row(
@@ -276,8 +282,8 @@ class _StudentDrawerState extends State<StudentDrawer>
       width: 1,
       height: 36,
       color: isDark
-          ? Colors.white.withOpacity(0.1)
-          : Colors.black.withOpacity(0.06),
+          ? Colors.white.withValues(alpha: 0.1)
+          : Colors.black.withValues(alpha: 0.06),
     );
   }
 
@@ -287,7 +293,7 @@ class _StudentDrawerState extends State<StudentDrawer>
         icon: Icons.space_dashboard_rounded,
         activeIcon: Icons.space_dashboard,
         title: l10n.dashboard,
-        route: '/student-dashboard',
+        route: '/dashboard',
         category: 'main',
       ),
       _MenuItem(
@@ -478,7 +484,7 @@ class _StudentDrawerState extends State<StudentDrawer>
             setState(() => _selectedIndex = index);
             Navigator.pop(context);
             // Navigate to the route
-            if (item.route.isNotEmpty && item.route != '/student-dashboard') {
+            if (item.route.isNotEmpty && item.route != '/dashboard') {
               context.push(item.route);
             }
           },
@@ -499,14 +505,16 @@ class _StudentDrawerState extends State<StudentDrawer>
                   : item.isHighlighted
                   ? LinearGradient(
                       colors: [
-                        const Color(0xFF8B5CF6).withOpacity(0.1),
-                        const Color(0xFF6366F1).withOpacity(0.05),
+                        const Color(0xFF8B5CF6).withValues(alpha: 0.1),
+                        const Color(0xFF6366F1).withValues(alpha: 0.05),
                       ],
                     )
                   : null,
               borderRadius: BorderRadius.circular(14),
               border: item.isHighlighted && !isSelected
-                  ? Border.all(color: const Color(0xFF8B5CF6).withOpacity(0.3))
+                  ? Border.all(
+                      color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                    )
                   : null,
             ),
             child: Row(
@@ -518,11 +526,13 @@ class _StudentDrawerState extends State<StudentDrawer>
                   decoration: BoxDecoration(
                     color: isSelected
                         ? (item.isHighlighted
-                              ? Colors.white.withOpacity(0.2)
-                              : const Color(0xFF3B82F6).withOpacity(0.1))
+                              ? Colors.white.withValues(alpha: 0.2)
+                              : const Color(
+                                  0xFF3B82F6,
+                                ).withValues(alpha: 0.1))
                         : (isDark
-                              ? Colors.white.withOpacity(0.05)
-                              : Colors.black.withOpacity(0.03)),
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.03)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -568,7 +578,7 @@ class _StudentDrawerState extends State<StudentDrawer>
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? Colors.white.withOpacity(0.2)
+                          ? Colors.white.withValues(alpha: 0.2)
                           : const Color(0xFFEF4444),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -623,8 +633,8 @@ class _StudentDrawerState extends State<StudentDrawer>
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withOpacity(0.05)
-                  : Colors.black.withOpacity(0.03),
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.black.withValues(alpha: 0.03),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
@@ -673,7 +683,7 @@ class _StudentDrawerState extends State<StudentDrawer>
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: const Color(0xFFEF4444).withOpacity(0.3),
+                    color: const Color(0xFFEF4444).withValues(alpha: 0.3),
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -725,7 +735,7 @@ class _StudentDrawerState extends State<StudentDrawer>
               ? [
                   BoxShadow(
                     color: (isDark ? const Color(0xFF3B82F6) : Colors.black)
-                        .withOpacity(0.1),
+                        .withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

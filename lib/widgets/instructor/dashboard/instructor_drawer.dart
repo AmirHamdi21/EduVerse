@@ -7,6 +7,7 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../shared/current_user_identity.dart';
 
 class InstructorDrawer extends StatefulWidget {
   const InstructorDrawer({super.key});
@@ -86,6 +87,11 @@ class _InstructorDrawerState extends State<InstructorDrawer>
   }
 
   Widget _buildProfileHeader(bool isDark, AppLocalizations l10n) {
+    final identity = CurrentUserIdentity.fromAuthState(
+      context.watch<AuthBloc>().state,
+      fallbackName: 'Instructor',
+    );
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       child: Row(
@@ -110,16 +116,16 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF155CFB).withOpacity(0.3),
+                        color: const Color(0xFF155CFB).withValues(alpha: 0.3),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
                     ],
                   ),
-                  child: const Center(
+                  child: Center(
                     child: Text(
-                      'D',
-                      style: TextStyle(
+                      identity.initials,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
@@ -153,7 +159,7 @@ class _InstructorDrawerState extends State<InstructorDrawer>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Dr. Ahmed Mohamed',
+                  identity.displayName,
                   style: TextStyle(
                     color: isDark ? Colors.white : const Color(0xFF1E293B),
                     fontSize: 17,
@@ -167,7 +173,7 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF155CFB).withOpacity(0.1),
+                    color: const Color(0xFF155CFB).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -192,8 +198,8 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? Colors.white.withOpacity(0.05)
-                      : Colors.black.withOpacity(0.03),
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -226,8 +232,8 @@ class _InstructorDrawerState extends State<InstructorDrawer>
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.black.withOpacity(0.03),
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.03),
         ),
       ),
       child: Row(
@@ -278,8 +284,8 @@ class _InstructorDrawerState extends State<InstructorDrawer>
       width: 1,
       height: 36,
       color: isDark
-          ? Colors.white.withOpacity(0.1)
-          : Colors.black.withOpacity(0.06),
+          ? Colors.white.withValues(alpha: 0.1)
+          : Colors.black.withValues(alpha: 0.06),
     );
   }
 
@@ -289,7 +295,7 @@ class _InstructorDrawerState extends State<InstructorDrawer>
         icon: Icons.space_dashboard_rounded,
         activeIcon: Icons.space_dashboard,
         title: l10n.dashboard,
-        route: '/instructor-dashboard',
+        route: '/instructor/dashboard',
         category: 'main',
       ),
       _MenuItem(
@@ -505,7 +511,7 @@ class _InstructorDrawerState extends State<InstructorDrawer>
             Navigator.pop(context);
             // Navigate to the route
             if (item.route.isNotEmpty &&
-                item.route != '/instructor-dashboard') {
+                item.route != '/instructor/dashboard') {
               context.push(item.route);
             }
           },
@@ -526,14 +532,16 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                   : item.isHighlighted
                   ? LinearGradient(
                       colors: [
-                        const Color(0xFF3B82F6).withOpacity(0.1),
-                        const Color(0xFF155CFB).withOpacity(0.05),
+                        const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                        const Color(0xFF155CFB).withValues(alpha: 0.05),
                       ],
                     )
                   : null,
               borderRadius: BorderRadius.circular(14),
               border: item.isHighlighted && !isSelected
-                  ? Border.all(color: const Color(0xFF3B82F6).withOpacity(0.3))
+                  ? Border.all(
+                      color: const Color(0xFF3B82F6).withValues(alpha: 0.3),
+                    )
                   : null,
             ),
             child: Row(
@@ -545,11 +553,13 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                   decoration: BoxDecoration(
                     color: isSelected
                         ? (item.isHighlighted
-                              ? Colors.white.withOpacity(0.2)
-                              : const Color(0xFF3B82F6).withOpacity(0.1))
+                              ? Colors.white.withValues(alpha: 0.2)
+                              : const Color(
+                                  0xFF3B82F6,
+                                ).withValues(alpha: 0.1))
                         : (isDark
-                              ? Colors.white.withOpacity(0.05)
-                              : Colors.black.withOpacity(0.03)),
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.03)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
@@ -595,7 +605,7 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? Colors.white.withOpacity(0.2)
+                          ? Colors.white.withValues(alpha: 0.2)
                           : const Color(0xFFEF4444),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -650,8 +660,8 @@ class _InstructorDrawerState extends State<InstructorDrawer>
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withOpacity(0.05)
-                  : Colors.black.withOpacity(0.03),
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.black.withValues(alpha: 0.03),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Row(
@@ -700,7 +710,7 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: const Color(0xFFEF4444).withOpacity(0.3),
+                    color: const Color(0xFFEF4444).withValues(alpha: 0.3),
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -752,7 +762,7 @@ class _InstructorDrawerState extends State<InstructorDrawer>
               ? [
                   BoxShadow(
                     color: (isDark ? const Color(0xFF3B82F6) : Colors.black)
-                        .withOpacity(0.1),
+                        .withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

@@ -49,6 +49,7 @@ import 'package:edu_verse/services/api/schedule_service.dart';
 import 'package:edu_verse/services/api/section_service.dart';
 import 'package:edu_verse/services/api/communication_service.dart';
 import 'package:edu_verse/services/api/public_profile_service.dart';
+import 'package:edu_verse/services/api/user_profile_service.dart';
 import 'package:edu_verse/services/api/office_hours_service.dart';
 import 'package:edu_verse/services/api/grades_service.dart';
 import 'package:edu_verse/services/api/student_stats_service.dart';
@@ -130,6 +131,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late MaterialService _materialService;
   late CommunicationService _communicationService;
   late PublicProfileService _publicProfileService;
+  late UserProfileService _userProfileService;
   late OfficeHoursService _officeHoursService;
   late StudentStatsService _studentStatsService;
   late NotificationApiService _notificationApiService;
@@ -163,6 +165,7 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _scheduleService = ScheduleService(coreApiClient: coreApiClient);
     _communicationService = CommunicationService(coreApiClient: coreApiClient);
     _publicProfileService = PublicProfileService(coreApiClient: coreApiClient);
+    _userProfileService = UserProfileService(coreApiClient: coreApiClient);
     _officeHoursService = OfficeHoursService(coreApiClient: coreApiClient);
     _studentStatsService = StudentStatsService(coreApiClient: coreApiClient);
     _notificationApiService = NotificationApiService(
@@ -191,7 +194,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _chatBloc = ChatBloc();
     _discussionBloc = DiscussionBloc();
     _aiNoteCubit = AINoteCubit();
-    _profileCubit = ProfileCubit()..loadProfile();
+    _profileCubit =
+        ProfileCubit(userProfileService: _userProfileService)..loadProfile();
     _searchCubit = SearchCubit();
     _adminNotificationCubit = AdminNotificationCubit(
       notificationApiService: _notificationApiService,

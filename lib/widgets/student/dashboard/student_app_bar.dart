@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../bloc/auth/auth_bloc.dart';
 import '../../../bloc/notifications/notification_cubit.dart';
 import '../../../bloc/notifications/notification_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
-import '../../../bloc/theme/theme_event.dart';
-import '../../../bloc/language/language_cubit.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../shared/current_user_identity.dart';
 
 class StudentAppBar extends StatelessWidget {
   const StudentAppBar({super.key});
@@ -36,6 +36,10 @@ class StudentAppBar extends StatelessWidget {
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
+        final identity = CurrentUserIdentity.fromAuthState(
+          context.watch<AuthBloc>().state,
+          fallbackName: 'Student',
+        );
 
         SystemChrome.setSystemUIOverlayStyle(
           isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
@@ -199,8 +203,8 @@ class StudentAppBar extends StatelessWidget {
                                             const Color(0xFF334155),
                                           ],
                                   ).createShader(bounds),
-                                  child: const Text(
-                                    'Amir',
+                                  child: Text(
+                                    identity.displayName,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 28,
@@ -213,7 +217,7 @@ class StudentAppBar extends StatelessWidget {
                               ],
                             ),
                           ),
-                          _buildProfileAvatar(isDark, context),
+                          _buildProfileAvatar(isDark, context, identity),
                         ],
                       ),
                     ],
@@ -358,7 +362,11 @@ class StudentAppBar extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileAvatar(bool isDark, BuildContext context) {
+  Widget _buildProfileAvatar(
+    bool isDark,
+    BuildContext context,
+    CurrentUserIdentity identity,
+  ) {
     return GestureDetector(
       onTap: () {
         context.push('/profile');
@@ -387,143 +395,14 @@ class StudentAppBar extends StatelessWidget {
             ),
           ],
         ),
-        child: const Center(
+        child: Center(
           child: Text(
-            'A',
-            style: TextStyle(
+            identity.initials,
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.w700,
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showLanguageMenu(
-    BuildContext context,
-    Locale locale,
-    AppLocalizations l10n,
-  ) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (context) => BlocBuilder<ThemeBloc, ThemeState>(
-        builder: (context, themeState) {
-          final isDark = themeState.isDark;
-          return Container(
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF1E293B) : Colors.white,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
-              ),
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? Colors.white.withValues(alpha: 0.2)
-                        : Colors.black.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Select Language',
-                  style: TextStyle(
-                    color: isDark ? Colors.white : const Color(0xFF0F172A),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                _buildLanguageOption(
-                  context,
-                  'en',
-                  l10n.english,
-                  '🇬🇧',
-                  locale.languageCode == 'en',
-                  isDark,
-                ),
-                const SizedBox(height: 8),
-                _buildLanguageOption(
-                  context,
-                  'ar',
-                  l10n.arabic,
-                  '🇸🇦',
-                  locale.languageCode == 'ar',
-                  isDark,
-                ),
-                const SizedBox(height: 8),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildLanguageOption(
-    BuildContext context,
-    String code,
-    String label,
-    String flag,
-    bool isSelected,
-    bool isDark,
-  ) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          context.read<LanguageCubit>().changeLanguage(code);
-          Navigator.pop(context);
-        },
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? (isDark
-                      ? const Color(0xFF6366F1).withValues(alpha: 0.15)
-                      : const Color(0xFF6366F1).withValues(alpha: 0.08))
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isSelected
-                  ? const Color(0xFF6366F1)
-                  : (isDark
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : Colors.black.withValues(alpha: 0.08)),
-              width: isSelected ? 2 : 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Text(flag, style: const TextStyle(fontSize: 28)),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : const Color(0xFF0F172A),
-                    fontSize: 16,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  ),
-                ),
-              ),
-              if (isSelected)
-                const Icon(
-                  Icons.check_circle_rounded,
-                  color: Color(0xFF6366F1),
-                  size: 24,
-                ),
-            ],
           ),
         ),
       ),
