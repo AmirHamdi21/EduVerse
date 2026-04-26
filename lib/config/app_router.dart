@@ -74,13 +74,14 @@ import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_attempts_screen.dar
 import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_grading_screen.dart';
 import 'package:edu_verse/screens/ta/quiz_management/ta_quiz_statistics_screen.dart';
 import 'package:edu_verse/screens/ta/assignments/ta_assignments_screen.dart';
+import 'package:edu_verse/screens/ta/assignments/ta_assignment_detail_screen.dart';
 import 'package:edu_verse/models/quiz/quiz_api_models.dart' as quiz_models;
 // Instructor screens
 import 'package:edu_verse/screens/instructor/dashboard/instructor_dashboard_screen.dart';
 import 'package:edu_verse/screens/instructor/courses/instructor_courses_screen.dart';
 import 'package:edu_verse/screens/instructor/grading_center/grading_center_screen.dart';
 import 'package:edu_verse/screens/instructor/assignments/instructor_assignments_screen.dart';
-import 'package:edu_verse/screens/instructor/assignments/assignment_submissions_screen.dart';
+import 'package:edu_verse/screens/instructor/assignments/instructor_assignment_detail_screen.dart';
 import 'package:edu_verse/screens/instructor/assignments/submission_grading_screen.dart';
 import 'package:edu_verse/screens/instructor/labs/instructor_labs_screen.dart';
 import 'package:edu_verse/screens/instructor/labs/lab_detail_screen.dart';
@@ -807,42 +808,18 @@ class AppRouter {
               body: Center(child: Text('Invalid assignment submissions route')),
             );
           }
-
-          String? assignmentTitle;
-          double? maxScore;
-          DateTime? assignmentDueDate;
-          double latePenaltyPercent = 0;
-          bool isArchived = false;
           final extra = state.extra;
-          if (extra is Map<String, dynamic>) {
-            assignmentTitle = extra['assignmentTitle'] as String?;
-            final rawMaxScore = extra['maxScore'];
-            if (rawMaxScore is num) {
-              maxScore = rawMaxScore.toDouble();
-            }
-            final rawDueDate = extra['assignmentDueDate'];
-            if (rawDueDate is DateTime) {
-              assignmentDueDate = rawDueDate;
-            } else if (rawDueDate is String) {
-              assignmentDueDate = DateTime.tryParse(rawDueDate);
-            }
-            final rawPenalty = extra['latePenaltyPercent'];
-            if (rawPenalty is num) {
-              latePenaltyPercent = rawPenalty.toDouble();
-            }
-            final rawArchived = extra['isArchived'];
-            if (rawArchived is bool) {
-              isArchived = rawArchived;
-            }
-          }
+          final assignment = extra is assignment_models.AssignmentModel
+              ? extra
+              : extra is Map<String, dynamic> &&
+                    extra['assignment'] is assignment_models.AssignmentModel
+              ? extra['assignment'] as assignment_models.AssignmentModel
+              : null;
 
-          return AssignmentSubmissionsScreen(
+          return InstructorAssignmentDetailScreen(
             assignmentId: assignmentId,
-            assignmentTitle: assignmentTitle,
-            maxScore: maxScore,
-            assignmentDueDate: assignmentDueDate,
-            latePenaltyPercent: latePenaltyPercent,
-            isArchived: isArchived,
+            initialAssignment: assignment,
+            initialTab: 1,
           );
         },
       ),
@@ -902,6 +879,43 @@ class AppRouter {
             assignmentDueDate: assignmentDueDate,
             latePenaltyPercent: latePenaltyPercent,
             isArchived: isArchived,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/instructor/assignments/:assignmentId',
+        builder: (context, state) {
+          final assignmentId = int.tryParse(
+            state.pathParameters['assignmentId'] ?? '',
+          );
+          if (assignmentId == null || assignmentId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid assignment detail route')),
+            );
+          }
+
+          final tabParam = (state.uri.queryParameters['tab'] ?? '')
+              .trim()
+              .toLowerCase();
+          final initialTab = switch (tabParam) {
+            'submissions' => 1,
+            'instructions' => 2,
+            'settings' => 3,
+            _ => 0,
+          };
+
+          final extra = state.extra;
+          final assignment = extra is assignment_models.AssignmentModel
+              ? extra
+              : extra is Map<String, dynamic> &&
+                    extra['assignment'] is assignment_models.AssignmentModel
+              ? extra['assignment'] as assignment_models.AssignmentModel
+              : null;
+
+          return InstructorAssignmentDetailScreen(
+            assignmentId: assignmentId,
+            initialAssignment: assignment,
+            initialTab: initialTab,
           );
         },
       ),
@@ -1096,6 +1110,32 @@ class AppRouter {
       GoRoute(
         path: '/ta/assignments',
         builder: (context, state) => const TAAssignmentsScreen(),
+      ),
+      GoRoute(
+        path: '/ta/assignments/:assignmentId',
+        builder: (context, state) {
+          final assignmentId = int.tryParse(
+            state.pathParameters['assignmentId'] ?? '',
+          );
+          if (assignmentId == null || assignmentId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid TA assignment detail route')),
+            );
+          }
+
+          final extra = state.extra;
+          final assignment = extra is assignment_models.AssignmentModel
+              ? extra
+              : extra is Map<String, dynamic> &&
+                    extra['assignment'] is assignment_models.AssignmentModel
+              ? extra['assignment'] as assignment_models.AssignmentModel
+              : null;
+
+          return TAAssignmentDetailScreen(
+            assignmentId: assignmentId,
+            initialAssignment: assignment,
+          );
+        },
       ),
       GoRoute(
         path: '/ta/course/:id',

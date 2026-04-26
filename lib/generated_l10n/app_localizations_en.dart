@@ -12956,4 +12956,117 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get drop => 'Drop';
+
+  @override
+  String get instructorAssignmentsHeaderTitle => 'Assignment Pulse';
+
+  @override
+  String get instructorAssignmentsHeaderSubtitle =>
+      'Track the selected course, publish updates, and review submissions without leaving the flow.';
+
+  @override
+  String get taAssignmentsHeaderTitle => 'Assignment Flow';
+
+  @override
+  String get taAssignmentsHeaderSubtitle =>
+      'Stay on top of deadlines, assignment states, and grading for your assigned course.';
+
+  @override
+  String get assignmentAllStates => 'All States';
+
+  @override
+  String get assignmentSubmissionsTab => 'Submissions';
+
+  @override
+  String get assignmentSubmissionType => 'Submission Type';
+
+  @override
+  String get assignmentSubmissionTypeFile => 'File';
+
+  @override
+  String get assignmentSubmissionTypeText => 'Text';
+
+  @override
+  String get assignmentSubmissionTypeLink => 'Link';
+
+  @override
+  String get assignmentSubmissionTypeMultiple => 'Multiple';
+
+  @override
+  String get assignmentLatePenalty => 'Late Penalty';
+
+  @override
+  String get assignmentMaxFileSize => 'Max File Size';
+
+  @override
+  String get assignmentAllowedFileTypes => 'Allowed File Types';
+
+  @override
+  String get assignmentInstructionFiles => 'Instruction Files';
+
+  @override
+  String get assignmentNoInstructionFiles => 'No instruction files yet.';
+
+  @override
+  String get assignmentNoInstructions => 'No instructions provided.';
+
+  @override
+  String get assignmentNoSubmissions =>
+      'No submissions yet for this assignment.';
+
+  @override
+  String get assignmentOpenFile => 'Open';
+
+  @override
+  String get assignmentDownloadFile => 'Download';
+
+  @override
+  String get assignmentDeleteTitle => 'Delete Assignment?';
+
+  @override
+  String get assignmentDeleteConfirm =>
+      'This action cannot be undone. Delete this assignment?';
+
+  @override
+  String get assignmentDeletedSuccess => 'Assignment deleted successfully.';
+
+  @override
+  String get assignmentStatusPublished => 'Published';
+
+  @override
+  String get assignmentStatusClosed => 'Closed';
+
+  @override
+  String get assignmentPublishedSuccess => 'Assignment published successfully.';
+
+  @override
+  String get assignmentClosedSuccess => 'Assignment closed successfully.';
+
+  @override
+  String get assignmentArchivedSuccess => 'Assignment archived successfully.';
+
+  @override
+  String get assignmentMovedToDraft => 'Assignment moved to draft.';
+
+  @override
+  String get assignmentStatusUpdated => 'Assignment status updated.';
+
+  @override
+  String get assignmentEmptyManagementMessage =>
+      'Assignments for the selected course will appear here once they are created.';
+
+  @override
+  String get assignmentNotConfigured => 'Not configured';
+
+  @override
+  String get assignmentNoDueDate => 'No due date';
+
+  @override
+  String get availableFrom => 'Available From';
+
+  @override
+  String get unknown => 'Unknown';
+
+  @override
+  String get noCoursesAvailable => 'No courses available';
 }

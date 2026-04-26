@@ -1,18 +1,23 @@
-import 'dart:async';
-
+import 'package:edu_verse/common/utils/responsive.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../bloc/instructor/instructor_assignments_cubit.dart';
 import '../../../bloc/instructor/instructor_assignments_state.dart';
+import '../../../bloc/theme/theme_bloc.dart';
+import '../../../bloc/theme/theme_event.dart';
+import '../../../bloc/theme/theme_state.dart';
 import '../../../models/assignments/assignment_model.dart';
 import '../../../models/core/enums/assignment_enums.dart' as api;
+import '../../../models/instructor/teaching_course_model.dart';
 import '../../../services/api/assignment_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/storage_service.dart';
-import '../../../widgets/instructor/assignments/assignment_barrel.dart';
 
 class InstructorAssignmentsScreen extends StatelessWidget {
   const InstructorAssignmentsScreen({
@@ -54,6 +59,8 @@ class InstructorAssignmentsScreen extends StatelessWidget {
   }
 }
 
+enum _InstructorAssignmentStateFilter { all, draft, published, closed, archived }
+
 class _InstructorAssignmentsView extends StatefulWidget {
   const _InstructorAssignmentsView({
     required this.canManage,
@@ -72,339 +79,473 @@ class _InstructorAssignmentsView extends StatefulWidget {
 
 class _InstructorAssignmentsViewState
     extends State<_InstructorAssignmentsView> {
-  final TextEditingController _searchController = TextEditingController();
-  Timer? _debounce;
-  AssignmentType? _typeFilter;
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    _searchController.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<InstructorAssignmentsCubit, InstructorAssignmentsState>(
-      listener: (context, state) {
-        if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-      },
-      builder: (context, state) {
-        final cubit = context.read<InstructorAssignmentsCubit>();
-        final assignments = state.assignmentItems;
-        final availableCourseIds = state.teachingCourses
-            .map((course) => course.courseId)
-            .toSet();
-        final selectedCourseId =
-            availableCourseIds.contains(state.selectedCourseId)
-            ? state.selectedCourseId
-            : null;
+    return BlocBuilder<ThemeBloc, ThemeState>(
+      builder: (context, themeState) {
+        final isDark = themeState.isDark;
+        final l10n = AppLocalizations.of(context);
 
-        final content = Column(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: DropdownButtonFormField<int>(
-                value: selectedCourseId,
-                decoration: const InputDecoration(
-                  labelText: 'Teaching course',
-                  border: OutlineInputBorder(),
-                  isDense: true,
+        return BlocConsumer<InstructorAssignmentsCubit, InstructorAssignmentsState>(
+          listener: (context, state) {
+            if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage!),
+                  behavior: SnackBarBehavior.floating,
                 ),
-                items: state.teachingCourses.map((course) {
-                  final label = '${course.course.code} - ${course.course.name}'
-                      .trim();
-                  return DropdownMenuItem<int>(
-                    value: course.courseId,
-                    child: Text(label),
-                  );
-                }).toList(),
-                onChanged: widget.lockCourseSelection
-                    ? null
-                    : (value) => cubit.selectCourse(value),
+              );
+            }
+          },
+          builder: (context, state) {
+            final content = RefreshIndicator(
+              onRefresh: () => context.read<InstructorAssignmentsCubit>().loadAssignments(
+                page: 1,
+                limit: 20,
+                refresh: true,
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: TextField(
-                controller: _searchController,
-                onChanged: (value) {
-                  _debounce?.cancel();
-                  _debounce = Timer(const Duration(milliseconds: 300), () {
-                    if (!mounted) {
-                      return;
-                    }
-                    context.read<InstructorAssignmentsCubit>().setSearchQuery(
-                      value,
-                    );
-                  });
-                },
-                decoration: const InputDecoration(
-                  hintText: 'Search assignments',
-                  prefixIcon: Icon(Icons.search_rounded),
-                  border: OutlineInputBorder(),
-                  isDense: true,
-                ),
-              ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
-              child: Row(
-                children: <Widget>[
-                  _StatusFilterChip(
-                    label: 'All',
-                    selected: state.statusFilter == null,
-                    onTap: () => cubit.setStatusFilter(null),
-                  ),
-                  _StatusFilterChip(
-                    label: 'Draft',
-                    selected: state.statusFilter == api.AssignmentStatus.draft,
-                    onTap: () =>
-                        cubit.setStatusFilter(api.AssignmentStatus.draft),
-                  ),
-                  _StatusFilterChip(
-                    label: 'Published',
-                    selected:
-                        state.statusFilter == api.AssignmentStatus.published,
-                    onTap: () =>
-                        cubit.setStatusFilter(api.AssignmentStatus.published),
-                  ),
-                  _StatusFilterChip(
-                    label: 'Closed',
-                    selected: state.statusFilter == api.AssignmentStatus.closed,
-                    onTap: () =>
-                        cubit.setStatusFilter(api.AssignmentStatus.closed),
-                  ),
-                  _StatusFilterChip(
-                    label: 'Archived',
-                    selected:
-                        state.statusFilter == api.AssignmentStatus.archived,
-                    onTap: () =>
-                        cubit.setStatusFilter(api.AssignmentStatus.archived),
-                  ),
+              color: InstructorColors.primary,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: <Widget>[
+                  if (!widget.embedded) _buildAppBar(isDark, l10n),
+                  if (state.isLoading && state.assignments == null)
+                    ...<Widget>[
+                      _buildLoadingHeader(isDark, l10n),
+                      _buildLoadingSkeleton(isDark),
+                    ]
+                  else if (!state.isLoading && state.teachingCourses.isEmpty)
+                    SliverFillRemaining(
+                      child: _buildNoCoursesState(isDark, l10n),
+                    )
+                  else
+                    _buildLoadedContent(isDark, l10n, state),
                 ],
               ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: Row(
-                children: <Widget>[
-                  _TypeFilterChip(
-                    label: 'All',
-                    selected: _typeFilter == null,
-                    onTap: () => setState(() => _typeFilter = null),
-                  ),
-                  _TypeFilterChip(
-                    label: 'Assignments',
-                    selected: _typeFilter == AssignmentType.document,
-                    onTap: () =>
-                        setState(() => _typeFilter = AssignmentType.document),
-                  ),
-                  _TypeFilterChip(
-                    label: 'Labs',
-                    selected: _typeFilter == AssignmentType.lab,
-                    onTap: () =>
-                        setState(() => _typeFilter = AssignmentType.lab),
-                  ),
-                  _TypeFilterChip(
-                    label: 'Projects',
-                    selected: _typeFilter == AssignmentType.project,
-                    onTap: () =>
-                        setState(() => _typeFilter = AssignmentType.project),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(child: _buildList(cubit, state, assignments)),
-          ],
-        );
+            );
 
-        if (widget.embedded) {
-          return content;
-        }
+            if (widget.embedded) {
+              return Container(
+                color: InstructorColors.background(isDark),
+                child: content,
+              );
+            }
 
-        return Scaffold(
-          appBar: AppBar(title: const Text('Assignments')),
-          floatingActionButton: widget.canManage
-              ? FloatingActionButton.extended(
-                  onPressed: () async {
-                    final result = await context.push(
-                      '/instructor/assignments/create',
-                    );
-                    if (!mounted) {
-                      return;
-                    }
-                    if (result == true) {
-                      await cubit.loadAssignments(
-                        page: 1,
-                        limit: 20,
-                        refresh: true,
-                      );
-                    }
-                  },
-                  icon: const Icon(Icons.add_rounded),
-                  label: const Text('Create Assignment'),
-                )
-              : null,
-          body: content,
+            return Scaffold(
+              backgroundColor: InstructorColors.background(isDark),
+              floatingActionButton: widget.canManage
+                  ? FloatingActionButton.extended(
+                      onPressed: _openCreateAssignment,
+                      backgroundColor: InstructorColors.primary,
+                      foregroundColor: Colors.white,
+                      icon: const Icon(Icons.add_rounded),
+                      label: Text(l10n.createAssignment),
+                    )
+                  : null,
+              body: SafeArea(child: content),
+            );
+          },
         );
       },
     );
   }
 
-  Widget _buildList(
-    InstructorAssignmentsCubit cubit,
-    InstructorAssignmentsState state,
-    List<AssignmentModel> assignments,
-  ) {
-    if (state.isLoading && state.assignments == null) {
-      return ListView.builder(
-        physics: widget.embedded ? const ClampingScrollPhysics() : null,
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        itemCount: 4,
-        itemBuilder: (_, __) => Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          height: 116,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade200,
-            borderRadius: BorderRadius.circular(12),
+  SliverAppBar _buildAppBar(bool isDark, AppLocalizations l10n) {
+    return SliverAppBar(
+      backgroundColor: InstructorColors.background(isDark),
+      surfaceTintColor: Colors.transparent,
+      leading: IconButton(
+        onPressed: () => context.pop(),
+        icon: Icon(
+          Icons.arrow_back_rounded,
+          color: InstructorColors.textPrimaryColor(isDark),
+        ),
+      ),
+      title: Text(
+        l10n.assignments,
+        style: TextStyle(
+          color: InstructorColors.textPrimaryColor(isDark),
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () =>
+              context.read<ThemeBloc>().add(const ToggleThemeEvent()),
+          icon: Icon(
+            isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+            color: InstructorColors.textSecondaryColor(isDark),
           ),
         ),
-      );
-    }
+        const SizedBox(width: 8),
+      ],
+      floating: true,
+      snap: true,
+    );
+  }
 
-    // Apply type filter
-    final typedAssignments = _typeFilter == null
-        ? assignments
-        : assignments.where((a) => a.type == _typeFilter).toList();
-
-    if (typedAssignments.isEmpty) {
-      return const _EmptyAssignmentsState();
-    }
-
-    // If a specific type is selected, show flat list
-    if (_typeFilter != null) {
-      return RefreshIndicator(
-        onRefresh: () => cubit.loadAssignments(page: 1, refresh: true),
-        child: CustomScrollView(
-          physics: widget.embedded ? const ClampingScrollPhysics() : null,
-          slivers: <Widget>[
-            SliverPadding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              sliver: SliverList.builder(
-                itemCount: typedAssignments.length,
-                itemBuilder: (context, index) {
-                  final assignment = typedAssignments[index];
-                  return _buildAssignmentCard(cubit, assignment);
-                },
+  SliverToBoxAdapter _buildLoadingHeader(
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+        padding: const EdgeInsets.all(22),
+        decoration: BoxDecoration(
+          gradient: isDark
+              ? InstructorColors.darkHeaderGradient
+              : const LinearGradient(
+                  colors: <Color>[
+                    Color(0xFF155CFB),
+                    Color(0xFF3B82F6),
+                    Color(0xFF14B8A6),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              l10n.instructorAssignmentsHeaderTitle,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              l10n.instructorAssignmentsHeaderSubtitle,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.84),
+                fontSize: 13,
               ),
             ),
           ],
         ),
-      );
+      ),
+    );
+  }
+
+  SliverMainAxisGroup _buildLoadedContent(
+    bool isDark,
+    AppLocalizations l10n,
+    InstructorAssignmentsState state,
+  ) {
+    final assignments = state.assignmentItems;
+    final grouped = <int, List<AssignmentModel>>{};
+    for (final assignment in assignments) {
+      grouped.putIfAbsent(assignment.courseId, () => <AssignmentModel>[]).add(assignment);
     }
 
-    // "All" type: group by type with section headers
-    final byType = <AssignmentType, List<AssignmentModel>>{};
-    for (final a in typedAssignments) {
-      byType.putIfAbsent(a.type, () => []).add(a);
-    }
+    final courseIds = grouped.keys.toList(growable: false);
+    final r = context.responsive;
 
-    // Order: document (Assignment) first, then lab, then project, then others
-    final typeOrder = [
-      AssignmentType.document,
-      AssignmentType.lab,
-      AssignmentType.project,
-      AssignmentType.code,
-      AssignmentType.presentation,
-      AssignmentType.quiz,
-      AssignmentType.other,
+    return SliverMainAxisGroup(
+      slivers: <Widget>[
+        SliverToBoxAdapter(
+          child: _buildSummaryHeader(isDark, l10n, r, state, assignments),
+        ),
+        SliverToBoxAdapter(
+          child: _buildFilterMenus(isDark, l10n, r, state, assignments.length),
+        ),
+        if (courseIds.isEmpty)
+          SliverFillRemaining(
+            child: _buildEmptyAssignmentsState(
+              isDark,
+              l10n,
+              onCreate: widget.canManage ? _openCreateAssignment : null,
+            ),
+          )
+        else
+          SliverPadding(
+            padding: const EdgeInsets.all(16),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final courseId = courseIds[index];
+                return _buildCourseAssignmentsCard(
+                  isDark,
+                  l10n,
+                  state,
+                  courseId,
+                  grouped[courseId] ?? const <AssignmentModel>[],
+                );
+              }, childCount: courseIds.length),
+            ),
+          ),
+        if (state.hasMorePages)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: state.isLoading
+                      ? null
+                      : () => context.read<InstructorAssignmentsCubit>().loadMore(),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: InstructorColors.primary,
+                    side: BorderSide(
+                      color: InstructorColors.primary.withValues(alpha: 0.25),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
+                  child: state.isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text(l10n.loadMore),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildSummaryHeader(
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil r,
+    InstructorAssignmentsState state,
+    List<AssignmentModel> assignments,
+  ) {
+    final publishedCount = assignments
+        .where((item) => item.apiStatus == api.AssignmentStatus.published)
+        .length;
+    final draftCount = assignments
+        .where((item) => item.apiStatus == api.AssignmentStatus.draft)
+        .length;
+    final closedCount = assignments
+        .where(
+          (item) =>
+              item.apiStatus == api.AssignmentStatus.closed ||
+              item.apiStatus == api.AssignmentStatus.archived,
+        )
+        .length;
+
+    final selectedCourse = _selectedCourse(state);
+    final subtitle = selectedCourse == null
+        ? l10n.instructorAssignmentsHeaderSubtitle
+        : '${selectedCourse.course.code} • ${selectedCourse.course.name}';
+
+    final stats = <({IconData icon, String label, String value, Color color})>[
+      (
+        icon: Icons.menu_book_rounded,
+        label: l10n.course,
+        value: selectedCourse == null ? '0' : '1',
+        color: InstructorColors.teal,
+      ),
+      (
+        icon: Icons.assignment_rounded,
+        label: l10n.assignments,
+        value: '${assignments.length}',
+        color: InstructorColors.accent,
+      ),
+      (
+        icon: Icons.publish_rounded,
+        label: l10n.assignmentStatusPublished,
+        value: '$publishedCount',
+        color: InstructorColors.success,
+      ),
+      (
+        icon: Icons.edit_note_rounded,
+        label: l10n.draft,
+        value: '$draftCount',
+        color: InstructorColors.warning,
+      ),
+      (
+        icon: Icons.archive_rounded,
+        label: l10n.assignmentStatusClosed,
+        value: '$closedCount',
+        color: InstructorColors.pink,
+      ),
     ];
 
-    final sections = <_TypeSection>[];
-    for (final type in typeOrder) {
-      final items = byType[type];
-      if (items != null && items.isNotEmpty) {
-        sections.add(_TypeSection(type: type, items: items));
-      }
-    }
-
-    // Any remaining types not in typeOrder
-    for (final entry in byType.entries) {
-      if (!typeOrder.contains(entry.key)) {
-        sections.add(_TypeSection(type: entry.key, items: entry.value));
-      }
-    }
-
-    int totalSliverItems = 0;
-    for (final section in sections) {
-      totalSliverItems += 1 + section.items.length; // header + items
-    }
-
-    return RefreshIndicator(
-      onRefresh: () => cubit.loadAssignments(page: 1, refresh: true),
-      child: CustomScrollView(
-        physics: widget.embedded ? const ClampingScrollPhysics() : null,
-        slivers: <Widget>[
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            sliver: SliverList.builder(
-              itemCount: totalSliverItems,
-              itemBuilder: (context, index) {
-                int offset = 0;
-                for (final section in sections) {
-                  if (index == offset) {
-                    // Section header
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Row(
-                        children: [
-                          Icon(
-                            section.type.icon,
-                            size: 18,
-                            color: section.type.color,
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      decoration: BoxDecoration(
+        gradient: isDark
+            ? InstructorColors.darkHeaderGradient
+            : const LinearGradient(
+                colors: <Color>[
+                  Color(0xFF155CFB),
+                  Color(0xFF3B82F6),
+                  Color(0xFF14B8A6),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: InstructorColors.primary.withValues(
+              alpha: isDark ? 0.28 : 0.2,
+            ),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              top: -34,
+              right: -10,
+              child: Container(
+                width: 132,
+                height: 132,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: -42,
+              left: -18,
+              child: Container(
+                width: 108,
+                height: 108,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.08),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(r.isMobile ? 18 : 22),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.16),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.18),
                           ),
-                          const SizedBox(width: 6),
-                          Text(
-                            section.type.label,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w700,
-                              color: section.type.color,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Container(
-                              height: 1,
-                              color: Colors.grey.shade300,
-                            ),
-                          ),
-                        ],
+                        ),
+                        child: const Icon(
+                          Icons.assignment_rounded,
+                          color: Colors.white,
+                          size: 24,
+                        ),
                       ),
-                    );
-                  }
-                  offset += 1;
-                  if (index < offset + section.items.length) {
-                    final itemIndex = index - offset;
-                    return _buildAssignmentCard(
-                      cubit,
-                      section.items[itemIndex],
-                    );
-                  }
-                  offset += section.items.length;
-                }
-                return const SizedBox.shrink();
-              },
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              l10n.instructorAssignmentsHeaderTitle,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: r.isMobile ? 19 : 22,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              subtitle,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.84),
+                                fontSize: r.isMobile ? 12 : 13,
+                                height: 1.45,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
+                      const spacing = 10.0;
+                      final itemWidth =
+                          (constraints.maxWidth -
+                              (spacing * (crossAxisCount - 1))) /
+                          crossAxisCount;
+
+                      return Wrap(
+                        spacing: spacing,
+                        runSpacing: spacing,
+                        children: stats.map((stat) {
+                          return SizedBox(
+                            width: itemWidth,
+                            child: _buildHeaderStatCard(
+                              icon: stat.icon,
+                              label: stat.label,
+                              value: stat.value,
+                              color: stat.color,
+                            ),
+                          );
+                        }).toList(growable: false),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderStatCard({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Icon(icon, size: 18, color: color),
+          const SizedBox(height: 10),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.82),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -412,166 +553,823 @@ class _InstructorAssignmentsViewState
     );
   }
 
-  Widget _buildAssignmentCard(
-    InstructorAssignmentsCubit cubit,
-    AssignmentModel assignment,
+  Widget _buildFilterMenus(
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil r,
+    InstructorAssignmentsState state,
+    int visibleCount,
   ) {
-    final assignmentId = _assignmentIdOf(assignment);
-    return AssignmentCard(
-      assignment: assignment,
-      canManage: widget.canManage,
-      onViewSubmissions: () => context.push(
-        '/instructor/assignments/$assignmentId/submissions',
-        extra: <String, dynamic>{
-          'assignmentTitle': assignment.title,
-          'maxScore': assignment.maxGrade,
-          'assignmentDueDate': assignment.dueDate,
-          'latePenaltyPercent': assignment.latePenaltyPercent,
-          'isArchived': assignment.apiStatus == api.AssignmentStatus.archived,
-        },
-      ),
-      onEdit: widget.canManage
-          ? () async {
-              final result = await context.push(
-                '/instructor/assignments/create',
-                extra: <String, dynamic>{
-                  'assignmentId': assignmentId,
-                  'assignment': assignment,
-                },
-              );
-              if (!mounted) {
-                return;
-              }
-              if (result == true) {
-                await cubit.loadAssignments(page: 1, limit: 20, refresh: true);
-              }
-            }
-          : null,
-      onDelete: widget.canManage
-          ? () => _confirmDelete(context, cubit, assignmentId, assignment.title)
-          : null,
-      onStatusChange: widget.canManage
-          ? (status) => cubit.updateStatus(assignmentId, status)
-          : null,
-    );
-  }
+    final selectedCourse = _selectedCourse(state);
+    final selectedCourseLabel = selectedCourse == null
+        ? l10n.course
+        : '${selectedCourse.course.code} • ${selectedCourse.course.name}';
 
-  static void _confirmDelete(
-    BuildContext context,
-    InstructorAssignmentsCubit cubit,
-    int assignmentId,
-    String title,
-  ) {
-    showDialog<void>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Delete Assignment?'),
-          content: Text(
-            'Are you sure you want to delete "$title"? '
-            'This action cannot be undone.',
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: InstructorColors.cardColor(isDark),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: InstructorColors.borderColor(isDark).withValues(alpha: 0.7),
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-                cubit.deleteAssignment(assignmentId);
-              },
-              style: FilledButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text('Delete'),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.14 : 0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
           ],
-        );
-      },
-    );
-  }
-
-  static int _assignmentIdOf(AssignmentModel assignment) {
-    if (assignment.assignmentId > 0) {
-      return assignment.assignmentId;
-    }
-    return int.tryParse(assignment.id) ?? 0;
-  }
-}
-
-class _StatusFilterChip extends StatelessWidget {
-  const _StatusFilterChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: ChoiceChip(
-        label: Text(label),
-        selected: selected,
-        onSelected: (_) => onTap(),
-      ),
-    );
-  }
-}
-
-class _TypeFilterChip extends StatelessWidget {
-  const _TypeFilterChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: ChoiceChip(
-        label: Text(label),
-        selected: selected,
-        onSelected: (_) => onTap(),
-      ),
-    );
-  }
-}
-
-class _TypeSection {
-  final AssignmentType type;
-  final List<AssignmentModel> items;
-  const _TypeSection({required this.type, required this.items});
-}
-
-class _EmptyAssignmentsState extends StatelessWidget {
-  const _EmptyAssignmentsState();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
+        ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: const <Widget>[
-            Icon(Icons.assignment_outlined, size: 52),
-            SizedBox(height: 10),
-            Text(
-              'No assignments found for this course.',
-              textAlign: TextAlign.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: InstructorColors.primary.withValues(
+                      alpha: isDark ? 0.18 : 0.1,
+                    ),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '$visibleCount ${l10n.assignments}',
+                    style: TextStyle(
+                      color: InstructorColors.primary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Expanded(
+                  child: _buildModernDropdown<int>(
+                    isDark: isDark,
+                    label: l10n.course,
+                    selectedLabel: selectedCourseLabel,
+                    value: state.selectedCourseId ?? 0,
+                    icon: Icons.menu_book_rounded,
+                    menuMaxHeight: r.screenHeight * 0.45,
+                    enabled: !widget.lockCourseSelection,
+                    items: state.teachingCourses.map((course) {
+                      return DropdownMenuItem<int>(
+                        value: course.courseId,
+                        child: Text(
+                          '${course.course.code} • ${course.course.name}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    }).toList(growable: false),
+                    onChanged: (value) {
+                      if (value == null) {
+                        return;
+                      }
+                      context.read<InstructorAssignmentsCubit>().selectCourse(value);
+                    },
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildModernDropdown<_InstructorAssignmentStateFilter>(
+                    isDark: isDark,
+                    label: l10n.status,
+                    selectedLabel: _statusFilterLabel(
+                      l10n,
+                      _statusFilterFromApi(state.statusFilter),
+                    ),
+                    value: _statusFilterFromApi(state.statusFilter),
+                    icon: Icons.tune_rounded,
+                    menuMaxHeight: r.screenHeight * 0.45,
+                    items: <DropdownMenuItem<_InstructorAssignmentStateFilter>>[
+                      DropdownMenuItem(
+                        value: _InstructorAssignmentStateFilter.all,
+                        child: Text(l10n.assignmentAllStates),
+                      ),
+                      DropdownMenuItem(
+                        value: _InstructorAssignmentStateFilter.draft,
+                        child: Text(l10n.draft),
+                      ),
+                      DropdownMenuItem(
+                        value: _InstructorAssignmentStateFilter.published,
+                        child: Text(l10n.assignmentStatusPublished),
+                      ),
+                      DropdownMenuItem(
+                        value: _InstructorAssignmentStateFilter.closed,
+                        child: Text(l10n.assignmentStatusClosed),
+                      ),
+                      DropdownMenuItem(
+                        value: _InstructorAssignmentStateFilter.archived,
+                        child: Text(l10n.archived),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value == null) {
+                        return;
+                      }
+                      context.read<InstructorAssignmentsCubit>().setStatusFilter(
+                        _statusFilterToApi(value),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildModernDropdown<T>({
+    required bool isDark,
+    required String label,
+    required String selectedLabel,
+    required T value,
+    required IconData icon,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+    required double menuMaxHeight,
+    bool enabled = true,
+  }) {
+    return DropdownButtonFormField<T>(
+      initialValue: value,
+      isExpanded: true,
+      menuMaxHeight: menuMaxHeight,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(
+          color: InstructorColors.textSecondaryColor(isDark),
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        prefixIcon: Icon(icon, size: 18, color: InstructorColors.primary),
+        filled: true,
+        fillColor: isDark
+            ? InstructorColors.surfaceColor(isDark).withValues(alpha: 0.75)
+            : InstructorColors.surfaceColor(isDark),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(
+            color: InstructorColors.borderColor(isDark).withValues(alpha: 0.9),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(
+            color: InstructorColors.borderColor(isDark).withValues(alpha: 0.9),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(
+            color: InstructorColors.primary,
+            width: 1.4,
+          ),
+        ),
+      ),
+      dropdownColor: InstructorColors.cardColor(isDark),
+      icon: const Icon(
+        Icons.keyboard_arrow_down_rounded,
+        color: InstructorColors.primary,
+      ),
+      style: TextStyle(
+        color: InstructorColors.textPrimaryColor(isDark),
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+      ),
+      selectedItemBuilder: (context) {
+        return items.map((_) {
+          return Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              selectedLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          );
+        }).toList(growable: false);
+      },
+      items: items,
+      onChanged: enabled ? onChanged : null,
+    );
+  }
+
+  Widget _buildCourseAssignmentsCard(
+    bool isDark,
+    AppLocalizations l10n,
+    InstructorAssignmentsState state,
+    int courseId,
+    List<AssignmentModel> assignments,
+  ) {
+    final course = state.teachingCourses.where((item) => item.courseId == courseId).firstOrNull;
+    final courseCode = course?.course.code ?? assignments.first.courseCode;
+    final courseName = course?.course.name ?? assignments.first.courseName;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: InstructorColors.cardColor(isDark),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: InstructorColors.borderColor(isDark).withValues(alpha: 0.6),
+        ),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.1 : 0.04),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: <Color>[
+                  InstructorColors.primary.withValues(alpha: isDark ? 0.28 : 0.12),
+                  InstructorColors.teal.withValues(alpha: isDark ? 0.18 : 0.08),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+            ),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: InstructorColors.teal,
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    _courseInitials(courseCode),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        courseCode,
+                        style: const TextStyle(
+                          color: InstructorColors.primary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        courseName,
+                        style: TextStyle(
+                          color: InstructorColors.textPrimaryColor(isDark),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: InstructorColors.success.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '${assignments.length} ${l10n.assignments}',
+                    style: const TextStyle(
+                      color: InstructorColors.success,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ...assignments.map(
+            (assignment) => _buildAssignmentTile(isDark, l10n, assignment),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAssignmentTile(
+    bool isDark,
+    AppLocalizations l10n,
+    AssignmentModel assignment,
+  ) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(18),
+      onTap: () => _openAssignmentDetail(assignment),
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color: InstructorColors.borderColor(isDark).withValues(alpha: 0.5),
+            ),
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: _assignmentTypeColor(assignment.type).withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(
+                assignment.type.icon,
+                color: _assignmentTypeColor(assignment.type),
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    assignment.title,
+                    style: TextStyle(
+                      color: InstructorColors.textPrimaryColor(isDark),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 6,
+                    children: <Widget>[
+                      _buildMetaChip(
+                        isDark,
+                        icon: Icons.calendar_today_rounded,
+                        label: _formatDate(context, assignment.dueDate),
+                      ),
+                      _buildMetaChip(
+                        isDark,
+                        icon: Icons.stars_rounded,
+                        label: _formatScore(assignment.maxGrade),
+                      ),
+                      _buildMetaChip(
+                        isDark,
+                        icon: Icons.upload_file_rounded,
+                        label: _submissionTypeLabel(l10n, assignment.submissionType),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                _buildStatusBadge(isDark, l10n, assignment.apiStatus),
+                PopupMenuButton<String>(
+                  padding: EdgeInsets.zero,
+                  onSelected: (value) {
+                    if (value == 'open') {
+                      _openAssignmentDetail(assignment);
+                    } else if (value == 'edit') {
+                      _openEditAssignment(assignment);
+                    } else if (value == 'delete') {
+                      context.read<InstructorAssignmentsCubit>().deleteAssignment(
+                        assignment.assignmentId,
+                      );
+                    } else if (value.startsWith('status:')) {
+                      final raw = value.split(':').last;
+                      context.read<InstructorAssignmentsCubit>().updateStatus(
+                        assignment.assignmentId,
+                        api.AssignmentStatus.fromString(raw),
+                      );
+                    }
+                  },
+                  itemBuilder: (context) {
+                    final nextStatuses = _nextStatuses(assignment.apiStatus);
+                    return <PopupMenuEntry<String>>[
+                      PopupMenuItem<String>(
+                        value: 'open',
+                        child: Text(l10n.assignmentDetails),
+                      ),
+                      if (widget.canManage)
+                        PopupMenuItem<String>(
+                          value: 'edit',
+                          child: Text(l10n.edit),
+                        ),
+                      ...nextStatuses.map(
+                        (status) => PopupMenuItem<String>(
+                          value: 'status:${status.value}',
+                          child: Text(_statusLabel(l10n, status)),
+                        ),
+                      ),
+                      if (widget.canManage)
+                        PopupMenuItem<String>(
+                          value: 'delete',
+                          child: Text(
+                            l10n.delete,
+                            style: const TextStyle(color: InstructorColors.error),
+                          ),
+                        ),
+                    ];
+                  },
+                  child: Icon(
+                    Icons.more_vert_rounded,
+                    color: InstructorColors.textSecondaryColor(isDark),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMetaChip(
+    bool isDark, {
+    required IconData icon,
+    required String label,
+  }) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(icon, size: 14, color: InstructorColors.textSecondaryColor(isDark)),
+        const SizedBox(width: 5),
+        Text(
+          label,
+          style: TextStyle(
+            color: InstructorColors.textSecondaryColor(isDark),
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusBadge(
+    bool isDark,
+    AppLocalizations l10n,
+    api.AssignmentStatus status,
+  ) {
+    final color = _statusColor(status);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: isDark ? 0.18 : 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        _statusLabel(l10n, status),
+        style: TextStyle(
+          color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingSkeleton(bool isDark) {
+    return SliverPadding(
+      padding: const EdgeInsets.all(16),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate((context, index) {
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            height: 210,
+            decoration: BoxDecoration(
+              color: InstructorColors.cardColor(isDark),
+              borderRadius: BorderRadius.circular(22),
+            ),
+          );
+        }, childCount: 3),
+      ),
+    );
+  }
+
+  Widget _buildNoCoursesState(bool isDark, AppLocalizations l10n) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(Icons.school_outlined, size: 52, color: InstructorColors.info),
+            const SizedBox(height: 12),
+            Text(
+              l10n.noCoursesAvailable,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyAssignmentsState(
+    bool isDark,
+    AppLocalizations l10n, {
+    VoidCallback? onCreate,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: InstructorColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.assignment_outlined,
+                size: 46,
+                color: InstructorColors.primary,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.noAssignmentsFound,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.assignmentEmptyManagementMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+              ),
+            ),
+            if (onCreate != null) ...<Widget>[
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: onCreate,
+                icon: const Icon(Icons.add_rounded),
+                label: Text(l10n.createAssignment),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  TeachingCourseModel? _selectedCourse(InstructorAssignmentsState state) {
+    final selectedCourseId = state.selectedCourseId;
+    if (selectedCourseId == null) {
+      return null;
+    }
+    return state.teachingCourses
+        .where((course) => course.courseId == selectedCourseId)
+        .firstOrNull;
+  }
+
+  Future<void> _openCreateAssignment() async {
+    final cubit = context.read<InstructorAssignmentsCubit>();
+    final result = await context.push<bool>('/instructor/assignments/create');
+    if (result == true && mounted) {
+      await cubit.loadAssignments(page: 1, limit: 20, refresh: true);
+    }
+  }
+
+  Future<void> _openEditAssignment(AssignmentModel assignment) async {
+    final cubit = context.read<InstructorAssignmentsCubit>();
+    final result = await context.push<bool>(
+      '/instructor/assignments/create',
+      extra: <String, dynamic>{
+        'assignmentId': assignment.assignmentId,
+        'assignment': assignment,
+      },
+    );
+    if (result == true && mounted) {
+      await cubit.loadAssignments(page: 1, limit: 20, refresh: true);
+    }
+  }
+
+  Future<void> _openAssignmentDetail(AssignmentModel assignment) async {
+    final cubit = context.read<InstructorAssignmentsCubit>();
+    await context.push<void>(
+      '/instructor/assignments/${assignment.assignmentId}',
+      extra: assignment,
+    );
+    if (mounted) {
+      await cubit.loadAssignments(page: 1, limit: 20, refresh: true);
+    }
+  }
+
+  static _InstructorAssignmentStateFilter _statusFilterFromApi(
+    api.AssignmentStatus? status,
+  ) {
+    switch (status) {
+      case api.AssignmentStatus.draft:
+        return _InstructorAssignmentStateFilter.draft;
+      case api.AssignmentStatus.published:
+        return _InstructorAssignmentStateFilter.published;
+      case api.AssignmentStatus.closed:
+        return _InstructorAssignmentStateFilter.closed;
+      case api.AssignmentStatus.archived:
+        return _InstructorAssignmentStateFilter.archived;
+      case api.AssignmentStatus.unknown:
+      case null:
+        return _InstructorAssignmentStateFilter.all;
+    }
+  }
+
+  static api.AssignmentStatus? _statusFilterToApi(
+    _InstructorAssignmentStateFilter value,
+  ) {
+    switch (value) {
+      case _InstructorAssignmentStateFilter.all:
+        return null;
+      case _InstructorAssignmentStateFilter.draft:
+        return api.AssignmentStatus.draft;
+      case _InstructorAssignmentStateFilter.published:
+        return api.AssignmentStatus.published;
+      case _InstructorAssignmentStateFilter.closed:
+        return api.AssignmentStatus.closed;
+      case _InstructorAssignmentStateFilter.archived:
+        return api.AssignmentStatus.archived;
+    }
+  }
+
+  static String _statusFilterLabel(
+    AppLocalizations l10n,
+    _InstructorAssignmentStateFilter value,
+  ) {
+    switch (value) {
+      case _InstructorAssignmentStateFilter.all:
+        return l10n.assignmentAllStates;
+      case _InstructorAssignmentStateFilter.draft:
+        return l10n.draft;
+      case _InstructorAssignmentStateFilter.published:
+        return l10n.assignmentStatusPublished;
+      case _InstructorAssignmentStateFilter.closed:
+        return l10n.assignmentStatusClosed;
+      case _InstructorAssignmentStateFilter.archived:
+        return l10n.archived;
+    }
+  }
+
+  static List<api.AssignmentStatus> _nextStatuses(api.AssignmentStatus current) {
+    switch (current) {
+      case api.AssignmentStatus.draft:
+        return const <api.AssignmentStatus>[api.AssignmentStatus.published];
+      case api.AssignmentStatus.published:
+        return const <api.AssignmentStatus>[
+          api.AssignmentStatus.closed,
+          api.AssignmentStatus.archived,
+        ];
+      case api.AssignmentStatus.closed:
+        return const <api.AssignmentStatus>[
+          api.AssignmentStatus.archived,
+          api.AssignmentStatus.draft,
+        ];
+      case api.AssignmentStatus.archived:
+        return const <api.AssignmentStatus>[api.AssignmentStatus.draft];
+      case api.AssignmentStatus.unknown:
+        return const <api.AssignmentStatus>[];
+    }
+  }
+
+  static Color _statusColor(api.AssignmentStatus status) {
+    switch (status) {
+      case api.AssignmentStatus.draft:
+        return InstructorColors.warning;
+      case api.AssignmentStatus.published:
+        return InstructorColors.success;
+      case api.AssignmentStatus.closed:
+        return InstructorColors.info;
+      case api.AssignmentStatus.archived:
+        return InstructorColors.pink;
+      case api.AssignmentStatus.unknown:
+        return InstructorColors.textSecondary;
+    }
+  }
+
+  static String _statusLabel(
+    AppLocalizations l10n,
+    api.AssignmentStatus status,
+  ) {
+    switch (status) {
+      case api.AssignmentStatus.draft:
+        return l10n.draft;
+      case api.AssignmentStatus.published:
+        return l10n.assignmentStatusPublished;
+      case api.AssignmentStatus.closed:
+        return l10n.assignmentStatusClosed;
+      case api.AssignmentStatus.archived:
+        return l10n.archived;
+      case api.AssignmentStatus.unknown:
+        return l10n.unknown;
+    }
+  }
+
+  static String _submissionTypeLabel(
+    AppLocalizations l10n,
+    api.SubmissionType type,
+  ) {
+    switch (type) {
+      case api.SubmissionType.file:
+        return l10n.assignmentSubmissionTypeFile;
+      case api.SubmissionType.text:
+        return l10n.assignmentSubmissionTypeText;
+      case api.SubmissionType.link:
+        return l10n.assignmentSubmissionTypeLink;
+      case api.SubmissionType.multiple:
+        return l10n.assignmentSubmissionTypeMultiple;
+      case api.SubmissionType.unknown:
+        return l10n.unknown;
+    }
+  }
+
+  static Color _assignmentTypeColor(AssignmentType type) {
+    switch (type) {
+      case AssignmentType.document:
+        return InstructorColors.primary;
+      case AssignmentType.code:
+        return InstructorColors.accent;
+      case AssignmentType.presentation:
+        return InstructorColors.warning;
+      case AssignmentType.quiz:
+        return InstructorColors.pink;
+      case AssignmentType.project:
+        return InstructorColors.success;
+      case AssignmentType.lab:
+        return InstructorColors.teal;
+      case AssignmentType.other:
+        return InstructorColors.textSecondary;
+    }
+  }
+
+  String _formatDate(BuildContext context, DateTime value) {
+    final locale = Localizations.localeOf(context).toLanguageTag();
+    return DateFormat.yMMMd(locale).add_jm().format(value.toLocal());
+  }
+
+  String _formatScore(double value) {
+    return value == value.roundToDouble()
+        ? value.round().toString()
+        : value.toStringAsFixed(1);
+  }
+
+  static String _courseInitials(String value) {
+    final cleaned = value.trim();
+    if (cleaned.isEmpty) {
+      return 'AS';
+    }
+    return cleaned.length <= 4 ? cleaned.toUpperCase() : cleaned.substring(0, 4).toUpperCase();
   }
 }

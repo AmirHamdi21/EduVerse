@@ -25270,6 +25270,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Drop'**
   String get drop;
+
+  /// No description provided for @instructorAssignmentsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment Pulse'**
+  String get instructorAssignmentsHeaderTitle;
+
+  /// No description provided for @instructorAssignmentsHeaderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track the selected course, publish updates, and review submissions without leaving the flow.'**
+  String get instructorAssignmentsHeaderSubtitle;
+
+  /// No description provided for @taAssignmentsHeaderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment Flow'**
+  String get taAssignmentsHeaderTitle;
+
+  /// No description provided for @taAssignmentsHeaderSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on top of deadlines, assignment states, and grading for your assigned course.'**
+  String get taAssignmentsHeaderSubtitle;
+
+  /// No description provided for @assignmentAllStates.
+  ///
+  /// In en, this message translates to:
+  /// **'All States'**
+  String get assignmentAllStates;
+
+  /// No description provided for @assignmentSubmissionsTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Submissions'**
+  String get assignmentSubmissionsTab;
+
+  /// No description provided for @assignmentSubmissionType.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Type'**
+  String get assignmentSubmissionType;
+
+  /// No description provided for @assignmentSubmissionTypeFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get assignmentSubmissionTypeFile;
+
+  /// No description provided for @assignmentSubmissionTypeText.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get assignmentSubmissionTypeText;
+
+  /// No description provided for @assignmentSubmissionTypeLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Link'**
+  String get assignmentSubmissionTypeLink;
+
+  /// No description provided for @assignmentSubmissionTypeMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple'**
+  String get assignmentSubmissionTypeMultiple;
+
+  /// No description provided for @assignmentLatePenalty.
+  ///
+  /// In en, this message translates to:
+  /// **'Late Penalty'**
+  String get assignmentLatePenalty;
+
+  /// No description provided for @assignmentMaxFileSize.
+  ///
+  /// In en, this message translates to:
+  /// **'Max File Size'**
+  String get assignmentMaxFileSize;
+
+  /// No description provided for @assignmentAllowedFileTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed File Types'**
+  String get assignmentAllowedFileTypes;
+
+  /// No description provided for @assignmentInstructionFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'Instruction Files'**
+  String get assignmentInstructionFiles;
+
+  /// No description provided for @assignmentNoInstructionFiles.
+  ///
+  /// In en, this message translates to:
+  /// **'No instruction files yet.'**
+  String get assignmentNoInstructionFiles;
+
+  /// No description provided for @assignmentNoInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'No instructions provided.'**
+  String get assignmentNoInstructions;
+
+  /// No description provided for @assignmentNoSubmissions.
+  ///
+  /// In en, this message translates to:
+  /// **'No submissions yet for this assignment.'**
+  String get assignmentNoSubmissions;
+
+  /// No description provided for @assignmentOpenFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get assignmentOpenFile;
+
+  /// No description provided for @assignmentDownloadFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get assignmentDownloadFile;
+
+  /// No description provided for @assignmentDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Assignment?'**
+  String get assignmentDeleteTitle;
+
+  /// No description provided for @assignmentDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This action cannot be undone. Delete this assignment?'**
+  String get assignmentDeleteConfirm;
+
+  /// No description provided for @assignmentDeletedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment deleted successfully.'**
+  String get assignmentDeletedSuccess;
+
+  /// No description provided for @assignmentStatusPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get assignmentStatusPublished;
+
+  /// No description provided for @assignmentStatusClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get assignmentStatusClosed;
+
+  /// No description provided for @assignmentPublishedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment published successfully.'**
+  String get assignmentPublishedSuccess;
+
+  /// No description provided for @assignmentClosedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment closed successfully.'**
+  String get assignmentClosedSuccess;
+
+  /// No description provided for @assignmentArchivedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment archived successfully.'**
+  String get assignmentArchivedSuccess;
+
+  /// No description provided for @assignmentMovedToDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment moved to draft.'**
+  String get assignmentMovedToDraft;
+
+  /// No description provided for @assignmentStatusUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment status updated.'**
+  String get assignmentStatusUpdated;
+
+  /// No description provided for @assignmentEmptyManagementMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignments for the selected course will appear here once they are created.'**
+  String get assignmentEmptyManagementMessage;
+
+  /// No description provided for @assignmentNotConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Not configured'**
+  String get assignmentNotConfigured;
+
+  /// No description provided for @assignmentNoDueDate.
+  ///
+  /// In en, this message translates to:
+  /// **'No due date'**
+  String get assignmentNoDueDate;
+
+  /// No description provided for @availableFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Available From'**
+  String get availableFrom;
+
+  /// No description provided for @unknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get unknown;
+
+  /// No description provided for @noCoursesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No courses available'**
+  String get noCoursesAvailable;
 }
 
 class _AppLocalizationsDelegate

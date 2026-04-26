@@ -12905,4 +12905,116 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get drop => 'حذف';
+
+  @override
+  String get instructorAssignmentsHeaderTitle => 'لوحة الواجبات';
+
+  @override
+  String get instructorAssignmentsHeaderSubtitle =>
+      'تابع المقرر المحدد، حدّث حالة الواجبات، وراجع التسليمات من نفس المكان.';
+
+  @override
+  String get taAssignmentsHeaderTitle => 'سير الواجبات';
+
+  @override
+  String get taAssignmentsHeaderSubtitle =>
+      'تابع المواعيد النهائية، حالات الواجبات، والتصحيح للمقرر المكلّف به.';
+
+  @override
+  String get assignmentAllStates => 'كل الحالات';
+
+  @override
+  String get assignmentSubmissionsTab => 'التسليمات';
+
+  @override
+  String get assignmentSubmissionType => 'نوع التسليم';
+
+  @override
+  String get assignmentSubmissionTypeFile => 'ملف';
+
+  @override
+  String get assignmentSubmissionTypeText => 'نص';
+
+  @override
+  String get assignmentSubmissionTypeLink => 'رابط';
+
+  @override
+  String get assignmentSubmissionTypeMultiple => 'متعدد';
+
+  @override
+  String get assignmentLatePenalty => 'خصم التأخير';
+
+  @override
+  String get assignmentMaxFileSize => 'الحد الأقصى لحجم الملف';
+
+  @override
+  String get assignmentAllowedFileTypes => 'أنواع الملفات المسموح بها';
+
+  @override
+  String get assignmentInstructionFiles => 'ملفات التعليمات';
+
+  @override
+  String get assignmentNoInstructionFiles => 'لا توجد ملفات تعليمات بعد.';
+
+  @override
+  String get assignmentNoInstructions => 'لا توجد تعليمات مضافة.';
+
+  @override
+  String get assignmentNoSubmissions => 'لا توجد تسليمات لهذا الواجب بعد.';
+
+  @override
+  String get assignmentOpenFile => 'فتح';
+
+  @override
+  String get assignmentDownloadFile => 'تنزيل';
+
+  @override
+  String get assignmentDeleteTitle => 'حذف الواجب؟';
+
+  @override
+  String get assignmentDeleteConfirm =>
+      'لا يمكن التراجع عن هذا الإجراء. هل تريد حذف هذا الواجب؟';
+
+  @override
+  String get assignmentDeletedSuccess => 'تم حذف الواجب بنجاح.';
+
+  @override
+  String get assignmentStatusPublished => 'منشور';
+
+  @override
+  String get assignmentStatusClosed => 'مغلق';
+
+  @override
+  String get assignmentPublishedSuccess => 'تم نشر الواجب بنجاح.';
+
+  @override
+  String get assignmentClosedSuccess => 'تم إغلاق الواجب بنجاح.';
+
+  @override
+  String get assignmentArchivedSuccess => 'تمت أرشفة الواجب بنجاح.';
+
+  @override
+  String get assignmentMovedToDraft => 'تم نقل الواجب إلى المسودة.';
+
+  @override
+  String get assignmentStatusUpdated => 'تم تحديث حالة الواجب.';
+
+  @override
+  String get assignmentEmptyManagementMessage =>
+      'ستظهر واجبات المقرر المحدد هنا بمجرد إنشائها.';
+
+  @override
+  String get assignmentNotConfigured => 'غير مهيأ';
+
+  @override
+  String get assignmentNoDueDate => 'لا يوجد موعد نهائي';
+
+  @override
+  String get availableFrom => 'متاح من';
+
+  @override
+  String get unknown => 'غير معروف';
+
+  @override
+  String get noCoursesAvailable => 'لا توجد مقررات متاحة';
 }
