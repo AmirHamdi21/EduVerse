@@ -1,4 +1,3 @@
-import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +27,6 @@ class InstructorCoursesScreen extends StatefulWidget {
 
 class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
     with TickerProviderStateMixin {
-  ResponsiveUtil get _responsive => ResponsiveUtil(context);
   // State variables
   String _searchQuery = '';
   String _selectedStatus = 'all';
@@ -957,8 +955,8 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
   //Enhanced stats dashboard with improved design and animation
   Widget _buildStatsDashboard(bool isDark, AppLocalizations l10n) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.fromLTRB(16, 10, 16, 10),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isDark
@@ -989,11 +987,11 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(9),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [const Color(0xFF0D3D9F), const Color(0xFF155CFB)],
@@ -1012,10 +1010,10 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                 child: const Icon(
                   Icons.dashboard_rounded,
                   color: Colors.white,
-                  size: 20,
+                  size: 18,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1024,7 +1022,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                       'Overview Dashboard',
                       style: TextStyle(
                         color: isDark ? Colors.white : const Color(0xFF0D3D9F),
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                         letterSpacing: -0.3,
                       ),
@@ -1036,19 +1034,15 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                         color: isDark
                             ? Colors.white.withValues(alpha: 0.6)
                             : const Color(0xFF6B7280),
-                        fontSize: 12,
+                        fontSize: 11,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
               ),
-              // Time period badge
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
                 decoration: BoxDecoration(
                   color: const Color(0xFF10B981).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -1062,7 +1056,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                   children: [
                     Icon(
                       Icons.calendar_today_rounded,
-                      size: 12,
+                      size: 11,
                       color: const Color(0xFF10B981),
                     ),
                     const SizedBox(width: 4),
@@ -1070,7 +1064,7 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                       'This Month',
                       style: TextStyle(
                         color: const Color(0xFF10B981),
-                        fontSize: 11,
+                        fontSize: 10,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -1079,32 +1073,35 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          // Stats Grid
-          Column(
+          const SizedBox(height: 14),
+          Row(
             children: [
-              _buildEnhancedStatCard(
-                isDark: isDark,
-                icon: Icons.school_rounded,
-                iconColors: [const Color(0xFF0D3D9F), const Color(0xFF155CFB)],
-                label: l10n.totalCourses,
-                value: '${(_courses.length * _statsAnimation.value).round()}',
-                subValue: '${_courses.length}',
-                trend: '+2 this month',
-                trendPositive: true,
-                accentColor: const Color(0xFF155CFB),
+              Expanded(
+                child: _buildEnhancedStatCard(
+                  isDark: isDark,
+                  icon: Icons.school_rounded,
+                  iconColors: const [Color(0xFF0D3D9F), Color(0xFF155CFB)],
+                  label: l10n.totalCourses,
+                  value: '${(_courses.length * _statsAnimation.value).round()}',
+                  subValue: '${_courses.length}',
+                  trend: 'Assigned now',
+                  trendPositive: true,
+                  accentColor: const Color(0xFF155CFB),
+                ),
               ),
-              const SizedBox(height: 12),
-              _buildEnhancedStatCard(
-                isDark: isDark,
-                icon: Icons.people_rounded,
-                iconColors: [const Color(0xFF7C4DFF), const Color(0xFF9C27B0)],
-                label: l10n.totalStudentsLabel,
-                value: '${(_totalStudents * _statsAnimation.value).round()}',
-                subValue: _formatNumber(_totalStudents),
-                trend: '+48 this week',
-                trendPositive: true,
-                accentColor: const Color(0xFF7C4DFF),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _buildEnhancedStatCard(
+                  isDark: isDark,
+                  icon: Icons.people_rounded,
+                  iconColors: const [Color(0xFF7C4DFF), Color(0xFF9C27B0)],
+                  label: l10n.totalStudentsLabel,
+                  value: '${(_totalStudents * _statsAnimation.value).round()}',
+                  subValue: _formatNumber(_totalStudents),
+                  trend: 'Across sections',
+                  trendPositive: true,
+                  accentColor: const Color(0xFF7C4DFF),
+                ),
               ),
             ],
           ),
@@ -1125,12 +1122,12 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
     required Color accentColor,
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
       decoration: BoxDecoration(
         color: isDark
             ? const Color(0xFF1F2937).withValues(alpha: 0.5)
             : Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: accentColor.withValues(alpha: 0.12),
           width: 1.5,
@@ -1148,11 +1145,9 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Icon with gradient background
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: iconColors,
@@ -1168,35 +1163,50 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                     ),
                   ],
                 ),
-                child: Icon(icon, color: Colors.white, size: 20),
+                child: Icon(icon, color: Colors.white, size: 17),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ShaderMask(
-                      shaderCallback: (bounds) => LinearGradient(
-                        colors: iconColors,
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ).createShader(bounds),
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          value,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 28,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: -0.5,
-                            height: 1.0,
+                    Row(
+                      children: [
+                        ShaderMask(
+                          shaderCallback: (bounds) => LinearGradient(
+                            colors: iconColors,
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ).createShader(bounds),
+                          child: Text(
+                            value,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -0.5,
+                              height: 1.0,
+                            ),
                           ),
                         ),
-                      ),
+                        // const SizedBox(width: 6),
+                        // Flexible(
+                        //   child: Text(
+                        //     subValue,
+                        //     maxLines: 1,
+                        //     overflow: TextOverflow.ellipsis,
+                        //     style: TextStyle(
+                        //       color: isDark
+                        //           ? Colors.white.withValues(alpha: 0.55)
+                        //           : const Color(0xFF6B7280),
+                        //       fontSize: 11,
+                        //       fontWeight: FontWeight.w600,
+                        //     ),
+                        //   ),
+                        // ),
+                      ],
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 3),
                     Text(
                       label,
                       maxLines: 1,
@@ -1205,9 +1215,8 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
                         color: isDark
                             ? Colors.white.withValues(alpha: 0.7)
                             : const Color(0xFF6B7280),
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: FontWeight.w600,
-                        letterSpacing: 0.3,
                       ),
                     ),
                   ],
@@ -1216,66 +1225,51 @@ class _InstructorCoursesScreenState extends State<InstructorCoursesScreen>
             ],
           ),
           const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-              decoration: BoxDecoration(
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+            decoration: BoxDecoration(
+              color:
+                  (trendPositive
+                          ? const Color(0xFF10B981)
+                          : const Color(0xFFEF4444))
+                      .withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(
                 color:
                     (trendPositive
                             ? const Color(0xFF10B981)
                             : const Color(0xFFEF4444))
-                        .withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color:
-                      (trendPositive
-                              ? const Color(0xFF10B981)
-                              : const Color(0xFFEF4444))
-                          .withValues(alpha: 0.2),
-                  width: 1,
-                ),
+                        .withValues(alpha: 0.2),
+                width: 1,
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                      color:
-                          (trendPositive
-                                  ? const Color(0xFF10B981)
-                                  : const Color(0xFFEF4444))
-                              .withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      trendPositive
-                          ? Icons.arrow_upward_rounded
-                          : Icons.arrow_downward_rounded,
-                      size: 10,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  trendPositive
+                      ? Icons.arrow_outward_rounded
+                      : Icons.south_east_rounded,
+                  size: 12,
+                  color: trendPositive
+                      ? const Color(0xFF10B981)
+                      : const Color(0xFFEF4444),
+                ),
+                const SizedBox(width: 5),
+                Flexible(
+                  child: Text(
+                    trend,
+                    style: TextStyle(
                       color: trendPositive
                           ? const Color(0xFF10B981)
                           : const Color(0xFFEF4444),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(width: 6),
-                  Flexible(
-                    child: Text(
-                      trend,
-                      style: TextStyle(
-                        color: trendPositive
-                            ? const Color(0xFF10B981)
-                            : const Color(0xFFEF4444),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.2,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],

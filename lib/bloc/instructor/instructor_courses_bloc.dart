@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../models/instructor/instructor_course_model.dart';
+import '../../models/instructor/teaching_course_model.dart';
 import '../../services/api/assignment_service.dart';
 import '../../services/api/enrollment_service.dart';
 import '../../services/api/lab_service.dart';
@@ -60,13 +61,33 @@ class InstructorCoursesBloc
   ) {
     final current = state;
     if (current is InstructorCoursesLoaded) {
+      TeachingCourseModel? teachingCourse;
+      for (final course in current.courses) {
+        if (course.courseId == event.courseId) {
+          teachingCourse = course;
+          break;
+        }
+      }
+
+      final resolvedSectionId =
+          teachingCourse?.sectionId ?? current.selectedSectionId;
+      final isSameSection = resolvedSectionId == current.selectedSectionId;
+
       emit(
         InstructorCoursesLoaded(
           current.courses,
           selectedCourseId: event.courseId,
-          selectedSectionId: current.selectedSectionId,
+          selectedSectionId: resolvedSectionId,
           deadlines: current.deadlines,
-          sectionStudents: current.sectionStudents,
+          sectionStudents: isSameSection
+              ? current.sectionStudents
+              : const <SectionStudentModel>[],
+          studentsStatus: isSameSection
+              ? current.studentsStatus
+              : CourseStudentsStatus.initial,
+          studentsErrorMessage: isSameSection
+              ? current.studentsErrorMessage
+              : null,
           engagementMetrics: current.engagementMetrics,
         ),
       );
@@ -148,6 +169,8 @@ class InstructorCoursesBloc
           selectedSectionId: current.selectedSectionId,
           deadlines: deadlines,
           sectionStudents: current.sectionStudents,
+          studentsStatus: current.studentsStatus,
+          studentsErrorMessage: current.studentsErrorMessage,
           engagementMetrics: current.engagementMetrics,
         ),
       );
@@ -163,18 +186,38 @@ class InstructorCoursesBloc
       return;
     }
 
+    emit(
+      InstructorCoursesLoaded(
+        current.courses,
+        selectedCourseId: current.selectedCourseId,
+        selectedSectionId: event.sectionId,
+        deadlines: current.deadlines,
+        sectionStudents: current.sectionStudents,
+        studentsStatus: CourseStudentsStatus.loading,
+        engagementMetrics: current.engagementMetrics,
+      ),
+    );
+
     final result = await _enrollmentService.getSectionStudentsLite(
       event.sectionId,
     );
+    final latest = state;
+    if (latest is! InstructorCoursesLoaded) {
+      return;
+    }
+
     if (!result.isSuccess || result.data == null) {
       emit(
         InstructorCoursesLoaded(
-          current.courses,
-          selectedCourseId: current.selectedCourseId,
-          selectedSectionId: current.selectedSectionId,
-          deadlines: current.deadlines,
-          sectionStudents: current.sectionStudents,
-          engagementMetrics: current.engagementMetrics,
+          latest.courses,
+          selectedCourseId: latest.selectedCourseId,
+          selectedSectionId: latest.selectedSectionId,
+          deadlines: latest.deadlines,
+          sectionStudents: latest.sectionStudents,
+          studentsStatus: CourseStudentsStatus.error,
+          studentsErrorMessage:
+              result.error?.message ?? 'Failed to load section students',
+          engagementMetrics: latest.engagementMetrics,
         ),
       );
       return;
@@ -182,12 +225,13 @@ class InstructorCoursesBloc
 
     emit(
       InstructorCoursesLoaded(
-        current.courses,
-        selectedCourseId: current.selectedCourseId,
+        latest.courses,
+        selectedCourseId: latest.selectedCourseId,
         selectedSectionId: event.sectionId,
-        deadlines: current.deadlines,
+        deadlines: latest.deadlines,
         sectionStudents: result.data!,
-        engagementMetrics: current.engagementMetrics,
+        studentsStatus: CourseStudentsStatus.loaded,
+        engagementMetrics: latest.engagementMetrics,
       ),
     );
   }
@@ -201,33 +245,66 @@ class InstructorCoursesBloc
       return;
     }
 
-    // Use section-level endpoint (same as TA) since course-level endpoint doesn't exist
-    final sectionId = current.selectedSectionId;
+    int? sectionId;
+    for (final course in current.courses) {
+      if (course.courseId == event.courseId) {
+        sectionId = course.sectionId;
+        break;
+      }
+    }
+    sectionId ??= current.selectedSectionId;
+
+    emit(
+      InstructorCoursesLoaded(
+        current.courses,
+        selectedCourseId: current.selectedCourseId ?? event.courseId,
+        selectedSectionId: sectionId,
+        deadlines: current.deadlines,
+        sectionStudents: current.sectionStudents,
+        studentsStatus: CourseStudentsStatus.loading,
+        engagementMetrics: current.engagementMetrics,
+      ),
+    );
+
     if (sectionId == null || sectionId <= 0) {
-      // No valid section selected, return empty
+      final latest = state;
+      if (latest is! InstructorCoursesLoaded) {
+        return;
+      }
+
       emit(
         InstructorCoursesLoaded(
-          current.courses,
-          selectedCourseId: current.selectedCourseId,
-          selectedSectionId: current.selectedSectionId,
-          deadlines: current.deadlines,
-          sectionStudents: current.sectionStudents,
-          engagementMetrics: current.engagementMetrics,
+          latest.courses,
+          selectedCourseId: latest.selectedCourseId,
+          selectedSectionId: latest.selectedSectionId,
+          deadlines: latest.deadlines,
+          sectionStudents: latest.sectionStudents,
+          studentsStatus: CourseStudentsStatus.error,
+          studentsErrorMessage: 'No valid section selected',
+          engagementMetrics: latest.engagementMetrics,
         ),
       );
       return;
     }
 
     final result = await _enrollmentService.getSectionStudentsLite(sectionId);
+    final latest = state;
+    if (latest is! InstructorCoursesLoaded) {
+      return;
+    }
+
     if (!result.isSuccess || result.data == null) {
       emit(
         InstructorCoursesLoaded(
-          current.courses,
-          selectedCourseId: current.selectedCourseId,
-          selectedSectionId: current.selectedSectionId,
-          deadlines: current.deadlines,
-          sectionStudents: current.sectionStudents,
-          engagementMetrics: current.engagementMetrics,
+          latest.courses,
+          selectedCourseId: latest.selectedCourseId,
+          selectedSectionId: latest.selectedSectionId,
+          deadlines: latest.deadlines,
+          sectionStudents: latest.sectionStudents,
+          studentsStatus: CourseStudentsStatus.error,
+          studentsErrorMessage:
+              result.error?.message ?? 'Failed to load enrolled students',
+          engagementMetrics: latest.engagementMetrics,
         ),
       );
       return;
@@ -235,12 +312,13 @@ class InstructorCoursesBloc
 
     emit(
       InstructorCoursesLoaded(
-        current.courses,
-        selectedCourseId: current.selectedCourseId,
+        latest.courses,
+        selectedCourseId: latest.selectedCourseId,
         selectedSectionId: sectionId,
-        deadlines: current.deadlines,
+        deadlines: latest.deadlines,
         sectionStudents: result.data!,
-        engagementMetrics: current.engagementMetrics,
+        studentsStatus: CourseStudentsStatus.loaded,
+        engagementMetrics: latest.engagementMetrics,
       ),
     );
   }
@@ -319,6 +397,8 @@ class InstructorCoursesBloc
         selectedSectionId: current.selectedSectionId,
         deadlines: current.deadlines,
         sectionStudents: current.sectionStudents,
+        studentsStatus: current.studentsStatus,
+        studentsErrorMessage: current.studentsErrorMessage,
         engagementMetrics: metrics,
       ),
     );

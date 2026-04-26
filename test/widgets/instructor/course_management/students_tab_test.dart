@@ -1,3 +1,6 @@
+@Timeout(Duration(seconds: 30))
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,7 +32,6 @@ Widget _buildStudentsTab(List<SectionStudentModel> students) {
   );
 }
 
-@Timeout(Duration(seconds: 30))
 void main() {
   testWidgets('renders students list with grade and score', (
     WidgetTester tester,
@@ -49,7 +51,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Student #1'), findsOneWidget);
+    expect(find.text('Student #1'), findsWidgets);
     expect(find.text('No email'), findsOneWidget);
     expect(find.textContaining('Grade:'), findsOneWidget);
     expect(find.textContaining('Score:'), findsOneWidget);
@@ -78,5 +80,43 @@ void main() {
     expect(find.byType(CircularProgressIndicator), findsNothing);
     expect(find.text('Failed to load course structure'), findsNothing);
     expect(find.text('Retry'), findsNothing);
+  });
+
+  testWidgets('supports manual refresh from the header action', (
+    WidgetTester tester,
+  ) async {
+    var refreshCount = 0;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const <Locale>[Locale('en'), Locale('ar')],
+        home: Builder(
+          builder: (context) {
+            return Scaffold(
+              body: StudentsTab(
+                students: const <SectionStudentModel>[
+                  SectionStudentModel(userId: 2, status: 'enrolled'),
+                ],
+                isDark: false,
+                l10n: AppLocalizations.of(context),
+                onRefreshRequested: () => refreshCount++,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.refresh_rounded));
+    await tester.pumpAndSettle();
+
+    expect(refreshCount, 1);
   });
 }

@@ -18,12 +18,16 @@ class InstructorCoursesLoading extends InstructorCoursesState {
   const InstructorCoursesLoading();
 }
 
+enum CourseStudentsStatus { initial, loading, loaded, error }
+
 class InstructorCoursesLoaded extends InstructorCoursesState {
   final List<TeachingCourseModel> courses;
   final int? selectedCourseId;
   final int? selectedSectionId;
   final List<DeadlineCardModel> deadlines;
   final List<SectionStudentModel> sectionStudents;
+  final CourseStudentsStatus studentsStatus;
+  final String? studentsErrorMessage;
   final EngagementMetricsModel? engagementMetrics;
 
   const InstructorCoursesLoaded(
@@ -32,6 +36,8 @@ class InstructorCoursesLoaded extends InstructorCoursesState {
     this.selectedSectionId,
     this.deadlines = const <DeadlineCardModel>[],
     this.sectionStudents = const <SectionStudentModel>[],
+    this.studentsStatus = CourseStudentsStatus.initial,
+    this.studentsErrorMessage,
     this.engagementMetrics,
   });
 
@@ -42,6 +48,8 @@ class InstructorCoursesLoaded extends InstructorCoursesState {
     selectedSectionId,
     deadlines,
     sectionStudents,
+    studentsStatus,
+    studentsErrorMessage,
     engagementMetrics,
   ];
 }
