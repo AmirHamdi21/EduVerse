@@ -1,3 +1,6 @@
+@Timeout(Duration(seconds: 30))
+library;
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/instructor/instructor_courses_bloc.dart';
@@ -204,7 +207,6 @@ Future<void> _flush() async {
   await Future<void>.delayed(const Duration(milliseconds: 1));
 }
 
-@Timeout(Duration(seconds: 30))
 void main() {
   group('InstructorCoursesBloc', () {
     test('loads teaching courses successfully', () async {
@@ -407,6 +409,72 @@ void main() {
 
       await bloc.close();
     });
+
+    test(
+      'loads course students using the selected course section id',
+      () async {
+        final bloc = InstructorCoursesBloc(
+          enrollmentService: _FakeEnrollmentService(
+            coursesResult: ServiceResult<List<TeachingCourseModel>>.success(
+              <TeachingCourseModel>[_teachingCourse()],
+            ),
+            studentsResult: ServiceResult<List<SectionStudentModel>>.success(
+              const <SectionStudentModel>[
+                SectionStudentModel(
+                  userId: 7,
+                  firstName: 'Mariam',
+                  lastName: 'Ali',
+                  status: 'enrolled',
+                  sectionId: 12,
+                  courseCode: 'CS401',
+                ),
+              ],
+            ),
+          ),
+          assignmentService: _FakeAssignmentService(
+            assignmentsResult:
+                ServiceResult<PaginatedResponse<AssignmentModel>>.success(
+                  const PaginatedResponse<AssignmentModel>(
+                    data: <AssignmentModel>[],
+                    total: 0,
+                    page: 1,
+                    limit: 1,
+                    totalPages: 1,
+                  ),
+                ),
+            submissionsByAssignment:
+                const <
+                  String,
+                  ServiceResult<List<AssignmentSubmissionModel>>
+                >{},
+          ),
+          labService: _FakeLabService(
+            labsResult: ServiceResult<List<LabModel>>.success(
+              const <LabModel>[],
+            ),
+          ),
+        );
+
+        bloc.add(const LoadTeachingCourses());
+        await _flush();
+        await _flush();
+
+        bloc.add(const SelectCourse(56));
+        await _flush();
+
+        bloc.add(const LoadCourseStudents(56));
+        await _flush();
+        await _flush();
+
+        expect(bloc.state, isA<InstructorCoursesLoaded>());
+        final loaded = bloc.state as InstructorCoursesLoaded;
+        expect(loaded.selectedSectionId, 12);
+        expect(loaded.sectionStudents, hasLength(1));
+        expect(loaded.sectionStudents.first.displayName, 'Mariam Ali');
+
+        await bloc.close();
+      },
+    );
 
     test(
       'computes engagement metrics from materials and submissions',

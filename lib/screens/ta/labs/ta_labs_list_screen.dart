@@ -1,6 +1,8 @@
+import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
@@ -25,9 +27,12 @@ class TALabsListScreen extends StatefulWidget {
   State<TALabsListScreen> createState() => _TALabsListScreenState();
 }
 
+enum _TALabStateFilter { all, active, draft, closed, archived }
+
 class _TALabsListScreenState extends State<TALabsListScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String _selectedFilter = 'all';
+  int? _selectedCourseId;
+  _TALabStateFilter _selectedStateFilter = _TALabStateFilter.all;
 
   @override
   void initState() {
@@ -59,7 +64,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
             backgroundColor: TAColors.primary,
             foregroundColor: Colors.white,
             icon: const Icon(Icons.add_rounded),
-            label: const Text('Create Lab'),
+            label: Text(l10n.taLabsCreateLab),
           ),
           body: SafeArea(
             child: BlocBuilder<TALabsCubit, TALabsState>(
@@ -70,7 +75,6 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                   child: CustomScrollView(
                     slivers: [
                       _buildAppBar(isDark, l10n),
-                      _buildFilterChips(isDark, l10n),
                       _buildContent(isDark, l10n, labsState),
                     ],
                   ),
@@ -119,80 +123,12 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     );
   }
 
-  Widget _buildFilterChips(bool isDark, AppLocalizations l10n) {
-    return SliverToBoxAdapter(
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Row(
-          children: [
-            _buildFilterChip(
-              label: l10n.taLabFilterAll,
-              value: 'all',
-              isDark: isDark,
-            ),
-            const SizedBox(width: 8),
-            _buildFilterChip(
-              label: l10n.taLabFilterActive,
-              value: 'active',
-              isDark: isDark,
-            ),
-            const SizedBox(width: 8),
-            _buildFilterChip(
-              label: l10n.taLabFilterPendingReview,
-              value: 'pending',
-              isDark: isDark,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFilterChip({
-    required String label,
-    required String value,
-    required bool isDark,
-  }) {
-    final isSelected = _selectedFilter == value;
-
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => setState(() => _selectedFilter = value),
-        borderRadius: BorderRadius.circular(10),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected ? TAColors.primary : TAColors.cardColor(isDark),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: isSelected
-                  ? TAColors.primary
-                  : TAColors.borderColor(isDark),
-            ),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected
-                  ? Colors.white
-                  : TAColors.textPrimaryColor(isDark),
-              fontSize: 13,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildContent(bool isDark, AppLocalizations l10n, TALabsState state) {
     // Wrap in BlocBuilder to get TA's assigned courses for filtering
     return BlocBuilder<TACoursesCubit, TACoursesState>(
       builder: (context, coursesState) {
         final cachedLabs = context.read<TALabsCubit>().cachedLabs;
+        final r = context.responsive;
 
         // Get TA's assigned course IDs and models
         List<TeachingCourseModel> assignedCourses = [];
@@ -206,26 +142,67 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         final assignedCourseIds = assignedCourses
             .map((c) => c.courseId)
             .toSet();
+        final allAssignedLabs = _filterLabsToAssignedCourses(
+          labs: state is TALabsLoaded
+              ? state.labs
+              : state is TALabsLoadingWithCache
+              ? state.cachedLabs
+              : cachedLabs,
+          assignedCourseIds: assignedCourseIds,
+        );
+        final visibleLabs = _applyFilters(allAssignedLabs);
+        final headerSlivers = <Widget>[
+          SliverToBoxAdapter(
+            child: _buildSummaryHeader(
+              isDark,
+              l10n,
+              r,
+              allAssignedLabs,
+              assignedCourseIds,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: _buildFilterMenus(
+              isDark,
+              l10n,
+              r,
+              assignedCourses,
+              visibleLabs.length,
+            ),
+          ),
+        ];
 
         // Handle full loading (no cache) - only on initial load
         if (state is TALabsLoading) {
           if (cachedLabs.isNotEmpty) {
-            return _buildLabsList(
-              isDark,
-              l10n,
-              cachedLabs,
-              assignedCourses,
-              assignedCourseIds,
-              showRefreshIndicator: true,
+            return SliverMainAxisGroup(
+              slivers: [
+                ...headerSlivers,
+                _buildLabsList(
+                  isDark,
+                  l10n,
+                  cachedLabs,
+                  assignedCourses,
+                  assignedCourseIds,
+                  showRefreshIndicator: true,
+                ),
+              ],
             );
           }
 
-          return _buildLoadingSkeleton(isDark);
+          return SliverMainAxisGroup(
+            slivers: [...headerSlivers, _buildLoadingSkeleton(isDark)],
+          );
         }
 
         if (state is TALabsError) {
-          return SliverFillRemaining(
-            child: _buildErrorState(isDark, state.message),
+          return SliverMainAxisGroup(
+            slivers: [
+              ...headerSlivers,
+              SliverFillRemaining(
+                child: _buildErrorState(isDark, l10n, state.message),
+              ),
+            ],
           );
         }
 
@@ -236,13 +213,18 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                 assignedCourseIds.contains(lab.courseId);
           }).toList();
 
-          return _buildLabsList(
-            isDark,
-            l10n,
-            filteredLabs,
-            assignedCourses,
-            assignedCourseIds,
-            showRefreshIndicator: true,
+          return SliverMainAxisGroup(
+            slivers: [
+              ...headerSlivers,
+              _buildLabsList(
+                isDark,
+                l10n,
+                filteredLabs,
+                assignedCourses,
+                assignedCourseIds,
+                showRefreshIndicator: true,
+              ),
+            ],
           );
         }
 
@@ -253,13 +235,18 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                 assignedCourseIds.contains(lab.courseId);
           }).toList();
 
-          return _buildLabsList(
-            isDark,
-            l10n,
-            filteredLabs,
-            assignedCourses,
-            assignedCourseIds,
-            showRefreshIndicator: false,
+          return SliverMainAxisGroup(
+            slivers: [
+              ...headerSlivers,
+              _buildLabsList(
+                isDark,
+                l10n,
+                filteredLabs,
+                assignedCourses,
+                assignedCourseIds,
+                showRefreshIndicator: false,
+              ),
+            ],
           );
         }
 
@@ -271,22 +258,518 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
             state is TALabGradeSuccess ||
             state is TALabGradeError) {
           if (cachedLabs.isNotEmpty) {
-            return _buildLabsList(
-              isDark,
-              l10n,
-              cachedLabs,
-              assignedCourses,
-              assignedCourseIds,
-              showRefreshIndicator: true,
+            return SliverMainAxisGroup(
+              slivers: [
+                ...headerSlivers,
+                _buildLabsList(
+                  isDark,
+                  l10n,
+                  cachedLabs,
+                  assignedCourses,
+                  assignedCourseIds,
+                  showRefreshIndicator: false,
+                ),
+              ],
             );
           }
 
-          return _buildLoadingSkeleton(isDark);
+          return SliverMainAxisGroup(
+            slivers: [...headerSlivers, _buildLoadingSkeleton(isDark)],
+          );
         }
 
         // Initial state - show loading if no courses loaded yet
-        return _buildLoadingSkeleton(isDark);
+        return SliverMainAxisGroup(
+          slivers: [...headerSlivers, _buildLoadingSkeleton(isDark)],
+        );
       },
+    );
+  }
+
+  List<LabModel> _filterLabsToAssignedCourses({
+    required List<LabModel> labs,
+    required Set<int> assignedCourseIds,
+  }) {
+    return labs
+        .where((lab) {
+          return assignedCourseIds.isEmpty ||
+              assignedCourseIds.contains(lab.courseId);
+        })
+        .toList(growable: false);
+  }
+
+  Widget _buildSummaryHeader(
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil r,
+    List<LabModel> labs,
+    Set<int> assignedCourseIds,
+  ) {
+    final courseCount = assignedCourseIds.isNotEmpty
+        ? assignedCourseIds.length
+        : labs.map((lab) => lab.courseId).toSet().length;
+    final activeCount = labs.where(_isActiveLab).length;
+    final draftCount = labs
+        .where((lab) => lab.status == api.LabStatus.draft)
+        .length;
+    final closedCount = labs
+        .where(
+          (lab) =>
+              lab.status == api.LabStatus.closed ||
+              lab.status == api.LabStatus.archived,
+        )
+        .length;
+    final stats = <({IconData icon, String label, String value, Color color})>[
+      (
+        icon: Icons.menu_book_rounded,
+        label: l10n.course,
+        value: '$courseCount',
+        color: TAColors.teal,
+      ),
+      (
+        icon: Icons.science_rounded,
+        label: l10n.taLabsCount,
+        value: '${labs.length}',
+        color: TAColors.secondary,
+      ),
+      (
+        icon: Icons.play_circle_rounded,
+        label: l10n.taLabActive,
+        value: '$activeCount',
+        color: TAColors.success,
+      ),
+      (
+        icon: Icons.edit_note_rounded,
+        label: l10n.draft,
+        value: '$draftCount',
+        color: TAColors.warning,
+      ),
+      (
+        icon: Icons.archive_rounded,
+        label: l10n.taLabClosed,
+        value: '$closedCount',
+        color: TAColors.pink,
+      ),
+    ];
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+      decoration: BoxDecoration(
+        gradient: isDark
+            ? TAColors.darkHeaderGradient
+            : TAColors.headerGradient,
+        borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: TAColors.primary.withValues(alpha: isDark ? 0.28 : 0.24),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: [
+            Positioned(
+              top: -34,
+              right: -10,
+              child: Container(
+                width: 132,
+                height: 132,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: -42,
+              left: -18,
+              child: Container(
+                width: 108,
+                height: 108,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.08),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(r.isMobile ? 18 : 22),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.16),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.18),
+                          ),
+                        ),
+                        child: const Icon(
+                          Icons.analytics_rounded,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.taLabsHeaderTitle,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: r.isMobile ? 19 : 22,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              l10n.taLabsHeaderSubtitle,
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.84),
+                                fontSize: r.isMobile ? 12 : 13,
+                                height: 1.45,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
+                      final spacing = 10.0;
+                      final itemWidth =
+                          (constraints.maxWidth -
+                              (spacing * (crossAxisCount - 1))) /
+                          crossAxisCount;
+
+                      return Wrap(
+                        spacing: spacing,
+                        runSpacing: spacing,
+                        children: stats
+                            .map((stat) {
+                              return SizedBox(
+                                width: itemWidth,
+                                child: _buildHeaderStatCard(
+                                  icon: stat.icon,
+                                  label: stat.label,
+                                  value: stat.value,
+                                  color: stat.color,
+                                ),
+                              );
+                            })
+                            .toList(growable: false),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderStatCard({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color color,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 18, color: color),
+          const SizedBox(height: 10),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.82),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterMenus(
+    bool isDark,
+    AppLocalizations l10n,
+    ResponsiveUtil r,
+    List<TeachingCourseModel> assignedCourses,
+    int visibleLabsCount,
+  ) {
+    String selectedCourseLabel = l10n.allCourses;
+    if (_selectedCourseId != null) {
+      for (final course in assignedCourses) {
+        if (course.courseId == _selectedCourseId) {
+          selectedCourseLabel =
+              '${course.course.courseCode} • ${course.course.courseName}';
+          break;
+        }
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: TAColors.cardColor(isDark),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: TAColors.borderColor(isDark).withValues(alpha: 0.7),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.14 : 0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: TAColors.primary.withValues(
+                      alpha: isDark ? 0.18 : 0.1,
+                    ),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    '$visibleLabsCount ${l10n.taLabsCount}',
+                    style: TextStyle(
+                      color: TAColors.primary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _buildModernDropdown<int?>(
+                    isDark: isDark,
+                    label: l10n.course,
+                    value: _selectedCourseId,
+                    icon: Icons.menu_book_rounded,
+                    menuMaxHeight: r.screenHeight * 0.45,
+                    items: <DropdownMenuItem<int?>>[
+                      DropdownMenuItem<int?>(
+                        value: null,
+                        child: Text(
+                          l10n.allCourses,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      ...assignedCourses.map((course) {
+                        return DropdownMenuItem<int?>(
+                          value: course.courseId,
+                          child: Text(
+                            '${course.course.courseCode} • ${course.course.courseName}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        );
+                      }),
+                    ],
+                    onChanged: (value) {
+                      setState(() => _selectedCourseId = value);
+                    },
+                    selectedLabel: selectedCourseLabel,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildModernDropdown<_TALabStateFilter>(
+                    isDark: isDark,
+                    label: l10n.status,
+                    value: _selectedStateFilter,
+                    icon: Icons.tune_rounded,
+                    menuMaxHeight: r.screenHeight * 0.45,
+                    items: <DropdownMenuItem<_TALabStateFilter>>[
+                      DropdownMenuItem<_TALabStateFilter>(
+                        value: _TALabStateFilter.all,
+                        child: Text(
+                          l10n.taLabsAllStates,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      DropdownMenuItem<_TALabStateFilter>(
+                        value: _TALabStateFilter.active,
+                        child: Text(
+                          l10n.taLabActive,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      DropdownMenuItem<_TALabStateFilter>(
+                        value: _TALabStateFilter.draft,
+                        child: Text(
+                          l10n.draft,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      DropdownMenuItem<_TALabStateFilter>(
+                        value: _TALabStateFilter.closed,
+                        child: Text(
+                          l10n.taLabClosed,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      DropdownMenuItem<_TALabStateFilter>(
+                        value: _TALabStateFilter.archived,
+                        child: Text(
+                          l10n.archived,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value == null) {
+                        return;
+                      }
+                      setState(() => _selectedStateFilter = value);
+                    },
+                    selectedLabel: _stateFilterLabel(
+                      l10n,
+                      _selectedStateFilter,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernDropdown<T>({
+    required bool isDark,
+    required String label,
+    required String selectedLabel,
+    required T value,
+    required IconData icon,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+    required double menuMaxHeight,
+  }) {
+    return DropdownButtonFormField<T>(
+      initialValue: value,
+      isExpanded: true,
+      menuMaxHeight: menuMaxHeight,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(
+          color: TAColors.textSecondaryColor(isDark),
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+        ),
+        prefixIcon: Icon(icon, size: 18, color: TAColors.primary),
+        filled: true,
+        fillColor: isDark
+            ? TAColors.surfaceColor(isDark).withValues(alpha: 0.75)
+            : TAColors.surfaceColor(isDark),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(
+            color: TAColors.borderColor(isDark).withValues(alpha: 0.9),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(
+            color: TAColors.borderColor(isDark).withValues(alpha: 0.9),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: TAColors.primary, width: 1.4),
+        ),
+      ),
+      dropdownColor: TAColors.cardColor(isDark),
+      icon: Icon(Icons.keyboard_arrow_down_rounded, color: TAColors.primary),
+      style: TextStyle(
+        color: TAColors.textPrimaryColor(isDark),
+        fontSize: 13,
+        fontWeight: FontWeight.w600,
+      ),
+      selectedItemBuilder: (context) {
+        return items
+            .map((_) {
+              return Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  selectedLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: TAColors.textPrimaryColor(isDark),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            })
+            .toList(growable: false);
+      },
+      items: items,
+      onChanged: onChanged,
     );
   }
 
@@ -299,7 +782,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     Set<int> assignedCourseIds, {
     required bool showRefreshIndicator,
   }) {
-    final filteredLabs = _applyFilter(labs);
+    final filteredLabs = _applyFilters(labs);
 
     // Group labs by courseId
     final grouped = <int, List<LabModel>>{};
@@ -307,10 +790,14 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
       grouped.putIfAbsent(lab.courseId, () => []).add(lab);
     }
 
-    // Show all assigned courses, even those without labs
-    final courseIds = assignedCourseIds.isNotEmpty
-        ? assignedCourseIds.toList()
-        : grouped.keys.toList();
+    final bool showAllAssignedCourses =
+        _selectedCourseId == null &&
+        _selectedStateFilter == _TALabStateFilter.all;
+    final courseIds = _resolveVisibleCourseIds(
+      grouped: grouped,
+      assignedCourseIds: assignedCourseIds,
+      showAllAssignedCourses: showAllAssignedCourses,
+    );
 
     if (courseIds.isEmpty) {
       return SliverFillRemaining(child: _buildEmptyState(isDark, l10n));
@@ -448,17 +935,53 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     );
   }
 
-  List<LabModel> _applyFilter(List<LabModel> labs) {
-    if (_selectedFilter == 'all') return labs;
-    if (_selectedFilter == 'active') {
-      return labs.where((lab) => lab.status.toJson() == 'published').toList();
+  List<int> _resolveVisibleCourseIds({
+    required Map<int, List<LabModel>> grouped,
+    required Set<int> assignedCourseIds,
+    required bool showAllAssignedCourses,
+  }) {
+    if (_selectedCourseId != null) {
+      return <int>[_selectedCourseId!];
     }
-    if (_selectedFilter == 'pending') {
-      return labs
-          .where((lab) => lab.status.toJson() == 'published' && !lab.isPastDue)
-          .toList();
+    if (showAllAssignedCourses && assignedCourseIds.isNotEmpty) {
+      return assignedCourseIds.toList();
     }
-    return labs;
+    return grouped.keys.toList();
+  }
+
+  List<LabModel> _applyFilters(List<LabModel> labs) {
+    return labs
+        .where((lab) {
+          final courseMatches =
+              _selectedCourseId == null || lab.courseId == _selectedCourseId;
+          final stateMatches = switch (_selectedStateFilter) {
+            _TALabStateFilter.all => true,
+            _TALabStateFilter.active => _isActiveLab(lab),
+            _TALabStateFilter.draft => lab.status == api.LabStatus.draft,
+            _TALabStateFilter.closed => lab.status == api.LabStatus.closed,
+            _TALabStateFilter.archived => lab.status == api.LabStatus.archived,
+          };
+
+          return courseMatches && stateMatches;
+        })
+        .toList(growable: false);
+  }
+
+  bool _isActiveLab(LabModel lab) {
+    return lab.status == api.LabStatus.published;
+  }
+
+  String _stateFilterLabel(
+    AppLocalizations l10n,
+    _TALabStateFilter stateFilter,
+  ) {
+    return switch (stateFilter) {
+      _TALabStateFilter.all => l10n.taLabsAllStates,
+      _TALabStateFilter.active => l10n.taLabActive,
+      _TALabStateFilter.draft => l10n.draft,
+      _TALabStateFilter.closed => l10n.taLabClosed,
+      _TALabStateFilter.archived => l10n.archived,
+    };
   }
 
   // T035: Empty state
@@ -501,7 +1024,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     );
   }
 
-  Widget _buildErrorState(bool isDark, String message) {
+  Widget _buildErrorState(bool isDark, AppLocalizations l10n, String message) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -520,7 +1043,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
           ElevatedButton.icon(
             onPressed: () => context.read<TALabsCubit>().fetchTALabs(),
             icon: const Icon(Icons.refresh_rounded),
-            label: const Text('Retry'),
+            label: Text(l10n.retry),
             style: ElevatedButton.styleFrom(
               backgroundColor: TAColors.primary,
               foregroundColor: Colors.white,
@@ -538,21 +1061,25 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     AppLocalizations l10n,
     List<TeachingCourseModel> assignedCourses,
   ) {
-    // Find the course model from assigned courses
-    final courseModel = assignedCourses.firstWhere(
-      (c) => c.courseId == courseId,
-      orElse: () => assignedCourses.isNotEmpty
-          ? assignedCourses.first
-          : throw Exception('Course not found'),
-    );
+    TeachingCourseModel? courseModel;
+    for (final course in assignedCourses) {
+      if (course.courseId == courseId) {
+        courseModel = course;
+        break;
+      }
+    }
 
+    final fallbackCourseName = '${l10n.course} #$courseId';
     final courseName = labs.isNotEmpty
-        ? (labs.first.course?.name ?? courseModel.course.courseName)
-        : courseModel.course.courseName;
+        ? (labs.first.course?.name ??
+              courseModel?.course.courseName ??
+              fallbackCourseName)
+        : (courseModel?.course.courseName ?? fallbackCourseName);
     final courseCode = labs.isNotEmpty
-        ? (labs.first.course?.code ?? courseModel.course.courseCode)
-        : courseModel.course.courseCode;
+        ? (labs.first.course?.code ?? courseModel?.course.courseCode ?? '')
+        : (courseModel?.course.courseCode ?? '');
     final color = _courseColor(courseId);
+    final courseInitials = _courseInitials(courseCode, courseName);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -591,6 +1118,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
               ),
             ),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: 48,
@@ -601,7 +1129,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                   ),
                   child: Center(
                     child: Text(
-                      courseCode.replaceAll(RegExp(r'[^A-Z]'), ''),
+                      courseInitials,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
@@ -626,6 +1154,8 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                         ),
                       Text(
                         courseName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: TAColors.textPrimaryColor(isDark),
                           fontSize: 15,
@@ -686,137 +1216,174 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () => context.push('/ta/lab/${lab.id}'),
+        onTap: () async {
+          await context.push('/ta/lab/${lab.id}');
+          if (!mounted) {
+            return;
+          }
+          context.read<TALabsCubit>().restoreLabsList();
+        },
         child: Padding(
           padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: _getStatusColor(
-                    statusStr,
-                  ).withValues(alpha: isDark ? 0.2 : 0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  Icons.science_rounded,
-                  color: _getStatusColor(statusStr),
-                  size: 20,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      lab.title,
-                      style: TextStyle(
-                        color: TAColors.textPrimaryColor(isDark),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 360;
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(
+                        statusStr,
+                      ).withValues(alpha: isDark ? 0.2 : 0.1),
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    const SizedBox(height: 4),
-                    Row(
+                    child: Icon(
+                      Icons.science_rounded,
+                      color: _getStatusColor(statusStr),
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.calendar_today_outlined,
-                          size: 14,
-                          color: TAColors.textTertiaryColor(isDark),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                lab.title,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: TAColors.textPrimaryColor(isDark),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            if (!isCompact) ...[
+                              const SizedBox(width: 10),
+                              _buildStatusBadge(statusStr, l10n),
+                              const SizedBox(width: 2),
+                              _buildLabMenuButton(isDark, l10n, lab),
+                            ],
+                          ],
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          lab.formattedDueDate,
-                          style: TextStyle(
-                            color: TAColors.textSecondaryColor(isDark),
-                            fontSize: 12,
+                        const SizedBox(height: 6),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.calendar_today_outlined,
+                              size: 14,
+                              color: TAColors.textTertiaryColor(isDark),
+                            ),
+                            const SizedBox(width: 4),
+                            Expanded(
+                              child: Text(
+                                _formatDueDate(context, l10n, lab),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: TAColors.textSecondaryColor(isDark),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (isCompact) ...[
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              _buildStatusBadge(statusStr, l10n),
+                              const Spacer(),
+                              _buildLabMenuButton(isDark, l10n, lab),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [_buildStatusBadge(statusStr, l10n)],
-              ),
-              const SizedBox(width: 4),
-              PopupMenuButton<String>(
-                icon: Icon(
-                  Icons.more_vert_rounded,
-                  size: 18,
-                  color: TAColors.textTertiaryColor(isDark),
-                ),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                onSelected: (value) {
-                if (value == 'delete') {
-                  _confirmDeleteLab(lab);
-                } else if (value == 'publish') {
-                  _updateLabStatus(lab, api.LabStatus.published);
-                } else if (value == 'close') {
-                  _updateLabStatus(lab, api.LabStatus.closed);
-                } else if (value == 'archive') {
-                  _updateLabStatus(lab, api.LabStatus.archived);
-                }
-              },
-                itemBuilder: (ctx) => [
-                  if (lab.status == api.LabStatus.draft)
-                    const PopupMenuItem(
-                      value: 'publish',
-                      child: Row(
-                        children: [
-                          Icon(Icons.publish_rounded, size: 18),
-                          SizedBox(width: 8),
-                          Text('Publish'),
                         ],
-                      ),
-                    ),
-                  if (lab.status == api.LabStatus.published)
-                    const PopupMenuItem(
-                      value: 'close',
-                      child: Row(
-                        children: [
-                          Icon(Icons.lock_outline_rounded, size: 18),
-                          SizedBox(width: 8),
-                          Text('Close'),
-                        ],
-                      ),
-                    ),
-                  if (lab.status == api.LabStatus.closed)
-                    const PopupMenuItem(
-                      value: 'archive',
-                      child: Row(
-                        children: [
-                          Icon(Icons.archive_outlined, size: 18),
-                          SizedBox(width: 8),
-                          Text('Archive'),
-                        ],
-                      ),
-                    ),
-                  PopupMenuItem(
-                    value: 'delete',
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.delete_rounded,
-                          size: 18,
-                          color: TAColors.error,
-                        ),
-                        const SizedBox(width: 8),
-                        Text('Delete', style: TextStyle(color: TAColors.error)),
                       ],
                     ),
                   ),
                 ],
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildLabMenuButton(bool isDark, AppLocalizations l10n, LabModel lab) {
+    return PopupMenuButton<String>(
+      icon: Icon(
+        Icons.more_vert_rounded,
+        size: 18,
+        color: TAColors.textTertiaryColor(isDark),
+      ),
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(),
+      onSelected: (value) {
+        if (value == 'delete') {
+          _confirmDeleteLab(lab, l10n);
+        } else if (value == 'publish') {
+          _updateLabStatus(lab, api.LabStatus.published);
+        } else if (value == 'close') {
+          _updateLabStatus(lab, api.LabStatus.closed);
+        } else if (value == 'archive') {
+          _updateLabStatus(lab, api.LabStatus.archived);
+        }
+      },
+      itemBuilder: (ctx) => [
+        if (lab.status == api.LabStatus.draft)
+          PopupMenuItem(
+            value: 'publish',
+            child: Row(
+              children: [
+                const Icon(Icons.publish_rounded, size: 18),
+                const SizedBox(width: 8),
+                Text(l10n.publish),
+              ],
+            ),
+          ),
+        if (lab.status == api.LabStatus.published)
+          PopupMenuItem(
+            value: 'close',
+            child: Row(
+              children: [
+                const Icon(Icons.lock_outline_rounded, size: 18),
+                const SizedBox(width: 8),
+                Text(l10n.close),
+              ],
+            ),
+          ),
+        if (lab.status == api.LabStatus.closed)
+          PopupMenuItem(
+            value: 'archive',
+            child: Row(
+              children: [
+                const Icon(Icons.archive_outlined, size: 18),
+                const SizedBox(width: 8),
+                Text(l10n.archive),
+              ],
+            ),
+          ),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(Icons.delete_rounded, size: 18, color: TAColors.error),
+              const SizedBox(width: 8),
+              Text(l10n.delete, style: const TextStyle(color: TAColors.error)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -845,11 +1412,13 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         label = l10n.taLabActive;
         break;
       case 'closed':
-      case 'archived':
         label = l10n.taLabClosed;
         break;
+      case 'archived':
+        label = l10n.archived;
+        break;
       case 'draft':
-        label = 'Draft';
+        label = l10n.draft;
         break;
       default:
         label = status;
@@ -883,8 +1452,44 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     return colors[courseId % colors.length];
   }
 
+  String _formatDueDate(
+    BuildContext context,
+    AppLocalizations l10n,
+    LabModel lab,
+  ) {
+    if (lab.dueDate == null) {
+      return l10n.taLabNoDueDate;
+    }
+
+    final locale = Localizations.localeOf(context).toString();
+    return DateFormat.yMMMd(locale).add_jm().format(lab.dueDate!.toLocal());
+  }
+
+  String _courseInitials(String courseCode, String courseName) {
+    final codeLetters = courseCode
+        .replaceAll(RegExp(r'[^A-Za-z]'), '')
+        .toUpperCase();
+    if (codeLetters.isNotEmpty) {
+      return codeLetters.length <= 3
+          ? codeLetters
+          : codeLetters.substring(0, 3);
+    }
+
+    final words = courseName
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((word) => word.isNotEmpty)
+        .take(2)
+        .toList(growable: false);
+    if (words.isEmpty) {
+      return 'LAB';
+    }
+    return words.map((word) => word.substring(0, 1).toUpperCase()).join();
+  }
+
   // T031: Open Create Lab form
   void _openCreateLabForm(bool isDark) {
+    final l10n = AppLocalizations.of(context);
     final coursesState = context.read<TACoursesCubit>().state;
     final courses =
         coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>
@@ -896,7 +1501,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     if (courses.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Courses are still loading. Please try again.'),
+          content: Text(l10n.taLabsCoursesLoading),
           backgroundColor: TAColors.warning,
           behavior: SnackBarBehavior.fixed,
         ),
@@ -940,8 +1545,9 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                     content: Text(
                       message ?? _labSavedMessage(data['status']?.toString()),
                     ),
-                    backgroundColor:
-                        message == null ? TAColors.success : TAColors.error,
+                    backgroundColor: message == null
+                        ? TAColors.success
+                        : TAColors.error,
                     behavior: SnackBarBehavior.fixed,
                   ),
                 );
@@ -954,18 +1560,16 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   }
 
   // T033: Delete lab from list
-  void _confirmDeleteLab(LabModel lab) {
+  void _confirmDeleteLab(LabModel lab, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Lab'),
-        content: const Text(
-          'Are you sure you want to delete this lab? This action cannot be undone.',
-        ),
+        title: Text(l10n.taLabDelete),
+        content: Text(l10n.taLabDeleteConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -973,7 +1577,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
               context.read<TALabsCubit>().deleteLab(lab.id);
             },
             style: TextButton.styleFrom(foregroundColor: TAColors.error),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -1000,25 +1604,27 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   }
 
   String _labSavedMessage(String? rawStatus) {
+    final l10n = AppLocalizations.of(context);
     final status = api.LabStatus.fromString(rawStatus ?? '');
     if (status == api.LabStatus.published) {
-      return 'Lab created as published. Enrolled students can now receive lab notifications.';
+      return l10n.taLabsCreatedPublished;
     }
-    return 'Lab created as draft. Publish it to notify enrolled students.';
+    return l10n.taLabsCreatedDraft;
   }
 
   String _labStatusSuccessMessage(api.LabStatus status) {
+    final l10n = AppLocalizations.of(context);
     switch (status) {
       case api.LabStatus.published:
-        return 'Lab published. Enrolled students can now receive lab notifications.';
+        return l10n.taLabsPublishedSuccess;
       case api.LabStatus.closed:
-        return 'Lab closed successfully.';
+        return l10n.taLabsClosedSuccess;
       case api.LabStatus.archived:
-        return 'Lab archived successfully.';
+        return l10n.taLabsArchivedSuccess;
       case api.LabStatus.draft:
-        return 'Lab moved to draft.';
+        return l10n.taLabsMovedToDraft;
       case api.LabStatus.unknown:
-        return 'Lab status updated.';
+        return l10n.taLabsStatusUpdated;
     }
   }
 }

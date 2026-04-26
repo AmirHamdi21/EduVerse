@@ -1,6 +1,8 @@
+import 'package:edu_verse/common/utils/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../bloc/theme/theme_event.dart';
@@ -82,10 +84,11 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
 
         return BlocConsumer<TALabsCubit, TALabsState>(
           listener: (context, state) {
+            final l10n = AppLocalizations.of(context);
             if (state is TALabGradeSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: const Text('Grade saved successfully!'),
+                  content: Text(l10n.gradeSubmitted),
                   backgroundColor: TAColors.success,
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -93,7 +96,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
             } else if (state is TALabGradeError) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('Grading failed: ${state.message}'),
+                  content: Text('${l10n.failed}: ${state.message}'),
                   backgroundColor: TAColors.error,
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -116,7 +119,10 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                 appBar: AppBar(
                   backgroundColor: TAColors.scaffoldColor(isDark),
                   leading: IconButton(
-                    onPressed: () => context.pop(),
+                    onPressed: () {
+                      context.read<TALabsCubit>().restoreLabsList();
+                      context.pop();
+                    },
                     icon: Icon(
                       Icons.arrow_back_rounded,
                       color: TAColors.textPrimaryColor(isDark),
@@ -145,7 +151,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                             .read<TALabsCubit>()
                             .fetchLabDetail(widget.labId),
                         icon: const Icon(Icons.refresh_rounded),
-                        label: const Text('Retry'),
+                        label: Text(l10n.retry),
                       ),
                     ],
                   ),
@@ -200,7 +206,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               _buildSliverAppBar(isDark, l10n, lab, innerBoxIsScrolled),
-              SliverToBoxAdapter(child: _buildLabHeader(isDark, lab)),
+              SliverToBoxAdapter(child: _buildLabHeader(isDark, l10n, lab)),
               SliverToBoxAdapter(
                 child: _buildStatsRow(isDark, lab, submissions),
               ),
@@ -216,10 +222,10 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
           body: TabBarView(
             controller: _tabController,
             children: [
-              _buildOverviewTab(isDark, lab),
-              _buildSubmissionsTab(isDark, lab, submissions),
-              _buildAttendanceTab(isDark, attendance),
-              _buildInstructionsTab(isDark, lab),
+              _buildOverviewTab(isDark, l10n, lab),
+              _buildSubmissionsTab(isDark, l10n, lab, submissions),
+              _buildAttendanceTab(isDark, l10n, attendance),
+              _buildInstructionsTab(isDark, l10n),
             ],
           ),
         ),
@@ -237,7 +243,10 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
       backgroundColor: TAColors.scaffoldColor(isDark),
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
-        onPressed: () => context.pop(),
+        onPressed: () {
+          context.read<TALabsCubit>().restoreLabsList();
+          context.pop();
+        },
         icon: Icon(
           Icons.arrow_back_rounded,
           color: TAColors.textPrimaryColor(isDark),
@@ -288,7 +297,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                     color: TAColors.textPrimaryColor(isDark),
                   ),
                   const SizedBox(width: 10),
-                  const Text('Edit Lab'),
+                  Text(l10n.taLabEdit),
                 ],
               ),
             ),
@@ -298,7 +307,10 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                 children: [
                   Icon(Icons.delete_rounded, size: 20, color: TAColors.error),
                   const SizedBox(width: 10),
-                  Text('Delete Lab', style: TextStyle(color: TAColors.error)),
+                  Text(
+                    l10n.taLabDelete,
+                    style: const TextStyle(color: TAColors.error),
+                  ),
                 ],
               ),
             ),
@@ -311,13 +323,16 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
     );
   }
 
-  Widget _buildLabHeader(bool isDark, LabModel lab) {
+  Widget _buildLabHeader(bool isDark, AppLocalizations l10n, LabModel lab) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            spacing: 10,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -329,7 +344,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  lab.course?.code ?? 'Course #${lab.courseId}',
+                  lab.course?.code ?? '${l10n.course} #${lab.courseId}',
                   style: TextStyle(
                     color: TAColors.primary,
                     fontSize: 12,
@@ -337,21 +352,21 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  lab.course?.name ?? '',
+              if ((lab.course?.name ?? '').isNotEmpty)
+                Text(
+                  lab.course!.name,
                   style: TextStyle(
                     color: TAColors.textSecondaryColor(isDark),
                     fontSize: 13,
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: 12),
           Text(
             lab.title,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: TAColors.textPrimaryColor(isDark),
               fontSize: 22,
@@ -381,32 +396,43 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          _buildStatCard(
-            isDark,
-            lab.status.toJson().toUpperCase(),
-            'Status',
-            Icons.info_rounded,
-            TAColors.info,
-          ),
-          const SizedBox(width: 8),
-          _buildStatCard(
-            isDark,
-            '${submissions.length}',
-            'Submissions',
-            Icons.assignment_rounded,
-            TAColors.warning,
-          ),
-          const SizedBox(width: 8),
-          _buildStatCard(
-            isDark,
-            lab.formattedDueDate,
-            'Due',
-            Icons.calendar_today_rounded,
-            TAColors.error,
-          ),
-        ],
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isCompact = constraints.maxWidth < 420;
+          final spacing = 8.0;
+          final itemWidth = isCompact
+              ? (constraints.maxWidth - spacing) / 2
+              : (constraints.maxWidth - (spacing * 2)) / 3;
+          final l10n = AppLocalizations.of(context);
+          final cards = [
+            _buildStatCard(
+              isDark,
+              _statusLabel(l10n, lab.status),
+              l10n.taLabStatus,
+              Icons.info_rounded,
+              TAColors.info,
+              width: itemWidth,
+            ),
+            _buildStatCard(
+              isDark,
+              '${submissions.length}',
+              l10n.taLabSubmissions,
+              Icons.assignment_rounded,
+              TAColors.warning,
+              width: itemWidth,
+            ),
+            _buildStatCard(
+              isDark,
+              _formatDueDate(context, l10n, lab),
+              l10n.taLabDue,
+              Icons.calendar_today_rounded,
+              TAColors.error,
+              width: itemWidth,
+            ),
+          ];
+
+          return Wrap(spacing: spacing, runSpacing: spacing, children: cards);
+        },
       ),
     );
   }
@@ -416,9 +442,11 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
     String value,
     String label,
     IconData icon,
-    Color color,
-  ) {
-    return Expanded(
+    Color color, {
+    double? width,
+  }) {
+    return SizedBox(
+      width: width,
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -438,7 +466,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                 fontWeight: FontWeight.w700,
               ),
               textAlign: TextAlign.center,
-              maxLines: 1,
+              maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
             Text(
@@ -455,39 +483,46 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
   }
 
   TabBar _buildTabBar(bool isDark, AppLocalizations l10n) {
+    final r = context.responsive;
     return TabBar(
       controller: _tabController,
+      isScrollable: true,
+      tabAlignment: TabAlignment.start,
+      padding: EdgeInsets.zero,
       labelColor: TAColors.primary,
       unselectedLabelColor: TAColors.textSecondaryColor(isDark),
       indicatorColor: TAColors.primary,
       indicatorWeight: 3,
-      labelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 14,
+      labelStyle: TextStyle(
+        fontSize: r.isMobile ? 13 : 14,
+        fontWeight: FontWeight.w600,
+      ),
+      unselectedLabelStyle: TextStyle(
+        fontSize: r.isMobile ? 13 : 14,
         fontWeight: FontWeight.w500,
       ),
       tabs: [
         Tab(text: l10n.taLabOverview),
         Tab(text: l10n.taLabSubmissionsTab),
         Tab(text: l10n.taLabAttendanceTab),
-        const Tab(text: 'Instructions'),
+        Tab(text: l10n.instructions),
       ],
     );
   }
 
   // ── Tab 1: Overview ──────────────────────────────────────────
 
-  Widget _buildOverviewTab(bool isDark, LabModel lab) {
+  Widget _buildOverviewTab(bool isDark, AppLocalizations l10n, LabModel lab) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _sectionTitle(isDark, 'Lab Information'),
+          _sectionTitle(isDark, l10n.taLabInformation),
           const SizedBox(height: 8),
           _buildInfoCard(
             isDark,
-            'Max Score',
+            l10n.taLabMaxScore,
             '${lab.maxScore}',
             Icons.stars_rounded,
             TAColors.warning,
@@ -495,34 +530,34 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
           if (lab.weight > 0)
             _buildInfoCard(
               isDark,
-              'Weight',
+              l10n.quizWeight,
               '${lab.weight}%',
               Icons.balance_rounded,
               TAColors.info,
             ),
           _buildInfoCard(
             isDark,
-            'Status',
-            lab.status.toJson().toUpperCase(),
+            l10n.taLabStatus,
+            _statusLabel(l10n, lab.status),
             Icons.flag_rounded,
             TAColors.success,
           ),
           _buildInfoCard(
             isDark,
-            'Due Date',
-            lab.formattedDueDate,
+            l10n.dueDate,
+            _formatDueDate(context, l10n, lab),
             Icons.calendar_today_rounded,
             TAColors.error,
           ),
           if (lab.instructions.isNotEmpty) ...[
             const SizedBox(height: 16),
-            _sectionTitle(isDark, 'Instructions'),
+            _sectionTitle(isDark, l10n.instructions),
             const SizedBox(height: 8),
             ...lab.instructions.map(
               (instr) => _buildInfoCard(
                 isDark,
-                'Instruction #${instr.orderIndex + 1}',
-                instr.instructionText ?? 'File attachment',
+                '${l10n.instructions} #${instr.orderIndex + 1}',
+                instr.instructionText ?? l10n.instructions,
                 Icons.description_rounded,
                 TAColors.primary,
               ),
@@ -606,13 +641,14 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
 
   Widget _buildSubmissionsTab(
     bool isDark,
+    AppLocalizations l10n,
     LabModel lab,
     List<LabSubmissionModel> submissions,
   ) {
     if (submissions.isEmpty) {
       return _buildEmptyTab(
         isDark,
-        'No submissions found for this lab',
+        l10n.taLabNoSubmissionsDesc,
         Icons.inbox_rounded,
       );
     }
@@ -621,12 +657,13 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
       padding: const EdgeInsets.all(16),
       itemCount: submissions.length,
       itemBuilder: (ctx, i) =>
-          _buildSubmissionCard(isDark, lab, submissions[i]),
+          _buildSubmissionCard(isDark, l10n, lab, submissions[i]),
     );
   }
 
   Widget _buildSubmissionCard(
     bool isDark,
+    AppLocalizations l10n,
     LabModel lab,
     LabSubmissionModel sub,
   ) {
@@ -674,7 +711,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                       Text(
                         studentName.isNotEmpty
                             ? studentName
-                            : 'Student #${sub.userId}',
+                            : '${l10n.student} #${sub.userId}',
                         style: TextStyle(
                           color: TAColors.textPrimaryColor(isDark),
                           fontSize: 14,
@@ -702,7 +739,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                'LATE',
+                                l10n.late.toUpperCase(),
                                 style: TextStyle(
                                   color: TAColors.error,
                                   fontSize: 9,
@@ -738,46 +775,59 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
               ],
             ),
             const SizedBox(height: 8),
-            // T037: View and Grade buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _viewLabSubmission(lab, sub),
-                    icon: const Icon(Icons.visibility_outlined, size: 16),
-                    label: const Text('View'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: TAColors.primary,
-                      side: BorderSide(
-                        color: TAColors.primary.withValues(alpha: 0.3),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final isCompact = constraints.maxWidth < 360;
+                final viewButton = OutlinedButton.icon(
+                  onPressed: () => _viewLabSubmission(l10n, lab, sub),
+                  icon: const Icon(Icons.visibility_outlined, size: 16),
+                  label: Text(l10n.view),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: TAColors.primary,
+                    side: BorderSide(
+                      color: TAColors.primary.withValues(alpha: 0.3),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _openLabGrading(isDark, lab, sub),
-                    icon: Icon(
-                      isGraded ? Icons.edit_rounded : Icons.grading_rounded,
-                      size: 16,
+                );
+                final gradeButton = OutlinedButton.icon(
+                  onPressed: () => _openLabGrading(isDark, lab, sub),
+                  icon: Icon(
+                    isGraded ? Icons.edit_rounded : Icons.grading_rounded,
+                    size: 16,
+                  ),
+                  label: Text(isGraded ? l10n.taLabRegrade : l10n.grade),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: TAColors.primary,
+                    side: BorderSide(
+                      color: TAColors.primary.withValues(alpha: 0.3),
                     ),
-                    label: Text(isGraded ? 'Re-grade' : 'Grade'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: TAColors.primary,
-                      side: BorderSide(
-                        color: TAColors.primary.withValues(alpha: 0.3),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                ),
-              ],
+                );
+
+                if (isCompact) {
+                  return Column(
+                    children: [
+                      SizedBox(width: double.infinity, child: viewButton),
+                      const SizedBox(height: 8),
+                      SizedBox(width: double.infinity, child: gradeButton),
+                    ],
+                  );
+                }
+
+                return Row(
+                  children: [
+                    Expanded(child: viewButton),
+                    const SizedBox(width: 8),
+                    Expanded(child: gradeButton),
+                  ],
+                );
+              },
             ),
           ],
         ),
@@ -786,15 +836,21 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
   }
 
   // T037: View lab submission details
-  Future<void> _viewLabSubmission(LabModel lab, LabSubmissionModel sub) async {
+  Future<void> _viewLabSubmission(
+    AppLocalizations l10n,
+    LabModel lab,
+    LabSubmissionModel sub,
+  ) async {
     final studentName = sub.user != null
         ? '${sub.user!.firstName} ${sub.user!.lastName}'.trim()
-        : 'Student #${sub.userId}';
+        : '${l10n.student} #${sub.userId}';
 
     await SubmissionDetailViewer.showLab(
       context: context,
       submission: sub,
-      studentName: studentName.isEmpty ? 'Student #${sub.userId}' : studentName,
+      studentName: studentName.isEmpty
+          ? '${l10n.student} #${sub.userId}'
+          : studentName,
       labTitle: lab.title,
       maxScore: lab.maxScore,
       onGrade: (score, feedback) async {
@@ -851,11 +907,15 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
 
   // ── Tab 3: Attendance (T042) — shared AttendanceSheet ───────
 
-  Widget _buildAttendanceTab(bool isDark, List<LabAttendanceModel> attendance) {
+  Widget _buildAttendanceTab(
+    bool isDark,
+    AppLocalizations l10n,
+    List<LabAttendanceModel> attendance,
+  ) {
     if (attendance.isEmpty) {
       return _buildEmptyTab(
         isDark,
-        'No attendance records for this lab',
+        l10n.taLabNoAttendanceDesc,
         Icons.people_rounded,
       );
     }
@@ -906,7 +966,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
 
   // ── Tab 4: Instructions (T045/T046) ─────────────────────────
 
-  Widget _buildInstructionsTab(bool isDark, LabModel lab) {
+  Widget _buildInstructionsTab(bool isDark, AppLocalizations l10n) {
     return BlocProvider<LabDetailCubit>.value(
       value: _instructionCubit,
       child: BlocConsumer<LabDetailCubit, LabDetailState>(
@@ -932,7 +992,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                   backgroundColor: TAColors.error,
                   behavior: SnackBarBehavior.floating,
                   action: SnackBarAction(
-                    label: 'Retry',
+                    label: l10n.retry,
                     textColor: Colors.white,
                     onPressed: () {
                       _instructionCubit.loadInstructions(widget.labId);
@@ -994,20 +1054,21 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
     final state = context.read<TALabsCubit>().state;
     final hasSubmissions =
         state is TALabDetailLoaded && state.submissions.isNotEmpty;
+    final l10n = AppLocalizations.of(context);
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Lab'),
+        title: Text(l10n.taLabDelete),
         content: Text(
           hasSubmissions
-              ? 'This lab has existing student submissions. Deleting it will permanently remove all submission data. Continue?'
-              : 'Are you sure you want to delete this lab?',
+              ? l10n.taLabDeleteWithSubmissionsConfirm
+              : l10n.taLabDeleteConfirm,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -1016,7 +1077,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
               context.go('/ta/labs');
             },
             style: TextButton.styleFrom(foregroundColor: TAColors.error),
-            child: Text(hasSubmissions ? 'Delete Anyway' : 'Delete'),
+            child: Text(hasSubmissions ? l10n.taLabDeleteAnyway : l10n.delete),
           ),
         ],
       ),
@@ -1055,15 +1116,19 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                 Navigator.of(ctx).pop();
                 try {
                   await _labService.update(lab.id, data);
+                  if (!mounted) {
+                    return;
+                  }
                   context.read<TALabsCubit>().fetchLabDetail(widget.labId);
                 } catch (e) {
                   if (mounted) {
+                    final l10n = AppLocalizations.of(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
                           e.toString().contains('403')
-                              ? "You don't have permission to edit this lab"
-                              : 'Failed to update lab: $e',
+                              ? l10n.taLabPermissionEditDenied
+                              : '${l10n.failed}: $e',
                         ),
                         backgroundColor: TAColors.error,
                         behavior: SnackBarBehavior.floating,
@@ -1077,6 +1142,29 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
         );
       },
     );
+  }
+
+  String _formatDueDate(
+    BuildContext context,
+    AppLocalizations l10n,
+    LabModel lab,
+  ) {
+    if (lab.dueDate == null) {
+      return l10n.taLabNoDueDate;
+    }
+
+    final locale = Localizations.localeOf(context).toString();
+    return DateFormat.yMMMd(locale).add_jm().format(lab.dueDate!.toLocal());
+  }
+
+  String _statusLabel(AppLocalizations l10n, lab_enums.LabStatus status) {
+    return switch (status) {
+      lab_enums.LabStatus.published => l10n.taLabActive,
+      lab_enums.LabStatus.draft => l10n.draft,
+      lab_enums.LabStatus.closed => l10n.taLabClosed,
+      lab_enums.LabStatus.archived => l10n.archived,
+      lab_enums.LabStatus.unknown => status.value.toUpperCase(),
+    };
   }
 }
 

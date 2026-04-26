@@ -1,3 +1,6 @@
+@Timeout(Duration(seconds: 30))
+library;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -256,7 +259,6 @@ void _setViewport(WidgetTester tester, Size size) {
   });
 }
 
-@Timeout(Duration(seconds: 30))
 void main() {
   testWidgets('shows five tabs and renders lectures content', (
     WidgetTester tester,

@@ -45,17 +45,20 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
   int? _resolvedCourseId;
   int? _requestedStudentsCourseId;
   int? _requestedMetricsCourseId;
+  bool _skipNextStudentsTabAutoRefresh = false;
   String? _materialsFailureMessage;
   List<String> _failedMaterialIds = const <String>[];
   bool _retryingFailedMaterials = false;
   bool _hasCourseAccess = true;
   bool _canDeleteCourse = true;
+  List<SectionStudentModel> _persistedStudents = const <SectionStudentModel>[];
 
   @override
   void initState() {
     super.initState();
     _storageService = widget.storageService ?? StorageService();
     _tabController = TabController(length: 5, vsync: this);
+    _tabController.addListener(_handleTabControllerChanged);
     _resolveRoleAccess();
     _course =
         widget.course ??
@@ -107,6 +110,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     _resolvedCourseId = incomingCourseId;
     _requestedStudentsCourseId = null;
     _requestedMetricsCourseId = null;
+    _persistedStudents = const <SectionStudentModel>[];
 
     if (_resolvedCourseId == null || _resolvedCourseId! <= 0) {
       return;
@@ -225,6 +229,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
 
   @override
   void dispose() {
+    _tabController.removeListener(_handleTabControllerChanged);
     _tabController.dispose();
     super.dispose();
   }
@@ -245,7 +250,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
 
         final teachingCourse = _resolveTeachingCourse(instructorState);
         final deadlines = _resolveDeadlines(instructorState);
-        final students = _resolveStudents(instructorState);
+        final students = _resolveVisibleStudents(instructorState);
         final engagementMetrics = _resolveEngagementMetrics(instructorState);
         final materials = _resolveMaterials(materialsState);
         final bundles = _resolveBundles(materialsState);
@@ -267,6 +272,14 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
             BlocListener<InstructorCoursesBloc, InstructorCoursesState>(
               listener: (context, state) {
                 if (state is InstructorCoursesLoaded) {
+                  final teachingCourse = _resolveTeachingCourse(state);
+                  if (teachingCourse != null &&
+                      state.selectedSectionId == teachingCourse.sectionId &&
+                      state.studentsStatus == CourseStudentsStatus.loaded) {
+                    _persistedStudents = List<SectionStudentModel>.from(
+                      state.sectionStudents,
+                    );
+                  }
                   _requestCourseDetailLoads(state);
                 }
               },
@@ -291,6 +304,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                     isDark: isDark,
                     l10n: l10n,
                     tabController: _tabController,
+                    onTabSelected: _handleTabSelected,
                     studentsCount: studentsCount,
                     assignmentsCount: deadlines
                         .where((item) => item.type == DeadlineType.assignment)
@@ -352,6 +366,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                     students: students,
                     isDark: isDark,
                     l10n: l10n,
+                    onRefreshRequested: _refreshStudents,
                     emptyStateTitleOverride: hasValidSection
                         ? null
                         : 'No section assigned',
@@ -396,11 +411,26 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     return const <DeadlineCardModel>[];
   }
 
-  List<SectionStudentModel> _resolveStudents(InstructorCoursesState state) {
+  List<SectionStudentModel> _resolveVisibleStudents(
+    InstructorCoursesState state,
+  ) {
     if (state is InstructorCoursesLoaded) {
-      return state.sectionStudents;
+      final teachingCourse = _resolveTeachingCourse(state);
+      if (teachingCourse != null &&
+          state.selectedSectionId == teachingCourse.sectionId) {
+        if (state.studentsStatus == CourseStudentsStatus.loaded) {
+          return state.sectionStudents;
+        }
+
+        if (_persistedStudents.isNotEmpty) {
+          return _persistedStudents;
+        }
+
+        return state.sectionStudents;
+      }
     }
-    return const <SectionStudentModel>[];
+
+    return _persistedStudents;
   }
 
   EngagementMetricsModel? _resolveEngagementMetrics(
@@ -848,12 +878,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       return;
     }
 
-    // Always use course-level enrolled students endpoint.
-    // This matches the website pattern which fetches enriched enrollment data
-    // with firstName, lastName, email for all students across all sections.
     if (_requestedStudentsCourseId != courseId) {
       _requestedStudentsCourseId = courseId;
-      context.read<InstructorCoursesBloc>().add(LoadCourseStudents(courseId));
+      _refreshStudents();
     }
 
     if (_requestedMetricsCourseId != courseId) {
@@ -870,6 +897,37 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
         ),
       );
     }
+  }
+
+  void _handleTabSelected(int index) {
+    if (index != 4) {
+      return;
+    }
+
+    _skipNextStudentsTabAutoRefresh = true;
+    _refreshStudents();
+  }
+
+  void _handleTabControllerChanged() {
+    if (_tabController.indexIsChanging || _tabController.index != 4) {
+      return;
+    }
+
+    if (_skipNextStudentsTabAutoRefresh) {
+      _skipNextStudentsTabAutoRefresh = false;
+      return;
+    }
+
+    _refreshStudents();
+  }
+
+  void _refreshStudents() {
+    final courseId = _resolvedCourseId;
+    if (courseId == null || courseId <= 0) {
+      return;
+    }
+
+    context.read<InstructorCoursesBloc>().add(LoadCourseStudents(courseId));
   }
 
   Widget _buildFAB(bool isDark, AppLocalizations l10n) {

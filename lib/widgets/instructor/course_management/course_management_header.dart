@@ -12,6 +12,7 @@ class CourseManagementHeader extends StatelessWidget {
   final int? studentsCount;
   final int? assignmentsCount;
   final int? materialsCount;
+  final ValueChanged<int>? onTabSelected;
 
   const CourseManagementHeader({
     super.key,
@@ -22,6 +23,7 @@ class CourseManagementHeader extends StatelessWidget {
     this.studentsCount,
     this.assignmentsCount,
     this.materialsCount,
+    this.onTabSelected,
   });
 
   @override
@@ -232,6 +234,7 @@ class CourseManagementHeader extends StatelessWidget {
       ),
       child: TabBar(
         controller: tabController,
+        onTap: onTabSelected,
         labelColor: isDark ? Colors.white : Colors.black,
         unselectedLabelColor: CMColors.textMutedColor(isDark),
         indicatorSize: TabBarIndicatorSize.tab,
