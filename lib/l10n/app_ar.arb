@@ -5363,5 +5363,193 @@
   "studentDiscussionTabTitle": "مجتمع المقرر",
   "studentDiscussionTabSubtitle": "افتح مساحة النقاش الكاملة لهذا المقرر لتصفح المنشورات وطرح الأسئلة وإضافة الردود.",
   "studentDiscussionTabOpen": "فتح المناقشات",
-  "studentDiscussionUnavailable": "المناقشة غير متاحة لأن معرّف المقرر النشط مفقود."
+  "studentDiscussionUnavailable": "المناقشة غير متاحة لأن معرّف المقرر النشط مفقود.",
+  "member": "عضو",
+  "comingSoon": "قريباً",
+  "chatActionDeleteConversation": "إخفاء المحادثة",
+  "chatActionDeleteConversationDesc": "إزالة هذه المحادثة من قائمة الدردشة الحالية لديك.",
+  "chatActionDeleteForEveryone": "حذف للجميع",
+  "chatActionDeleteForEveryoneDesc": "إزالة هذه الرسالة لجميع المشاركين في المحادثة.",
+  "chatActionDeleteForMe": "حذف لي فقط",
+  "chatActionDeleteForMeDesc": "إخفاء هذه الرسالة من عرضك الحالي فقط.",
+  "chatActionEditMessage": "تعديل الرسالة",
+  "chatActionEditMessageDesc": "تحديث صياغة الرسالة قبل متابعة الحوار.",
+  "chatActionMute": "كتم الإشعارات",
+  "chatActionMuteDesc": "إيقاف التنبيهات مع إبقاء المحادثة متاحة.",
+  "chatActionOpenProfile": "فتح الملف الشخصي",
+  "chatActionOpenProfileDesc": "عرض تفاصيل هذا الشخص والسياق المشترك معه.",
+  "chatActionPin": "تثبيت المحادثة",
+  "chatActionPinDesc": "إبقاء هذه المحادثة في الأعلى للوصول السريع.",
+  "chatActionReply": "رد",
+  "chatActionReplyDesc": "الرد مباشرة على هذه الرسالة.",
+  "chatActionSheetDirectSubtitle": "خيارات المحادثة المباشرة",
+  "chatActionSheetGroupSubtitle": "خيارات محادثة المجموعة",
+  "chatActionUnmute": "إلغاء كتم الإشعارات",
+  "chatActionUnmuteDesc": "إعادة التنبيهات لهذه المحادثة.",
+  "chatActionUnpin": "إلغاء التثبيت",
+  "chatActionUnpinDesc": "إرجاع هذه المحادثة إلى ترتيبها الطبيعي.",
+  "chatChangeRecipient": "تغيير",
+  "chatClearFiltersButton": "مسح الفلاتر",
+  "chatCloseSearchTooltip": "إغلاق البحث",
+  "chatConnectionConnecting": "جارٍ الاتصال",
+  "chatConnectionLive": "مباشر",
+  "chatConnectionOffline": "غير متصل",
+  "chatConversationCount": "{count, plural, =0 {لا توجد محادثات} =1 {محادثة واحدة} =2 {محادثتان} few {{count} محادثات} many {{count} محادثة} other {{count} محادثة}}",
+  "@chatConversationCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatConversationOptions": "خيارات المحادثة",
+  "chatCreateGroupConversationButton": "إنشاء محادثة جماعية",
+  "chatCreatingGroupConversation": "جارٍ الإنشاء...",
+  "chatDirectConversationLabel": "محادثة مباشرة",
+  "chatEditedLabel": "تم التعديل",
+  "chatEditMessageDialogHint": "حدّث رسالتك",
+  "chatEditMessageDialogTitle": "تعديل الرسالة",
+  "chatEmptySubtitle": "ابدأ محادثة جديدة للتواصل مع زملائك وفريق التدريس.",
+  "chatEmptyTitle": "لا توجد محادثات بعد",
+  "chatFastRepliesLabel": "ردود سريعة جاهزة",
+  "chatFilterAll": "كل الدردشات",
+  "chatFilterGroups": "المجموعات",
+  "chatFilterUnread": "غير المقروءة",
+  "chatFirstMessageHint": "اكتب رسالة افتتاحية قصيرة...",
+  "chatFirstMessageTitle": "الرسالة الأولى",
+  "chatFrequentlyContactedTitle": "الأكثر تواصلاً",
+  "chatGoBack": "العودة",
+  "chatGroupConversationLabel": "محادثة جماعية",
+  "chatGroupNameHint": "اسم المجموعة",
+  "chatHeaderHint": "ابحث، وابدأ محادثات جديدة، واحتفظ بالمحادثات المهمة قريباً منك دون مغادرة هذه المساحة.",
+  "chatHubSubtitle": "ابقَ على تواصل مع الأشخاص، وسير المقرر، والرسائل التي تحتاج انتباهك.",
+  "chatLastSeen": "آخر ظهور {time}",
+  "@chatLastSeen": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "chatLoadFailedSubtitle": "تعذر تحميل مساحة الدردشة الآن. حاول مرة أخرى.",
+  "chatLoadFailedTitle": "تعذر تحميل بيانات الدردشة",
+  "chatLoadingMoreLabel": "جارٍ التحميل",
+  "chatMessageActionsSubtitle": "اختر ما تريد فعله مع هذه الرسالة.",
+  "chatMessageActionsTitle": "إجراءات الرسالة",
+  "chatMessagesLoadFailedSubtitle": "تعذر تحميل رسائل هذه المحادثة. حاول مرة أخرى بعد قليل.",
+  "chatMessageTooOld": "هذه الرسالة قديمة جداً ولا يمكن الانتقال إليها الآن.",
+  "chatModeDirect": "مباشرة",
+  "chatModeDirectSubtitle": "محادثة بين شخصين",
+  "chatModeGroup": "مجموعة",
+  "chatModeGroupSubtitle": "أنشئ مساحة نقاش لفريق المقرر",
+  "chatMutedLabel": "مكتومة",
+  "chatNewButton": "دردشة جديدة",
+  "chatNewConversationSubtitle": "اختر الأشخاص المناسبين، وابدأ بسياق واضح، وافتح محادثة أنظف وأسهل.",
+  "chatNewMessagesCount": "{count, plural, =1 {رسالة جديدة واحدة} =2 {رسالتان جديدتان} few {{count} رسائل جديدة} many {{count} رسالة جديدة} other {{count} رسالة جديدة}}",
+  "@chatNewMessagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatNoContactsFound": "لا توجد جهات اتصال مطابقة لهذا البحث حالياً.",
+  "chatNoFilteredResultsSubtitle": "جرّب فلترًا آخر أو ارجع إلى كل الدردشات.",
+  "chatNoFilteredResultsTitle": "لا توجد دردشات تطابق هذا العرض",
+  "chatNoMessagesConversationSubtitle": "أرسل أول رسالة لبدء المحادثة بشكل واضح ومركز.",
+  "chatNoSearchResults": "لا توجد نتائج لـ \"{query}\"",
+  "@chatNoSearchResults": {
+    "placeholders": {
+      "query": {}
+    }
+  },
+  "chatNoSearchResultsSubtitle": "جرّب اسمًا أو كلمة مفتاحية أو بريدًا إلكترونيًا مختلفًا.",
+  "chatOfflineSubtitle": "اتصل بالإنترنت لتحميل محادثاتك لأول مرة.",
+  "chatOfflineTitle": "أنت غير متصل",
+  "chatOnlineNow": "متصل الآن",
+  "chatOriginalMessageUnavailable": "الرسالة الأصلية غير متاحة",
+  "chatParticipantsCount": "{count, plural, =1 {مشارك واحد} =2 {مشاركان} few {{count} مشاركين} many {{count} مشاركاً} other {{count} مشارك}}",
+  "@chatParticipantsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatPinnedLabel": "مثبتة",
+  "chatRelativeDays": "{count}ي",
+  "@chatRelativeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatRelativeHoursAgo": "منذ {count}س",
+  "@chatRelativeHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatRelativeMinutes": "{count}د",
+  "@chatRelativeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatRelativeMinutesAgo": "منذ {count}د",
+  "@chatRelativeMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatRelativeNow": "الآن",
+  "chatReplyingTo": "الرد على {name}",
+  "@chatReplyingTo": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "chatSearchConversationsHint": "ابحث عن الأشخاص أو أسماء المجموعات أو الرسائل الأخيرة",
+  "chatSearchPromptSubtitle": "تظل كل جهات الاتصال مخفية حتى تبدأ البحث. اكتب للعثور على الشخص المناسب بسرعة.",
+  "chatSearchPromptTitle": "ابحث لإظهار المزيد من الأشخاص",
+  "chatSelectConversationSubtitle": "اختر محادثة من القائمة لعرض الرسائل والرد بسرعة والبقاء على اطلاع.",
+  "chatSelectConversationTitle": "اختر محادثة",
+  "chatSelectedParticipantsTitle": "المشاركون المحددون",
+  "chatSelectedRecipientSubtitle": "المستلم المحدد",
+  "chatServiceUnavailableSubtitle": "تعذر تهيئة ميزة الدردشة. أعد تشغيل التطبيق أو حاول لاحقاً.",
+  "chatServiceUnavailableTitle": "خدمة الدردشة غير متاحة",
+  "chatStartConversationButton": "ابدأ المحادثة",
+  "chatStartingConversation": "جارٍ البدء...",
+  "chatStartNewChatButton": "ابدأ دردشة جديدة",
+  "chatTapToStartLabel": "اضغط للبدء",
+  "chatTypingDouble": "{first} و {second} يكتبان الآن...",
+  "@chatTypingDouble": {
+    "placeholders": {
+      "first": {},
+      "second": {}
+    }
+  },
+  "chatTypingMultiple": "{first} و {second} و {count, plural, =1 {شخص آخر} =2 {شخصان آخران} few {{count} أشخاص آخرون} many {{count} شخصاً آخر} other {{count} شخص آخر}} يكتبون الآن...",
+  "@chatTypingMultiple": {
+    "placeholders": {
+      "first": {},
+      "second": {},
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatTypingSingle": "{name} يكتب الآن...",
+  "@chatTypingSingle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "chatVideoCallTooltip": "مكالمة فيديو",
+  "chatVoiceCallTooltip": "مكالمة صوتية"
 }

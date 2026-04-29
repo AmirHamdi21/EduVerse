@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../../bloc/chat/chat_models.dart';
+import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/chat/chat_models.dart';
+import '../modern_action_sheet.dart';
 
 /// Individual message bubble with alignment, sender info, and actions.
 /// Supports reply context, delete states, and long-press menu.
@@ -95,7 +98,7 @@ class SharedMessageBubble extends StatelessWidget {
                 children: [
                   if (!isMe && isGroup && showSenderInfo) _buildSenderName(),
                   if (replyToMessage != null) _buildReplyContext(),
-                  _buildMessageBubble(),
+                  _buildMessageBubble(context),
                 ],
               ),
             ),
@@ -112,7 +115,7 @@ class SharedMessageBubble extends StatelessWidget {
 
     return CircleAvatar(
       radius: 16,
-      backgroundColor: accentColor.withOpacity(0.2),
+      backgroundColor: accentColor.withValues(alpha: 0.2),
       child: Text(
         initial,
         style: TextStyle(
@@ -150,7 +153,10 @@ class SharedMessageBubble extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? Colors.grey[800] : Colors.grey[200],
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: accentColor.withOpacity(0.3), width: 2),
+          border: Border.all(
+            color: accentColor.withValues(alpha: 0.3),
+            width: 2,
+          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +190,7 @@ class SharedMessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildMessageBubble() {
+  Widget _buildMessageBubble(BuildContext context) {
     final isFailed = message.status.toLowerCase() == 'failed';
     final normalizedStatus = message.status.toLowerCase();
     final isPending =
@@ -194,7 +200,7 @@ class SharedMessageBubble extends StatelessWidget {
     if (message.isDeleted) {
       bgColor = isDark ? Colors.grey[850]! : Colors.grey[100]!;
     } else if (isMe) {
-      bgColor = isFailed ? Colors.red.withOpacity(0.2) : accentColor;
+      bgColor = isFailed ? Colors.red.withValues(alpha: 0.2) : accentColor;
     } else {
       bgColor = isDark ? Colors.grey[800]! : Colors.grey[200]!;
     }
@@ -232,22 +238,22 @@ class SharedMessageBubble extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                _formatTime(message.sentAt),
+                _formatTime(context, message.sentAt),
                 style: TextStyle(
                   fontSize: 10,
                   color: isMe
-                      ? Colors.white.withOpacity(0.7)
+                      ? Colors.white.withValues(alpha: 0.7)
                       : (isDark ? Colors.grey[500] : Colors.grey[600]),
                 ),
               ),
               if (message.editedAt != null && !message.isDeleted) ...[
                 const SizedBox(width: 4),
                 Text(
-                  'edited',
+                  AppLocalizations.of(context).chatEditedLabel,
                   style: TextStyle(
                     fontSize: 10,
                     color: isMe
-                        ? Colors.white.withOpacity(0.7)
+                        ? Colors.white.withValues(alpha: 0.7)
                         : (isDark ? Colors.grey[500] : Colors.grey[600]),
                     fontStyle: FontStyle.italic,
                   ),
@@ -279,72 +285,91 @@ class SharedMessageBubble extends StatelessWidget {
       return Icon(
         Icons.access_time,
         size: 12,
-        color: Colors.white.withOpacity(0.7),
+        color: Colors.white.withValues(alpha: 0.7),
       );
     }
-    return Icon(Icons.check, size: 12, color: Colors.white.withOpacity(0.7));
+    return Icon(
+      Icons.check,
+      size: 12,
+      color: Colors.white.withValues(alpha: 0.7),
+    );
   }
 
-  String _formatTime(DateTime dateTime) {
+  String _formatTime(BuildContext context, DateTime dateTime) {
+    final locale = Localizations.localeOf(context).languageCode;
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
     if (difference.inDays > 0) {
-      return '${dateTime.day}/${dateTime.month} ${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+      return DateFormat.Md(locale).add_jm().format(dateTime.toLocal());
     }
-    return '${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
+    return DateFormat.jm(locale).format(dateTime.toLocal());
   }
 
   VoidCallback? _showActionsMenu(BuildContext context) {
     if (message.isDeleted) return null;
 
     return () {
-      showModalBottomSheet(
-        context: context,
-        builder: (context) => SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (onReply != null)
-                ListTile(
-                  leading: const Icon(Icons.reply),
-                  title: const Text('Reply'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    onReply!();
-                  },
-                ),
-              if (canEdit && onEdit != null)
-                ListTile(
-                  leading: const Icon(Icons.edit_outlined),
-                  title: const Text('Edit message'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    onEdit!();
-                  },
-                ),
-              if (onDeleteForMe != null)
-                ListTile(
-                  leading: const Icon(Icons.delete_outline),
-                  title: const Text('Delete for me'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    onDeleteForMe!();
-                  },
-                ),
-              if (canDeleteForEveryone && onDeleteForEveryone != null)
-                ListTile(
-                  leading: const Icon(Icons.delete_forever),
-                  title: const Text('Delete for everyone'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    onDeleteForEveryone!();
-                  },
-                ),
-            ],
-          ),
-        ),
-      );
+      final l10n = AppLocalizations.of(context);
+      showModernActionSheet<_MessageAction>(
+        context,
+        title: l10n.chatMessageActionsTitle,
+        subtitle: message.text.trim().isEmpty
+            ? l10n.chatMessageActionsSubtitle
+            : message.text,
+        accentColor: accentColor,
+        actions: <ModernActionItem<_MessageAction>>[
+          if (onReply != null)
+            ModernActionItem<_MessageAction>(
+              value: _MessageAction.reply,
+              label: l10n.chatActionReply,
+              icon: Icons.reply_rounded,
+              description: l10n.chatActionReplyDesc,
+            ),
+          if (canEdit && onEdit != null)
+            ModernActionItem<_MessageAction>(
+              value: _MessageAction.edit,
+              label: l10n.chatActionEditMessage,
+              icon: Icons.edit_outlined,
+              description: l10n.chatActionEditMessageDesc,
+            ),
+          if (onDeleteForMe != null)
+            ModernActionItem<_MessageAction>(
+              value: _MessageAction.deleteForMe,
+              label: l10n.chatActionDeleteForMe,
+              icon: Icons.delete_outline_rounded,
+              description: l10n.chatActionDeleteForMeDesc,
+              destructive: true,
+            ),
+          if (canDeleteForEveryone && onDeleteForEveryone != null)
+            ModernActionItem<_MessageAction>(
+              value: _MessageAction.deleteForEveryone,
+              label: l10n.chatActionDeleteForEveryone,
+              icon: Icons.delete_forever_rounded,
+              description: l10n.chatActionDeleteForEveryoneDesc,
+              destructive: true,
+            ),
+        ],
+      ).then((value) {
+        switch (value) {
+          case _MessageAction.reply:
+            onReply?.call();
+            break;
+          case _MessageAction.edit:
+            onEdit?.call();
+            break;
+          case _MessageAction.deleteForMe:
+            onDeleteForMe?.call();
+            break;
+          case _MessageAction.deleteForEveryone:
+            onDeleteForEveryone?.call();
+            break;
+          case null:
+            break;
+        }
+      });
     };
   }
 }
+
+enum _MessageAction { reply, edit, deleteForMe, deleteForEveryone }

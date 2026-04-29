@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../../generated_l10n/app_localizations.dart';
+
 /// Animated typing indicator showing who is currently typing.
-/// Displays three bouncing dots with user names.
 class SharedTypingIndicator extends StatefulWidget {
-  /// List of user names currently typing (excludes current user)
   final List<String> typingUserNames;
-
-  /// Accent color for dots
   final Color accentColor;
-
-  /// Dark mode flag
   final bool isDark;
 
   const SharedTypingIndicator({
@@ -25,7 +21,7 @@ class SharedTypingIndicator extends StatefulWidget {
 
 class _SharedTypingIndicatorState extends State<SharedTypingIndicator>
     with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+  late final AnimationController _controller;
 
   @override
   void initState() {
@@ -48,33 +44,30 @@ class _SharedTypingIndicatorState extends State<SharedTypingIndicator>
       return const SizedBox.shrink();
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildAnimatedDots(),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              _buildTypingText(),
-              style: TextStyle(
-                fontSize: 12,
-                color: widget.isDark ? Colors.grey[400] : Colors.grey[600],
-                fontStyle: FontStyle.italic,
-              ),
-              overflow: TextOverflow.ellipsis,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        _buildAnimatedDots(),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            _buildTypingText(context),
+            style: TextStyle(
+              fontSize: 12,
+              color: widget.isDark ? Colors.grey[300] : Colors.white,
+              fontWeight: FontWeight.w600,
             ),
+            overflow: TextOverflow.ellipsis,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget _buildAnimatedDots() {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: List.generate(3, (index) {
+      children: List<Widget>.generate(3, (index) {
         return AnimatedBuilder(
           animation: _controller,
           builder: (context, child) {
@@ -89,7 +82,9 @@ class _SharedTypingIndicatorState extends State<SharedTypingIndicator>
                 width: 6,
                 height: 6,
                 decoration: BoxDecoration(
-                  color: widget.accentColor.withOpacity(0.7 + 0.3 * bounce),
+                  color: widget.accentColor.withValues(
+                    alpha: 0.72 + 0.28 * bounce,
+                  ),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -100,15 +95,26 @@ class _SharedTypingIndicatorState extends State<SharedTypingIndicator>
     );
   }
 
-  String _buildTypingText() {
+  String _buildTypingText(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final count = widget.typingUserNames.length;
-    if (count == 0) return '';
-    if (count == 1) return '${widget.typingUserNames[0]} is typing...';
-    if (count == 2) {
-      return '${widget.typingUserNames[0]} and ${widget.typingUserNames[1]} are typing...';
+    if (count == 0) {
+      return '';
     }
-    // 3 or more
+    if (count == 1) {
+      return l10n.chatTypingSingle(widget.typingUserNames[0]);
+    }
+    if (count == 2) {
+      return l10n.chatTypingDouble(
+        widget.typingUserNames[0],
+        widget.typingUserNames[1],
+      );
+    }
     final others = count - 2;
-    return '${widget.typingUserNames[0]}, ${widget.typingUserNames[1]}, and $others ${others == 1 ? 'other' : 'others'} are typing...';
+    return l10n.chatTypingMultiple(
+      widget.typingUserNames[0],
+      widget.typingUserNames[1],
+      others,
+    );
   }
 }

@@ -13736,4 +13736,391 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get studentDiscussionUnavailable =>
       'Discussion is unavailable because the active course ID is missing.';
+
+  @override
+  String get member => 'Member';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get chatActionDeleteConversation => 'Delete conversation';
+
+  @override
+  String get chatActionDeleteConversationDesc =>
+      'Hide this conversation from your current chat list.';
+
+  @override
+  String get chatActionDeleteForEveryone => 'Delete for everyone';
+
+  @override
+  String get chatActionDeleteForEveryoneDesc =>
+      'Remove this message for every participant in the conversation.';
+
+  @override
+  String get chatActionDeleteForMe => 'Delete for me';
+
+  @override
+  String get chatActionDeleteForMeDesc =>
+      'Hide this message only from your current view.';
+
+  @override
+  String get chatActionEditMessage => 'Edit message';
+
+  @override
+  String get chatActionEditMessageDesc =>
+      'Update the wording before the conversation continues.';
+
+  @override
+  String get chatActionMute => 'Mute notifications';
+
+  @override
+  String get chatActionMuteDesc =>
+      'Pause alerts while keeping the conversation available.';
+
+  @override
+  String get chatActionOpenProfile => 'Open profile';
+
+  @override
+  String get chatActionOpenProfileDesc =>
+      'View this person\'s details and shared context.';
+
+  @override
+  String get chatActionPin => 'Pin conversation';
+
+  @override
+  String get chatActionPinDesc =>
+      'Keep this conversation near the top for quick access.';
+
+  @override
+  String get chatActionReply => 'Reply';
+
+  @override
+  String get chatActionReplyDesc => 'Respond directly to this message.';
+
+  @override
+  String get chatActionSheetDirectSubtitle => 'Direct conversation options';
+
+  @override
+  String get chatActionSheetGroupSubtitle => 'Group conversation options';
+
+  @override
+  String get chatActionUnmute => 'Unmute notifications';
+
+  @override
+  String get chatActionUnmuteDesc => 'Bring alerts back for this conversation.';
+
+  @override
+  String get chatActionUnpin => 'Unpin conversation';
+
+  @override
+  String get chatActionUnpinDesc =>
+      'Return this conversation to its natural order.';
+
+  @override
+  String get chatChangeRecipient => 'Change';
+
+  @override
+  String get chatClearFiltersButton => 'Clear filters';
+
+  @override
+  String get chatCloseSearchTooltip => 'Close search';
+
+  @override
+  String get chatConnectionConnecting => 'Connecting';
+
+  @override
+  String get chatConnectionLive => 'Live';
+
+  @override
+  String get chatConnectionOffline => 'Offline';
+
+  @override
+  String chatConversationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conversations',
+      one: '1 conversation',
+      zero: 'No conversations',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatConversationOptions => 'Conversation options';
+
+  @override
+  String get chatCreateGroupConversationButton => 'Create group conversation';
+
+  @override
+  String get chatCreatingGroupConversation => 'Creating...';
+
+  @override
+  String get chatDirectConversationLabel => 'Direct conversation';
+
+  @override
+  String get chatEditedLabel => 'edited';
+
+  @override
+  String get chatEditMessageDialogHint => 'Update your message';
+
+  @override
+  String get chatEditMessageDialogTitle => 'Edit message';
+
+  @override
+  String get chatEmptySubtitle =>
+      'Start a new chat to begin messaging with your classmates and teaching team.';
+
+  @override
+  String get chatEmptyTitle => 'No conversations yet';
+
+  @override
+  String get chatFastRepliesLabel => 'Quick replies ready';
+
+  @override
+  String get chatFilterAll => 'All chats';
+
+  @override
+  String get chatFilterGroups => 'Groups';
+
+  @override
+  String get chatFilterUnread => 'Unread';
+
+  @override
+  String get chatFirstMessageHint => 'Write a short opening message...';
+
+  @override
+  String get chatFirstMessageTitle => 'First message';
+
+  @override
+  String get chatFrequentlyContactedTitle => 'Frequently contacted';
+
+  @override
+  String get chatGoBack => 'Go back';
+
+  @override
+  String get chatGroupConversationLabel => 'Group conversation';
+
+  @override
+  String get chatGroupNameHint => 'Group name';
+
+  @override
+  String get chatHeaderHint =>
+      'Search, start new chats, and keep your important conversations close without leaving this workspace.';
+
+  @override
+  String get chatHubSubtitle =>
+      'Stay in sync with your people, your course flow, and the messages that need your attention.';
+
+  @override
+  String chatLastSeen(Object time) {
+    return 'Last seen $time';
+  }
+
+  @override
+  String get chatLoadFailedSubtitle =>
+      'We could not load your chat space right now. Please try again.';
+
+  @override
+  String get chatLoadFailedTitle => 'Chat data could not be loaded';
+
+  @override
+  String get chatLoadingMoreLabel => 'Loading more';
+
+  @override
+  String get chatMessageActionsSubtitle =>
+      'Choose what you want to do with this message.';
+
+  @override
+  String get chatMessageActionsTitle => 'Message actions';
+
+  @override
+  String get chatMessagesLoadFailedSubtitle =>
+      'We could not load messages for this conversation. Try again in a moment.';
+
+  @override
+  String get chatMessageTooOld =>
+      'This message is too old to jump to right now.';
+
+  @override
+  String get chatModeDirect => 'Direct';
+
+  @override
+  String get chatModeDirectSubtitle => 'One-to-one conversation';
+
+  @override
+  String get chatModeGroup => 'Group';
+
+  @override
+  String get chatModeGroupSubtitle => 'Create a course team thread';
+
+  @override
+  String get chatMutedLabel => 'Muted';
+
+  @override
+  String get chatNewButton => 'New chat';
+
+  @override
+  String get chatNewConversationSubtitle =>
+      'Pick the right people, open with context, and start a cleaner conversation flow.';
+
+  @override
+  String chatNewMessagesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new messages',
+      one: '1 new message',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatNoContactsFound => 'No contacts match this search yet.';
+
+  @override
+  String get chatNoFilteredResultsSubtitle =>
+      'Try another filter or return to all chats.';
+
+  @override
+  String get chatNoFilteredResultsTitle => 'No chats match this view';
+
+  @override
+  String get chatNoMessagesConversationSubtitle =>
+      'Send the first message to start the conversation in a clear, focused way.';
+
+  @override
+  String chatNoSearchResults(Object query) {
+    return 'No results for \"$query\"';
+  }
+
+  @override
+  String get chatNoSearchResultsSubtitle =>
+      'Try a different name, keyword, or email address.';
+
+  @override
+  String get chatOfflineSubtitle =>
+      'Connect to the internet to load your conversations for the first time.';
+
+  @override
+  String get chatOfflineTitle => 'You are offline';
+
+  @override
+  String get chatOnlineNow => 'Online';
+
+  @override
+  String get chatOriginalMessageUnavailable => 'Original message unavailable';
+
+  @override
+  String chatParticipantsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count participants',
+      one: '1 participant',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatPinnedLabel => 'Pinned';
+
+  @override
+  String chatRelativeDays(int count) {
+    return '${count}d';
+  }
+
+  @override
+  String chatRelativeHoursAgo(int count) {
+    return '${count}h ago';
+  }
+
+  @override
+  String chatRelativeMinutes(int count) {
+    return '${count}m';
+  }
+
+  @override
+  String chatRelativeMinutesAgo(int count) {
+    return '${count}m ago';
+  }
+
+  @override
+  String get chatRelativeNow => 'now';
+
+  @override
+  String chatReplyingTo(Object name) {
+    return 'Replying to $name';
+  }
+
+  @override
+  String get chatSearchConversationsHint =>
+      'Search people, group names, or recent messages';
+
+  @override
+  String get chatSearchPromptSubtitle =>
+      'All contacts stay tucked away until you search. Start typing to find the right person quickly.';
+
+  @override
+  String get chatSearchPromptTitle => 'Search to reveal more people';
+
+  @override
+  String get chatSelectConversationSubtitle =>
+      'Pick a conversation from the list to view messages, reply faster, and stay in sync.';
+
+  @override
+  String get chatSelectConversationTitle => 'Choose a conversation';
+
+  @override
+  String get chatSelectedParticipantsTitle => 'Selected participants';
+
+  @override
+  String get chatSelectedRecipientSubtitle => 'Selected recipient';
+
+  @override
+  String get chatServiceUnavailableSubtitle =>
+      'The chat feature could not be initialized. Restart the app or try again later.';
+
+  @override
+  String get chatServiceUnavailableTitle => 'Chat service unavailable';
+
+  @override
+  String get chatStartConversationButton => 'Start conversation';
+
+  @override
+  String get chatStartingConversation => 'Starting...';
+
+  @override
+  String get chatStartNewChatButton => 'Start a new chat';
+
+  @override
+  String get chatTapToStartLabel => 'Tap to start';
+
+  @override
+  String chatTypingDouble(Object first, Object second) {
+    return '$first and $second are typing...';
+  }
+
+  @override
+  String chatTypingMultiple(Object first, Object second, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count others',
+      one: '1 other',
+    );
+    return '$first, $second, and $_temp0 are typing...';
+  }
+
+  @override
+  String chatTypingSingle(Object name) {
+    return '$name is typing...';
+  }
+
+  @override
+  String get chatVideoCallTooltip => 'Video call';
+
+  @override
+  String get chatVoiceCallTooltip => 'Voice call';
 }

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../../bloc/chat/chat_models.dart';
+import '../../../generated_l10n/app_localizations.dart';
 
 class FrequentlyContactedSection extends StatelessWidget {
   final List<ChatUserModel> users;
   final Set<int> onlineUsers;
   final ValueChanged<ChatUserModel> onUserTap;
   final ValueChanged<ChatUserModel>? onAvatarTap;
+  final Color? accentColor;
 
   const FrequentlyContactedSection({
     super.key,
@@ -14,6 +16,7 @@ class FrequentlyContactedSection extends StatelessWidget {
     required this.onlineUsers,
     required this.onUserTap,
     this.onAvatarTap,
+    this.accentColor,
   });
 
   @override
@@ -23,22 +26,40 @@ class FrequentlyContactedSection extends StatelessWidget {
     }
 
     final theme = Theme.of(context);
+    final effectiveAccent = accentColor ?? theme.colorScheme.primary;
+    final l10n = AppLocalizations.of(context);
+    final cardColor = theme.brightness == Brightness.dark
+        ? const Color(0xFF111827)
+        : Colors.white;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Frequently Contacted',
-            style: theme.textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-            ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  l10n.chatFrequentlyContactedTitle,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              Text(
+                l10n.chatTapToStartLabel,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 12),
         SizedBox(
-          height: 96,
+          height: 122,
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             scrollDirection: Axis.horizontal,
@@ -50,8 +71,23 @@ class FrequentlyContactedSection extends StatelessWidget {
 
               return GestureDetector(
                 onTap: () => onUserTap(user),
-                child: SizedBox(
-                  width: 72,
+                child: Container(
+                  width: 108,
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: cardColor,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(
+                      color: effectiveAccent.withValues(alpha: 0.10),
+                    ),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color: effectiveAccent.withValues(alpha: 0.08),
+                        blurRadius: 16,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
                   child: Column(
                     children: [
                       GestureDetector(
@@ -60,15 +96,31 @@ class FrequentlyContactedSection extends StatelessWidget {
                             : () => onAvatarTap!(user),
                         child: Stack(
                           children: [
-                            CircleAvatar(
-                              radius: 24,
-                              backgroundColor: theme.colorScheme.primary
-                                  .withValues(alpha: 0.16),
-                              child: Text(
-                                _initials(user.displayName),
-                                style: TextStyle(
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.w700,
+                            Container(
+                              width: 54,
+                              height: 54,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: <Color>[
+                                    effectiveAccent,
+                                    Color.lerp(
+                                      effectiveAccent,
+                                      const Color(0xFF06B6D4),
+                                      0.28,
+                                    )!,
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  _initials(user.displayName),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w800,
+                                  ),
                                 ),
                               ),
                             ),
@@ -77,13 +129,13 @@ class FrequentlyContactedSection extends StatelessWidget {
                                 right: 0,
                                 bottom: 0,
                                 child: Container(
-                                  width: 10,
-                                  height: 10,
+                                  width: 12,
+                                  height: 12,
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF16A34A),
+                                    color: const Color(0xFF22C55E),
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: theme.scaffoldBackgroundColor,
+                                      color: cardColor,
                                       width: 2,
                                     ),
                                   ),
@@ -92,14 +144,34 @@ class FrequentlyContactedSection extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 10),
+                      Expanded(
+                        child: Text(
+                          user.displayName,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            height: 1.25,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
                       Text(
-                        user.displayName,
+                        isOnline
+                            ? l10n.chatOnlineNow
+                            : ((user.role ?? '').trim().isEmpty
+                                  ? l10n.member
+                                  : user.role!),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          fontWeight: FontWeight.w600,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: isOnline
+                              ? const Color(0xFF16A34A)
+                              : theme.colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],
