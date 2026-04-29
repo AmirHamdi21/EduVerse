@@ -12416,6 +12416,216 @@ abstract class AppLocalizations {
   /// **'Lab status updated.'**
   String get taLabsStatusUpdated;
 
+  /// No description provided for @labEditorCreateScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Lab'**
+  String get labEditorCreateScreenTitle;
+
+  /// No description provided for @labEditorEditScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Lab'**
+  String get labEditorEditScreenTitle;
+
+  /// No description provided for @labEditorHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Studio'**
+  String get labEditorHeroTitle;
+
+  /// No description provided for @instructorLabEditorHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shape the lab brief, release timing, and submission rules in one focused workflow.'**
+  String get instructorLabEditorHeroSubtitle;
+
+  /// No description provided for @taLabEditorHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tune the lab setup quickly, keep submission rules clear, and stay aligned with your assigned course flow.'**
+  String get taLabEditorHeroSubtitle;
+
+  /// No description provided for @labEditorCoreSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Details'**
+  String get labEditorCoreSection;
+
+  /// No description provided for @labEditorCoreSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the course, title, and learner-facing summary.'**
+  String get labEditorCoreSectionSubtitle;
+
+  /// No description provided for @labEditorScheduleSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get labEditorScheduleSection;
+
+  /// No description provided for @labEditorScheduleSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Control when the lab opens and when it is due.'**
+  String get labEditorScheduleSectionSubtitle;
+
+  /// No description provided for @labEditorRulesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Scoring & Rules'**
+  String get labEditorRulesSection;
+
+  /// No description provided for @labEditorRulesSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure grading and submission limits without wasting space.'**
+  String get labEditorRulesSectionSubtitle;
+
+  /// No description provided for @labEditorTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a clear lab title'**
+  String get labEditorTitleHint;
+
+  /// No description provided for @labEditorCourseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the teaching course for this lab'**
+  String get labEditorCourseHint;
+
+  /// No description provided for @labEditorDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Summarize the task, expected output, or focus of this lab.'**
+  String get labEditorDescriptionHint;
+
+  /// No description provided for @labEditorAvailableHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Students can access the lab as soon as this window opens.'**
+  String get labEditorAvailableHelper;
+
+  /// No description provided for @labEditorDueHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the final due date with the exact date and time.'**
+  String get labEditorDueHelper;
+
+  /// No description provided for @labEditorWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get labEditorWeight;
+
+  /// No description provided for @labEditorVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Visibility'**
+  String get labEditorVisibility;
+
+  /// No description provided for @labEditorAllowedTypesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type file extensions separated by commas'**
+  String get labEditorAllowedTypesHint;
+
+  /// No description provided for @labEditorQuickTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Types'**
+  String get labEditorQuickTypes;
+
+  /// No description provided for @labEditorReadyToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to Save'**
+  String get labEditorReadyToSave;
+
+  /// No description provided for @labEditorCreateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Lab'**
+  String get labEditorCreateAction;
+
+  /// No description provided for @labEditorSaveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Lab'**
+  String get labEditorSaveAction;
+
+  /// No description provided for @labEditorSavingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get labEditorSavingAction;
+
+  /// No description provided for @labEditorDraftStateHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft keeps the lab out of publish notifications until you are ready to release it.'**
+  String get labEditorDraftStateHelper;
+
+  /// No description provided for @labEditorPublishedStateHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Published makes the lab immediately available in the live course workflow.'**
+  String get labEditorPublishedStateHelper;
+
+  /// No description provided for @labEditorValidationTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Title is required'**
+  String get labEditorValidationTitleRequired;
+
+  /// No description provided for @labEditorValidationCourseRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Course is required'**
+  String get labEditorValidationCourseRequired;
+
+  /// No description provided for @labEditorValidationPositiveNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number greater than 0'**
+  String get labEditorValidationPositiveNumber;
+
+  /// No description provided for @labEditorValidationAvailableRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Available from is required'**
+  String get labEditorValidationAvailableRequired;
+
+  /// No description provided for @labEditorValidationDueRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date is required'**
+  String get labEditorValidationDueRequired;
+
+  /// No description provided for @labEditorValidationDueAfterAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date must be after the available-from time'**
+  String get labEditorValidationDueAfterAvailable;
+
+  /// No description provided for @labEditorValidationUnsupportedTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsupported type(s): {types}'**
+  String labEditorValidationUnsupportedTypes(Object types);
+
+  /// No description provided for @labEditorPastDueWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'This lab\'s due date is already in the past.'**
+  String get labEditorPastDueWarning;
+
+  /// No description provided for @labEditorMaxScoreWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Some submissions may still have scores above the new max score. Those scores are not adjusted automatically.'**
+  String get labEditorMaxScoreWarning;
+
   /// No description provided for @taPerformanceTitle.
   ///
   /// In en, this message translates to:

@@ -14,6 +14,7 @@ import '../../services/api/enrollment_service.dart';
 import '../../services/storage_service.dart';
 import '../../widgets/instructor/assignments/assignment_create_form.dart';
 import '../../widgets/instructor/shared/instructor_colors.dart';
+import '../../widgets/ta/shared/ta_colors.dart';
 
 class CreateAssignmentScreen extends StatelessWidget {
   const CreateAssignmentScreen({
@@ -23,6 +24,7 @@ class CreateAssignmentScreen extends StatelessWidget {
     this.assignmentService,
     this.enrollmentService,
     this.preferredCourseId,
+    this.useTAColors = false,
   });
 
   final AssignmentModel? assignment;
@@ -30,6 +32,7 @@ class CreateAssignmentScreen extends StatelessWidget {
   final AssignmentService? assignmentService;
   final EnrollmentService? enrollmentService;
   final int? preferredCourseId;
+  final bool useTAColors;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +51,7 @@ class CreateAssignmentScreen extends StatelessWidget {
         assignment: assignment,
         assignmentId: assignmentId,
         assignmentService: resolvedAssignmentService,
+        useTAColors: useTAColors,
       ),
     );
   }
@@ -58,11 +62,13 @@ class _CreateAssignmentView extends StatefulWidget {
     this.assignment,
     this.assignmentId,
     required this.assignmentService,
+    required this.useTAColors,
   });
 
   final AssignmentModel? assignment;
   final int? assignmentId;
   final AssignmentService assignmentService;
+  final bool useTAColors;
 
   @override
   State<_CreateAssignmentView> createState() => _CreateAssignmentViewState();
@@ -119,12 +125,15 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
     final initialData = _toInitialData(effectiveAssignment);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
+    final background = widget.useTAColors
+        ? TAColors.scaffoldColor(isDark)
+        : (isDark ? InstructorColors.darkBg : InstructorColors.lightBackground);
+    final warningColor =
+        widget.useTAColors ? TAColors.warning : InstructorColors.warning;
 
     if (_fetchingAssignment) {
       return Scaffold(
-        backgroundColor: isDark
-            ? InstructorColors.darkBg
-            : InstructorColors.lightBackground,
+        backgroundColor: background,
         body: const Center(child: CircularProgressIndicator()),
       );
     }
@@ -139,9 +148,7 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
       },
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: isDark
-              ? InstructorColors.darkBg
-              : InstructorColors.lightBackground,
+          backgroundColor: background,
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
@@ -153,9 +160,8 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
             ),
             actions: <Widget>[
               IconButton(
-                onPressed: _submitting
-                    ? null
-                    : () => Navigator.of(context).pop(),
+                onPressed:
+                    _submitting ? null : () => Navigator.of(context).pop(),
                 icon: const Icon(Icons.close_rounded),
                 tooltip: l10n.cancel,
               ),
@@ -171,25 +177,19 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
                         margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: InstructorColors.warning.withValues(
-                            alpha: 0.12,
-                          ),
+                          color: warningColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: InstructorColors.warning.withValues(
-                              alpha: 0.24,
-                            ),
+                            color: warningColor.withValues(alpha: 0.24),
                           ),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.only(top: 1),
-                              child: Icon(
-                                Icons.warning_amber_rounded,
-                                color: InstructorColors.warning,
-                              ),
+                              child: Icon(Icons.warning_amber_rounded,
+                                  color: warningColor),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
@@ -211,6 +211,7 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
                         initialData: initialData,
                         assignmentId: _activeAssignmentId,
                         submitting: _submitting,
+                        useTAColors: widget.useTAColors,
                         onSubmit: (data) => _submit(context, data, initialData),
                       ),
                     ),
@@ -253,9 +254,8 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
       return;
     }
 
-    final savedAssignmentId = isEdit
-        ? editId
-        : _resolveCreatedAssignmentId(cubit.state, data);
+    final savedAssignmentId =
+        isEdit ? editId : _resolveCreatedAssignmentId(cubit.state, data);
 
     if (savedAssignmentId > 0 && _activeAssignmentId != savedAssignmentId) {
       setState(() {

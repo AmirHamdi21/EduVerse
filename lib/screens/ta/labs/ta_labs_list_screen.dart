@@ -14,6 +14,11 @@ import '../../../models/core/enums/lab_enums.dart' as api;
 import '../../../models/labs/lab_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../services/api/core_api_client.dart';
+import '../../../services/api/lab_service.dart';
+import '../../../services/storage_service.dart';
+import '../../shared/lab_editor_screen.dart';
+import '../../../widgets/shared/modern_action_sheet.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/ta/dashboard/ta_drawer.dart';
 import '../../../widgets/instructor/labs/lab_create_form.dart';
@@ -31,6 +36,9 @@ enum _TALabStateFilter { all, active, draft, closed, archived }
 
 class _TALabsListScreenState extends State<TALabsListScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final LabService _labService = LabService(
+    coreApiClient: CoreApiClient(storageService: StorageService()),
+  );
   int? _selectedCourseId;
   _TALabStateFilter _selectedStateFilter = _TALabStateFilter.all;
 
@@ -134,20 +142,18 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         List<TeachingCourseModel> assignedCourses = [];
         if (coursesState.coursesStatus
             is TASubTabLoaded<List<TeachingCourseModel>>) {
-          assignedCourses =
-              (coursesState.coursesStatus
-                      as TASubTabLoaded<List<TeachingCourseModel>>)
-                  .data;
+          assignedCourses = (coursesState.coursesStatus
+                  as TASubTabLoaded<List<TeachingCourseModel>>)
+              .data;
         }
-        final assignedCourseIds = assignedCourses
-            .map((c) => c.courseId)
-            .toSet();
+        final assignedCourseIds =
+            assignedCourses.map((c) => c.courseId).toSet();
         final allAssignedLabs = _filterLabsToAssignedCourses(
           labs: state is TALabsLoaded
               ? state.labs
               : state is TALabsLoadingWithCache
-              ? state.cachedLabs
-              : cachedLabs,
+                  ? state.cachedLabs
+                  : cachedLabs,
           assignedCourseIds: assignedCourseIds,
         );
         final visibleLabs = _applyFilters(allAssignedLabs);
@@ -290,12 +296,10 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     required List<LabModel> labs,
     required Set<int> assignedCourseIds,
   }) {
-    return labs
-        .where((lab) {
-          return assignedCourseIds.isEmpty ||
-              assignedCourseIds.contains(lab.courseId);
-        })
-        .toList(growable: false);
+    return labs.where((lab) {
+      return assignedCourseIds.isEmpty ||
+          assignedCourseIds.contains(lab.courseId);
+    }).toList(growable: false);
   }
 
   Widget _buildSummaryHeader(
@@ -309,9 +313,8 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         ? assignedCourseIds.length
         : labs.map((lab) => lab.courseId).toSet().length;
     final activeCount = labs.where(_isActiveLab).length;
-    final draftCount = labs
-        .where((lab) => lab.status == api.LabStatus.draft)
-        .length;
+    final draftCount =
+        labs.where((lab) => lab.status == api.LabStatus.draft).length;
     final closedCount = labs
         .where(
           (lab) =>
@@ -355,9 +358,8 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       decoration: BoxDecoration(
-        gradient: isDark
-            ? TAColors.darkHeaderGradient
-            : TAColors.headerGradient,
+        gradient:
+            isDark ? TAColors.darkHeaderGradient : TAColors.headerGradient,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -450,27 +452,24 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                     builder: (context, constraints) {
                       final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
                       final spacing = 10.0;
-                      final itemWidth =
-                          (constraints.maxWidth -
+                      final itemWidth = (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
                           crossAxisCount;
 
                       return Wrap(
                         spacing: spacing,
                         runSpacing: spacing,
-                        children: stats
-                            .map((stat) {
-                              return SizedBox(
-                                width: itemWidth,
-                                child: _buildHeaderStatCard(
-                                  icon: stat.icon,
-                                  label: stat.label,
-                                  value: stat.value,
-                                  color: stat.color,
-                                ),
-                              );
-                            })
-                            .toList(growable: false),
+                        children: stats.map((stat) {
+                          return SizedBox(
+                            width: itemWidth,
+                            child: _buildHeaderStatCard(
+                              icon: stat.icon,
+                              label: stat.label,
+                              value: stat.value,
+                              color: stat.color,
+                            ),
+                          );
+                        }).toList(growable: false),
                       );
                     },
                   ),
@@ -750,23 +749,21 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         fontWeight: FontWeight.w600,
       ),
       selectedItemBuilder: (context) {
-        return items
-            .map((_) {
-              return Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(
-                  selectedLabel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: TAColors.textPrimaryColor(isDark),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              );
-            })
-            .toList(growable: false);
+        return items.map((_) {
+          return Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              selectedLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: TAColors.textPrimaryColor(isDark),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          );
+        }).toList(growable: false);
       },
       items: items,
       onChanged: onChanged,
@@ -790,8 +787,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
       grouped.putIfAbsent(lab.courseId, () => []).add(lab);
     }
 
-    final bool showAllAssignedCourses =
-        _selectedCourseId == null &&
+    final bool showAllAssignedCourses = _selectedCourseId == null &&
         _selectedStateFilter == _TALabStateFilter.all;
     final courseIds = _resolveVisibleCourseIds(
       grouped: grouped,
@@ -950,21 +946,19 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   }
 
   List<LabModel> _applyFilters(List<LabModel> labs) {
-    return labs
-        .where((lab) {
-          final courseMatches =
-              _selectedCourseId == null || lab.courseId == _selectedCourseId;
-          final stateMatches = switch (_selectedStateFilter) {
-            _TALabStateFilter.all => true,
-            _TALabStateFilter.active => _isActiveLab(lab),
-            _TALabStateFilter.draft => lab.status == api.LabStatus.draft,
-            _TALabStateFilter.closed => lab.status == api.LabStatus.closed,
-            _TALabStateFilter.archived => lab.status == api.LabStatus.archived,
-          };
+    return labs.where((lab) {
+      final courseMatches =
+          _selectedCourseId == null || lab.courseId == _selectedCourseId;
+      final stateMatches = switch (_selectedStateFilter) {
+        _TALabStateFilter.all => true,
+        _TALabStateFilter.active => _isActiveLab(lab),
+        _TALabStateFilter.draft => lab.status == api.LabStatus.draft,
+        _TALabStateFilter.closed => lab.status == api.LabStatus.closed,
+        _TALabStateFilter.archived => lab.status == api.LabStatus.archived,
+      };
 
-          return courseMatches && stateMatches;
-        })
-        .toList(growable: false);
+      return courseMatches && stateMatches;
+    }).toList(growable: false);
   }
 
   bool _isActiveLab(LabModel lab) {
@@ -1072,8 +1066,8 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     final fallbackCourseName = '${l10n.course} #$courseId';
     final courseName = labs.isNotEmpty
         ? (labs.first.course?.name ??
-              courseModel?.course.courseName ??
-              fallbackCourseName)
+            courseModel?.course.courseName ??
+            fallbackCourseName)
         : (courseModel?.course.courseName ?? fallbackCourseName);
     final courseCode = labs.isNotEmpty
         ? (labs.first.course?.code ?? courseModel?.course.courseCode ?? '')
@@ -1223,6 +1217,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
           }
           context.read<TALabsCubit>().restoreLabsList();
         },
+        onLongPress: () => _showLabActions(l10n, lab),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: LayoutBuilder(
@@ -1320,71 +1315,97 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   }
 
   Widget _buildLabMenuButton(bool isDark, AppLocalizations l10n, LabModel lab) {
-    return PopupMenuButton<String>(
-      icon: Icon(
-        Icons.more_vert_rounded,
-        size: 18,
-        color: TAColors.textTertiaryColor(isDark),
-      ),
+    return IconButton(
+      onPressed: () => _showLabActions(l10n, lab),
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),
-      onSelected: (value) {
-        if (value == 'delete') {
-          _confirmDeleteLab(lab, l10n);
-        } else if (value == 'publish') {
-          _updateLabStatus(lab, api.LabStatus.published);
-        } else if (value == 'close') {
-          _updateLabStatus(lab, api.LabStatus.closed);
-        } else if (value == 'archive') {
-          _updateLabStatus(lab, api.LabStatus.archived);
-        }
-      },
-      itemBuilder: (ctx) => [
-        if (lab.status == api.LabStatus.draft)
-          PopupMenuItem(
-            value: 'publish',
-            child: Row(
-              children: [
-                const Icon(Icons.publish_rounded, size: 18),
-                const SizedBox(width: 8),
-                Text(l10n.publish),
-              ],
-            ),
-          ),
-        if (lab.status == api.LabStatus.published)
-          PopupMenuItem(
-            value: 'close',
-            child: Row(
-              children: [
-                const Icon(Icons.lock_outline_rounded, size: 18),
-                const SizedBox(width: 8),
-                Text(l10n.close),
-              ],
-            ),
-          ),
-        if (lab.status == api.LabStatus.closed)
-          PopupMenuItem(
-            value: 'archive',
-            child: Row(
-              children: [
-                const Icon(Icons.archive_outlined, size: 18),
-                const SizedBox(width: 8),
-                Text(l10n.archive),
-              ],
-            ),
-          ),
-        PopupMenuItem(
-          value: 'delete',
-          child: Row(
-            children: [
-              Icon(Icons.delete_rounded, size: 18, color: TAColors.error),
-              const SizedBox(width: 8),
-              Text(l10n.delete, style: const TextStyle(color: TAColors.error)),
-            ],
-          ),
-        ),
-      ],
+      visualDensity: VisualDensity.compact,
+      icon: Icon(
+        Icons.more_horiz_rounded,
+        size: 20,
+        color: TAColors.textTertiaryColor(isDark),
+      ),
     );
+  }
+
+  Future<void> _showLabActions(AppLocalizations l10n, LabModel lab) async {
+    final actions = <ModernActionItem<String>>[
+      ModernActionItem<String>(
+        value: 'open',
+        label: l10n.labDetails,
+        icon: Icons.open_in_new_rounded,
+        color: TAColors.primary,
+      ),
+      ModernActionItem<String>(
+        value: 'edit',
+        label: l10n.edit,
+        icon: Icons.edit_rounded,
+        color: TAColors.accent,
+      ),
+      if (lab.status == api.LabStatus.draft)
+        ModernActionItem<String>(
+          value: 'publish',
+          label: l10n.publish,
+          icon: Icons.publish_rounded,
+          color: TAColors.success,
+        ),
+      if (lab.status == api.LabStatus.published)
+        ModernActionItem<String>(
+          value: 'close',
+          label: l10n.close,
+          icon: Icons.lock_outline_rounded,
+          color: TAColors.warning,
+        ),
+      if (lab.status == api.LabStatus.closed)
+        ModernActionItem<String>(
+          value: 'archive',
+          label: l10n.archive,
+          icon: Icons.archive_outlined,
+          color: TAColors.textSecondary,
+        ),
+      ModernActionItem<String>(
+        value: 'delete',
+        label: l10n.delete,
+        icon: Icons.delete_outline_rounded,
+        color: TAColors.error,
+        destructive: true,
+      ),
+    ];
+
+    final value = await showModernActionSheet<String>(
+      context,
+      title: lab.title,
+      accentColor: _getStatusColor(lab.status.toJson()),
+      actions: actions,
+    );
+
+    if (!mounted || value == null) {
+      return;
+    }
+
+    if (value == 'open') {
+      await context.push('/ta/lab/${lab.id}');
+      if (!mounted) {
+        return;
+      }
+      context.read<TALabsCubit>().restoreLabsList();
+      return;
+    }
+
+    if (value == 'edit') {
+      await _openEditLabForm(l10n, lab);
+      return;
+    }
+
+    if (value == 'delete') {
+      _confirmDeleteLab(lab, l10n);
+    } else if (value == 'publish') {
+      _updateLabStatus(lab, api.LabStatus.published);
+    } else if (value == 'close') {
+      _updateLabStatus(lab, api.LabStatus.closed);
+    } else if (value == 'archive') {
+      _updateLabStatus(lab, api.LabStatus.archived);
+    }
   }
 
   Color _getStatusColor(String status) {
@@ -1466,9 +1487,8 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   }
 
   String _courseInitials(String courseCode, String courseName) {
-    final codeLetters = courseCode
-        .replaceAll(RegExp(r'[^A-Za-z]'), '')
-        .toUpperCase();
+    final codeLetters =
+        courseCode.replaceAll(RegExp(r'[^A-Za-z]'), '').toUpperCase();
     if (codeLetters.isNotEmpty) {
       return codeLetters.length <= 3
           ? codeLetters
@@ -1488,15 +1508,15 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   }
 
   // T031: Open Create Lab form
-  void _openCreateLabForm(bool isDark) {
+  Future<void> _openCreateLabForm(bool _) async {
     final l10n = AppLocalizations.of(context);
     final coursesState = context.read<TACoursesCubit>().state;
     final courses =
         coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>
-        ? (coursesState.coursesStatus
-                  as TASubTabLoaded<List<TeachingCourseModel>>)
-              .data
-        : <TeachingCourseModel>[];
+            ? (coursesState.coursesStatus
+                    as TASubTabLoaded<List<TeachingCourseModel>>)
+                .data
+            : <TeachingCourseModel>[];
 
     if (courses.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1509,53 +1529,77 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
       return;
     }
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: TAColors.cardColor(isDark),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    final result = await Navigator.of(context).push<Map<String, dynamic>>(
+      MaterialPageRoute<Map<String, dynamic>>(
+        builder: (_) => LabEditorScreen(
+          role: LabComposerRole.ta,
+          courses: courses,
+          onSave: (data) => context.read<TALabsCubit>().createLab(data),
+        ),
       ),
-      builder: (ctx) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          maxChildSize: 0.95,
-          minChildSize: 0.5,
-          expand: false,
-          builder: (_, scrollController) {
-            return LabCreateForm(
-              courses: courses,
-              onCancel: () => Navigator.of(ctx).pop(),
-              onSubmit: (data) async {
-                final messenger = ScaffoldMessenger.of(context);
-                final cubit = context.read<TALabsCubit>();
-                final message = await cubit.createLab(data);
+    );
 
-                if (!mounted) {
-                  return;
-                }
+    if (!mounted || result == null) {
+      return;
+    }
 
-                if (!ctx.mounted) {
-                  return;
-                }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_labSavedMessage(result['status']?.toString())),
+        backgroundColor: TAColors.success,
+        behavior: SnackBarBehavior.fixed,
+      ),
+    );
+  }
 
-                Navigator.of(ctx).pop();
-                messenger.showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      message ?? _labSavedMessage(data['status']?.toString()),
-                    ),
-                    backgroundColor: message == null
-                        ? TAColors.success
-                        : TAColors.error,
-                    behavior: SnackBarBehavior.fixed,
-                  ),
-                );
-              },
-            );
+  Future<void> _openEditLabForm(AppLocalizations l10n, LabModel lab) async {
+    final coursesState = context.read<TACoursesCubit>().state;
+    final courses =
+        coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>
+            ? (coursesState.coursesStatus
+                    as TASubTabLoaded<List<TeachingCourseModel>>)
+                .data
+            : <TeachingCourseModel>[];
+
+    if (courses.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.taLabsCoursesLoading),
+          backgroundColor: TAColors.warning,
+          behavior: SnackBarBehavior.fixed,
+        ),
+      );
+      return;
+    }
+
+    final result = await Navigator.of(context).push<Map<String, dynamic>>(
+      MaterialPageRoute<Map<String, dynamic>>(
+        builder: (_) => LabEditorScreen(
+          role: LabComposerRole.ta,
+          courses: courses,
+          existingLab: lab,
+          onSave: (data) async {
+            final response = await _labService.update(lab.id, data);
+            if (!response.isSuccess) {
+              return response.error?.message ?? l10n.taLabPermissionEditDenied;
+            }
+            return null;
           },
-        );
-      },
+        ),
+      ),
+    );
+
+    if (!mounted || result == null) {
+      return;
+    }
+
+    context.read<TALabsCubit>().fetchTALabs();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_labSavedMessage(result['status']?.toString())),
+        backgroundColor: TAColors.success,
+        behavior: SnackBarBehavior.fixed,
+      ),
     );
   }
 
@@ -1586,9 +1630,9 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
 
   Future<void> _updateLabStatus(LabModel lab, api.LabStatus status) async {
     final message = await context.read<TALabsCubit>().updateLabStatus(
-      lab.id.isNotEmpty ? (int.tryParse(lab.id) ?? lab.id) : lab.labId,
-      status,
-    );
+          lab.id.isNotEmpty ? (int.tryParse(lab.id) ?? lab.id) : lab.labId,
+          status,
+        );
 
     if (!mounted) {
       return;

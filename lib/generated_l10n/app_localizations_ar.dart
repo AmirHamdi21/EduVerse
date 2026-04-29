@@ -6339,6 +6339,126 @@ class AppLocalizationsAr extends AppLocalizations {
   String get taLabsStatusUpdated => 'تم تحديث حالة المختبر.';
 
   @override
+  String get labEditorCreateScreenTitle => 'إنشاء مختبر';
+
+  @override
+  String get labEditorEditScreenTitle => 'تعديل المختبر';
+
+  @override
+  String get labEditorHeroTitle => 'استوديو المختبر';
+
+  @override
+  String get instructorLabEditorHeroSubtitle =>
+      'نظّم وصف المختبر وتوقيته وقواعد التسليم في تدفق واحد واضح ومركز.';
+
+  @override
+  String get taLabEditorHeroSubtitle =>
+      'اضبط إعداد المختبر بسرعة، ووضّح قواعد التسليم، وابقَ منسجماً مع تدفق المقرر المكلّف به.';
+
+  @override
+  String get labEditorCoreSection => 'التفاصيل الأساسية';
+
+  @override
+  String get labEditorCoreSectionSubtitle =>
+      'حدّد المقرر والعنوان والملخص الذي سيظهر للطلاب.';
+
+  @override
+  String get labEditorScheduleSection => 'الجدولة';
+
+  @override
+  String get labEditorScheduleSectionSubtitle =>
+      'تحكم في وقت فتح المختبر وموعد استحقاقه.';
+
+  @override
+  String get labEditorRulesSection => 'الدرجات والقواعد';
+
+  @override
+  String get labEditorRulesSectionSubtitle =>
+      'اضبط التقييم وحدود التسليم بشكل منظم وواضح.';
+
+  @override
+  String get labEditorTitleHint => 'أدخل عنوانًا واضحًا للمختبر';
+
+  @override
+  String get labEditorCourseHint => 'اختر المقرر الذي يتبع له هذا المختبر';
+
+  @override
+  String get labEditorDescriptionHint =>
+      'لخّص المهمة أو المخرجات المتوقعة أو محور هذا المختبر.';
+
+  @override
+  String get labEditorAvailableHelper =>
+      'يستطيع الطلاب الوصول إلى المختبر فور فتح هذه النافذة الزمنية.';
+
+  @override
+  String get labEditorDueHelper =>
+      'حدد الموعد النهائي بدقة باستخدام التاريخ والوقت.';
+
+  @override
+  String get labEditorWeight => 'الوزن';
+
+  @override
+  String get labEditorVisibility => 'الظهور';
+
+  @override
+  String get labEditorAllowedTypesHint => 'اكتب امتدادات الملفات مفصولة بفواصل';
+
+  @override
+  String get labEditorQuickTypes => 'أنواع سريعة';
+
+  @override
+  String get labEditorReadyToSave => 'جاهز للحفظ';
+
+  @override
+  String get labEditorCreateAction => 'إنشاء المختبر';
+
+  @override
+  String get labEditorSaveAction => 'حفظ المختبر';
+
+  @override
+  String get labEditorSavingAction => 'جارٍ الحفظ...';
+
+  @override
+  String get labEditorDraftStateHelper =>
+      'المسودة تُبقي المختبر بعيدًا عن إشعارات النشر حتى تصبح جاهزًا لإطلاقه.';
+
+  @override
+  String get labEditorPublishedStateHelper =>
+      'النشر يجعل المختبر متاحًا مباشرة ضمن تدفق المقرر الحالي.';
+
+  @override
+  String get labEditorValidationTitleRequired => 'العنوان مطلوب';
+
+  @override
+  String get labEditorValidationCourseRequired => 'المقرر مطلوب';
+
+  @override
+  String get labEditorValidationPositiveNumber => 'أدخل رقمًا أكبر من 0';
+
+  @override
+  String get labEditorValidationAvailableRequired => 'وقت الإتاحة مطلوب';
+
+  @override
+  String get labEditorValidationDueRequired => 'تاريخ الاستحقاق مطلوب';
+
+  @override
+  String get labEditorValidationDueAfterAvailable =>
+      'يجب أن يكون تاريخ الاستحقاق بعد وقت الإتاحة';
+
+  @override
+  String labEditorValidationUnsupportedTypes(Object types) {
+    return 'أنواع غير مدعومة: $types';
+  }
+
+  @override
+  String get labEditorPastDueWarning =>
+      'موعد استحقاق هذا المختبر أصبح في الماضي بالفعل.';
+
+  @override
+  String get labEditorMaxScoreWarning =>
+      'قد تظل بعض التسليمات تحتوي على درجات أعلى من الدرجة القصوى الجديدة. هذه الدرجات لا يتم تعديلها تلقائيًا.';
+
+  @override
   String get taPerformanceTitle => 'أداء الطلاب';
 
   @override

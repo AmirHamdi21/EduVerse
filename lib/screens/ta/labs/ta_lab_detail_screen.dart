@@ -13,7 +13,12 @@ import '../../../bloc/ta/ta_courses_state.dart';
 import '../../../models/labs/lab_model.dart';
 import '../../../models/labs/lab_submission_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
+import '../../../models/core/course_model.dart';
+import '../../../models/core/section_model.dart';
+import '../../../models/core/semester_model.dart';
+import '../../../models/core/enums/course_enums.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../shared/lab_editor_screen.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../../../widgets/instructor/assignments/grading_panel.dart';
 import '../../../widgets/instructor/labs/lab_create_form.dart';
@@ -1085,7 +1090,7 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
   }
 
   // T032: Open Edit Lab form
-  void _openEditLabForm(bool isDark, LabModel lab) {
+  Future<void> _openEditLabForm(bool _, LabModel lab) async {
     final coursesState = context.read<TACoursesCubit>().state;
     final courses =
         coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>
@@ -1093,55 +1098,67 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
                   as TASubTabLoaded<List<TeachingCourseModel>>)
               .data
         : <TeachingCourseModel>[];
+    final l10n = AppLocalizations.of(context);
+    final fallbackCourses = courses.isNotEmpty
+        ? courses
+        : <TeachingCourseModel>[
+            TeachingCourseModel(
+              courseId: lab.courseId,
+              sectionId: 0,
+              course: CourseModel(
+                id: lab.courseId,
+                departmentId: 0,
+                code: lab.course?.code ?? 'COURSE',
+                name: lab.course?.name ?? '${l10n.course} #${lab.courseId}',
+                description: null,
+                credits: 0,
+                courseLevel: CourseLevel.unknown,
+                courseStatus: CourseStatus.unknown,
+              ),
+              section: SectionModel(
+                id: 0,
+                courseId: lab.courseId,
+                semesterId: 0,
+                sectionNumber: '1',
+                maxCapacity: 0,
+                currentEnrollment: 0,
+                location: null,
+                sectionStatus: SectionStatus.unknown,
+              ),
+              semester: const SemesterModel(id: 0, name: ''),
+              role: 'ta',
+            ),
+          ];
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: TAColors.cardColor(isDark),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          maxChildSize: 0.95,
-          minChildSize: 0.5,
-          expand: false,
-          builder: (_, scrollController) {
-            return LabCreateForm(
-              courses: courses,
-              existingLab: lab,
-              onCancel: () => Navigator.of(ctx).pop(),
-              onSubmit: (data) async {
-                Navigator.of(ctx).pop();
-                try {
-                  await _labService.update(lab.id, data);
-                  if (!mounted) {
-                    return;
-                  }
-                  context.read<TALabsCubit>().fetchLabDetail(widget.labId);
-                } catch (e) {
-                  if (mounted) {
-                    final l10n = AppLocalizations.of(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          e.toString().contains('403')
-                              ? l10n.taLabPermissionEditDenied
-                              : '${l10n.failed}: $e',
-                        ),
-                        backgroundColor: TAColors.error,
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  }
-                }
-              },
-            );
+    final result = await Navigator.of(context).push<Map<String, dynamic>>(
+      MaterialPageRoute<Map<String, dynamic>>(
+        builder: (_) => LabEditorScreen(
+          role: LabComposerRole.ta,
+          courses: fallbackCourses,
+          existingLab: lab,
+          onSave: (data) async {
+            final result = await _labService.update(lab.id, data);
+            if (!result.isSuccess) {
+              return result.error?.message ?? l10n.taLabPermissionEditDenied;
+            }
+            return null;
           },
-        );
-      },
+        ),
+      ),
     );
+
+    if (!mounted || result == null) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(_labSavedMessage(result['status']?.toString())),
+        backgroundColor: TAColors.success,
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+    context.read<TALabsCubit>().fetchLabDetail(widget.labId);
   }
 
   String _formatDueDate(
@@ -1155,6 +1172,15 @@ class _TALabDetailScreenState extends State<TALabDetailScreen>
 
     final locale = Localizations.localeOf(context).toString();
     return DateFormat.yMMMd(locale).add_jm().format(lab.dueDate!.toLocal());
+  }
+
+  String _labSavedMessage(String? rawStatus) {
+    final status = rawStatus?.trim().toLowerCase();
+    return switch (status) {
+      'published' => AppLocalizations.of(context).taLabsCreatedPublished,
+      'draft' => AppLocalizations.of(context).taLabsCreatedDraft,
+      _ => AppLocalizations.of(context).taLabsCreatedDraft,
+    };
   }
 
   String _statusLabel(AppLocalizations l10n, lab_enums.LabStatus status) {

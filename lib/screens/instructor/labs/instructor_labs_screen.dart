@@ -17,8 +17,10 @@ import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/api/lab_service.dart';
 import '../../../services/storage_service.dart';
+import '../../shared/lab_editor_screen.dart';
 import '../../../widgets/instructor/labs/lab_create_form.dart';
 import '../../../widgets/instructor/shared/instructor_colors.dart';
+import '../../../widgets/shared/modern_action_sheet.dart';
 
 class InstructorLabsScreen extends StatelessWidget {
   const InstructorLabsScreen({
@@ -95,8 +97,7 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
   Future<void> _resolveRoleAccess() async {
     try {
       final user = await widget.storageService.getUserData();
-      final roleNames =
-          user?.roles
+      final roleNames = user?.roles
               .map((role) => role.roleName.toLowerCase().trim())
               .toSet() ??
           <String>{};
@@ -146,8 +147,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
 
             return Scaffold(
               backgroundColor: InstructorColors.background(isDark),
-              floatingActionButton:
-                  _resolvedCanManage && state is InstructorLabsLoaded
+              floatingActionButton: _resolvedCanManage &&
+                      state is InstructorLabsLoaded
                   ? FloatingActionButton.extended(
                       onPressed: () => _openCreateOrEditSheet(context, state),
                       backgroundColor: InstructorColors.primary,
@@ -242,8 +243,7 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
       groupedLabs.putIfAbsent(lab.courseId, () => <LabModel>[]).add(lab);
     }
 
-    final showAllAssignedCourses =
-        state.selectedCourseId == null &&
+    final showAllAssignedCourses = state.selectedCourseId == null &&
         selectedStateFilter == _InstructorLabStateFilter.all;
     final courseIds = _resolveVisibleCourseIds(
       grouped: groupedLabs,
@@ -361,13 +361,11 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
     ResponsiveUtil r,
     InstructorLabsLoaded state,
   ) {
-    final courseCount = state.selectedCourseId == null
-        ? state.teachingCourses.length
-        : 1;
+    final courseCount =
+        state.selectedCourseId == null ? state.teachingCourses.length : 1;
     final activeCount = state.labs.where(_isActiveLab).length;
-    final draftCount = state.labs
-        .where((lab) => lab.status == api.LabStatus.draft)
-        .length;
+    final draftCount =
+        state.labs.where((lab) => lab.status == api.LabStatus.draft).length;
     final closedCount = state.labs
         .where(
           (lab) =>
@@ -508,27 +506,24 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
                     builder: (context, constraints) {
                       final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
                       const spacing = 10.0;
-                      final itemWidth =
-                          (constraints.maxWidth -
+                      final itemWidth = (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
                           crossAxisCount;
 
                       return Wrap(
                         spacing: spacing,
                         runSpacing: spacing,
-                        children: stats
-                            .map((stat) {
-                              return SizedBox(
-                                width: itemWidth,
-                                child: _buildHeaderStatCard(
-                                  icon: stat.icon,
-                                  label: stat.label,
-                                  value: stat.value,
-                                  color: stat.color,
-                                ),
-                              );
-                            })
-                            .toList(growable: false),
+                        children: stats.map((stat) {
+                          return SizedBox(
+                            width: itemWidth,
+                            child: _buildHeaderStatCard(
+                              icon: stat.icon,
+                              label: stat.label,
+                              value: stat.value,
+                              color: stat.color,
+                            ),
+                          );
+                        }).toList(growable: false),
                       );
                     },
                   ),
@@ -736,8 +731,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
                         return;
                       }
                       context.read<InstructorLabsCubit>().filterLabs(
-                        status: _stateFilterValue(value),
-                      );
+                            status: _stateFilterValue(value),
+                          );
                     },
                     selectedLabel: _stateFilterLabel(
                       l10n,
@@ -814,23 +809,21 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
         fontWeight: FontWeight.w600,
       ),
       selectedItemBuilder: (context) {
-        return items
-            .map((_) {
-              return Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: Text(
-                  selectedLabel,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: InstructorColors.textPrimaryColor(isDark),
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              );
-            })
-            .toList(growable: false);
+        return items.map((_) {
+          return Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              selectedLabel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          );
+        }).toList(growable: false);
       },
       items: items,
       onChanged: onChanged,
@@ -1061,8 +1054,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
     final fallbackCourseName = '${l10n.course} #$courseId';
     final courseName = labs.isNotEmpty
         ? (labs.first.course?.name ??
-              courseModel?.course.name ??
-              fallbackCourseName)
+            courseModel?.course.name ??
+            fallbackCourseName)
         : (courseModel?.course.name ?? fallbackCourseName);
     final courseCode = labs.isNotEmpty
         ? (labs.first.course?.code ?? courseModel?.course.code ?? '')
@@ -1211,6 +1204,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () => context.push('/instructor/labs/${lab.id}'),
+        onLongPress:
+            _resolvedCanManage ? () => _showLabActions(l10n, lab) : null,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: LayoutBuilder(
@@ -1316,78 +1311,100 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
   }
 
   Widget _buildLabMenuButton(bool isDark, AppLocalizations l10n, LabModel lab) {
-    return PopupMenuButton<String>(
-      icon: Icon(
-        Icons.more_vert_rounded,
-        size: 18,
-        color: InstructorColors.textTertiaryColor(isDark),
-      ),
+    return IconButton(
+      onPressed: () => _showLabActions(l10n, lab),
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),
-      onSelected: (value) {
-        if (value == 'delete') {
-          _confirmDelete(context, lab, l10n);
-        } else if (value == 'publish') {
-          _updateLabStatus(lab, api.LabStatus.published);
-        } else if (value == 'close') {
-          _updateLabStatus(lab, api.LabStatus.closed);
-        } else if (value == 'archive') {
-          _updateLabStatus(lab, api.LabStatus.archived);
-        }
-      },
-      itemBuilder: (ctx) => [
-        if (lab.status == api.LabStatus.draft)
-          PopupMenuItem(
-            value: 'publish',
-            child: Row(
-              children: [
-                const Icon(Icons.publish_rounded, size: 18),
-                const SizedBox(width: 8),
-                Text(l10n.publish),
-              ],
-            ),
-          ),
-        if (lab.status == api.LabStatus.published)
-          PopupMenuItem(
-            value: 'close',
-            child: Row(
-              children: [
-                const Icon(Icons.lock_outline_rounded, size: 18),
-                const SizedBox(width: 8),
-                Text(l10n.close),
-              ],
-            ),
-          ),
-        if (lab.status == api.LabStatus.closed)
-          PopupMenuItem(
-            value: 'archive',
-            child: Row(
-              children: [
-                const Icon(Icons.archive_outlined, size: 18),
-                const SizedBox(width: 8),
-                Text(l10n.archive),
-              ],
-            ),
-          ),
-        PopupMenuItem(
-          value: 'delete',
-          child: Row(
-            children: [
-              const Icon(
-                Icons.delete_rounded,
-                size: 18,
-                color: InstructorColors.error,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                l10n.delete,
-                style: const TextStyle(color: InstructorColors.error),
-              ),
-            ],
-          ),
-        ),
-      ],
+      visualDensity: VisualDensity.compact,
+      icon: Icon(
+        Icons.more_horiz_rounded,
+        size: 20,
+        color: InstructorColors.textTertiaryColor(isDark),
+      ),
     );
+  }
+
+  Future<void> _showLabActions(AppLocalizations l10n, LabModel lab) async {
+    if (!_resolvedCanManage) {
+      return;
+    }
+
+    final actions = <ModernActionItem<String>>[
+      ModernActionItem<String>(
+        value: 'open',
+        label: l10n.labDetails,
+        icon: Icons.open_in_new_rounded,
+        color: InstructorColors.primary,
+      ),
+      ModernActionItem<String>(
+        value: 'edit',
+        label: l10n.edit,
+        icon: Icons.edit_rounded,
+        color: InstructorColors.accent,
+      ),
+      if (lab.status == api.LabStatus.draft)
+        ModernActionItem<String>(
+          value: 'publish',
+          label: l10n.publish,
+          icon: Icons.publish_rounded,
+          color: InstructorColors.success,
+        ),
+      if (lab.status == api.LabStatus.published)
+        ModernActionItem<String>(
+          value: 'close',
+          label: l10n.close,
+          icon: Icons.lock_outline_rounded,
+          color: InstructorColors.warning,
+        ),
+      if (lab.status == api.LabStatus.closed)
+        ModernActionItem<String>(
+          value: 'archive',
+          label: l10n.archive,
+          icon: Icons.archive_outlined,
+          color: InstructorColors.textSecondary,
+        ),
+      ModernActionItem<String>(
+        value: 'delete',
+        label: l10n.delete,
+        icon: Icons.delete_outline_rounded,
+        color: InstructorColors.error,
+        destructive: true,
+      ),
+    ];
+
+    final value = await showModernActionSheet<String>(
+      context,
+      title: lab.title,
+      accentColor: _getStatusColor(lab.status.toJson()),
+      actions: actions,
+    );
+
+    if (!mounted || value == null) {
+      return;
+    }
+
+    if (value == 'open') {
+      context.push('/instructor/labs/${lab.id}');
+      return;
+    }
+
+    if (value == 'edit') {
+      final currentState = context.read<InstructorLabsCubit>().state;
+      if (currentState is InstructorLabsLoaded) {
+        await _openCreateOrEditSheet(context, currentState, existingLab: lab);
+      }
+      return;
+    }
+
+    if (value == 'delete') {
+      _confirmDelete(context, lab, l10n);
+    } else if (value == 'publish') {
+      _updateLabStatus(lab, api.LabStatus.published);
+    } else if (value == 'close') {
+      _updateLabStatus(lab, api.LabStatus.closed);
+    } else if (value == 'archive') {
+      _updateLabStatus(lab, api.LabStatus.archived);
+    }
   }
 
   Color _getStatusColor(String status) {
@@ -1469,9 +1486,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
   }
 
   String _courseInitials(String courseCode, String courseName) {
-    final codeLetters = courseCode
-        .replaceAll(RegExp(r'[^A-Za-z]'), '')
-        .toUpperCase();
+    final codeLetters =
+        courseCode.replaceAll(RegExp(r'[^A-Za-z]'), '').toUpperCase();
     if (codeLetters.isNotEmpty) {
       return codeLetters.length <= 3
           ? codeLetters
@@ -1536,76 +1552,35 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
     final isEdit = existingLab != null;
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context);
-
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: InstructorColors.cardColor(
-        context.read<ThemeBloc>().state.isDark,
-      ),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (sheetContext) {
-        var submitting = false;
-
-        return StatefulBuilder(
-          builder: (sheetContext, setModalState) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
-              ),
-              child: SizedBox(
-                height: MediaQuery.of(sheetContext).size.height * 0.86,
-                child: LabCreateForm(
-                  courses: state.teachingCourses,
-                  existingLab: existingLab,
-                  submitting: submitting,
-                  onCancel: () => Navigator.of(sheetContext).pop(),
-                  onSubmit: (payload) async {
-                    setModalState(() => submitting = true);
-
-                    final message = isEdit
-                        ? await cubit.updateLab(
-                            existingLab.id.isNotEmpty
-                                ? existingLab.id
-                                : existingLab.labId.toString(),
-                            payload,
-                          )
-                        : await cubit.createLab(payload);
-
-                    if (!mounted || !sheetContext.mounted) {
-                      return;
-                    }
-
-                    setModalState(() => submitting = false);
-
-                    if (message != null) {
-                      messenger.showSnackBar(
-                        SnackBar(
-                          content: Text(message),
-                          behavior: SnackBarBehavior.floating,
-                        ),
-                      );
-                      return;
-                    }
-
-                    Navigator.of(sheetContext).pop();
-                    messenger.showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          _labSavedMessage(l10n, payload['status']),
-                        ),
-                        behavior: SnackBarBehavior.floating,
-                      ),
-                    );
-                  },
-                ),
-              ),
-            );
+    final result = await Navigator.of(context).push<Map<String, dynamic>>(
+      MaterialPageRoute<Map<String, dynamic>>(
+        builder: (_) => LabEditorScreen(
+          role: LabComposerRole.instructor,
+          courses: state.teachingCourses,
+          existingLab: existingLab,
+          onSave: (payload) {
+            return isEdit
+                ? cubit.updateLab(
+                    existingLab.id.isNotEmpty
+                        ? existingLab.id
+                        : existingLab.labId.toString(),
+                    payload,
+                  )
+                : cubit.createLab(payload);
           },
-        );
-      },
+        ),
+      ),
+    );
+
+    if (!mounted || result == null) {
+      return;
+    }
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(_labSavedMessage(l10n, result['status'])),
+        behavior: SnackBarBehavior.floating,
+      ),
     );
   }
 
@@ -1663,9 +1638,9 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
   Future<void> _updateLabStatus(LabModel lab, api.LabStatus status) async {
     final l10n = AppLocalizations.of(context);
     final message = await context.read<InstructorLabsCubit>().updateStatus(
-      lab.id.isNotEmpty ? lab.id : lab.labId.toString(),
-      status,
-    );
+          lab.id.isNotEmpty ? lab.id : lab.labId.toString(),
+          status,
+        );
 
     if (!mounted) {
       return;

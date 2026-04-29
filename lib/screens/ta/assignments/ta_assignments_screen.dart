@@ -15,6 +15,7 @@ import '../../../bloc/theme/theme_state.dart';
 import '../../../models/assignments/assignment_model.dart';
 import '../../../models/core/enums/assignment_enums.dart' as api;
 import '../../../models/instructor/teaching_course_model.dart';
+import '../../../widgets/shared/modern_action_sheet.dart';
 import '../../instructor/create_assignment_screen.dart';
 
 class TAAssignmentsScreen extends StatefulWidget {
@@ -64,7 +65,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
 
     final hasSelected = _selectedCourseId != null &&
         courses.any((course) => course.courseId == _selectedCourseId);
-    final nextCourseId = hasSelected ? _selectedCourseId : courses.first.courseId;
+    final nextCourseId =
+        hasSelected ? _selectedCourseId : courses.first.courseId;
 
     if (nextCourseId == null) {
       return;
@@ -145,7 +147,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
         onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-        icon: Icon(Icons.menu_rounded, color: TAColors.textPrimaryColor(isDark)),
+        icon:
+            Icon(Icons.menu_rounded, color: TAColors.textPrimaryColor(isDark)),
       ),
       title: Text(
         l10n.assignments,
@@ -176,13 +179,16 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     List<TeachingCourseModel> courses,
   ) {
     final assignmentsState = state.assignmentsData;
-    final assignments = assignmentsState is TASubTabLoaded<List<AssignmentModel>>
-        ? assignmentsState.data
-        : const <AssignmentModel>[];
+    final assignments =
+        assignmentsState is TASubTabLoaded<List<AssignmentModel>>
+            ? assignmentsState.data
+            : const <AssignmentModel>[];
     final filteredAssignments = _applyStatusFilter(assignments);
     final grouped = <int, List<AssignmentModel>>{};
     for (final assignment in filteredAssignments) {
-      grouped.putIfAbsent(assignment.courseId, () => <AssignmentModel>[]).add(assignment);
+      grouped
+          .putIfAbsent(assignment.courseId, () => <AssignmentModel>[])
+          .add(assignment);
     }
     final courseIds = grouped.keys.toList(growable: false);
     final r = context.responsive;
@@ -210,7 +216,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
             child: _buildSummaryHeader(isDark, l10n, r, courses, assignments),
           ),
           SliverToBoxAdapter(
-            child: _buildFilterMenus(isDark, l10n, r, courses, filteredAssignments.length),
+            child: _buildFilterMenus(
+                isDark, l10n, r, courses, filteredAssignments.length),
           ),
           SliverFillRemaining(
             child: _buildErrorState(isDark, l10n, assignmentsState.message),
@@ -237,7 +244,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
           child: _buildSummaryHeader(isDark, l10n, r, courses, assignments),
         ),
         SliverToBoxAdapter(
-          child: _buildFilterMenus(isDark, l10n, r, courses, filteredAssignments.length),
+          child: _buildFilterMenus(
+              isDark, l10n, r, courses, filteredAssignments.length),
         ),
         if (courseIds.isEmpty)
           SliverFillRemaining(
@@ -483,8 +491,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                     builder: (context, constraints) {
                       final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
                       const spacing = 10.0;
-                      final itemWidth =
-                          (constraints.maxWidth -
+                      final itemWidth = (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
                           crossAxisCount;
 
@@ -643,7 +650,9 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                         return;
                       }
                       setState(() => _selectedCourseId = value);
-                      context.read<TACoursesCubit>().fetchCourseAssignments(value);
+                      context
+                          .read<TACoursesCubit>()
+                          .fetchCourseAssignments(value);
                     },
                   ),
                 ),
@@ -652,7 +661,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                   child: _buildModernDropdown<_TAAssignmentStateFilter>(
                     isDark: isDark,
                     label: l10n.status,
-                    selectedLabel: _statusFilterLabel(l10n, _selectedStatusFilter),
+                    selectedLabel:
+                        _statusFilterLabel(l10n, _selectedStatusFilter),
                     value: _selectedStatusFilter,
                     icon: Icons.tune_rounded,
                     menuMaxHeight: r.screenHeight * 0.45,
@@ -742,7 +752,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
         ),
       ),
       dropdownColor: TAColors.cardColor(isDark),
-      icon: const Icon(Icons.keyboard_arrow_down_rounded, color: TAColors.primary),
+      icon: const Icon(Icons.keyboard_arrow_down_rounded,
+          color: TAColors.primary),
       style: TextStyle(
         color: TAColors.textPrimaryColor(isDark),
         fontSize: 13,
@@ -777,7 +788,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     int courseId,
     List<AssignmentModel> assignments,
   ) {
-    final course = courses.where((item) => item.courseId == courseId).firstOrNull;
+    final course =
+        courses.where((item) => item.courseId == courseId).firstOrNull;
     final courseCode = course?.course.code ?? assignments.first.courseCode;
     final courseName = course?.course.name ?? assignments.first.courseName;
 
@@ -811,7 +823,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(22)),
             ),
             child: Row(
               children: <Widget>[
@@ -877,7 +890,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
               ],
             ),
           ),
-          ...assignments.map((assignment) => _buildAssignmentTile(isDark, l10n, assignment)),
+          ...assignments.map(
+              (assignment) => _buildAssignmentTile(isDark, l10n, assignment)),
         ],
       ),
     );
@@ -891,6 +905,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     return InkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: () => _openAssignmentDetail(assignment),
+      onLongPress: () => _showAssignmentActions(l10n, assignment),
       child: Container(
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
         decoration: BoxDecoration(
@@ -907,7 +922,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: _assignmentTypeColor(assignment.type).withValues(alpha: 0.12),
+                color: _assignmentTypeColor(assignment.type)
+                    .withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
@@ -947,7 +963,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                       _buildMetaChip(
                         isDark,
                         icon: Icons.upload_file_rounded,
-                        label: _submissionTypeLabel(l10n, assignment.submissionType),
+                        label: _submissionTypeLabel(
+                            l10n, assignment.submissionType),
                       ),
                     ],
                   ),
@@ -959,48 +976,12 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 _buildStatusBadge(isDark, l10n, assignment.apiStatus),
-                PopupMenuButton<String>(
+                IconButton(
+                  onPressed: () => _showAssignmentActions(l10n, assignment),
                   padding: EdgeInsets.zero,
-                  onSelected: (value) async {
-                    if (value == 'open') {
-                      await _openAssignmentDetail(assignment);
-                    } else if (value == 'edit') {
-                      await _openAssignmentEditor(context, assignment: assignment);
-                    } else if (value == 'delete') {
-                      await _confirmDelete(context, assignment);
-                    } else if (value.startsWith('status:')) {
-                      final raw = value.split(':').last;
-                      await _updateStatus(context, assignment, api.AssignmentStatus.fromString(raw));
-                    }
-                  },
-                  itemBuilder: (context) {
-                    final nextStatuses = _nextStatuses(assignment.apiStatus);
-                    return <PopupMenuEntry<String>>[
-                      PopupMenuItem<String>(
-                        value: 'open',
-                        child: Text(l10n.assignmentDetails),
-                      ),
-                      PopupMenuItem<String>(
-                        value: 'edit',
-                        child: Text(l10n.edit),
-                      ),
-                      ...nextStatuses.map(
-                        (status) => PopupMenuItem<String>(
-                          value: 'status:${status.value}',
-                          child: Text(_statusLabel(l10n, status)),
-                        ),
-                      ),
-                      PopupMenuItem<String>(
-                        value: 'delete',
-                        child: Text(
-                          l10n.delete,
-                          style: const TextStyle(color: TAColors.error),
-                        ),
-                      ),
-                    ];
-                  },
-                  child: Icon(
-                    Icons.more_vert_rounded,
+                  visualDensity: VisualDensity.compact,
+                  icon: Icon(
+                    Icons.more_horiz_rounded,
                     color: TAColors.textSecondaryColor(isDark),
                   ),
                 ),
@@ -1173,7 +1154,9 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
               onPressed: () {
                 final courseId = _selectedCourseId;
                 if (courseId != null) {
-                  context.read<TACoursesCubit>().fetchCourseAssignments(courseId);
+                  context
+                      .read<TACoursesCubit>()
+                      .fetchCourseAssignments(courseId);
                 }
               },
               icon: const Icon(Icons.refresh_rounded),
@@ -1227,12 +1210,74 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
           assignment: assignment,
           assignmentId: assignment?.assignmentId,
           preferredCourseId: courseId,
+          useTAColors: true,
         ),
       ),
     );
 
     if (result == true && mounted) {
       await cubit.fetchCourseAssignments(courseId);
+    }
+  }
+
+  Future<void> _showAssignmentActions(
+    AppLocalizations l10n,
+    AssignmentModel assignment,
+  ) async {
+    final actions = <ModernActionItem<String>>[
+      ModernActionItem<String>(
+        value: 'open',
+        label: l10n.assignmentDetails,
+        icon: Icons.open_in_new_rounded,
+        color: TAColors.primary,
+      ),
+      ModernActionItem<String>(
+        value: 'edit',
+        label: l10n.edit,
+        icon: Icons.edit_rounded,
+        color: TAColors.accent,
+      ),
+      ..._nextStatuses(assignment.apiStatus).map(
+        (status) => ModernActionItem<String>(
+          value: 'status:${status.value}',
+          label: _statusLabel(l10n, status),
+          icon: _statusActionIcon(status),
+          color: _statusColor(status),
+        ),
+      ),
+      ModernActionItem<String>(
+        value: 'delete',
+        label: l10n.delete,
+        icon: Icons.delete_outline_rounded,
+        color: TAColors.error,
+        destructive: true,
+      ),
+    ];
+
+    final value = await showModernActionSheet<String>(
+      context,
+      title: assignment.title,
+      accentColor: _assignmentTypeColor(assignment.type),
+      actions: actions,
+    );
+
+    if (!mounted || value == null) {
+      return;
+    }
+
+    if (value == 'open') {
+      await _openAssignmentDetail(assignment);
+    } else if (value == 'edit') {
+      await _openAssignmentEditor(context, assignment: assignment);
+    } else if (value == 'delete') {
+      await _confirmDelete(context, assignment);
+    } else if (value.startsWith('status:')) {
+      final raw = value.split(':').last;
+      await _updateStatus(
+        context,
+        assignment,
+        api.AssignmentStatus.fromString(raw),
+      );
     }
   }
 
@@ -1313,7 +1358,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     );
   }
 
-  static List<api.AssignmentStatus> _nextStatuses(api.AssignmentStatus current) {
+  static List<api.AssignmentStatus> _nextStatuses(
+      api.AssignmentStatus current) {
     switch (current) {
       case api.AssignmentStatus.draft:
         return const <api.AssignmentStatus>[api.AssignmentStatus.published];
@@ -1331,6 +1377,21 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
         return const <api.AssignmentStatus>[api.AssignmentStatus.draft];
       case api.AssignmentStatus.unknown:
         return const <api.AssignmentStatus>[];
+    }
+  }
+
+  static IconData _statusActionIcon(api.AssignmentStatus status) {
+    switch (status) {
+      case api.AssignmentStatus.published:
+        return Icons.publish_rounded;
+      case api.AssignmentStatus.closed:
+        return Icons.lock_outline_rounded;
+      case api.AssignmentStatus.archived:
+        return Icons.archive_outlined;
+      case api.AssignmentStatus.draft:
+        return Icons.edit_note_rounded;
+      case api.AssignmentStatus.unknown:
+        return Icons.more_horiz_rounded;
     }
   }
 
@@ -1438,6 +1499,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     if (cleaned.isEmpty) {
       return 'AS';
     }
-    return cleaned.length <= 4 ? cleaned.toUpperCase() : cleaned.substring(0, 4).toUpperCase();
+    return cleaned.length <= 4
+        ? cleaned.toUpperCase()
+        : cleaned.substring(0, 4).toUpperCase();
   }
 }

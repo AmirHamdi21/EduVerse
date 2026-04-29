@@ -6360,6 +6360,129 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taLabsStatusUpdated => 'Lab status updated.';
 
   @override
+  String get labEditorCreateScreenTitle => 'Create Lab';
+
+  @override
+  String get labEditorEditScreenTitle => 'Edit Lab';
+
+  @override
+  String get labEditorHeroTitle => 'Lab Studio';
+
+  @override
+  String get instructorLabEditorHeroSubtitle =>
+      'Shape the lab brief, release timing, and submission rules in one focused workflow.';
+
+  @override
+  String get taLabEditorHeroSubtitle =>
+      'Tune the lab setup quickly, keep submission rules clear, and stay aligned with your assigned course flow.';
+
+  @override
+  String get labEditorCoreSection => 'Core Details';
+
+  @override
+  String get labEditorCoreSectionSubtitle =>
+      'Set the course, title, and learner-facing summary.';
+
+  @override
+  String get labEditorScheduleSection => 'Schedule';
+
+  @override
+  String get labEditorScheduleSectionSubtitle =>
+      'Control when the lab opens and when it is due.';
+
+  @override
+  String get labEditorRulesSection => 'Scoring & Rules';
+
+  @override
+  String get labEditorRulesSectionSubtitle =>
+      'Configure grading and submission limits without wasting space.';
+
+  @override
+  String get labEditorTitleHint => 'Enter a clear lab title';
+
+  @override
+  String get labEditorCourseHint => 'Choose the teaching course for this lab';
+
+  @override
+  String get labEditorDescriptionHint =>
+      'Summarize the task, expected output, or focus of this lab.';
+
+  @override
+  String get labEditorAvailableHelper =>
+      'Students can access the lab as soon as this window opens.';
+
+  @override
+  String get labEditorDueHelper =>
+      'Set the final due date with the exact date and time.';
+
+  @override
+  String get labEditorWeight => 'Weight';
+
+  @override
+  String get labEditorVisibility => 'Visibility';
+
+  @override
+  String get labEditorAllowedTypesHint =>
+      'Type file extensions separated by commas';
+
+  @override
+  String get labEditorQuickTypes => 'Quick Types';
+
+  @override
+  String get labEditorReadyToSave => 'Ready to Save';
+
+  @override
+  String get labEditorCreateAction => 'Create Lab';
+
+  @override
+  String get labEditorSaveAction => 'Save Lab';
+
+  @override
+  String get labEditorSavingAction => 'Saving...';
+
+  @override
+  String get labEditorDraftStateHelper =>
+      'Draft keeps the lab out of publish notifications until you are ready to release it.';
+
+  @override
+  String get labEditorPublishedStateHelper =>
+      'Published makes the lab immediately available in the live course workflow.';
+
+  @override
+  String get labEditorValidationTitleRequired => 'Title is required';
+
+  @override
+  String get labEditorValidationCourseRequired => 'Course is required';
+
+  @override
+  String get labEditorValidationPositiveNumber =>
+      'Enter a number greater than 0';
+
+  @override
+  String get labEditorValidationAvailableRequired =>
+      'Available from is required';
+
+  @override
+  String get labEditorValidationDueRequired => 'Due date is required';
+
+  @override
+  String get labEditorValidationDueAfterAvailable =>
+      'Due date must be after the available-from time';
+
+  @override
+  String labEditorValidationUnsupportedTypes(Object types) {
+    return 'Unsupported type(s): $types';
+  }
+
+  @override
+  String get labEditorPastDueWarning =>
+      'This lab\'s due date is already in the past.';
+
+  @override
+  String get labEditorMaxScoreWarning =>
+      'Some submissions may still have scores above the new max score. Those scores are not adjusted automatically.';
+
+  @override
   String get taPerformanceTitle => 'Student Performance';
 
   @override
