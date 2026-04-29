@@ -6360,6 +6360,129 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taLabsStatusUpdated => 'Lab status updated.';
 
   @override
+  String get labEditorCreateScreenTitle => 'Create Lab';
+
+  @override
+  String get labEditorEditScreenTitle => 'Edit Lab';
+
+  @override
+  String get labEditorHeroTitle => 'Lab Studio';
+
+  @override
+  String get instructorLabEditorHeroSubtitle =>
+      'Shape the lab brief, release timing, and submission rules in one focused workflow.';
+
+  @override
+  String get taLabEditorHeroSubtitle =>
+      'Tune the lab setup quickly, keep submission rules clear, and stay aligned with your assigned course flow.';
+
+  @override
+  String get labEditorCoreSection => 'Core Details';
+
+  @override
+  String get labEditorCoreSectionSubtitle =>
+      'Set the course, title, and learner-facing summary.';
+
+  @override
+  String get labEditorScheduleSection => 'Schedule';
+
+  @override
+  String get labEditorScheduleSectionSubtitle =>
+      'Control when the lab opens and when it is due.';
+
+  @override
+  String get labEditorRulesSection => 'Scoring & Rules';
+
+  @override
+  String get labEditorRulesSectionSubtitle =>
+      'Configure grading and submission limits without wasting space.';
+
+  @override
+  String get labEditorTitleHint => 'Enter a clear lab title';
+
+  @override
+  String get labEditorCourseHint => 'Choose the teaching course for this lab';
+
+  @override
+  String get labEditorDescriptionHint =>
+      'Summarize the task, expected output, or focus of this lab.';
+
+  @override
+  String get labEditorAvailableHelper =>
+      'Students can access the lab as soon as this window opens.';
+
+  @override
+  String get labEditorDueHelper =>
+      'Set the final due date with the exact date and time.';
+
+  @override
+  String get labEditorWeight => 'Weight';
+
+  @override
+  String get labEditorVisibility => 'Visibility';
+
+  @override
+  String get labEditorAllowedTypesHint =>
+      'Type file extensions separated by commas';
+
+  @override
+  String get labEditorQuickTypes => 'Quick Types';
+
+  @override
+  String get labEditorReadyToSave => 'Ready to Save';
+
+  @override
+  String get labEditorCreateAction => 'Create Lab';
+
+  @override
+  String get labEditorSaveAction => 'Save Lab';
+
+  @override
+  String get labEditorSavingAction => 'Saving...';
+
+  @override
+  String get labEditorDraftStateHelper =>
+      'Draft keeps the lab out of publish notifications until you are ready to release it.';
+
+  @override
+  String get labEditorPublishedStateHelper =>
+      'Published makes the lab immediately available in the live course workflow.';
+
+  @override
+  String get labEditorValidationTitleRequired => 'Title is required';
+
+  @override
+  String get labEditorValidationCourseRequired => 'Course is required';
+
+  @override
+  String get labEditorValidationPositiveNumber =>
+      'Enter a number greater than 0';
+
+  @override
+  String get labEditorValidationAvailableRequired =>
+      'Available from is required';
+
+  @override
+  String get labEditorValidationDueRequired => 'Due date is required';
+
+  @override
+  String get labEditorValidationDueAfterAvailable =>
+      'Due date must be after the available-from time';
+
+  @override
+  String labEditorValidationUnsupportedTypes(Object types) {
+    return 'Unsupported type(s): $types';
+  }
+
+  @override
+  String get labEditorPastDueWarning =>
+      'This lab\'s due date is already in the past.';
+
+  @override
+  String get labEditorMaxScoreWarning =>
+      'Some submissions may still have scores above the new max score. Those scores are not adjusted automatically.';
+
+  @override
   String get taPerformanceTitle => 'Student Performance';
 
   @override
@@ -13003,6 +13126,165 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assignmentInstructionFiles => 'Instruction Files';
+
+  @override
+  String get instructorAssignmentCreateScreenTitle => 'Create Assignment';
+
+  @override
+  String get instructorAssignmentEditScreenTitle => 'Edit Assignment';
+
+  @override
+  String get instructorAssignmentComposerTitle => 'Assignment Studio';
+
+  @override
+  String get instructorAssignmentComposerSubtitle =>
+      'Shape the assignment brief, timing, grading, and resources in one focused flow.';
+
+  @override
+  String get instructorAssignmentOverviewSection => 'Core Details';
+
+  @override
+  String get instructorAssignmentOverviewSectionSubtitle =>
+      'Set the course, title, and learner-facing summary.';
+
+  @override
+  String get instructorAssignmentScheduleSection => 'Schedule';
+
+  @override
+  String get instructorAssignmentScheduleSectionSubtitle =>
+      'Control when the assignment opens and when it closes.';
+
+  @override
+  String get instructorAssignmentSettingsSection => 'Scoring & Rules';
+
+  @override
+  String get instructorAssignmentSettingsSectionSubtitle =>
+      'Tune grading, submissions, and file requirements without wasting space.';
+
+  @override
+  String get instructorAssignmentResourcesSection => 'Instructions & Resources';
+
+  @override
+  String get instructorAssignmentResourcesSectionSubtitle =>
+      'Give students clear steps and attach the files they need to start strong.';
+
+  @override
+  String get instructorAssignmentTitleHint => 'Enter a clear assignment title';
+
+  @override
+  String get instructorAssignmentCourseHint =>
+      'Choose the teaching course for this assignment';
+
+  @override
+  String get instructorAssignmentDescriptionHint =>
+      'Summarize what students should build, solve, or submit.';
+
+  @override
+  String get instructorAssignmentInstructionsHint =>
+      'Write the detailed instructions, expectations, and grading notes for students.';
+
+  @override
+  String get instructorAssignmentAvailableHelper =>
+      'Students can access the assignment as soon as this window opens.';
+
+  @override
+  String get instructorAssignmentDueHelper =>
+      'Set the final submission deadline with the exact date and time.';
+
+  @override
+  String get instructorAssignmentMaxScore => 'Max Score';
+
+  @override
+  String get instructorAssignmentWeight => 'Weight';
+
+  @override
+  String get instructorAssignmentVisibility => 'Visibility';
+
+  @override
+  String get instructorAssignmentAllowedTypesHint =>
+      'Type file extensions separated by commas';
+
+  @override
+  String get instructorAssignmentQuickTypes => 'Quick Types';
+
+  @override
+  String get instructorAssignmentResourcesHint =>
+      'Upload starter files, rubrics, or sample assets using the current assignment storage flow.';
+
+  @override
+  String get instructorAssignmentReadyToSave => 'Ready to Save';
+
+  @override
+  String get instructorAssignmentSaveAction => 'Save Assignment';
+
+  @override
+  String get instructorAssignmentSavingAction => 'Saving...';
+
+  @override
+  String get instructorAssignmentDraftStateHelper =>
+      'Draft keeps the assignment hidden from publish notifications until you are ready.';
+
+  @override
+  String get instructorAssignmentPublishedStateHelper =>
+      'Published makes the assignment available in the live course flow right away.';
+
+  @override
+  String get instructorAssignmentClosedStateHelper =>
+      'Closed preserves the record while preventing new active work from students.';
+
+  @override
+  String get instructorAssignmentArchivedStateHelper =>
+      'Archived keeps the assignment for reference while moving it out of the active flow.';
+
+  @override
+  String get instructorAssignmentValidationTitleRequired => 'Title is required';
+
+  @override
+  String get instructorAssignmentValidationCourseRequired =>
+      'Course is required';
+
+  @override
+  String get instructorAssignmentValidationPositiveNumber =>
+      'Enter a number greater than 0';
+
+  @override
+  String get instructorAssignmentValidationPositiveInteger =>
+      'Enter an integer greater than 0';
+
+  @override
+  String get instructorAssignmentValidationValidValue => 'Enter a valid value';
+
+  @override
+  String get instructorAssignmentValidationZeroToHundred =>
+      'Value must be between 0 and 100';
+
+  @override
+  String get instructorAssignmentValidationDueRequired =>
+      'Due date is required';
+
+  @override
+  String get instructorAssignmentValidationAvailableRequired =>
+      'Available from is required';
+
+  @override
+  String get instructorAssignmentValidationDueAfterAvailable =>
+      'Due date must be after the available-from time';
+
+  @override
+  String get instructorAssignmentMaxScoreWarning =>
+      'Max score changed while editing. Review graded submissions to keep scoring consistent.';
+
+  @override
+  String get instructorAssignmentTemplateChecklist => 'Checklist';
+
+  @override
+  String get instructorAssignmentTemplateCode => 'Code Block';
+
+  @override
+  String get instructorAssignmentTemplateRubric => 'Rubric';
+
+  @override
+  String get instructorAssignmentTemplateReminder => 'Reminder';
 
   @override
   String get assignmentNoInstructionFiles => 'No instruction files yet.';

@@ -18,6 +18,7 @@ import '../../../services/api/assignment_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/storage_service.dart';
+import '../../../widgets/shared/modern_action_sheet.dart';
 
 class InstructorAssignmentsScreen extends StatelessWidget {
   const InstructorAssignmentsScreen({
@@ -59,7 +60,13 @@ class InstructorAssignmentsScreen extends StatelessWidget {
   }
 }
 
-enum _InstructorAssignmentStateFilter { all, draft, published, closed, archived }
+enum _InstructorAssignmentStateFilter {
+  all,
+  draft,
+  published,
+  closed,
+  archived
+}
 
 class _InstructorAssignmentsView extends StatefulWidget {
   const _InstructorAssignmentsView({
@@ -86,7 +93,8 @@ class _InstructorAssignmentsViewState
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
-        return BlocConsumer<InstructorAssignmentsCubit, InstructorAssignmentsState>(
+        return BlocConsumer<InstructorAssignmentsCubit,
+            InstructorAssignmentsState>(
           listener: (context, state) {
             if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -99,22 +107,21 @@ class _InstructorAssignmentsViewState
           },
           builder: (context, state) {
             final content = RefreshIndicator(
-              onRefresh: () => context.read<InstructorAssignmentsCubit>().loadAssignments(
-                page: 1,
-                limit: 20,
-                refresh: true,
-              ),
+              onRefresh: () =>
+                  context.read<InstructorAssignmentsCubit>().loadAssignments(
+                        page: 1,
+                        limit: 20,
+                        refresh: true,
+                      ),
               color: InstructorColors.primary,
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 slivers: <Widget>[
                   if (!widget.embedded) _buildAppBar(isDark, l10n),
-                  if (state.isLoading && state.assignments == null)
-                    ...<Widget>[
-                      _buildLoadingHeader(isDark, l10n),
-                      _buildLoadingSkeleton(isDark),
-                    ]
-                  else if (!state.isLoading && state.teachingCourses.isEmpty)
+                  if (state.isLoading && state.assignments == null) ...<Widget>[
+                    _buildLoadingHeader(isDark, l10n),
+                    _buildLoadingSkeleton(isDark),
+                  ] else if (!state.isLoading && state.teachingCourses.isEmpty)
                     SliverFillRemaining(
                       child: _buildNoCoursesState(isDark, l10n),
                     )
@@ -240,7 +247,9 @@ class _InstructorAssignmentsViewState
     final assignments = state.assignmentItems;
     final grouped = <int, List<AssignmentModel>>{};
     for (final assignment in assignments) {
-      grouped.putIfAbsent(assignment.courseId, () => <AssignmentModel>[]).add(assignment);
+      grouped
+          .putIfAbsent(assignment.courseId, () => <AssignmentModel>[])
+          .add(assignment);
     }
 
     final courseIds = grouped.keys.toList(growable: false);
@@ -287,7 +296,8 @@ class _InstructorAssignmentsViewState
                 child: OutlinedButton(
                   onPressed: state.isLoading
                       ? null
-                      : () => context.read<InstructorAssignmentsCubit>().loadMore(),
+                      : () =>
+                          context.read<InstructorAssignmentsCubit>().loadMore(),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: InstructorColors.primary,
                     side: BorderSide(
@@ -480,8 +490,7 @@ class _InstructorAssignmentsViewState
                     builder: (context, constraints) {
                       final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
                       const spacing = 10.0;
-                      final itemWidth =
-                          (constraints.maxWidth -
+                      final itemWidth = (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
                           crossAxisCount;
 
@@ -637,7 +646,9 @@ class _InstructorAssignmentsViewState
                       if (value == null) {
                         return;
                       }
-                      context.read<InstructorAssignmentsCubit>().selectCourse(value);
+                      context
+                          .read<InstructorAssignmentsCubit>()
+                          .selectCourse(value);
                     },
                   ),
                 ),
@@ -679,9 +690,11 @@ class _InstructorAssignmentsViewState
                       if (value == null) {
                         return;
                       }
-                      context.read<InstructorAssignmentsCubit>().setStatusFilter(
-                        _statusFilterToApi(value),
-                      );
+                      context
+                          .read<InstructorAssignmentsCubit>()
+                          .setStatusFilter(
+                            _statusFilterToApi(value),
+                          );
                     },
                   ),
                 ),
@@ -783,7 +796,9 @@ class _InstructorAssignmentsViewState
     int courseId,
     List<AssignmentModel> assignments,
   ) {
-    final course = state.teachingCourses.where((item) => item.courseId == courseId).firstOrNull;
+    final course = state.teachingCourses
+        .where((item) => item.courseId == courseId)
+        .firstOrNull;
     final courseCode = course?.course.code ?? assignments.first.courseCode;
     final courseName = course?.course.name ?? assignments.first.courseName;
 
@@ -811,13 +826,15 @@ class _InstructorAssignmentsViewState
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: <Color>[
-                  InstructorColors.primary.withValues(alpha: isDark ? 0.28 : 0.12),
+                  InstructorColors.primary
+                      .withValues(alpha: isDark ? 0.28 : 0.12),
                   InstructorColors.teal.withValues(alpha: isDark ? 0.18 : 0.08),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(22)),
             ),
             child: Row(
               children: <Widget>[
@@ -899,12 +916,14 @@ class _InstructorAssignmentsViewState
     return InkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: () => _openAssignmentDetail(assignment),
+      onLongPress: () => _showAssignmentActions(l10n, assignment),
       child: Container(
         padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color: InstructorColors.borderColor(isDark).withValues(alpha: 0.5),
+              color:
+                  InstructorColors.borderColor(isDark).withValues(alpha: 0.5),
             ),
           ),
         ),
@@ -915,7 +934,8 @@ class _InstructorAssignmentsViewState
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: _assignmentTypeColor(assignment.type).withValues(alpha: 0.12),
+                color: _assignmentTypeColor(assignment.type)
+                    .withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
@@ -955,7 +975,8 @@ class _InstructorAssignmentsViewState
                       _buildMetaChip(
                         isDark,
                         icon: Icons.upload_file_rounded,
-                        label: _submissionTypeLabel(l10n, assignment.submissionType),
+                        label: _submissionTypeLabel(
+                            l10n, assignment.submissionType),
                       ),
                     ],
                   ),
@@ -967,55 +988,12 @@ class _InstructorAssignmentsViewState
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 _buildStatusBadge(isDark, l10n, assignment.apiStatus),
-                PopupMenuButton<String>(
+                IconButton(
+                  onPressed: () => _showAssignmentActions(l10n, assignment),
                   padding: EdgeInsets.zero,
-                  onSelected: (value) {
-                    if (value == 'open') {
-                      _openAssignmentDetail(assignment);
-                    } else if (value == 'edit') {
-                      _openEditAssignment(assignment);
-                    } else if (value == 'delete') {
-                      context.read<InstructorAssignmentsCubit>().deleteAssignment(
-                        assignment.assignmentId,
-                      );
-                    } else if (value.startsWith('status:')) {
-                      final raw = value.split(':').last;
-                      context.read<InstructorAssignmentsCubit>().updateStatus(
-                        assignment.assignmentId,
-                        api.AssignmentStatus.fromString(raw),
-                      );
-                    }
-                  },
-                  itemBuilder: (context) {
-                    final nextStatuses = _nextStatuses(assignment.apiStatus);
-                    return <PopupMenuEntry<String>>[
-                      PopupMenuItem<String>(
-                        value: 'open',
-                        child: Text(l10n.assignmentDetails),
-                      ),
-                      if (widget.canManage)
-                        PopupMenuItem<String>(
-                          value: 'edit',
-                          child: Text(l10n.edit),
-                        ),
-                      ...nextStatuses.map(
-                        (status) => PopupMenuItem<String>(
-                          value: 'status:${status.value}',
-                          child: Text(_statusLabel(l10n, status)),
-                        ),
-                      ),
-                      if (widget.canManage)
-                        PopupMenuItem<String>(
-                          value: 'delete',
-                          child: Text(
-                            l10n.delete,
-                            style: const TextStyle(color: InstructorColors.error),
-                          ),
-                        ),
-                    ];
-                  },
-                  child: Icon(
-                    Icons.more_vert_rounded,
+                  visualDensity: VisualDensity.compact,
+                  icon: Icon(
+                    Icons.more_horiz_rounded,
                     color: InstructorColors.textSecondaryColor(isDark),
                   ),
                 ),
@@ -1035,7 +1013,8 @@ class _InstructorAssignmentsViewState
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Icon(icon, size: 14, color: InstructorColors.textSecondaryColor(isDark)),
+        Icon(icon,
+            size: 14, color: InstructorColors.textSecondaryColor(isDark)),
         const SizedBox(width: 5),
         Text(
           label,
@@ -1199,6 +1178,71 @@ class _InstructorAssignmentsViewState
     }
   }
 
+  Future<void> _showAssignmentActions(
+    AppLocalizations l10n,
+    AssignmentModel assignment,
+  ) async {
+    final actions = <ModernActionItem<String>>[
+      ModernActionItem<String>(
+        value: 'open',
+        label: l10n.assignmentDetails,
+        icon: Icons.open_in_new_rounded,
+        color: InstructorColors.primary,
+      ),
+      if (widget.canManage)
+        ModernActionItem<String>(
+          value: 'edit',
+          label: l10n.edit,
+          icon: Icons.edit_rounded,
+          color: InstructorColors.accent,
+        ),
+      if (widget.canManage)
+        ..._nextStatuses(assignment.apiStatus).map(
+          (status) => ModernActionItem<String>(
+            value: 'status:${status.value}',
+            label: _statusLabel(l10n, status),
+            icon: _statusActionIcon(status),
+            color: _statusColor(status),
+          ),
+        ),
+      if (widget.canManage)
+        ModernActionItem<String>(
+          value: 'delete',
+          label: l10n.delete,
+          icon: Icons.delete_outline_rounded,
+          color: InstructorColors.error,
+          destructive: true,
+        ),
+    ];
+
+    final value = await showModernActionSheet<String>(
+      context,
+      title: assignment.title,
+      accentColor: _assignmentTypeColor(assignment.type),
+      actions: actions,
+    );
+
+    if (!mounted || value == null) {
+      return;
+    }
+
+    if (value == 'open') {
+      _openAssignmentDetail(assignment);
+    } else if (value == 'edit') {
+      await _openEditAssignment(assignment);
+    } else if (value == 'delete') {
+      context.read<InstructorAssignmentsCubit>().deleteAssignment(
+            assignment.assignmentId,
+          );
+    } else if (value.startsWith('status:')) {
+      final raw = value.split(':').last;
+      context.read<InstructorAssignmentsCubit>().updateStatus(
+            assignment.assignmentId,
+            api.AssignmentStatus.fromString(raw),
+          );
+    }
+  }
+
   Future<void> _openAssignmentDetail(AssignmentModel assignment) async {
     final cubit = context.read<InstructorAssignmentsCubit>();
     await context.push<void>(
@@ -1263,7 +1307,8 @@ class _InstructorAssignmentsViewState
     }
   }
 
-  static List<api.AssignmentStatus> _nextStatuses(api.AssignmentStatus current) {
+  static List<api.AssignmentStatus> _nextStatuses(
+      api.AssignmentStatus current) {
     switch (current) {
       case api.AssignmentStatus.draft:
         return const <api.AssignmentStatus>[api.AssignmentStatus.published];
@@ -1281,6 +1326,21 @@ class _InstructorAssignmentsViewState
         return const <api.AssignmentStatus>[api.AssignmentStatus.draft];
       case api.AssignmentStatus.unknown:
         return const <api.AssignmentStatus>[];
+    }
+  }
+
+  static IconData _statusActionIcon(api.AssignmentStatus status) {
+    switch (status) {
+      case api.AssignmentStatus.published:
+        return Icons.publish_rounded;
+      case api.AssignmentStatus.closed:
+        return Icons.lock_outline_rounded;
+      case api.AssignmentStatus.archived:
+        return Icons.archive_outlined;
+      case api.AssignmentStatus.draft:
+        return Icons.edit_note_rounded;
+      case api.AssignmentStatus.unknown:
+        return Icons.more_horiz_rounded;
     }
   }
 
@@ -1370,6 +1430,8 @@ class _InstructorAssignmentsViewState
     if (cleaned.isEmpty) {
       return 'AS';
     }
-    return cleaned.length <= 4 ? cleaned.toUpperCase() : cleaned.substring(0, 4).toUpperCase();
+    return cleaned.length <= 4
+        ? cleaned.toUpperCase()
+        : cleaned.substring(0, 4).toUpperCase();
   }
 }

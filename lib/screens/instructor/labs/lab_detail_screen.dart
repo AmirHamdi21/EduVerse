@@ -24,6 +24,7 @@ import '../../../models/core/semester_model.dart';
 import '../../../models/labs/lab_model.dart';
 import '../../../models/labs/lab_submission_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
+import '../../shared/lab_editor_screen.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/lab_service.dart';
 import '../../../services/storage_service.dart';
@@ -1274,7 +1275,7 @@ class _LabDetailViewState extends State<_LabDetailView>
     context.go('/instructor/labs');
   }
 
-  Future<void> _openEditLabForm(bool isDark, LabModel lab) async {
+  Future<void> _openEditLabForm(bool _, LabModel lab) async {
     final l10n = AppLocalizations.of(context);
     final courseInfo = lab.course;
     final courseOptions = <TeachingCourseModel>[
@@ -1307,58 +1308,44 @@ class _LabDetailViewState extends State<_LabDetailView>
     ];
     final messenger = ScaffoldMessenger.of(context);
 
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: InstructorColors.cardColor(isDark),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (sheetContext) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          maxChildSize: 0.95,
-          minChildSize: 0.5,
-          expand: false,
-          builder: (_, __) {
-            return LabCreateForm(
-              courses: courseOptions,
-              existingLab: lab,
-              onCancel: () => Navigator.of(sheetContext).pop(),
-              onSubmit: (payload) async {
-                Navigator.of(sheetContext).pop();
-                final result = await widget.labService.update(
-                  lab.id.isNotEmpty ? lab.id : lab.labId,
-                  payload,
-                );
-
-                if (!mounted) {
-                  return;
-                }
-
-                if (!result.isSuccess) {
-                  messenger.showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        result.error?.message ?? l10n.taLabPermissionEditDenied,
-                      ),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
-                  return;
-                }
-
-                final cubit = context.read<LabDetailCubit>();
-                await cubit.loadLabDetail(widget.labId);
-                await cubit.loadInstructions(widget.labId);
-                await cubit.loadSubmissions(widget.labId);
-                await cubit.loadAttendance(widget.labId);
-              },
+    final result = await Navigator.of(context).push<Map<String, dynamic>>(
+      MaterialPageRoute<Map<String, dynamic>>(
+        builder: (_) => LabEditorScreen(
+          role: LabComposerRole.instructor,
+          courses: courseOptions,
+          existingLab: lab,
+          onSave: (payload) async {
+            final result = await widget.labService.update(
+              lab.id.isNotEmpty ? lab.id : lab.labId,
+              payload,
             );
+
+            if (!result.isSuccess) {
+              return result.error?.message ?? l10n.taLabPermissionEditDenied;
+            }
+
+            return null;
           },
-        );
-      },
+        ),
+      ),
     );
+
+    if (!mounted || result == null) {
+      return;
+    }
+
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(_labSavedMessage(l10n, result['status'])),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+
+    final cubit = context.read<LabDetailCubit>();
+    await cubit.loadLabDetail(widget.labId);
+    await cubit.loadInstructions(widget.labId);
+    await cubit.loadSubmissions(widget.labId);
+    await cubit.loadAttendance(widget.labId);
   }
 
   String _formatDueDate(
@@ -1372,6 +1359,15 @@ class _LabDetailViewState extends State<_LabDetailView>
 
     final locale = Localizations.localeOf(context).toString();
     return DateFormat.yMMMd(locale).add_jm().format(lab.dueDate!.toLocal());
+  }
+
+  String _labSavedMessage(AppLocalizations l10n, Object? rawStatus) {
+    final status = rawStatus?.toString().trim().toLowerCase();
+    return switch (status) {
+      'published' => l10n.taLabsCreatedPublished,
+      'draft' => l10n.taLabsCreatedDraft,
+      _ => l10n.taLabsCreatedDraft,
+    };
   }
 
   String _statusLabel(AppLocalizations l10n, api.LabStatus status) {

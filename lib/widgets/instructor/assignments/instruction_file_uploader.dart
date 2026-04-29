@@ -7,6 +7,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../../models/core/drive_file_model.dart';
 import '../../../services/api/assignment_service.dart';
+import '../shared/instructor_colors.dart';
+import '../../ta/shared/ta_colors.dart';
 
 class InstructionFileUploader extends StatefulWidget {
   const InstructionFileUploader({
@@ -15,12 +17,14 @@ class InstructionFileUploader extends StatefulWidget {
     required this.assignmentService,
     this.initialFiles = const <DriveFileModel>[],
     this.onFilesChanged,
+    this.useTAColors = false,
   });
 
   final int assignmentId;
   final AssignmentService assignmentService;
   final List<DriveFileModel> initialFiles;
   final ValueChanged<List<DriveFileModel>>? onFilesChanged;
+  final bool useTAColors;
 
   @override
   State<InstructionFileUploader> createState() =>
@@ -44,6 +48,23 @@ class PendingInstructionUploadResult {
 class InstructionFileUploaderState extends State<InstructionFileUploader> {
   final List<_UploadItem> _items = <_UploadItem>[];
 
+  Color get _primaryColor =>
+      widget.useTAColors ? TAColors.primary : InstructorColors.primary;
+  Color get _warningColor =>
+      widget.useTAColors ? TAColors.warning : InstructorColors.warning;
+  Color get _errorColor =>
+      widget.useTAColors ? TAColors.error : InstructorColors.error;
+  Color get _errorLightColor =>
+      widget.useTAColors ? TAColors.errorLight : InstructorColors.errorLight;
+  Color _darkCardColor() =>
+      widget.useTAColors ? TAColors.darkCard : InstructorColors.darkCard;
+  Color _textPrimaryColor(bool isDark) => widget.useTAColors
+      ? TAColors.textPrimaryColor(isDark)
+      : InstructorColors.textPrimaryColor(isDark);
+  Color _textSecondaryColor(bool isDark) => widget.useTAColors
+      ? TAColors.textSecondaryColor(isDark)
+      : InstructorColors.textSecondaryColor(isDark);
+
   @override
   void initState() {
     super.initState();
@@ -61,28 +82,74 @@ class InstructionFileUploaderState extends State<InstructionFileUploader> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        OutlinedButton.icon(
-          onPressed: _pickAndUpload,
-          icon: const Icon(Icons.upload_file_rounded),
-          label: const Text('Upload Instruction File'),
-        ),
-        if (widget.assignmentId <= 0)
-          const Padding(
-            padding: EdgeInsets.only(top: 8),
-            child: Text(
-              'You can select files now. They will upload automatically when you save.',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+        Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: isDark
+                ? _darkCardColor().withValues(alpha: 0.65)
+                : Colors.white.withValues(alpha: 0.92),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: _primaryColor.withValues(alpha: 0.12),
             ),
           ),
+          child: LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints constraints) {
+              final isCompact = constraints.maxWidth < 380;
+
+              if (isCompact) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    _buildUploaderIntro(isDark),
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.tonalIcon(
+                        onPressed: _pickAndUpload,
+                        style: FilledButton.styleFrom(
+                          foregroundColor: _primaryColor,
+                          backgroundColor:
+                              _primaryColor.withValues(alpha: 0.12),
+                        ),
+                        icon: const Icon(Icons.add_rounded),
+                        label: const Text('Add Files'),
+                      ),
+                    ),
+                  ],
+                );
+              }
+
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(child: _buildUploaderIntro(isDark)),
+                  const SizedBox(width: 12),
+                  FilledButton.tonalIcon(
+                    onPressed: _pickAndUpload,
+                    style: FilledButton.styleFrom(
+                      foregroundColor: _primaryColor,
+                      backgroundColor: _primaryColor.withValues(alpha: 0.12),
+                    ),
+                    icon: const Icon(Icons.add_rounded),
+                    label: const Text('Add Files'),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
         if (_items.isNotEmpty) const SizedBox(height: 10),
         for (var index = 0; index < _items.length; index++)
           _UploadItemTile(
             item: _items[index],
-            onRetry:
-                _items[index].localPath == null ||
+            useTAColors: widget.useTAColors,
+            onRetry: _items[index].localPath == null ||
                     _items[index].errorMessage == null
                 ? null
                 : () => _retryUpload(index),
@@ -99,6 +166,51 @@ class InstructionFileUploaderState extends State<InstructionFileUploader> {
                 ? null
                 : () => _deleteFile(index),
           ),
+      ],
+    );
+  }
+
+  Widget _buildUploaderIntro(bool isDark) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: _primaryColor.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Icon(
+            Icons.upload_file_rounded,
+            color: _primaryColor,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Upload instruction files',
+                style: TextStyle(
+                  color: _textPrimaryColor(isDark),
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                widget.assignmentId <= 0
+                    ? 'Select files now and they will upload after you save the assignment.'
+                    : 'Attach starter files, rubrics, or reference notes for students.',
+                style: TextStyle(
+                  color: _textSecondaryColor(isDark),
+                  fontSize: 12,
+                  height: 1.4,
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -510,9 +622,8 @@ class InstructionFileUploaderState extends State<InstructionFileUploader> {
   }
 
   Future<void> _openPreview(DriveFileModel file) async {
-    final previewUrl = file.iframeUrl.trim().isNotEmpty
-        ? file.iframeUrl
-        : file.webViewLink;
+    final previewUrl =
+        file.iframeUrl.trim().isNotEmpty ? file.iframeUrl : file.webViewLink;
 
     await showDialog<void>(
       context: context,
@@ -535,6 +646,7 @@ class InstructionFileUploaderState extends State<InstructionFileUploader> {
 class _UploadItemTile extends StatelessWidget {
   const _UploadItemTile({
     required this.item,
+    this.useTAColors = false,
     this.onRetry,
     this.onOpen,
     this.onDownload,
@@ -543,6 +655,7 @@ class _UploadItemTile extends StatelessWidget {
   });
 
   final _UploadItem item;
+  final bool useTAColors;
   final VoidCallback? onRetry;
   final VoidCallback? onOpen;
   final VoidCallback? onDownload;
@@ -551,30 +664,89 @@ class _UploadItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = item.uploadedFile?.fileName ?? item.displayName ?? 'File';
+    final primaryColor =
+        useTAColors ? TAColors.primary : InstructorColors.primary;
+    final warningColor =
+        useTAColors ? TAColors.warning : InstructorColors.warning;
+    final errorColor = useTAColors ? TAColors.error : InstructorColors.error;
+    final errorLightColor =
+        useTAColors ? TAColors.errorLight : InstructorColors.errorLight;
+    final darkCardColor =
+        useTAColors ? TAColors.darkCard : InstructorColors.darkCard;
+    final textPrimaryColor = useTAColors
+        ? TAColors.textPrimaryColor(isDark)
+        : InstructorColors.textPrimaryColor(isDark);
+    final borderColor = item.errorMessage != null
+        ? errorColor.withValues(alpha: 0.24)
+        : primaryColor.withValues(alpha: 0.10);
+    final backgroundColor = item.errorMessage != null
+        ? errorLightColor.withValues(alpha: isDark ? 0.10 : 0.55)
+        : (isDark
+            ? darkCardColor.withValues(alpha: 0.72)
+            : Colors.white.withValues(alpha: 0.96));
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(10),
+        color: backgroundColor,
+        border: Border.all(color: borderColor),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
             children: <Widget>[
-              const Icon(Icons.insert_drive_file_outlined, size: 18),
-              const SizedBox(width: 6),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: item.errorMessage != null
+                      ? errorColor.withValues(alpha: 0.12)
+                      : primaryColor.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  item.errorMessage != null
+                      ? Icons.warning_amber_rounded
+                      : Icons.insert_drive_file_outlined,
+                  size: 18,
+                  color: item.errorMessage != null ? errorColor : primaryColor,
+                ),
+              ),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: textPrimaryColor,
+                  ),
                 ),
               ),
+              if (item.pendingUpload && !item.isUploading)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: warningColor.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    'Pending',
+                    style: TextStyle(
+                      color: warningColor,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
               if (item.isUploading)
                 const SizedBox(
                   width: 16,
@@ -591,14 +763,22 @@ class _UploadItemTile extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               item.errorMessage!,
-              style: const TextStyle(color: Colors.red, fontSize: 12),
+              style: TextStyle(
+                color: errorColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
           if (item.pendingUpload && item.errorMessage == null) ...<Widget>[
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Will upload after save.',
-              style: TextStyle(color: Colors.orange, fontSize: 12),
+              style: TextStyle(
+                color: warningColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
           const SizedBox(height: 8),
@@ -629,7 +809,7 @@ class _UploadItemTile extends StatelessWidget {
                   onPressed: onDelete,
                   icon: const Icon(Icons.delete_outline_rounded),
                   label: const Text('Delete'),
-                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                  style: TextButton.styleFrom(foregroundColor: errorColor),
                 ),
               if (onRetry != null)
                 TextButton.icon(

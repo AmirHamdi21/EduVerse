@@ -74,9 +74,9 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
       final id = int.tryParse(widget.courseId);
       if (id != null) {
         tc = status.data.cast<TeachingCourseModel?>().firstWhere(
-          (c) => c!.sectionId == id || c.courseId == id,
-          orElse: () => null,
-        );
+              (c) => c!.sectionId == id || c.courseId == id,
+              orElse: () => null,
+            );
       }
     }
 
@@ -1066,6 +1066,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
           assignmentId: existing?.assignmentId,
           assignmentService: assignmentService,
           preferredCourseId: tc.courseId,
+          useTAColors: true,
         ),
       ),
     );
@@ -1093,9 +1094,9 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
             onPressed: () {
               Navigator.of(ctx).pop();
               context.read<TACoursesCubit>().deleteAssignment(
-                tc.courseId,
-                a.assignmentId,
-              );
+                    tc.courseId,
+                    a.assignmentId,
+                  );
             },
             style: TextButton.styleFrom(foregroundColor: TAColors.error),
             child: const Text('Delete'),
@@ -1274,10 +1275,11 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
                     isDark: isDark,
                     title:
                         '${sub.user?.firstName ?? ''} ${sub.user?.lastName ?? ''}'
-                            .trim()
-                            .isEmpty
-                        ? 'Student #${sub.userId}'
-                        : '${sub.user!.firstName} ${sub.user!.lastName}'.trim(),
+                                .trim()
+                                .isEmpty
+                            ? 'Student #${sub.userId}'
+                            : '${sub.user!.firstName} ${sub.user!.lastName}'
+                                .trim(),
                     subtitle: 'Assignment #${sub.assignmentId}',
                     trailing: sub.submissionStatus.value,
                     icon: Icons.grading_rounded,
@@ -1421,14 +1423,14 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
   }) {
     return switch (subTabState) {
       TASubTabInitial<T>() || TASubTabLoading<T>() => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(40),
-          child: CircularProgressIndicator(
-            color: TAColors.primary,
-            strokeWidth: 3,
+          child: Padding(
+            padding: const EdgeInsets.all(40),
+            child: CircularProgressIndicator(
+              color: TAColors.primary,
+              strokeWidth: 3,
+            ),
           ),
         ),
-      ),
       TASubTabError<T>(message: final msg) => _buildErrorWidget(isDark, msg),
       TASubTabLoaded<T>(data: final data) => builder(data),
     };

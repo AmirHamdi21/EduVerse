@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/instructor/instructor_assignments_cubit.dart';
 import '../../bloc/instructor/instructor_assignments_state.dart';
+import '../../generated_l10n/app_localizations.dart';
 import '../../models/assignments/assignment_form_data.dart';
 import '../../models/assignments/assignment_model.dart';
 import '../../models/core/drive_file_model.dart';
@@ -12,6 +13,8 @@ import '../../services/api/core_api_client.dart';
 import '../../services/api/enrollment_service.dart';
 import '../../services/storage_service.dart';
 import '../../widgets/instructor/assignments/assignment_create_form.dart';
+import '../../widgets/instructor/shared/instructor_colors.dart';
+import '../../widgets/ta/shared/ta_colors.dart';
 
 class CreateAssignmentScreen extends StatelessWidget {
   const CreateAssignmentScreen({
@@ -21,6 +24,7 @@ class CreateAssignmentScreen extends StatelessWidget {
     this.assignmentService,
     this.enrollmentService,
     this.preferredCourseId,
+    this.useTAColors = false,
   });
 
   final AssignmentModel? assignment;
@@ -28,6 +32,7 @@ class CreateAssignmentScreen extends StatelessWidget {
   final AssignmentService? assignmentService;
   final EnrollmentService? enrollmentService;
   final int? preferredCourseId;
+  final bool useTAColors;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +51,7 @@ class CreateAssignmentScreen extends StatelessWidget {
         assignment: assignment,
         assignmentId: assignmentId,
         assignmentService: resolvedAssignmentService,
+        useTAColors: useTAColors,
       ),
     );
   }
@@ -56,11 +62,13 @@ class _CreateAssignmentView extends StatefulWidget {
     this.assignment,
     this.assignmentId,
     required this.assignmentService,
+    required this.useTAColors,
   });
 
   final AssignmentModel? assignment;
   final int? assignmentId;
   final AssignmentService assignmentService;
+  final bool useTAColors;
 
   @override
   State<_CreateAssignmentView> createState() => _CreateAssignmentViewState();
@@ -115,9 +123,19 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
     final isEdit = (_activeAssignmentId ?? 0) > 0;
     final effectiveAssignment = _fetchedAssignment ?? widget.assignment;
     final initialData = _toInitialData(effectiveAssignment);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
+    final background = widget.useTAColors
+        ? TAColors.scaffoldColor(isDark)
+        : (isDark ? InstructorColors.darkBg : InstructorColors.lightBackground);
+    final warningColor =
+        widget.useTAColors ? TAColors.warning : InstructorColors.warning;
 
     if (_fetchingAssignment) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        backgroundColor: background,
+        body: const Center(child: CircularProgressIndicator()),
+      );
     }
 
     return BlocConsumer<InstructorAssignmentsCubit, InstructorAssignmentsState>(
@@ -130,14 +148,22 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
       },
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: background,
           appBar: AppBar(
-            title: Text(isEdit ? 'Edit Assignment' : 'Create Assignment'),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
+            title: Text(
+              isEdit
+                  ? l10n.instructorAssignmentEditScreenTitle
+                  : l10n.instructorAssignmentCreateScreenTitle,
+            ),
             actions: <Widget>[
-              TextButton(
-                onPressed: _submitting
-                    ? null
-                    : () => Navigator.of(context).pop(),
-                child: const Text('Cancel'),
+              IconButton(
+                onPressed:
+                    _submitting ? null : () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.close_rounded),
+                tooltip: l10n.cancel,
               ),
             ],
           ),
@@ -149,17 +175,32 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
                       Container(
                         width: double.infinity,
                         margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(10),
+                          color: warningColor.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: Colors.orange.withValues(alpha: 0.25),
+                            color: warningColor.withValues(alpha: 0.24),
                           ),
                         ),
-                        child: const Text(
-                          'Max score changed while editing. Review existing graded submissions for consistency.',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.only(top: 1),
+                              child: Icon(Icons.warning_amber_rounded,
+                                  color: warningColor),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                l10n.instructorAssignmentMaxScoreWarning,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     Expanded(
@@ -170,6 +211,7 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
                         initialData: initialData,
                         assignmentId: _activeAssignmentId,
                         submitting: _submitting,
+                        useTAColors: widget.useTAColors,
                         onSubmit: (data) => _submit(context, data, initialData),
                       ),
                     ),
@@ -212,9 +254,8 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
       return;
     }
 
-    final savedAssignmentId = isEdit
-        ? editId
-        : _resolveCreatedAssignmentId(cubit.state, data);
+    final savedAssignmentId =
+        isEdit ? editId : _resolveCreatedAssignmentId(cubit.state, data);
 
     if (savedAssignmentId > 0 && _activeAssignmentId != savedAssignmentId) {
       setState(() {

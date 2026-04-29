@@ -45,7 +45,8 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
   late final TabController _tabController;
 
   AssignmentModel? _assignment;
-  List<AssignmentSubmissionModel> _submissions = const <AssignmentSubmissionModel>[];
+  List<AssignmentSubmissionModel> _submissions =
+      const <AssignmentSubmissionModel>[];
   bool _loadingAssignment = true;
   bool _loadingSubmissions = true;
   bool _savingStatus = false;
@@ -57,8 +58,7 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
   void initState() {
     super.initState();
     final coreApiClient = CoreApiClient(storageService: StorageService());
-    _assignmentService =
-        widget.assignmentService ??
+    _assignmentService = widget.assignmentService ??
         AssignmentService(coreApiClient: coreApiClient);
     _assignment = widget.initialAssignment;
     _tabController = TabController(length: 4, vsync: this);
@@ -170,7 +170,8 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
                     Text(
                       _errorMessage ?? 'Assignment not found.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: TAColors.textSecondaryColor(isDark)),
+                      style:
+                          TextStyle(color: TAColors.textSecondaryColor(isDark)),
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
@@ -323,7 +324,8 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
                       color: TAColors.error,
                     ),
                     const SizedBox(width: 10),
-                    Text(l10n.delete, style: const TextStyle(color: TAColors.error)),
+                    Text(l10n.delete,
+                        style: const TextStyle(color: TAColors.error)),
                   ],
                 ),
               ),
@@ -349,7 +351,8 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
             crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: TAColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -379,7 +382,9 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
               fontWeight: FontWeight.w700,
             ),
           ),
-          if ((assignment.course?.name ?? assignment.courseName).trim().isNotEmpty)
+          if ((assignment.course?.name ?? assignment.courseName)
+              .trim()
+              .isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
@@ -631,7 +636,7 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
   ) {
     final isGraded =
         submission.submissionStatus == api.SubmissionStatus.graded ||
-        submission.submissionStatus == api.SubmissionStatus.returned;
+            submission.submissionStatus == api.SubmissionStatus.returned;
     final studentName = _studentName(l10n, submission);
 
     return Container(
@@ -654,13 +659,14 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color:
-                        (isGraded ? TAColors.success : TAColors.warning)
-                            .withValues(alpha: 0.1),
+                    color: (isGraded ? TAColors.success : TAColors.warning)
+                        .withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
-                    isGraded ? Icons.check_circle_rounded : Icons.pending_rounded,
+                    isGraded
+                        ? Icons.check_circle_rounded
+                        : Icons.pending_rounded,
                     size: 20,
                     color: isGraded ? TAColors.success : TAColors.warning,
                   ),
@@ -760,7 +766,9 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
                   ),
                 );
                 final gradeButton = OutlinedButton.icon(
-                  onPressed: _grading ? null : () => _openGradingSheet(isDark, assignment, submission),
+                  onPressed: _grading
+                      ? null
+                      : () => _openGradingSheet(isDark, assignment, submission),
                   icon: Icon(
                     isGraded ? Icons.edit_rounded : Icons.grading_rounded,
                     size: 16,
@@ -808,7 +816,8 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
     AssignmentModel assignment,
   ) {
     final files = assignment.instructionFiles ?? const <DriveFileModel>[];
-    final hasInstructions = assignment.instructionsText?.trim().isNotEmpty == true;
+    final hasInstructions =
+        assignment.instructionsText?.trim().isNotEmpty == true;
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -826,7 +835,8 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
           if (files.isEmpty)
             _buildEmptyCard(isDark, l10n.assignmentNoInstructionFiles)
           else
-            ...files.map((file) => _buildInstructionFileCard(isDark, l10n, file)),
+            ...files
+                .map((file) => _buildInstructionFileCard(isDark, l10n, file)),
         ],
       ),
     );
@@ -1141,6 +1151,7 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
           assignment: assignment,
           assignmentId: assignment.assignmentId,
           preferredCourseId: assignment.courseId,
+          useTAColors: true,
         ),
       ),
     );
@@ -1195,7 +1206,8 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
 
   Future<void> _updateStatus(api.AssignmentStatus status) async {
     setState(() => _savingStatus = true);
-    final result = await _assignmentService.updateStatus(widget.assignmentId, status);
+    final result =
+        await _assignmentService.updateStatus(widget.assignmentId, status);
     if (!mounted) {
       return;
     }
@@ -1210,7 +1222,8 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
     _showSnack(_statusUpdateMessage(AppLocalizations.of(context), status));
   }
 
-  Future<void> _showSubmissionPreview(AssignmentSubmissionModel submission) async {
+  Future<void> _showSubmissionPreview(
+      AssignmentSubmissionModel submission) async {
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -1260,8 +1273,8 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
   ) {
     final daysLate = assignment.dueDate.isBefore(submission.submittedAt)
         ? submission.submittedAt.difference(assignment.dueDate).inDays == 0
-              ? 1
-              : submission.submittedAt.difference(assignment.dueDate).inDays
+            ? 1
+            : submission.submittedAt.difference(assignment.dueDate).inDays
         : 0;
 
     showModalBottomSheet<void>(
@@ -1270,7 +1283,8 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
       backgroundColor: Colors.transparent,
       builder: (ctx) {
         return Container(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
           decoration: BoxDecoration(
             color: TAColors.cardColor(isDark),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
@@ -1330,7 +1344,8 @@ class _TAAssignmentDetailScreenState extends State<TAAssignmentDetailScreen>
     );
   }
 
-  static List<api.AssignmentStatus> _nextStatuses(api.AssignmentStatus current) {
+  static List<api.AssignmentStatus> _nextStatuses(
+      api.AssignmentStatus current) {
     switch (current) {
       case api.AssignmentStatus.draft:
         return const <api.AssignmentStatus>[api.AssignmentStatus.published];
