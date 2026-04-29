@@ -4,7 +4,7 @@ import '../../models/quiz/quiz_api_models.dart';
 
 /// AI Quiz Generation service — mirrors the web's `quizAiGeneration.ts` 1:1.
 ///
-/// Calls the FastAPI quiz AI service (port 8001) via a 3-step pipeline:
+/// Calls the deployed AI quiz service via a 3-step pipeline:
 ///   1. `uploadFile()`        → POST /api/v1/upload   → { uploadId }
 ///   2. `generateQuiz()`      → POST /api/v1/generate → { quizId, status, numQuestions }
 ///   3. `fetchGeneratedQuiz()`→ GET  /api/v1/quiz/:id → { quizId, questions, answerKey }
@@ -12,14 +12,13 @@ import '../../models/quiz/quiz_api_models.dart';
 /// The convenience method `generateQuestions()` runs all 3 in sequence and
 /// returns a list of [AiGeneratedQuestion] ready for the quiz builder UI.
 class QuizAiService {
-  /// Base URL for the AI quiz service.
-  /// Android emulator uses 10.0.2.2 to reach host localhost.
-  static String get baseUrl {
-    if (Platform.isAndroid) {
-      return 'http://10.0.2.2:8001';
-    }
-    return 'http://127.0.0.1:8001';
-  }
+  /// Base URL for the deployed AI quiz service.
+  /// Kept slash-trimmed so endpoint concatenation stays stable.
+  static const String _configuredBaseUrl =
+      'https://eduverse-team-quiz-generation.hf.space/';
+
+  static String get baseUrl =>
+      _configuredBaseUrl.replaceFirst(RegExp(r'/$'), '');
 
   /// AI question types accepted by the FastAPI endpoint.
   static const List<String> questionTypes = ['MCQ', 'FillBlank', 'Explain'];
@@ -226,7 +225,7 @@ class QuizAiService {
     if (responseData == null || responseData.toString().trim().isEmpty) {
       return Exception(
         '$step: empty response (HTTP ${e.response?.statusCode ?? 'N/A'}). '
-        'Make sure the AI quiz service (FastAPI on port 8001) is running.',
+        'Make sure the AI quiz service is reachable at $baseUrl.',
       );
     }
 
@@ -241,7 +240,7 @@ class QuizAiService {
         e.type == DioExceptionType.connectionError) {
       return Exception(
         '$step: Could not connect to AI quiz service at $baseUrl. '
-        'Make sure FastAPI is running on port 8001.',
+        'Make sure the deployed AI quiz service is available.',
       );
     }
 
