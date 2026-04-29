@@ -13005,6 +13005,165 @@ class AppLocalizationsEn extends AppLocalizations {
   String get assignmentInstructionFiles => 'Instruction Files';
 
   @override
+  String get instructorAssignmentCreateScreenTitle => 'Create Assignment';
+
+  @override
+  String get instructorAssignmentEditScreenTitle => 'Edit Assignment';
+
+  @override
+  String get instructorAssignmentComposerTitle => 'Assignment Studio';
+
+  @override
+  String get instructorAssignmentComposerSubtitle =>
+      'Shape the assignment brief, timing, grading, and resources in one focused flow.';
+
+  @override
+  String get instructorAssignmentOverviewSection => 'Core Details';
+
+  @override
+  String get instructorAssignmentOverviewSectionSubtitle =>
+      'Set the course, title, and learner-facing summary.';
+
+  @override
+  String get instructorAssignmentScheduleSection => 'Schedule';
+
+  @override
+  String get instructorAssignmentScheduleSectionSubtitle =>
+      'Control when the assignment opens and when it closes.';
+
+  @override
+  String get instructorAssignmentSettingsSection => 'Scoring & Rules';
+
+  @override
+  String get instructorAssignmentSettingsSectionSubtitle =>
+      'Tune grading, submissions, and file requirements without wasting space.';
+
+  @override
+  String get instructorAssignmentResourcesSection => 'Instructions & Resources';
+
+  @override
+  String get instructorAssignmentResourcesSectionSubtitle =>
+      'Give students clear steps and attach the files they need to start strong.';
+
+  @override
+  String get instructorAssignmentTitleHint => 'Enter a clear assignment title';
+
+  @override
+  String get instructorAssignmentCourseHint =>
+      'Choose the teaching course for this assignment';
+
+  @override
+  String get instructorAssignmentDescriptionHint =>
+      'Summarize what students should build, solve, or submit.';
+
+  @override
+  String get instructorAssignmentInstructionsHint =>
+      'Write the detailed instructions, expectations, and grading notes for students.';
+
+  @override
+  String get instructorAssignmentAvailableHelper =>
+      'Students can access the assignment as soon as this window opens.';
+
+  @override
+  String get instructorAssignmentDueHelper =>
+      'Set the final submission deadline with the exact date and time.';
+
+  @override
+  String get instructorAssignmentMaxScore => 'Max Score';
+
+  @override
+  String get instructorAssignmentWeight => 'Weight';
+
+  @override
+  String get instructorAssignmentVisibility => 'Visibility';
+
+  @override
+  String get instructorAssignmentAllowedTypesHint =>
+      'Type file extensions separated by commas';
+
+  @override
+  String get instructorAssignmentQuickTypes => 'Quick Types';
+
+  @override
+  String get instructorAssignmentResourcesHint =>
+      'Upload starter files, rubrics, or sample assets using the current assignment storage flow.';
+
+  @override
+  String get instructorAssignmentReadyToSave => 'Ready to Save';
+
+  @override
+  String get instructorAssignmentSaveAction => 'Save Assignment';
+
+  @override
+  String get instructorAssignmentSavingAction => 'Saving...';
+
+  @override
+  String get instructorAssignmentDraftStateHelper =>
+      'Draft keeps the assignment hidden from publish notifications until you are ready.';
+
+  @override
+  String get instructorAssignmentPublishedStateHelper =>
+      'Published makes the assignment available in the live course flow right away.';
+
+  @override
+  String get instructorAssignmentClosedStateHelper =>
+      'Closed preserves the record while preventing new active work from students.';
+
+  @override
+  String get instructorAssignmentArchivedStateHelper =>
+      'Archived keeps the assignment for reference while moving it out of the active flow.';
+
+  @override
+  String get instructorAssignmentValidationTitleRequired => 'Title is required';
+
+  @override
+  String get instructorAssignmentValidationCourseRequired =>
+      'Course is required';
+
+  @override
+  String get instructorAssignmentValidationPositiveNumber =>
+      'Enter a number greater than 0';
+
+  @override
+  String get instructorAssignmentValidationPositiveInteger =>
+      'Enter an integer greater than 0';
+
+  @override
+  String get instructorAssignmentValidationValidValue => 'Enter a valid value';
+
+  @override
+  String get instructorAssignmentValidationZeroToHundred =>
+      'Value must be between 0 and 100';
+
+  @override
+  String get instructorAssignmentValidationDueRequired =>
+      'Due date is required';
+
+  @override
+  String get instructorAssignmentValidationAvailableRequired =>
+      'Available from is required';
+
+  @override
+  String get instructorAssignmentValidationDueAfterAvailable =>
+      'Due date must be after the available-from time';
+
+  @override
+  String get instructorAssignmentMaxScoreWarning =>
+      'Max score changed while editing. Review graded submissions to keep scoring consistent.';
+
+  @override
+  String get instructorAssignmentTemplateChecklist => 'Checklist';
+
+  @override
+  String get instructorAssignmentTemplateCode => 'Code Block';
+
+  @override
+  String get instructorAssignmentTemplateRubric => 'Rubric';
+
+  @override
+  String get instructorAssignmentTemplateReminder => 'Reminder';
+
+  @override
   String get assignmentNoInstructionFiles => 'No instruction files yet.';
 
   @override

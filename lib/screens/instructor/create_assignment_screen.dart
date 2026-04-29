@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../bloc/instructor/instructor_assignments_cubit.dart';
 import '../../bloc/instructor/instructor_assignments_state.dart';
+import '../../generated_l10n/app_localizations.dart';
 import '../../models/assignments/assignment_form_data.dart';
 import '../../models/assignments/assignment_model.dart';
 import '../../models/core/drive_file_model.dart';
@@ -12,6 +13,7 @@ import '../../services/api/core_api_client.dart';
 import '../../services/api/enrollment_service.dart';
 import '../../services/storage_service.dart';
 import '../../widgets/instructor/assignments/assignment_create_form.dart';
+import '../../widgets/instructor/shared/instructor_colors.dart';
 
 class CreateAssignmentScreen extends StatelessWidget {
   const CreateAssignmentScreen({
@@ -115,9 +117,16 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
     final isEdit = (_activeAssignmentId ?? 0) > 0;
     final effectiveAssignment = _fetchedAssignment ?? widget.assignment;
     final initialData = _toInitialData(effectiveAssignment);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final l10n = AppLocalizations.of(context);
 
     if (_fetchingAssignment) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        backgroundColor: isDark
+            ? InstructorColors.darkBg
+            : InstructorColors.lightBackground,
+        body: const Center(child: CircularProgressIndicator()),
+      );
     }
 
     return BlocConsumer<InstructorAssignmentsCubit, InstructorAssignmentsState>(
@@ -130,14 +139,25 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
       },
       builder: (context, state) {
         return Scaffold(
+          backgroundColor: isDark
+              ? InstructorColors.darkBg
+              : InstructorColors.lightBackground,
           appBar: AppBar(
-            title: Text(isEdit ? 'Edit Assignment' : 'Create Assignment'),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
+            title: Text(
+              isEdit
+                  ? l10n.instructorAssignmentEditScreenTitle
+                  : l10n.instructorAssignmentCreateScreenTitle,
+            ),
             actions: <Widget>[
-              TextButton(
+              IconButton(
                 onPressed: _submitting
                     ? null
                     : () => Navigator.of(context).pop(),
-                child: const Text('Cancel'),
+                icon: const Icon(Icons.close_rounded),
+                tooltip: l10n.cancel,
               ),
             ],
           ),
@@ -149,17 +169,38 @@ class _CreateAssignmentViewState extends State<_CreateAssignmentView> {
                       Container(
                         width: double.infinity,
                         margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(10),
+                          color: InstructorColors.warning.withValues(
+                            alpha: 0.12,
+                          ),
+                          borderRadius: BorderRadius.circular(18),
                           border: Border.all(
-                            color: Colors.orange.withValues(alpha: 0.25),
+                            color: InstructorColors.warning.withValues(
+                              alpha: 0.24,
+                            ),
                           ),
                         ),
-                        child: const Text(
-                          'Max score changed while editing. Review existing graded submissions for consistency.',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            const Padding(
+                              padding: EdgeInsets.only(top: 1),
+                              child: Icon(
+                                Icons.warning_amber_rounded,
+                                color: InstructorColors.warning,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                l10n.instructorAssignmentMaxScoreWarning,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     Expanded(

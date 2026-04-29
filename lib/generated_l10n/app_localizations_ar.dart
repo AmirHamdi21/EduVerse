@@ -12954,6 +12954,164 @@ class AppLocalizationsAr extends AppLocalizations {
   String get assignmentInstructionFiles => 'ملفات التعليمات';
 
   @override
+  String get instructorAssignmentCreateScreenTitle => 'إنشاء واجب';
+
+  @override
+  String get instructorAssignmentEditScreenTitle => 'تعديل الواجب';
+
+  @override
+  String get instructorAssignmentComposerTitle => 'استوديو الواجب';
+
+  @override
+  String get instructorAssignmentComposerSubtitle =>
+      'نظّم وصف الواجب وتوقيته ودرجاته وموارده في تدفق واحد واضح ومركز.';
+
+  @override
+  String get instructorAssignmentOverviewSection => 'التفاصيل الأساسية';
+
+  @override
+  String get instructorAssignmentOverviewSectionSubtitle =>
+      'حدّد المقرر والعنوان والملخص الذي سيظهر للطلاب.';
+
+  @override
+  String get instructorAssignmentScheduleSection => 'الجدولة';
+
+  @override
+  String get instructorAssignmentScheduleSectionSubtitle =>
+      'تحكم في وقت فتح الواجب ووقت إغلاقه.';
+
+  @override
+  String get instructorAssignmentSettingsSection => 'الدرجات والقواعد';
+
+  @override
+  String get instructorAssignmentSettingsSectionSubtitle =>
+      'اضبط التقييم ونوع التسليم ومتطلبات الملفات بشكل منظم وواضح.';
+
+  @override
+  String get instructorAssignmentResourcesSection => 'التعليمات والموارد';
+
+  @override
+  String get instructorAssignmentResourcesSectionSubtitle =>
+      'قدّم للطلاب خطوات واضحة وأرفق الملفات التي يحتاجونها للبداية.';
+
+  @override
+  String get instructorAssignmentTitleHint => 'أدخل عنوانًا واضحًا للواجب';
+
+  @override
+  String get instructorAssignmentCourseHint =>
+      'اختر المقرر الذي يتبع له هذا الواجب';
+
+  @override
+  String get instructorAssignmentDescriptionHint =>
+      'لخّص ما المطلوب من الطلاب بناؤه أو حله أو تسليمه.';
+
+  @override
+  String get instructorAssignmentInstructionsHint =>
+      'اكتب التعليمات التفصيلية والتوقعات وملاحظات التقييم للطلاب.';
+
+  @override
+  String get instructorAssignmentAvailableHelper =>
+      'يستطيع الطلاب الوصول إلى الواجب فور فتح هذه النافذة الزمنية.';
+
+  @override
+  String get instructorAssignmentDueHelper =>
+      'حدد الموعد النهائي للتسليم بالتاريخ والوقت بدقة.';
+
+  @override
+  String get instructorAssignmentMaxScore => 'الدرجة القصوى';
+
+  @override
+  String get instructorAssignmentWeight => 'الوزن';
+
+  @override
+  String get instructorAssignmentVisibility => 'الظهور';
+
+  @override
+  String get instructorAssignmentAllowedTypesHint =>
+      'اكتب امتدادات الملفات مفصولة بفواصل';
+
+  @override
+  String get instructorAssignmentQuickTypes => 'أنواع سريعة';
+
+  @override
+  String get instructorAssignmentResourcesHint =>
+      'ارفع ملفات البداية أو معايير التقييم أو الأصول المرجعية باستخدام تدفق التخزين الحالي للواجب.';
+
+  @override
+  String get instructorAssignmentReadyToSave => 'جاهز للحفظ';
+
+  @override
+  String get instructorAssignmentSaveAction => 'حفظ الواجب';
+
+  @override
+  String get instructorAssignmentSavingAction => 'جارٍ الحفظ...';
+
+  @override
+  String get instructorAssignmentDraftStateHelper =>
+      'المسودة تُبقي الواجب بعيدًا عن إشعارات النشر حتى تصبح جاهزًا.';
+
+  @override
+  String get instructorAssignmentPublishedStateHelper =>
+      'النشر يجعل الواجب متاحًا مباشرة ضمن تدفق المقرر الحالي.';
+
+  @override
+  String get instructorAssignmentClosedStateHelper =>
+      'الإغلاق يحافظ على السجل مع منع العمل النشط الجديد من الطلاب.';
+
+  @override
+  String get instructorAssignmentArchivedStateHelper =>
+      'الأرشفة تُبقي الواجب للرجوع إليه مع إخراجه من التدفق النشط.';
+
+  @override
+  String get instructorAssignmentValidationTitleRequired => 'العنوان مطلوب';
+
+  @override
+  String get instructorAssignmentValidationCourseRequired => 'المقرر مطلوب';
+
+  @override
+  String get instructorAssignmentValidationPositiveNumber =>
+      'أدخل رقمًا أكبر من 0';
+
+  @override
+  String get instructorAssignmentValidationPositiveInteger =>
+      'أدخل عددًا صحيحًا أكبر من 0';
+
+  @override
+  String get instructorAssignmentValidationValidValue => 'أدخل قيمة صحيحة';
+
+  @override
+  String get instructorAssignmentValidationZeroToHundred =>
+      'يجب أن تكون القيمة بين 0 و100';
+
+  @override
+  String get instructorAssignmentValidationDueRequired =>
+      'تاريخ الاستحقاق مطلوب';
+
+  @override
+  String get instructorAssignmentValidationAvailableRequired =>
+      'وقت الإتاحة مطلوب';
+
+  @override
+  String get instructorAssignmentValidationDueAfterAvailable =>
+      'يجب أن يكون تاريخ الاستحقاق بعد وقت الإتاحة';
+
+  @override
+  String get instructorAssignmentMaxScoreWarning =>
+      'تم تغيير الدرجة القصوى أثناء التعديل. راجع التسليمات التي تم تقييمها للحفاظ على اتساق الدرجات.';
+
+  @override
+  String get instructorAssignmentTemplateChecklist => 'قائمة تحقق';
+
+  @override
+  String get instructorAssignmentTemplateCode => 'مقطع كود';
+
+  @override
+  String get instructorAssignmentTemplateRubric => 'معيار تقييم';
+
+  @override
+  String get instructorAssignmentTemplateReminder => 'تذكير';
+
+  @override
   String get assignmentNoInstructionFiles => 'لا توجد ملفات تعليمات بعد.';
 
   @override

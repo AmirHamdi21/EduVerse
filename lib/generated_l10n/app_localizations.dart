@@ -25361,6 +25361,276 @@ abstract class AppLocalizations {
   /// **'Instruction Files'**
   String get assignmentInstructionFiles;
 
+  /// No description provided for @instructorAssignmentCreateScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Assignment'**
+  String get instructorAssignmentCreateScreenTitle;
+
+  /// No description provided for @instructorAssignmentEditScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Assignment'**
+  String get instructorAssignmentEditScreenTitle;
+
+  /// No description provided for @instructorAssignmentComposerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment Studio'**
+  String get instructorAssignmentComposerTitle;
+
+  /// No description provided for @instructorAssignmentComposerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shape the assignment brief, timing, grading, and resources in one focused flow.'**
+  String get instructorAssignmentComposerSubtitle;
+
+  /// No description provided for @instructorAssignmentOverviewSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Core Details'**
+  String get instructorAssignmentOverviewSection;
+
+  /// No description provided for @instructorAssignmentOverviewSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the course, title, and learner-facing summary.'**
+  String get instructorAssignmentOverviewSectionSubtitle;
+
+  /// No description provided for @instructorAssignmentScheduleSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule'**
+  String get instructorAssignmentScheduleSection;
+
+  /// No description provided for @instructorAssignmentScheduleSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Control when the assignment opens and when it closes.'**
+  String get instructorAssignmentScheduleSectionSubtitle;
+
+  /// No description provided for @instructorAssignmentSettingsSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Scoring & Rules'**
+  String get instructorAssignmentSettingsSection;
+
+  /// No description provided for @instructorAssignmentSettingsSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Tune grading, submissions, and file requirements without wasting space.'**
+  String get instructorAssignmentSettingsSectionSubtitle;
+
+  /// No description provided for @instructorAssignmentResourcesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions & Resources'**
+  String get instructorAssignmentResourcesSection;
+
+  /// No description provided for @instructorAssignmentResourcesSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Give students clear steps and attach the files they need to start strong.'**
+  String get instructorAssignmentResourcesSectionSubtitle;
+
+  /// No description provided for @instructorAssignmentTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a clear assignment title'**
+  String get instructorAssignmentTitleHint;
+
+  /// No description provided for @instructorAssignmentCourseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the teaching course for this assignment'**
+  String get instructorAssignmentCourseHint;
+
+  /// No description provided for @instructorAssignmentDescriptionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Summarize what students should build, solve, or submit.'**
+  String get instructorAssignmentDescriptionHint;
+
+  /// No description provided for @instructorAssignmentInstructionsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write the detailed instructions, expectations, and grading notes for students.'**
+  String get instructorAssignmentInstructionsHint;
+
+  /// No description provided for @instructorAssignmentAvailableHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Students can access the assignment as soon as this window opens.'**
+  String get instructorAssignmentAvailableHelper;
+
+  /// No description provided for @instructorAssignmentDueHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the final submission deadline with the exact date and time.'**
+  String get instructorAssignmentDueHelper;
+
+  /// No description provided for @instructorAssignmentMaxScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Score'**
+  String get instructorAssignmentMaxScore;
+
+  /// No description provided for @instructorAssignmentWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get instructorAssignmentWeight;
+
+  /// No description provided for @instructorAssignmentVisibility.
+  ///
+  /// In en, this message translates to:
+  /// **'Visibility'**
+  String get instructorAssignmentVisibility;
+
+  /// No description provided for @instructorAssignmentAllowedTypesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Type file extensions separated by commas'**
+  String get instructorAssignmentAllowedTypesHint;
+
+  /// No description provided for @instructorAssignmentQuickTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Types'**
+  String get instructorAssignmentQuickTypes;
+
+  /// No description provided for @instructorAssignmentResourcesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload starter files, rubrics, or sample assets using the current assignment storage flow.'**
+  String get instructorAssignmentResourcesHint;
+
+  /// No description provided for @instructorAssignmentReadyToSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to Save'**
+  String get instructorAssignmentReadyToSave;
+
+  /// No description provided for @instructorAssignmentSaveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Assignment'**
+  String get instructorAssignmentSaveAction;
+
+  /// No description provided for @instructorAssignmentSavingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get instructorAssignmentSavingAction;
+
+  /// No description provided for @instructorAssignmentDraftStateHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft keeps the assignment hidden from publish notifications until you are ready.'**
+  String get instructorAssignmentDraftStateHelper;
+
+  /// No description provided for @instructorAssignmentPublishedStateHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Published makes the assignment available in the live course flow right away.'**
+  String get instructorAssignmentPublishedStateHelper;
+
+  /// No description provided for @instructorAssignmentClosedStateHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Closed preserves the record while preventing new active work from students.'**
+  String get instructorAssignmentClosedStateHelper;
+
+  /// No description provided for @instructorAssignmentArchivedStateHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived keeps the assignment for reference while moving it out of the active flow.'**
+  String get instructorAssignmentArchivedStateHelper;
+
+  /// No description provided for @instructorAssignmentValidationTitleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Title is required'**
+  String get instructorAssignmentValidationTitleRequired;
+
+  /// No description provided for @instructorAssignmentValidationCourseRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Course is required'**
+  String get instructorAssignmentValidationCourseRequired;
+
+  /// No description provided for @instructorAssignmentValidationPositiveNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number greater than 0'**
+  String get instructorAssignmentValidationPositiveNumber;
+
+  /// No description provided for @instructorAssignmentValidationPositiveInteger.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter an integer greater than 0'**
+  String get instructorAssignmentValidationPositiveInteger;
+
+  /// No description provided for @instructorAssignmentValidationValidValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid value'**
+  String get instructorAssignmentValidationValidValue;
+
+  /// No description provided for @instructorAssignmentValidationZeroToHundred.
+  ///
+  /// In en, this message translates to:
+  /// **'Value must be between 0 and 100'**
+  String get instructorAssignmentValidationZeroToHundred;
+
+  /// No description provided for @instructorAssignmentValidationDueRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date is required'**
+  String get instructorAssignmentValidationDueRequired;
+
+  /// No description provided for @instructorAssignmentValidationAvailableRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Available from is required'**
+  String get instructorAssignmentValidationAvailableRequired;
+
+  /// No description provided for @instructorAssignmentValidationDueAfterAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Due date must be after the available-from time'**
+  String get instructorAssignmentValidationDueAfterAvailable;
+
+  /// No description provided for @instructorAssignmentMaxScoreWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Max score changed while editing. Review graded submissions to keep scoring consistent.'**
+  String get instructorAssignmentMaxScoreWarning;
+
+  /// No description provided for @instructorAssignmentTemplateChecklist.
+  ///
+  /// In en, this message translates to:
+  /// **'Checklist'**
+  String get instructorAssignmentTemplateChecklist;
+
+  /// No description provided for @instructorAssignmentTemplateCode.
+  ///
+  /// In en, this message translates to:
+  /// **'Code Block'**
+  String get instructorAssignmentTemplateCode;
+
+  /// No description provided for @instructorAssignmentTemplateRubric.
+  ///
+  /// In en, this message translates to:
+  /// **'Rubric'**
+  String get instructorAssignmentTemplateRubric;
+
+  /// No description provided for @instructorAssignmentTemplateReminder.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder'**
+  String get instructorAssignmentTemplateReminder;
+
   /// No description provided for @assignmentNoInstructionFiles.
   ///
   /// In en, this message translates to:
