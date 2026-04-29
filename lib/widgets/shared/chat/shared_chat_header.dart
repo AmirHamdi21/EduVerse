@@ -39,12 +39,9 @@ class SharedChatHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final statusData = _resolveStatus(l10n, connectionStatus);
-    final secondaryText = isDark
-        ? const Color(0xFFE2E8F0)
-        : const Color(0xFF475569);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 6),
       child: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -56,23 +53,23 @@ class SharedChatHeader extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: accentColor.withValues(alpha: isDark ? 0.34 : 0.22),
-              blurRadius: 28,
-              offset: const Offset(0, 14),
+              color: accentColor.withValues(alpha: isDark ? 0.28 : 0.18),
+              blurRadius: 24,
+              offset: const Offset(0, 12),
             ),
           ],
         ),
         child: Stack(
           children: <Widget>[
             Positioned(
-              right: -18,
-              top: -18,
+              right: -14,
+              top: -16,
               child: Container(
-                width: 118,
-                height: 118,
+                width: 96,
+                height: 96,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.10),
                   shape: BoxShape.circle,
@@ -80,11 +77,11 @@ class SharedChatHeader extends StatelessWidget {
               ),
             ),
             Positioned(
-              left: -22,
-              bottom: -34,
+              left: -18,
+              bottom: -28,
               child: Container(
-                width: 132,
-                height: 132,
+                width: 108,
+                height: 108,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.08),
                   shape: BoxShape.circle,
@@ -92,11 +89,12 @@ class SharedChatHeader extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(18),
+              padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       if (leadingIcon != null)
                         _HeaderCircleButton(
@@ -104,7 +102,7 @@ class SharedChatHeader extends StatelessWidget {
                           onPressed: onLeadingPressed,
                           foregroundColor: Colors.white,
                         ),
-                      if (leadingIcon != null) const SizedBox(width: 12),
+                      if (leadingIcon != null) const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,117 +111,83 @@ class SharedChatHeader extends StatelessWidget {
                               title,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 24,
+                                fontSize: 20,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: -0.4,
                               ),
                             ),
-                            const SizedBox(height: 6),
+                            const SizedBox(height: 2),
                             Text(
                               l10n.chatHubSubtitle,
-                              maxLines: 2,
+                              maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.88),
-                                fontSize: 13,
-                                height: 1.35,
+                                fontSize: 11.5,
+                                height: 1.2,
                               ),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(width: 10),
+                      _HeaderCircleButton(
+                        icon: isSearching
+                            ? Icons.close_rounded
+                            : Icons.search_rounded,
+                        onPressed: onToggleSearch,
+                        foregroundColor: Colors.white,
+                        tooltip: isSearching
+                            ? l10n.chatCloseSearchTooltip
+                            : l10n.search,
+                      ),
+                      const SizedBox(width: 8),
+                      FilledButton.icon(
+                        onPressed: () => _openNewConversation(context),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: accentColor,
+                          minimumSize: const Size(0, 40),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 9,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          textStyle: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                          ),
+                        ),
+                        icon: const Icon(Icons.edit_rounded, size: 16),
+                        label: Text(l10n.chatNewButton),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 18),
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    crossAxisAlignment: WrapCrossAlignment.center,
+                  const SizedBox(height: 10),
+                  Row(
                     children: <Widget>[
-                      _HeaderInfoChip(
-                        icon: Icons.fiber_manual_record_rounded,
-                        label: statusData.label,
-                        backgroundColor: statusData.color.withValues(
-                          alpha: 0.18,
+                      Flexible(
+                        child: _HeaderInfoChip(
+                          icon: Icons.fiber_manual_record_rounded,
+                          label: statusData.label,
+                          backgroundColor: statusData.color.withValues(
+                            alpha: 0.18,
+                          ),
+                          foregroundColor: Colors.white,
                         ),
-                        foregroundColor: Colors.white,
                       ),
-                      _HeaderInfoChip(
-                        icon: Icons.bolt_rounded,
-                        label: l10n.chatFastRepliesLabel,
-                        backgroundColor: Colors.white.withValues(alpha: 0.14),
-                        foregroundColor: Colors.white,
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          _HeaderCircleButton(
-                            icon: isSearching
-                                ? Icons.close_rounded
-                                : Icons.search_rounded,
-                            onPressed: onToggleSearch,
-                            foregroundColor: Colors.white,
-                            tooltip: isSearching
-                                ? l10n.chatCloseSearchTooltip
-                                : l10n.search,
-                          ),
-                          const SizedBox(width: 8),
-                          FilledButton.icon(
-                            onPressed: () => _openNewConversation(context),
-                            style: FilledButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: accentColor,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              textStyle: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            icon: const Icon(Icons.edit_rounded, size: 18),
-                            label: Text(l10n.chatNewButton),
-                          ),
-                        ],
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: _HeaderInfoChip(
+                          icon: Icons.bolt_rounded,
+                          label: l10n.chatFastRepliesLabel,
+                          backgroundColor: Colors.white.withValues(alpha: 0.14),
+                          foregroundColor: Colors.white,
+                        ),
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 14),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.12),
-                      ),
-                    ),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.auto_awesome_rounded,
-                          size: 18,
-                          color: Colors.white.withValues(alpha: 0.92),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            l10n.chatHeaderHint,
-                            style: TextStyle(
-                              color: secondaryText.withValues(alpha: 0.98),
-                              fontSize: 12.5,
-                              height: 1.35,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),
@@ -276,7 +240,9 @@ class _HeaderCircleButton extends StatelessWidget {
       child: IconButton(
         onPressed: onPressed,
         tooltip: tooltip,
-        icon: Icon(icon, color: foregroundColor),
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints.tightFor(width: 38, height: 38),
+        icon: Icon(icon, color: foregroundColor, size: 18),
       ),
     );
   }
@@ -298,7 +264,7 @@ class _HeaderInfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(999),

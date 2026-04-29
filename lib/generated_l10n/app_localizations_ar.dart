@@ -14032,6 +14032,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get chatServiceUnavailableTitle => 'خدمة الدردشة غير متاحة';
 
   @override
+  String get chatAttachmentAiImages => 'صور الذكاء الاصطناعي';
+
+  @override
+  String get chatAttachmentAudio => 'صوت';
+
+  @override
+  String get chatAttachmentContact => 'جهة اتصال';
+
+  @override
+  String get chatAttachmentEvent => 'فعالية';
+
+  @override
+  String get chatAttachmentLocation => 'موقع';
+
+  @override
+  String get chatAttachmentPoll => 'استطلاع';
+
+  @override
+  String get chatAttachmentSheetSubtitle =>
+      'اختر مرفقاً سريعاً لمواصلة المحادثة بسهولة.';
+
+  @override
   String get chatStartConversationButton => 'ابدأ المحادثة';
 
   @override

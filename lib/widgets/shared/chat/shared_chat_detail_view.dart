@@ -599,9 +599,9 @@ class _ConversationHeader extends StatelessWidget {
               : l10n.chatConnectionOffline);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 10),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 6),
       child: Container(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: <Color>[
@@ -612,23 +612,23 @@ class _ConversationHeader extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(22),
           boxShadow: <BoxShadow>[
             BoxShadow(
-              color: accentColor.withValues(alpha: isDark ? 0.30 : 0.20),
-              blurRadius: 28,
-              offset: const Offset(0, 16),
+              color: accentColor.withValues(alpha: isDark ? 0.24 : 0.16),
+              blurRadius: 22,
+              offset: const Offset(0, 12),
             ),
           ],
         ),
         child: Stack(
           children: <Widget>[
             Positioned(
-              right: -26,
-              top: -20,
+              right: -18,
+              top: -18,
               child: Container(
-                width: 128,
-                height: 128,
+                width: 84,
+                height: 84,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.10),
                   shape: BoxShape.circle,
@@ -648,40 +648,41 @@ class _ConversationHeader extends StatelessWidget {
                           context,
                         ).backButtonTooltip,
                       ),
-                    if (onBack != null) const SizedBox(width: 10),
+                    if (onBack != null) const SizedBox(width: 8),
                     GestureDetector(
                       onTap: directUser == null || onOpenProfile == null
                           ? null
                           : () => onOpenProfile!(directUser.userId),
                       child: Container(
-                        width: 56,
-                        height: 56,
+                        width: 42,
+                        height: 42,
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.14),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                         child: Center(
                           child: conversation.type == ConversationType.group
                               ? const Icon(
                                   Icons.groups_rounded,
                                   color: Colors.white,
-                                  size: 28,
+                                  size: 22,
                                 )
                               : Text(
                                   _titleInitial(conversation.title),
                                   style: const TextStyle(
                                     color: Colors.white,
-                                    fontSize: 18,
+                                    fontSize: 15,
                                     fontWeight: FontWeight.w800,
                                   ),
                                 ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 14),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           GestureDetector(
                             onTap: directUser == null || onOpenProfile == null
@@ -693,13 +694,13 @@ class _ConversationHeader extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: Colors.white,
-                                fontSize: 20,
+                                fontSize: 17,
                                 fontWeight: FontWeight.w800,
-                                letterSpacing: -0.3,
+                                letterSpacing: -0.2,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 2),
                           if (typingUserNames.isNotEmpty)
                             SharedTypingIndicator(
                               typingUserNames: typingUserNames,
@@ -710,7 +711,7 @@ class _ConversationHeader extends StatelessWidget {
                             Text(
                               subtitleText,
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 12,
                                 color: Colors.white.withValues(alpha: 0.90),
                                 fontWeight: FontWeight.w600,
                               ),
@@ -724,7 +725,7 @@ class _ConversationHeader extends StatelessWidget {
                         onPressed: () => _showComingSoon(context),
                         tooltip: l10n.chatVoiceCallTooltip,
                       ),
-                    if (showVoiceCall) const SizedBox(width: 8),
+                    if (showVoiceCall) const SizedBox(width: 6),
                     if (showVideoCall)
                       _HeaderActionButton(
                         icon: Icons.videocam_rounded,
@@ -733,10 +734,10 @@ class _ConversationHeader extends StatelessWidget {
                       ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 8),
                 Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+                  spacing: 7,
+                  runSpacing: 7,
                   children: <Widget>[
                     _HeaderChip(
                       icon: Icons.circle,
@@ -827,11 +828,13 @@ class _HeaderActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.white.withValues(alpha: 0.12),
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(14),
       child: IconButton(
         onPressed: onPressed,
         tooltip: tooltip,
-        icon: Icon(icon, color: Colors.white),
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints.tightFor(width: 36, height: 36),
+        icon: Icon(icon, color: Colors.white, size: 18),
       ),
     );
   }
@@ -846,7 +849,7 @@ class _HeaderChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(999),
@@ -860,7 +863,7 @@ class _HeaderChip extends StatelessWidget {
             label,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -1238,9 +1241,9 @@ class _InputBar extends StatelessWidget {
         : accentColor;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       child: Container(
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
         decoration: BoxDecoration(
           color: surfaceColor,
           borderRadius: BorderRadius.circular(28),
@@ -1255,83 +1258,299 @@ class _InputBar extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            if (showAttachment)
-              _ComposerIconButton(
-                icon: Icons.attach_file_rounded,
-                color: activeAccent,
-                onPressed: () {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(l10n.comingSoon)));
-                },
-              ),
-            if (showVoiceMessage)
-              _ComposerIconButton(
-                icon: Icons.mic_none_rounded,
-                color: activeAccent,
-                onPressed: () {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text(l10n.comingSoon)));
-                },
-              ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF0F172A)
-                      : const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(22),
-                ),
-                child: TextField(
-                  controller: textController,
-                  focusNode: focusNode,
-                  maxLines: null,
-                  textInputAction: TextInputAction.newline,
-                  decoration: InputDecoration(
-                    hintText: l10n.typeMessage,
-                    hintStyle: TextStyle(color: mutedText),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 14,
+        child: ValueListenableBuilder<TextEditingValue>(
+          valueListenable: textController,
+          builder: (context, value, _) {
+            final hasText = value.text.trim().isNotEmpty;
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? const Color(0xFF0F172A)
+                          : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Row(
+                      children: [
+                        if (showEmojiPicker)
+                          _ComposerIconButton(
+                            icon: emojiPickerVisible
+                                ? Icons.keyboard_rounded
+                                : Icons.emoji_emotions_outlined,
+                            color: mutedText,
+                            onPressed: onToggleEmojiPicker,
+                          ),
+                        Expanded(
+                          child: TextField(
+                            controller: textController,
+                            focusNode: focusNode,
+                            minLines: 1,
+                            maxLines: 5,
+                            textInputAction: TextInputAction.newline,
+                            decoration: InputDecoration(
+                              hintText: l10n.typeMessage,
+                              hintStyle: TextStyle(color: mutedText),
+                              border: InputBorder.none,
+                              isCollapsed: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                        if (showAttachment)
+                          _ComposerIconButton(
+                            icon: Icons.attach_file_rounded,
+                            color: mutedText,
+                            onPressed: () =>
+                                _showAttachmentSheet(context, activeAccent),
+                          ),
+                        // if (!hasText)
+                        //   _ComposerIconButton(
+                        //     icon: Icons.camera_alt_rounded,
+                        //     color: mutedText,
+                        //     onPressed: () {
+                        //       ScaffoldMessenger.of(context).showSnackBar(
+                        //         SnackBar(content: Text(l10n.comingSoon)),
+                        //       );
+                        //     },
+                        //   ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-            ),
-            if (showEmojiPicker)
-              _ComposerIconButton(
-                icon: emojiPickerVisible
-                    ? Icons.keyboard_rounded
-                    : Icons.emoji_emotions_outlined,
-                color: activeAccent,
-                onPressed: onToggleEmojiPicker,
-              ),
-            const SizedBox(width: 6),
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: <Color>[
-                    activeAccent,
-                    Color.lerp(activeAccent, const Color(0xFF06B6D4), 0.28)!,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                const SizedBox(width: 8),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        activeAccent,
+                        Color.lerp(
+                          activeAccent,
+                          const Color(0xFF06B6D4),
+                          0.28,
+                        )!,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  child: IconButton(
+                    onPressed: hasText
+                        ? onSend
+                        : (showVoiceMessage
+                              ? () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(l10n.comingSoon)),
+                                  );
+                                }
+                              : null),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints.tightFor(
+                      width: 48,
+                      height: 48,
+                    ),
+                    icon: Icon(
+                      hasText ? Icons.send_rounded : Icons.mic_rounded,
+                      color: Colors.white,
+                      size: hasText ? 22 : 24,
+                    ),
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: IconButton(
-                onPressed: onSend,
-                icon: const Icon(Icons.send_rounded, color: Colors.white),
-              ),
-            ),
-          ],
+              ],
+            );
+          },
         ),
       ),
+    );
+  }
+
+  Future<void> _showAttachmentSheet(
+    BuildContext context,
+    Color activeAccent,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        final isSheetDark =
+            Theme.of(sheetContext).brightness == Brightness.dark;
+        final cardColor = isSheetDark ? const Color(0xFF111827) : Colors.white;
+        final options = <_AttachmentOption>[
+          _AttachmentOption(
+            icon: Icons.photo_library_rounded,
+            label: l10n.gallery,
+            color: const Color(0xFF3B82F6),
+          ),
+          _AttachmentOption(
+            icon: Icons.camera_alt_rounded,
+            label: l10n.camera,
+            color: const Color(0xFFEC4899),
+          ),
+          _AttachmentOption(
+            icon: Icons.location_on_rounded,
+            label: l10n.chatAttachmentLocation,
+            color: const Color(0xFF14B8A6),
+          ),
+          _AttachmentOption(
+            icon: Icons.person_rounded,
+            label: l10n.chatAttachmentContact,
+            color: const Color(0xFF3B82F6),
+          ),
+          _AttachmentOption(
+            icon: Icons.description_rounded,
+            label: l10n.document,
+            color: const Color(0xFF8B5CF6),
+          ),
+          _AttachmentOption(
+            icon: Icons.headphones_rounded,
+            label: l10n.chatAttachmentAudio,
+            color: const Color(0xFFF97316),
+          ),
+          _AttachmentOption(
+            icon: Icons.poll_rounded,
+            label: l10n.chatAttachmentPoll,
+            color: const Color(0xFFF59E0B),
+          ),
+          _AttachmentOption(
+            icon: Icons.event_rounded,
+            label: l10n.chatAttachmentEvent,
+            color: const Color(0xFFEC4899),
+          ),
+          _AttachmentOption(
+            icon: Icons.auto_awesome_rounded,
+            label: l10n.chatAttachmentAiImages,
+            color: activeAccent,
+          ),
+        ];
+
+        return SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(18, 14, 18, 20),
+              decoration: BoxDecoration(
+                color: cardColor,
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.12),
+                    blurRadius: 28,
+                    offset: const Offset(0, 14),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 42,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFE2E8F0),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    l10n.attachments,
+                    style: TextStyle(
+                      color: isSheetDark
+                          ? Colors.white
+                          : const Color(0xFF0F172A),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    l10n.chatAttachmentSheetSubtitle,
+                    style: TextStyle(
+                      color: isSheetDark
+                          ? const Color(0xFF94A3B8)
+                          : const Color(0xFF64748B),
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final itemWidth = (constraints.maxWidth - 42) / 4;
+                      return Wrap(
+                        spacing: 14,
+                        runSpacing: 14,
+                        children: options
+                            .map((option) {
+                              return SizedBox(
+                                width: itemWidth.clamp(68.0, 84.0).toDouble(),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(20),
+                                  onTap: () {
+                                    Navigator.of(sheetContext).pop();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(l10n.comingSoon)),
+                                    );
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          color: option.color.withValues(
+                                            alpha: 0.10,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        child: Icon(
+                                          option.icon,
+                                          color: option.color,
+                                          size: 25,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        option.label,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: isSheetDark
+                                              ? Colors.white
+                                              : const Color(0xFF0F172A),
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            })
+                            .toList(growable: false),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -1349,18 +1568,26 @@ class _ComposerIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 6),
-      child: Material(
-        color: color.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(18),
-        child: IconButton(
-          onPressed: onPressed,
-          icon: Icon(icon, color: color),
-        ),
-      ),
+    return IconButton(
+      onPressed: onPressed,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints.tightFor(width: 38, height: 38),
+      splashRadius: 20,
+      icon: Icon(icon, color: color, size: 20),
     );
   }
+}
+
+class _AttachmentOption {
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  const _AttachmentOption({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
 }
 
 class _NewMessagesIndicator extends StatelessWidget {

@@ -27239,6 +27239,48 @@ abstract class AppLocalizations {
   /// **'Chat service unavailable'**
   String get chatServiceUnavailableTitle;
 
+  /// No description provided for @chatAttachmentAiImages.
+  ///
+  /// In en, this message translates to:
+  /// **'AI images'**
+  String get chatAttachmentAiImages;
+
+  /// No description provided for @chatAttachmentAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get chatAttachmentAudio;
+
+  /// No description provided for @chatAttachmentContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get chatAttachmentContact;
+
+  /// No description provided for @chatAttachmentEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get chatAttachmentEvent;
+
+  /// No description provided for @chatAttachmentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get chatAttachmentLocation;
+
+  /// No description provided for @chatAttachmentPoll.
+  ///
+  /// In en, this message translates to:
+  /// **'Poll'**
+  String get chatAttachmentPoll;
+
+  /// No description provided for @chatAttachmentSheetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a quick attachment to keep the conversation moving.'**
+  String get chatAttachmentSheetSubtitle;
+
   /// No description provided for @chatStartConversationButton.
   ///
   /// In en, this message translates to:

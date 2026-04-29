@@ -14086,6 +14086,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatServiceUnavailableTitle => 'Chat service unavailable';
 
   @override
+  String get chatAttachmentAiImages => 'AI images';
+
+  @override
+  String get chatAttachmentAudio => 'Audio';
+
+  @override
+  String get chatAttachmentContact => 'Contact';
+
+  @override
+  String get chatAttachmentEvent => 'Event';
+
+  @override
+  String get chatAttachmentLocation => 'Location';
+
+  @override
+  String get chatAttachmentPoll => 'Poll';
+
+  @override
+  String get chatAttachmentSheetSubtitle =>
+      'Choose a quick attachment to keep the conversation moving.';
+
+  @override
   String get chatStartConversationButton => 'Start conversation';
 
   @override

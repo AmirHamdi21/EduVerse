@@ -45,17 +45,17 @@ class SharedConversationTile extends StatelessWidget {
     final hasUnread = conversation.unreadCount > 0;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(22),
           onTap: onTap,
           onLongPress: () => _openActions(context),
           child: Ink(
             decoration: BoxDecoration(
               color: cardColor,
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(22),
               border: Border.all(
                 color: hasUnread
                     ? accentColor.withValues(alpha: 0.20)
@@ -66,228 +66,189 @@ class SharedConversationTile extends StatelessWidget {
               boxShadow: <BoxShadow>[
                 BoxShadow(
                   color: accentColor.withValues(alpha: hasUnread ? 0.12 : 0.06),
-                  blurRadius: 24,
-                  offset: const Offset(0, 14),
+                  blurRadius: 18,
+                  offset: const Offset(0, 10),
                 ),
               ],
             ),
-            child: Stack(
-              children: <Widget>[
-                Positioned(
-                  right: -12,
-                  top: -10,
-                  child: Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      color: accentColor.withValues(alpha: 0.07),
-                      shape: BoxShape.circle,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              child: Row(
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: onAvatarTap,
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                _avatarColor(),
+                                Color.lerp(_avatarColor(), accentColor, 0.35)!,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Center(child: _avatarChild()),
+                        ),
+                        if (isOnline)
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Container(
+                              width: 12,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF22C55E),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: cardColor, width: 2),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: onAvatarTap,
-                        child: Stack(
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
                           children: <Widget>[
-                            Container(
-                              width: 56,
-                              height: 56,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: <Color>[
-                                    _avatarColor(),
-                                    Color.lerp(
-                                      _avatarColor(),
-                                      accentColor,
-                                      0.35,
-                                    )!,
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Center(child: _avatarChild()),
-                            ),
-                            if (isOnline)
-                              Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Container(
-                                  width: 14,
-                                  height: 14,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF22C55E),
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: cardColor,
-                                      width: 2,
-                                    ),
-                                  ),
+                            Expanded(
+                              child: Text(
+                                conversation.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: primaryText,
+                                  fontSize: 15.5,
+                                  fontWeight: hasUnread
+                                      ? FontWeight.w800
+                                      : FontWeight.w700,
                                 ),
                               ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text(
-                                        conversation.title,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: primaryText,
-                                          fontSize: 16,
-                                          fontWeight: hasUnread
-                                              ? FontWeight.w800
-                                              : FontWeight.w700,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Wrap(
-                                        spacing: 8,
-                                        runSpacing: 8,
-                                        children: <Widget>[
-                                          if (conversation.type ==
-                                              ConversationType.group)
-                                            _MetaChip(
-                                              label: l10n.chatFilterGroups,
-                                              icon: Icons.groups_rounded,
-                                              color: accentColor,
-                                              isDark: isDark,
-                                            ),
-                                          if (isOnline)
-                                            _MetaChip(
-                                              label: l10n.chatOnlineNow,
-                                              icon: Icons.circle,
-                                              color: const Color(0xFF22C55E),
-                                              isDark: isDark,
-                                            ),
-                                          if (isPinned)
-                                            _MetaChip(
-                                              label: l10n.chatPinnedLabel,
-                                              icon: Icons.push_pin_rounded,
-                                              color: accentColor,
-                                              isDark: isDark,
-                                            ),
-                                          if (isMuted)
-                                            _MetaChip(
-                                              label: l10n.chatMutedLabel,
-                                              icon: Icons.volume_off_rounded,
-                                              color: const Color(0xFFF59E0B),
-                                              isDark: isDark,
-                                            ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: <Widget>[
-                                    _TopActionButton(
-                                      onPressed: () => _openActions(context),
-                                      icon: Icons.more_horiz_rounded,
-                                      accentColor: accentColor,
-                                      isDark: isDark,
-                                      tooltip: l10n.chatConversationOptions,
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      _formatTimestamp(
-                                        context,
-                                        conversation.updatedAt,
-                                      ),
-                                      style: TextStyle(
-                                        color: hasUnread
-                                            ? accentColor
-                                            : secondaryText,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
                             ),
-                            const SizedBox(height: 14),
+                            const SizedBox(width: 8),
                             Text(
-                              subtitle,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                              _formatTimestamp(context, conversation.updatedAt),
                               style: TextStyle(
-                                color: secondaryText,
-                                fontSize: 13.5,
-                                height: 1.38,
-                                fontWeight: hasUnread
-                                    ? FontWeight.w600
-                                    : FontWeight.w500,
+                                color: hasUnread ? accentColor : secondaryText,
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
                               ),
                             ),
-                            const SizedBox(height: 14),
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: Text(
-                                    conversation.type == ConversationType.group
-                                        ? l10n.chatGroupConversationLabel
-                                        : l10n.chatDirectConversationLabel,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: secondaryText,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                                if (hasUnread)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                      vertical: 5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: accentColor,
-                                      borderRadius: BorderRadius.circular(999),
-                                    ),
-                                    child: Text(
-                                      conversation.unreadCount > 99
-                                          ? '99+'
-                                          : '${conversation.unreadCount}',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                  ),
-                              ],
+                            const SizedBox(width: 8),
+                            _TopActionButton(
+                              onPressed: () => _openActions(context),
+                              icon: Icons.more_horiz_rounded,
+                              accentColor: accentColor,
+                              isDark: isDark,
+                              tooltip: l10n.chatConversationOptions,
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 5),
+                        Text(
+                          subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: secondaryText,
+                            fontSize: 13,
+                            fontWeight: hasUnread
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 7),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Row(
+                                children: <Widget>[
+                                  Flexible(
+                                    child: Text(
+                                      conversation.type ==
+                                              ConversationType.group
+                                          ? l10n.chatGroupConversationLabel
+                                          : l10n.chatDirectConversationLabel,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: secondaryText,
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  if (isPinned || isMuted || isOnline) ...[
+                                    const SizedBox(width: 8),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        if (isPinned)
+                                          Icon(
+                                            Icons.push_pin_rounded,
+                                            size: 13,
+                                            color: accentColor,
+                                          ),
+                                        if (isPinned && (isMuted || isOnline))
+                                          const SizedBox(width: 4),
+                                        if (isMuted)
+                                          const Icon(
+                                            Icons.volume_off_rounded,
+                                            size: 13,
+                                            color: Color(0xFFF59E0B),
+                                          ),
+                                        if (isMuted && isOnline)
+                                          const SizedBox(width: 4),
+                                        if (isOnline)
+                                          const Icon(
+                                            Icons.circle,
+                                            size: 11,
+                                            color: Color(0xFF22C55E),
+                                          ),
+                                      ],
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            if (hasUnread)
+                              Container(
+                                margin: const EdgeInsets.only(left: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: accentColor,
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                                child: Text(
+                                  conversation.unreadCount > 99
+                                      ? '99+'
+                                      : '${conversation.unreadCount}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -444,46 +405,6 @@ class SharedConversationTile extends StatelessWidget {
 
 enum _ConversationAction { profile, pin, mute, delete }
 
-class _MetaChip extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final bool isDark;
-
-  const _MetaChip({
-    required this.label,
-    required this.icon,
-    required this.color,
-    required this.isDark,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: isDark ? 0.18 : 0.10),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(icon, size: 13, color: color),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _TopActionButton extends StatelessWidget {
   final VoidCallback onPressed;
   final IconData icon;
@@ -503,11 +424,13 @@ class _TopActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: accentColor.withValues(alpha: isDark ? 0.14 : 0.08),
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(14),
       child: IconButton(
         onPressed: onPressed,
         tooltip: tooltip,
-        icon: Icon(icon, size: 20, color: accentColor),
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints.tightFor(width: 34, height: 34),
+        icon: Icon(icon, size: 18, color: accentColor),
       ),
     );
   }
