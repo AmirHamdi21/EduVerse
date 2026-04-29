@@ -5366,5 +5366,200 @@
   "studentDiscussionTabTitle": "Course Community",
   "studentDiscussionTabSubtitle": "Open the full discussion space for this course to browse posts, ask questions, and reply.",
   "studentDiscussionTabOpen": "Open discussions",
-  "studentDiscussionUnavailable": "Discussion is unavailable because the active course ID is missing."
+  "studentDiscussionUnavailable": "Discussion is unavailable because the active course ID is missing.",
+  "member": "Member",
+  "comingSoon": "Coming soon",
+  "chatActionDeleteConversation": "Delete conversation",
+  "chatActionDeleteConversationDesc": "Hide this conversation from your current chat list.",
+  "chatActionDeleteForEveryone": "Delete for everyone",
+  "chatActionDeleteForEveryoneDesc": "Remove this message for every participant in the conversation.",
+  "chatActionDeleteForMe": "Delete for me",
+  "chatActionDeleteForMeDesc": "Hide this message only from your current view.",
+  "chatActionEditMessage": "Edit message",
+  "chatActionEditMessageDesc": "Update the wording before the conversation continues.",
+  "chatActionMute": "Mute notifications",
+  "chatActionMuteDesc": "Pause alerts while keeping the conversation available.",
+  "chatActionOpenProfile": "Open profile",
+  "chatActionOpenProfileDesc": "View this person's details and shared context.",
+  "chatActionPin": "Pin conversation",
+  "chatActionPinDesc": "Keep this conversation near the top for quick access.",
+  "chatActionReply": "Reply",
+  "chatActionReplyDesc": "Respond directly to this message.",
+  "chatActionSheetDirectSubtitle": "Direct conversation options",
+  "chatActionSheetGroupSubtitle": "Group conversation options",
+  "chatActionUnmute": "Unmute notifications",
+  "chatActionUnmuteDesc": "Bring alerts back for this conversation.",
+  "chatActionUnpin": "Unpin conversation",
+  "chatActionUnpinDesc": "Return this conversation to its natural order.",
+  "chatChangeRecipient": "Change",
+  "chatClearFiltersButton": "Clear filters",
+  "chatCloseSearchTooltip": "Close search",
+  "chatConnectionConnecting": "Connecting",
+  "chatConnectionLive": "Live",
+  "chatConnectionOffline": "Offline",
+  "chatConversationCount": "{count, plural, =0 {No conversations} =1 {1 conversation} other {{count} conversations}}",
+  "@chatConversationCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatConversationOptions": "Conversation options",
+  "chatCreateGroupConversationButton": "Create group conversation",
+  "chatCreatingGroupConversation": "Creating...",
+  "chatDirectConversationLabel": "Direct conversation",
+  "chatEditedLabel": "edited",
+  "chatEditMessageDialogHint": "Update your message",
+  "chatEditMessageDialogTitle": "Edit message",
+  "chatEmptySubtitle": "Start a new chat to begin messaging with your classmates and teaching team.",
+  "chatEmptyTitle": "No conversations yet",
+  "chatFastRepliesLabel": "Quick replies ready",
+  "chatFilterAll": "All chats",
+  "chatFilterGroups": "Groups",
+  "chatFilterUnread": "Unread",
+  "chatFirstMessageHint": "Write a short opening message...",
+  "chatFirstMessageTitle": "First message",
+  "chatFrequentlyContactedTitle": "Frequently contacted",
+  "chatGoBack": "Go back",
+  "chatGroupConversationLabel": "Group conversation",
+  "chatGroupNameHint": "Group name",
+  "chatHeaderHint": "Search, start new chats, and keep your important conversations close without leaving this workspace.",
+  "chatHubSubtitle": "Stay in sync with your people, your course flow, and the messages that need your attention.",
+  "chatLastSeen": "Last seen {time}",
+  "@chatLastSeen": {
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "chatLoadFailedSubtitle": "We could not load your chat space right now. Please try again.",
+  "chatLoadFailedTitle": "Chat data could not be loaded",
+  "chatLoadingMoreLabel": "Loading more",
+  "chatMessageActionsSubtitle": "Choose what you want to do with this message.",
+  "chatMessageActionsTitle": "Message actions",
+  "chatMessagesLoadFailedSubtitle": "We could not load messages for this conversation. Try again in a moment.",
+  "chatMessageTooOld": "This message is too old to jump to right now.",
+  "chatModeDirect": "Direct",
+  "chatModeDirectSubtitle": "One-to-one conversation",
+  "chatModeGroup": "Group",
+  "chatModeGroupSubtitle": "Create a course team thread",
+  "chatMutedLabel": "Muted",
+  "chatNewButton": "New chat",
+  "chatNewConversationSubtitle": "Pick the right people, open with context, and start a cleaner conversation flow.",
+  "chatNewMessagesCount": "{count, plural, =1 {1 new message} other {{count} new messages}}",
+  "@chatNewMessagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatNoContactsFound": "No contacts match this search yet.",
+  "chatNoFilteredResultsSubtitle": "Try another filter or return to all chats.",
+  "chatNoFilteredResultsTitle": "No chats match this view",
+  "chatNoMessagesConversationSubtitle": "Send the first message to start the conversation in a clear, focused way.",
+  "chatNoSearchResults": "No results for \"{query}\"",
+  "@chatNoSearchResults": {
+    "placeholders": {
+      "query": {}
+    }
+  },
+  "chatNoSearchResultsSubtitle": "Try a different name, keyword, or email address.",
+  "chatOfflineSubtitle": "Connect to the internet to load your conversations for the first time.",
+  "chatOfflineTitle": "You are offline",
+  "chatOnlineNow": "Online",
+  "chatOriginalMessageUnavailable": "Original message unavailable",
+  "chatParticipantsCount": "{count, plural, =1 {1 participant} other {{count} participants}}",
+  "@chatParticipantsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatPinnedLabel": "Pinned",
+  "chatRelativeDays": "{count}d",
+  "@chatRelativeDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatRelativeHoursAgo": "{count}h ago",
+  "@chatRelativeHoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatRelativeMinutes": "{count}m",
+  "@chatRelativeMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatRelativeMinutesAgo": "{count}m ago",
+  "@chatRelativeMinutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatRelativeNow": "now",
+  "chatReplyingTo": "Replying to {name}",
+  "@chatReplyingTo": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "chatSearchConversationsHint": "Search people, group names, or recent messages",
+  "chatSearchPromptSubtitle": "All contacts stay tucked away until you search. Start typing to find the right person quickly.",
+  "chatSearchPromptTitle": "Search to reveal more people",
+  "chatSelectConversationSubtitle": "Pick a conversation from the list to view messages, reply faster, and stay in sync.",
+  "chatSelectConversationTitle": "Choose a conversation",
+  "chatSelectedParticipantsTitle": "Selected participants",
+  "chatSelectedRecipientSubtitle": "Selected recipient",
+  "chatServiceUnavailableSubtitle": "The chat feature could not be initialized. Restart the app or try again later.",
+  "chatServiceUnavailableTitle": "Chat service unavailable",
+  "chatAttachmentAiImages": "AI images",
+  "chatAttachmentAudio": "Audio",
+  "chatAttachmentContact": "Contact",
+  "chatAttachmentEvent": "Event",
+  "chatAttachmentLocation": "Location",
+  "chatAttachmentPoll": "Poll",
+  "chatAttachmentSheetSubtitle": "Choose a quick attachment to keep the conversation moving.",
+  "chatStartConversationButton": "Start conversation",
+  "chatStartingConversation": "Starting...",
+  "chatStartNewChatButton": "Start a new chat",
+  "chatTapToStartLabel": "Tap to start",
+  "chatTypingDouble": "{first} and {second} are typing...",
+  "@chatTypingDouble": {
+    "placeholders": {
+      "first": {},
+      "second": {}
+    }
+  },
+  "chatTypingMultiple": "{first}, {second}, and {count, plural, =1 {1 other} other {{count} others}} are typing...",
+  "@chatTypingMultiple": {
+    "placeholders": {
+      "first": {},
+      "second": {},
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chatTypingSingle": "{name} is typing...",
+  "@chatTypingSingle": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "chatVideoCallTooltip": "Video call",
+  "chatVoiceCallTooltip": "Voice call"
 }

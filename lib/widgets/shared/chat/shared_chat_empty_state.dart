@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../generated_l10n/app_localizations.dart';
+
 class SharedChatEmptyState extends StatelessWidget {
   final bool isDark;
   final bool isFiltered;
@@ -26,6 +28,7 @@ class SharedChatEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final normalizedSearchQuery = searchQuery?.trim();
     final hasSearchQuery =
         normalizedSearchQuery != null && normalizedSearchQuery.isNotEmpty;
@@ -40,74 +43,90 @@ class SharedChatEmptyState extends StatelessWidget {
 
     if (isError) {
       iconData = Icons.error_outline_rounded;
-      title = 'Something went wrong';
-      subtitle = "We couldn't load your conversations. Please try again.";
-      actionLabel = 'Try again';
+      title = l10n.chatLoadFailedTitle;
+      subtitle = l10n.chatLoadFailedSubtitle;
+      actionLabel = l10n.tryAgain;
       actionIcon = Icons.refresh_rounded;
       onAction = onRetry;
       isPrimaryAction = true;
     } else if (isOffline) {
       iconData = Icons.wifi_off_rounded;
-      title = "You're offline";
-      subtitle = 'A connection is needed to load chats for the first time.';
+      title = l10n.chatOfflineTitle;
+      subtitle = l10n.chatOfflineSubtitle;
     } else if (hasSearchQuery) {
       iconData = Icons.search_off_rounded;
-      title = "No results for '$normalizedSearchQuery'";
-      subtitle = 'Try a different search term.';
-      actionLabel = 'Clear search';
+      title = l10n.chatNoSearchResults(normalizedSearchQuery);
+      subtitle = l10n.chatNoSearchResultsSubtitle;
+      actionLabel = l10n.clearSearch;
       actionIcon = Icons.clear_rounded;
       onAction = onClearFilters;
     } else if (isFiltered) {
       iconData = Icons.filter_alt_off_rounded;
-      title = 'No matching conversations';
-      subtitle = 'Try another query or reset the filters.';
-      actionLabel = 'Clear filters';
+      title = l10n.chatNoFilteredResultsTitle;
+      subtitle = l10n.chatNoFilteredResultsSubtitle;
+      actionLabel = l10n.chatClearFiltersButton;
       actionIcon = Icons.restart_alt_rounded;
       onAction = onClearFilters;
     } else {
-      iconData = Icons.forum_outlined;
-      title = 'No conversations yet';
-      subtitle = 'Start a new chat to begin messaging.';
-      actionLabel = 'Start a new chat';
-      actionIcon = Icons.add_rounded;
+      iconData = Icons.mark_chat_read_rounded;
+      title = l10n.chatEmptyTitle;
+      subtitle = l10n.chatEmptySubtitle;
+      actionLabel = l10n.chatStartNewChatButton;
+      actionIcon = Icons.add_comment_rounded;
       onAction = onStartNewChat;
       isPrimaryAction = true;
     }
 
-    return TweenAnimationBuilder<double>(
-      tween: Tween<double>(begin: 0, end: 1),
-      duration: const Duration(milliseconds: 400),
-      builder: (context, opacity, child) {
-        return Opacity(opacity: opacity, child: child);
-      },
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 420),
+          padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF111827) : Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: accentColor.withValues(alpha: isDark ? 0.18 : 0.10),
+            ),
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: accentColor.withValues(alpha: isDark ? 0.18 : 0.10),
+                blurRadius: 32,
+                offset: const Offset(0, 16),
+              ),
+            ],
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [
+            children: <Widget>[
               Container(
-                width: 92,
-                height: 92,
+                width: 96,
+                height: 96,
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? const Color(0xFF1E293B)
-                      : const Color(0xFFEFF6FF),
-                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    colors: <Color>[
+                      accentColor,
+                      Color.lerp(accentColor, const Color(0xFF06B6D4), 0.30)!,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
                 ),
-                child: Icon(iconData, size: 44, color: accentColor),
+                child: Icon(iconData, size: 46, color: Colors.white),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 22),
               Text(
                 title,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: isDark ? Colors.white : const Color(0xFF0F172A),
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
@@ -116,21 +135,43 @@ class SharedChatEmptyState extends StatelessWidget {
                       ? const Color(0xFF94A3B8)
                       : const Color(0xFF64748B),
                   fontSize: 14,
+                  height: 1.45,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               if (actionLabel != null && onAction != null)
                 isPrimaryAction
                     ? FilledButton.icon(
                         onPressed: onAction,
                         style: FilledButton.styleFrom(
                           backgroundColor: accentColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
                         ),
                         icon: Icon(actionIcon),
                         label: Text(actionLabel),
                       )
                     : OutlinedButton.icon(
                         onPressed: onAction,
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: accentColor,
+                          side: BorderSide(
+                            color: accentColor.withValues(alpha: 0.28),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18),
+                          ),
+                        ),
                         icon: Icon(actionIcon),
                         label: Text(actionLabel),
                       ),

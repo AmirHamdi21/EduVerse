@@ -579,7 +579,10 @@ class AppRouter {
         builder: (context, state) {
           final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
           final threadId = int.tryParse(state.pathParameters['threadId'] ?? '');
-          if (courseId == null || courseId <= 0 || threadId == null || threadId <= 0) {
+          if (courseId == null ||
+              courseId <= 0 ||
+              threadId == null ||
+              threadId <= 0) {
             return const Scaffold(
               body: Center(child: Text('Invalid discussion post route')),
             );
@@ -1060,7 +1063,7 @@ class AppRouter {
       GoRoute(
         path: '/instructor/messages',
         builder: (context, state) => const SharedChatScreen(
-          accentColor: Color(0xFF4F46E5), // Instructor indigo
+          accentColor: Color(0xFF155CFB), // Instructor blue
         ),
       ),
       GoRoute(
@@ -1095,7 +1098,10 @@ class AppRouter {
         builder: (context, state) {
           final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
           final threadId = int.tryParse(state.pathParameters['threadId'] ?? '');
-          if (courseId == null || courseId <= 0 || threadId == null || threadId <= 0) {
+          if (courseId == null ||
+              courseId <= 0 ||
+              threadId == null ||
+              threadId <= 0) {
             return const Scaffold(
               body: Center(
                 child: Text('Invalid instructor discussion post route'),
@@ -1334,7 +1340,10 @@ class AppRouter {
         builder: (context, state) {
           final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
           final threadId = int.tryParse(state.pathParameters['threadId'] ?? '');
-          if (courseId == null || courseId <= 0 || threadId == null || threadId <= 0) {
+          if (courseId == null ||
+              courseId <= 0 ||
+              threadId == null ||
+              threadId <= 0) {
             return const Scaffold(
               body: Center(child: Text('Invalid TA discussion post route')),
             );
@@ -1444,7 +1453,7 @@ class AppRouter {
       GoRoute(
         path: '/ta/messages',
         builder: (context, state) => const SharedChatScreen(
-          accentColor: Color(0xFF4F46E5), // TA indigo
+          accentColor: Color(0xFF8B5CF6), // TA violet
         ),
       ),
 

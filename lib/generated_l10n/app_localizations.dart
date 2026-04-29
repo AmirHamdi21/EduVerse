@@ -26668,6 +26668,672 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discussion is unavailable because the active course ID is missing.'**
   String get studentDiscussionUnavailable;
+
+  /// No description provided for @member.
+  ///
+  /// In en, this message translates to:
+  /// **'Member'**
+  String get member;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon'**
+  String get comingSoon;
+
+  /// No description provided for @chatActionDeleteConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete conversation'**
+  String get chatActionDeleteConversation;
+
+  /// No description provided for @chatActionDeleteConversationDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide this conversation from your current chat list.'**
+  String get chatActionDeleteConversationDesc;
+
+  /// No description provided for @chatActionDeleteForEveryone.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete for everyone'**
+  String get chatActionDeleteForEveryone;
+
+  /// No description provided for @chatActionDeleteForEveryoneDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this message for every participant in the conversation.'**
+  String get chatActionDeleteForEveryoneDesc;
+
+  /// No description provided for @chatActionDeleteForMe.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete for me'**
+  String get chatActionDeleteForMe;
+
+  /// No description provided for @chatActionDeleteForMeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide this message only from your current view.'**
+  String get chatActionDeleteForMeDesc;
+
+  /// No description provided for @chatActionEditMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit message'**
+  String get chatActionEditMessage;
+
+  /// No description provided for @chatActionEditMessageDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Update the wording before the conversation continues.'**
+  String get chatActionEditMessageDesc;
+
+  /// No description provided for @chatActionMute.
+  ///
+  /// In en, this message translates to:
+  /// **'Mute notifications'**
+  String get chatActionMute;
+
+  /// No description provided for @chatActionMuteDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause alerts while keeping the conversation available.'**
+  String get chatActionMuteDesc;
+
+  /// No description provided for @chatActionOpenProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Open profile'**
+  String get chatActionOpenProfile;
+
+  /// No description provided for @chatActionOpenProfileDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'View this person\'s details and shared context.'**
+  String get chatActionOpenProfileDesc;
+
+  /// No description provided for @chatActionPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin conversation'**
+  String get chatActionPin;
+
+  /// No description provided for @chatActionPinDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep this conversation near the top for quick access.'**
+  String get chatActionPinDesc;
+
+  /// No description provided for @chatActionReply.
+  ///
+  /// In en, this message translates to:
+  /// **'Reply'**
+  String get chatActionReply;
+
+  /// No description provided for @chatActionReplyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Respond directly to this message.'**
+  String get chatActionReplyDesc;
+
+  /// No description provided for @chatActionSheetDirectSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct conversation options'**
+  String get chatActionSheetDirectSubtitle;
+
+  /// No description provided for @chatActionSheetGroupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Group conversation options'**
+  String get chatActionSheetGroupSubtitle;
+
+  /// No description provided for @chatActionUnmute.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmute notifications'**
+  String get chatActionUnmute;
+
+  /// No description provided for @chatActionUnmuteDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Bring alerts back for this conversation.'**
+  String get chatActionUnmuteDesc;
+
+  /// No description provided for @chatActionUnpin.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin conversation'**
+  String get chatActionUnpin;
+
+  /// No description provided for @chatActionUnpinDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Return this conversation to its natural order.'**
+  String get chatActionUnpinDesc;
+
+  /// No description provided for @chatChangeRecipient.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get chatChangeRecipient;
+
+  /// No description provided for @chatClearFiltersButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get chatClearFiltersButton;
+
+  /// No description provided for @chatCloseSearchTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Close search'**
+  String get chatCloseSearchTooltip;
+
+  /// No description provided for @chatConnectionConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting'**
+  String get chatConnectionConnecting;
+
+  /// No description provided for @chatConnectionLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get chatConnectionLive;
+
+  /// No description provided for @chatConnectionOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get chatConnectionOffline;
+
+  /// No description provided for @chatConversationCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0 {No conversations} =1 {1 conversation} other {{count} conversations}}'**
+  String chatConversationCount(int count);
+
+  /// No description provided for @chatConversationOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversation options'**
+  String get chatConversationOptions;
+
+  /// No description provided for @chatCreateGroupConversationButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create group conversation'**
+  String get chatCreateGroupConversationButton;
+
+  /// No description provided for @chatCreatingGroupConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating...'**
+  String get chatCreatingGroupConversation;
+
+  /// No description provided for @chatDirectConversationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct conversation'**
+  String get chatDirectConversationLabel;
+
+  /// No description provided for @chatEditedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'edited'**
+  String get chatEditedLabel;
+
+  /// No description provided for @chatEditMessageDialogHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Update your message'**
+  String get chatEditMessageDialogHint;
+
+  /// No description provided for @chatEditMessageDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit message'**
+  String get chatEditMessageDialogTitle;
+
+  /// No description provided for @chatEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new chat to begin messaging with your classmates and teaching team.'**
+  String get chatEmptySubtitle;
+
+  /// No description provided for @chatEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No conversations yet'**
+  String get chatEmptyTitle;
+
+  /// No description provided for @chatFastRepliesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick replies ready'**
+  String get chatFastRepliesLabel;
+
+  /// No description provided for @chatFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All chats'**
+  String get chatFilterAll;
+
+  /// No description provided for @chatFilterGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get chatFilterGroups;
+
+  /// No description provided for @chatFilterUnread.
+  ///
+  /// In en, this message translates to:
+  /// **'Unread'**
+  String get chatFilterUnread;
+
+  /// No description provided for @chatFirstMessageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a short opening message...'**
+  String get chatFirstMessageHint;
+
+  /// No description provided for @chatFirstMessageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'First message'**
+  String get chatFirstMessageTitle;
+
+  /// No description provided for @chatFrequentlyContactedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequently contacted'**
+  String get chatFrequentlyContactedTitle;
+
+  /// No description provided for @chatGoBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Go back'**
+  String get chatGoBack;
+
+  /// No description provided for @chatGroupConversationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Group conversation'**
+  String get chatGroupConversationLabel;
+
+  /// No description provided for @chatGroupNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Group name'**
+  String get chatGroupNameHint;
+
+  /// No description provided for @chatHeaderHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search, start new chats, and keep your important conversations close without leaving this workspace.'**
+  String get chatHeaderHint;
+
+  /// No description provided for @chatHubSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay in sync with your people, your course flow, and the messages that need your attention.'**
+  String get chatHubSubtitle;
+
+  /// No description provided for @chatLastSeen.
+  ///
+  /// In en, this message translates to:
+  /// **'Last seen {time}'**
+  String chatLastSeen(Object time);
+
+  /// No description provided for @chatLoadFailedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not load your chat space right now. Please try again.'**
+  String get chatLoadFailedSubtitle;
+
+  /// No description provided for @chatLoadFailedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat data could not be loaded'**
+  String get chatLoadFailedTitle;
+
+  /// No description provided for @chatLoadingMoreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading more'**
+  String get chatLoadingMoreLabel;
+
+  /// No description provided for @chatMessageActionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what you want to do with this message.'**
+  String get chatMessageActionsSubtitle;
+
+  /// No description provided for @chatMessageActionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Message actions'**
+  String get chatMessageActionsTitle;
+
+  /// No description provided for @chatMessagesLoadFailedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'We could not load messages for this conversation. Try again in a moment.'**
+  String get chatMessagesLoadFailedSubtitle;
+
+  /// No description provided for @chatMessageTooOld.
+  ///
+  /// In en, this message translates to:
+  /// **'This message is too old to jump to right now.'**
+  String get chatMessageTooOld;
+
+  /// No description provided for @chatModeDirect.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct'**
+  String get chatModeDirect;
+
+  /// No description provided for @chatModeDirectSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'One-to-one conversation'**
+  String get chatModeDirectSubtitle;
+
+  /// No description provided for @chatModeGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Group'**
+  String get chatModeGroup;
+
+  /// No description provided for @chatModeGroupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a course team thread'**
+  String get chatModeGroupSubtitle;
+
+  /// No description provided for @chatMutedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Muted'**
+  String get chatMutedLabel;
+
+  /// No description provided for @chatNewButton.
+  ///
+  /// In en, this message translates to:
+  /// **'New chat'**
+  String get chatNewButton;
+
+  /// No description provided for @chatNewConversationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the right people, open with context, and start a cleaner conversation flow.'**
+  String get chatNewConversationSubtitle;
+
+  /// No description provided for @chatNewMessagesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {1 new message} other {{count} new messages}}'**
+  String chatNewMessagesCount(int count);
+
+  /// No description provided for @chatNoContactsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No contacts match this search yet.'**
+  String get chatNoContactsFound;
+
+  /// No description provided for @chatNoFilteredResultsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another filter or return to all chats.'**
+  String get chatNoFilteredResultsSubtitle;
+
+  /// No description provided for @chatNoFilteredResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No chats match this view'**
+  String get chatNoFilteredResultsTitle;
+
+  /// No description provided for @chatNoMessagesConversationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send the first message to start the conversation in a clear, focused way.'**
+  String get chatNoMessagesConversationSubtitle;
+
+  /// No description provided for @chatNoSearchResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No results for \"{query}\"'**
+  String chatNoSearchResults(Object query);
+
+  /// No description provided for @chatNoSearchResultsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different name, keyword, or email address.'**
+  String get chatNoSearchResultsSubtitle;
+
+  /// No description provided for @chatOfflineSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connect to the internet to load your conversations for the first time.'**
+  String get chatOfflineSubtitle;
+
+  /// No description provided for @chatOfflineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You are offline'**
+  String get chatOfflineTitle;
+
+  /// No description provided for @chatOnlineNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Online'**
+  String get chatOnlineNow;
+
+  /// No description provided for @chatOriginalMessageUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Original message unavailable'**
+  String get chatOriginalMessageUnavailable;
+
+  /// No description provided for @chatParticipantsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1 {1 participant} other {{count} participants}}'**
+  String chatParticipantsCount(int count);
+
+  /// No description provided for @chatPinnedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get chatPinnedLabel;
+
+  /// No description provided for @chatRelativeDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}d'**
+  String chatRelativeDays(int count);
+
+  /// No description provided for @chatRelativeHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h ago'**
+  String chatRelativeHoursAgo(int count);
+
+  /// No description provided for @chatRelativeMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}m'**
+  String chatRelativeMinutes(int count);
+
+  /// No description provided for @chatRelativeMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}m ago'**
+  String chatRelativeMinutesAgo(int count);
+
+  /// No description provided for @chatRelativeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'now'**
+  String get chatRelativeNow;
+
+  /// No description provided for @chatReplyingTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Replying to {name}'**
+  String chatReplyingTo(Object name);
+
+  /// No description provided for @chatSearchConversationsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search people, group names, or recent messages'**
+  String get chatSearchConversationsHint;
+
+  /// No description provided for @chatSearchPromptSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All contacts stay tucked away until you search. Start typing to find the right person quickly.'**
+  String get chatSearchPromptSubtitle;
+
+  /// No description provided for @chatSearchPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search to reveal more people'**
+  String get chatSearchPromptTitle;
+
+  /// No description provided for @chatSelectConversationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a conversation from the list to view messages, reply faster, and stay in sync.'**
+  String get chatSelectConversationSubtitle;
+
+  /// No description provided for @chatSelectConversationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a conversation'**
+  String get chatSelectConversationTitle;
+
+  /// No description provided for @chatSelectedParticipantsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected participants'**
+  String get chatSelectedParticipantsTitle;
+
+  /// No description provided for @chatSelectedRecipientSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected recipient'**
+  String get chatSelectedRecipientSubtitle;
+
+  /// No description provided for @chatServiceUnavailableSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The chat feature could not be initialized. Restart the app or try again later.'**
+  String get chatServiceUnavailableSubtitle;
+
+  /// No description provided for @chatServiceUnavailableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat service unavailable'**
+  String get chatServiceUnavailableTitle;
+
+  /// No description provided for @chatAttachmentAiImages.
+  ///
+  /// In en, this message translates to:
+  /// **'AI images'**
+  String get chatAttachmentAiImages;
+
+  /// No description provided for @chatAttachmentAudio.
+  ///
+  /// In en, this message translates to:
+  /// **'Audio'**
+  String get chatAttachmentAudio;
+
+  /// No description provided for @chatAttachmentContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get chatAttachmentContact;
+
+  /// No description provided for @chatAttachmentEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Event'**
+  String get chatAttachmentEvent;
+
+  /// No description provided for @chatAttachmentLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get chatAttachmentLocation;
+
+  /// No description provided for @chatAttachmentPoll.
+  ///
+  /// In en, this message translates to:
+  /// **'Poll'**
+  String get chatAttachmentPoll;
+
+  /// No description provided for @chatAttachmentSheetSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a quick attachment to keep the conversation moving.'**
+  String get chatAttachmentSheetSubtitle;
+
+  /// No description provided for @chatStartConversationButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start conversation'**
+  String get chatStartConversationButton;
+
+  /// No description provided for @chatStartingConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting...'**
+  String get chatStartingConversation;
+
+  /// No description provided for @chatStartNewChatButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new chat'**
+  String get chatStartNewChatButton;
+
+  /// No description provided for @chatTapToStartLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to start'**
+  String get chatTapToStartLabel;
+
+  /// No description provided for @chatTypingDouble.
+  ///
+  /// In en, this message translates to:
+  /// **'{first} and {second} are typing...'**
+  String chatTypingDouble(Object first, Object second);
+
+  /// No description provided for @chatTypingMultiple.
+  ///
+  /// In en, this message translates to:
+  /// **'{first}, {second}, and {count, plural, =1 {1 other} other {{count} others}} are typing...'**
+  String chatTypingMultiple(Object first, Object second, int count);
+
+  /// No description provided for @chatTypingSingle.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is typing...'**
+  String chatTypingSingle(Object name);
+
+  /// No description provided for @chatVideoCallTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Video call'**
+  String get chatVideoCallTooltip;
+
+  /// No description provided for @chatVoiceCallTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice call'**
+  String get chatVoiceCallTooltip;
 }
 
 class _AppLocalizationsDelegate

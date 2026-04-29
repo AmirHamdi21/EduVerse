@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../bloc/auth/auth_bloc.dart';
+import '../../../bloc/auth/auth_state.dart';
 import '../../../bloc/chat/chat_bloc.dart';
 import '../../../bloc/chat/chat_event.dart';
 import '../../../bloc/chat/chat_models.dart';
 import '../../../bloc/chat/chat_state.dart';
+import '../../../generated_l10n/app_localizations.dart';
 import '../../../widgets/shared/chat/contact_list_item.dart';
 import '../../../widgets/shared/chat/frequently_contacted_section.dart';
 
@@ -98,6 +101,10 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final accentColor = _resolveAccentColor(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return BlocListener<ChatBloc, ChatState>(
       listenWhen: (previous, current) =>
           previous.newlyCreatedConversationId !=
@@ -119,16 +126,6 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('New Conversation'),
-          actions: [
-            IconButton(
-              tooltip: 'Close',
-              onPressed: () => context.pop(),
-              icon: const Icon(Icons.close),
-            ),
-          ],
-        ),
         body: SafeArea(
           child: BlocBuilder<ChatBloc, ChatState>(
             builder: (context, state) {
@@ -164,221 +161,346 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
                   _messageController.text.trim().isNotEmpty &&
                   !state.creatingConversation;
 
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                    child: SegmentedButton<String>(
-                      segments: const [
-                        ButtonSegment(
-                          value: 'direct',
-                          icon: Icon(Icons.person_outline),
-                          label: Text('Direct'),
-                        ),
-                        ButtonSegment(
-                          value: 'group',
-                          icon: Icon(Icons.group_outlined),
-                          label: Text('Group'),
-                        ),
-                      ],
-                      selected: <String>{mode},
-                      onSelectionChanged: (selection) {
-                        context.read<ChatBloc>().add(
-                          ChatConversationModeChanged(selection.first),
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-                    child: TextField(
-                      controller: _searchController,
-                      textInputAction: TextInputAction.search,
-                      decoration: InputDecoration(
-                        hintText: 'Search by name or email',
-                        prefixIcon: const Icon(Icons.search),
-                        suffixIcon: state.userSearchLoading
-                            ? const Padding(
-                                padding: EdgeInsets.all(12),
-                                child: SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
+              return Container(
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF020617)
+                      : const Color(0xFFF8FAFC),
+                ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    return AnimatedPadding(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOut,
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.viewInsetsOf(context).bottom,
+                      ),
+                      child: SingleChildScrollView(
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _NewConversationHeader(
+                                accentColor: accentColor,
+                                title: l10n.newConversation,
+                                subtitle: l10n.chatNewConversationSubtitle,
+                                onClose: () => context.pop(),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  6,
+                                  16,
+                                  10,
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: _ModeCard(
+                                        icon: Icons.person_outline_rounded,
+                                        label: l10n.chatModeDirect,
+                                        subtitle: l10n.chatModeDirectSubtitle,
+                                        accentColor: accentColor,
+                                        isSelected: !isGroup,
+                                        isDark: isDark,
+                                        onTap: () {
+                                          context.read<ChatBloc>().add(
+                                            const ChatConversationModeChanged(
+                                              'direct',
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: _ModeCard(
+                                        icon: Icons.groups_rounded,
+                                        label: l10n.chatModeGroup,
+                                        subtitle: l10n.chatModeGroupSubtitle,
+                                        accentColor: accentColor,
+                                        isSelected: isGroup,
+                                        isDark: isDark,
+                                        onTap: () {
+                                          context.read<ChatBloc>().add(
+                                            const ChatConversationModeChanged(
+                                              'group',
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              _ModernSearchField(
+                                controller: _searchController,
+                                accentColor: accentColor,
+                                isDark: isDark,
+                                hintText: l10n.searchByNameOrEmail,
+                                loading: state.userSearchLoading,
+                                onChanged: (value) {
+                                  context.read<ChatBloc>().add(
+                                    ChatSearchUsersRequested(value),
+                                  );
+                                  setState(() {});
+                                },
+                                onClear: () {
+                                  _searchController.clear();
+                                  context.read<ChatBloc>().add(
+                                    const ChatSearchUsersRequested(''),
+                                  );
+                                  setState(() {});
+                                },
+                              ),
+                              if (isGroup)
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    0,
+                                    16,
+                                    10,
+                                  ),
+                                  child: _SectionCard(
+                                    accentColor: accentColor,
+                                    isDark: isDark,
+                                    child: TextField(
+                                      controller: _groupNameController,
+                                      decoration: InputDecoration(
+                                        hintText: l10n.chatGroupNameHint,
+                                        prefixIcon: const Icon(
+                                          Icons.group_work_rounded,
+                                        ),
+                                        border: InputBorder.none,
+                                      ),
+                                      onChanged: (_) => setState(() {}),
+                                    ),
                                   ),
                                 ),
-                              )
-                            : (_searchController.text.isEmpty
-                                  ? null
-                                  : IconButton(
-                                      icon: const Icon(Icons.close),
-                                      onPressed: () {
-                                        _searchController.clear();
-                                        context.read<ChatBloc>().add(
-                                          const ChatSearchUsersRequested(''),
-                                        );
-                                        setState(() {});
-                                      },
-                                    )),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        context.read<ChatBloc>().add(
-                          ChatSearchUsersRequested(value),
-                        );
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                  if (isGroup)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                      child: TextField(
-                        controller: _groupNameController,
-                        decoration: InputDecoration(
-                          hintText: 'Group name',
-                          prefixIcon: const Icon(Icons.group),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        onChanged: (_) => setState(() {}),
-                      ),
-                    ),
-                  if (isGroup && state.selectedParticipants.isNotEmpty)
-                    SizedBox(
-                      height: 48,
-                      child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          final user = state.selectedParticipants[index];
-                          return Chip(
-                            label: Text(user.displayName),
-                            deleteIcon: const Icon(Icons.close),
-                            onDeleted: () {
-                              context.read<ChatBloc>().add(
-                                ChatParticipantRemoved(user.userId),
-                              );
-                            },
-                          );
-                        },
-                        separatorBuilder: (_, __) => const SizedBox(width: 8),
-                        itemCount: state.selectedParticipants.length,
-                      ),
-                    ),
-                  const SizedBox(height: 8),
-                  if (!isGroup && selectedDirectUser != null)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                      child: Card(
-                        child: ListTile(
-                          leading: const CircleAvatar(
-                            child: Icon(Icons.person_outline),
-                          ),
-                          title: Text(selectedDirectUser.displayName),
-                          subtitle: Text(
-                            (selectedDirectUser.email ?? '').trim().isNotEmpty
-                                ? selectedDirectUser.email!
-                                : 'Selected recipient',
-                          ),
-                          trailing: IconButton(
-                            tooltip: 'Change recipient',
-                            icon: const Icon(Icons.close),
-                            onPressed: () {
-                              context.read<ChatBloc>().add(
-                                const ChatNewConversationDialogReset(),
-                              );
-                              if (widget.preselectedUser != null) {
-                                _searchController.clear();
-                              }
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  Expanded(
-                    child: showSearchResults
-                        ? _buildSearchResults(
-                            state: state,
-                            results: availableResults,
-                            isGroup: isGroup,
-                          )
-                        : _buildInitialState(state, isGroup),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
-                    child: TextField(
-                      controller: _messageController,
-                      maxLines: 2,
-                      decoration: InputDecoration(
-                        hintText: 'First message',
-                        prefixIcon: const Icon(Icons.message_outlined),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onChanged: (_) => setState(() {}),
-                    ),
-                  ),
-                  if (!isGroup)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: FilledButton.icon(
-                          onPressed: canCreateDirect
-                              ? () => _startDirectConversation(state)
-                              : null,
-                          icon: state.creatingConversation
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
+                              if (isGroup &&
+                                  state.selectedParticipants.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    0,
+                                    16,
+                                    10,
                                   ),
-                                )
-                              : const Icon(Icons.send_outlined),
-                          label: Text(
-                            state.creatingConversation
-                                ? 'Starting...'
-                                : 'Start Conversation',
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (isGroup)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: SizedBox(
-                        width: double.infinity,
-                        child: FilledButton.icon(
-                          onPressed: canCreateGroup
-                              ? () => _createGroupConversation(state)
-                              : null,
-                          icon: state.creatingConversation
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.white,
+                                  child: _SectionCard(
+                                    accentColor: accentColor,
+                                    isDark: isDark,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          l10n.chatSelectedParticipantsTitle,
+                                          style: TextStyle(
+                                            color: isDark
+                                                ? Colors.white
+                                                : const Color(0xFF0F172A),
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 12),
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: state.selectedParticipants
+                                              .map((user) {
+                                                return Chip(
+                                                  label: Text(user.displayName),
+                                                  avatar: CircleAvatar(
+                                                    backgroundColor: accentColor
+                                                        .withValues(
+                                                          alpha: 0.14,
+                                                        ),
+                                                    child: Text(
+                                                      user.displayName[0]
+                                                          .toUpperCase(),
+                                                      style: TextStyle(
+                                                        color: accentColor,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  deleteIcon: const Icon(
+                                                    Icons.close_rounded,
+                                                  ),
+                                                  onDeleted: () {
+                                                    context.read<ChatBloc>().add(
+                                                      ChatParticipantRemoved(
+                                                        user.userId,
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              })
+                                              .toList(growable: false),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                )
-                              : const Icon(Icons.send_outlined),
-                          label: Text(
-                            state.creatingConversation
-                                ? 'Creating...'
-                                : 'Create Group Conversation',
+                                ),
+                              if (!isGroup && selectedDirectUser != null)
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    0,
+                                    16,
+                                    10,
+                                  ),
+                                  child: _SectionCard(
+                                    accentColor: accentColor,
+                                    isDark: isDark,
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          width: 48,
+                                          height: 48,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: <Color>[
+                                                accentColor,
+                                                Color.lerp(
+                                                  accentColor,
+                                                  const Color(0xFF06B6D4),
+                                                  0.28,
+                                                )!,
+                                              ],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              18,
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              selectedDirectUser.displayName[0]
+                                                  .toUpperCase(),
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w800,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                selectedDirectUser.displayName,
+                                                style: TextStyle(
+                                                  color: isDark
+                                                      ? Colors.white
+                                                      : const Color(0xFF0F172A),
+                                                  fontWeight: FontWeight.w800,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                (selectedDirectUser.email ?? '')
+                                                        .trim()
+                                                        .isNotEmpty
+                                                    ? selectedDirectUser.email!
+                                                    : l10n.chatSelectedRecipientSubtitle,
+                                                style: TextStyle(
+                                                  color: isDark
+                                                      ? const Color(0xFF94A3B8)
+                                                      : const Color(0xFF64748B),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        TextButton.icon(
+                                          onPressed: () {
+                                            context.read<ChatBloc>().add(
+                                              const ChatNewConversationDialogReset(),
+                                            );
+                                            if (widget.preselectedUser !=
+                                                null) {
+                                              _searchController.clear();
+                                            }
+                                            setState(() {});
+                                          },
+                                          icon: const Icon(
+                                            Icons.swap_horiz_rounded,
+                                          ),
+                                          label: Text(l10n.chatChangeRecipient),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
+                                child: showSearchResults
+                                    ? _buildSearchResults(
+                                        state: state,
+                                        results: availableResults,
+                                        isGroup: isGroup,
+                                        accentColor: accentColor,
+                                      )
+                                    : _buildInitialState(
+                                        state,
+                                        isGroup,
+                                        accentColor,
+                                      ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  10,
+                                  16,
+                                  0,
+                                ),
+                                child: _ComposerCard(
+                                  accentColor: accentColor,
+                                  isDark: isDark,
+                                  child: _CompactComposer(
+                                    accentColor: accentColor,
+                                    isDark: isDark,
+                                    controller: _messageController,
+                                    isLoading: state.creatingConversation,
+                                    enabled: !isGroup
+                                        ? canCreateDirect
+                                        : canCreateGroup,
+                                    title: l10n.chatFirstMessageTitle,
+                                    hintText: l10n.chatFirstMessageHint,
+                                    onChanged: (_) => setState(() {}),
+                                    onPressed: !isGroup
+                                        ? (canCreateDirect
+                                              ? () => _startDirectConversation(
+                                                  state,
+                                                )
+                                              : null)
+                                        : (canCreateGroup
+                                              ? () => _createGroupConversation(
+                                                  state,
+                                                )
+                                              : null),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                ],
+                    );
+                  },
+                ),
               );
             },
           ),
@@ -387,13 +509,32 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
     );
   }
 
-  Widget _buildInitialState(ChatState state, bool isGroup) {
-    return ListView(
-      padding: const EdgeInsets.only(bottom: 20),
+  Color _resolveAccentColor(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final role = authState is AuthAuthenticated
+        ? authState.user.primaryRoleName.toLowerCase()
+        : 'student';
+
+    if (role.contains('ta')) {
+      return const Color(0xFF8B5CF6);
+    }
+    if (role.contains('instructor')) {
+      return const Color(0xFF155CFB);
+    }
+    if (role.contains('admin')) {
+      return const Color(0xFF4F46E5);
+    }
+    return const Color(0xFF3B82F6);
+  }
+
+  Widget _buildInitialState(ChatState state, bool isGroup, Color accentColor) {
+    final l10n = AppLocalizations.of(context);
+    return Column(
       children: [
         FrequentlyContactedSection(
           users: state.frequentlyContacted,
           onlineUsers: state.onlineUsers,
+          accentColor: accentColor,
           onUserTap: (user) {
             if (isGroup) {
               _toggleGroupParticipant(state, user);
@@ -405,12 +546,36 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
             context.push('/messages/profile/${user.userId}');
           },
         ),
-        const SizedBox(height: 20),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'All Contacts is hidden until you search. Start typing to find people.',
-            style: TextStyle(fontSize: 13, color: Color(0xFF64748B)),
+        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: _SectionCard(
+            accentColor: accentColor,
+            isDark: Theme.of(context).brightness == Brightness.dark,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.chatSearchPromptTitle,
+                  style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : const Color(0xFF0F172A),
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  l10n.chatSearchPromptSubtitle,
+                  style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF94A3B8)
+                        : const Color(0xFF64748B),
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -421,21 +586,29 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
     required ChatState state,
     required List<ChatUserModel> results,
     required bool isGroup,
+    required Color accentColor,
   }) {
+    final l10n = AppLocalizations.of(context);
     if (state.userSearchLoading && results.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator(color: accentColor));
     }
 
     if (results.isEmpty) {
-      return const Center(
-        child: Text(
-          'No contacts found for this search.',
-          style: TextStyle(color: Color(0xFF64748B)),
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Text(
+            l10n.chatNoContactsFound,
+            style: const TextStyle(color: Color(0xFF64748B)),
+          ),
         ),
       );
     }
 
     return ListView.builder(
+      padding: const EdgeInsets.only(top: 4, bottom: 12),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: results.length,
       itemBuilder: (context, index) {
         final user = results[index];
@@ -447,6 +620,7 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
           user: user,
           isOnline: state.onlineUsers.contains(user.userId),
           isSelected: isSelected,
+          accentColor: accentColor,
           onAvatarTap: () {
             context.push('/messages/profile/${user.userId}');
           },
@@ -459,6 +633,458 @@ class _NewConversationScreenState extends State<NewConversationScreen> {
           },
         );
       },
+    );
+  }
+}
+
+class _NewConversationHeader extends StatelessWidget {
+  final Color accentColor;
+  final String title;
+  final String subtitle;
+  final VoidCallback onClose;
+
+  const _NewConversationHeader({
+    required this.accentColor,
+    required this.title,
+    required this.subtitle,
+    required this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: <Color>[
+              accentColor,
+              Color.lerp(accentColor, Colors.white, 0.16)!,
+              Color.lerp(accentColor, const Color(0xFF06B6D4), 0.24)!,
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+              color: accentColor.withValues(alpha: 0.20),
+              blurRadius: 26,
+              offset: const Offset(0, 14),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.90),
+                      fontSize: 13,
+                      height: 1.35,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Material(
+              color: Colors.white.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(18),
+              child: IconButton(
+                onPressed: onClose,
+                icon: const Icon(Icons.close_rounded, color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ModeCard extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final Color accentColor;
+  final bool isSelected;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _ModeCard({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.accentColor,
+    required this.isSelected,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 220),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? accentColor
+              : (isDark ? const Color(0xFF111827) : Colors.white),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected
+                ? Colors.transparent
+                : (isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0)),
+          ),
+          boxShadow: isSelected
+              ? <BoxShadow>[
+                  BoxShadow(
+                    color: accentColor.withValues(alpha: 0.18),
+                    blurRadius: 18,
+                    offset: const Offset(0, 10),
+                  ),
+                ]
+              : const <BoxShadow>[],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? Colors.white.withValues(alpha: 0.14)
+                    : accentColor.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                icon,
+                size: 18,
+                color: isSelected ? Colors.white : accentColor,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: isSelected
+                          ? Colors.white
+                          : (isDark ? Colors.white : const Color(0xFF0F172A)),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    subtitle,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: isSelected
+                          ? Colors.white.withValues(alpha: 0.88)
+                          : (isDark
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF64748B)),
+                      fontSize: 11.2,
+                      height: 1.2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ModernSearchField extends StatelessWidget {
+  final TextEditingController controller;
+  final Color accentColor;
+  final bool isDark;
+  final String hintText;
+  final bool loading;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onClear;
+
+  const _ModernSearchField({
+    required this.controller,
+    required this.accentColor,
+    required this.isDark,
+    required this.hintText,
+    required this.loading,
+    required this.onChanged,
+    required this.onClear,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final mutedText = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: accentColor.withValues(alpha: isDark ? 0.08 : 0.05),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isDark ? const Color(0xFF1E293B) : const Color(0xFFE2E8F0),
+          ),
+        ),
+        child: TextField(
+          controller: controller,
+          textInputAction: TextInputAction.search,
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: TextStyle(color: mutedText),
+            prefixIcon: Container(
+              margin: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(Icons.search_rounded, color: accentColor, size: 20),
+            ),
+            suffixIcon: loading
+                ? const Padding(
+                    padding: EdgeInsets.all(14),
+                    child: SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  )
+                : (controller.text.isEmpty
+                      ? null
+                      : IconButton(
+                          icon: Icon(Icons.close_rounded, color: mutedText),
+                          onPressed: onClear,
+                        )),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide.none,
+            ),
+            filled: true,
+            fillColor: isDark ? const Color(0xFF111827) : Colors.white,
+            contentPadding: const EdgeInsets.symmetric(vertical: 12),
+          ),
+          onChanged: onChanged,
+        ),
+      ),
+    );
+  }
+}
+
+class _SectionCard extends StatelessWidget {
+  final Color accentColor;
+  final bool isDark;
+  final Widget child;
+
+  const _SectionCard({
+    required this.accentColor,
+    required this.isDark,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF111827) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: accentColor.withValues(alpha: 0.10)),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: accentColor.withValues(alpha: isDark ? 0.10 : 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
+class _CompactComposer extends StatelessWidget {
+  final Color accentColor;
+  final bool isDark;
+  final TextEditingController controller;
+  final bool enabled;
+  final bool isLoading;
+  final String title;
+  final String hintText;
+  final ValueChanged<String> onChanged;
+  final VoidCallback? onPressed;
+
+  const _CompactComposer({
+    required this.accentColor,
+    required this.isDark,
+    required this.controller,
+    required this.enabled,
+    required this.isLoading,
+    required this.title,
+    required this.hintText,
+    required this.onChanged,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final mutedText = isDark
+        ? const Color(0xFF94A3B8)
+        : const Color(0xFF64748B);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            color: isDark ? Colors.white : const Color(0xFF0F172A),
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? const Color(0xFF0F172A)
+                      : const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(
+                    color: accentColor.withValues(alpha: isDark ? 0.18 : 0.10),
+                  ),
+                ),
+                child: TextField(
+                  controller: controller,
+                  minLines: 1,
+                  maxLines: 3,
+                  decoration: InputDecoration(
+                    hintText: hintText,
+                    hintStyle: TextStyle(color: mutedText),
+                    border: InputBorder.none,
+                    isCollapsed: true,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  onChanged: onChanged,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: enabled
+                      ? <Color>[
+                          accentColor,
+                          Color.lerp(
+                            accentColor,
+                            const Color(0xFF06B6D4),
+                            0.30,
+                          )!,
+                        ]
+                      : <Color>[
+                          const Color(0xFFCBD5E1),
+                          const Color(0xFFE2E8F0),
+                        ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: IconButton(
+                onPressed: enabled ? onPressed : null,
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints.tightFor(
+                  width: 50,
+                  height: 50,
+                ),
+                icon: isLoading
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(
+                        Icons.send_rounded,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _ComposerCard extends StatelessWidget {
+  final Color accentColor;
+  final bool isDark;
+  final Widget child;
+
+  const _ComposerCard({
+    required this.accentColor,
+    required this.isDark,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF111827) : Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: accentColor.withValues(alpha: 0.12)),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: accentColor.withValues(alpha: isDark ? 0.12 : 0.08),
+            blurRadius: 18,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 }

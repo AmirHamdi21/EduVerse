@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
 import '../../../bloc/chat/chat_models.dart';
+import '../../../generated_l10n/app_localizations.dart';
+import '../modern_action_sheet.dart';
 
 class SharedConversationTile extends StatelessWidget {
   final ConversationModel conversation;
@@ -34,174 +35,220 @@ class SharedConversationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final subtitle =
-        conversation.lastMessage ??
-        conversation.lastMessageInfo?.text ??
-        'No messages yet';
+    final l10n = AppLocalizations.of(context);
+    final subtitle = _buildSubtitle(l10n);
+    final primaryText = isDark ? Colors.white : const Color(0xFF0F172A);
+    final secondaryText = isDark
+        ? const Color(0xFFCBD5E1)
+        : const Color(0xFF64748B);
+    final cardColor = isDark ? const Color(0xFF111827) : Colors.white;
+    final hasUnread = conversation.unreadCount > 0;
 
-    return Slidable(
-      key: ValueKey('conversation-${conversation.conversationId}'),
-      endActionPane: ActionPane(
-        motion: const DrawerMotion(),
-        extentRatio: 0.78,
-        children: [
-          SlidableAction(
-            onPressed: (_) => onPin(),
-            icon: isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-            backgroundColor: const Color(0xFF0EA5E9),
-            foregroundColor: Colors.white,
-            label: isPinned ? 'Unpin' : 'Pin',
-          ),
-          SlidableAction(
-            onPressed: (_) => onMute(),
-            icon: isMuted ? Icons.volume_up_rounded : Icons.volume_off_rounded,
-            backgroundColor: const Color(0xFF6D28D9),
-            foregroundColor: Colors.white,
-            label: isMuted ? 'Unmute' : 'Mute',
-          ),
-          SlidableAction(
-            onPressed: (_) => onDelete(),
-            icon: Icons.delete_outline_rounded,
-            backgroundColor: const Color(0xFFDC2626),
-            foregroundColor: Colors.white,
-            label: 'Delete',
-          ),
-        ],
-      ),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
       child: Material(
-        color: isDark ? const Color(0xFF0F172A) : Colors.white,
+        color: Colors.transparent,
         child: InkWell(
+          borderRadius: BorderRadius.circular(22),
           onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: onAvatarTap,
-                  child: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: 24,
-                        backgroundColor: _avatarColor(),
-                        child: _avatarChild(),
-                      ),
-                      if (isOnline)
-                        Positioned(
-                          right: 0,
-                          bottom: 1,
-                          child: Container(
-                            width: 11,
-                            height: 11,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF16A34A),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isDark
-                                    ? const Color(0xFF0F172A)
-                                    : Colors.white,
-                                width: 2,
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              conversation.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: isDark
-                                    ? Colors.white
-                                    : const Color(0xFF0F172A),
-                                fontSize: 15,
-                                fontWeight: conversation.unreadCount > 0
-                                    ? FontWeight.w700
-                                    : FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          if (isPinned)
-                            Icon(Icons.push_pin, size: 15, color: accentColor),
-                          if (isMuted)
-                            const Padding(
-                              padding: EdgeInsets.only(left: 4),
-                              child: Icon(
-                                Icons.volume_off_rounded,
-                                size: 15,
-                                color: Color(0xFF64748B),
-                              ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        subtitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: isDark
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF64748B),
-                          fontSize: 13,
-                          fontWeight: conversation.unreadCount > 0
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      _formatTimestamp(conversation.updatedAt),
-                      style: TextStyle(
-                        color: conversation.unreadCount > 0
-                            ? accentColor
-                            : (isDark
-                                  ? const Color(0xFF94A3B8)
-                                  : const Color(0xFF64748B)),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    if (conversation.unreadCount > 0)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: accentColor,
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          conversation.unreadCount > 99
-                              ? '99+'
-                              : '${conversation.unreadCount}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                  ],
+          onLongPress: () => _openActions(context),
+          child: Ink(
+            decoration: BoxDecoration(
+              color: cardColor,
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: hasUnread
+                    ? accentColor.withValues(alpha: 0.20)
+                    : (isDark
+                          ? const Color(0xFF233047)
+                          : const Color(0xFFE2E8F0)),
+              ),
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: accentColor.withValues(alpha: hasUnread ? 0.12 : 0.06),
+                  blurRadius: 18,
+                  offset: const Offset(0, 10),
                 ),
               ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+              child: Row(
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: onAvatarTap,
+                    child: Stack(
+                      children: <Widget>[
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                _avatarColor(),
+                                Color.lerp(_avatarColor(), accentColor, 0.35)!,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Center(child: _avatarChild()),
+                        ),
+                        if (isOnline)
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Container(
+                              width: 12,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF22C55E),
+                                shape: BoxShape.circle,
+                                border: Border.all(color: cardColor, width: 2),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                conversation.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: primaryText,
+                                  fontSize: 15.5,
+                                  fontWeight: hasUnread
+                                      ? FontWeight.w800
+                                      : FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _formatTimestamp(context, conversation.updatedAt),
+                              style: TextStyle(
+                                color: hasUnread ? accentColor : secondaryText,
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            _TopActionButton(
+                              onPressed: () => _openActions(context),
+                              icon: Icons.more_horiz_rounded,
+                              accentColor: accentColor,
+                              isDark: isDark,
+                              tooltip: l10n.chatConversationOptions,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: secondaryText,
+                            fontSize: 13,
+                            fontWeight: hasUnread
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 7),
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Row(
+                                children: <Widget>[
+                                  Flexible(
+                                    child: Text(
+                                      conversation.type ==
+                                              ConversationType.group
+                                          ? l10n.chatGroupConversationLabel
+                                          : l10n.chatDirectConversationLabel,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: secondaryText,
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  if (isPinned || isMuted || isOnline) ...[
+                                    const SizedBox(width: 8),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        if (isPinned)
+                                          Icon(
+                                            Icons.push_pin_rounded,
+                                            size: 13,
+                                            color: accentColor,
+                                          ),
+                                        if (isPinned && (isMuted || isOnline))
+                                          const SizedBox(width: 4),
+                                        if (isMuted)
+                                          const Icon(
+                                            Icons.volume_off_rounded,
+                                            size: 13,
+                                            color: Color(0xFFF59E0B),
+                                          ),
+                                        if (isMuted && isOnline)
+                                          const SizedBox(width: 4),
+                                        if (isOnline)
+                                          const Icon(
+                                            Icons.circle,
+                                            size: 11,
+                                            color: Color(0xFF22C55E),
+                                          ),
+                                      ],
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                            if (hasUnread)
+                              Container(
+                                margin: const EdgeInsets.only(left: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: accentColor,
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                                child: Text(
+                                  conversation.unreadCount > 99
+                                      ? '99+'
+                                      : '${conversation.unreadCount}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -209,17 +256,93 @@ class SharedConversationTile extends StatelessWidget {
     );
   }
 
+  Future<void> _openActions(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    final result = await showModernActionSheet<_ConversationAction>(
+      context,
+      title: conversation.title,
+      subtitle: conversation.type == ConversationType.group
+          ? l10n.chatActionSheetGroupSubtitle
+          : l10n.chatActionSheetDirectSubtitle,
+      accentColor: accentColor,
+      actions: <ModernActionItem<_ConversationAction>>[
+        if (onAvatarTap != null)
+          ModernActionItem<_ConversationAction>(
+            value: _ConversationAction.profile,
+            label: l10n.chatActionOpenProfile,
+            icon: Icons.person_outline_rounded,
+            description: l10n.chatActionOpenProfileDesc,
+          ),
+        ModernActionItem<_ConversationAction>(
+          value: _ConversationAction.pin,
+          label: isPinned ? l10n.chatActionUnpin : l10n.chatActionPin,
+          icon: isPinned ? Icons.push_pin_rounded : Icons.push_pin_outlined,
+          description: isPinned
+              ? l10n.chatActionUnpinDesc
+              : l10n.chatActionPinDesc,
+        ),
+        ModernActionItem<_ConversationAction>(
+          value: _ConversationAction.mute,
+          label: isMuted ? l10n.chatActionUnmute : l10n.chatActionMute,
+          icon: isMuted ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+          description: isMuted
+              ? l10n.chatActionUnmuteDesc
+              : l10n.chatActionMuteDesc,
+          color: const Color(0xFFF59E0B),
+        ),
+        ModernActionItem<_ConversationAction>(
+          value: _ConversationAction.delete,
+          label: l10n.chatActionDeleteConversation,
+          icon: Icons.delete_outline_rounded,
+          description: l10n.chatActionDeleteConversationDesc,
+          destructive: true,
+        ),
+      ],
+    );
+
+    switch (result) {
+      case _ConversationAction.profile:
+        onAvatarTap?.call();
+        break;
+      case _ConversationAction.pin:
+        onPin();
+        break;
+      case _ConversationAction.mute:
+        onMute();
+        break;
+      case _ConversationAction.delete:
+        onDelete();
+        break;
+      case null:
+        break;
+    }
+  }
+
+  String _buildSubtitle(AppLocalizations l10n) {
+    final lastMessageText =
+        conversation.lastMessage ?? conversation.lastMessageInfo?.text ?? '';
+    final normalized = lastMessageText.trim();
+    if (normalized.isEmpty) {
+      return l10n.noMessagesYet;
+    }
+    if (conversation.type == ConversationType.group &&
+        (conversation.lastMessageInfo?.senderName ?? '').trim().isNotEmpty) {
+      return '${conversation.lastMessageInfo!.senderName}: $normalized';
+    }
+    return normalized;
+  }
+
   Widget _avatarChild() {
     if (conversation.type == ConversationType.group) {
-      return const Icon(Icons.group_rounded, color: Colors.white, size: 20);
+      return const Icon(Icons.groups_rounded, color: Colors.white, size: 24);
     }
 
     return Text(
       _initials(conversation.title),
       style: const TextStyle(
         color: Colors.white,
-        fontWeight: FontWeight.w700,
-        fontSize: 12,
+        fontWeight: FontWeight.w800,
+        fontSize: 14,
       ),
     );
   }
@@ -257,26 +380,58 @@ class SharedConversationTile extends StatelessWidget {
     return '${tokens.first[0]}${tokens[1][0]}'.toUpperCase();
   }
 
-  String _formatTimestamp(DateTime dateTime) {
+  String _formatTimestamp(BuildContext context, DateTime dateTime) {
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).languageCode;
     final now = DateTime.now();
     final diff = now.difference(dateTime);
 
     if (diff.inMinutes < 1) {
-      return 'now';
+      return l10n.chatRelativeNow;
     }
-
     if (diff.inMinutes < 60) {
-      return '${diff.inMinutes}m';
+      return l10n.chatRelativeMinutes(diff.inMinutes);
     }
-
     if (diff.inHours < 24) {
-      return DateFormat('h:mm a').format(dateTime);
+      return DateFormat.jm(locale).format(dateTime.toLocal());
     }
-
     if (diff.inDays < 7) {
-      return '${diff.inDays}d';
+      return l10n.chatRelativeDays(diff.inDays);
     }
 
-    return DateFormat('MMM d').format(dateTime);
+    return DateFormat.MMMd(locale).format(dateTime.toLocal());
+  }
+}
+
+enum _ConversationAction { profile, pin, mute, delete }
+
+class _TopActionButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final IconData icon;
+  final Color accentColor;
+  final bool isDark;
+  final String tooltip;
+
+  const _TopActionButton({
+    required this.onPressed,
+    required this.icon,
+    required this.accentColor,
+    required this.isDark,
+    required this.tooltip,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: accentColor.withValues(alpha: isDark ? 0.14 : 0.08),
+      borderRadius: BorderRadius.circular(14),
+      child: IconButton(
+        onPressed: onPressed,
+        tooltip: tooltip,
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints.tightFor(width: 34, height: 34),
+        icon: Icon(icon, size: 18, color: accentColor),
+      ),
+    );
   }
 }

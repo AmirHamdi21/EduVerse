@@ -24,6 +24,13 @@ class AuthRoleResolver {
   }
 
   static bool canAccessRoute(UserDto user, String location) {
+    if (location.startsWith('/messages')) {
+      return hasRole(user, studentRole) ||
+          hasRole(user, instructorRole) ||
+          hasRole(user, teachingAssistantRole) ||
+          hasRole(user, adminRole) ||
+          hasRole(user, itAdminRole);
+    }
     if (location.startsWith('/it-admin/')) {
       return hasRole(user, itAdminRole);
     }

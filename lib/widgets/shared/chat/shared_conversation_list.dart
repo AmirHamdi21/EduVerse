@@ -7,6 +7,7 @@ import '../../../bloc/chat/chat_bloc.dart';
 import '../../../bloc/chat/chat_event.dart';
 import '../../../bloc/chat/chat_models.dart';
 import '../../../bloc/chat/chat_state.dart';
+import '../../../generated_l10n/app_localizations.dart';
 import 'chat_list_types.dart';
 import 'shared_chat_empty_state.dart';
 import 'shared_chat_filter_chips.dart';
@@ -281,6 +282,7 @@ class _SharedConversationListState extends State<SharedConversationList> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocConsumer<ChatBloc, ChatState>(
       listener: (context, state) {
         if (state.status == ChatStatus.failure &&
@@ -322,131 +324,177 @@ class _SharedConversationListState extends State<SharedConversationList> {
             state.conversationSearchQuery.trim().isNotEmpty ||
             _currentFilter != ChatListFilter.all;
 
-        return Column(
-          children: [
-            SharedChatHeader(
-              isDark: widget.isDark,
-              accentColor: widget.accentColor,
-              connectionStatus: state.connectionStatus,
-              isSearching: _isSearchVisible,
-              onToggleSearch: () {
-                setState(() {
-                  _isSearchVisible = !_isSearchVisible;
-                  if (!_isSearchVisible) {
-                    _clearFilters();
-                  }
-                });
-              },
-              onConversationCreated: _handleConversationCreated,
-              title: widget.title,
-              leadingIcon: widget.leadingIcon,
-              onLeadingPressed: widget.onLeadingPressed,
-            ),
-            if (_isSearchVisible)
-              SharedChatSearchBar(
-                controller: _searchController,
-                onChanged: _onQueryChanged,
+        return Container(
+          decoration: BoxDecoration(
+            color: widget.isDark
+                ? const Color(0xFF020617)
+                : const Color(0xFFF8FAFC),
+          ),
+          child: Column(
+            children: [
+              SharedChatHeader(
+                isDark: widget.isDark,
+                accentColor: widget.accentColor,
+                connectionStatus: state.connectionStatus,
+                isSearching: _isSearchVisible,
+                onToggleSearch: () {
+                  setState(() {
+                    _isSearchVisible = !_isSearchVisible;
+                    if (!_isSearchVisible) {
+                      _clearFilters();
+                    }
+                  });
+                },
+                onConversationCreated: _handleConversationCreated,
+                title: widget.title,
+                leadingIcon: widget.leadingIcon,
+                onLeadingPressed: widget.onLeadingPressed,
+              ),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                child: !_isSearchVisible
+                    ? const SizedBox.shrink()
+                    : SharedChatSearchBar(
+                        key: const ValueKey('chat-search'),
+                        controller: _searchController,
+                        onChanged: _onQueryChanged,
+                        isDark: widget.isDark,
+                        accentColor: widget.accentColor,
+                      ),
+              ),
+              SharedChatFilterChips(
+                currentFilter: _currentFilter,
+                onFilterChanged: _onFilterChanged,
                 isDark: widget.isDark,
                 accentColor: widget.accentColor,
               ),
-            SharedChatFilterChips(
-              currentFilter: _currentFilter,
-              onFilterChanged: _onFilterChanged,
-              isDark: widget.isDark,
-              accentColor: widget.accentColor,
-            ),
-            Expanded(
-              child:
-                  state.status == ChatStatus.loading &&
-                      state.conversations.isEmpty
-                  ? const Center(child: CircularProgressIndicator())
-                  : visibleConversations.isEmpty
-                  ? SharedChatEmptyState(
-                      isDark: widget.isDark,
-                      isFiltered: isFiltered,
-                      isError: state.status == ChatStatus.failure,
-                      isOffline:
-                          state.connectionStatus == ConnectionStatus.offline &&
-                          state.conversations.isEmpty,
-                      searchQuery:
-                          state.conversationSearchQuery.trim().isNotEmpty
-                          ? state.conversationSearchQuery
-                          : null,
-                      accentColor: widget.accentColor,
-                      onStartNewChat: _openNewConversationScreen,
-                      onClearFilters: _clearFilters,
-                      onRetry: () => context.read<ChatBloc>().add(
-                        const LoadConversations(),
-                      ),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: () async {
-                        context.read<ChatBloc>().add(const LoadConversations());
-                      },
-                      child: ListView.separated(
-                        controller: _scrollController,
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        itemCount:
-                            visibleConversations.length +
-                            (hasMoreItems ? 1 : 0),
-                        separatorBuilder: (_, __) => Divider(
-                          height: 1,
-                          color: widget.isDark
-                              ? const Color(0xFF1E293B)
-                              : const Color(0xFFE2E8F0),
-                        ),
-                        itemBuilder: (context, index) {
-                          if (index >= visibleConversations.length) {
-                            return const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                            );
-                          }
-
-                          final conversation = visibleConversations[index];
-
-                          return SharedConversationTile(
-                            conversation: conversation,
-                            isDark: widget.isDark,
-                            accentColor: widget.accentColor,
-                            isOnline: _isConversationOnline(
-                              conversation,
-                              state.onlineUsers,
-                            ),
-                            isPinned: _pinnedConversations.contains(
-                              conversation.conversationId,
-                            ),
-                            isMuted: _mutedConversations.contains(
-                              conversation.conversationId,
-                            ),
-                            onTap: () {
-                              context.read<ChatBloc>().add(
-                                SelectConversation(conversation.conversationId),
-                              );
-                              context.read<ChatBloc>().add(
-                                MarkRead(conversation.conversationId),
-                              );
-                            },
-                            onAvatarTap: conversation.directDisplayUser == null
-                                ? null
-                                : () {
-                                    context.push(
-                                      '/messages/profile/${conversation.directDisplayUser!.userId}',
-                                    );
-                                  },
-                            onPin: () => _togglePinned(conversation),
-                            onMute: () => _toggleMuted(conversation),
-                            onDelete: () => _deleteConversation(conversation),
-                          );
-                        },
+              Padding(
+                padding: const EdgeInsets.fromLTRB(18, 0, 18, 12),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      l10n.chatConversationCount(allMatches.length),
+                      style: TextStyle(
+                        color: widget.isDark
+                            ? const Color(0xFFCBD5E1)
+                            : const Color(0xFF475569),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-            ),
-          ],
+                    const Spacer(),
+                    if (hasMoreItems)
+                      Text(
+                        l10n.chatLoadingMoreLabel,
+                        style: TextStyle(
+                          color: widget.accentColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child:
+                    state.status == ChatStatus.loading &&
+                        state.conversations.isEmpty
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: widget.accentColor,
+                        ),
+                      )
+                    : visibleConversations.isEmpty
+                    ? SharedChatEmptyState(
+                        isDark: widget.isDark,
+                        isFiltered: isFiltered,
+                        isError: state.status == ChatStatus.failure,
+                        isOffline:
+                            state.connectionStatus ==
+                                ConnectionStatus.offline &&
+                            state.conversations.isEmpty,
+                        searchQuery:
+                            state.conversationSearchQuery.trim().isNotEmpty
+                            ? state.conversationSearchQuery
+                            : null,
+                        accentColor: widget.accentColor,
+                        onStartNewChat: _openNewConversationScreen,
+                        onClearFilters: _clearFilters,
+                        onRetry: () => context.read<ChatBloc>().add(
+                          const LoadConversations(),
+                        ),
+                      )
+                    : RefreshIndicator(
+                        color: widget.accentColor,
+                        onRefresh: () async {
+                          context.read<ChatBloc>().add(
+                            const LoadConversations(),
+                          );
+                        },
+                        child: ListView.builder(
+                          controller: _scrollController,
+                          padding: const EdgeInsets.only(bottom: 20),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          itemCount:
+                              visibleConversations.length +
+                              (hasMoreItems ? 1 : 0),
+                          itemBuilder: (context, index) {
+                            if (index >= visibleConversations.length) {
+                              return Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: widget.accentColor,
+                                  ),
+                                ),
+                              );
+                            }
+
+                            final conversation = visibleConversations[index];
+
+                            return SharedConversationTile(
+                              conversation: conversation,
+                              isDark: widget.isDark,
+                              accentColor: widget.accentColor,
+                              isOnline: _isConversationOnline(
+                                conversation,
+                                state.onlineUsers,
+                              ),
+                              isPinned: _pinnedConversations.contains(
+                                conversation.conversationId,
+                              ),
+                              isMuted: _mutedConversations.contains(
+                                conversation.conversationId,
+                              ),
+                              onTap: () {
+                                context.read<ChatBloc>().add(
+                                  SelectConversation(
+                                    conversation.conversationId,
+                                  ),
+                                );
+                                context.read<ChatBloc>().add(
+                                  MarkRead(conversation.conversationId),
+                                );
+                              },
+                              onAvatarTap:
+                                  conversation.directDisplayUser == null
+                                  ? null
+                                  : () {
+                                      context.push(
+                                        '/messages/profile/${conversation.directDisplayUser!.userId}',
+                                      );
+                                    },
+                              onPin: () => _togglePinned(conversation),
+                              onMute: () => _toggleMuted(conversation),
+                              onDelete: () => _deleteConversation(conversation),
+                            );
+                          },
+                        ),
+                      ),
+              ),
+            ],
+          ),
         );
       },
     );

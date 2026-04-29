@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_state.dart';
@@ -94,14 +93,15 @@ class SharedChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final chatBloc = context.read<ChatBloc?>();
 
     // Error state: ChatBloc not provided
     if (chatBloc == null) {
       return _buildErrorScreen(
         context,
-        'Chat service unavailable',
-        'The chat feature could not be initialized. Please restart the app or contact support if this persists.',
+        l10n.chatServiceUnavailableTitle,
+        l10n.chatServiceUnavailableSubtitle,
       );
     }
 
@@ -142,47 +142,82 @@ class SharedChatScreen extends StatelessWidget {
   }
 
   Widget _buildErrorScreen(BuildContext context, String title, String message) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.error_outline_rounded,
-                size: 64,
-                color: theme.colorScheme.error,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 420),
+            padding: const EdgeInsets.fromLTRB(24, 30, 24, 24),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(
+                color: theme.colorScheme.error.withValues(alpha: 0.18),
               ),
-              const SizedBox(height: 16),
-              Text(
-                title,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  color: theme.colorScheme.error,
+              boxShadow: <BoxShadow>[
+                BoxShadow(
+                  color: theme.colorScheme.error.withValues(alpha: 0.10),
+                  blurRadius: 30,
+                  offset: const Offset(0, 14),
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                message,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 86,
+                  height: 86,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: <Color>[
+                        theme.colorScheme.error,
+                        Color.lerp(
+                          theme.colorScheme.error,
+                          theme.colorScheme.primary,
+                          0.28,
+                        )!,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(28),
+                  ),
+                  child: const Icon(
+                    Icons.sms_failed_rounded,
+                    color: Colors.white,
+                    size: 38,
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: () => Navigator.of(context).maybePop(),
-                icon: const Icon(Icons.arrow_back),
-                label: const Text('Go Back'),
-              ),
-            ],
+                const SizedBox(height: 18),
+                Text(
+                  title,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  message,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                    height: 1.45,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: () => Navigator.of(context).maybePop(),
+                  icon: const Icon(Icons.arrow_back_rounded),
+                  label: Text(l10n.chatGoBack),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -266,23 +301,9 @@ class _MobileLayout extends StatelessWidget {
                   },
             ),
           ),
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: accentColor,
-            onPressed: () => _openNewConversationScreen(context),
-            tooltip: 'New Conversation',
-            child: const Icon(Icons.add),
-          ),
         );
       },
     );
-  }
-
-  Future<void> _openNewConversationScreen(BuildContext context) async {
-    final conversationId = await context.push<int>('/messages/new');
-    if (conversationId != null && conversationId > 0 && context.mounted) {
-      context.read<ChatBloc>().add(SelectConversation(conversationId));
-      context.read<ChatBloc>().add(MarkRead(conversationId));
-    }
   }
 }
 
@@ -334,21 +355,6 @@ class _TabletDesktopLayout extends StatelessWidget {
                           () {
                             Navigator.of(context).maybePop();
                           },
-                    ),
-                  ),
-                  // New conversation button at bottom of list
-                  Padding(
-                    padding: const EdgeInsets.all(12),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: FilledButton.icon(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: accentColor,
-                        ),
-                        onPressed: () => _openNewConversationScreen(context),
-                        icon: const Icon(Icons.add),
-                        label: const Text('New Conversation'),
-                      ),
                     ),
                   ),
                 ],
@@ -410,42 +416,72 @@ class _TabletDesktopLayout extends StatelessWidget {
           ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
           : theme.colorScheme.surfaceContainerLowest,
       child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.chat_bubble_outline_rounded,
-              size: 64,
-              color: accentColor.withValues(alpha: 0.5),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Select a conversation',
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 460),
+          margin: const EdgeInsets.all(24),
+          padding: const EdgeInsets.fromLTRB(26, 28, 26, 24),
+          decoration: BoxDecoration(
+            color: effectiveIsDark ? const Color(0xFF111827) : Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(
+              color: accentColor.withValues(
+                alpha: effectiveIsDark ? 0.18 : 0.10,
               ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Choose from your existing conversations\nor start a new one',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant.withValues(
-                  alpha: 0.7,
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: accentColor.withValues(
+                  alpha: effectiveIsDark ? 0.18 : 0.08,
+                ),
+                blurRadius: 26,
+                offset: const Offset(0, 14),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 92,
+                height: 92,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: <Color>[
+                      accentColor,
+                      Color.lerp(accentColor, const Color(0xFF06B6D4), 0.28)!,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: const Icon(
+                  Icons.forum_rounded,
+                  color: Colors.white,
+                  size: 40,
                 ),
               ),
-              textAlign: TextAlign.center,
-            ),
-          ],
+              const SizedBox(height: 18),
+              Text(
+                AppLocalizations.of(context).chatSelectConversationTitle,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                AppLocalizations.of(context).chatSelectConversationSubtitle,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                  height: 1.45,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  Future<void> _openNewConversationScreen(BuildContext context) async {
-    final conversationId = await context.push<int>('/messages/new');
-    if (conversationId != null && conversationId > 0 && context.mounted) {
-      context.read<ChatBloc>().add(SelectConversation(conversationId));
-      context.read<ChatBloc>().add(MarkRead(conversationId));
-    }
   }
 }

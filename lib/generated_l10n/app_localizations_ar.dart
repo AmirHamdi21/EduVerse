@@ -13677,4 +13677,421 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get studentDiscussionUnavailable =>
       'المناقشة غير متاحة لأن معرّف المقرر النشط مفقود.';
+
+  @override
+  String get member => 'عضو';
+
+  @override
+  String get comingSoon => 'قريباً';
+
+  @override
+  String get chatActionDeleteConversation => 'إخفاء المحادثة';
+
+  @override
+  String get chatActionDeleteConversationDesc =>
+      'إزالة هذه المحادثة من قائمة الدردشة الحالية لديك.';
+
+  @override
+  String get chatActionDeleteForEveryone => 'حذف للجميع';
+
+  @override
+  String get chatActionDeleteForEveryoneDesc =>
+      'إزالة هذه الرسالة لجميع المشاركين في المحادثة.';
+
+  @override
+  String get chatActionDeleteForMe => 'حذف لي فقط';
+
+  @override
+  String get chatActionDeleteForMeDesc =>
+      'إخفاء هذه الرسالة من عرضك الحالي فقط.';
+
+  @override
+  String get chatActionEditMessage => 'تعديل الرسالة';
+
+  @override
+  String get chatActionEditMessageDesc =>
+      'تحديث صياغة الرسالة قبل متابعة الحوار.';
+
+  @override
+  String get chatActionMute => 'كتم الإشعارات';
+
+  @override
+  String get chatActionMuteDesc => 'إيقاف التنبيهات مع إبقاء المحادثة متاحة.';
+
+  @override
+  String get chatActionOpenProfile => 'فتح الملف الشخصي';
+
+  @override
+  String get chatActionOpenProfileDesc =>
+      'عرض تفاصيل هذا الشخص والسياق المشترك معه.';
+
+  @override
+  String get chatActionPin => 'تثبيت المحادثة';
+
+  @override
+  String get chatActionPinDesc => 'إبقاء هذه المحادثة في الأعلى للوصول السريع.';
+
+  @override
+  String get chatActionReply => 'رد';
+
+  @override
+  String get chatActionReplyDesc => 'الرد مباشرة على هذه الرسالة.';
+
+  @override
+  String get chatActionSheetDirectSubtitle => 'خيارات المحادثة المباشرة';
+
+  @override
+  String get chatActionSheetGroupSubtitle => 'خيارات محادثة المجموعة';
+
+  @override
+  String get chatActionUnmute => 'إلغاء كتم الإشعارات';
+
+  @override
+  String get chatActionUnmuteDesc => 'إعادة التنبيهات لهذه المحادثة.';
+
+  @override
+  String get chatActionUnpin => 'إلغاء التثبيت';
+
+  @override
+  String get chatActionUnpinDesc => 'إرجاع هذه المحادثة إلى ترتيبها الطبيعي.';
+
+  @override
+  String get chatChangeRecipient => 'تغيير';
+
+  @override
+  String get chatClearFiltersButton => 'مسح الفلاتر';
+
+  @override
+  String get chatCloseSearchTooltip => 'إغلاق البحث';
+
+  @override
+  String get chatConnectionConnecting => 'جارٍ الاتصال';
+
+  @override
+  String get chatConnectionLive => 'مباشر';
+
+  @override
+  String get chatConnectionOffline => 'غير متصل';
+
+  @override
+  String chatConversationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count محادثة',
+      many: '$count محادثة',
+      few: '$count محادثات',
+      two: 'محادثتان',
+      one: 'محادثة واحدة',
+      zero: 'لا توجد محادثات',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatConversationOptions => 'خيارات المحادثة';
+
+  @override
+  String get chatCreateGroupConversationButton => 'إنشاء محادثة جماعية';
+
+  @override
+  String get chatCreatingGroupConversation => 'جارٍ الإنشاء...';
+
+  @override
+  String get chatDirectConversationLabel => 'محادثة مباشرة';
+
+  @override
+  String get chatEditedLabel => 'تم التعديل';
+
+  @override
+  String get chatEditMessageDialogHint => 'حدّث رسالتك';
+
+  @override
+  String get chatEditMessageDialogTitle => 'تعديل الرسالة';
+
+  @override
+  String get chatEmptySubtitle =>
+      'ابدأ محادثة جديدة للتواصل مع زملائك وفريق التدريس.';
+
+  @override
+  String get chatEmptyTitle => 'لا توجد محادثات بعد';
+
+  @override
+  String get chatFastRepliesLabel => 'ردود سريعة جاهزة';
+
+  @override
+  String get chatFilterAll => 'كل الدردشات';
+
+  @override
+  String get chatFilterGroups => 'المجموعات';
+
+  @override
+  String get chatFilterUnread => 'غير المقروءة';
+
+  @override
+  String get chatFirstMessageHint => 'اكتب رسالة افتتاحية قصيرة...';
+
+  @override
+  String get chatFirstMessageTitle => 'الرسالة الأولى';
+
+  @override
+  String get chatFrequentlyContactedTitle => 'الأكثر تواصلاً';
+
+  @override
+  String get chatGoBack => 'العودة';
+
+  @override
+  String get chatGroupConversationLabel => 'محادثة جماعية';
+
+  @override
+  String get chatGroupNameHint => 'اسم المجموعة';
+
+  @override
+  String get chatHeaderHint =>
+      'ابحث، وابدأ محادثات جديدة، واحتفظ بالمحادثات المهمة قريباً منك دون مغادرة هذه المساحة.';
+
+  @override
+  String get chatHubSubtitle =>
+      'ابقَ على تواصل مع الأشخاص، وسير المقرر، والرسائل التي تحتاج انتباهك.';
+
+  @override
+  String chatLastSeen(Object time) {
+    return 'آخر ظهور $time';
+  }
+
+  @override
+  String get chatLoadFailedSubtitle =>
+      'تعذر تحميل مساحة الدردشة الآن. حاول مرة أخرى.';
+
+  @override
+  String get chatLoadFailedTitle => 'تعذر تحميل بيانات الدردشة';
+
+  @override
+  String get chatLoadingMoreLabel => 'جارٍ التحميل';
+
+  @override
+  String get chatMessageActionsSubtitle => 'اختر ما تريد فعله مع هذه الرسالة.';
+
+  @override
+  String get chatMessageActionsTitle => 'إجراءات الرسالة';
+
+  @override
+  String get chatMessagesLoadFailedSubtitle =>
+      'تعذر تحميل رسائل هذه المحادثة. حاول مرة أخرى بعد قليل.';
+
+  @override
+  String get chatMessageTooOld =>
+      'هذه الرسالة قديمة جداً ولا يمكن الانتقال إليها الآن.';
+
+  @override
+  String get chatModeDirect => 'مباشرة';
+
+  @override
+  String get chatModeDirectSubtitle => 'محادثة بين شخصين';
+
+  @override
+  String get chatModeGroup => 'مجموعة';
+
+  @override
+  String get chatModeGroupSubtitle => 'أنشئ مساحة نقاش لفريق المقرر';
+
+  @override
+  String get chatMutedLabel => 'مكتومة';
+
+  @override
+  String get chatNewButton => 'دردشة جديدة';
+
+  @override
+  String get chatNewConversationSubtitle =>
+      'اختر الأشخاص المناسبين، وابدأ بسياق واضح، وافتح محادثة أنظف وأسهل.';
+
+  @override
+  String chatNewMessagesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count رسالة جديدة',
+      many: '$count رسالة جديدة',
+      few: '$count رسائل جديدة',
+      two: 'رسالتان جديدتان',
+      one: 'رسالة جديدة واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatNoContactsFound =>
+      'لا توجد جهات اتصال مطابقة لهذا البحث حالياً.';
+
+  @override
+  String get chatNoFilteredResultsSubtitle =>
+      'جرّب فلترًا آخر أو ارجع إلى كل الدردشات.';
+
+  @override
+  String get chatNoFilteredResultsTitle => 'لا توجد دردشات تطابق هذا العرض';
+
+  @override
+  String get chatNoMessagesConversationSubtitle =>
+      'أرسل أول رسالة لبدء المحادثة بشكل واضح ومركز.';
+
+  @override
+  String chatNoSearchResults(Object query) {
+    return 'لا توجد نتائج لـ \"$query\"';
+  }
+
+  @override
+  String get chatNoSearchResultsSubtitle =>
+      'جرّب اسمًا أو كلمة مفتاحية أو بريدًا إلكترونيًا مختلفًا.';
+
+  @override
+  String get chatOfflineSubtitle => 'اتصل بالإنترنت لتحميل محادثاتك لأول مرة.';
+
+  @override
+  String get chatOfflineTitle => 'أنت غير متصل';
+
+  @override
+  String get chatOnlineNow => 'متصل الآن';
+
+  @override
+  String get chatOriginalMessageUnavailable => 'الرسالة الأصلية غير متاحة';
+
+  @override
+  String chatParticipantsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count مشارك',
+      many: '$count مشاركاً',
+      few: '$count مشاركين',
+      two: 'مشاركان',
+      one: 'مشارك واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get chatPinnedLabel => 'مثبتة';
+
+  @override
+  String chatRelativeDays(int count) {
+    return '$countي';
+  }
+
+  @override
+  String chatRelativeHoursAgo(int count) {
+    return 'منذ $countس';
+  }
+
+  @override
+  String chatRelativeMinutes(int count) {
+    return '$countد';
+  }
+
+  @override
+  String chatRelativeMinutesAgo(int count) {
+    return 'منذ $countد';
+  }
+
+  @override
+  String get chatRelativeNow => 'الآن';
+
+  @override
+  String chatReplyingTo(Object name) {
+    return 'الرد على $name';
+  }
+
+  @override
+  String get chatSearchConversationsHint =>
+      'ابحث عن الأشخاص أو أسماء المجموعات أو الرسائل الأخيرة';
+
+  @override
+  String get chatSearchPromptSubtitle =>
+      'تظل كل جهات الاتصال مخفية حتى تبدأ البحث. اكتب للعثور على الشخص المناسب بسرعة.';
+
+  @override
+  String get chatSearchPromptTitle => 'ابحث لإظهار المزيد من الأشخاص';
+
+  @override
+  String get chatSelectConversationSubtitle =>
+      'اختر محادثة من القائمة لعرض الرسائل والرد بسرعة والبقاء على اطلاع.';
+
+  @override
+  String get chatSelectConversationTitle => 'اختر محادثة';
+
+  @override
+  String get chatSelectedParticipantsTitle => 'المشاركون المحددون';
+
+  @override
+  String get chatSelectedRecipientSubtitle => 'المستلم المحدد';
+
+  @override
+  String get chatServiceUnavailableSubtitle =>
+      'تعذر تهيئة ميزة الدردشة. أعد تشغيل التطبيق أو حاول لاحقاً.';
+
+  @override
+  String get chatServiceUnavailableTitle => 'خدمة الدردشة غير متاحة';
+
+  @override
+  String get chatAttachmentAiImages => 'صور الذكاء الاصطناعي';
+
+  @override
+  String get chatAttachmentAudio => 'صوت';
+
+  @override
+  String get chatAttachmentContact => 'جهة اتصال';
+
+  @override
+  String get chatAttachmentEvent => 'فعالية';
+
+  @override
+  String get chatAttachmentLocation => 'موقع';
+
+  @override
+  String get chatAttachmentPoll => 'استطلاع';
+
+  @override
+  String get chatAttachmentSheetSubtitle =>
+      'اختر مرفقاً سريعاً لمواصلة المحادثة بسهولة.';
+
+  @override
+  String get chatStartConversationButton => 'ابدأ المحادثة';
+
+  @override
+  String get chatStartingConversation => 'جارٍ البدء...';
+
+  @override
+  String get chatStartNewChatButton => 'ابدأ دردشة جديدة';
+
+  @override
+  String get chatTapToStartLabel => 'اضغط للبدء';
+
+  @override
+  String chatTypingDouble(Object first, Object second) {
+    return '$first و $second يكتبان الآن...';
+  }
+
+  @override
+  String chatTypingMultiple(Object first, Object second, int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count شخص آخر',
+      many: '$count شخصاً آخر',
+      few: '$count أشخاص آخرون',
+      two: 'شخصان آخران',
+      one: 'شخص آخر',
+    );
+    return '$first و $second و $_temp0 يكتبون الآن...';
+  }
+
+  @override
+  String chatTypingSingle(Object name) {
+    return '$name يكتب الآن...';
+  }
+
+  @override
+  String get chatVideoCallTooltip => 'مكالمة فيديو';
+
+  @override
+  String get chatVoiceCallTooltip => 'مكالمة صوتية';
 }
