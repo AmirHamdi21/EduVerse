@@ -5560,6 +5560,23 @@
       "name": {}
     }
   },
+  "instructorCalendarHeroSubtitle": "Keep classes, office hours, campus events, and personal plans aligned in one polished schedule.",
+  "calendarRangeEvents": "Visible events",
+  "calendarFocusDay": "Focus day",
+  "calendarCampusEvents": "Campus events",
+  "calendarEventTypes": "Event types",
+  "calendarCampusSource": "Campus source",
+  "calendarManageFilters": "Manage filters",
+  "calendarAllEventTypes": "All event types",
+  "calendarAllCampusEvents": "All campus events",
+  "calendarMyCampusEvents": "My campus events",
+  "calendarDayAgenda": "Day agenda",
+  "calendarNothingPlanned": "Nothing planned yet",
+  "calendarSelectedDay": "Selected day",
+  "calendarNoSelectedDayEvents": "No scheduled items for this date",
+  "calendarDeadlineLabel": "Deadlines",
+  "calendarGradingLabel": "Grading",
+  "calendarAllDay": "All day",
   "chatVideoCallTooltip": "Video call",
   "chatVoiceCallTooltip": "Voice call"
 }

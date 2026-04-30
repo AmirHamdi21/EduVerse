@@ -134,7 +134,8 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
       initial?.instructionFiles ?? const <DriveFileModel>[],
     );
 
-    _courseId = initial?.courseId ??
+    _courseId =
+        initial?.courseId ??
         (widget.courses.isNotEmpty ? widget.courses.first.courseId : null);
     _availableFromDate =
         initial?.availableFrom ?? DateTime.now().add(const Duration(hours: 1));
@@ -367,19 +368,21 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
                     label: l10n.instructorAssignmentVisibility,
                     icon: Icons.visibility_outlined,
                     value: _status,
-                    items: <api.AssignmentStatus>[
-                      api.AssignmentStatus.draft,
-                      api.AssignmentStatus.published,
-                      api.AssignmentStatus.closed,
-                      api.AssignmentStatus.archived,
-                    ]
-                        .map(
-                          (status) => DropdownMenuItem<api.AssignmentStatus>(
-                            value: status,
-                            child: Text(_statusLabel(l10n, status)),
-                          ),
-                        )
-                        .toList(),
+                    items:
+                        <api.AssignmentStatus>[
+                              api.AssignmentStatus.draft,
+                              api.AssignmentStatus.published,
+                              api.AssignmentStatus.closed,
+                              api.AssignmentStatus.archived,
+                            ]
+                            .map(
+                              (status) =>
+                                  DropdownMenuItem<api.AssignmentStatus>(
+                                    value: status,
+                                    child: Text(_statusLabel(l10n, status)),
+                                  ),
+                            )
+                            .toList(),
                     onChanged: (value) {
                       if (value != null) {
                         setState(() => _status = value);
@@ -487,16 +490,16 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
         : DateFormat.yMMMd(
             Localizations.localeOf(context).toLanguageTag(),
           ).add_jm().format(
-              _combineDateAndTime(
-                _dueDate!,
-                _dueTime ?? const TimeOfDay(hour: 23, minute: 59),
-              ),
-            );
+            _combineDateAndTime(
+              _dueDate!,
+              _dueTime ?? const TimeOfDay(hour: 23, minute: 59),
+            ),
+          );
 
     return Container(
       decoration: BoxDecoration(
         gradient: _heroGradient,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: _assignmentColor.withValues(alpha: 0.20),
@@ -532,25 +535,26 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.16),
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Icon(
                         Icons.assignment_turned_in_outlined,
                         color: Colors.white,
-                        size: 24,
+                        size: 21,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -561,18 +565,19 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 24,
+                              fontSize: 22,
                               fontWeight: FontWeight.w800,
                               height: 1.1,
                             ),
                           ),
-                          const SizedBox(height: 4),
                           Text(
                             l10n.instructorAssignmentComposerSubtitle,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.86),
-                              fontSize: 13,
-                              height: 1.4,
+                              fontSize: 12,
+                              height: 1.3,
                             ),
                           ),
                         ],
@@ -580,10 +585,14 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 18),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+                const SizedBox(height: 12),
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 1.95,
                   children: <Widget>[
                     _buildHeroMetric(
                       context,
@@ -614,16 +623,16 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
                   ],
                 ),
                 if (selectedCourse != null) ...<Widget>[
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 10),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
+                      horizontal: 12,
+                      vertical: 10,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.18),
                       ),
@@ -666,18 +675,17 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
     required String value,
   }) {
     return Container(
-      constraints: const BoxConstraints(minWidth: 138, maxWidth: 220),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, size: 18, color: Colors.white),
-          const SizedBox(width: 10),
+          Icon(icon, size: 16, color: Colors.white),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -689,19 +697,20 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.78),
-                    fontSize: 11,
+                    fontSize: 10.5,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 13,
+                    fontSize: 12.5,
                     fontWeight: FontWeight.w700,
+                    height: 1.2,
                   ),
                 ),
               ],
@@ -1006,8 +1015,9 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
       floatingLabelBehavior: label == null
           ? FloatingLabelBehavior.never
           : FloatingLabelBehavior.auto,
-      fillColor:
-          isDark ? _darkSurfaceColor().withValues(alpha: 0.65) : Colors.white,
+      fillColor: isDark
+          ? _darkSurfaceColor().withValues(alpha: 0.65)
+          : Colors.white,
       prefixIcon: Container(
         margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
@@ -1112,8 +1122,9 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
       child: Ink(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
         decoration: BoxDecoration(
-          color:
-              isDark ? _darkCardColor() : Colors.white.withValues(alpha: 0.92),
+          color: isDark
+              ? _darkCardColor()
+              : Colors.white.withValues(alpha: 0.92),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: accentColor.withValues(alpha: 0.20)),
         ),
@@ -1184,9 +1195,7 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
                     : _borderColor(isDark),
               ),
               backgroundColor: isDark ? _darkCardColor() : Colors.white,
-              selectedColor: _primaryColor.withValues(
-                alpha: 0.10,
-              ),
+              selectedColor: _primaryColor.withValues(alpha: 0.10),
               labelStyle: TextStyle(
                 color: isSelected ? _primaryColor : _textSecondaryColor(isDark),
                 fontWeight: FontWeight.w700,
@@ -1208,18 +1217,12 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
       decoration: BoxDecoration(
         color: _primaryColor.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: _primaryColor.withValues(alpha: 0.12),
-        ),
+        border: Border.all(color: _primaryColor.withValues(alpha: 0.12)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(
-            Icons.attach_file_rounded,
-            size: 16,
-            color: _primaryColor,
-          ),
+          Icon(Icons.attach_file_rounded, size: 16, color: _primaryColor),
           const SizedBox(width: 6),
           Text(
             value.toUpperCase(),
@@ -1278,17 +1281,11 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
       children: templates.map((template) {
         return ActionChip(
           onPressed: () => _appendInstructionTemplate(template.value),
-          avatar: Icon(
-            template.icon,
-            size: 16,
-            color: _warningColor,
-          ),
+          avatar: Icon(template.icon, size: 16, color: _warningColor),
           backgroundColor: isDark
               ? _darkCardColor()
               : _warningLightColor.withValues(alpha: 0.35),
-          side: BorderSide(
-            color: _warningColor.withValues(alpha: 0.16),
-          ),
+          side: BorderSide(color: _warningColor.withValues(alpha: 0.16)),
           label: Text(
             template.label,
             style: TextStyle(
@@ -1313,9 +1310,7 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
             ? _darkSurfaceColor().withValues(alpha: 0.55)
             : _warningColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: _warningColor.withValues(alpha: 0.16),
-        ),
+        border: Border.all(color: _warningColor.withValues(alpha: 0.16)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1328,10 +1323,7 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
                   color: _warningColor.withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(
-                  Icons.cloud_upload_outlined,
-                  color: _warningColor,
-                ),
+                child: Icon(Icons.cloud_upload_outlined, color: _warningColor),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -1383,9 +1375,7 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
             ? _darkCardColor().withValues(alpha: 0.92)
             : Colors.white.withValues(alpha: 0.96),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: _primaryColor.withValues(alpha: 0.10),
-        ),
+        border: Border.all(color: _primaryColor.withValues(alpha: 0.10)),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.06),
@@ -1410,10 +1400,7 @@ class AssignmentCreateFormState extends State<AssignmentCreateForm> {
             const SizedBox(height: 4),
             Text(
               _statusHelperText(l10n, _status),
-              style: TextStyle(
-                color: _textSecondaryColor(isDark),
-                height: 1.4,
-              ),
+              style: TextStyle(color: _textSecondaryColor(isDark), height: 1.4),
             ),
             const SizedBox(height: 14),
             SizedBox(

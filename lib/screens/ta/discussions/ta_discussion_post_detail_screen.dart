@@ -147,7 +147,8 @@ class _TADiscussionPostDetailScreenState
           );
         }
 
-        for (final course in coursesResult.data ?? const <TeachingCourseModel>[]) {
+        for (final course
+            in coursesResult.data ?? const <TeachingCourseModel>[]) {
           if (course.courseId == widget.courseId) {
             _course = course;
             break;
@@ -195,7 +196,9 @@ class _TADiscussionPostDetailScreenState
         return;
       }
 
-      final merged = <int, DiscussionReply>{for (final reply in _replies) reply.id: reply};
+      final merged = <int, DiscussionReply>{
+        for (final reply in _replies) reply.id: reply,
+      };
       for (final reply in detail.replies.data) {
         merged[reply.id] = reply;
       }
@@ -381,15 +384,17 @@ class _TADiscussionPostDetailScreenState
       }
 
       setState(() {
-        _replies = _replies.map((item) {
-          if (item.id != reply.id) {
-            return item;
-          }
-          final nextCount = action == 'added'
-              ? item.upvoteCount + 1
-              : (item.upvoteCount > 0 ? item.upvoteCount - 1 : 0);
-          return item.copyWith(upvoteCount: nextCount);
-        }).toList(growable: false);
+        _replies = _replies
+            .map((item) {
+              if (item.id != reply.id) {
+                return item;
+              }
+              final nextCount = action == 'added'
+                  ? item.upvoteCount + 1
+                  : (item.upvoteCount > 0 ? item.upvoteCount - 1 : 0);
+              return item.copyWith(upvoteCount: nextCount);
+            })
+            .toList(growable: false);
       });
 
       _showSnack(
@@ -499,15 +504,15 @@ class _TADiscussionPostDetailScreenState
             child: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return <Widget>[
-                  _buildAppBar(isDark, l10n, thread, innerBoxIsScrolled, viewer),
+                  _buildAppBar(
+                    isDark,
+                    l10n,
+                    thread,
+                    innerBoxIsScrolled,
+                    viewer,
+                  ),
                   SliverToBoxAdapter(
-                    child: _buildThreadHeader(
-                      context,
-                      isDark,
-                      l10n,
-                      r,
-                      thread,
-                    ),
+                    child: _buildThreadHeader(context, isDark, l10n, r, thread),
                   ),
                   SliverToBoxAdapter(
                     child: _buildStatsRow(isDark, l10n, thread),
@@ -683,19 +688,17 @@ class _TADiscussionPostDetailScreenState
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       decoration: BoxDecoration(
         gradient: taDiscussionHeaderGradient(isDark),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: TAColors.primary.withValues(
-              alpha: isDark ? 0.28 : 0.2,
-            ),
+            color: TAColors.primary.withValues(alpha: isDark ? 0.28 : 0.2),
             blurRadius: 24,
             offset: const Offset(0, 12),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         child: Stack(
           children: <Widget>[
             Positioned(
@@ -723,19 +726,19 @@ class _TADiscussionPostDetailScreenState
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(r.isMobile ? 18 : 22),
+              padding: EdgeInsets.all(r.isMobile ? 16 : 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        width: 58,
-                        height: 58,
+                        width: 46,
+                        height: 46,
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.16),
-                          borderRadius: BorderRadius.circular(18),
+                          borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: Colors.white.withValues(alpha: 0.18),
                           ),
@@ -743,10 +746,10 @@ class _TADiscussionPostDetailScreenState
                         child: const Icon(
                           Icons.forum_rounded,
                           color: Colors.white,
-                          size: 28,
+                          size: 22,
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -756,26 +759,29 @@ class _TADiscussionPostDetailScreenState
                                 '${_course!.course.code} • ${_course!.course.name}',
                                 style: TextStyle(
                                   color: Colors.white.withValues(alpha: 0.9),
-                                  fontSize: 12,
+                                  fontSize: 11.5,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                            const SizedBox(height: 4),
                             Text(
                               thread.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: r.isMobile ? 20 : 23,
+                                fontSize: r.isMobile ? 18 : 20,
                                 fontWeight: FontWeight.w800,
-                                height: 1.18,
+                                height: 1.12,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 4),
                             Text(
                               '${taDiscussionDisplayName(context, thread.createdByName)} • ${taDiscussionFormatDate(context, thread.createdAt)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.84),
-                                fontSize: 12,
+                                fontSize: 11.5,
                               ),
                             ),
                           ],
@@ -783,7 +789,7 @@ class _TADiscussionPostDetailScreenState
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -808,11 +814,11 @@ class _TADiscussionPostDetailScreenState
                         ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 12),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
-                      const spacing = 10.0;
+                      final crossAxisCount = constraints.maxWidth < 360 ? 2 : 4;
+                      const spacing = 8.0;
                       final itemWidth =
                           (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
@@ -1108,8 +1114,9 @@ class _TADiscussionPostDetailScreenState
                         );
                       }
 
-                      final adjustedIndex =
-                          pinnedAnswer == null ? index : index - 1;
+                      final adjustedIndex = pinnedAnswer == null
+                          ? index
+                          : index - 1;
 
                       if (adjustedIndex >= roots.length) {
                         return const Padding(
@@ -1169,7 +1176,9 @@ class _TADiscussionPostDetailScreenState
       ),
       (
         label: l10n.status,
-        value: thread.isLocked ? l10n.instructorDiscussionLockedLabel : l10n.open,
+        value: thread.isLocked
+            ? l10n.instructorDiscussionLockedLabel
+            : l10n.open,
       ),
     ];
 
@@ -1195,9 +1204,7 @@ class _TADiscussionPostDetailScreenState
                             child: Text(
                               item.label,
                               style: TextStyle(
-                                color: TAColors.textSecondaryColor(
-                                  isDark,
-                                ),
+                                color: TAColors.textSecondaryColor(isDark),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -1284,9 +1291,7 @@ class _TADiscussionPostDetailScreenState
             ? TAColors.surfaceColor(isDark).withValues(alpha: 0.78)
             : const Color(0xFFF8FBFF),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: TAColors.success.withValues(alpha: 0.28),
-        ),
+        border: Border.all(color: TAColors.success.withValues(alpha: 0.28)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1329,17 +1334,20 @@ class _TADiscussionPostDetailScreenState
           .add(reply);
     }
 
-    final roots = (childrenByParent[null] ?? const <DiscussionReply>[])
-        .toList(growable: false)
-      ..sort(_replyComparator);
+    final roots = (childrenByParent[null] ?? const <DiscussionReply>[]).toList(
+      growable: false,
+    )..sort(_replyComparator);
 
     List<_ReplyNode> buildNodes(List<DiscussionReply> replies) {
-      return replies.map((reply) {
-        final children = (childrenByParent[reply.id] ?? const <DiscussionReply>[])
-            .toList(growable: false);
-        children.sort(_replyComparator);
-        return _ReplyNode(reply: reply, children: buildNodes(children));
-      }).toList(growable: false);
+      return replies
+          .map((reply) {
+            final children =
+                (childrenByParent[reply.id] ?? const <DiscussionReply>[])
+                    .toList(growable: false);
+            children.sort(_replyComparator);
+            return _ReplyNode(reply: reply, children: buildNodes(children));
+          })
+          .toList(growable: false);
     }
 
     return buildNodes(roots);
@@ -1351,8 +1359,9 @@ class _TADiscussionPostDetailScreenState
       return answerCompare;
     }
 
-    final endorsementCompare =
-        (b.isEndorsed ? 1 : 0).compareTo(a.isEndorsed ? 1 : 0);
+    final endorsementCompare = (b.isEndorsed ? 1 : 0).compareTo(
+      a.isEndorsed ? 1 : 0,
+    );
     if (endorsementCompare != 0) {
       return endorsementCompare;
     }
@@ -1404,9 +1413,7 @@ class _TADiscussionPostDetailScreenState
               children: <Widget>[
                 CircleAvatar(
                   radius: 18,
-                  backgroundColor: TAColors.primary.withValues(
-                    alpha: 0.12,
-                  ),
+                  backgroundColor: TAColors.primary.withValues(alpha: 0.12),
                   child: Text(
                     taDiscussionInitials(reply.userName),
                     style: const TextStyle(
@@ -1422,10 +1429,7 @@ class _TADiscussionPostDetailScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        taDiscussionDisplayName(
-                          context,
-                          reply.userName,
-                        ),
+                        taDiscussionDisplayName(context, reply.userName),
                         style: TextStyle(
                           color: TAColors.textPrimaryColor(isDark),
                           fontSize: 13,
@@ -1629,9 +1633,7 @@ class _TADiscussionPostDetailScreenState
                         : l10n.instructorDiscussionReplyHint,
                     filled: true,
                     fillColor: isDark
-                        ? TAColors.surfaceColor(isDark).withValues(
-                            alpha: 0.78,
-                          )
+                        ? TAColors.surfaceColor(isDark).withValues(alpha: 0.78)
                         : const Color(0xFFF8FBFF),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 14,
@@ -1640,17 +1642,17 @@ class _TADiscussionPostDetailScreenState
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide(
-                        color: TAColors.borderColor(isDark).withValues(
-                          alpha: 0.8,
-                        ),
+                        color: TAColors.borderColor(
+                          isDark,
+                        ).withValues(alpha: 0.8),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide(
-                        color: TAColors.borderColor(isDark).withValues(
-                          alpha: 0.8,
-                        ),
+                        color: TAColors.borderColor(
+                          isDark,
+                        ).withValues(alpha: 0.8),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -1732,8 +1734,3 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
         oldDelegate.backgroundColor != backgroundColor;
   }
 }
-
-
-
-
-

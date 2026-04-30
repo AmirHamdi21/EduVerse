@@ -27323,6 +27323,108 @@ abstract class AppLocalizations {
   /// **'{name} is typing...'**
   String chatTypingSingle(Object name);
 
+  /// No description provided for @instructorCalendarHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep classes, office hours, campus events, and personal plans aligned in one polished schedule.'**
+  String get instructorCalendarHeroSubtitle;
+
+  /// No description provided for @calendarRangeEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Visible events'**
+  String get calendarRangeEvents;
+
+  /// No description provided for @calendarFocusDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus day'**
+  String get calendarFocusDay;
+
+  /// No description provided for @calendarCampusEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus events'**
+  String get calendarCampusEvents;
+
+  /// No description provided for @calendarEventTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'Event types'**
+  String get calendarEventTypes;
+
+  /// No description provided for @calendarCampusSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Campus source'**
+  String get calendarCampusSource;
+
+  /// No description provided for @calendarManageFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage filters'**
+  String get calendarManageFilters;
+
+  /// No description provided for @calendarAllEventTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All event types'**
+  String get calendarAllEventTypes;
+
+  /// No description provided for @calendarAllCampusEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'All campus events'**
+  String get calendarAllCampusEvents;
+
+  /// No description provided for @calendarMyCampusEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'My campus events'**
+  String get calendarMyCampusEvents;
+
+  /// No description provided for @calendarDayAgenda.
+  ///
+  /// In en, this message translates to:
+  /// **'Day agenda'**
+  String get calendarDayAgenda;
+
+  /// No description provided for @calendarNothingPlanned.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing planned yet'**
+  String get calendarNothingPlanned;
+
+  /// No description provided for @calendarSelectedDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected day'**
+  String get calendarSelectedDay;
+
+  /// No description provided for @calendarNoSelectedDayEvents.
+  ///
+  /// In en, this message translates to:
+  /// **'No scheduled items for this date'**
+  String get calendarNoSelectedDayEvents;
+
+  /// No description provided for @calendarDeadlineLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Deadlines'**
+  String get calendarDeadlineLabel;
+
+  /// No description provided for @calendarGradingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading'**
+  String get calendarGradingLabel;
+
+  /// No description provided for @calendarAllDay.
+  ///
+  /// In en, this message translates to:
+  /// **'All day'**
+  String get calendarAllDay;
+
   /// No description provided for @chatVideoCallTooltip.
   ///
   /// In en, this message translates to:

@@ -14141,6 +14141,58 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get instructorCalendarHeroSubtitle =>
+      'Keep classes, office hours, campus events, and personal plans aligned in one polished schedule.';
+
+  @override
+  String get calendarRangeEvents => 'Visible events';
+
+  @override
+  String get calendarFocusDay => 'Focus day';
+
+  @override
+  String get calendarCampusEvents => 'Campus events';
+
+  @override
+  String get calendarEventTypes => 'Event types';
+
+  @override
+  String get calendarCampusSource => 'Campus source';
+
+  @override
+  String get calendarManageFilters => 'Manage filters';
+
+  @override
+  String get calendarAllEventTypes => 'All event types';
+
+  @override
+  String get calendarAllCampusEvents => 'All campus events';
+
+  @override
+  String get calendarMyCampusEvents => 'My campus events';
+
+  @override
+  String get calendarDayAgenda => 'Day agenda';
+
+  @override
+  String get calendarNothingPlanned => 'Nothing planned yet';
+
+  @override
+  String get calendarSelectedDay => 'Selected day';
+
+  @override
+  String get calendarNoSelectedDayEvents => 'No scheduled items for this date';
+
+  @override
+  String get calendarDeadlineLabel => 'Deadlines';
+
+  @override
+  String get calendarGradingLabel => 'Grading';
+
+  @override
+  String get calendarAllDay => 'All day';
+
+  @override
   String get chatVideoCallTooltip => 'Video call';
 
   @override

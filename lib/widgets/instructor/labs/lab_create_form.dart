@@ -382,7 +382,7 @@ class _LabCreateFormState extends State<LabCreateForm> {
     return Container(
       decoration: BoxDecoration(
         gradient: _headerGradient,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: _primary.withValues(alpha: 0.22),
@@ -418,25 +418,26 @@ class _LabCreateFormState extends State<LabCreateForm> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.16),
-                        borderRadius: BorderRadius.circular(18),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Icon(
                         Icons.science_outlined,
                         color: Colors.white,
-                        size: 24,
+                        size: 21,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -447,20 +448,21 @@ class _LabCreateFormState extends State<LabCreateForm> {
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 24,
+                              fontSize: 22,
                               fontWeight: FontWeight.w800,
                               height: 1.1,
                             ),
                           ),
-                          const SizedBox(height: 4),
                           Text(
                             _isTA
                                 ? l10n.taLabEditorHeroSubtitle
                                 : l10n.instructorLabEditorHeroSubtitle,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.86),
-                              fontSize: 13,
-                              height: 1.4,
+                              fontSize: 12,
+                              height: 1.3,
                             ),
                           ),
                         ],
@@ -468,10 +470,14 @@ class _LabCreateFormState extends State<LabCreateForm> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 18),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
+                const SizedBox(height: 12),
+                GridView.count(
+                  crossAxisCount: 2,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 1.95,
                   children: <Widget>[
                     _buildHeroMetric(
                       label: l10n.course,
@@ -500,16 +506,16 @@ class _LabCreateFormState extends State<LabCreateForm> {
                   ],
                 ),
                 if (selectedCourse != null) ...<Widget>[
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 10),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 12,
+                      horizontal: 12,
+                      vertical: 10,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.18),
                       ),
@@ -551,18 +557,17 @@ class _LabCreateFormState extends State<LabCreateForm> {
     required IconData icon,
   }) {
     return Container(
-      constraints: const BoxConstraints(minWidth: 138, maxWidth: 220),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Icon(icon, size: 18, color: Colors.white),
-          const SizedBox(width: 10),
+          Icon(icon, size: 16, color: Colors.white),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -574,19 +579,20 @@ class _LabCreateFormState extends State<LabCreateForm> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.78),
-                    fontSize: 11,
+                    fontSize: 10.5,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  maxLines: 1,
+                  maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 13,
+                    fontSize: 12.5,
                     fontWeight: FontWeight.w700,
+                    height: 1.2,
                   ),
                 ),
               ],

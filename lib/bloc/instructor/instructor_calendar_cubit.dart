@@ -143,10 +143,22 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
   }
 
   void selectDate(DateTime date) {
+    final normalized = DateTime(date.year, date.month, date.day);
+    final focusedMonth = DateTime(normalized.year, normalized.month);
+    final needsReload = _shouldReloadForSelectedDate(normalized);
+
     emit(
-      state.copyWith(selectedDate: date, clearError: true, clearSuccess: true),
+      state.copyWith(
+        selectedDate: normalized,
+        focusedMonth: focusedMonth,
+        clearError: true,
+        clearSuccess: true,
+      ),
     );
-    loadSchedule();
+
+    if (needsReload) {
+      loadSchedule();
+    }
   }
 
   void nextMonth() {
@@ -698,6 +710,22 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
         emit(state.copyWith(clearSuccess: true));
       }
     });
+  }
+
+  bool _shouldReloadForSelectedDate(DateTime date) {
+    switch (state.viewType) {
+      case CalendarViewType.month:
+        return date.year != state.focusedMonth.year ||
+            date.month != state.focusedMonth.month;
+      case CalendarViewType.week:
+        return !_isSameDay(startOfWeek(date), startOfWeek(state.selectedDate));
+      case CalendarViewType.day:
+        return !_isSameDay(date, state.selectedDate);
+    }
+  }
+
+  bool _isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }
 

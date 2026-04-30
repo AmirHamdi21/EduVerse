@@ -63,17 +63,20 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
       return;
     }
 
-    final hasSelected = _selectedCourseId != null &&
+    final hasSelected =
+        _selectedCourseId != null &&
         courses.any((course) => course.courseId == _selectedCourseId);
-    final nextCourseId =
-        hasSelected ? _selectedCourseId : courses.first.courseId;
+    final nextCourseId = hasSelected
+        ? _selectedCourseId
+        : courses.first.courseId;
 
     if (nextCourseId == null) {
       return;
     }
 
     final assignmentsState = state.assignmentsData;
-    final shouldFetch = _selectedCourseId != nextCourseId ||
+    final shouldFetch =
+        _selectedCourseId != nextCourseId ||
         assignmentsState is TASubTabInitial<List<AssignmentModel>>;
 
     if (_selectedCourseId != nextCourseId) {
@@ -147,8 +150,10 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
       surfaceTintColor: Colors.transparent,
       leading: IconButton(
         onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-        icon:
-            Icon(Icons.menu_rounded, color: TAColors.textPrimaryColor(isDark)),
+        icon: Icon(
+          Icons.menu_rounded,
+          color: TAColors.textPrimaryColor(isDark),
+        ),
       ),
       title: Text(
         l10n.assignments,
@@ -181,8 +186,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     final assignmentsState = state.assignmentsData;
     final assignments =
         assignmentsState is TASubTabLoaded<List<AssignmentModel>>
-            ? assignmentsState.data
-            : const <AssignmentModel>[];
+        ? assignmentsState.data
+        : const <AssignmentModel>[];
     final filteredAssignments = _applyStatusFilter(assignments);
     final grouped = <int, List<AssignmentModel>>{};
     for (final assignment in filteredAssignments) {
@@ -197,9 +202,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
         courses.isEmpty) {
       return SliverMainAxisGroup(
         slivers: <Widget>[
-          SliverToBoxAdapter(
-            child: _buildLoadingHeader(isDark, l10n),
-          ),
+          SliverToBoxAdapter(child: _buildLoadingHeader(isDark, l10n)),
           _buildLoadingSkeleton(isDark),
         ],
       );
@@ -217,7 +220,12 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
           ),
           SliverToBoxAdapter(
             child: _buildFilterMenus(
-                isDark, l10n, r, courses, filteredAssignments.length),
+              isDark,
+              l10n,
+              r,
+              courses,
+              filteredAssignments.length,
+            ),
           ),
           SliverFillRemaining(
             child: _buildErrorState(isDark, l10n, assignmentsState.message),
@@ -230,9 +238,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
         assignments.isEmpty) {
       return SliverMainAxisGroup(
         slivers: <Widget>[
-          SliverToBoxAdapter(
-            child: _buildLoadingHeader(isDark, l10n),
-          ),
+          SliverToBoxAdapter(child: _buildLoadingHeader(isDark, l10n)),
           _buildLoadingSkeleton(isDark),
         ],
       );
@@ -245,7 +251,12 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
         ),
         SliverToBoxAdapter(
           child: _buildFilterMenus(
-              isDark, l10n, r, courses, filteredAssignments.length),
+            isDark,
+            l10n,
+            r,
+            courses,
+            filteredAssignments.length,
+          ),
         ),
         if (courseIds.isEmpty)
           SliverFillRemaining(
@@ -280,7 +291,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
   Widget _buildLoadingHeader(bool isDark, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         gradient: isDark
             ? TAColors.darkHeaderGradient
@@ -302,16 +313,18 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
             l10n.taAssignmentsHeaderTitle,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 22,
+              fontSize: 20,
               fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 6),
           Text(
             l10n.taAssignmentsHeaderSubtitle,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.84),
-              fontSize: 13,
+              fontSize: 12,
+              height: 1.3,
             ),
           ),
         ],
@@ -399,7 +412,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: TAColors.primary.withValues(alpha: isDark ? 0.28 : 0.24),
@@ -409,7 +422,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         child: Stack(
           children: <Widget>[
             Positioned(
@@ -437,18 +450,18 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(r.isMobile ? 18 : 22),
+              padding: EdgeInsets.all(r.isMobile ? 16 : 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.16),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: Colors.white.withValues(alpha: 0.18),
                           ),
@@ -456,10 +469,10 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                         child: const Icon(
                           Icons.assignment_rounded,
                           color: Colors.white,
-                          size: 24,
+                          size: 21,
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -468,17 +481,18 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                               l10n.taAssignmentsHeaderTitle,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: r.isMobile ? 19 : 22,
+                                fontSize: r.isMobile ? 18 : 20,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
-                            const SizedBox(height: 4),
                             Text(
                               subtitle,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.84),
-                                fontSize: r.isMobile ? 12 : 13,
-                                height: 1.45,
+                                fontSize: r.isMobile ? 11.5 : 12,
+                                height: 1.28,
                               ),
                             ),
                           ],
@@ -486,29 +500,32 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 12),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
-                      const spacing = 10.0;
-                      final itemWidth = (constraints.maxWidth -
+                      final crossAxisCount = constraints.maxWidth < 360 ? 2 : 3;
+                      const spacing = 8.0;
+                      final itemWidth =
+                          (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
                           crossAxisCount;
 
                       return Wrap(
                         spacing: spacing,
                         runSpacing: spacing,
-                        children: stats.map((stat) {
-                          return SizedBox(
-                            width: itemWidth,
-                            child: _buildHeaderStatCard(
-                              icon: stat.icon,
-                              label: stat.label,
-                              value: stat.value,
-                              color: stat.color,
-                            ),
-                          );
-                        }).toList(growable: false),
+                        children: stats
+                            .map((stat) {
+                              return SizedBox(
+                                width: itemWidth,
+                                child: _buildHeaderStatCard(
+                                  icon: stat.icon,
+                                  label: stat.label,
+                                  value: stat.value,
+                                  color: stat.color,
+                                ),
+                              );
+                            })
+                            .toList(growable: false),
                       );
                     },
                   ),
@@ -528,34 +545,35 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Icon(icon, size: 18, color: color),
-          const SizedBox(height: 10),
+          Icon(icon, size: 16, color: color),
+          const SizedBox(height: 6),
           Text(
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.82),
-              fontSize: 11,
+              fontSize: 10.5,
               fontWeight: FontWeight.w600,
+              height: 1.15,
             ),
           ),
         ],
@@ -635,24 +653,26 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                     value: _selectedCourseId ?? 0,
                     icon: Icons.menu_book_rounded,
                     menuMaxHeight: r.screenHeight * 0.45,
-                    items: courses.map((course) {
-                      return DropdownMenuItem<int>(
-                        value: course.courseId,
-                        child: Text(
-                          '${course.course.code} • ${course.course.name}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(growable: false),
+                    items: courses
+                        .map((course) {
+                          return DropdownMenuItem<int>(
+                            value: course.courseId,
+                            child: Text(
+                              '${course.course.code} • ${course.course.name}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        })
+                        .toList(growable: false),
                     onChanged: (value) {
                       if (value == null) {
                         return;
                       }
                       setState(() => _selectedCourseId = value);
-                      context
-                          .read<TACoursesCubit>()
-                          .fetchCourseAssignments(value);
+                      context.read<TACoursesCubit>().fetchCourseAssignments(
+                        value,
+                      );
                     },
                   ),
                 ),
@@ -661,8 +681,10 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                   child: _buildModernDropdown<_TAAssignmentStateFilter>(
                     isDark: isDark,
                     label: l10n.status,
-                    selectedLabel:
-                        _statusFilterLabel(l10n, _selectedStatusFilter),
+                    selectedLabel: _statusFilterLabel(
+                      l10n,
+                      _selectedStatusFilter,
+                    ),
                     value: _selectedStatusFilter,
                     icon: Icons.tune_rounded,
                     menuMaxHeight: r.screenHeight * 0.45,
@@ -752,29 +774,33 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
         ),
       ),
       dropdownColor: TAColors.cardColor(isDark),
-      icon: const Icon(Icons.keyboard_arrow_down_rounded,
-          color: TAColors.primary),
+      icon: const Icon(
+        Icons.keyboard_arrow_down_rounded,
+        color: TAColors.primary,
+      ),
       style: TextStyle(
         color: TAColors.textPrimaryColor(isDark),
         fontSize: 13,
         fontWeight: FontWeight.w600,
       ),
       selectedItemBuilder: (context) {
-        return items.map((_) {
-          return Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              selectedLabel,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: TAColors.textPrimaryColor(isDark),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          );
-        }).toList(growable: false);
+        return items
+            .map((_) {
+              return Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  selectedLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: TAColors.textPrimaryColor(isDark),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            })
+            .toList(growable: false);
       },
       items: items,
       onChanged: onChanged,
@@ -788,8 +814,9 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     int courseId,
     List<AssignmentModel> assignments,
   ) {
-    final course =
-        courses.where((item) => item.courseId == courseId).firstOrNull;
+    final course = courses
+        .where((item) => item.courseId == courseId)
+        .firstOrNull;
     final courseCode = course?.course.code ?? assignments.first.courseCode;
     final courseName = course?.course.name ?? assignments.first.courseName;
 
@@ -823,8 +850,9 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(22)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(22),
+              ),
             ),
             child: Row(
               children: <Widget>[
@@ -891,7 +919,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
             ),
           ),
           ...assignments.map(
-              (assignment) => _buildAssignmentTile(isDark, l10n, assignment)),
+            (assignment) => _buildAssignmentTile(isDark, l10n, assignment),
+          ),
         ],
       ),
     );
@@ -922,8 +951,9 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: _assignmentTypeColor(assignment.type)
-                    .withValues(alpha: 0.12),
+                color: _assignmentTypeColor(
+                  assignment.type,
+                ).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
@@ -964,7 +994,9 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                         isDark,
                         icon: Icons.upload_file_rounded,
                         label: _submissionTypeLabel(
-                            l10n, assignment.submissionType),
+                          l10n,
+                          assignment.submissionType,
+                        ),
                       ),
                     ],
                   ),
@@ -1131,11 +1163,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     );
   }
 
-  Widget _buildErrorState(
-    bool isDark,
-    AppLocalizations l10n,
-    String message,
-  ) {
+  Widget _buildErrorState(bool isDark, AppLocalizations l10n, String message) {
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Center(
@@ -1154,9 +1182,9 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
               onPressed: () {
                 final courseId = _selectedCourseId;
                 if (courseId != null) {
-                  context
-                      .read<TACoursesCubit>()
-                      .fetchCourseAssignments(courseId);
+                  context.read<TACoursesCubit>().fetchCourseAssignments(
+                    courseId,
+                  );
                 }
               },
               icon: const Icon(Icons.refresh_rounded),
@@ -1177,20 +1205,22 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
   }
 
   List<AssignmentModel> _applyStatusFilter(List<AssignmentModel> assignments) {
-    return assignments.where((assignment) {
-      switch (_selectedStatusFilter) {
-        case _TAAssignmentStateFilter.all:
-          return true;
-        case _TAAssignmentStateFilter.draft:
-          return assignment.apiStatus == api.AssignmentStatus.draft;
-        case _TAAssignmentStateFilter.published:
-          return assignment.apiStatus == api.AssignmentStatus.published;
-        case _TAAssignmentStateFilter.closed:
-          return assignment.apiStatus == api.AssignmentStatus.closed;
-        case _TAAssignmentStateFilter.archived:
-          return assignment.apiStatus == api.AssignmentStatus.archived;
-      }
-    }).toList(growable: false);
+    return assignments
+        .where((assignment) {
+          switch (_selectedStatusFilter) {
+            case _TAAssignmentStateFilter.all:
+              return true;
+            case _TAAssignmentStateFilter.draft:
+              return assignment.apiStatus == api.AssignmentStatus.draft;
+            case _TAAssignmentStateFilter.published:
+              return assignment.apiStatus == api.AssignmentStatus.published;
+            case _TAAssignmentStateFilter.closed:
+              return assignment.apiStatus == api.AssignmentStatus.closed;
+            case _TAAssignmentStateFilter.archived:
+              return assignment.apiStatus == api.AssignmentStatus.archived;
+          }
+        })
+        .toList(growable: false);
   }
 
   Future<void> _openAssignmentEditor(
@@ -1351,15 +1381,13 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     }
 
     ScaffoldMessenger.of(this.context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-      ),
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
     );
   }
 
   static List<api.AssignmentStatus> _nextStatuses(
-      api.AssignmentStatus current) {
+    api.AssignmentStatus current,
+  ) {
     switch (current) {
       case api.AssignmentStatus.draft:
         return const <api.AssignmentStatus>[api.AssignmentStatus.published];

@@ -142,18 +142,20 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         List<TeachingCourseModel> assignedCourses = [];
         if (coursesState.coursesStatus
             is TASubTabLoaded<List<TeachingCourseModel>>) {
-          assignedCourses = (coursesState.coursesStatus
-                  as TASubTabLoaded<List<TeachingCourseModel>>)
-              .data;
+          assignedCourses =
+              (coursesState.coursesStatus
+                      as TASubTabLoaded<List<TeachingCourseModel>>)
+                  .data;
         }
-        final assignedCourseIds =
-            assignedCourses.map((c) => c.courseId).toSet();
+        final assignedCourseIds = assignedCourses
+            .map((c) => c.courseId)
+            .toSet();
         final allAssignedLabs = _filterLabsToAssignedCourses(
           labs: state is TALabsLoaded
               ? state.labs
               : state is TALabsLoadingWithCache
-                  ? state.cachedLabs
-                  : cachedLabs,
+              ? state.cachedLabs
+              : cachedLabs,
           assignedCourseIds: assignedCourseIds,
         );
         final visibleLabs = _applyFilters(allAssignedLabs);
@@ -296,10 +298,12 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     required List<LabModel> labs,
     required Set<int> assignedCourseIds,
   }) {
-    return labs.where((lab) {
-      return assignedCourseIds.isEmpty ||
-          assignedCourseIds.contains(lab.courseId);
-    }).toList(growable: false);
+    return labs
+        .where((lab) {
+          return assignedCourseIds.isEmpty ||
+              assignedCourseIds.contains(lab.courseId);
+        })
+        .toList(growable: false);
   }
 
   Widget _buildSummaryHeader(
@@ -313,8 +317,9 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         ? assignedCourseIds.length
         : labs.map((lab) => lab.courseId).toSet().length;
     final activeCount = labs.where(_isActiveLab).length;
-    final draftCount =
-        labs.where((lab) => lab.status == api.LabStatus.draft).length;
+    final draftCount = labs
+        .where((lab) => lab.status == api.LabStatus.draft)
+        .length;
     final closedCount = labs
         .where(
           (lab) =>
@@ -358,9 +363,10 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       decoration: BoxDecoration(
-        gradient:
-            isDark ? TAColors.darkHeaderGradient : TAColors.headerGradient,
-        borderRadius: BorderRadius.circular(24),
+        gradient: isDark
+            ? TAColors.darkHeaderGradient
+            : TAColors.headerGradient,
+        borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
             color: TAColors.primary.withValues(alpha: isDark ? 0.28 : 0.24),
@@ -370,7 +376,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         child: Stack(
           children: [
             Positioned(
@@ -398,18 +404,18 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(r.isMobile ? 18 : 22),
+              padding: EdgeInsets.all(r.isMobile ? 16 : 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.16),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: Colors.white.withValues(alpha: 0.18),
                           ),
@@ -417,10 +423,10 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                         child: const Icon(
                           Icons.analytics_rounded,
                           color: Colors.white,
-                          size: 24,
+                          size: 21,
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -429,17 +435,18 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                               l10n.taLabsHeaderTitle,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: r.isMobile ? 19 : 22,
+                                fontSize: r.isMobile ? 18 : 20,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
-                            const SizedBox(height: 4),
                             Text(
                               l10n.taLabsHeaderSubtitle,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.84),
-                                fontSize: r.isMobile ? 12 : 13,
-                                height: 1.45,
+                                fontSize: r.isMobile ? 11.5 : 12,
+                                height: 1.28,
                               ),
                             ),
                           ],
@@ -447,29 +454,32 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 12),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
-                      final spacing = 10.0;
-                      final itemWidth = (constraints.maxWidth -
+                      final crossAxisCount = constraints.maxWidth < 360 ? 2 : 3;
+                      final spacing = 8.0;
+                      final itemWidth =
+                          (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
                           crossAxisCount;
 
                       return Wrap(
                         spacing: spacing,
                         runSpacing: spacing,
-                        children: stats.map((stat) {
-                          return SizedBox(
-                            width: itemWidth,
-                            child: _buildHeaderStatCard(
-                              icon: stat.icon,
-                              label: stat.label,
-                              value: stat.value,
-                              color: stat.color,
-                            ),
-                          );
-                        }).toList(growable: false),
+                        children: stats
+                            .map((stat) {
+                              return SizedBox(
+                                width: itemWidth,
+                                child: _buildHeaderStatCard(
+                                  icon: stat.icon,
+                                  label: stat.label,
+                                  value: stat.value,
+                                  color: stat.color,
+                                ),
+                              );
+                            })
+                            .toList(growable: false),
                       );
                     },
                   ),
@@ -489,34 +499,35 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: color),
-          const SizedBox(height: 10),
+          Icon(icon, size: 16, color: color),
+          const SizedBox(height: 6),
           Text(
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.82),
-              fontSize: 11,
+              fontSize: 10.5,
               fontWeight: FontWeight.w600,
+              height: 1.15,
             ),
           ),
         ],
@@ -749,21 +760,23 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         fontWeight: FontWeight.w600,
       ),
       selectedItemBuilder: (context) {
-        return items.map((_) {
-          return Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              selectedLabel,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: TAColors.textPrimaryColor(isDark),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          );
-        }).toList(growable: false);
+        return items
+            .map((_) {
+              return Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  selectedLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: TAColors.textPrimaryColor(isDark),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            })
+            .toList(growable: false);
       },
       items: items,
       onChanged: onChanged,
@@ -787,7 +800,8 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
       grouped.putIfAbsent(lab.courseId, () => []).add(lab);
     }
 
-    final bool showAllAssignedCourses = _selectedCourseId == null &&
+    final bool showAllAssignedCourses =
+        _selectedCourseId == null &&
         _selectedStateFilter == _TALabStateFilter.all;
     final courseIds = _resolveVisibleCourseIds(
       grouped: grouped,
@@ -946,19 +960,21 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   }
 
   List<LabModel> _applyFilters(List<LabModel> labs) {
-    return labs.where((lab) {
-      final courseMatches =
-          _selectedCourseId == null || lab.courseId == _selectedCourseId;
-      final stateMatches = switch (_selectedStateFilter) {
-        _TALabStateFilter.all => true,
-        _TALabStateFilter.active => _isActiveLab(lab),
-        _TALabStateFilter.draft => lab.status == api.LabStatus.draft,
-        _TALabStateFilter.closed => lab.status == api.LabStatus.closed,
-        _TALabStateFilter.archived => lab.status == api.LabStatus.archived,
-      };
+    return labs
+        .where((lab) {
+          final courseMatches =
+              _selectedCourseId == null || lab.courseId == _selectedCourseId;
+          final stateMatches = switch (_selectedStateFilter) {
+            _TALabStateFilter.all => true,
+            _TALabStateFilter.active => _isActiveLab(lab),
+            _TALabStateFilter.draft => lab.status == api.LabStatus.draft,
+            _TALabStateFilter.closed => lab.status == api.LabStatus.closed,
+            _TALabStateFilter.archived => lab.status == api.LabStatus.archived,
+          };
 
-      return courseMatches && stateMatches;
-    }).toList(growable: false);
+          return courseMatches && stateMatches;
+        })
+        .toList(growable: false);
   }
 
   bool _isActiveLab(LabModel lab) {
@@ -1066,8 +1082,8 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     final fallbackCourseName = '${l10n.course} #$courseId';
     final courseName = labs.isNotEmpty
         ? (labs.first.course?.name ??
-            courseModel?.course.courseName ??
-            fallbackCourseName)
+              courseModel?.course.courseName ??
+              fallbackCourseName)
         : (courseModel?.course.courseName ?? fallbackCourseName);
     final courseCode = labs.isNotEmpty
         ? (labs.first.course?.code ?? courseModel?.course.courseCode ?? '')
@@ -1487,8 +1503,9 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   }
 
   String _courseInitials(String courseCode, String courseName) {
-    final codeLetters =
-        courseCode.replaceAll(RegExp(r'[^A-Za-z]'), '').toUpperCase();
+    final codeLetters = courseCode
+        .replaceAll(RegExp(r'[^A-Za-z]'), '')
+        .toUpperCase();
     if (codeLetters.isNotEmpty) {
       return codeLetters.length <= 3
           ? codeLetters
@@ -1513,10 +1530,10 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     final coursesState = context.read<TACoursesCubit>().state;
     final courses =
         coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>
-            ? (coursesState.coursesStatus
-                    as TASubTabLoaded<List<TeachingCourseModel>>)
-                .data
-            : <TeachingCourseModel>[];
+        ? (coursesState.coursesStatus
+                  as TASubTabLoaded<List<TeachingCourseModel>>)
+              .data
+        : <TeachingCourseModel>[];
 
     if (courses.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1556,10 +1573,10 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     final coursesState = context.read<TACoursesCubit>().state;
     final courses =
         coursesState.coursesStatus is TASubTabLoaded<List<TeachingCourseModel>>
-            ? (coursesState.coursesStatus
-                    as TASubTabLoaded<List<TeachingCourseModel>>)
-                .data
-            : <TeachingCourseModel>[];
+        ? (coursesState.coursesStatus
+                  as TASubTabLoaded<List<TeachingCourseModel>>)
+              .data
+        : <TeachingCourseModel>[];
 
     if (courses.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1630,9 +1647,9 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
 
   Future<void> _updateLabStatus(LabModel lab, api.LabStatus status) async {
     final message = await context.read<TALabsCubit>().updateLabStatus(
-          lab.id.isNotEmpty ? (int.tryParse(lab.id) ?? lab.id) : lab.labId,
-          status,
-        );
+      lab.id.isNotEmpty ? (int.tryParse(lab.id) ?? lab.id) : lab.labId,
+      status,
+    );
 
     if (!mounted) {
       return;

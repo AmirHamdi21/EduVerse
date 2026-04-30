@@ -14090,6 +14090,58 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String get instructorCalendarHeroSubtitle =>
+      'نسّق المحاضرات والساعات المكتبية وفعاليات الحرم وخططك الشخصية في جدول واحد أنيق.';
+
+  @override
+  String get calendarRangeEvents => 'الأحداث الظاهرة';
+
+  @override
+  String get calendarFocusDay => 'يوم التركيز';
+
+  @override
+  String get calendarCampusEvents => 'فعاليات الحرم';
+
+  @override
+  String get calendarEventTypes => 'أنواع الأحداث';
+
+  @override
+  String get calendarCampusSource => 'مصدر فعاليات الحرم';
+
+  @override
+  String get calendarManageFilters => 'إدارة الفلاتر';
+
+  @override
+  String get calendarAllEventTypes => 'كل أنواع الأحداث';
+
+  @override
+  String get calendarAllCampusEvents => 'كل فعاليات الحرم';
+
+  @override
+  String get calendarMyCampusEvents => 'فعالياتي في الحرم';
+
+  @override
+  String get calendarDayAgenda => 'أجندة اليوم';
+
+  @override
+  String get calendarNothingPlanned => 'لا يوجد شيء مخطط بعد';
+
+  @override
+  String get calendarSelectedDay => 'اليوم المحدد';
+
+  @override
+  String get calendarNoSelectedDayEvents => 'لا توجد عناصر مجدولة لهذا التاريخ';
+
+  @override
+  String get calendarDeadlineLabel => 'المواعيد النهائية';
+
+  @override
+  String get calendarGradingLabel => 'التصحيح';
+
+  @override
+  String get calendarAllDay => 'طوال اليوم';
+
+  @override
   String get chatVideoCallTooltip => 'مكالمة فيديو';
 
   @override

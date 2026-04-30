@@ -5557,6 +5557,23 @@
       "name": {}
     }
   },
+  "instructorCalendarHeroSubtitle": "نسّق المحاضرات والساعات المكتبية وفعاليات الحرم وخططك الشخصية في جدول واحد أنيق.",
+  "calendarRangeEvents": "الأحداث الظاهرة",
+  "calendarFocusDay": "يوم التركيز",
+  "calendarCampusEvents": "فعاليات الحرم",
+  "calendarEventTypes": "أنواع الأحداث",
+  "calendarCampusSource": "مصدر فعاليات الحرم",
+  "calendarManageFilters": "إدارة الفلاتر",
+  "calendarAllEventTypes": "كل أنواع الأحداث",
+  "calendarAllCampusEvents": "كل فعاليات الحرم",
+  "calendarMyCampusEvents": "فعالياتي في الحرم",
+  "calendarDayAgenda": "أجندة اليوم",
+  "calendarNothingPlanned": "لا يوجد شيء مخطط بعد",
+  "calendarSelectedDay": "اليوم المحدد",
+  "calendarNoSelectedDayEvents": "لا توجد عناصر مجدولة لهذا التاريخ",
+  "calendarDeadlineLabel": "المواعيد النهائية",
+  "calendarGradingLabel": "التصحيح",
+  "calendarAllDay": "طوال اليوم",
   "chatVideoCallTooltip": "مكالمة فيديو",
   "chatVoiceCallTooltip": "مكالمة صوتية"
 }
