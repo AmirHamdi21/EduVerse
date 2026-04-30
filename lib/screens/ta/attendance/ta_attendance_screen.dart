@@ -4,9 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../bloc/attendance/instructor_attendance_cubit.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
+import '../../../generated_l10n/app_localizations.dart';
 import '../../../services/api/attendance_service.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../widgets/shared/attendance/shared_attendance_manager_screen.dart';
+import '../../../widgets/ta/shared/ta_colors.dart';
 
 const List<List<Color>> _kTaAttendanceGradients = <List<Color>>[
   <Color>[Color(0xFF8B5CF6), Color(0xFFA78BFA)],
@@ -30,27 +32,30 @@ class TAAttendanceScreen extends StatelessWidget {
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {
           final isDark = themeState.isDark;
+          final l10n = AppLocalizations.of(context);
           return SharedAttendanceManagerScreen(
             isDark: isDark,
             theme: SharedAttendanceTheme(
-              title: 'TA Attendance',
-              primary: const Color(0xFF8B5CF6),
-              accent: const Color(0xFF3B82F6),
-              success: const Color(0xFF10B981),
-              warning: const Color(0xFFF59E0B),
-              error: const Color(0xFFEF4444),
-              info: const Color(0xFF06B6D4),
+              title: l10n.attendanceManager,
+              subtitle: l10n.trackStudentAttendance,
+              heroIcon: Icons.fact_check_rounded,
+              primary: TAColors.primary,
+              primaryLight: TAColors.primaryLight,
+              accent: TAColors.accent,
+              success: TAColors.success,
+              warning: TAColors.warning,
+              error: TAColors.error,
+              info: TAColors.info,
+              headerGradient: TAColors.headerGradient,
+              darkHeaderGradient: TAColors.darkHeaderGradient,
               sectionGradients: _kTaAttendanceGradients,
-              background: (dark) =>
-                  dark ? const Color(0xFF0F172A) : const Color(0xFFFAFAFA),
-              cardColor: (dark) =>
-                  dark ? const Color(0xFF1E293B) : Colors.white,
-              borderColor: (dark) =>
-                  dark ? const Color(0xFF475569) : const Color(0xFFE2E8F0),
-              textPrimary: (dark) =>
-                  dark ? Colors.white : const Color(0xFF1E293B),
-              textSecondary: (dark) =>
-                  dark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B),
+              background: TAColors.background,
+              cardColor: TAColors.cardColor,
+              surfaceColor: TAColors.surfaceColor,
+              borderColor: TAColors.borderColor,
+              textPrimary: TAColors.textPrimaryColor,
+              textSecondary: TAColors.textSecondaryColor,
+              textTertiary: TAColors.textTertiaryColor,
             ),
           );
         },

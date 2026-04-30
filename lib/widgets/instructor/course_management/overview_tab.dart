@@ -47,8 +47,8 @@ class OverviewTab extends StatelessWidget {
         _buildLiveMetricsCard(),
         const SizedBox(height: 16),
         // T009: Course Structure Viewer
-        if (courseId != null)
-          CourseStructureViewer(courseId: courseId, isDark: isDark),
+        // if (courseId != null)
+        // CourseStructureViewer(courseId: courseId, isDark: isDark),
         if (courseId != null) const SizedBox(height: 16),
         _buildSectionTitle('Section Schedule'),
         const SizedBox(height: 10),

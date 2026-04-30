@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../shared/profile/role_profile_theme.dart';
 import '../../shared/profile/shared_edit_profile_screen.dart';
 
 class EditProfileScreen extends StatelessWidget {
@@ -7,6 +8,10 @@ class EditProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SharedEditProfileScreen(title: 'Edit Profile');
+    return SharedEditProfileScreen(
+      title: 'Edit Profile',
+      roleLabel: 'Student',
+      theme: RoleProfileTheme.student(),
+    );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../shared/profile/role_profile_theme.dart';
 import '../../shared/profile/shared_edit_profile_screen.dart';
 
 class TAEditProfileScreen extends StatelessWidget {
@@ -7,6 +8,10 @@ class TAEditProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SharedEditProfileScreen(title: 'Edit Teaching Assistant Profile');
+    return SharedEditProfileScreen(
+      title: 'Edit Teaching Assistant Profile',
+      roleLabel: 'Teaching Assistant',
+      theme: RoleProfileTheme.ta(),
+    );
   }
 }

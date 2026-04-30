@@ -4841,6 +4841,216 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendanceManager => 'Attendance Manager';
 
   @override
+  String get attendanceLectureMode => 'Live Roster';
+
+  @override
+  String get attendanceSessionsMode => 'Sessions';
+
+  @override
+  String get attendanceModeLectureSubtitle =>
+      'Open a section and take attendance fast.';
+
+  @override
+  String get attendanceModeSessionsSubtitle =>
+      'Review and manage attendance sessions.';
+
+  @override
+  String attendanceSectionTakeResume(String sectionNumber) {
+    return 'Section $sectionNumber • Take or resume attendance';
+  }
+
+  @override
+  String get attendanceRosterLabel => 'Roster';
+
+  @override
+  String get attendanceChangesLabel => 'Changes';
+
+  @override
+  String get attendanceFlagged => 'Flagged';
+
+  @override
+  String get attendanceSectionsLabel => 'Sections';
+
+  @override
+  String get attendanceOpenSessionsLabel => 'Open Sessions';
+
+  @override
+  String get attendanceAllSections => 'All Sections';
+
+  @override
+  String get attendanceNoSectionsAssigned => 'No sections assigned yet.';
+
+  @override
+  String get attendanceOpenSessionsTitle => 'Open Sessions';
+
+  @override
+  String get attendanceOpenSessionsSubtitle =>
+      'Resume any session that is still editable.';
+
+  @override
+  String get attendanceNoOpenSessions =>
+      'No open sessions. Start a new session below.';
+
+  @override
+  String get attendanceStartSessionTitle => 'New Session';
+
+  @override
+  String get attendanceStartSessionSubtitle =>
+      'Pick the date and type, then jump straight into the roster.';
+
+  @override
+  String get attendanceCreateSessionAndOpenRoster =>
+      'Create Session and Open Roster';
+
+  @override
+  String get attendanceSelectSectionToViewSessions =>
+      'Select a section to view attendance sessions.';
+
+  @override
+  String get attendanceRecordsTitle => 'Attendance History';
+
+  @override
+  String get attendanceRecordsSubtitle =>
+      'Browse session summaries and reopen any roster you need.';
+
+  @override
+  String get attendanceNoSessionsYet => 'No attendance sessions yet.';
+
+  @override
+  String get attendanceOpen => 'Open';
+
+  @override
+  String attendanceSessionLabel(int id) {
+    return 'Session $id';
+  }
+
+  @override
+  String get attendanceOpenRosterAction => 'Open roster';
+
+  @override
+  String get attendanceEditSessionTitle => 'Edit Session';
+
+  @override
+  String get attendanceEditSessionSubtitle =>
+      'Update the session date or type.';
+
+  @override
+  String get attendanceDeleteSessionTitle => 'Delete Session';
+
+  @override
+  String attendanceDeleteSessionMessage(String id, String date) {
+    return 'Delete session $id on $date? This cannot be undone.';
+  }
+
+  @override
+  String get attendanceEveryonePresent => 'Everyone Present';
+
+  @override
+  String get attendanceEveryoneAbsent => 'Everyone Absent';
+
+  @override
+  String get attendanceCloseAndLock => 'Close & Lock';
+
+  @override
+  String get attendanceUnsavedChangesBanner =>
+      'You have unsaved attendance changes. Save before leaving or closing the session.';
+
+  @override
+  String get attendanceReadOnlyBanner =>
+      'This session is closed, so the roster is view only.';
+
+  @override
+  String get attendanceNoEnrolledStudents => 'No enrolled students.';
+
+  @override
+  String get attendanceAiPhotoTitle => 'AI From Class Photo';
+
+  @override
+  String get attendanceAiPhotoSubtitle =>
+      'Upload a class photo to generate smart attendance suggestions.';
+
+  @override
+  String get attendanceUsesSavedFaceReferences => 'Uses saved face references';
+
+  @override
+  String get attendancePickPhoto => 'Pick attendance photo';
+
+  @override
+  String get attendanceRunAi => 'Run AI';
+
+  @override
+  String get attendanceRunning => 'Running...';
+
+  @override
+  String get attendanceApplyAiSuggestions => 'Apply AI Suggestions';
+
+  @override
+  String get attendanceOnRoster => 'On Roster';
+
+  @override
+  String get attendanceUnknown => 'Unknown';
+
+  @override
+  String get attendanceReview => 'Review';
+
+  @override
+  String attendanceAiBadge(String percent) {
+    return 'AI $percent%';
+  }
+
+  @override
+  String attendanceAiSuggestedWithConfidence(String status, String percent) {
+    return 'AI suggested $status • $percent% confidence';
+  }
+
+  @override
+  String attendanceAiSuggestedWithoutConfidence(String status) {
+    return 'AI suggested $status • No confidence score';
+  }
+
+  @override
+  String get attendanceAiNotRunYet =>
+      'AI has not been run yet. Pick a photo and start analysis.';
+
+  @override
+  String attendanceMarkEveryoneTitle(String status) {
+    return 'Mark everyone $status';
+  }
+
+  @override
+  String attendanceMarkEveryoneMessage(String status) {
+    return 'Apply \"$status\" to all roster rows? You can still change each student before saving.';
+  }
+
+  @override
+  String get attendanceApply => 'Apply';
+
+  @override
+  String get attendanceCloseSessionTitle => 'Close Session';
+
+  @override
+  String get attendanceCloseSessionMessage =>
+      'Close and lock this session? Attendance will become read only.';
+
+  @override
+  String get attendanceTutorialType => 'Tutorial';
+
+  @override
+  String get attendanceStatusInProgress => 'In Progress';
+
+  @override
+  String get attendanceStatusCompleted => 'Completed';
+
+  @override
+  String get attendanceStatusCancelled => 'Cancelled';
+
+  @override
+  String get attendanceStatusScheduled => 'Scheduled';
+
+  @override
+  String get attendanceBackToSessions => 'Back to Sessions';
+
+  @override
   String get trackStudentAttendance => 'Track and manage student attendance';
 
   @override

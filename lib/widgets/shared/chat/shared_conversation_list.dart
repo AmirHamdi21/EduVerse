@@ -477,14 +477,25 @@ class _SharedConversationListState extends State<SharedConversationList> {
                                   MarkRead(conversation.conversationId),
                                 );
                               },
-                              onAvatarTap:
-                                  conversation.directDisplayUser == null
-                                  ? null
-                                  : () {
-                                      context.push(
-                                        '/messages/profile/${conversation.directDisplayUser!.userId}',
-                                      );
-                                    },
+                              onAvatarTap: () {
+                                if (conversation.type ==
+                                    ConversationType.group) {
+                                  context.push(
+                                    '/messages/group/${conversation.conversationId}',
+                                  );
+                                  return;
+                                }
+
+                                final directUser =
+                                    conversation.directDisplayUser;
+                                if (directUser == null) {
+                                  return;
+                                }
+
+                                context.push(
+                                  '/messages/profile/${directUser.userId}',
+                                );
+                              },
                               onPin: () => _togglePinned(conversation),
                               onMute: () => _toggleMuted(conversation),
                               onDelete: () => _deleteConversation(conversation),

@@ -4238,6 +4238,128 @@
   "languageSettings": "إعدادات اللغة",
   
   "attendanceManager": "إدارة الحضور",
+  "attendanceLectureMode": "كشف مباشر",
+  "attendanceSessionsMode": "الجلسات",
+  "attendanceModeLectureSubtitle": "افتح الشعبة وسجّل الحضور بسرعة.",
+  "attendanceModeSessionsSubtitle": "راجع جلسات الحضور وأدرها بسهولة.",
+  "attendanceSectionTakeResume": "الشعبة {sectionNumber} • سجّل الحضور أو استكمله",
+  "@attendanceSectionTakeResume": {
+    "placeholders": {
+      "sectionNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceRosterLabel": "الكشف",
+  "attendanceChangesLabel": "التغييرات",
+  "attendanceFlagged": "بحاجة مراجعة",
+  "attendanceSectionsLabel": "الشعب",
+  "attendanceOpenSessionsLabel": "الجلسات المفتوحة",
+  "attendanceAllSections": "كل الشعب",
+  "attendanceNoSectionsAssigned": "لا توجد شعب مخصصة بعد.",
+  "attendanceOpenSessionsTitle": "الجلسات المفتوحة",
+  "attendanceOpenSessionsSubtitle": "استأنف أي جلسة ما زالت قابلة للتعديل.",
+  "attendanceNoOpenSessions": "لا توجد جلسات مفتوحة. ابدأ جلسة جديدة بالأسفل.",
+  "attendanceStartSessionTitle": "جلسة جديدة",
+  "attendanceStartSessionSubtitle": "اختر التاريخ والنوع ثم انتقل مباشرة إلى الكشف.",
+  "attendanceCreateSessionAndOpenRoster": "إنشاء الجلسة وفتح الكشف",
+  "attendanceSelectSectionToViewSessions": "اختر شعبة لعرض جلسات الحضور.",
+  "attendanceRecordsTitle": "سجل الحضور",
+  "attendanceRecordsSubtitle": "استعرض ملخصات الجلسات وأعد فتح أي كشف تحتاجه.",
+  "attendanceNoSessionsYet": "لا توجد جلسات حضور بعد.",
+  "attendanceOpen": "فتح",
+  "attendanceSessionLabel": "الجلسة {id}",
+  "@attendanceSessionLabel": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "attendanceOpenRosterAction": "فتح الكشف",
+  "attendanceEditSessionTitle": "تعديل الجلسة",
+  "attendanceEditSessionSubtitle": "حدّث تاريخ الجلسة أو نوعها.",
+  "attendanceDeleteSessionTitle": "حذف الجلسة",
+  "attendanceDeleteSessionMessage": "حذف الجلسة {id} بتاريخ {date}؟ لا يمكن التراجع عن هذا الإجراء.",
+  "@attendanceDeleteSessionMessage": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceEveryonePresent": "الجميع حاضر",
+  "attendanceEveryoneAbsent": "الجميع غائب",
+  "attendanceCloseAndLock": "إغلاق وقفل",
+  "attendanceUnsavedChangesBanner": "لديك تغييرات حضور غير محفوظة. احفظها قبل المغادرة أو إغلاق الجلسة.",
+  "attendanceReadOnlyBanner": "هذه الجلسة مغلقة، لذلك الكشف للعرض فقط.",
+  "attendanceNoEnrolledStudents": "لا يوجد طلاب مسجلون.",
+  "attendanceAiPhotoTitle": "الذكاء الاصطناعي من صورة الصف",
+  "attendanceAiPhotoSubtitle": "ارفع صورة للصف لإنشاء اقتراحات حضور ذكية.",
+  "attendanceUsesSavedFaceReferences": "يعتمد على صور الوجوه المحفوظة",
+  "attendancePickPhoto": "اختر صورة الحضور",
+  "attendanceRunAi": "تشغيل الذكاء الاصطناعي",
+  "attendanceRunning": "جارٍ التشغيل...",
+  "attendanceApplyAiSuggestions": "تطبيق اقتراحات الذكاء الاصطناعي",
+  "attendanceOnRoster": "على الكشف",
+  "attendanceUnknown": "غير معروف",
+  "attendanceReview": "مراجعة",
+  "attendanceAiBadge": "AI {percent}%",
+  "@attendanceAiBadge": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceAiSuggestedWithConfidence": "اقترح الذكاء الاصطناعي {status} • بنسبة ثقة {percent}%",
+  "@attendanceAiSuggestedWithConfidence": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceAiSuggestedWithoutConfidence": "اقترح الذكاء الاصطناعي {status} • بدون نسبة ثقة",
+  "@attendanceAiSuggestedWithoutConfidence": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceAiNotRunYet": "لم يتم تشغيل الذكاء الاصطناعي بعد. اختر صورة وابدأ التحليل.",
+  "attendanceMarkEveryoneTitle": "تحديد الجميع كـ {status}",
+  "@attendanceMarkEveryoneTitle": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceMarkEveryoneMessage": "تطبيق حالة \"{status}\" على جميع صفوف الكشف؟ لا يزال بإمكانك تعديل كل طالب قبل الحفظ.",
+  "@attendanceMarkEveryoneMessage": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceApply": "تطبيق",
+  "attendanceCloseSessionTitle": "إغلاق الجلسة",
+  "attendanceCloseSessionMessage": "هل تريد إغلاق هذه الجلسة وقفلها؟ سيصبح الحضور للقراءة فقط.",
+  "attendanceTutorialType": "تمرين",
+  "attendanceStatusInProgress": "قيد التنفيذ",
+  "attendanceStatusCompleted": "مكتملة",
+  "attendanceStatusCancelled": "ملغاة",
+  "attendanceStatusScheduled": "مجدولة",
+  "attendanceBackToSessions": "العودة إلى الجلسات",
   "aiInsights": "رؤى الذكاء الاصطناعي",
   "unmarked": "غير محدد",
   "sendAlerts": "إرسال تنبيهات",

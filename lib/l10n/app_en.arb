@@ -1777,6 +1777,128 @@
   "late": "Late",
   
   "attendanceManager": "Attendance Manager",
+  "attendanceLectureMode": "Live Roster",
+  "attendanceSessionsMode": "Sessions",
+  "attendanceModeLectureSubtitle": "Open a section and take attendance fast.",
+  "attendanceModeSessionsSubtitle": "Review and manage attendance sessions.",
+  "attendanceSectionTakeResume": "Section {sectionNumber} • Take or resume attendance",
+  "@attendanceSectionTakeResume": {
+    "placeholders": {
+      "sectionNumber": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceRosterLabel": "Roster",
+  "attendanceChangesLabel": "Changes",
+  "attendanceFlagged": "Flagged",
+  "attendanceSectionsLabel": "Sections",
+  "attendanceOpenSessionsLabel": "Open Sessions",
+  "attendanceAllSections": "All Sections",
+  "attendanceNoSectionsAssigned": "No sections assigned yet.",
+  "attendanceOpenSessionsTitle": "Open Sessions",
+  "attendanceOpenSessionsSubtitle": "Resume any session that is still editable.",
+  "attendanceNoOpenSessions": "No open sessions. Start a new session below.",
+  "attendanceStartSessionTitle": "New Session",
+  "attendanceStartSessionSubtitle": "Pick the date and type, then jump straight into the roster.",
+  "attendanceCreateSessionAndOpenRoster": "Create Session and Open Roster",
+  "attendanceSelectSectionToViewSessions": "Select a section to view attendance sessions.",
+  "attendanceRecordsTitle": "Attendance History",
+  "attendanceRecordsSubtitle": "Browse session summaries and reopen any roster you need.",
+  "attendanceNoSessionsYet": "No attendance sessions yet.",
+  "attendanceOpen": "Open",
+  "attendanceSessionLabel": "Session {id}",
+  "@attendanceSessionLabel": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "attendanceOpenRosterAction": "Open roster",
+  "attendanceEditSessionTitle": "Edit Session",
+  "attendanceEditSessionSubtitle": "Update the session date or type.",
+  "attendanceDeleteSessionTitle": "Delete Session",
+  "attendanceDeleteSessionMessage": "Delete session {id} on {date}? This cannot be undone.",
+  "@attendanceDeleteSessionMessage": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceEveryonePresent": "Everyone Present",
+  "attendanceEveryoneAbsent": "Everyone Absent",
+  "attendanceCloseAndLock": "Close & Lock",
+  "attendanceUnsavedChangesBanner": "You have unsaved attendance changes. Save before leaving or closing the session.",
+  "attendanceReadOnlyBanner": "This session is closed, so the roster is view only.",
+  "attendanceNoEnrolledStudents": "No enrolled students.",
+  "attendanceAiPhotoTitle": "AI From Class Photo",
+  "attendanceAiPhotoSubtitle": "Upload a class photo to generate smart attendance suggestions.",
+  "attendanceUsesSavedFaceReferences": "Uses saved face references",
+  "attendancePickPhoto": "Pick attendance photo",
+  "attendanceRunAi": "Run AI",
+  "attendanceRunning": "Running...",
+  "attendanceApplyAiSuggestions": "Apply AI Suggestions",
+  "attendanceOnRoster": "On Roster",
+  "attendanceUnknown": "Unknown",
+  "attendanceReview": "Review",
+  "attendanceAiBadge": "AI {percent}%",
+  "@attendanceAiBadge": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceAiSuggestedWithConfidence": "AI suggested {status} • {percent}% confidence",
+  "@attendanceAiSuggestedWithConfidence": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceAiSuggestedWithoutConfidence": "AI suggested {status} • No confidence score",
+  "@attendanceAiSuggestedWithoutConfidence": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceAiNotRunYet": "AI has not been run yet. Pick a photo and start analysis.",
+  "attendanceMarkEveryoneTitle": "Mark everyone {status}",
+  "@attendanceMarkEveryoneTitle": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceMarkEveryoneMessage": "Apply \"{status}\" to all roster rows? You can still change each student before saving.",
+  "@attendanceMarkEveryoneMessage": {
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "attendanceApply": "Apply",
+  "attendanceCloseSessionTitle": "Close Session",
+  "attendanceCloseSessionMessage": "Close and lock this session? Attendance will become read only.",
+  "attendanceTutorialType": "Tutorial",
+  "attendanceStatusInProgress": "In Progress",
+  "attendanceStatusCompleted": "Completed",
+  "attendanceStatusCancelled": "Cancelled",
+  "attendanceStatusScheduled": "Scheduled",
+  "attendanceBackToSessions": "Back to Sessions",
   "trackStudentAttendance": "Track and manage student attendance",
   "searchStudents": "Search students...",
   "noStudentsFound": "No Students Found",

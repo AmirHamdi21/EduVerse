@@ -9428,6 +9428,366 @@ abstract class AppLocalizations {
   /// **'Attendance Manager'**
   String get attendanceManager;
 
+  /// No description provided for @attendanceLectureMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Roster'**
+  String get attendanceLectureMode;
+
+  /// No description provided for @attendanceSessionsMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get attendanceSessionsMode;
+
+  /// No description provided for @attendanceModeLectureSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open a section and take attendance fast.'**
+  String get attendanceModeLectureSubtitle;
+
+  /// No description provided for @attendanceModeSessionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review and manage attendance sessions.'**
+  String get attendanceModeSessionsSubtitle;
+
+  /// No description provided for @attendanceSectionTakeResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Section {sectionNumber} • Take or resume attendance'**
+  String attendanceSectionTakeResume(String sectionNumber);
+
+  /// No description provided for @attendanceRosterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Roster'**
+  String get attendanceRosterLabel;
+
+  /// No description provided for @attendanceChangesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Changes'**
+  String get attendanceChangesLabel;
+
+  /// No description provided for @attendanceFlagged.
+  ///
+  /// In en, this message translates to:
+  /// **'Flagged'**
+  String get attendanceFlagged;
+
+  /// No description provided for @attendanceSectionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sections'**
+  String get attendanceSectionsLabel;
+
+  /// No description provided for @attendanceOpenSessionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Sessions'**
+  String get attendanceOpenSessionsLabel;
+
+  /// No description provided for @attendanceAllSections.
+  ///
+  /// In en, this message translates to:
+  /// **'All Sections'**
+  String get attendanceAllSections;
+
+  /// No description provided for @attendanceNoSectionsAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'No sections assigned yet.'**
+  String get attendanceNoSectionsAssigned;
+
+  /// No description provided for @attendanceOpenSessionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Sessions'**
+  String get attendanceOpenSessionsTitle;
+
+  /// No description provided for @attendanceOpenSessionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume any session that is still editable.'**
+  String get attendanceOpenSessionsSubtitle;
+
+  /// No description provided for @attendanceNoOpenSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'No open sessions. Start a new session below.'**
+  String get attendanceNoOpenSessions;
+
+  /// No description provided for @attendanceStartSessionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Session'**
+  String get attendanceStartSessionTitle;
+
+  /// No description provided for @attendanceStartSessionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the date and type, then jump straight into the roster.'**
+  String get attendanceStartSessionSubtitle;
+
+  /// No description provided for @attendanceCreateSessionAndOpenRoster.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Session and Open Roster'**
+  String get attendanceCreateSessionAndOpenRoster;
+
+  /// No description provided for @attendanceSelectSectionToViewSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a section to view attendance sessions.'**
+  String get attendanceSelectSectionToViewSessions;
+
+  /// No description provided for @attendanceRecordsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance History'**
+  String get attendanceRecordsTitle;
+
+  /// No description provided for @attendanceRecordsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse session summaries and reopen any roster you need.'**
+  String get attendanceRecordsSubtitle;
+
+  /// No description provided for @attendanceNoSessionsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No attendance sessions yet.'**
+  String get attendanceNoSessionsYet;
+
+  /// No description provided for @attendanceOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get attendanceOpen;
+
+  /// No description provided for @attendanceSessionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Session {id}'**
+  String attendanceSessionLabel(int id);
+
+  /// No description provided for @attendanceOpenRosterAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open roster'**
+  String get attendanceOpenRosterAction;
+
+  /// No description provided for @attendanceEditSessionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Session'**
+  String get attendanceEditSessionTitle;
+
+  /// No description provided for @attendanceEditSessionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Update the session date or type.'**
+  String get attendanceEditSessionSubtitle;
+
+  /// No description provided for @attendanceDeleteSessionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Session'**
+  String get attendanceDeleteSessionTitle;
+
+  /// No description provided for @attendanceDeleteSessionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete session {id} on {date}? This cannot be undone.'**
+  String attendanceDeleteSessionMessage(String id, String date);
+
+  /// No description provided for @attendanceEveryonePresent.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone Present'**
+  String get attendanceEveryonePresent;
+
+  /// No description provided for @attendanceEveryoneAbsent.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyone Absent'**
+  String get attendanceEveryoneAbsent;
+
+  /// No description provided for @attendanceCloseAndLock.
+  ///
+  /// In en, this message translates to:
+  /// **'Close & Lock'**
+  String get attendanceCloseAndLock;
+
+  /// No description provided for @attendanceUnsavedChangesBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved attendance changes. Save before leaving or closing the session.'**
+  String get attendanceUnsavedChangesBanner;
+
+  /// No description provided for @attendanceReadOnlyBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'This session is closed, so the roster is view only.'**
+  String get attendanceReadOnlyBanner;
+
+  /// No description provided for @attendanceNoEnrolledStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'No enrolled students.'**
+  String get attendanceNoEnrolledStudents;
+
+  /// No description provided for @attendanceAiPhotoTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI From Class Photo'**
+  String get attendanceAiPhotoTitle;
+
+  /// No description provided for @attendanceAiPhotoSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload a class photo to generate smart attendance suggestions.'**
+  String get attendanceAiPhotoSubtitle;
+
+  /// No description provided for @attendanceUsesSavedFaceReferences.
+  ///
+  /// In en, this message translates to:
+  /// **'Uses saved face references'**
+  String get attendanceUsesSavedFaceReferences;
+
+  /// No description provided for @attendancePickPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick attendance photo'**
+  String get attendancePickPhoto;
+
+  /// No description provided for @attendanceRunAi.
+  ///
+  /// In en, this message translates to:
+  /// **'Run AI'**
+  String get attendanceRunAi;
+
+  /// No description provided for @attendanceRunning.
+  ///
+  /// In en, this message translates to:
+  /// **'Running...'**
+  String get attendanceRunning;
+
+  /// No description provided for @attendanceApplyAiSuggestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply AI Suggestions'**
+  String get attendanceApplyAiSuggestions;
+
+  /// No description provided for @attendanceOnRoster.
+  ///
+  /// In en, this message translates to:
+  /// **'On Roster'**
+  String get attendanceOnRoster;
+
+  /// No description provided for @attendanceUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get attendanceUnknown;
+
+  /// No description provided for @attendanceReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get attendanceReview;
+
+  /// No description provided for @attendanceAiBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'AI {percent}%'**
+  String attendanceAiBadge(String percent);
+
+  /// No description provided for @attendanceAiSuggestedWithConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'AI suggested {status} • {percent}% confidence'**
+  String attendanceAiSuggestedWithConfidence(String status, String percent);
+
+  /// No description provided for @attendanceAiSuggestedWithoutConfidence.
+  ///
+  /// In en, this message translates to:
+  /// **'AI suggested {status} • No confidence score'**
+  String attendanceAiSuggestedWithoutConfidence(String status);
+
+  /// No description provided for @attendanceAiNotRunYet.
+  ///
+  /// In en, this message translates to:
+  /// **'AI has not been run yet. Pick a photo and start analysis.'**
+  String get attendanceAiNotRunYet;
+
+  /// No description provided for @attendanceMarkEveryoneTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark everyone {status}'**
+  String attendanceMarkEveryoneTitle(String status);
+
+  /// No description provided for @attendanceMarkEveryoneMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply \"{status}\" to all roster rows? You can still change each student before saving.'**
+  String attendanceMarkEveryoneMessage(String status);
+
+  /// No description provided for @attendanceApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get attendanceApply;
+
+  /// No description provided for @attendanceCloseSessionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close Session'**
+  String get attendanceCloseSessionTitle;
+
+  /// No description provided for @attendanceCloseSessionMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Close and lock this session? Attendance will become read only.'**
+  String get attendanceCloseSessionMessage;
+
+  /// No description provided for @attendanceTutorialType.
+  ///
+  /// In en, this message translates to:
+  /// **'Tutorial'**
+  String get attendanceTutorialType;
+
+  /// No description provided for @attendanceStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get attendanceStatusInProgress;
+
+  /// No description provided for @attendanceStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get attendanceStatusCompleted;
+
+  /// No description provided for @attendanceStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get attendanceStatusCancelled;
+
+  /// No description provided for @attendanceStatusScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get attendanceStatusScheduled;
+
+  /// No description provided for @attendanceBackToSessions.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Sessions'**
+  String get attendanceBackToSessions;
+
   /// No description provided for @trackStudentAttendance.
   ///
   /// In en, this message translates to:

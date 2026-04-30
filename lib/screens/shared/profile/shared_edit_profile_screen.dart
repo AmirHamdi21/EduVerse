@@ -8,14 +8,23 @@ import '../../../bloc/profile/profile_cubit.dart';
 import '../../../bloc/profile/profile_models.dart';
 import '../../../bloc/profile/profile_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import 'role_profile_theme.dart';
 
 class SharedEditProfileScreen extends StatefulWidget {
   final String title;
+  final RoleProfileTheme theme;
+  final String roleLabel;
 
-  const SharedEditProfileScreen({super.key, required this.title});
+  const SharedEditProfileScreen({
+    super.key,
+    required this.title,
+    required this.theme,
+    required this.roleLabel,
+  });
 
   @override
-  State<SharedEditProfileScreen> createState() => _SharedEditProfileScreenState();
+  State<SharedEditProfileScreen> createState() =>
+      _SharedEditProfileScreenState();
 }
 
 class _SharedEditProfileScreenState extends State<SharedEditProfileScreen> {
@@ -61,22 +70,43 @@ class _SharedEditProfileScreenState extends State<SharedEditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
+    final theme = widget.theme;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? const Color(0xFF0F172A)
-          : const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(widget.title),
+      backgroundColor: theme.background(isDark),
+      floatingActionButton: BlocBuilder<ProfileCubit, ProfileState>(
+        builder: (context, state) {
+          final isSaving = state is ProfileLoaded && state.isSaving;
+          return FloatingActionButton.extended(
+            onPressed: state is ProfileLoaded && !isSaving
+                ? () => _save(context, state)
+                : null,
+            backgroundColor: theme.primary,
+            foregroundColor: Colors.white,
+            icon: isSaving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Icon(Icons.save_rounded),
+            label: Text(
+              l10n.saveChanges,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          );
+        },
       ),
       body: BlocConsumer<ProfileCubit, ProfileState>(
         listenWhen: (previous, current) {
-          final previousMessage = previous is ProfileLoaded ? previous.error : '';
+          final previousMessage = previous is ProfileLoaded
+              ? previous.error
+              : '';
           final currentMessage = current is ProfileLoaded ? current.error : '';
           return previousMessage != currentMessage;
         },
@@ -91,13 +121,20 @@ class _SharedEditProfileScreenState extends State<SharedEditProfileScreen> {
         },
         builder: (context, state) {
           if (state is ProfileLoading || state is ProfileInitial) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(color: theme.primary),
+            );
           }
 
           if (state is ProfileError) {
             return Center(
               child: ElevatedButton(
-                onPressed: () => context.read<ProfileCubit>().loadProfile(force: true),
+                onPressed: () =>
+                    context.read<ProfileCubit>().loadProfile(force: true),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.primary,
+                  foregroundColor: Colors.white,
+                ),
                 child: const Text('Retry'),
               ),
             );
@@ -112,111 +149,549 @@ class _SharedEditProfileScreenState extends State<SharedEditProfileScreen> {
             _initialized = true;
           }
 
-          return Form(
-            key: _formKey,
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+          return Stack(
+            children: [
+              _buildBackgroundDecorations(isDark, theme),
+              SafeArea(
+                child: Form(
+                  key: _formKey,
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 112),
+                    children: [
+                      _buildTopBar(context, isDark, l10n, theme),
+                      const SizedBox(height: 10),
+                      _buildHeroCard(state.profile, isDark, theme),
+                      const SizedBox(height: 14),
+                      _buildReadOnlyBanner(
+                        email: state.profile.email,
+                        isDark: isDark,
+                        theme: theme,
+                      ),
+                      const SizedBox(height: 14),
+                      _buildSectionCard(
+                        title: l10n.personalInformation,
+                        subtitle:
+                            'Update your core identity and communication details.',
+                        icon: Icons.badge_rounded,
+                        isDark: isDark,
+                        theme: theme,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _buildInputField(
+                                    controller: _firstNameController,
+                                    label: l10n.firstName,
+                                    icon: Icons.person_outline_rounded,
+                                    isDark: isDark,
+                                    theme: theme,
+                                    validator: _requiredValidator,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _buildInputField(
+                                    controller: _lastNameController,
+                                    label: l10n.lastName,
+                                    icon: Icons.person_rounded,
+                                    isDark: isDark,
+                                    theme: theme,
+                                    validator: _requiredValidator,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            _buildInputField(
+                              controller: _phoneController,
+                              label: l10n.phone,
+                              icon: Icons.phone_rounded,
+                              isDark: isDark,
+                              theme: theme,
+                              keyboardType: TextInputType.phone,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildInputField(
+                              controller: _bioController,
+                              label: l10n.bio,
+                              icon: Icons.auto_stories_rounded,
+                              isDark: isDark,
+                              theme: theme,
+                              maxLines: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      _buildSectionCard(
+                        title: 'Academic Interests & Skills',
+                        subtitle:
+                            'Keep your study direction and strengths up to date.',
+                        icon: Icons.interests_rounded,
+                        isDark: isDark,
+                        theme: theme,
+                        child: Column(
+                          children: [
+                            _buildInputField(
+                              controller: _interestsController,
+                              label: 'Academic interests (comma separated)',
+                              icon: Icons.explore_rounded,
+                              isDark: isDark,
+                              theme: theme,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildInputField(
+                              controller: _skillsController,
+                              label: 'Skills (comma separated)',
+                              icon: Icons.bolt_rounded,
+                              isDark: isDark,
+                              theme: theme,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      _buildSectionCard(
+                        title: 'Social Links',
+                        subtitle:
+                            'Share the links you want visible on your profile.',
+                        icon: Icons.link_rounded,
+                        isDark: isDark,
+                        theme: theme,
+                        child: Column(
+                          children: [
+                            _buildInputField(
+                              controller: _websiteController,
+                              label: l10n.personalWebsite,
+                              icon: Icons.language_rounded,
+                              isDark: isDark,
+                              theme: theme,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildInputField(
+                              controller: _githubController,
+                              label: 'GitHub',
+                              icon: Icons.code_rounded,
+                              isDark: isDark,
+                              theme: theme,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildInputField(
+                              controller: _linkedinController,
+                              label: 'LinkedIn',
+                              icon: Icons.work_outline_rounded,
+                              isDark: isDark,
+                              theme: theme,
+                            ),
+                            const SizedBox(height: 12),
+                            _buildInputField(
+                              controller: _twitterController,
+                              label: 'Twitter',
+                              icon: Icons.alternate_email_rounded,
+                              isDark: isDark,
+                              theme: theme,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      _buildSurfaceCard(
+                        isDark: isDark,
+                        theme: theme,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: state.isSaving
+                                    ? null
+                                    : () => context.pop(),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: theme.textSecondary(isDark),
+                                  side: BorderSide(color: theme.border(isDark)),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                child: Text(l10n.cancel),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: state.isSaving
+                                    ? null
+                                    : () => _save(context, state),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: theme.primary,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                child: state.isSaving
+                                    ? const SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                Colors.white,
+                                              ),
+                                        ),
+                                      )
+                                    : Text(l10n.saveChanges),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildBackgroundDecorations(bool isDark, RoleProfileTheme theme) {
+    return Stack(
+      children: [
+        Positioned(
+          top: -110,
+          right: -70,
+          child: Container(
+            width: 260,
+            height: 260,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  theme.primary.withValues(alpha: isDark ? 0.2 : 0.14),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 220,
+          left: -90,
+          child: Container(
+            width: 210,
+            height: 210,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  theme.accent.withValues(alpha: isDark ? 0.14 : 0.1),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTopBar(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+    RoleProfileTheme theme,
+  ) {
+    return Row(
+      children: [
+        _buildUtilityButton(
+          onTap: () => context.pop(),
+          isDark: isDark,
+          theme: theme,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 16,
+                color: theme.textPrimary(isDark),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.back,
+                style: TextStyle(
+                  color: theme.textPrimary(isDark),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUtilityButton({
+    required VoidCallback onTap,
+    required bool isDark,
+    required RoleProfileTheme theme,
+    required Widget child,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: theme.card(isDark).withValues(alpha: isDark ? 0.92 : 0.96),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: theme.border(isDark)),
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeroCard(
+    UserProfile profile,
+    bool isDark,
+    RoleProfileTheme theme,
+  ) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: isDark ? theme.darkHeaderGradient : theme.headerGradient,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: theme.primary.withValues(alpha: isDark ? 0.22 : 0.18),
+            blurRadius: 26,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: const Icon(
+              Icons.edit_note_rounded,
+              color: Colors.white,
+              size: 28,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _ReadOnlyBanner(email: state.profile.email),
-                const SizedBox(height: 16),
-                _FormCard(
-                  title: l10n.personalInformation,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _InputField(
-                            controller: _firstNameController,
-                            label: l10n.firstName,
-                            validator: _requiredValidator,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: _InputField(
-                            controller: _lastNameController,
-                            label: l10n.lastName,
-                            validator: _requiredValidator,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    _InputField(
-                      controller: _phoneController,
-                      label: l10n.phone,
-                      keyboardType: TextInputType.phone,
-                    ),
-                    const SizedBox(height: 12),
-                    _InputField(
-                      controller: _bioController,
-                      label: l10n.bio,
-                      maxLines: 4,
-                    ),
-                  ],
+                Text(
+                  widget.title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.4,
+                  ),
                 ),
-                const SizedBox(height: 16),
-                _FormCard(
-                  title: 'Academic interests & skills',
-                  children: [
-                    _InputField(
-                      controller: _interestsController,
-                      label: 'Academic interests (comma separated)',
-                    ),
-                    const SizedBox(height: 12),
-                    _InputField(
-                      controller: _skillsController,
-                      label: 'Skills (comma separated)',
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _FormCard(
-                  title: 'Social links',
-                  children: [
-                    _InputField(
-                      controller: _websiteController,
-                      label: l10n.personalWebsite,
-                    ),
-                    const SizedBox(height: 12),
-                    _InputField(controller: _githubController, label: 'GitHub'),
-                    const SizedBox(height: 12),
-                    _InputField(
-                      controller: _linkedinController,
-                      label: 'LinkedIn',
-                    ),
-                    const SizedBox(height: 12),
-                    _InputField(controller: _twitterController, label: 'Twitter'),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: state.isSaving ? null : () => context.pop(),
-                        child: Text(l10n.cancel),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: state.isSaving ? null : () => _save(context, state),
-                        child: state.isSaving
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(strokeWidth: 2),
-                              )
-                            : Text(l10n.saveChanges),
-                      ),
-                    ),
-                  ],
+                const SizedBox(height: 4),
+                Text(
+                  'Refine ${profile.displayName} for the ${widget.roleLabel.toLowerCase()} experience in one focused flow.',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.86),
+                    fontSize: 12.5,
+                    height: 1.35,
+                  ),
                 ),
               ],
             ),
-          );
-        },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildReadOnlyBanner({
+    required String email,
+    required bool isDark,
+    required RoleProfileTheme theme,
+  }) {
+    return _buildSurfaceCard(
+      isDark: isDark,
+      theme: theme,
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: theme.primary.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(Icons.info_outline_rounded, color: theme.primary),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Account Email',
+                  style: TextStyle(
+                    color: theme.textPrimary(isDark),
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Email is managed by your account and stays read-only here: $email',
+                  style: TextStyle(
+                    color: theme.textSecondary(isDark),
+                    fontSize: 12.5,
+                    height: 1.35,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool isDark,
+    required RoleProfileTheme theme,
+    required Widget child,
+  }) {
+    return _buildSurfaceCard(
+      isDark: isDark,
+      theme: theme,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: theme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(icon, color: theme.primary, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: theme.textPrimary(isDark),
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: theme.textSecondary(isDark),
+                        fontSize: 12.5,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSurfaceCard({
+    required bool isDark,
+    required RoleProfileTheme theme,
+    required Widget child,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.card(isDark),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: theme.border(isDark)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.05),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    required bool isDark,
+    required RoleProfileTheme theme,
+    int maxLines = 1,
+    TextInputType? keyboardType,
+    String? Function(String?)? validator,
+  }) {
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      validator: validator,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: theme.textSecondary(isDark)),
+        filled: true,
+        fillColor: theme.surface(isDark),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: theme.border(isDark)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: theme.border(isDark)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: theme.primary, width: 1.5),
+        ),
       ),
     );
   }
@@ -281,9 +756,7 @@ class _SharedEditProfileScreenState extends State<SharedEditProfileScreen> {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).profileUpdated),
-          ),
+          SnackBar(content: Text(AppLocalizations.of(context).profileUpdated)),
         );
       context.pop();
     }
@@ -295,95 +768,5 @@ class _SharedEditProfileScreenState extends State<SharedEditProfileScreen> {
         .map((part) => part.trim())
         .where((part) => part.isNotEmpty)
         .toList();
-  }
-}
-
-class _ReadOnlyBanner extends StatelessWidget {
-  final String email;
-
-  const _ReadOnlyBanner({required this.email});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.info_outline_rounded, color: Color(0xFF2563EB)),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'Email is managed by your account and is read only here: $email',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _FormCard extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-
-  const _FormCard({required this.title, required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : const Color(0xFF0F172A),
-            ),
-          ),
-          const SizedBox(height: 14),
-          ...children,
-        ],
-      ),
-    );
-  }
-}
-
-class _InputField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final int maxLines;
-  final TextInputType? keyboardType;
-  final String? Function(String?)? validator;
-
-  const _InputField({
-    required this.controller,
-    required this.label,
-    this.maxLines = 1,
-    this.keyboardType,
-    this.validator,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      maxLines: maxLines,
-      keyboardType: keyboardType,
-      validator: validator,
-      decoration: InputDecoration(labelText: label),
-    );
   }
 }

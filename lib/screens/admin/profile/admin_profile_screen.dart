@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../shared/profile/role_profile_theme.dart';
 import '../../shared/profile/shared_profile_screen.dart';
 
 class AdminProfileScreen extends StatelessWidget {
@@ -7,10 +8,11 @@ class AdminProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SharedProfileScreen(
+    return SharedProfileScreen(
       editRoute: '/admin/edit-profile',
       roleFallbackLabel: 'Administrator',
       title: 'Admin Profile',
+      theme: RoleProfileTheme.admin(),
     );
   }
 }
