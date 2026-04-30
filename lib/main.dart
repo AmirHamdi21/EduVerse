@@ -11,7 +11,6 @@ import 'package:edu_verse/bloc/auth/auth_state.dart';
 import 'package:edu_verse/bloc/chat/chat_bloc.dart';
 import 'package:edu_verse/bloc/chat/chat_event.dart';
 import 'package:edu_verse/bloc/discussions/discussion_bloc.dart';
-import 'package:edu_verse/bloc/ai_notes/ai_notes_cubit.dart';
 import 'package:edu_verse/bloc/profile/profile_cubit.dart';
 import 'package:edu_verse/bloc/grades/grades_cubit.dart';
 import 'package:edu_verse/bloc/labs/labs_cubit.dart';
@@ -26,7 +25,6 @@ import 'package:edu_verse/bloc/admin_course_management/course_wizard_bloc.dart';
 import 'package:edu_verse/bloc/admin_course_management/admin_enrollment_bloc.dart';
 import 'package:edu_verse/bloc/language/language_cubit.dart';
 import 'package:edu_verse/bloc/notifications/notification_cubit.dart';
-import 'package:edu_verse/bloc/smart_study/smart_study_cubit.dart';
 import 'package:edu_verse/bloc/summarizer/summarizer_cubit.dart';
 import 'package:edu_verse/bloc/tasks/tasks_cubit.dart';
 import 'package:edu_verse/bloc/search/search_cubit.dart';
@@ -106,10 +104,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   late GradesCubit _gradesCubit;
   late AttendanceCubit _attendanceCubit;
   late SummarizerCubit _summarizerCubit;
-  late SmartStudyCubit _smartStudyCubit;
   late ChatBloc _chatBloc;
   late DiscussionBloc _discussionBloc;
-  late AINoteCubit _aiNoteCubit;
   late ProfileCubit _profileCubit;
   late SearchCubit _searchCubit;
   late AdminNotificationCubit _adminNotificationCubit;
@@ -195,10 +191,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _attendanceCubit = AttendanceCubit(attendanceService: _attendanceService)
       ..loadAttendance();
     _summarizerCubit = SummarizerCubit();
-    _smartStudyCubit = SmartStudyCubit();
     _chatBloc = ChatBloc();
     _discussionBloc = DiscussionBloc();
-    _aiNoteCubit = AINoteCubit();
     _profileCubit = ProfileCubit(userProfileService: _userProfileService);
     _searchCubit = SearchCubit();
     _adminNotificationCubit = AdminNotificationCubit(
@@ -369,10 +363,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _gradesCubit.close();
     _attendanceCubit.close();
     _summarizerCubit.close();
-    _smartStudyCubit.close();
     _chatBloc.close();
     _discussionBloc.close();
-    _aiNoteCubit.close();
     _profileCubit.close();
     _searchCubit.close();
     _adminNotificationCubit.close();
@@ -414,10 +406,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
           BlocProvider.value(value: _gradesCubit),
           BlocProvider.value(value: _attendanceCubit),
           BlocProvider.value(value: _summarizerCubit),
-          BlocProvider.value(value: _smartStudyCubit),
           BlocProvider.value(value: _chatBloc),
           BlocProvider.value(value: _discussionBloc),
-          BlocProvider.value(value: _aiNoteCubit),
           BlocProvider.value(value: _profileCubit),
           BlocProvider.value(value: _searchCubit),
           BlocProvider.value(value: _adminNotificationCubit),

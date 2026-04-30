@@ -288,7 +288,7 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
           isDark: isDark,
           trend: _statsData['atRiskTrend'],
           isPositiveTrend: false,
-          onTap: () => context.push('/ta/student-performance'),
+          onTap: () => context.push('/ta/roster'),
         ),
         TAStatsCard(
           title: l10n.taAnalyticsEngagement,
@@ -546,7 +546,7 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
             const SizedBox(height: 10),
             _buildActionButton('View Submissions', Icons.folder_open, () {
               Navigator.pop(context);
-              context.push('/ta/ai-grading');
+              context.push('/ta/grading');
             }, isDark),
             const SizedBox(height: 20),
           ],
@@ -970,9 +970,9 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
             context.push('/ta/labs');
           }, isDark),
           const SizedBox(height: 10),
-          _buildActionButton('Start AI Grading', Icons.auto_fix_high, () {
+          _buildActionButton('Open Grading Center', Icons.grading, () {
             Navigator.pop(context);
-            context.push('/ta/ai-grading');
+            context.push('/ta/grading');
           }, isDark),
         ],
       ),
@@ -1021,9 +1021,9 @@ class _TAAnalyticsScreenState extends State<TAAnalyticsScreen> {
             context.push('/ta/discussions');
           }, isDark),
           const SizedBox(height: 10),
-          _buildActionButton('View Student Inbox', Icons.inbox, () {
+          _buildActionButton('View Messages', Icons.chat_bubble, () {
             Navigator.pop(context);
-            context.push('/ta/student-inbox');
+            context.push('/ta/messages');
           }, isDark),
         ],
       ),

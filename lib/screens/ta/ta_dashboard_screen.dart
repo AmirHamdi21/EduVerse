@@ -169,7 +169,7 @@ class _TADashboardScreenState extends State<TADashboardScreen> {
   void _handleQuickAction(String action) {
     switch (action) {
       case 'exam_grading':
-        context.push('/ta/ai-grading');
+        context.push('/ta/grading');
         break;
       case 'review_labs':
         context.push('/ta/labs');

@@ -130,19 +130,6 @@ class InstructorQuickAccessGrid extends StatelessWidget {
               ),
               _buildQuickAccessItem(
                 context,
-                title: l10n.aiAssistant,
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFFFB63B6), Color(0xFFE50076)],
-                ),
-                icon: Icons.psychology_outlined,
-                onTap: () {
-                  context.push('/ai-chat');
-                },
-              ),
-              _buildQuickAccessItem(
-                context,
                 title: l10n.discussions,
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,

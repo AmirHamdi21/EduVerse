@@ -2,7 +2,6 @@ import 'package:edu_verse/models/quiz_models.dart';
 import 'package:edu_verse/screens/student/ai_quiz_generator_screen.dart';
 import 'package:edu_verse/screens/student/assignments_screen.dart';
 import 'package:edu_verse/screens/student/chat/chat_swipe_settings_screen.dart';
-import 'package:edu_verse/screens/student/ai_notes/ai_notes_screen.dart';
 import 'package:edu_verse/screens/student/profile/profile_screen.dart';
 import 'package:edu_verse/screens/student/profile/edit_profile_screen.dart';
 import 'package:edu_verse/screens/student/settings/settings_screen.dart';
@@ -36,7 +35,6 @@ import 'package:edu_verse/screens/student/flashcards_screen.dart';
 import 'package:edu_verse/screens/student/grades_screen.dart';
 import 'package:edu_verse/screens/student/grade_analysis_screen.dart';
 import 'package:edu_verse/screens/student/labs_screen.dart';
-import 'package:edu_verse/screens/student/my_files/my_files_screen.dart';
 import 'package:edu_verse/screens/student/notifications/notifications_screen.dart';
 import 'package:edu_verse/screens/student/announcements/student_announcements_screen.dart';
 import 'package:edu_verse/screens/student/quiz_questions_screen.dart';
@@ -47,7 +45,6 @@ import 'package:edu_verse/screens/student/tasks_screen.dart';
 import 'package:edu_verse/screens/student/voice_to_text/voice_to_text_screen.dart';
 import 'package:edu_verse/screens/student/attendance/attendance_screen.dart';
 import 'package:edu_verse/screens/student/summarizer/summarizer_screen.dart';
-import 'package:edu_verse/screens/student/smart_study/smart_study_screen.dart';
 import 'package:edu_verse/screens/student/gamification/gamification_screen.dart';
 import 'package:edu_verse/screens/student/ai_chat/ai_chat_screen.dart';
 import 'package:edu_verse/screens/student/search/overall_search_screen.dart';
@@ -117,19 +114,13 @@ import 'package:edu_verse/screens/ta/courses/ta_courses_list_screen.dart';
 import 'package:edu_verse/screens/ta/courses/ta_course_detail_screen.dart';
 import 'package:edu_verse/screens/ta/labs/ta_labs_list_screen.dart';
 import 'package:edu_verse/screens/ta/labs/ta_lab_detail_screen.dart';
-import 'package:edu_verse/screens/ta/student_performance/ta_student_performance_screen.dart';
 import 'package:edu_verse/screens/ta/notifications/ta_notifications_screen.dart';
-import 'package:edu_verse/screens/ta/upload_materials/ta_upload_materials_screen.dart';
 import 'package:edu_verse/screens/ta/sections/ta_section_materials_screen.dart';
-import 'package:edu_verse/screens/ta/ai_grading/ta_ai_grading_screen.dart';
 import 'package:edu_verse/screens/ta/grading/ta_grading_center_screen.dart';
-import 'package:edu_verse/screens/ta/student_inbox/ta_student_inbox_screen.dart';
-import 'package:edu_verse/screens/ta/lab_resources/ta_lab_resources_screen.dart';
 import 'package:edu_verse/screens/ta/analytics/ta_analytics_screen.dart';
 import 'package:edu_verse/screens/ta/settings/ta_settings_screen.dart';
 import 'package:edu_verse/screens/ta/profile/ta_profile_screen.dart';
 import 'package:edu_verse/screens/ta/profile/ta_edit_profile_screen.dart';
-import 'package:edu_verse/screens/ta/office_hours/ta_office_hours_screen.dart';
 import 'package:edu_verse/screens/ta/calendar/ta_calendar_screen.dart';
 import 'package:edu_verse/screens/ta/search/ta_search_screen.dart';
 import 'package:edu_verse/screens/ta/attendance/ta_attendance_screen.dart';
@@ -512,16 +503,8 @@ class AppRouter {
         builder: (context, state) => const StudentQuizResultScreen(),
       ),
       GoRoute(
-        path: '/my-files',
-        builder: (context, state) => const MyFilesScreen(),
-      ),
-      GoRoute(
         path: '/summarizer',
         builder: (context, state) => const SummarizerScreen(),
-      ),
-      GoRoute(
-        path: '/smart-study',
-        builder: (context, state) => const SmartStudyScreen(),
       ),
       GoRoute(
         path: '/gamification',
@@ -633,10 +616,6 @@ class AppRouter {
       GoRoute(
         path: '/messages/swipe-settings',
         builder: (context, state) => const ChatSwipeSettingsScreen(),
-      ),
-      GoRoute(
-        path: '/ai-notes',
-        builder: (context, state) => const AiNotesScreen(),
       ),
       GoRoute(
         path: '/profile',
@@ -1297,10 +1276,6 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/ta/student-performance',
-        builder: (context, state) => const TAStudentPerformanceScreen(),
-      ),
-      GoRoute(
         path: '/ta/notifications',
         builder: (context, state) => const TANotificationsScreen(),
       ),
@@ -1372,10 +1347,6 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/ta/upload-materials',
-        builder: (context, state) => const TAUploadMaterialsScreen(),
-      ),
-      GoRoute(
         path: '/ta/section-materials',
         builder: (context, state) {
           final extra = state.extra as Map<String, dynamic>?;
@@ -1394,10 +1365,6 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/ta/ai-grading',
-        builder: (context, state) => const TAAIGradingScreen(),
-      ),
-      GoRoute(
         path: '/ta/grading',
         builder: (context, state) {
           final courseId = state.uri.queryParameters['courseId'] != null
@@ -1405,14 +1372,6 @@ class AppRouter {
               : null;
           return TAGradingCenterScreen(courseId: courseId);
         },
-      ),
-      GoRoute(
-        path: '/ta/student-inbox',
-        builder: (context, state) => const TAStudentInboxScreen(),
-      ),
-      GoRoute(
-        path: '/ta/lab-resources',
-        builder: (context, state) => const TALabResourcesScreen(),
       ),
       GoRoute(
         path: '/ta/analytics',
@@ -1429,10 +1388,6 @@ class AppRouter {
       GoRoute(
         path: '/ta/edit-profile',
         builder: (context, state) => const TAEditProfileScreen(),
-      ),
-      GoRoute(
-        path: '/ta/office-hours',
-        builder: (context, state) => const TAOfficeHoursScreen(),
       ),
       GoRoute(
         path: '/ta/calendar',

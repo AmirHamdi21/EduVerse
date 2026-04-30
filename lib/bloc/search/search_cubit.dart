@@ -85,12 +85,6 @@ class SearchCubit extends Cubit<SearchState> {
       'AI assistant',
     ),
     _FeatureItem(
-      'AI Notes',
-      '/ai-notes',
-      Icons.note_alt_rounded,
-      'AI-powered notes',
-    ),
-    _FeatureItem(
       'Voice to Text',
       '/voice-to-text',
       Icons.mic_rounded,
@@ -101,18 +95,6 @@ class SearchCubit extends Cubit<SearchState> {
       '/summarizer',
       Icons.summarize_rounded,
       'Text summarizer',
-    ),
-    _FeatureItem(
-      'Smart Study',
-      '/smart-study',
-      Icons.psychology_rounded,
-      'Smart study plans',
-    ),
-    _FeatureItem(
-      'My Files',
-      '/my-files',
-      Icons.folder_rounded,
-      'File management',
     ),
     _FeatureItem(
       'Attendance',

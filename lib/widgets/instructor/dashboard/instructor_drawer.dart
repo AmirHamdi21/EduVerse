@@ -370,33 +370,10 @@ class _InstructorDrawerState extends State<InstructorDrawer>
         category: 'main',
       ),
       _MenuItem(
-        icon: Icons.folder_outlined,
-        activeIcon: Icons.folder,
-        title: l10n.myFiles,
-        route: '/my-files',
-        category: 'main',
-      ),
-      _MenuItem(
         icon: Icons.psychology_outlined,
         activeIcon: Icons.psychology,
         title: l10n.aiTeachingAssistant,
         route: '/instructor/ai-teaching',
-        isHighlighted: true,
-        category: 'ai',
-      ),
-      _MenuItem(
-        icon: Icons.auto_awesome_outlined,
-        activeIcon: Icons.auto_awesome,
-        title: l10n.aiAssistant,
-        route: '/ai-chat',
-        isHighlighted: true,
-        category: 'ai',
-      ),
-      _MenuItem(
-        icon: Icons.quiz_outlined,
-        activeIcon: Icons.quiz,
-        title: l10n.aiQuiz,
-        route: '/ai-quiz-generator',
         isHighlighted: true,
         category: 'ai',
       ),
@@ -554,9 +531,7 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                     color: isSelected
                         ? (item.isHighlighted
                               ? Colors.white.withValues(alpha: 0.2)
-                              : const Color(
-                                  0xFF3B82F6,
-                                ).withValues(alpha: 0.1))
+                              : const Color(0xFF3B82F6).withValues(alpha: 0.1))
                         : (isDark
                               ? Colors.white.withValues(alpha: 0.05)
                               : Colors.black.withValues(alpha: 0.03)),
