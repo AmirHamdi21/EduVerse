@@ -147,7 +147,7 @@ class SharedAttendanceManagerScreen extends StatelessWidget {
                                       InstructorAttendanceView
                                           .roster) ...<Widget>[
                                     const SizedBox(height: 12),
-                                    _ModeToggle(
+                                    _AttendanceFilters(
                                       isDark: isDark,
                                       theme: theme,
                                       state: state,
@@ -465,7 +465,7 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
       child: Row(
         children: <Widget>[
           _UtilityButton(
@@ -497,7 +497,7 @@ class _TopBar extends StatelessWidget {
             style: TextStyle(
               color: theme.textPrimary(isDark),
               fontWeight: FontWeight.w800,
-              fontSize: 15,
+              fontSize: 14.5,
             ),
           ),
         ],
@@ -527,7 +527,7 @@ class _UtilityButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Ink(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
             color: theme
                 .cardColor(isDark)
@@ -568,15 +568,15 @@ class _HeroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         gradient: isDark ? theme.darkHeaderGradient : theme.headerGradient,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(24),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: theme.primary.withValues(alpha: isDark ? 0.24 : 0.18),
-            blurRadius: 28,
-            offset: const Offset(0, 16),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -584,27 +584,27 @@ class _HeroCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Container(
-                width: 58,
-                height: 58,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.14),
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.22),
                   ),
                 ),
-                child: Icon(icon, color: Colors.white, size: 28),
+                child: Icon(icon, color: Colors.white, size: 21),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Expanded(
                           child: Text(
@@ -613,25 +613,25 @@ class _HeroCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 26,
+                              fontSize: 17.5,
                               fontWeight: FontWeight.w800,
-                              letterSpacing: -0.5,
+                              letterSpacing: -0.2,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 8),
                         _HeaderPill(label: badge),
                       ],
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 3),
                     Text(
                       subtitle,
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.88),
-                        fontSize: 13.5,
-                        height: 1.35,
+                        fontSize: 12.5,
+                        height: 1.2,
                       ),
                     ),
                   ],
@@ -639,10 +639,10 @@ class _HeroCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           _StatsGrid(stats: stats),
           if (actionLabel != null && onActionTap != null) ...<Widget>[
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Align(
               alignment: Alignment.centerLeft,
               child: OutlinedButton.icon(
@@ -652,11 +652,11 @@ class _HeroCard extends StatelessWidget {
                   side: BorderSide(color: Colors.white.withValues(alpha: 0.30)),
                   backgroundColor: Colors.white.withValues(alpha: 0.08),
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
+                    horizontal: 12,
+                    vertical: 8,
                   ),
                 ),
-                icon: const Icon(Icons.chevron_left_rounded),
+                icon: const Icon(Icons.chevron_left_rounded, size: 18),
                 label: Text(actionLabel!),
               ),
             ),
@@ -675,7 +675,7 @@ class _HeaderPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(999),
@@ -685,7 +685,7 @@ class _HeaderPill extends StatelessWidget {
         label,
         style: const TextStyle(
           color: Colors.white,
-          fontSize: 12,
+          fontSize: 11.5,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -718,9 +718,9 @@ class _StatsGrid extends StatelessWidget {
       builder: (context, constraints) {
         final columns = constraints.maxWidth >= 720
             ? 3
-            : constraints.maxWidth >= 420
+            : constraints.maxWidth >= 360
             ? 3
-            : 1;
+            : 2;
         final tileWidth = columns == 1
             ? constraints.maxWidth
             : (constraints.maxWidth - ((columns - 1) * 10)) / columns;
@@ -750,24 +750,24 @@ class _HeroStatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Row(
         children: <Widget>[
           Container(
-            width: 34,
-            height: 34,
+            width: 30,
+            height: 30,
             decoration: BoxDecoration(
               color: stat.color.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(stat.icon, color: Colors.white, size: 18),
+            child: Icon(stat.icon, color: Colors.white, size: 16),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -776,16 +776,17 @@ class _HeroStatTile extends StatelessWidget {
                   stat.value,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 17,
+                    fontSize: 14.5,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(height: 1),
                 Text(
                   stat.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.86),
-                    fontSize: 11.5,
+                    fontSize: 10.5,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -798,8 +799,8 @@ class _HeroStatTile extends StatelessWidget {
   }
 }
 
-class _ModeToggle extends StatelessWidget {
-  const _ModeToggle({
+class _AttendanceFilters extends StatelessWidget {
+  const _AttendanceFilters({
     required this.isDark,
     required this.theme,
     required this.state,
@@ -812,85 +813,147 @@ class _ModeToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final cubit = context.read<InstructorAttendanceCubit>();
+    final modeLabel = state.uiMode == AttendanceUiMode.lecture
+        ? l10n.attendanceLectureMode
+        : l10n.attendanceSessionsMode;
+    final section = state.selectedSection;
+    final hasSectionFilter =
+        state.uiMode == AttendanceUiMode.sessions &&
+        state.teachingSections.isNotEmpty;
+    final sectionLabel = section == null
+        ? l10n.selectSection
+        : '${section.course.courseCode} • ${l10n.sectionLabel(section.section.sectionNumber)}';
+
     return _SurfaceCard(
       isDark: isDark,
       theme: theme,
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(10),
       child: Row(
-        children: AttendanceUiMode.values.map((mode) {
-          final selected = state.uiMode == mode;
-          final label = mode == AttendanceUiMode.lecture
-              ? l10n.attendanceLectureMode
-              : l10n.attendanceSessionsMode;
-          final subtitle = mode == AttendanceUiMode.lecture
-              ? l10n.attendanceModeLectureSubtitle
-              : l10n.attendanceModeSessionsSubtitle;
-          final icon = mode == AttendanceUiMode.lecture
-              ? Icons.how_to_reg_rounded
-              : Icons.table_rows_rounded;
-          return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 2),
-              child: InkWell(
-                onTap: () =>
-                    context.read<InstructorAttendanceCubit>().setUiMode(mode),
-                borderRadius: BorderRadius.circular(18),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 180),
-                  curve: Curves.easeOut,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: selected
-                        ? theme.primary.withValues(alpha: 0.14)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: selected
-                          ? theme.primary.withValues(alpha: 0.36)
-                          : Colors.transparent,
+        children: <Widget>[
+          Expanded(
+            child: _CompactPopupFilter<AttendanceUiMode>(
+              isDark: isDark,
+              theme: theme,
+              icon: Icons.tune_rounded,
+              color: theme.primary,
+              label: modeLabel,
+              items: AttendanceUiMode.values
+                  .map(
+                    (mode) => PopupMenuItem<AttendanceUiMode>(
+                      value: mode,
+                      child: Row(
+                        children: <Widget>[
+                          Icon(
+                            mode == AttendanceUiMode.lecture
+                                ? Icons.how_to_reg_rounded
+                                : Icons.table_rows_rounded,
+                            size: 18,
+                            color: theme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              mode == AttendanceUiMode.lecture
+                                  ? l10n.attendanceLectureMode
+                                  : l10n.attendanceSessionsMode,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      Icon(
-                        icon,
-                        color: selected
-                            ? theme.primary
-                            : theme.textSecondary(isDark),
-                        size: 20,
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        label,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: selected
-                              ? theme.primary
-                              : theme.textPrimary(isDark),
-                          fontWeight: FontWeight.w800,
-                          fontSize: 12.5,
+                  )
+                  .toList(),
+              onSelected: cubit.setUiMode,
+            ),
+          ),
+          if (hasSectionFilter) ...<Widget>[
+            const SizedBox(width: 8),
+            Expanded(
+              child: _CompactPopupFilter<int>(
+                isDark: isDark,
+                theme: theme,
+                icon: Icons.filter_list_rounded,
+                color: theme.accent,
+                label: sectionLabel,
+                items: state.teachingSections
+                    .map(
+                      (teachingSection) => PopupMenuItem<int>(
+                        value: teachingSection.sectionId,
+                        child: Text(
+                          '${teachingSection.course.courseCode} • ${teachingSection.course.name} • ${l10n.sectionLabel(teachingSection.section.sectionNumber)}',
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: theme.textSecondary(isDark),
-                          fontSize: 10.5,
-                          height: 1.3,
-                        ),
-                      ),
-                    ],
-                  ),
+                    )
+                    .toList(),
+                onSelected: cubit.selectSectionForSessions,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _CompactPopupFilter<T> extends StatelessWidget {
+  const _CompactPopupFilter({
+    required this.isDark,
+    required this.theme,
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.items,
+    required this.onSelected,
+  });
+
+  final bool isDark;
+  final SharedAttendanceTheme theme;
+  final IconData icon;
+  final Color color;
+  final String label;
+  final List<PopupMenuEntry<T>> items;
+  final ValueChanged<T> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<T>(
+      onSelected: onSelected,
+      itemBuilder: (_) => items,
+      color: theme.cardColor(isDark),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: theme.surfaceColor(isDark),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: theme.borderColor(isDark)),
+        ),
+        child: Row(
+          children: <Widget>[
+            Icon(icon, color: color, size: 18),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: theme.textPrimary(isDark),
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ),
-          );
-        }).toList(),
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              color: theme.textTertiary(isDark),
+              size: 18,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -926,7 +989,8 @@ class _ClassesView extends StatelessWidget {
 
     final crossAxisCount = wide ? 2 : 1;
     final spacing = 12.0;
-    final aspectRatio = wide ? 1.9 : 1.42;
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final aspectRatio = wide ? 2.2 : (screenWidth >= 430 ? 2.7 : 1.8);
 
     return GridView.builder(
       shrinkWrap: true,
@@ -974,6 +1038,8 @@ class _TeachingSectionCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return Material(
       color: Colors.transparent,
+      borderRadius: BorderRadius.circular(24),
+      clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(24),
@@ -1004,37 +1070,39 @@ class _TeachingSectionCard extends StatelessWidget {
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Row(
                         children: <Widget>[
                           Container(
-                            width: 46,
-                            height: 46,
+                            width: 36,
+                            height: 36,
                             decoration: BoxDecoration(
                               gradient: LinearGradient(colors: colors),
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             child: const Icon(
                               Icons.auto_stories_rounded,
                               color: Colors.white,
+                              size: 18,
                             ),
                           ),
                           const Spacer(),
                           Icon(
                             Icons.chevron_right_rounded,
                             color: theme.textTertiary(isDark),
+                            size: 20,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
                       Text(
                         section.course.courseCode,
                         style: TextStyle(
                           color: colors.first,
-                          fontSize: 11,
+                          fontSize: 10.5,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.1,
                         ),
@@ -1046,14 +1114,14 @@ class _TeachingSectionCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: theme.textPrimary(isDark),
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
-                      const Spacer(),
+                      const SizedBox(height: 8),
                       Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
+                        spacing: 6,
+                        runSpacing: 6,
                         children: <Widget>[
                           _MetaPill(
                             color: theme.accent,
@@ -1139,9 +1207,7 @@ class _SessionsModeView extends StatelessWidget {
 
     return Column(
       children: <Widget>[
-        _SessionsSectionSelector(isDark: isDark, theme: theme, state: state),
         if (selectedSection == null) ...<Widget>[
-          const SizedBox(height: 12),
           _EmptyPanel(
             isDark: isDark,
             theme: theme,
@@ -1210,72 +1276,6 @@ class _AdaptivePanelRow extends StatelessWidget {
   }
 }
 
-class _SessionsSectionSelector extends StatelessWidget {
-  const _SessionsSectionSelector({
-    required this.isDark,
-    required this.theme,
-    required this.state,
-  });
-
-  final bool isDark;
-  final SharedAttendanceTheme theme;
-  final InstructorAttendanceState state;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    if (state.teachingSections.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return _SurfaceCard(
-      isDark: isDark,
-      theme: theme,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _SectionHeader(
-            isDark: isDark,
-            theme: theme,
-            icon: Icons.tune_rounded,
-            title: l10n.selectSection,
-            subtitle: l10n.attendanceModeSessionsSubtitle,
-            color: theme.accent,
-          ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<int>(
-            initialValue:
-                state.selectedSectionId ??
-                state.teachingSections.first.sectionId,
-            decoration: _inputDecoration(
-              isDark: isDark,
-              theme: theme,
-              label: l10n.selectSection,
-            ),
-            dropdownColor: theme.cardColor(isDark),
-            items: state.teachingSections.map((section) {
-              return DropdownMenuItem<int>(
-                value: section.sectionId,
-                child: Text(
-                  '${section.course.courseCode} • ${section.course.name} • ${l10n.sectionLabel(section.section.sectionNumber)}',
-                  overflow: TextOverflow.ellipsis,
-                ),
-              );
-            }).toList(),
-            onChanged: (value) {
-              if (value != null) {
-                context
-                    .read<InstructorAttendanceCubit>()
-                    .selectSectionForSessions(value);
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _SectionSummaryCard extends StatelessWidget {
   const _SectionSummaryCard({
     required this.isDark,
@@ -1299,17 +1299,21 @@ class _SectionSummaryCard extends StatelessWidget {
           Row(
             children: <Widget>[
               Container(
-                width: 46,
-                height: 46,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: <Color>[theme.primary, theme.accent],
                   ),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(13),
                 ),
-                child: const Icon(Icons.class_rounded, color: Colors.white),
+                child: const Icon(
+                  Icons.class_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1328,7 +1332,7 @@ class _SectionSummaryCard extends StatelessWidget {
                       section.course.name,
                       style: TextStyle(
                         color: theme.textPrimary(isDark),
-                        fontSize: 18,
+                        fontSize: 16.5,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -1337,7 +1341,7 @@ class _SectionSummaryCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 10),
           Wrap(
             spacing: 8,
             runSpacing: 8,
@@ -1374,7 +1378,7 @@ class _MetaPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(999),
@@ -1383,7 +1387,7 @@ class _MetaPill extends StatelessWidget {
         label,
         style: TextStyle(
           color: color,
-          fontSize: 12,
+          fontSize: 11.5,
           fontWeight: FontWeight.w700,
         ),
       ),
@@ -1803,17 +1807,17 @@ class _SessionSummaryCard extends StatelessWidget {
     final statusColor = _statusColor(theme, session.status);
 
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: theme.surfaceColor(isDark),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: theme.borderColor(isDark)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               Expanded(
                 child: Column(
@@ -1824,13 +1828,13 @@ class _SessionSummaryCard extends StatelessWidget {
                       style: TextStyle(
                         color: theme.textPrimary(isDark),
                         fontWeight: FontWeight.w800,
-                        fontSize: 15,
+                        fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 3),
                     Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
+                      spacing: 6,
+                      runSpacing: 6,
                       children: <Widget>[
                         _MetaPill(
                           color: statusColor,
@@ -1861,12 +1865,14 @@ class _SessionSummaryCard extends StatelessWidget {
                     tooltip: l10n.attendanceOpenRosterAction,
                     onTap: onOpen,
                   ),
+                  const SizedBox(width: 4),
                   _IconAction(
                     icon: Icons.edit_outlined,
                     color: theme.accent,
                     tooltip: l10n.attendanceEditSessionTitle,
                     onTap: session.isClosed ? null : onEdit,
                   ),
+                  const SizedBox(width: 4),
                   _IconAction(
                     icon: Icons.delete_outline_rounded,
                     color: theme.error,
@@ -1877,10 +1883,10 @@ class _SessionSummaryCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Wrap(
-            spacing: 8,
-            runSpacing: 8,
+            spacing: 6,
+            runSpacing: 6,
             children: <Widget>[
               _InfoChip(
                 color: theme.success,
@@ -1900,7 +1906,7 @@ class _SessionSummaryCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           Row(
             children: <Widget>[
               Expanded(
@@ -1945,10 +1951,29 @@ class _IconAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: onTap,
-      tooltip: tooltip,
-      icon: Icon(icon, color: color),
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onTap,
+          child: Ink(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: onTap == null ? 0.10 : 0.14),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: color.withValues(alpha: 0.22)),
+            ),
+            child: Icon(
+              icon,
+              color: onTap == null ? color.withValues(alpha: 0.45) : color,
+              size: 17,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -1962,7 +1987,7 @@ class _InfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(999),
@@ -1972,7 +1997,7 @@ class _InfoChip extends StatelessWidget {
         style: TextStyle(
           color: color,
           fontWeight: FontWeight.w700,
-          fontSize: 11.5,
+          fontSize: 11,
         ),
       ),
     );
