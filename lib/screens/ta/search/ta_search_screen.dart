@@ -478,12 +478,6 @@ class _TASearchScreenState extends State<TASearchScreen>
         'color': TAColors.warning,
       },
       {
-        'icon': Icons.people_rounded,
-        'label': l10n.taAtRiskStudents,
-        'route': '/ta/student-performance',
-        'color': TAColors.error,
-      },
-      {
         'icon': Icons.science_rounded,
         'label': l10n.taUpcomingLabs,
         'route': '/ta/labs',
@@ -881,7 +875,7 @@ class _TASearchScreenState extends State<TASearchScreen>
     // Navigate based on type
     switch (type) {
       case 'student':
-        context.push('/ta/student-performance');
+        context.push('/ta/roster');
         break;
       case 'course':
         context.push('/ta/courses');
@@ -893,7 +887,7 @@ class _TASearchScreenState extends State<TASearchScreen>
         context.push('/ta/grading');
         break;
       case 'material':
-        context.push('/ta/lab-resources');
+        context.push('/ta/courses');
         break;
       case 'discussion':
         context.push('/ta/discussions');

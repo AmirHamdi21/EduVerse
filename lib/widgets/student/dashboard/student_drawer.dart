@@ -340,25 +340,10 @@ class _StudentDrawerState extends State<StudentDrawer>
         category: 'main',
       ),
       _MenuItem(
-        icon: Icons.folder_outlined,
-        activeIcon: Icons.folder,
-        title: l10n.myFiles,
-        route: '/my-files',
-        category: 'main',
-      ),
-      _MenuItem(
         icon: Icons.summarize_outlined,
         activeIcon: Icons.summarize,
         title: l10n.summarizerTitle,
         route: '/summarizer',
-        category: 'ai',
-        isHighlighted: true,
-      ),
-      _MenuItem(
-        icon: Icons.auto_awesome_outlined,
-        activeIcon: Icons.auto_awesome,
-        title: l10n.smartStudyTitle,
-        route: '/smart-study',
         category: 'ai',
         isHighlighted: true,
       ),
@@ -392,14 +377,6 @@ class _StudentDrawerState extends State<StudentDrawer>
         title: l10n.announcements,
         route: '/student/announcements',
         category: 'communication',
-      ),
-      _MenuItem(
-        icon: Icons.auto_awesome_outlined,
-        activeIcon: Icons.auto_awesome,
-        title: l10n.aiNotesSummaries,
-        route: '/ai-notes',
-        isHighlighted: true,
-        category: 'ai',
       ),
       _MenuItem(
         icon: Icons.psychology_outlined,
@@ -527,9 +504,7 @@ class _StudentDrawerState extends State<StudentDrawer>
                     color: isSelected
                         ? (item.isHighlighted
                               ? Colors.white.withValues(alpha: 0.2)
-                              : const Color(
-                                  0xFF3B82F6,
-                                ).withValues(alpha: 0.1))
+                              : const Color(0xFF3B82F6).withValues(alpha: 0.1))
                         : (isDark
                               ? Colors.white.withValues(alpha: 0.05)
                               : Colors.black.withValues(alpha: 0.03)),

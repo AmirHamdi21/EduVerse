@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -57,8 +56,8 @@ class _TASettingsScreenState extends State<TASettingsScreen>
   }
 
   Future<void> _loadSettings() async {
-    final prefs = await SharedPreferences.getInstance();
     final themeState = context.read<ThemeBloc>().state;
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
       _pushNotifications = prefs.getBool('ta_push_notifications') ?? true;
       _emailNotifications = prefs.getBool('ta_email_notifications') ?? true;
@@ -904,63 +903,6 @@ class _TASettingsScreenState extends State<TASettingsScreen>
     );
   }
 
-  Widget _buildFontSizeOption(
-    String title,
-    String preview,
-    double size,
-    bool isDark, {
-    bool isSelected = false,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          Navigator.pop(context);
-          _showSnackBar('Font size changed to $title', isDark);
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? TAColors.primary.withValues(alpha: 0.1)
-                : TAColors.cardColor(isDark),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isSelected
-                  ? TAColors.primary
-                  : TAColors.borderColor(isDark),
-            ),
-          ),
-          child: Row(
-            children: [
-              Text(
-                preview,
-                style: TextStyle(
-                  fontSize: size,
-                  color: TAColors.textPrimaryColor(isDark),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: TAColors.textPrimaryColor(isDark),
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                  ),
-                ),
-              ),
-              if (isSelected)
-                const Icon(Icons.check_rounded, color: TAColors.primary),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   void _showOfficeHoursSheet(bool isDark, AppLocalizations l10n) {
     showModalBottomSheet(
       context: context,
@@ -999,26 +941,6 @@ class _TASettingsScreenState extends State<TASettingsScreen>
             _buildOfficeHourSlot('Monday', '2:00 PM - 4:00 PM', isDark),
             _buildOfficeHourSlot('Wednesday', '10:00 AM - 12:00 PM', isDark),
             _buildOfficeHourSlot('Friday', '3:00 PM - 5:00 PM', isDark),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                  context.push('/ta/office-hours');
-                },
-                icon: const Icon(Icons.edit_rounded),
-                label: const Text('Edit Office Hours'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: TAColors.primary,
-                  side: const BorderSide(color: TAColors.primary),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
             const SizedBox(height: 10),
           ],
         ),
@@ -1217,7 +1139,7 @@ class _TASettingsScreenState extends State<TASettingsScreen>
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: TAColors.primary,
+            activeThumbColor: TAColors.primary,
           ),
         ],
       ),
