@@ -198,6 +198,7 @@ import 'package:edu_verse/screens/shared/shared_chat_screen.dart';
 import 'package:edu_verse/screens/shared/discussion_screen.dart';
 import 'package:edu_verse/screens/shared/chat/new_conversation_screen.dart';
 import 'package:edu_verse/screens/shared/chat/user_profile_screen.dart';
+import 'package:edu_verse/screens/shared/chat/group_profile_screen.dart';
 import 'package:edu_verse/bloc/chat/chat_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -611,6 +612,20 @@ class AppRouter {
             );
           }
           return UserProfileScreen(userId: userId);
+        },
+      ),
+      GoRoute(
+        path: '/messages/group/:conversationId',
+        builder: (context, state) {
+          final conversationId = int.tryParse(
+            state.pathParameters['conversationId'] ?? '',
+          );
+          if (conversationId == null || conversationId <= 0) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid group profile request')),
+            );
+          }
+          return ChatGroupProfileScreen(conversationId: conversationId);
         },
       ),
       GoRoute(

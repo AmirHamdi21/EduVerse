@@ -8,21 +8,22 @@ import '../../../bloc/chat/chat_bloc.dart';
 import '../../../bloc/chat/chat_event.dart';
 import '../../../bloc/chat/chat_models.dart';
 import '../../../bloc/chat/chat_state.dart';
-import '../../../models/chat/user_profile_context.dart';
 import '../profile/role_profile_theme.dart';
 
-class UserProfileScreen extends StatefulWidget {
-  final int userId;
+class ChatGroupProfileScreen extends StatefulWidget {
+  const ChatGroupProfileScreen({super.key, required this.conversationId});
 
-  const UserProfileScreen({super.key, required this.userId});
+  final int conversationId;
 
   @override
-  State<UserProfileScreen> createState() => _UserProfileScreenState();
+  State<ChatGroupProfileScreen> createState() => _ChatGroupProfileScreenState();
 }
 
-class _UserProfileScreenState extends State<UserProfileScreen> {
-  _ChatProfileTheme get _theme =>
-      _ChatProfileTheme.fromAuthState(context.read<AuthBloc>().state);
+class _ChatGroupProfileScreenState extends State<ChatGroupProfileScreen> {
+  int? _pendingMemberUserId;
+
+  _ChatGroupTheme get _theme =>
+      _ChatGroupTheme.fromAuthState(context.read<AuthBloc>().state);
 
   @override
   Widget build(BuildContext context) {
@@ -30,35 +31,59 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
     return Scaffold(
       backgroundColor: _theme.background(isDark),
-      body: BlocBuilder<ChatBloc, ChatState>(
-        builder: (context, state) {
-          final user = _resolveUser(state, widget.userId);
-          if (user == null) {
-            return _buildMissingUserState(context, isDark);
+      body: BlocConsumer<ChatBloc, ChatState>(
+        listenWhen: (previous, current) =>
+            previous.activeConversationId != current.activeConversationId ||
+            previous.errorMessage != current.errorMessage,
+        listener: (context, state) {
+          final pendingUserId = _pendingMemberUserId;
+          if (pendingUserId == null) {
+            return;
           }
 
-          final commonGroups = state.conversations
-              .where(
-                (conversation) =>
-                    conversation.type == ConversationType.group &&
-                    (conversation.participants.contains(widget.userId) ||
-                        conversation.participantUsers.any(
-                          (participant) => participant.userId == widget.userId,
-                        )),
-              )
-              .toList(growable: false);
+          final activeConversation = state.activeConversation;
+          final openedConversation =
+              activeConversation != null &&
+              activeConversation.type == ConversationType.direct &&
+              (activeConversation.directDisplayUser?.userId == pendingUserId ||
+                  activeConversation.participants.contains(pendingUserId));
 
-          final profile = UserProfileContext(
-            userId: user.userId,
-            firstName: _resolveFirstName(user),
-            lastName: _resolveLastName(user),
-            fullName: user.displayName,
-            email: _resolveEmail(user),
-            role: _resolveRole(user),
-            isOnline: state.onlineUsers.contains(user.userId),
-            lastSeen: state.userLastSeen[user.userId],
-            commonGroups: commonGroups,
-          );
+          if (openedConversation) {
+            context.read<ChatBloc>().add(
+              MarkRead(activeConversation.conversationId),
+            );
+            setState(() => _pendingMemberUserId = null);
+            if (Navigator.of(context).canPop()) {
+              context.pop();
+            }
+            return;
+          }
+
+          final error = (state.errorMessage ?? '').trim();
+          if (error.isNotEmpty) {
+            setState(() => _pendingMemberUserId = null);
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(error)));
+          }
+        },
+        builder: (context, state) {
+          final conversation = state.conversations
+              .where((item) => item.conversationId == widget.conversationId)
+              .firstOrNull;
+
+          if (conversation == null) {
+            return _buildMissingState(context, isDark);
+          }
+
+          final authState = context.read<AuthBloc>().state;
+          final currentUserId = authState is AuthAuthenticated
+              ? authState.user.userId
+              : 0;
+          final members = _resolveMembers(state, conversation);
+          final onlineCount = members
+              .where((member) => state.onlineUsers.contains(member.userId))
+              .length;
 
           return Stack(
             children: [
@@ -69,88 +94,59 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   children: [
                     _buildTopBar(context, isDark),
                     const SizedBox(height: 10),
-                    _buildHeroCard(profile, isDark),
-                    const SizedBox(height: 14),
-                    _buildStatsRow(profile, isDark),
-                    const SizedBox(height: 14),
-                    _buildSectionCard(
+                    _buildHeroCard(
+                      conversation: conversation,
+                      memberCount: members.length,
+                      onlineCount: onlineCount,
                       isDark: isDark,
-                      title: 'Profile Info',
-                      subtitle:
-                          'Core contact details and account presence at a glance.',
-                      icon: Icons.badge_rounded,
-                      child: Column(
-                        children: [
-                          _buildInfoTile(
-                            icon: Icons.alternate_email_rounded,
-                            label: 'Email',
-                            value: profile.email,
-                            isDark: isDark,
-                          ),
-                          _buildInfoTile(
-                            icon: Icons.workspace_premium_rounded,
-                            label: 'Role',
-                            value: _roleLabel(profile.role),
-                            isDark: isDark,
-                            highlight: _roleColor(profile.role),
-                          ),
-                          _buildInfoTile(
-                            icon: profile.isOnline
-                                ? Icons.circle_rounded
-                                : Icons.history_toggle_off_rounded,
-                            label: 'Presence',
-                            value: _statusText(profile),
-                            isDark: isDark,
-                            highlight: profile.isOnline
-                                ? _theme.success
-                                : _theme.textMutedLight,
-                          ),
-                        ],
-                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    _buildStatsRow(
+                      isDark: isDark,
+                      memberCount: members.length,
+                      onlineCount: onlineCount,
+                      unreadCount: conversation.unreadCount,
                     ),
                     const SizedBox(height: 14),
                     _buildSectionCard(
                       isDark: isDark,
-                      title: 'Shared Spaces',
+                      title: 'Members',
                       subtitle:
-                          'Group conversations where both of you are already connected.',
-                      icon: Icons.group_work_rounded,
-                      child: profile.commonGroups.isEmpty
-                          ? _buildEmptyState(
-                              isDark: isDark,
-                              icon: Icons.forum_outlined,
-                              title: 'No common groups yet',
-                              subtitle:
-                                  'This user is not currently sharing a group conversation with you.',
+                          'Open a direct chat with any member and keep the conversation flowing.',
+                      icon: Icons.groups_rounded,
+                      child: Column(
+                        children: members
+                            .map(
+                              (member) => Padding(
+                                padding: const EdgeInsets.only(bottom: 10),
+                                child: _buildMemberTile(
+                                  context: context,
+                                  member: member,
+                                  isDark: isDark,
+                                  isCurrentUser: member.userId == currentUserId,
+                                  isOnline: state.onlineUsers.contains(
+                                    member.userId,
+                                  ),
+                                ),
+                              ),
                             )
-                          : Column(
-                              children: profile.commonGroups
-                                  .map(
-                                    (conversation) => Padding(
-                                      padding: const EdgeInsets.only(
-                                        bottom: 10,
-                                      ),
-                                      child: _buildGroupTile(
-                                        conversation,
-                                        isDark,
-                                        context: context,
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
+                            .toList(),
+                      ),
                     ),
                     const SizedBox(height: 14),
                     _buildSectionCard(
                       isDark: isDark,
                       title: 'Quick Action',
                       subtitle:
-                          'Jump straight back into the conversation with a cleaner action flow.',
+                          'Jump straight back into the group thread from this info view.',
                       icon: Icons.flash_on_rounded,
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: () => _sendMessage(context, user),
+                          onPressed: () => _openConversation(
+                            context,
+                            conversation.conversationId,
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _theme.primary,
                             foregroundColor: Colors.white,
@@ -160,9 +156,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               borderRadius: BorderRadius.circular(18),
                             ),
                           ),
-                          icon: const Icon(Icons.message_outlined),
+                          icon: const Icon(Icons.forum_outlined),
                           label: const Text(
-                            'Send Message',
+                            'Open Group Chat',
                             style: TextStyle(fontWeight: FontWeight.w700),
                           ),
                         ),
@@ -178,7 +174,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  Widget _buildMissingUserState(BuildContext context, bool isDark) {
+  Widget _buildMissingState(BuildContext context, bool isDark) {
     return Stack(
       children: [
         _buildBackgroundDecorations(isDark),
@@ -192,10 +188,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   child: Center(
                     child: _buildEmptyState(
                       isDark: isDark,
-                      icon: Icons.person_off_outlined,
-                      title: 'User data not found',
+                      icon: Icons.group_off_outlined,
+                      title: 'Group data not found',
                       subtitle:
-                          'We could not resolve this chat profile from the current conversation cache.',
+                          'We could not resolve this group from the current chat cache.',
                     ),
                   ),
                 ),
@@ -212,15 +208,15 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       children: [
         Positioned(
           top: -120,
-          right: -60,
+          right: -50,
           child: Container(
-            width: 250,
-            height: 250,
+            width: 240,
+            height: 240,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  _theme.primary.withValues(alpha: isDark ? 0.24 : 0.16),
+                  _theme.primary.withValues(alpha: isDark ? 0.22 : 0.15),
                   Colors.transparent,
                 ],
               ),
@@ -228,16 +224,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
         ),
         Positioned(
-          top: 180,
+          top: 220,
           left: -80,
           child: Container(
-            width: 190,
-            height: 190,
+            width: 180,
+            height: 180,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  _theme.accent.withValues(alpha: isDark ? 0.18 : 0.1),
+                  _theme.accent.withValues(alpha: isDark ? 0.16 : 0.1),
                   Colors.transparent,
                 ],
               ),
@@ -249,11 +245,18 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   Widget _buildTopBar(BuildContext context, bool isDark) {
-    return Row(
-      children: [
-        _buildUtilityButton(
-          isDark: isDark,
-          onTap: () => context.pop(),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => context.pop(),
+        borderRadius: BorderRadius.circular(16),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: _theme.card(isDark).withValues(alpha: isDark ? 0.92 : 0.96),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: _theme.border(isDark)),
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -273,35 +276,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             ],
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildUtilityButton({
-    required bool isDark,
-    required VoidCallback onTap,
-    required Widget child,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Ink(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: _theme.card(isDark).withValues(alpha: isDark ? 0.92 : 0.96),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _theme.border(isDark)),
-          ),
-          child: child,
-        ),
       ),
     );
   }
 
-  Widget _buildHeroCard(UserProfileContext profile, bool isDark) {
-    final roleColor = _roleColor(profile.role);
+  Widget _buildHeroCard({
+    required ConversationModel conversation,
+    required int memberCount,
+    required int onlineCount,
+    required bool isDark,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -316,29 +300,25 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                width: 76,
-                height: 76,
+                width: 72,
+                height: 72,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
                   color: Colors.white.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(24),
                   border: Border.all(
                     color: Colors.white.withValues(alpha: 0.7),
                     width: 2,
                   ),
                 ),
-                child: Center(
-                  child: Text(
-                    profile.initials,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
+                child: const Icon(
+                  Icons.groups_rounded,
+                  color: Colors.white,
+                  size: 34,
                 ),
               ),
               const SizedBox(width: 14),
@@ -347,7 +327,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Profile',
+                      'Group Profile',
                       style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.82),
                         fontSize: 12.5,
@@ -356,7 +336,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      profile.fullName,
+                      conversation.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -372,14 +352,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       runSpacing: 8,
                       children: [
                         _buildHeroChip(
-                          icon: profile.isOnline
-                              ? Icons.circle_rounded
-                              : Icons.schedule_rounded,
-                          label: _statusText(profile),
+                          icon: Icons.people_alt_rounded,
+                          label: '$memberCount members',
                         ),
                         _buildHeroChip(
-                          icon: Icons.workspace_premium_rounded,
-                          label: _roleLabel(profile.role),
+                          icon: Icons.circle_rounded,
+                          label: '$onlineCount online',
                         ),
                       ],
                     ),
@@ -393,17 +371,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
             children: [
               Expanded(
                 child: _buildHeroMetaCard(
-                  title: 'Email',
-                  value: profile.email,
+                  title: 'Conversation',
+                  value: 'Group chat',
                   color: Colors.white,
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: _buildHeroMetaCard(
-                  title: 'Role Tone',
-                  value: _roleLabel(profile.role),
-                  color: roleColor,
+                  title: 'Unread',
+                  value: '${conversation.unreadCount}',
+                  color: _theme.warning,
                 ),
               ),
             ],
@@ -477,7 +455,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  Widget _buildStatsRow(UserProfileContext profile, bool isDark) {
+  Widget _buildStatsRow({
+    required bool isDark,
+    required int memberCount,
+    required int onlineCount,
+    required int unreadCount,
+  }) {
     return _buildSurfaceCard(
       isDark: isDark,
       child: Row(
@@ -485,9 +468,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           Expanded(
             child: _buildStatItem(
               isDark: isDark,
-              icon: Icons.group_rounded,
-              value: '${profile.commonGroups.length}',
-              label: 'Groups',
+              icon: Icons.groups_rounded,
+              value: '$memberCount',
+              label: 'Members',
               color: _theme.primary,
             ),
           ),
@@ -495,22 +478,20 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           Expanded(
             child: _buildStatItem(
               isDark: isDark,
-              icon: profile.isOnline
-                  ? Icons.wifi_tethering_rounded
-                  : Icons.wifi_tethering_off_rounded,
-              value: profile.isOnline ? 'Live' : 'Away',
-              label: 'Presence',
-              color: profile.isOnline ? _theme.success : _theme.textMutedLight,
+              icon: Icons.wifi_tethering_rounded,
+              value: '$onlineCount',
+              label: 'Online',
+              color: _theme.success,
             ),
           ),
           const SizedBox(width: 10),
           Expanded(
             child: _buildStatItem(
               isDark: isDark,
-              icon: Icons.person_pin_circle_rounded,
-              value: profile.initials,
-              label: 'Initials',
-              color: _roleColor(profile.role),
+              icon: Icons.mark_chat_unread_rounded,
+              value: '$unreadCount',
+              label: 'Unread',
+              color: _theme.warning,
             ),
           ),
         ],
@@ -624,99 +605,53 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  Widget _buildInfoTile({
-    required IconData icon,
-    required String label,
-    required String value,
-    required bool isDark,
-    Color? highlight,
-  }) {
-    final activeColor = highlight ?? _theme.primary;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: _theme.surface(isDark),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: highlight != null
-              ? activeColor.withValues(alpha: 0.2)
-              : _theme.border(isDark),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: activeColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, size: 18, color: activeColor),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: _theme.textSecondary(isDark),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 3),
-                Text(
-                  value,
-                  style: TextStyle(
-                    color: highlight ?? _theme.textPrimary(isDark),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGroupTile(
-    ConversationModel conversation,
-    bool isDark, {
+  Widget _buildMemberTile({
     required BuildContext context,
+    required ChatUserModel member,
+    required bool isDark,
+    required bool isCurrentUser,
+    required bool isOnline,
   }) {
+    final isPending = _pendingMemberUserId == member.userId;
+    final memberRole = (member.role ?? '').trim();
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(18),
-        onTap: () => _openConversation(context, conversation.conversationId),
+        onTap: isCurrentUser || isPending
+            ? null
+            : () => _openMemberConversation(context, member),
         child: Ink(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: _theme.surface(isDark),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: _theme.border(isDark)),
+            border: Border.all(
+              color: isCurrentUser
+                  ? _theme.accent.withValues(alpha: 0.20)
+                  : _theme.border(isDark),
+            ),
           ),
           child: Row(
             children: [
               Container(
-                width: 42,
-                height: 42,
+                width: 46,
+                height: 46,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [_theme.primary, _theme.accent],
                   ),
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(
-                  Icons.group_rounded,
-                  color: Colors.white,
-                  size: 20,
+                child: Center(
+                  child: Text(
+                    _initialsFor(member.displayName),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -724,33 +659,90 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      conversation.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: _theme.textPrimary(isDark),
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w800,
-                      ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            member.displayName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: _theme.textPrimary(isDark),
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                        if (isCurrentUser)
+                          _buildMiniBadge(label: 'You', color: _theme.accent)
+                        else if (isOnline)
+                          _buildMiniBadge(
+                            label: 'Online',
+                            color: _theme.success,
+                          ),
+                      ],
                     ),
-                    const SizedBox(height: 3),
+                    const SizedBox(height: 4),
                     Text(
-                      '${conversation.participantUsers.length} members',
+                      memberRole.isEmpty ? 'Member' : memberRole,
                       style: TextStyle(
                         color: _theme.textSecondary(isDark),
                         fontSize: 12,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
+                    if ((member.email ?? '').trim().isNotEmpty) ...[
+                      const SizedBox(height: 3),
+                      Text(
+                        member.email!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: _theme.textTertiary(isDark),
+                          fontSize: 11.5,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: _theme.textTertiary(isDark),
-              ),
+              const SizedBox(width: 10),
+              if (isPending)
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: _theme.primary,
+                  ),
+                )
+              else
+                Icon(
+                  isCurrentUser
+                      ? Icons.check_circle_outline_rounded
+                      : Icons.chat_bubble_outline_rounded,
+                  color: isCurrentUser ? _theme.accent : _theme.primary,
+                ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMiniBadge({required String label, required Color color}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
@@ -825,19 +817,33 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     );
   }
 
-  Future<void> _sendMessage(BuildContext context, ChatUserModel user) async {
-    final router = GoRouter.of(context);
-    final navigator = Navigator.of(context);
-    final chatBloc = context.read<ChatBloc>();
+  List<ChatUserModel> _resolveMembers(
+    ChatState state,
+    ConversationModel conversation,
+  ) {
+    final resolved = <int, ChatUserModel>{};
 
-    final conversationId = await router.push<int>('/messages/new', extra: user);
-    if (!mounted || conversationId == null || conversationId <= 0) {
-      return;
+    for (final member in conversation.participantUsers) {
+      if (member.userId > 0) {
+        resolved[member.userId] = member;
+      }
     }
 
-    chatBloc.add(SelectConversation(conversationId));
-    chatBloc.add(MarkRead(conversationId));
-    navigator.pop();
+    for (final userId in conversation.participants) {
+      if (userId <= 0 || resolved.containsKey(userId)) {
+        continue;
+      }
+      resolved[userId] =
+          state.participantCache[userId] ?? ChatUserModel(userId: userId);
+    }
+
+    final members = resolved.values.toList(growable: false);
+    members.sort(
+      (left, right) => left.displayName.toLowerCase().compareTo(
+        right.displayName.toLowerCase(),
+      ),
+    );
+    return members;
   }
 
   void _openConversation(BuildContext context, int conversationId) {
@@ -848,149 +854,34 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     }
   }
 
-  ChatUserModel? _resolveUser(ChatState state, int userId) {
-    final cached = state.participantCache[userId];
-    if (cached != null) {
-      return cached;
-    }
-
-    for (final conversation in state.conversations) {
-      if (conversation.directDisplayUser?.userId == userId) {
-        return conversation.directDisplayUser;
-      }
-
-      final participant = conversation.participantUsers.firstWhere(
-        (entry) => entry.userId == userId,
-        orElse: () => const ChatUserModel(userId: -1),
-      );
-      if (participant.userId > 0) {
-        return participant;
-      }
-    }
-
-    return null;
+  void _openMemberConversation(BuildContext context, ChatUserModel member) {
+    setState(() => _pendingMemberUserId = member.userId);
+    context.read<ChatBloc>().add(const ClearChatError());
+    context.read<ChatBloc>().add(
+      StartNewConversation(participantIds: [member.userId], type: 'direct'),
+    );
   }
 
-  String _resolveFirstName(ChatUserModel user) {
-    final firstName = (user.firstName ?? '').trim();
-    if (firstName.isNotEmpty) {
-      return firstName;
-    }
-
-    final tokens = user.displayName
+  String _initialsFor(String value) {
+    final parts = value
         .split(RegExp(r'\s+'))
-        .where((entry) => entry.trim().isNotEmpty)
+        .where((part) => part.trim().isNotEmpty)
         .toList(growable: false);
-
-    if (tokens.isEmpty) {
-      return 'User';
+    if (parts.isEmpty) {
+      return 'G';
     }
-
-    return tokens.first;
-  }
-
-  String _resolveLastName(ChatUserModel user) {
-    final lastName = (user.lastName ?? '').trim();
-    if (lastName.isNotEmpty) {
-      return lastName;
-    }
-
-    final tokens = user.displayName
-        .split(RegExp(r'\s+'))
-        .where((entry) => entry.trim().isNotEmpty)
-        .toList(growable: false);
-
-    if (tokens.length > 1) {
-      return tokens.sublist(1).join(' ');
-    }
-
-    return '';
-  }
-
-  String _resolveEmail(ChatUserModel user) {
-    final email = (user.email ?? '').trim();
-    if (email.isNotEmpty) {
-      return email;
-    }
-
-    return 'Unknown email';
-  }
-
-  String _resolveRole(ChatUserModel user) {
-    final role = (user.role ?? '').trim();
-    if (role.isNotEmpty) {
-      return role;
-    }
-
-    return 'Member';
-  }
-
-  String _statusText(UserProfileContext profile) {
-    if (profile.isOnline) {
-      return 'Online now';
-    }
-
-    if (profile.lastSeen == null) {
-      return 'Offline';
-    }
-
-    return 'Last seen ${_formatLastSeen(profile.lastSeen!)}';
-  }
-
-  String _formatLastSeen(DateTime value) {
-    final now = DateTime.now();
-    final diff = now.difference(value);
-
-    if (diff.inMinutes < 1) {
-      return 'just now';
-    }
-    if (diff.inMinutes < 60) {
-      return '${diff.inMinutes}m ago';
-    }
-    if (diff.inHours < 24) {
-      return '${diff.inHours}h ago';
-    }
-    return '${value.day}/${value.month}/${value.year}';
-  }
-
-  String _roleLabel(String? rawRole) {
-    final normalized = (rawRole ?? '').trim();
-    if (normalized.isEmpty) {
-      return 'Member';
-    }
-    return normalized;
-  }
-
-  Color _roleColor(String? role) {
-    final normalized = (role ?? '').toLowerCase();
-    if (normalized.contains('instructor')) {
-      return _theme.info;
-    }
-    if (normalized.contains('assistant') || normalized == 'ta') {
-      return _theme.accent;
-    }
-    if (normalized.contains('student')) {
-      return _theme.primary;
-    }
-    if (normalized.contains('admin')) {
-      return _theme.warning;
-    }
-    return _theme.primary;
+    final first = parts.first.substring(0, 1);
+    final second = parts.length > 1 ? parts.last.substring(0, 1) : '';
+    return '$first$second'.toUpperCase();
   }
 }
 
-class _ChatProfileTheme {
-  const _ChatProfileTheme({
+class _ChatGroupTheme {
+  const _ChatGroupTheme({
     required this.primary,
-    required this.primaryLight,
     required this.accent,
-    required this.info,
     required this.success,
     required this.warning,
-    required this.error,
-    required this.textMutedLight,
-    required this.headerGradient,
-    required this.darkHeaderGradient,
     required this.background,
     required this.card,
     required this.surface,
@@ -998,18 +889,14 @@ class _ChatProfileTheme {
     required this.textPrimary,
     required this.textSecondary,
     required this.textTertiary,
+    required this.headerGradient,
+    required this.darkHeaderGradient,
   });
 
   final Color primary;
-  final Color primaryLight;
   final Color accent;
-  final Color info;
   final Color success;
   final Color warning;
-  final Color error;
-  final Color textMutedLight;
-  final LinearGradient headerGradient;
-  final LinearGradient darkHeaderGradient;
   final Color Function(bool isDark) background;
   final Color Function(bool isDark) card;
   final Color Function(bool isDark) surface;
@@ -1017,46 +904,42 @@ class _ChatProfileTheme {
   final Color Function(bool isDark) textPrimary;
   final Color Function(bool isDark) textSecondary;
   final Color Function(bool isDark) textTertiary;
+  final LinearGradient headerGradient;
+  final LinearGradient darkHeaderGradient;
 
-  factory _ChatProfileTheme.fromAuthState(AuthState authState) {
+  factory _ChatGroupTheme.fromAuthState(AuthState authState) {
     if (authState is AuthAuthenticated) {
-      return _ChatProfileTheme.fromRoleName(authState.user.primaryRoleName);
+      return _ChatGroupTheme.fromRoleName(authState.user.primaryRoleName);
     }
-    return _ChatProfileTheme.fromRoleName(null);
+    return _ChatGroupTheme.fromRoleName(null);
   }
 
-  factory _ChatProfileTheme.fromRoleName(String? roleName) {
+  factory _ChatGroupTheme.fromRoleName(String? roleName) {
     final normalized = (roleName ?? '').trim().toLowerCase().replaceAll(
       '_',
       ' ',
     );
 
     if (normalized.contains('assistant') || normalized == 'ta') {
-      return _ChatProfileTheme.fromRoleProfileTheme(RoleProfileTheme.ta());
+      return _ChatGroupTheme.fromRoleProfileTheme(RoleProfileTheme.ta());
     }
     if (normalized.contains('instructor')) {
-      return _ChatProfileTheme.fromRoleProfileTheme(
+      return _ChatGroupTheme.fromRoleProfileTheme(
         RoleProfileTheme.instructor(),
       );
     }
     if (normalized.contains('admin')) {
-      return _ChatProfileTheme.fromRoleProfileTheme(RoleProfileTheme.admin());
+      return _ChatGroupTheme.fromRoleProfileTheme(RoleProfileTheme.admin());
     }
-    return _ChatProfileTheme.fromRoleProfileTheme(RoleProfileTheme.student());
+    return _ChatGroupTheme.fromRoleProfileTheme(RoleProfileTheme.student());
   }
 
-  factory _ChatProfileTheme.fromRoleProfileTheme(RoleProfileTheme roleTheme) {
-    return _ChatProfileTheme(
+  factory _ChatGroupTheme.fromRoleProfileTheme(RoleProfileTheme roleTheme) {
+    return _ChatGroupTheme(
       primary: roleTheme.primary,
-      primaryLight: roleTheme.primaryLight,
       accent: roleTheme.accent,
-      info: roleTheme.primaryLight,
       success: roleTheme.success,
       warning: roleTheme.warning,
-      error: roleTheme.error,
-      textMutedLight: const Color(0xFF64748B),
-      headerGradient: roleTheme.headerGradient,
-      darkHeaderGradient: roleTheme.darkHeaderGradient,
       background: roleTheme.background,
       card: roleTheme.card,
       surface: roleTheme.surface,
@@ -1064,6 +947,8 @@ class _ChatProfileTheme {
       textPrimary: roleTheme.textPrimary,
       textSecondary: roleTheme.textSecondary,
       textTertiary: roleTheme.textTertiary,
+      headerGradient: roleTheme.headerGradient,
+      darkHeaderGradient: roleTheme.darkHeaderGradient,
     );
   }
 }

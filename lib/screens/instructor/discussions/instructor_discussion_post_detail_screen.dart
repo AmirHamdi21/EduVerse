@@ -147,7 +147,8 @@ class _InstructorDiscussionPostDetailScreenState
           );
         }
 
-        for (final course in coursesResult.data ?? const <TeachingCourseModel>[]) {
+        for (final course
+            in coursesResult.data ?? const <TeachingCourseModel>[]) {
           if (course.courseId == widget.courseId) {
             _course = course;
             break;
@@ -195,7 +196,9 @@ class _InstructorDiscussionPostDetailScreenState
         return;
       }
 
-      final merged = <int, DiscussionReply>{for (final reply in _replies) reply.id: reply};
+      final merged = <int, DiscussionReply>{
+        for (final reply in _replies) reply.id: reply,
+      };
       for (final reply in detail.replies.data) {
         merged[reply.id] = reply;
       }
@@ -381,15 +384,17 @@ class _InstructorDiscussionPostDetailScreenState
       }
 
       setState(() {
-        _replies = _replies.map((item) {
-          if (item.id != reply.id) {
-            return item;
-          }
-          final nextCount = action == 'added'
-              ? item.upvoteCount + 1
-              : (item.upvoteCount > 0 ? item.upvoteCount - 1 : 0);
-          return item.copyWith(upvoteCount: nextCount);
-        }).toList(growable: false);
+        _replies = _replies
+            .map((item) {
+              if (item.id != reply.id) {
+                return item;
+              }
+              final nextCount = action == 'added'
+                  ? item.upvoteCount + 1
+                  : (item.upvoteCount > 0 ? item.upvoteCount - 1 : 0);
+              return item.copyWith(upvoteCount: nextCount);
+            })
+            .toList(growable: false);
       });
 
       _showSnack(
@@ -499,15 +504,15 @@ class _InstructorDiscussionPostDetailScreenState
             child: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return <Widget>[
-                  _buildAppBar(isDark, l10n, thread, innerBoxIsScrolled, viewer),
+                  _buildAppBar(
+                    isDark,
+                    l10n,
+                    thread,
+                    innerBoxIsScrolled,
+                    viewer,
+                  ),
                   SliverToBoxAdapter(
-                    child: _buildThreadHeader(
-                      context,
-                      isDark,
-                      l10n,
-                      r,
-                      thread,
-                    ),
+                    child: _buildThreadHeader(context, isDark, l10n, r, thread),
                   ),
                   SliverToBoxAdapter(
                     child: _buildStatsRow(isDark, l10n, thread),
@@ -674,7 +679,7 @@ class _InstructorDiscussionPostDetailScreenState
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       decoration: BoxDecoration(
         gradient: instructorDiscussionHeaderGradient(isDark),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: InstructorColors.primary.withValues(
@@ -686,7 +691,7 @@ class _InstructorDiscussionPostDetailScreenState
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         child: Stack(
           children: <Widget>[
             Positioned(
@@ -714,19 +719,19 @@ class _InstructorDiscussionPostDetailScreenState
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(r.isMobile ? 18 : 22),
+              padding: EdgeInsets.all(r.isMobile ? 16 : 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        width: 58,
-                        height: 58,
+                        width: 46,
+                        height: 46,
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.16),
-                          borderRadius: BorderRadius.circular(18),
+                          borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: Colors.white.withValues(alpha: 0.18),
                           ),
@@ -734,10 +739,10 @@ class _InstructorDiscussionPostDetailScreenState
                         child: const Icon(
                           Icons.forum_rounded,
                           color: Colors.white,
-                          size: 28,
+                          size: 22,
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -747,26 +752,29 @@ class _InstructorDiscussionPostDetailScreenState
                                 '${_course!.course.code} • ${_course!.course.name}',
                                 style: TextStyle(
                                   color: Colors.white.withValues(alpha: 0.9),
-                                  fontSize: 12,
+                                  fontSize: 11.5,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                            const SizedBox(height: 4),
                             Text(
                               thread.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: r.isMobile ? 20 : 23,
+                                fontSize: r.isMobile ? 18 : 20,
                                 fontWeight: FontWeight.w800,
-                                height: 1.18,
+                                height: 1.12,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 4),
                             Text(
                               '${instructorDiscussionDisplayName(context, thread.createdByName)} • ${instructorDiscussionFormatDate(context, thread.createdAt)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.84),
-                                fontSize: 12,
+                                fontSize: 11.5,
                               ),
                             ),
                           ],
@@ -774,7 +782,7 @@ class _InstructorDiscussionPostDetailScreenState
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -799,11 +807,11 @@ class _InstructorDiscussionPostDetailScreenState
                         ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 12),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
-                      const spacing = 10.0;
+                      final crossAxisCount = constraints.maxWidth < 360 ? 2 : 4;
+                      const spacing = 8.0;
                       final itemWidth =
                           (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
@@ -1099,8 +1107,9 @@ class _InstructorDiscussionPostDetailScreenState
                         );
                       }
 
-                      final adjustedIndex =
-                          pinnedAnswer == null ? index : index - 1;
+                      final adjustedIndex = pinnedAnswer == null
+                          ? index
+                          : index - 1;
 
                       if (adjustedIndex >= roots.length) {
                         return const Padding(
@@ -1160,7 +1169,9 @@ class _InstructorDiscussionPostDetailScreenState
       ),
       (
         label: l10n.status,
-        value: thread.isLocked ? l10n.instructorDiscussionLockedLabel : l10n.open,
+        value: thread.isLocked
+            ? l10n.instructorDiscussionLockedLabel
+            : l10n.open,
       ),
     ];
 
@@ -1201,7 +1212,9 @@ class _InstructorDiscussionPostDetailScreenState
                               item.value,
                               textAlign: TextAlign.end,
                               style: TextStyle(
-                                color: InstructorColors.textPrimaryColor(isDark),
+                                color: InstructorColors.textPrimaryColor(
+                                  isDark,
+                                ),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -1320,17 +1333,20 @@ class _InstructorDiscussionPostDetailScreenState
           .add(reply);
     }
 
-    final roots = (childrenByParent[null] ?? const <DiscussionReply>[])
-        .toList(growable: false)
-      ..sort(_replyComparator);
+    final roots = (childrenByParent[null] ?? const <DiscussionReply>[]).toList(
+      growable: false,
+    )..sort(_replyComparator);
 
     List<_ReplyNode> buildNodes(List<DiscussionReply> replies) {
-      return replies.map((reply) {
-        final children = (childrenByParent[reply.id] ?? const <DiscussionReply>[])
-            .toList(growable: false);
-        children.sort(_replyComparator);
-        return _ReplyNode(reply: reply, children: buildNodes(children));
-      }).toList(growable: false);
+      return replies
+          .map((reply) {
+            final children =
+                (childrenByParent[reply.id] ?? const <DiscussionReply>[])
+                    .toList(growable: false);
+            children.sort(_replyComparator);
+            return _ReplyNode(reply: reply, children: buildNodes(children));
+          })
+          .toList(growable: false);
     }
 
     return buildNodes(roots);
@@ -1342,8 +1358,9 @@ class _InstructorDiscussionPostDetailScreenState
       return answerCompare;
     }
 
-    final endorsementCompare =
-        (b.isEndorsed ? 1 : 0).compareTo(a.isEndorsed ? 1 : 0);
+    final endorsementCompare = (b.isEndorsed ? 1 : 0).compareTo(
+      a.isEndorsed ? 1 : 0,
+    );
     if (endorsementCompare != 0) {
       return endorsementCompare;
     }
@@ -1425,7 +1442,10 @@ class _InstructorDiscussionPostDetailScreenState
                       ),
                       const SizedBox(height: 3),
                       Text(
-                        instructorDiscussionFormatDate(context, reply.createdAt),
+                        instructorDiscussionFormatDate(
+                          context,
+                          reply.createdAt,
+                        ),
                         style: TextStyle(
                           color: InstructorColors.textTertiaryColor(isDark),
                           fontSize: 11,
@@ -1620,9 +1640,9 @@ class _InstructorDiscussionPostDetailScreenState
                         : l10n.instructorDiscussionReplyHint,
                     filled: true,
                     fillColor: isDark
-                        ? InstructorColors.surfaceColor(isDark).withValues(
-                            alpha: 0.78,
-                          )
+                        ? InstructorColors.surfaceColor(
+                            isDark,
+                          ).withValues(alpha: 0.78)
                         : const Color(0xFFF8FBFF),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 14,
@@ -1631,17 +1651,17 @@ class _InstructorDiscussionPostDetailScreenState
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide(
-                        color: InstructorColors.borderColor(isDark).withValues(
-                          alpha: 0.8,
-                        ),
+                        color: InstructorColors.borderColor(
+                          isDark,
+                        ).withValues(alpha: 0.8),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide(
-                        color: InstructorColors.borderColor(isDark).withValues(
-                          alpha: 0.8,
-                        ),
+                        color: InstructorColors.borderColor(
+                          isDark,
+                        ).withValues(alpha: 0.8),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(

@@ -8,17 +8,20 @@ import '../../../bloc/profile/profile_cubit.dart';
 import '../../../bloc/profile/profile_models.dart';
 import '../../../bloc/profile/profile_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import 'role_profile_theme.dart';
 
 class SharedProfileScreen extends StatefulWidget {
   final String editRoute;
   final String roleFallbackLabel;
   final String title;
+  final RoleProfileTheme theme;
 
   const SharedProfileScreen({
     super.key,
     required this.editRoute,
     required this.roleFallbackLabel,
     required this.title,
+    required this.theme,
   });
 
   @override
@@ -39,29 +42,27 @@ class _SharedProfileScreenState extends State<SharedProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
+    final theme = widget.theme;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? const Color(0xFF0F172A)
-          : const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text(widget.title),
-        actions: [
-          IconButton(
-            onPressed: () => context.push(widget.editRoute),
-            icon: const Icon(Icons.edit_rounded),
-            tooltip: l10n.editProfile,
-          ),
-        ],
+      backgroundColor: theme.background(isDark),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => context.push(widget.editRoute),
+        backgroundColor: theme.primary,
+        foregroundColor: Colors.white,
+        icon: const Icon(Icons.edit_rounded),
+        label: Text(
+          l10n.editProfile,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
       ),
       body: BlocConsumer<ProfileCubit, ProfileState>(
         listenWhen: (previous, current) {
-          final previousMessage = previous is ProfileLoaded ? previous.error : '';
+          final previousMessage = previous is ProfileLoaded
+              ? previous.error
+              : '';
           final currentMessage = current is ProfileLoaded ? current.error : '';
           return previousMessage != currentMessage &&
               currentMessage != null &&
@@ -78,13 +79,17 @@ class _SharedProfileScreenState extends State<SharedProfileScreen> {
         },
         builder: (context, state) {
           if (state is ProfileLoading || state is ProfileInitial) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(color: theme.primary),
+            );
           }
 
           if (state is ProfileError) {
             return _ErrorView(
               message: state.message,
-              onRetry: () => context.read<ProfileCubit>().loadProfile(force: true),
+              theme: theme,
+              onRetry: () =>
+                  context.read<ProfileCubit>().loadProfile(force: true),
             );
           }
 
@@ -96,131 +101,1037 @@ class _SharedProfileScreenState extends State<SharedProfileScreen> {
           final roleLabel = profile.roles.isNotEmpty
               ? profile.primaryRoleLabel
               : widget.roleFallbackLabel;
+          final socialEntries = profile.socialLinks.entries;
 
-          return RefreshIndicator(
-            onRefresh: () => context.read<ProfileCubit>().loadProfile(force: true),
-            child: ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-              children: [
-                _ProfileHero(profile: profile, roleLabel: roleLabel),
-                const SizedBox(height: 16),
-                _SectionCard(
-                  title: l10n.personalInformation,
-                  children: [
-                    _InfoRow(label: l10n.fullName, value: profile.displayName),
-                    _InfoRow(label: l10n.email, value: profile.email),
-                    _InfoRow(
-                      label: l10n.phone,
-                      value: profile.phone ?? 'Not set',
-                    ),
-                    _InfoRow(label: 'Role', value: roleLabel),
-                    _InfoRow(
-                      label: 'Profile completeness',
-                      value:
-                          '${profile.profileCompleteness.toStringAsFixed(0)}%',
-                    ),
-                    _InfoRow(
-                      label: 'Email verification',
-                      value: profile.emailVerified ? 'Verified' : 'Not verified',
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                if ((profile.bio ?? '').trim().isNotEmpty)
-                  _SectionCard(
-                    title: l10n.bio,
+          return Stack(
+            children: [
+              _buildBackgroundDecorations(isDark, theme),
+              SafeArea(
+                child: RefreshIndicator(
+                  color: theme.primary,
+                  onRefresh: () =>
+                      context.read<ProfileCubit>().loadProfile(force: true),
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 10, 16, 112),
                     children: [
-                      Text(
-                        profile.bio!,
-                        style: TextStyle(
-                          color: isDark ? Colors.white70 : const Color(0xFF334155),
-                          height: 1.45,
+                      _buildTopBar(context, isDark, l10n, theme),
+                      const SizedBox(height: 10),
+                      _buildHeroCard(
+                        profile: profile,
+                        roleLabel: roleLabel,
+                        subtitle: widget.title,
+                        memberSince: _formatCreatedDate(profile.createdAt),
+                        isDark: isDark,
+                        theme: theme,
+                      ),
+                      const SizedBox(height: 14),
+                      _buildStatsCard(
+                        profile: profile,
+                        isDark: isDark,
+                        l10n: l10n,
+                        theme: theme,
+                      ),
+                      const SizedBox(height: 14),
+                      _buildQuickActionsCard(context, isDark, l10n, theme),
+                      const SizedBox(height: 14),
+                      _buildSectionCard(
+                        title: l10n.personalInformation,
+                        subtitle:
+                            'Core account details and contact information.',
+                        icon: Icons.badge_rounded,
+                        isDark: isDark,
+                        theme: theme,
+                        child: Column(
+                          children: [
+                            _buildInfoTile(
+                              icon: Icons.person_outline_rounded,
+                              label: l10n.fullName,
+                              value: profile.displayName,
+                              isDark: isDark,
+                              theme: theme,
+                            ),
+                            _buildInfoTile(
+                              icon: Icons.alternate_email_rounded,
+                              label: l10n.email,
+                              value: profile.email,
+                              isDark: isDark,
+                              theme: theme,
+                            ),
+                            _buildInfoTile(
+                              icon: Icons.phone_rounded,
+                              label: l10n.phone,
+                              value: (profile.phone ?? '').trim().isEmpty
+                                  ? 'Not set'
+                                  : profile.phone!,
+                              isDark: isDark,
+                              theme: theme,
+                            ),
+                            _buildInfoTile(
+                              icon: Icons.workspace_premium_rounded,
+                              label: l10n.role,
+                              value: roleLabel,
+                              isDark: isDark,
+                              theme: theme,
+                            ),
+                          ],
                         ),
                       ),
+                      if ((profile.bio ?? '').trim().isNotEmpty) ...[
+                        const SizedBox(height: 14),
+                        _buildSectionCard(
+                          title: l10n.bio,
+                          subtitle: 'A concise introduction to this profile.',
+                          icon: Icons.auto_stories_rounded,
+                          isDark: isDark,
+                          theme: theme,
+                          child: Text(
+                            profile.bio!,
+                            style: TextStyle(
+                              color: theme.textPrimary(isDark),
+                              fontSize: 14,
+                              height: 1.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 14),
+                      _buildSectionCard(
+                        title: 'Academic Interests',
+                        subtitle:
+                            'Topics and areas this profile is currently focused on.',
+                        icon: Icons.interests_rounded,
+                        isDark: isDark,
+                        theme: theme,
+                        child: _buildTagWrap(
+                          items: profile.academicInterests,
+                          emptyLabel: 'No academic interests added yet.',
+                          isDark: isDark,
+                          color: theme.primary,
+                          theme: theme,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      _buildSectionCard(
+                        title: 'Skills',
+                        subtitle: 'Practical strengths and areas of expertise.',
+                        icon: Icons.bolt_rounded,
+                        isDark: isDark,
+                        theme: theme,
+                        child: _buildTagWrap(
+                          items: profile.skills,
+                          emptyLabel: 'No skills added yet.',
+                          isDark: isDark,
+                          color: theme.accent,
+                          theme: theme,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      _buildSectionCard(
+                        title: 'Social Links',
+                        subtitle:
+                            'Connected public profiles and personal links.',
+                        icon: Icons.link_rounded,
+                        isDark: isDark,
+                        theme: theme,
+                        child: socialEntries.isEmpty
+                            ? _buildEmptyInlineState(
+                                'No social links added yet.',
+                                isDark,
+                                theme,
+                              )
+                            : Column(
+                                children: socialEntries
+                                    .map(
+                                      (entry) => _buildInfoTile(
+                                        icon: _socialIcon(entry.key),
+                                        label: entry.key,
+                                        value: entry.value,
+                                        isDark: isDark,
+                                        theme: theme,
+                                      ),
+                                    )
+                                    .toList(),
+                              ),
+                      ),
+                      const SizedBox(height: 14),
+                      _buildSectionCard(
+                        title: l10n.securityAccount,
+                        subtitle:
+                            'Update your password and keep account access secure.',
+                        icon: Icons.shield_rounded,
+                        isDark: isDark,
+                        theme: theme,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildInfoTile(
+                              icon: Icons.mark_email_read_rounded,
+                              label: 'Email Verification',
+                              value: profile.emailVerified
+                                  ? 'Verified'
+                                  : 'Pending verification',
+                              isDark: isDark,
+                              theme: theme,
+                              highlight: profile.emailVerified
+                                  ? theme.success
+                                  : theme.warning,
+                            ),
+                            const SizedBox(height: 6),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: () =>
+                                    _showPasswordDialog(context, l10n, isDark),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: theme.primary,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  elevation: 0,
+                                ),
+                                icon: const Icon(Icons.lock_reset_rounded),
+                                label: Text(
+                                  l10n.changePassword,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      _buildSupportCard(isDark, l10n, theme),
                     ],
                   ),
-                if ((profile.bio ?? '').trim().isNotEmpty)
-                  const SizedBox(height: 16),
-                _SectionCard(
-                  title: 'Academic interests',
-                  children: [
-                    if (profile.academicInterests.isEmpty)
-                      const _MutedText('No academic interests added yet.')
-                    else
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: profile.academicInterests
-                            .map((item) => Chip(label: Text(item)))
-                            .toList(),
-                      ),
-                  ],
                 ),
-                const SizedBox(height: 16),
-                _SectionCard(
-                  title: 'Skills',
-                  children: [
-                    if (profile.skills.isEmpty)
-                      const _MutedText('No skills added yet.')
-                    else
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: profile.skills
-                            .map((item) => Chip(label: Text(item)))
-                            .toList(),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _SectionCard(
-                  title: 'Social links',
-                  children: [
-                    if (!profile.socialLinks.hasAny)
-                      const _MutedText('No social links added yet.')
-                    else
-                      ...profile.socialLinks.entries.map(
-                        (entry) => _InfoRow(
-                          label: entry.key,
-                          value: entry.value,
-                          dense: true,
-                        ),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _SectionCard(
-                  title: l10n.securityAccount,
-                  children: [
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton.icon(
-                        onPressed: () => _showPasswordDialog(context, l10n),
-                        icon: const Icon(Icons.lock_reset_rounded),
-                        label: Text(l10n.changePassword),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
     );
   }
 
+  Widget _buildBackgroundDecorations(bool isDark, RoleProfileTheme theme) {
+    return Stack(
+      children: [
+        Positioned(
+          top: -110,
+          right: -70,
+          child: Container(
+            width: 260,
+            height: 260,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  theme.primary.withValues(alpha: isDark ? 0.2 : 0.14),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 220,
+          left: -90,
+          child: Container(
+            width: 210,
+            height: 210,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  theme.accent.withValues(alpha: isDark ? 0.14 : 0.1),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTopBar(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+    RoleProfileTheme theme,
+  ) {
+    return Row(
+      children: [
+        _buildUtilityButton(
+          onTap: () => context.pop(),
+          isDark: isDark,
+          theme: theme,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 16,
+                color: theme.textPrimary(isDark),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                l10n.back,
+                style: TextStyle(
+                  color: theme.textPrimary(isDark),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Spacer(),
+        _buildUtilityButton(
+          onTap: () => context.push(widget.editRoute),
+          isDark: isDark,
+          theme: theme,
+          child: Icon(
+            Icons.edit_outlined,
+            size: 18,
+            color: theme.textPrimary(isDark),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUtilityButton({
+    required VoidCallback onTap,
+    required bool isDark,
+    required RoleProfileTheme theme,
+    required Widget child,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: theme.card(isDark).withValues(alpha: isDark ? 0.92 : 0.96),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: theme.border(isDark)),
+          ),
+          child: child,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeroCard({
+    required UserProfile profile,
+    required String roleLabel,
+    required String subtitle,
+    required String memberSince,
+    required bool isDark,
+    required RoleProfileTheme theme,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: isDark ? theme.darkHeaderGradient : theme.headerGradient,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: theme.primary.withValues(alpha: isDark ? 0.22 : 0.18),
+            blurRadius: 26,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.75),
+                        width: 2,
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      backgroundImage:
+                          (profile.profilePictureUrl ?? '').trim().isNotEmpty
+                          ? NetworkImage(profile.profilePictureUrl!)
+                          : null,
+                      child: (profile.profilePictureUrl ?? '').trim().isEmpty
+                          ? Text(
+                              profile.initials,
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w800,
+                                color: theme.primary,
+                              ),
+                            )
+                          : null,
+                    ),
+                  ),
+                  Positioned(
+                    right: 2,
+                    bottom: 2,
+                    child: Container(
+                      width: 18,
+                      height: 18,
+                      decoration: BoxDecoration(
+                        color: profile.emailVerified
+                            ? theme.success
+                            : theme.warning,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.82),
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      profile.displayName,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      profile.email,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.86),
+                        fontSize: 12.5,
+                        height: 1.25,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: _buildHeroPill(
+                  icon: Icons.workspace_premium_rounded,
+                  label: roleLabel,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildHeroPill(
+                  icon: Icons.timelapse_rounded,
+                  label: memberSince,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeroPill({required IconData icon, required String label}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: Colors.white),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatsCard({
+    required UserProfile profile,
+    required bool isDark,
+    required AppLocalizations l10n,
+    required RoleProfileTheme theme,
+  }) {
+    return _buildSurfaceCard(
+      isDark: isDark,
+      theme: theme,
+      child: GridView.count(
+        crossAxisCount: 4,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 0.82,
+        children: [
+          _buildStatItem(
+            value: '${profile.profileCompleteness.toStringAsFixed(0)}%',
+            label: 'Complete',
+            icon: Icons.auto_graph_rounded,
+            color: theme.primary,
+            isDark: isDark,
+            theme: theme,
+          ),
+          _buildStatItem(
+            value: '${profile.academicInterests.length}',
+            label: 'Interests',
+            icon: Icons.interests_rounded,
+            color: theme.accent,
+            isDark: isDark,
+            theme: theme,
+          ),
+          _buildStatItem(
+            value: '${profile.skills.length}',
+            label: 'Skills',
+            icon: Icons.bolt_rounded,
+            color: theme.success,
+            isDark: isDark,
+            theme: theme,
+          ),
+          _buildStatItem(
+            value: profile.emailVerified ? l10n.verified : 'Pending',
+            label: 'Email',
+            icon: Icons.verified_rounded,
+            color: profile.emailVerified ? theme.success : theme.warning,
+            isDark: isDark,
+            theme: theme,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem({
+    required String value,
+    required String label,
+    required IconData icon,
+    required Color color,
+    required bool isDark,
+    required RoleProfileTheme theme,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: theme.surface(isDark),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: color.withValues(alpha: 0.14)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 16, color: color),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: theme.textPrimary(isDark),
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: theme.textSecondary(isDark),
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionsCard(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+    RoleProfileTheme theme,
+  ) {
+    return _buildSurfaceCard(
+      isDark: isDark,
+      theme: theme,
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildActionButton(
+              icon: Icons.edit_note_rounded,
+              label: l10n.editProfile,
+              color: theme.primary,
+              isDark: isDark,
+              theme: theme,
+              onTap: () => context.push(widget.editRoute),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: _buildActionButton(
+              icon: Icons.lock_reset_rounded,
+              label: l10n.changePassword,
+              color: theme.accent,
+              isDark: isDark,
+              theme: theme,
+              onTap: () => _showPasswordDialog(context, l10n, isDark),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required bool isDark,
+    required RoleProfileTheme theme,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: isDark ? 0.18 : 0.1),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withValues(alpha: 0.18)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 18, color: color),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: color,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool isDark,
+    required RoleProfileTheme theme,
+    required Widget child,
+  }) {
+    return _buildSurfaceCard(
+      isDark: isDark,
+      theme: theme,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: theme.primary.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Icon(icon, color: theme.primary, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        color: theme.textPrimary(isDark),
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        color: theme.textSecondary(isDark),
+                        fontSize: 12.5,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          child,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoTile({
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool isDark,
+    required RoleProfileTheme theme,
+    Color? highlight,
+  }) {
+    final activeColor = highlight ?? theme.primary;
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: theme.surface(isDark),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: highlight != null
+              ? activeColor.withValues(alpha: 0.2)
+              : theme.border(isDark),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: activeColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, size: 18, color: activeColor),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: theme.textSecondary(isDark),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  value,
+                  style: TextStyle(
+                    color: highlight ?? theme.textPrimary(isDark),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTagWrap({
+    required List<String> items,
+    required String emptyLabel,
+    required bool isDark,
+    required Color color,
+    required RoleProfileTheme theme,
+  }) {
+    if (items.isEmpty) {
+      return _buildEmptyInlineState(emptyLabel, isDark, theme);
+    }
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: items
+          .map(
+            (item) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: color.withValues(alpha: 0.16)),
+              ),
+              child: Text(
+                item,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  Widget _buildEmptyInlineState(
+    String label,
+    bool isDark,
+    RoleProfileTheme theme,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: theme.surface(isDark),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(color: theme.textSecondary(isDark), fontSize: 13),
+      ),
+    );
+  }
+
+  Widget _buildSupportCard(
+    bool isDark,
+    AppLocalizations l10n,
+    RoleProfileTheme theme,
+  ) {
+    return _buildSurfaceCard(
+      isDark: isDark,
+      theme: theme,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Support & Info',
+            style: TextStyle(
+              color: theme.textPrimary(isDark),
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Helpful links for policy, support, and product details.',
+            style: TextStyle(
+              color: theme.textSecondary(isDark),
+              fontSize: 12.5,
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: _buildSupportTile(
+                  icon: Icons.help_outline_rounded,
+                  label: l10n.helpCenter,
+                  color: theme.primary,
+                  isDark: isDark,
+                  theme: theme,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _buildSupportTile(
+                  icon: Icons.privacy_tip_outlined,
+                  label: l10n.privacyPolicy,
+                  color: theme.accent,
+                  isDark: isDark,
+                  theme: theme,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _buildSupportTile(
+                  icon: Icons.info_outline_rounded,
+                  label: l10n.about,
+                  color: theme.success,
+                  isDark: isDark,
+                  theme: theme,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSupportTile({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required bool isDark,
+    required RoleProfileTheme theme,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
+      decoration: BoxDecoration(
+        color: theme.surface(isDark),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: color.withValues(alpha: 0.16)),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, size: 18, color: color),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: theme.textSecondary(isDark),
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSurfaceCard({
+    required bool isDark,
+    required RoleProfileTheme theme,
+    required Widget child,
+  }) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.card(isDark),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: theme.border(isDark)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.05),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  IconData _socialIcon(String label) {
+    switch (label.toLowerCase()) {
+      case 'website':
+        return Icons.language_rounded;
+      case 'github':
+        return Icons.code_rounded;
+      case 'linkedin':
+        return Icons.work_outline_rounded;
+      case 'twitter':
+        return Icons.alternate_email_rounded;
+      default:
+        return Icons.link_rounded;
+    }
+  }
+
+  String _formatCreatedDate(String createdAt) {
+    final parsed = DateTime.tryParse(createdAt);
+    if (parsed == null) {
+      return 'Member';
+    }
+    final month = parsed.month.toString().padLeft(2, '0');
+    return 'Joined $month/${parsed.year}';
+  }
+
   Future<void> _showPasswordDialog(
     BuildContext context,
     AppLocalizations l10n,
+    bool isDark,
   ) async {
     final currentPasswordController = TextEditingController();
     final newPasswordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
+    final theme = widget.theme;
 
     final success = await showDialog<bool>(
       context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.45),
       builder: (dialogContext) {
         bool isSubmitting = false;
         String? validationMessage;
@@ -235,7 +1146,9 @@ class _SharedProfileScreenState extends State<SharedProfileScreen> {
               if (currentPassword.isEmpty ||
                   newPassword.isEmpty ||
                   confirmPassword.isEmpty) {
-                setState(() => validationMessage = 'All password fields are required.');
+                setState(
+                  () => validationMessage = 'All password fields are required.',
+                );
                 return;
               }
 
@@ -269,55 +1182,192 @@ class _SharedProfileScreenState extends State<SharedProfileScreen> {
               }
             }
 
-            return AlertDialog(
-              title: Text(l10n.changePassword),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: currentPasswordController,
-                    obscureText: true,
-                    decoration: InputDecoration(labelText: l10n.currentPassword),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: newPasswordController,
-                    obscureText: true,
-                    decoration: InputDecoration(labelText: l10n.newPassword),
-                  ),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: confirmPasswordController,
-                    obscureText: true,
-                    decoration: InputDecoration(labelText: l10n.confirmPassword),
-                  ),
-                  if (validationMessage != null) ...[
-                    const SizedBox(height: 12),
-                    Text(
-                      validationMessage!,
-                      style: const TextStyle(color: Colors.red),
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 24,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: theme.card(isDark),
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(color: theme.border(isDark)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.18),
+                      blurRadius: 26,
+                      offset: const Offset(0, 12),
                     ),
                   ],
-                ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+                      decoration: BoxDecoration(
+                        gradient: isDark
+                            ? theme.darkHeaderGradient
+                            : theme.headerGradient,
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(28),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.16),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: const Icon(
+                              Icons.lock_reset_rounded,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.changePassword,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                                Text(
+                                  'Keep your account secure with a fresh password.',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.86),
+                                    fontSize: 12.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: isSubmitting
+                                ? null
+                                : () => Navigator.of(dialogContext).pop(false),
+                            icon: const Icon(
+                              Icons.close_rounded,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          _buildPasswordField(
+                            controller: currentPasswordController,
+                            label: l10n.currentPassword,
+                            icon: Icons.key_rounded,
+                            isDark: isDark,
+                            theme: theme,
+                          ),
+                          const SizedBox(height: 12),
+                          _buildPasswordField(
+                            controller: newPasswordController,
+                            label: l10n.newPassword,
+                            icon: Icons.lock_outline_rounded,
+                            isDark: isDark,
+                            theme: theme,
+                          ),
+                          const SizedBox(height: 12),
+                          _buildPasswordField(
+                            controller: confirmPasswordController,
+                            label: l10n.confirmPassword,
+                            icon: Icons.verified_user_outlined,
+                            isDark: isDark,
+                            theme: theme,
+                          ),
+                          if (validationMessage != null) ...[
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: AlignmentDirectional.centerStart,
+                              child: Text(
+                                validationMessage!,
+                                style: TextStyle(
+                                  color: theme.error,
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
+                          const SizedBox(height: 18),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton(
+                                  onPressed: isSubmitting
+                                      ? null
+                                      : () => Navigator.of(
+                                          dialogContext,
+                                        ).pop(false),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: theme.textSecondary(
+                                      isDark,
+                                    ),
+                                    side: BorderSide(
+                                      color: theme.border(isDark),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                  child: Text(l10n.cancel),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: isSubmitting ? null : submit,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: theme.primary,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                  child: isSubmitting
+                                      ? const SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  Colors.white,
+                                                ),
+                                          ),
+                                        )
+                                      : Text(l10n.save),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: isSubmitting
-                      ? null
-                      : () => Navigator.of(dialogContext).pop(false),
-                  child: Text(l10n.cancel),
-                ),
-                ElevatedButton(
-                  onPressed: isSubmitting ? null : submit,
-                  child: isSubmitting
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(l10n.save),
-                ),
-              ],
             );
           },
         );
@@ -331,201 +1381,34 @@ class _SharedProfileScreenState extends State<SharedProfileScreen> {
       context.read<AuthBloc>().add(const RefreshUserDataRequested());
     }
   }
-}
 
-class _ProfileHero extends StatelessWidget {
-  final UserProfile profile;
-  final String roleLabel;
-
-  const _ProfileHero({required this.profile, required this.roleLabel});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF2563EB), Color(0xFF3B82F6)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  Widget _buildPasswordField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    required bool isDark,
+    required RoleProfileTheme theme,
+  }) {
+    return TextField(
+      controller: controller,
+      obscureText: true,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: theme.textSecondary(isDark)),
+        filled: true,
+        fillColor: theme.surface(isDark),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: theme.border(isDark)),
         ),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 34,
-            backgroundColor: Colors.white,
-            backgroundImage: (profile.profilePictureUrl ?? '').trim().isNotEmpty
-                ? NetworkImage(profile.profilePictureUrl!)
-                : null,
-            child: (profile.profilePictureUrl ?? '').trim().isEmpty
-                ? Text(
-                    profile.initials,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF2563EB),
-                    ),
-                  )
-                : null,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  profile.displayName,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  roleLabel,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.88),
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    _HeroChip(label: profile.status),
-                    _HeroChip(
-                      label: profile.emailVerified ? 'Verified email' : 'Email pending',
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HeroChip extends StatelessWidget {
-  final String label;
-
-  const _HeroChip({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.16),
-        borderRadius: BorderRadius.circular(999),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: theme.border(isDark)),
         ),
-      ),
-    );
-  }
-}
-
-class _SectionCard extends StatelessWidget {
-  final String title;
-  final List<Widget> children;
-
-  const _SectionCard({required this.title, required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E293B) : Colors.white,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-              color: isDark ? Colors.white : const Color(0xFF0F172A),
-            ),
-          ),
-          const SizedBox(height: 14),
-          ...children,
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool dense;
-
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    this.dense = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Padding(
-      padding: EdgeInsets.only(bottom: dense ? 10 : 14),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 140,
-            child: Text(
-              label,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white60 : const Color(0xFF64748B),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                color: isDark ? Colors.white : const Color(0xFF0F172A),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _MutedText extends StatelessWidget {
-  final String text;
-
-  const _MutedText(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Text(
-      text,
-      style: TextStyle(
-        color: isDark ? Colors.white54 : const Color(0xFF64748B),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: theme.primary, width: 1.4),
+        ),
       ),
     );
   }
@@ -533,31 +1416,63 @@ class _MutedText extends StatelessWidget {
 
 class _ErrorView extends StatelessWidget {
   final String message;
+  final RoleProfileTheme theme;
   final VoidCallback onRetry;
 
-  const _ErrorView({required this.message, required this.onRetry});
+  const _ErrorView({
+    required this.message,
+    required this.theme,
+    required this.onRetry,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.error_outline_rounded, size: 56, color: Colors.red),
-            const SizedBox(height: 16),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh_rounded),
-              label: const Text('Retry'),
-            ),
-          ],
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(22),
+          decoration: BoxDecoration(
+            color: theme.card(isDark),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: theme.border(isDark)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 56,
+                height: 56,
+                decoration: BoxDecoration(
+                  color: theme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: Icon(Icons.error_outline_rounded, color: theme.primary),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: theme.textPrimary(isDark),
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: onRetry,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.primary,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
         ),
       ),
     );

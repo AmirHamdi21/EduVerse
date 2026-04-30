@@ -59,7 +59,7 @@ class FrequentlyContactedSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         SizedBox(
-          height: 122,
+          height: 150,
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             scrollDirection: Axis.horizontal,

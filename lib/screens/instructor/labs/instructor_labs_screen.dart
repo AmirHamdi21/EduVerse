@@ -97,7 +97,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
   Future<void> _resolveRoleAccess() async {
     try {
       final user = await widget.storageService.getUserData();
-      final roleNames = user?.roles
+      final roleNames =
+          user?.roles
               .map((role) => role.roleName.toLowerCase().trim())
               .toSet() ??
           <String>{};
@@ -147,8 +148,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
 
             return Scaffold(
               backgroundColor: InstructorColors.background(isDark),
-              floatingActionButton: _resolvedCanManage &&
-                      state is InstructorLabsLoaded
+              floatingActionButton:
+                  _resolvedCanManage && state is InstructorLabsLoaded
                   ? FloatingActionButton.extended(
                       onPressed: () => _openCreateOrEditSheet(context, state),
                       backgroundColor: InstructorColors.primary,
@@ -243,7 +244,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
       groupedLabs.putIfAbsent(lab.courseId, () => <LabModel>[]).add(lab);
     }
 
-    final showAllAssignedCourses = state.selectedCourseId == null &&
+    final showAllAssignedCourses =
+        state.selectedCourseId == null &&
         selectedStateFilter == _InstructorLabStateFilter.all;
     final courseIds = _resolveVisibleCourseIds(
       grouped: groupedLabs,
@@ -323,7 +325,7 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
     return SliverToBoxAdapter(
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-        padding: const EdgeInsets.all(22),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: isDark
               ? InstructorColors.darkHeaderGradient
@@ -337,16 +339,18 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
               l10n.instructorLabsHeaderTitle,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(height: 6),
             Text(
               l10n.instructorLabsHeaderSubtitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.84),
-                fontSize: 13,
+                fontSize: 12,
+                height: 1.3,
               ),
             ),
           ],
@@ -361,11 +365,13 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
     ResponsiveUtil r,
     InstructorLabsLoaded state,
   ) {
-    final courseCount =
-        state.selectedCourseId == null ? state.teachingCourses.length : 1;
+    final courseCount = state.selectedCourseId == null
+        ? state.teachingCourses.length
+        : 1;
     final activeCount = state.labs.where(_isActiveLab).length;
-    final draftCount =
-        state.labs.where((lab) => lab.status == api.LabStatus.draft).length;
+    final draftCount = state.labs
+        .where((lab) => lab.status == api.LabStatus.draft)
+        .length;
     final closedCount = state.labs
         .where(
           (lab) =>
@@ -412,7 +418,7 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
         gradient: isDark
             ? InstructorColors.darkHeaderGradient
             : InstructorColors.headerGradient,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         boxShadow: [
           BoxShadow(
             color: InstructorColors.primary.withValues(
@@ -424,7 +430,7 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         child: Stack(
           children: [
             Positioned(
@@ -452,18 +458,18 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(r.isMobile ? 18 : 22),
+              padding: EdgeInsets.all(r.isMobile ? 16 : 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.16),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: Colors.white.withValues(alpha: 0.18),
                           ),
@@ -471,10 +477,10 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
                         child: const Icon(
                           Icons.auto_graph_rounded,
                           color: Colors.white,
-                          size: 24,
+                          size: 21,
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,17 +489,18 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
                               l10n.instructorLabsHeaderTitle,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: r.isMobile ? 19 : 22,
+                                fontSize: r.isMobile ? 18 : 20,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
-                            const SizedBox(height: 4),
                             Text(
                               l10n.instructorLabsHeaderSubtitle,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.84),
-                                fontSize: r.isMobile ? 12 : 13,
-                                height: 1.45,
+                                fontSize: r.isMobile ? 11.5 : 12,
+                                height: 1.28,
                               ),
                             ),
                           ],
@@ -501,29 +508,32 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 12),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
-                      const spacing = 10.0;
-                      final itemWidth = (constraints.maxWidth -
+                      final crossAxisCount = constraints.maxWidth < 360 ? 2 : 3;
+                      const spacing = 8.0;
+                      final itemWidth =
+                          (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
                           crossAxisCount;
 
                       return Wrap(
                         spacing: spacing,
                         runSpacing: spacing,
-                        children: stats.map((stat) {
-                          return SizedBox(
-                            width: itemWidth,
-                            child: _buildHeaderStatCard(
-                              icon: stat.icon,
-                              label: stat.label,
-                              value: stat.value,
-                              color: stat.color,
-                            ),
-                          );
-                        }).toList(growable: false),
+                        children: stats
+                            .map((stat) {
+                              return SizedBox(
+                                width: itemWidth,
+                                child: _buildHeaderStatCard(
+                                  icon: stat.icon,
+                                  label: stat.label,
+                                  value: stat.value,
+                                  color: stat.color,
+                                ),
+                              );
+                            })
+                            .toList(growable: false),
                       );
                     },
                   ),
@@ -543,34 +553,35 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: color),
-          const SizedBox(height: 10),
+          Icon(icon, size: 16, color: color),
+          const SizedBox(height: 6),
           Text(
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.82),
-              fontSize: 11,
+              fontSize: 10.5,
               fontWeight: FontWeight.w600,
+              height: 1.15,
             ),
           ),
         ],
@@ -731,8 +742,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
                         return;
                       }
                       context.read<InstructorLabsCubit>().filterLabs(
-                            status: _stateFilterValue(value),
-                          );
+                        status: _stateFilterValue(value),
+                      );
                     },
                     selectedLabel: _stateFilterLabel(
                       l10n,
@@ -809,21 +820,23 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
         fontWeight: FontWeight.w600,
       ),
       selectedItemBuilder: (context) {
-        return items.map((_) {
-          return Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              selectedLabel,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: InstructorColors.textPrimaryColor(isDark),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          );
-        }).toList(growable: false);
+        return items
+            .map((_) {
+              return Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  selectedLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: InstructorColors.textPrimaryColor(isDark),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            })
+            .toList(growable: false);
       },
       items: items,
       onChanged: onChanged,
@@ -1054,8 +1067,8 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
     final fallbackCourseName = '${l10n.course} #$courseId';
     final courseName = labs.isNotEmpty
         ? (labs.first.course?.name ??
-            courseModel?.course.name ??
-            fallbackCourseName)
+              courseModel?.course.name ??
+              fallbackCourseName)
         : (courseModel?.course.name ?? fallbackCourseName);
     final courseCode = labs.isNotEmpty
         ? (labs.first.course?.code ?? courseModel?.course.code ?? '')
@@ -1204,8 +1217,9 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
       color: Colors.transparent,
       child: InkWell(
         onTap: () => context.push('/instructor/labs/${lab.id}'),
-        onLongPress:
-            _resolvedCanManage ? () => _showLabActions(l10n, lab) : null,
+        onLongPress: _resolvedCanManage
+            ? () => _showLabActions(l10n, lab)
+            : null,
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: LayoutBuilder(
@@ -1486,8 +1500,9 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
   }
 
   String _courseInitials(String courseCode, String courseName) {
-    final codeLetters =
-        courseCode.replaceAll(RegExp(r'[^A-Za-z]'), '').toUpperCase();
+    final codeLetters = courseCode
+        .replaceAll(RegExp(r'[^A-Za-z]'), '')
+        .toUpperCase();
     if (codeLetters.isNotEmpty) {
       return codeLetters.length <= 3
           ? codeLetters
@@ -1638,9 +1653,9 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
   Future<void> _updateLabStatus(LabModel lab, api.LabStatus status) async {
     final l10n = AppLocalizations.of(context);
     final message = await context.read<InstructorLabsCubit>().updateStatus(
-          lab.id.isNotEmpty ? lab.id : lab.labId.toString(),
-          status,
-        );
+      lab.id.isNotEmpty ? lab.id : lab.labId.toString(),
+      status,
+    );
 
     if (!mounted) {
       return;

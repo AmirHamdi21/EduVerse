@@ -4828,6 +4828,214 @@ class AppLocalizationsAr extends AppLocalizations {
   String get attendanceManager => 'إدارة الحضور';
 
   @override
+  String get attendanceLectureMode => 'كشف مباشر';
+
+  @override
+  String get attendanceSessionsMode => 'الجلسات';
+
+  @override
+  String get attendanceModeLectureSubtitle => 'افتح الشعبة وسجّل الحضور بسرعة.';
+
+  @override
+  String get attendanceModeSessionsSubtitle =>
+      'راجع جلسات الحضور وأدرها بسهولة.';
+
+  @override
+  String attendanceSectionTakeResume(String sectionNumber) {
+    return 'الشعبة $sectionNumber • سجّل الحضور أو استكمله';
+  }
+
+  @override
+  String get attendanceRosterLabel => 'الكشف';
+
+  @override
+  String get attendanceChangesLabel => 'التغييرات';
+
+  @override
+  String get attendanceFlagged => 'بحاجة مراجعة';
+
+  @override
+  String get attendanceSectionsLabel => 'الشعب';
+
+  @override
+  String get attendanceOpenSessionsLabel => 'الجلسات المفتوحة';
+
+  @override
+  String get attendanceAllSections => 'كل الشعب';
+
+  @override
+  String get attendanceNoSectionsAssigned => 'لا توجد شعب مخصصة بعد.';
+
+  @override
+  String get attendanceOpenSessionsTitle => 'الجلسات المفتوحة';
+
+  @override
+  String get attendanceOpenSessionsSubtitle =>
+      'استأنف أي جلسة ما زالت قابلة للتعديل.';
+
+  @override
+  String get attendanceNoOpenSessions =>
+      'لا توجد جلسات مفتوحة. ابدأ جلسة جديدة بالأسفل.';
+
+  @override
+  String get attendanceStartSessionTitle => 'جلسة جديدة';
+
+  @override
+  String get attendanceStartSessionSubtitle =>
+      'اختر التاريخ والنوع ثم انتقل مباشرة إلى الكشف.';
+
+  @override
+  String get attendanceCreateSessionAndOpenRoster => 'إنشاء الجلسة وفتح الكشف';
+
+  @override
+  String get attendanceSelectSectionToViewSessions =>
+      'اختر شعبة لعرض جلسات الحضور.';
+
+  @override
+  String get attendanceRecordsTitle => 'سجل الحضور';
+
+  @override
+  String get attendanceRecordsSubtitle =>
+      'استعرض ملخصات الجلسات وأعد فتح أي كشف تحتاجه.';
+
+  @override
+  String get attendanceNoSessionsYet => 'لا توجد جلسات حضور بعد.';
+
+  @override
+  String get attendanceOpen => 'فتح';
+
+  @override
+  String attendanceSessionLabel(int id) {
+    return 'الجلسة $id';
+  }
+
+  @override
+  String get attendanceOpenRosterAction => 'فتح الكشف';
+
+  @override
+  String get attendanceEditSessionTitle => 'تعديل الجلسة';
+
+  @override
+  String get attendanceEditSessionSubtitle => 'حدّث تاريخ الجلسة أو نوعها.';
+
+  @override
+  String get attendanceDeleteSessionTitle => 'حذف الجلسة';
+
+  @override
+  String attendanceDeleteSessionMessage(String id, String date) {
+    return 'حذف الجلسة $id بتاريخ $date؟ لا يمكن التراجع عن هذا الإجراء.';
+  }
+
+  @override
+  String get attendanceEveryonePresent => 'الجميع حاضر';
+
+  @override
+  String get attendanceEveryoneAbsent => 'الجميع غائب';
+
+  @override
+  String get attendanceCloseAndLock => 'إغلاق وقفل';
+
+  @override
+  String get attendanceUnsavedChangesBanner =>
+      'لديك تغييرات حضور غير محفوظة. احفظها قبل المغادرة أو إغلاق الجلسة.';
+
+  @override
+  String get attendanceReadOnlyBanner =>
+      'هذه الجلسة مغلقة، لذلك الكشف للعرض فقط.';
+
+  @override
+  String get attendanceNoEnrolledStudents => 'لا يوجد طلاب مسجلون.';
+
+  @override
+  String get attendanceAiPhotoTitle => 'الذكاء الاصطناعي من صورة الصف';
+
+  @override
+  String get attendanceAiPhotoSubtitle =>
+      'ارفع صورة للصف لإنشاء اقتراحات حضور ذكية.';
+
+  @override
+  String get attendanceUsesSavedFaceReferences =>
+      'يعتمد على صور الوجوه المحفوظة';
+
+  @override
+  String get attendancePickPhoto => 'اختر صورة الحضور';
+
+  @override
+  String get attendanceRunAi => 'تشغيل الذكاء الاصطناعي';
+
+  @override
+  String get attendanceRunning => 'جارٍ التشغيل...';
+
+  @override
+  String get attendanceApplyAiSuggestions => 'تطبيق اقتراحات الذكاء الاصطناعي';
+
+  @override
+  String get attendanceOnRoster => 'على الكشف';
+
+  @override
+  String get attendanceUnknown => 'غير معروف';
+
+  @override
+  String get attendanceReview => 'مراجعة';
+
+  @override
+  String attendanceAiBadge(String percent) {
+    return 'AI $percent%';
+  }
+
+  @override
+  String attendanceAiSuggestedWithConfidence(String status, String percent) {
+    return 'اقترح الذكاء الاصطناعي $status • بنسبة ثقة $percent%';
+  }
+
+  @override
+  String attendanceAiSuggestedWithoutConfidence(String status) {
+    return 'اقترح الذكاء الاصطناعي $status • بدون نسبة ثقة';
+  }
+
+  @override
+  String get attendanceAiNotRunYet =>
+      'لم يتم تشغيل الذكاء الاصطناعي بعد. اختر صورة وابدأ التحليل.';
+
+  @override
+  String attendanceMarkEveryoneTitle(String status) {
+    return 'تحديد الجميع كـ $status';
+  }
+
+  @override
+  String attendanceMarkEveryoneMessage(String status) {
+    return 'تطبيق حالة \"$status\" على جميع صفوف الكشف؟ لا يزال بإمكانك تعديل كل طالب قبل الحفظ.';
+  }
+
+  @override
+  String get attendanceApply => 'تطبيق';
+
+  @override
+  String get attendanceCloseSessionTitle => 'إغلاق الجلسة';
+
+  @override
+  String get attendanceCloseSessionMessage =>
+      'هل تريد إغلاق هذه الجلسة وقفلها؟ سيصبح الحضور للقراءة فقط.';
+
+  @override
+  String get attendanceTutorialType => 'تمرين';
+
+  @override
+  String get attendanceStatusInProgress => 'قيد التنفيذ';
+
+  @override
+  String get attendanceStatusCompleted => 'مكتملة';
+
+  @override
+  String get attendanceStatusCancelled => 'ملغاة';
+
+  @override
+  String get attendanceStatusScheduled => 'مجدولة';
+
+  @override
+  String get attendanceBackToSessions => 'العودة إلى الجلسات';
+
+  @override
   String get trackStudentAttendance => 'تتبع وإدارة حضور الطلاب';
 
   @override
@@ -14088,6 +14296,58 @@ class AppLocalizationsAr extends AppLocalizations {
   String chatTypingSingle(Object name) {
     return '$name يكتب الآن...';
   }
+
+  @override
+  String get instructorCalendarHeroSubtitle =>
+      'نسّق المحاضرات والساعات المكتبية وفعاليات الحرم وخططك الشخصية في جدول واحد أنيق.';
+
+  @override
+  String get calendarRangeEvents => 'الأحداث الظاهرة';
+
+  @override
+  String get calendarFocusDay => 'يوم التركيز';
+
+  @override
+  String get calendarCampusEvents => 'فعاليات الحرم';
+
+  @override
+  String get calendarEventTypes => 'أنواع الأحداث';
+
+  @override
+  String get calendarCampusSource => 'مصدر فعاليات الحرم';
+
+  @override
+  String get calendarManageFilters => 'إدارة الفلاتر';
+
+  @override
+  String get calendarAllEventTypes => 'كل أنواع الأحداث';
+
+  @override
+  String get calendarAllCampusEvents => 'كل فعاليات الحرم';
+
+  @override
+  String get calendarMyCampusEvents => 'فعالياتي في الحرم';
+
+  @override
+  String get calendarDayAgenda => 'أجندة اليوم';
+
+  @override
+  String get calendarNothingPlanned => 'لا يوجد شيء مخطط بعد';
+
+  @override
+  String get calendarSelectedDay => 'اليوم المحدد';
+
+  @override
+  String get calendarNoSelectedDayEvents => 'لا توجد عناصر مجدولة لهذا التاريخ';
+
+  @override
+  String get calendarDeadlineLabel => 'المواعيد النهائية';
+
+  @override
+  String get calendarGradingLabel => 'التصحيح';
+
+  @override
+  String get calendarAllDay => 'طوال اليوم';
 
   @override
   String get chatVideoCallTooltip => 'مكالمة فيديو';

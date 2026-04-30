@@ -195,7 +195,9 @@ class _StudentDiscussionPostDetailScreenState
         return;
       }
 
-      final merged = <int, DiscussionReply>{for (final reply in _replies) reply.id: reply};
+      final merged = <int, DiscussionReply>{
+        for (final reply in _replies) reply.id: reply,
+      };
       for (final reply in detail.replies.data) {
         merged[reply.id] = reply;
       }
@@ -381,15 +383,17 @@ class _StudentDiscussionPostDetailScreenState
       }
 
       setState(() {
-        _replies = _replies.map((item) {
-          if (item.id != reply.id) {
-            return item;
-          }
-          final nextCount = action == 'added'
-              ? item.upvoteCount + 1
-              : (item.upvoteCount > 0 ? item.upvoteCount - 1 : 0);
-          return item.copyWith(upvoteCount: nextCount);
-        }).toList(growable: false);
+        _replies = _replies
+            .map((item) {
+              if (item.id != reply.id) {
+                return item;
+              }
+              final nextCount = action == 'added'
+                  ? item.upvoteCount + 1
+                  : (item.upvoteCount > 0 ? item.upvoteCount - 1 : 0);
+              return item.copyWith(upvoteCount: nextCount);
+            })
+            .toList(growable: false);
       });
 
       _showSnack(
@@ -454,7 +458,9 @@ class _StudentDiscussionPostDetailScreenState
               title: Text(l10n.instructorDiscussionPostDetailsTitle),
             ),
             body: Center(
-              child: CircularProgressIndicator(color: StudentDiscussionPalette.primary),
+              child: CircularProgressIndicator(
+                color: StudentDiscussionPalette.primary,
+              ),
             ),
           );
         }
@@ -499,15 +505,15 @@ class _StudentDiscussionPostDetailScreenState
             child: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) {
                 return <Widget>[
-                  _buildAppBar(isDark, l10n, thread, innerBoxIsScrolled, viewer),
+                  _buildAppBar(
+                    isDark,
+                    l10n,
+                    thread,
+                    innerBoxIsScrolled,
+                    viewer,
+                  ),
                   SliverToBoxAdapter(
-                    child: _buildThreadHeader(
-                      context,
-                      isDark,
-                      l10n,
-                      r,
-                      thread,
-                    ),
+                    child: _buildThreadHeader(context, isDark, l10n, r, thread),
                   ),
                   SliverToBoxAdapter(
                     child: _buildStatsRow(isDark, l10n, thread),
@@ -515,7 +521,9 @@ class _StudentDiscussionPostDetailScreenState
                   SliverPersistentHeader(
                     pinned: true,
                     delegate: _SliverTabBarDelegate(
-                      backgroundColor: StudentDiscussionPalette.background(isDark),
+                      backgroundColor: StudentDiscussionPalette.background(
+                        isDark,
+                      ),
                       tabBar: _buildTabBar(isDark, l10n),
                     ),
                   ),
@@ -635,7 +643,9 @@ class _StudentDiscussionPostDetailScreenState
                   value: 'delete',
                   child: Text(
                     l10n.delete,
-                    style: const TextStyle(color: StudentDiscussionPalette.error),
+                    style: const TextStyle(
+                      color: StudentDiscussionPalette.error,
+                    ),
                   ),
                 ),
             ],
@@ -683,7 +693,7 @@ class _StudentDiscussionPostDetailScreenState
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       decoration: BoxDecoration(
         gradient: studentDiscussionHeaderGradient(isDark),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: StudentDiscussionPalette.primary.withValues(
@@ -695,7 +705,7 @@ class _StudentDiscussionPostDetailScreenState
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         child: Stack(
           children: <Widget>[
             Positioned(
@@ -723,19 +733,19 @@ class _StudentDiscussionPostDetailScreenState
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(r.isMobile ? 18 : 22),
+              padding: EdgeInsets.all(r.isMobile ? 16 : 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        width: 58,
-                        height: 58,
+                        width: 46,
+                        height: 46,
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.16),
-                          borderRadius: BorderRadius.circular(18),
+                          borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: Colors.white.withValues(alpha: 0.18),
                           ),
@@ -743,10 +753,10 @@ class _StudentDiscussionPostDetailScreenState
                         child: const Icon(
                           Icons.forum_rounded,
                           color: Colors.white,
-                          size: 28,
+                          size: 22,
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -756,26 +766,29 @@ class _StudentDiscussionPostDetailScreenState
                                 '${_course!.course?.code ?? ''} • ${_course!.course?.name ?? ''}',
                                 style: TextStyle(
                                   color: Colors.white.withValues(alpha: 0.9),
-                                  fontSize: 12,
+                                  fontSize: 11.5,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
-                            const SizedBox(height: 4),
                             Text(
                               thread.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: r.isMobile ? 20 : 23,
+                                fontSize: r.isMobile ? 18 : 20,
                                 fontWeight: FontWeight.w800,
-                                height: 1.18,
+                                height: 1.12,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 4),
                             Text(
                               '${studentDiscussionDisplayName(context, thread.createdByName)} • ${studentDiscussionFormatDate(context, thread.createdAt)}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.84),
-                                fontSize: 12,
+                                fontSize: 11.5,
                               ),
                             ),
                           ],
@@ -783,7 +796,7 @@ class _StudentDiscussionPostDetailScreenState
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -808,11 +821,11 @@ class _StudentDiscussionPostDetailScreenState
                         ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 12),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
-                      const spacing = 10.0;
+                      final crossAxisCount = constraints.maxWidth < 360 ? 2 : 4;
+                      const spacing = 8.0;
                       final itemWidth =
                           (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
@@ -976,7 +989,9 @@ class _StudentDiscussionPostDetailScreenState
                 ? Text(
                     l10n.instructorDiscussionNoHighlightedAnswer,
                     style: TextStyle(
-                      color: StudentDiscussionPalette.textSecondaryColor(isDark),
+                      color: StudentDiscussionPalette.textSecondaryColor(
+                        isDark,
+                      ),
                       fontSize: 13,
                     ),
                   )
@@ -1049,7 +1064,10 @@ class _StudentDiscussionPostDetailScreenState
             ),
             child: Row(
               children: <Widget>[
-                const Icon(Icons.lock_rounded, color: StudentDiscussionPalette.warning),
+                const Icon(
+                  Icons.lock_rounded,
+                  color: StudentDiscussionPalette.warning,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -1108,8 +1126,9 @@ class _StudentDiscussionPostDetailScreenState
                         );
                       }
 
-                      final adjustedIndex =
-                          pinnedAnswer == null ? index : index - 1;
+                      final adjustedIndex = pinnedAnswer == null
+                          ? index
+                          : index - 1;
 
                       if (adjustedIndex >= roots.length) {
                         return const Padding(
@@ -1169,7 +1188,9 @@ class _StudentDiscussionPostDetailScreenState
       ),
       (
         label: l10n.status,
-        value: thread.isLocked ? l10n.instructorDiscussionLockedLabel : l10n.open,
+        value: thread.isLocked
+            ? l10n.instructorDiscussionLockedLabel
+            : l10n.open,
       ),
     ];
 
@@ -1195,9 +1216,10 @@ class _StudentDiscussionPostDetailScreenState
                             child: Text(
                               item.label,
                               style: TextStyle(
-                                color: StudentDiscussionPalette.textSecondaryColor(
-                                  isDark,
-                                ),
+                                color:
+                                    StudentDiscussionPalette.textSecondaryColor(
+                                      isDark,
+                                    ),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -1210,7 +1232,10 @@ class _StudentDiscussionPostDetailScreenState
                               item.value,
                               textAlign: TextAlign.end,
                               style: TextStyle(
-                                color: StudentDiscussionPalette.textPrimaryColor(isDark),
+                                color:
+                                    StudentDiscussionPalette.textPrimaryColor(
+                                      isDark,
+                                    ),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -1246,10 +1271,16 @@ class _StudentDiscussionPostDetailScreenState
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: StudentDiscussionPalette.primary.withValues(alpha: 0.12),
+                  color: StudentDiscussionPalette.primary.withValues(
+                    alpha: 0.12,
+                  ),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: StudentDiscussionPalette.primary, size: 20),
+                child: Icon(
+                  icon,
+                  color: StudentDiscussionPalette.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -1281,7 +1312,9 @@ class _StudentDiscussionPostDetailScreenState
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: isDark
-            ? StudentDiscussionPalette.surfaceColor(isDark).withValues(alpha: 0.78)
+            ? StudentDiscussionPalette.surfaceColor(
+                isDark,
+              ).withValues(alpha: 0.78)
             : const Color(0xFFF8FBFF),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
@@ -1329,17 +1362,20 @@ class _StudentDiscussionPostDetailScreenState
           .add(reply);
     }
 
-    final roots = (childrenByParent[null] ?? const <DiscussionReply>[])
-        .toList(growable: false)
-      ..sort(_replyComparator);
+    final roots = (childrenByParent[null] ?? const <DiscussionReply>[]).toList(
+      growable: false,
+    )..sort(_replyComparator);
 
     List<_ReplyNode> buildNodes(List<DiscussionReply> replies) {
-      return replies.map((reply) {
-        final children = (childrenByParent[reply.id] ?? const <DiscussionReply>[])
-            .toList(growable: false);
-        children.sort(_replyComparator);
-        return _ReplyNode(reply: reply, children: buildNodes(children));
-      }).toList(growable: false);
+      return replies
+          .map((reply) {
+            final children =
+                (childrenByParent[reply.id] ?? const <DiscussionReply>[])
+                    .toList(growable: false);
+            children.sort(_replyComparator);
+            return _ReplyNode(reply: reply, children: buildNodes(children));
+          })
+          .toList(growable: false);
     }
 
     return buildNodes(roots);
@@ -1351,8 +1387,9 @@ class _StudentDiscussionPostDetailScreenState
       return answerCompare;
     }
 
-    final endorsementCompare =
-        (b.isEndorsed ? 1 : 0).compareTo(a.isEndorsed ? 1 : 0);
+    final endorsementCompare = (b.isEndorsed ? 1 : 0).compareTo(
+      a.isEndorsed ? 1 : 0,
+    );
     if (endorsementCompare != 0) {
       return endorsementCompare;
     }
@@ -1386,7 +1423,9 @@ class _StudentDiscussionPostDetailScreenState
           border: Border.all(
             color: reply.isAnswer
                 ? StudentDiscussionPalette.success.withValues(alpha: 0.35)
-                : StudentDiscussionPalette.borderColor(isDark).withValues(alpha: 0.75),
+                : StudentDiscussionPalette.borderColor(
+                    isDark,
+                  ).withValues(alpha: 0.75),
           ),
           boxShadow: <BoxShadow>[
             BoxShadow(
@@ -1422,12 +1461,11 @@ class _StudentDiscussionPostDetailScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        studentDiscussionDisplayName(
-                          context,
-                          reply.userName,
-                        ),
+                        studentDiscussionDisplayName(context, reply.userName),
                         style: TextStyle(
-                          color: StudentDiscussionPalette.textPrimaryColor(isDark),
+                          color: StudentDiscussionPalette.textPrimaryColor(
+                            isDark,
+                          ),
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
                         ),
@@ -1436,7 +1474,9 @@ class _StudentDiscussionPostDetailScreenState
                       Text(
                         studentDiscussionFormatDate(context, reply.createdAt),
                         style: TextStyle(
-                          color: StudentDiscussionPalette.textTertiaryColor(isDark),
+                          color: StudentDiscussionPalette.textTertiaryColor(
+                            isDark,
+                          ),
                           fontSize: 11,
                         ),
                       ),
@@ -1579,7 +1619,9 @@ class _StudentDiscussionPostDetailScreenState
         color: StudentDiscussionPalette.cardColor(isDark),
         border: Border(
           top: BorderSide(
-            color: StudentDiscussionPalette.borderColor(isDark).withValues(alpha: 0.7),
+            color: StudentDiscussionPalette.borderColor(
+              isDark,
+            ).withValues(alpha: 0.7),
           ),
         ),
       ),
@@ -1629,9 +1671,9 @@ class _StudentDiscussionPostDetailScreenState
                         : l10n.instructorDiscussionReplyHint,
                     filled: true,
                     fillColor: isDark
-                        ? StudentDiscussionPalette.surfaceColor(isDark).withValues(
-                            alpha: 0.78,
-                          )
+                        ? StudentDiscussionPalette.surfaceColor(
+                            isDark,
+                          ).withValues(alpha: 0.78)
                         : const Color(0xFFF8FBFF),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 14,
@@ -1640,17 +1682,17 @@ class _StudentDiscussionPostDetailScreenState
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide(
-                        color: StudentDiscussionPalette.borderColor(isDark).withValues(
-                          alpha: 0.8,
-                        ),
+                        color: StudentDiscussionPalette.borderColor(
+                          isDark,
+                        ).withValues(alpha: 0.8),
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
                       borderSide: BorderSide(
-                        color: StudentDiscussionPalette.borderColor(isDark).withValues(
-                          alpha: 0.8,
-                        ),
+                        color: StudentDiscussionPalette.borderColor(
+                          isDark,
+                        ).withValues(alpha: 0.8),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
@@ -1732,10 +1774,3 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
         oldDelegate.backgroundColor != backgroundColor;
   }
 }
-
-
-
-
-
-
-

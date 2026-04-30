@@ -65,7 +65,7 @@ enum _InstructorAssignmentStateFilter {
   draft,
   published,
   closed,
-  archived
+  archived,
 }
 
 class _InstructorAssignmentsView extends StatefulWidget {
@@ -93,8 +93,10 @@ class _InstructorAssignmentsViewState
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
 
-        return BlocConsumer<InstructorAssignmentsCubit,
-            InstructorAssignmentsState>(
+        return BlocConsumer<
+          InstructorAssignmentsCubit,
+          InstructorAssignmentsState
+        >(
           listener: (context, state) {
             if (state.errorMessage != null && state.errorMessage!.isNotEmpty) {
               ScaffoldMessenger.of(context).showSnackBar(
@@ -107,12 +109,9 @@ class _InstructorAssignmentsViewState
           },
           builder: (context, state) {
             final content = RefreshIndicator(
-              onRefresh: () =>
-                  context.read<InstructorAssignmentsCubit>().loadAssignments(
-                        page: 1,
-                        limit: 20,
-                        refresh: true,
-                      ),
+              onRefresh: () => context
+                  .read<InstructorAssignmentsCubit>()
+                  .loadAssignments(page: 1, limit: 20, refresh: true),
               color: InstructorColors.primary,
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -192,14 +191,11 @@ class _InstructorAssignmentsViewState
     );
   }
 
-  SliverToBoxAdapter _buildLoadingHeader(
-    bool isDark,
-    AppLocalizations l10n,
-  ) {
+  SliverToBoxAdapter _buildLoadingHeader(bool isDark, AppLocalizations l10n) {
     return SliverToBoxAdapter(
       child: Container(
         margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-        padding: const EdgeInsets.all(22),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: isDark
               ? InstructorColors.darkHeaderGradient
@@ -221,16 +217,18 @@ class _InstructorAssignmentsViewState
               l10n.instructorAssignmentsHeaderTitle,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.w800,
               ),
             ),
-            const SizedBox(height: 6),
             Text(
               l10n.instructorAssignmentsHeaderSubtitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.84),
-                fontSize: 13,
+                fontSize: 12,
+                height: 1.3,
               ),
             ),
           ],
@@ -296,8 +294,9 @@ class _InstructorAssignmentsViewState
                 child: OutlinedButton(
                   onPressed: state.isLoading
                       ? null
-                      : () =>
-                          context.read<InstructorAssignmentsCubit>().loadMore(),
+                      : () => context
+                            .read<InstructorAssignmentsCubit>()
+                            .loadMore(),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: InstructorColors.primary,
                     side: BorderSide(
@@ -396,7 +395,7 @@ class _InstructorAssignmentsViewState
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         boxShadow: <BoxShadow>[
           BoxShadow(
             color: InstructorColors.primary.withValues(
@@ -408,7 +407,7 @@ class _InstructorAssignmentsViewState
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         child: Stack(
           children: <Widget>[
             Positioned(
@@ -436,18 +435,18 @@ class _InstructorAssignmentsViewState
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(r.isMobile ? 18 : 22),
+              padding: EdgeInsets.all(r.isMobile ? 16 : 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.16),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: Colors.white.withValues(alpha: 0.18),
                           ),
@@ -455,10 +454,10 @@ class _InstructorAssignmentsViewState
                         child: const Icon(
                           Icons.assignment_rounded,
                           color: Colors.white,
-                          size: 24,
+                          size: 21,
                         ),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -467,17 +466,18 @@ class _InstructorAssignmentsViewState
                               l10n.instructorAssignmentsHeaderTitle,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: r.isMobile ? 19 : 22,
+                                fontSize: r.isMobile ? 18 : 20,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
-                            const SizedBox(height: 4),
                             Text(
                               subtitle,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.84),
-                                fontSize: r.isMobile ? 12 : 13,
-                                height: 1.45,
+                                fontSize: r.isMobile ? 11.5 : 12,
+                                height: 1.28,
                               ),
                             ),
                           ],
@@ -485,29 +485,32 @@ class _InstructorAssignmentsViewState
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 12),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
-                      const spacing = 10.0;
-                      final itemWidth = (constraints.maxWidth -
+                      final crossAxisCount = constraints.maxWidth < 360 ? 2 : 3;
+                      const spacing = 8.0;
+                      final itemWidth =
+                          (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
                           crossAxisCount;
 
                       return Wrap(
                         spacing: spacing,
                         runSpacing: spacing,
-                        children: stats.map((stat) {
-                          return SizedBox(
-                            width: itemWidth,
-                            child: _buildHeaderStatCard(
-                              icon: stat.icon,
-                              label: stat.label,
-                              value: stat.value,
-                              color: stat.color,
-                            ),
-                          );
-                        }).toList(growable: false),
+                        children: stats
+                            .map((stat) {
+                              return SizedBox(
+                                width: itemWidth,
+                                child: _buildHeaderStatCard(
+                                  icon: stat.icon,
+                                  label: stat.label,
+                                  value: stat.value,
+                                  color: stat.color,
+                                ),
+                              );
+                            })
+                            .toList(growable: false),
                       );
                     },
                   ),
@@ -527,34 +530,35 @@ class _InstructorAssignmentsViewState
     required Color color,
   }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Icon(icon, size: 18, color: color),
-          const SizedBox(height: 10),
+          Icon(icon, size: 16, color: color),
+          const SizedBox(height: 6),
           Text(
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.82),
-              fontSize: 11,
+              fontSize: 10.5,
               fontWeight: FontWeight.w600,
+              height: 1.15,
             ),
           ),
         ],
@@ -632,23 +636,25 @@ class _InstructorAssignmentsViewState
                     icon: Icons.menu_book_rounded,
                     menuMaxHeight: r.screenHeight * 0.45,
                     enabled: !widget.lockCourseSelection,
-                    items: state.teachingCourses.map((course) {
-                      return DropdownMenuItem<int>(
-                        value: course.courseId,
-                        child: Text(
-                          '${course.course.code} • ${course.course.name}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    }).toList(growable: false),
+                    items: state.teachingCourses
+                        .map((course) {
+                          return DropdownMenuItem<int>(
+                            value: course.courseId,
+                            child: Text(
+                              '${course.course.code} • ${course.course.name}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        })
+                        .toList(growable: false),
                     onChanged: (value) {
                       if (value == null) {
                         return;
                       }
-                      context
-                          .read<InstructorAssignmentsCubit>()
-                          .selectCourse(value);
+                      context.read<InstructorAssignmentsCubit>().selectCourse(
+                        value,
+                      );
                     },
                   ),
                 ),
@@ -692,9 +698,7 @@ class _InstructorAssignmentsViewState
                       }
                       context
                           .read<InstructorAssignmentsCubit>()
-                          .setStatusFilter(
-                            _statusFilterToApi(value),
-                          );
+                          .setStatusFilter(_statusFilterToApi(value));
                     },
                   ),
                 ),
@@ -768,21 +772,23 @@ class _InstructorAssignmentsViewState
         fontWeight: FontWeight.w600,
       ),
       selectedItemBuilder: (context) {
-        return items.map((_) {
-          return Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text(
-              selectedLabel,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: InstructorColors.textPrimaryColor(isDark),
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          );
-        }).toList(growable: false);
+        return items
+            .map((_) {
+              return Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Text(
+                  selectedLabel,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: InstructorColors.textPrimaryColor(isDark),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              );
+            })
+            .toList(growable: false);
       },
       items: items,
       onChanged: enabled ? onChanged : null,
@@ -826,15 +832,17 @@ class _InstructorAssignmentsViewState
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: <Color>[
-                  InstructorColors.primary
-                      .withValues(alpha: isDark ? 0.28 : 0.12),
+                  InstructorColors.primary.withValues(
+                    alpha: isDark ? 0.28 : 0.12,
+                  ),
                   InstructorColors.teal.withValues(alpha: isDark ? 0.18 : 0.08),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(22)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(22),
+              ),
             ),
             child: Row(
               children: <Widget>[
@@ -922,8 +930,9 @@ class _InstructorAssignmentsViewState
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color:
-                  InstructorColors.borderColor(isDark).withValues(alpha: 0.5),
+              color: InstructorColors.borderColor(
+                isDark,
+              ).withValues(alpha: 0.5),
             ),
           ),
         ),
@@ -934,8 +943,9 @@ class _InstructorAssignmentsViewState
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: _assignmentTypeColor(assignment.type)
-                    .withValues(alpha: 0.12),
+                color: _assignmentTypeColor(
+                  assignment.type,
+                ).withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(14),
               ),
               child: Icon(
@@ -976,7 +986,9 @@ class _InstructorAssignmentsViewState
                         isDark,
                         icon: Icons.upload_file_rounded,
                         label: _submissionTypeLabel(
-                            l10n, assignment.submissionType),
+                          l10n,
+                          assignment.submissionType,
+                        ),
                       ),
                     ],
                   ),
@@ -1013,8 +1025,11 @@ class _InstructorAssignmentsViewState
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Icon(icon,
-            size: 14, color: InstructorColors.textSecondaryColor(isDark)),
+        Icon(
+          icon,
+          size: 14,
+          color: InstructorColors.textSecondaryColor(isDark),
+        ),
         const SizedBox(width: 5),
         Text(
           label,
@@ -1232,14 +1247,14 @@ class _InstructorAssignmentsViewState
       await _openEditAssignment(assignment);
     } else if (value == 'delete') {
       context.read<InstructorAssignmentsCubit>().deleteAssignment(
-            assignment.assignmentId,
-          );
+        assignment.assignmentId,
+      );
     } else if (value.startsWith('status:')) {
       final raw = value.split(':').last;
       context.read<InstructorAssignmentsCubit>().updateStatus(
-            assignment.assignmentId,
-            api.AssignmentStatus.fromString(raw),
-          );
+        assignment.assignmentId,
+        api.AssignmentStatus.fromString(raw),
+      );
     }
   }
 
@@ -1308,7 +1323,8 @@ class _InstructorAssignmentsViewState
   }
 
   static List<api.AssignmentStatus> _nextStatuses(
-      api.AssignmentStatus current) {
+    api.AssignmentStatus current,
+  ) {
     switch (current) {
       case api.AssignmentStatus.draft:
         return const <api.AssignmentStatus>[api.AssignmentStatus.published];

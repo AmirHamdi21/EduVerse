@@ -347,8 +347,19 @@ class _SharedChatDetailViewState extends State<SharedChatDetailView> {
                 isDark: widget.isDark,
                 showVoiceCall: widget.showVoiceCall,
                 showVideoCall: widget.showVideoCall,
-                onOpenProfile: (userId) {
-                  context.push('/messages/profile/$userId');
+                onOpenConversationInfo: () {
+                  if (widget.conversation.type == ConversationType.group) {
+                    context.push(
+                      '/messages/group/${widget.conversation.conversationId}',
+                    );
+                    return;
+                  }
+
+                  final directUserId =
+                      widget.conversation.directDisplayUser?.userId;
+                  if (directUserId != null && directUserId > 0) {
+                    context.push('/messages/profile/$directUserId');
+                  }
                 },
                 onBack: widget.onBack,
               ),
@@ -557,7 +568,7 @@ class _ConversationHeader extends StatelessWidget {
   final bool isDark;
   final bool showVoiceCall;
   final bool showVideoCall;
-  final void Function(int userId)? onOpenProfile;
+  final VoidCallback? onOpenConversationInfo;
   final VoidCallback? onBack;
 
   const _ConversationHeader({
@@ -570,7 +581,7 @@ class _ConversationHeader extends StatelessWidget {
     required this.isDark,
     required this.showVoiceCall,
     required this.showVideoCall,
-    this.onOpenProfile,
+    this.onOpenConversationInfo,
     this.onBack,
   });
 
@@ -589,6 +600,9 @@ class _ConversationHeader extends StatelessWidget {
         conversation.type == ConversationType.direct &&
         directUser != null &&
         onlineUsers.contains(directUser.userId);
+    final canOpenConversationInfo =
+        onOpenConversationInfo != null &&
+        (conversation.type == ConversationType.group || directUser != null);
     final lastSeen = directUser != null
         ? userLastSeen[directUser.userId]
         : null;
@@ -650,9 +664,9 @@ class _ConversationHeader extends StatelessWidget {
                       ),
                     if (onBack != null) const SizedBox(width: 8),
                     GestureDetector(
-                      onTap: directUser == null || onOpenProfile == null
-                          ? null
-                          : () => onOpenProfile!(directUser.userId),
+                      onTap: canOpenConversationInfo
+                          ? onOpenConversationInfo
+                          : null,
                       child: Container(
                         width: 42,
                         height: 42,
@@ -685,9 +699,9 @@ class _ConversationHeader extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           GestureDetector(
-                            onTap: directUser == null || onOpenProfile == null
-                                ? null
-                                : () => onOpenProfile!(directUser.userId),
+                            onTap: canOpenConversationInfo
+                                ? onOpenConversationInfo
+                                : null,
                             child: Text(
                               conversation.title,
                               maxLines: 1,

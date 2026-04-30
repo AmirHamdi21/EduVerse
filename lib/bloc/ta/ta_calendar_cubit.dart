@@ -138,8 +138,15 @@ class TACalendarCubit extends Cubit<TACalendarState> {
   }
 
   void selectDate(DateTime date) {
-    emit(state.copyWith(selectedDate: date));
-    loadSchedule();
+    final normalized = DateTime(date.year, date.month, date.day);
+    final focusedMonth = DateTime(normalized.year, normalized.month);
+    final needsReload = _shouldReloadForSelectedDate(normalized);
+
+    emit(state.copyWith(selectedDate: normalized, focusedMonth: focusedMonth));
+
+    if (needsReload) {
+      loadSchedule();
+    }
   }
 
   void setFocusedMonth(DateTime month) {
@@ -386,5 +393,21 @@ class TACalendarCubit extends Cubit<TACalendarState> {
         emit(state.copyWith(clearSuccess: true));
       }
     });
+  }
+
+  bool _shouldReloadForSelectedDate(DateTime date) {
+    switch (state.viewType) {
+      case TACalendarViewType.month:
+        return date.year != state.focusedMonth.year ||
+            date.month != state.focusedMonth.month;
+      case TACalendarViewType.week:
+        return !_isSameDay(startOfWeek(date), startOfWeek(state.selectedDate));
+      case TACalendarViewType.day:
+        return !_isSameDay(date, state.selectedDate);
+    }
+  }
+
+  bool _isSameDay(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 }

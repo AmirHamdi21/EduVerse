@@ -76,10 +76,7 @@ String taDiscussionFormatDate(BuildContext context, DateTime? value) {
   return DateFormat.yMMMd(locale).add_jm().format(value.toLocal());
 }
 
-String taDiscussionDisplayName(
-  BuildContext context,
-  String providedName,
-) {
+String taDiscussionDisplayName(BuildContext context, String providedName) {
   final trimmed = providedName.trim();
   if (trimmed.isNotEmpty) {
     return trimmed;
@@ -99,13 +96,13 @@ String taDiscussionInitials(String primary, [String? secondary]) {
       ? safeSecondary.characters.first
       : (safePrimary.contains(' ')
             ? safePrimary
-                  .split(' ')
-                  .where((part) => part.trim().isNotEmpty)
-                  .skip(1)
-                  .firstOrNull
-                  ?.characters
-                  .first ??
-                ''
+                      .split(' ')
+                      .where((part) => part.trim().isNotEmpty)
+                      .skip(1)
+                      .firstOrNull
+                      ?.characters
+                      .first ??
+                  ''
             : '');
 
   return '$first$second'.toUpperCase();
@@ -176,19 +173,17 @@ class TADiscussionSummaryHeader extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       decoration: BoxDecoration(
         gradient: taDiscussionHeaderGradient(isDark),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         boxShadow: <BoxShadow>[
           BoxShadow(
-            color: TAColors.primary.withValues(
-              alpha: isDark ? 0.28 : 0.2,
-            ),
+            color: TAColors.primary.withValues(alpha: isDark ? 0.28 : 0.2),
             blurRadius: 24,
             offset: const Offset(0, 12),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(22),
         child: Stack(
           children: <Widget>[
             Positioned(
@@ -216,25 +211,25 @@ class TADiscussionSummaryHeader extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(responsive.isMobile ? 18 : 22),
+              padding: EdgeInsets.all(responsive.isMobile ? 16 : 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: <Widget>[
                       Container(
-                        padding: const EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.16),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: Colors.white.withValues(alpha: 0.18),
                           ),
                         ),
-                        child: Icon(icon, color: Colors.white, size: 24),
+                        child: Icon(icon, color: Colors.white, size: 21),
                       ),
-                      const SizedBox(width: 14),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -243,17 +238,18 @@ class TADiscussionSummaryHeader extends StatelessWidget {
                               title,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: responsive.isMobile ? 19 : 22,
+                                fontSize: responsive.isMobile ? 18 : 20,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
-                            const SizedBox(height: 4),
                             Text(
                               subtitle,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.84),
-                                fontSize: responsive.isMobile ? 12 : 13,
-                                height: 1.45,
+                                fontSize: responsive.isMobile ? 11.5 : 12,
+                                height: 1.28,
                               ),
                             ),
                           ],
@@ -261,11 +257,13 @@ class TADiscussionSummaryHeader extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 12),
                   LayoutBuilder(
                     builder: (context, constraints) {
-                      final crossAxisCount = constraints.maxWidth < 420 ? 2 : 4;
-                      const spacing = 10.0;
+                      final crossAxisCount = constraints.maxWidth < 360
+                          ? 2
+                          : (stats.length <= 4 ? 4 : 3);
+                      const spacing = 8.0;
                       final itemWidth =
                           (constraints.maxWidth -
                               (spacing * (crossAxisCount - 1))) /
@@ -317,34 +315,35 @@ class TADiscussionHeaderStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.14),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Icon(icon, size: 18, color: color),
-          const SizedBox(height: 10),
+          Icon(icon, size: 16, color: color),
+          const SizedBox(height: 6),
           Text(
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 18,
+              fontSize: 17,
               fontWeight: FontWeight.w800,
             ),
           ),
           const SizedBox(height: 2),
           Text(
             label,
-            maxLines: 1,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.82),
-              fontSize: 11,
+              fontSize: 10.5,
               fontWeight: FontWeight.w600,
+              height: 1.15,
             ),
           ),
         ],
@@ -393,9 +392,7 @@ class TADiscussionFilterPanel extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: TAColors.primary.withValues(
-                  alpha: isDark ? 0.18 : 0.1,
-                ),
+                color: TAColors.primary.withValues(alpha: isDark ? 0.18 : 0.1),
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(
@@ -468,10 +465,7 @@ class TADiscussionSearchField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(
-            color: TAColors.primary,
-            width: 1.4,
-          ),
+          borderSide: const BorderSide(color: TAColors.primary, width: 1.4),
         ),
       ),
     );
@@ -536,10 +530,7 @@ class TADiscussionDropdown<T> extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(18),
-          borderSide: const BorderSide(
-            color: TAColors.primary,
-            width: 1.4,
-          ),
+          borderSide: const BorderSide(color: TAColors.primary, width: 1.4),
         ),
       ),
       dropdownColor: TAColors.cardColor(isDark),
@@ -686,13 +677,14 @@ class TADiscussionEmptyState extends StatelessWidget {
   }
 }
 
-Future<TADiscussionComposerResult?>
-showTADiscussionThreadComposer(
+Future<TADiscussionComposerResult?> showTADiscussionThreadComposer(
   BuildContext context, {
   TADiscussionComposerResult? initialValue,
 }) {
   final l10n = AppLocalizations.of(context);
-  final titleController = TextEditingController(text: initialValue?.title ?? '');
+  final titleController = TextEditingController(
+    text: initialValue?.title ?? '',
+  );
   final descriptionController = TextEditingController(
     text: initialValue?.description ?? '',
   );
@@ -750,8 +742,7 @@ showTADiscussionThreadComposer(
                   validator: (value) {
                     final text = value?.trim() ?? '';
                     if (text.isEmpty) {
-                      return l10n
-                          .instructorDiscussionPostDescriptionRequired;
+                      return l10n.instructorDiscussionPostDescriptionRequired;
                     }
                     if (text.length < 10) {
                       return l10n.instructorDiscussionPostDescriptionMin;
@@ -905,8 +896,3 @@ Future<bool> showTADiscussionConfirmDialog(
 
   return result ?? false;
 }
-
-
-
-
-
