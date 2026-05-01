@@ -598,6 +598,167 @@ class AppLocalizationsAr extends AppLocalizations {
       'تصفّح مقرراتك المسجلة وتابع التقدم فيها ونظّمها من مساحة تعلم واحدة مركزة.';
 
   @override
+  String get studentCourseDetailCourseContent => 'محتوى المقرر';
+
+  @override
+  String get studentCourseDetailPrerequisites => 'المتطلبات السابقة';
+
+  @override
+  String get studentCourseDetailHeroFallback =>
+      'ابقَ على اطلاع بالمحتوى ودعم فريق التدريس والتحديثات من مساحة مقرر مصقولة واحدة.';
+
+  @override
+  String get studentCourseDetailItemsLabel => 'عناصر';
+
+  @override
+  String get studentCourseDetailItemsCompleted => 'عناصر مكتملة';
+
+  @override
+  String get studentCourseDetailEnrolledOn => 'تاريخ التسجيل';
+
+  @override
+  String get studentCourseDetailOverviewHeading => 'نظرة عامة على المقرر';
+
+  @override
+  String get studentCourseDetailOverviewFallback =>
+      'هذا المقرر جاهز لخطوتك التعليمية التالية. استكشف المحتوى وتواصل مع فريق التدريس وواصل تقدمك بثبات.';
+
+  @override
+  String get studentCourseDetailInstructorTitle => 'المدرس';
+
+  @override
+  String get studentCourseDetailInstructorSubtitle =>
+      'افتح صفحة ملف المدرس والحجز لمراجعة التفاصيل وحجز دعم الساعات المكتبية.';
+
+  @override
+  String get studentCourseDetailOpenProfileBooking => 'فتح الملف والحجز';
+
+  @override
+  String get studentCourseDetailLoadingInstructor =>
+      'جارٍ تحميل بيانات المدرس...';
+
+  @override
+  String get studentCourseDetailUnknownInstructor => 'مدرس غير معروف';
+
+  @override
+  String get studentCourseDetailInstructorLoadingMessage =>
+      'معلومات المدرس ما زالت قيد التحميل.';
+
+  @override
+  String get studentCourseDetailNoInstructorAssigned =>
+      'لم يتم تعيين مدرس بعد.';
+
+  @override
+  String get studentCourseDetailTeachingAssistantsTitle => 'المعيدون';
+
+  @override
+  String get studentCourseDetailTeachingAssistantsSubtitle =>
+      'تواصل بسرعة مع فريق دعم الشعبة عندما تحتاج متابعة أو تفاصيل الحجز.';
+
+  @override
+  String get studentCourseDetailLoadingTeachingAssistants =>
+      'جارٍ تحميل بيانات المعيدين...';
+
+  @override
+  String get studentCourseDetailNoTeachingAssistants =>
+      'لا يوجد معيدون معينون بعد.';
+
+  @override
+  String get studentCourseDetailTeachingAssistantRole => 'معيد';
+
+  @override
+  String get studentCourseDetailNoTaProfile =>
+      'لا يوجد ملف متاح للمعيد حالياً.';
+
+  @override
+  String get studentCourseDetailProgressTitle => 'تقدم المقرر';
+
+  @override
+  String get studentCourseDetailProgressSubtitle =>
+      'تابع ما أنجزته بالفعل وكم تبقى من محتوى المقرر.';
+
+  @override
+  String get studentCourseDetailDropped => 'منسحب';
+
+  @override
+  String get studentCourseDetailWaitlisted => 'على قائمة الانتظار';
+
+  @override
+  String get studentCourseDetailBeginner => 'مبتدئ';
+
+  @override
+  String get studentCourseDetailIntermediate => 'متوسط';
+
+  @override
+  String get studentCourseDetailSearchHint =>
+      'ابحث في محتوى المقرر أو الواجبات أو المعامل أو الإعلانات';
+
+  @override
+  String get studentCourseDetailSearchPromptTitle => 'ابدأ بحثاً جديداً';
+
+  @override
+  String get studentCourseDetailSearchPromptSubtitle =>
+      'اكتب كلمة مفتاحية للعثور على المحاضرات أو الواجبات أو المعامل أو الإعلانات المرتبطة بهذا المقرر.';
+
+  @override
+  String get studentCourseDetailSearchNoResultsTitle => 'لا توجد نتائج مطابقة';
+
+  @override
+  String get studentCourseDetailSearchNoResultsSubtitle =>
+      'جرّب كلمة أخرى أو افتح أحد تبويبات المقرر لتصفح كل شيء مباشرة.';
+
+  @override
+  String get studentCourseDetailSearchMaterialsLabel => 'محتوى المقرر';
+
+  @override
+  String get studentCourseDetailNotesHint => 'أنشئ ملاحظة سريعة لهذا المقرر';
+
+  @override
+  String get studentCourseDetailNotesAllItems => 'كل الملاحظات';
+
+  @override
+  String get studentCourseDetailNotesSessionOnly => 'ملاحظات هذه الجلسة فقط';
+
+  @override
+  String get studentCourseDetailNotesSortRecent => 'الأحدث';
+
+  @override
+  String get studentCourseDetailNotesSortOldest => 'الأقدم أولاً';
+
+  @override
+  String get studentCourseDetailNotesEmptyTitle => 'لا توجد ملاحظات بعد';
+
+  @override
+  String get studentCourseDetailNotesEmptySubtitle =>
+      'دوّن ملاحظة سريعة لهذا المقرر وستبقى ظاهرة ما دامت هذه الصفحة مفتوحة.';
+
+  @override
+  String get studentCourseDetailDownload => 'تنزيل';
+
+  @override
+  String get studentCourseDetailVideoLessons => 'دروس فيديو';
+
+  @override
+  String get studentCourseDetailUnableToOpenVideo =>
+      'يتعذر فتح هذا الفيديو الآن.';
+
+  @override
+  String get studentCourseDetailPlay => 'تشغيل';
+
+  @override
+  String get studentCourseDetailPause => 'إيقاف';
+
+  @override
+  String get studentCourseDetailOpenInBrowser => 'فتح في المتصفح';
+
+  @override
+  String get studentCourseDetailNormalSpeed => 'السرعة العادية';
+
+  @override
+  String get studentCourseDetailVideoPreviewUnavailable =>
+      'معاينة الفيديو غير متاحة.';
+
+  @override
   String get filter => 'تصفية';
 
   @override

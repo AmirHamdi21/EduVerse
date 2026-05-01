@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/common/service_error.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/models/admin/admin_periods_models.dart';
 import 'package:edu_verse/models/core/course_structure_model.dart';
 import 'package:edu_verse/models/core/enrollment_model.dart';
@@ -182,10 +183,22 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+        ),
+      );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.message_outlined).first);
+      await tester.tap(find.text('Overview'));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Open profile & booking'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open profile & booking'));
       await tester.pumpAndSettle();
 
       expect(find.text('Instructor Route Hit'), findsOneWidget);

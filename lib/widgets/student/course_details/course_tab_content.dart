@@ -18,12 +18,14 @@ class CourseTabContent extends StatefulWidget {
   final int selectedIndex;
   final bool isDark;
   final CourseModel course;
+  final bool Function(CourseMaterialModel material)? onInterceptMaterialTap;
 
   const CourseTabContent({
     super.key,
     required this.selectedIndex,
     required this.isDark,
     required this.course,
+    this.onInterceptMaterialTap,
   });
 
   @override
@@ -89,6 +91,12 @@ class _CourseTabContentState extends State<CourseTabContent> {
   }
 
   Future<void> _openMaterial(CourseMaterialModel material) async {
+    final shouldIntercept =
+        widget.onInterceptMaterialTap?.call(material) ?? false;
+    if (shouldIntercept) {
+      return;
+    }
+
     final type = material.materialType.toLowerCase().trim();
 
     if (type == 'video') {

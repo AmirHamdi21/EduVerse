@@ -600,6 +600,168 @@ class AppLocalizationsEn extends AppLocalizations {
       'Browse, continue, and organize every enrolled course from one focused learning space.';
 
   @override
+  String get studentCourseDetailCourseContent => 'Course content';
+
+  @override
+  String get studentCourseDetailPrerequisites => 'Prerequisites';
+
+  @override
+  String get studentCourseDetailHeroFallback =>
+      'Stay on top of your materials, staff support, and updates from one polished course space.';
+
+  @override
+  String get studentCourseDetailItemsLabel => 'items';
+
+  @override
+  String get studentCourseDetailItemsCompleted => 'items completed';
+
+  @override
+  String get studentCourseDetailEnrolledOn => 'Enrolled on';
+
+  @override
+  String get studentCourseDetailOverviewHeading => 'Course overview';
+
+  @override
+  String get studentCourseDetailOverviewFallback =>
+      'This course is ready for its next learning step. Explore the content, connect with the teaching team, and keep your progress moving.';
+
+  @override
+  String get studentCourseDetailInstructorTitle => 'Instructor';
+
+  @override
+  String get studentCourseDetailInstructorSubtitle =>
+      'Open the instructor profile and booking screen to review details and reserve office-hour support.';
+
+  @override
+  String get studentCourseDetailOpenProfileBooking => 'Open profile & booking';
+
+  @override
+  String get studentCourseDetailLoadingInstructor => 'Loading instructor...';
+
+  @override
+  String get studentCourseDetailUnknownInstructor => 'Unknown instructor';
+
+  @override
+  String get studentCourseDetailInstructorLoadingMessage =>
+      'Instructor information is still loading.';
+
+  @override
+  String get studentCourseDetailNoInstructorAssigned =>
+      'No instructor is assigned yet.';
+
+  @override
+  String get studentCourseDetailTeachingAssistantsTitle =>
+      'Teaching assistants';
+
+  @override
+  String get studentCourseDetailTeachingAssistantsSubtitle =>
+      'Reach the section support team quickly when you need follow-up help or booking details.';
+
+  @override
+  String get studentCourseDetailLoadingTeachingAssistants =>
+      'Loading teaching assistants...';
+
+  @override
+  String get studentCourseDetailNoTeachingAssistants =>
+      'No teaching assistants are assigned yet.';
+
+  @override
+  String get studentCourseDetailTeachingAssistantRole => 'Teaching assistant';
+
+  @override
+  String get studentCourseDetailNoTaProfile =>
+      'No TA profile is available yet.';
+
+  @override
+  String get studentCourseDetailProgressTitle => 'Course progress';
+
+  @override
+  String get studentCourseDetailProgressSubtitle =>
+      'Track what you have already completed and how much course material is still ahead.';
+
+  @override
+  String get studentCourseDetailDropped => 'Dropped';
+
+  @override
+  String get studentCourseDetailWaitlisted => 'Waitlisted';
+
+  @override
+  String get studentCourseDetailBeginner => 'Beginner';
+
+  @override
+  String get studentCourseDetailIntermediate => 'Intermediate';
+
+  @override
+  String get studentCourseDetailSearchHint =>
+      'Search course content, assignments, labs, or announcements';
+
+  @override
+  String get studentCourseDetailSearchPromptTitle => 'Start a new search';
+
+  @override
+  String get studentCourseDetailSearchPromptSubtitle =>
+      'Type a keyword to find lectures, assignments, labs, or announcements tied to this course.';
+
+  @override
+  String get studentCourseDetailSearchNoResultsTitle => 'No matching results';
+
+  @override
+  String get studentCourseDetailSearchNoResultsSubtitle =>
+      'Try another keyword or open one of the course tabs to browse everything directly.';
+
+  @override
+  String get studentCourseDetailSearchMaterialsLabel => 'Course content';
+
+  @override
+  String get studentCourseDetailNotesHint =>
+      'Create a quick note for this course';
+
+  @override
+  String get studentCourseDetailNotesAllItems => 'All notes';
+
+  @override
+  String get studentCourseDetailNotesSessionOnly => 'Session notes only';
+
+  @override
+  String get studentCourseDetailNotesSortRecent => 'Most recent';
+
+  @override
+  String get studentCourseDetailNotesSortOldest => 'Oldest first';
+
+  @override
+  String get studentCourseDetailNotesEmptyTitle => 'No notes yet';
+
+  @override
+  String get studentCourseDetailNotesEmptySubtitle =>
+      'Capture a quick note for this course and it will stay visible while this page remains open.';
+
+  @override
+  String get studentCourseDetailDownload => 'Download';
+
+  @override
+  String get studentCourseDetailVideoLessons => 'video lessons';
+
+  @override
+  String get studentCourseDetailUnableToOpenVideo =>
+      'Unable to open this video right now.';
+
+  @override
+  String get studentCourseDetailPlay => 'Play';
+
+  @override
+  String get studentCourseDetailPause => 'Pause';
+
+  @override
+  String get studentCourseDetailOpenInBrowser => 'Open in browser';
+
+  @override
+  String get studentCourseDetailNormalSpeed => 'Normal speed';
+
+  @override
+  String get studentCourseDetailVideoPreviewUnavailable =>
+      'Video preview is not available.';
+
+  @override
   String get filter => 'Filter';
 
   @override
