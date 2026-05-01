@@ -3,35 +3,34 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
+import '../../../common/utils/student_course_filters.dart';
 import '../../../common/utils/student_courses_theme.dart';
 import '../../../generated_l10n/app_localizations.dart';
 
-class SortButton extends StatelessWidget {
-  final String selectedSort;
-  final ValueChanged<String> onSortChanged;
+class SemesterFilterMenuButton extends StatelessWidget {
+  final int? selectedSemesterId;
+  final List<SemesterFilterOption> semesterOptions;
+  final ValueChanged<int?> onSemesterChanged;
 
-  const SortButton({
-    required this.onSortChanged,
-    this.selectedSort = 'title_asc',
+  const SemesterFilterMenuButton({
     super.key,
+    required this.selectedSemesterId,
+    required this.semesterOptions,
+    required this.onSemesterChanged,
   });
 
-  bool get _hasCustomSort => selectedSort != 'title_asc';
-
   String _label(AppLocalizations l10n) {
-    switch (selectedSort) {
-      case 'title_desc':
-        return l10n.titleZA;
-      case 'credits_desc':
-        return '${l10n.credits} ↓';
-      case 'credits_asc':
-        return '${l10n.credits} ↑';
-      case 'date':
-        return l10n.recent;
-      case 'title_asc':
-      default:
-        return l10n.titleAZ;
+    if (selectedSemesterId == null) {
+      return l10n.allSemesters;
     }
+
+    for (final SemesterFilterOption option in semesterOptions) {
+      if (option.id == selectedSemesterId) {
+        return option.label;
+      }
+    }
+
+    return l10n.allSemesters;
   }
 
   @override
@@ -40,14 +39,15 @@ class SortButton extends StatelessWidget {
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
+        final isActive = selectedSemesterId != null;
 
         return Semantics(
           button: true,
-          label: l10n.sortBy,
+          label: l10n.coursesShellSemesterLabel,
           value: _label(l10n),
-          hint: l10n.sort,
-          child: PopupMenuButton<String>(
-            tooltip: l10n.sortBy,
+          hint: l10n.selectSemester,
+          child: PopupMenuButton<int?>(
+            tooltip: l10n.coursesShellSemesterLabel,
             position: PopupMenuPosition.under,
             offset: const Offset(0, 8),
             padding: EdgeInsets.zero,
@@ -58,21 +58,20 @@ class SortButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(22),
               side: BorderSide(color: StudentCoursesTheme.borderColor(isDark)),
             ),
-            onSelected: onSortChanged,
-            itemBuilder: (context) => <PopupMenuEntry<String>>[
-              _buildSortItem('title_asc', l10n.titleAZ, isDark),
-              _buildSortItem('title_desc', l10n.titleZA, isDark),
-              _buildSortItem('credits_desc', '${l10n.credits} ↓', isDark),
-              _buildSortItem('credits_asc', '${l10n.credits} ↑', isDark),
-              _buildSortItem('date', l10n.recent, isDark),
+            onSelected: onSemesterChanged,
+            itemBuilder: (context) => <PopupMenuEntry<int?>>[
+              _buildSemesterItem(null, l10n.allSemesters, isDark),
+              ...semesterOptions.map(
+                (option) => _buildSemesterItem(option.id, option.label, isDark),
+              ),
             ],
-            child: _SortMenuCard(
+            child: _SemesterMenuCard(
               isDark: isDark,
-              title: l10n.sortBy,
+              title: l10n.coursesShellSemesterLabel,
               subtitle: _label(l10n),
-              icon: Icons.swap_vert_rounded,
-              color: StudentCoursesTheme.brandBlue,
-              isActive: _hasCustomSort,
+              icon: Icons.school_rounded,
+              color: const Color(0xFF06B6D4),
+              isActive: isActive,
             ),
           ),
         );
@@ -80,14 +79,14 @@ class SortButton extends StatelessWidget {
     );
   }
 
-  PopupMenuItem<String> _buildSortItem(
-    String value,
+  PopupMenuItem<int?> _buildSemesterItem(
+    int? value,
     String label,
     bool isDark,
   ) {
-    final selected = selectedSort == value;
+    final selected = selectedSemesterId == value;
 
-    return PopupMenuItem<String>(
+    return PopupMenuItem<int?>(
       value: value,
       child: Row(
         children: [
@@ -116,7 +115,7 @@ class SortButton extends StatelessWidget {
   }
 }
 
-class _SortMenuCard extends StatelessWidget {
+class _SemesterMenuCard extends StatelessWidget {
   final bool isDark;
   final String title;
   final String subtitle;
@@ -124,7 +123,7 @@ class _SortMenuCard extends StatelessWidget {
   final Color color;
   final bool isActive;
 
-  const _SortMenuCard({
+  const _SemesterMenuCard({
     required this.isDark,
     required this.title,
     required this.subtitle,

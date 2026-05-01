@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../bloc/courses/courses_bloc.dart';
-import '../../bloc/courses/courses_event.dart';
 import '../../features/courses/bloc/course_detail/course_detail_bloc.dart';
 import '../../features/courses/bloc/course_detail/course_detail_event.dart';
 import '../../features/courses/bloc/course_detail/course_detail_state.dart';
@@ -44,7 +43,6 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
   late AnimationController _headerAnimationController;
   final ScrollController _scrollController = ScrollController();
   bool _isHeaderCollapsed = false;
-  bool _didRequestCoursesRefreshOnExit = false;
 
   // ── Safe accessors with SC-003 null-coalescing ─────────────────────────
 
@@ -484,31 +482,13 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
     );
   }
 
-  void _refreshCoursesOnExit() {
-    if (_didRequestCoursesRefreshOnExit) {
-      return;
-    }
-    _didRequestCoursesRefreshOnExit = true;
-
-    final semesterId = widget.enrollment?.semester?.id;
-    try {
-      context.read<CoursesBloc>().add(
-        StudentCoursesFetched(semester: semesterId),
-      );
-    } catch (_) {
-      // Keep navigation working even if this screen is rendered without CoursesBloc.
-    }
-  }
-
   void _onPopInvoked(bool didPop, Object? result) {
-    _refreshCoursesOnExit();
     if (!didPop) {
       context.go('/courses');
     }
   }
 
   void _handleBackPressed() {
-    _refreshCoursesOnExit();
     if (context.canPop()) {
       context.pop();
       return;

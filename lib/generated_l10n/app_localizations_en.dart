@@ -596,6 +596,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchCourseNameOrInstructor => 'Search course name or instructor';
 
   @override
+  String get studentCourseHeroSubtitle =>
+      'Browse, continue, and organize every enrolled course from one focused learning space.';
+
+  @override
   String get filter => 'Filter';
 
   @override
@@ -618,6 +622,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get joinCourse => 'Join Course';
+
+  @override
+  String get studentCourseJoinHint =>
+      'Opens available course enrollment options';
 
   @override
   String get nextLecture => 'Next Lecture';
@@ -13018,6 +13026,59 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get coursesShellSearchSemanticsHint =>
       'Search by course code, title, section, semester, or instructor';
+
+  @override
+  String get studentCourseDropped => 'Dropped';
+
+  @override
+  String get studentCourseOverviewTitle => 'Keep your momentum';
+
+  @override
+  String get studentCourseOverviewSubtitle =>
+      'Track your active load, completed work, and overall progress at a glance.';
+
+  @override
+  String get studentCourseTotalCourses => 'Total courses';
+
+  @override
+  String get studentCourseActiveCourses => 'Active now';
+
+  @override
+  String get studentCourseCompletedCourses => 'Completed';
+
+  @override
+  String get studentCourseAverageProgress => 'Average progress';
+
+  @override
+  String get studentCourseResultsLabel => 'courses';
+
+  @override
+  String get studentCourseOfflineCached =>
+      'Offline: showing cached course data.';
+
+  @override
+  String get studentCourseEmptyDescription =>
+      'You are not enrolled in any courses yet. Once registration opens, your course library will appear here.';
+
+  @override
+  String get studentCourseConnectionErrorTitle => 'Connection Error';
+
+  @override
+  String get studentCourseConnectionErrorDescription =>
+      'We couldn\'t load your courses right now. Check your connection and try again.';
+
+  @override
+  String get studentCourseAccessRestrictedTitle => 'Access Restricted';
+
+  @override
+  String get studentCourseUnknownInstructor =>
+      'Instructor information unavailable';
+
+  @override
+  String get studentCourseSectionFallback => 'Section -';
+
+  @override
+  String get studentCourseNoSemester => 'No semester';
 
   @override
   String get adminUseTimeFormat => 'Use HH:mm format for times.';

@@ -1,120 +1,113 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../common/utils/course_ui_utils.dart';
+import '../../../common/utils/student_course_filters.dart';
+import '../../../common/utils/student_courses_theme.dart';
+import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/core/enrollment_model.dart';
 
 /// Displays a single course enrollment card with live data from the API.
-///
-/// Consumes [CourseEnrollmentModel] and uses [CourseUiUtils] for
-/// deterministic gradient backgrounds when thumbnails are unavailable.
-class CourseCard extends StatefulWidget {
+class CourseCard extends StatelessWidget {
   final CourseEnrollmentModel enrollment;
   final Animation<double>? animation;
 
   const CourseCard({super.key, required this.enrollment, this.animation});
 
-  @override
-  State<CourseCard> createState() => _CourseCardState();
-}
-
-class _CourseCardState extends State<CourseCard>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  // ── Helpers ──────────────────────────────────────────────────────────────
-
-  /// Safe course title extraction with SC-003 null-coalescing.
   String get _title =>
-      CourseUiUtils.safeCourseTitle(widget.enrollment.course?.courseName);
+      CourseUiUtils.safeCourseTitle(enrollment.course?.courseName);
 
-  /// Safe course code extraction with SC-003 null-coalescing.
   String get _courseCode =>
-      CourseUiUtils.safeCourseCode(widget.enrollment.course?.courseCode);
+      CourseUiUtils.safeCourseCode(enrollment.course?.courseCode);
 
-  /// Department name or fallback text if unavailable.
-  String get _departmentOrInstructor =>
-      widget.enrollment.course?.departmentName ?? 'General';
+  String get _initials =>
+      CourseUiUtils.initialsFromCourseName(enrollment.course?.courseName ?? '');
 
-  /// Credit hours display.
-  int get _credits => widget.enrollment.course?.credits ?? 0;
+  String get _normalizedStatus =>
+      StudentCourseFilters.normalizeEnrollmentStatus(enrollment.status);
 
-  /// Section display label from audited enrollment payload.
-  String get _sectionLabel {
-    final String? sectionNumber = widget.enrollment.section?.sectionNumber;
-    if (sectionNumber == null || sectionNumber.trim().isEmpty) {
-      return 'Section -';
-    }
-    return 'Section $sectionNumber';
-  }
-
-  /// Semester display label from audited enrollment payload.
-  String get _semesterLabel {
-    final String? semesterName = widget.enrollment.semester?.name;
-    if (semesterName == null || semesterName.trim().isEmpty) {
-      return 'No Semester';
-    }
-    return semesterName;
-  }
-
-  /// Enrollment status label.
-  String get _statusLabel {
-    switch (widget.enrollment.status.toLowerCase()) {
-      case 'completed':
-        return 'Completed';
-      case 'dropped':
-        return 'Dropped';
-      case 'active':
-      case 'enrolled':
-        return 'Active';
-      case 'waitlisted':
-        return 'Waitlisted';
-      default:
-        return 'Active';
-    }
-  }
-
-  /// Deterministic gradient colors for the course icon placeholder.
   List<Color> get _gradientColors => CourseUiUtils.gradientForCourseId(
-    widget.enrollment.course?.courseId ?? widget.enrollment.courseId,
+    enrollment.course?.courseId ?? enrollment.courseId,
   );
 
-  /// Initials for the gradient avatar.
-  String get _initials => CourseUiUtils.initialsFromCourseName(
-    widget.enrollment.course?.courseName ?? '',
-  );
-
-  /// Status badge color.
-  Color get _statusColor {
-    switch (widget.enrollment.status.toLowerCase()) {
+  String _statusLabel(AppLocalizations l10n) {
+    switch (_normalizedStatus) {
       case 'completed':
-        return const Color(0xFF10B981);
+        return l10n.completed;
       case 'dropped':
-        return const Color(0xFFEF4444);
-      case 'waitlisted':
-        return const Color(0xFFF59E0B);
+        return l10n.studentCourseDropped;
       case 'active':
-      case 'enrolled':
       default:
-        return const Color(0xFF155DFC);
+        return l10n.active;
     }
+  }
+
+  String _instructorLabel(AppLocalizations l10n) {
+    final String instructor = StudentCourseFilters.instructorFullName(
+      enrollment,
+    ).trim();
+    if (instructor.isNotEmpty) {
+      return instructor;
+    }
+
+    final String department = (enrollment.course?.departmentName ?? '').trim();
+    if (department.isNotEmpty) {
+      return department;
+    }
+
+    return l10n.studentCourseUnknownInstructor;
+  }
+
+  String _sectionLabel(AppLocalizations l10n) {
+    final String section = (enrollment.section?.sectionNumber ?? '').trim();
+    if (section.isEmpty) {
+      return l10n.studentCourseSectionFallback;
+    }
+    return l10n.sectionLabel(section);
+  }
+
+  String _semesterLabel(AppLocalizations l10n) {
+    final String semester = (enrollment.semester?.name ?? '').trim();
+    if (semester.isNotEmpty) {
+      return semester;
+    }
+    return l10n.studentCourseNoSemester;
+  }
+
+  double? get _progressFraction {
+    final double? backendProgress = enrollment.progressPercentage;
+    if (backendProgress != null) {
+      return (backendProgress / 100).clamp(0.0, 1.0);
+    }
+
+    final int viewed = enrollment.materialsViewed ?? 0;
+    final int total = enrollment.totalMaterials ?? 0;
+    if (total > 0) {
+      return (viewed / total).clamp(0.0, 1.0);
+    }
+
+    if (_normalizedStatus == 'completed') {
+      return 1.0;
+    }
+    if (_normalizedStatus == 'dropped') {
+      return 0.0;
+    }
+    return null;
+  }
+
+  String _primaryActionLabel(AppLocalizations l10n) {
+    if (_normalizedStatus == 'completed') {
+      return l10n.review;
+    }
+
+    final double? progress = _progressFraction;
+    if (progress != null && progress > 0) {
+      return l10n.continueButton;
+    }
+    return l10n.openCourse;
   }
 
   @override
@@ -122,54 +115,162 @@ class _CourseCardState extends State<CourseCard>
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
+        final l10n = AppLocalizations.of(context);
+
+        final slideAnimation =
+            animation?.drive(
+              Tween<Offset>(
+                begin: const Offset(0, 0.12),
+                end: Offset.zero,
+              ).chain(CurveTween(curve: Curves.easeOutCubic)),
+            ) ??
+            const AlwaysStoppedAnimation(Offset.zero);
+
+        final fadeAnimation =
+            animation?.drive(
+              Tween<double>(
+                begin: 0,
+                end: 1,
+              ).chain(CurveTween(curve: Curves.easeOut)),
+            ) ??
+            const AlwaysStoppedAnimation(1);
 
         return SlideTransition(
-          position:
-              widget.animation?.drive(
-                Tween<Offset>(
-                  begin: const Offset(0, 0.15),
-                  end: Offset.zero,
-                ).chain(CurveTween(curve: Curves.easeOutCubic)),
-              ) ??
-              const AlwaysStoppedAnimation(Offset.zero),
+          position: slideAnimation,
           child: FadeTransition(
-            opacity:
-                widget.animation?.drive(
-                  Tween<double>(
-                    begin: 0.0,
-                    end: 1.0,
-                  ).chain(CurveTween(curve: Curves.easeOut)),
-                ) ??
-                const AlwaysStoppedAnimation(1.0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF16213E) : Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.1)
-                      : const Color(0xFFD1D5DC),
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
+            opacity: fadeAnimation,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => _openCourse(context),
+                borderRadius: StudentCoursesTheme.cardRadius,
+                child: Ink(
+                  decoration: BoxDecoration(
+                    color: StudentCoursesTheme.cardBackground(isDark),
+                    borderRadius: StudentCoursesTheme.cardRadius,
+                    border: Border.all(
+                      color: StudentCoursesTheme.borderColor(isDark),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(
+                          alpha: isDark ? 0.18 : 0.08,
+                        ),
+                        blurRadius: 24,
+                        offset: const Offset(0, 12),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildCourseHeader(isDark),
-                    const SizedBox(height: 24),
-                    _buildInfoSection(isDark),
-                    const SizedBox(height: 24),
-                    _buildActionButtons(isDark),
-                  ],
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildBanner(isDark, l10n),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(18, 18, 18, 18),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: StudentCoursesTheme.primaryText(isDark),
+                                fontSize: 22,
+                                fontWeight: FontWeight.w800,
+                                height: 1.18,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _instructorLabel(l10n),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: StudentCoursesTheme.secondaryText(
+                                  isDark,
+                                ),
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: [
+                                _buildMetaChip(
+                                  isDark: isDark,
+                                  icon: Icons.confirmation_number_outlined,
+                                  label: _courseCode,
+                                ),
+                                _buildMetaChip(
+                                  isDark: isDark,
+                                  icon: Icons.groups_rounded,
+                                  label: _sectionLabel(l10n),
+                                ),
+                                _buildMetaChip(
+                                  isDark: isDark,
+                                  icon: Icons.calendar_today_rounded,
+                                  label: _semesterLabel(l10n),
+                                ),
+                                _buildMetaChip(
+                                  isDark: isDark,
+                                  icon: Icons.workspace_premium_outlined,
+                                  label:
+                                      '${enrollment.course?.credits ?? 0} ${l10n.credits}',
+                                ),
+                              ],
+                            ),
+                            if (_progressFraction != null) ...[
+                              const SizedBox(height: 18),
+                              _buildProgressRow(isDark, l10n),
+                            ],
+                            const SizedBox(height: 18),
+                            SizedBox(
+                              width: double.infinity,
+                              child: TextButton(
+                                onPressed: () => _openCourse(context),
+                                style: TextButton.styleFrom(
+                                  foregroundColor:
+                                      StudentCoursesTheme.brandBlue,
+                                  backgroundColor: isDark
+                                      ? Colors.white.withValues(alpha: 0.05)
+                                      : StudentCoursesTheme.brandBluePale,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        StudentCoursesTheme.controlRadius,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _primaryActionLabel(l10n),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_forward_rounded,
+                                      size: 18,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -179,155 +280,120 @@ class _CourseCardState extends State<CourseCard>
     );
   }
 
-  Widget _buildCourseHeader(bool isDark) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Gradient avatar with initials (replaces hardcoded icon)
-        Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: _gradientColors,
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Center(
-            child: Text(
-              _initials,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _title,
-                style: TextStyle(
-                  color: isDark ? Colors.white : const Color(0xFF101828),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                _courseCode,
-                style: TextStyle(
-                  color: isDark ? Colors.white70 : const Color(0xFF4A5565),
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                children: [
-                  Icon(
-                    Icons.school_outlined,
-                    size: 14,
-                    color: isDark ? Colors.white54 : const Color(0xFF6A7282),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    _departmentOrInstructor,
-                    style: TextStyle(
-                      color: isDark ? Colors.white54 : const Color(0xFF6A7282),
-                      fontSize: 12,
-                      height: 1.33,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 12),
-        // Status badge
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(
-            color: _statusColor.withOpacity(0.12),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            _statusLabel,
-            style: TextStyle(
-              color: _statusColor,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ],
+  Widget _buildBanner(bool isDark, AppLocalizations l10n) {
+    final Color statusColor = StudentCoursesTheme.statusColor(
+      _normalizedStatus,
     );
-  }
 
-  Widget _buildInfoSection(bool isDark) {
-    return Row(
-      children: [
-        _buildInfoChip(
-          icon: Icons.credit_card_outlined,
-          label: '$_credits Credits',
-          isDark: isDark,
-        ),
-        const SizedBox(width: 12),
-        _buildInfoChip(
-          icon: Icons.class_outlined,
-          label: _sectionLabel,
-          isDark: isDark,
-        ),
-        const SizedBox(width: 12),
-        _buildInfoChip(
-          icon: Icons.calendar_month_outlined,
-          label: _semesterLabel,
-          isDark: isDark,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoChip({
-    required IconData icon,
-    required String label,
-    required bool isDark,
-  }) {
-    return Expanded(
+    return AspectRatio(
+      aspectRatio: 16 / 9,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withOpacity(0.05)
-              : const Color(0xFFF5F7FA),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          gradient: LinearGradient(
+            colors: isDark
+                ? [
+                    _gradientColors.first.withValues(alpha: 0.82),
+                    _gradientColors.last.withValues(alpha: 0.96),
+                    const Color(0xFF0F172A),
+                  ]
+                : [
+                    _gradientColors.first,
+                    _gradientColors.last,
+                    StudentCoursesTheme.heroInk,
+                  ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
+        child: Stack(
           children: [
-            Icon(
-              icon,
-              size: 14,
-              color: isDark ? Colors.white54 : const Color(0xFF6A7282),
-            ),
-            const SizedBox(width: 4),
-            Flexible(
-              child: Text(
-                label,
-                style: TextStyle(
-                  color: isDark ? Colors.white70 : const Color(0xFF4A5565),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
+            Positioned(
+              top: -24,
+              right: -18,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
                 ),
-                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            Positioned(
+              left: -30,
+              bottom: -36,
+              child: Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.08),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            Positioned(
+              top: 16,
+              left: 16,
+              child: _buildBannerChip(
+                label: _courseCode.isNotEmpty
+                    ? _courseCode
+                    : l10n.myCoursesHeader,
+                backgroundColor: Colors.white.withValues(alpha: 0.18),
+              ),
+            ),
+            Positioned(
+              top: 16,
+              right: 16,
+              child: _buildBannerChip(
+                label: _statusLabel(l10n),
+                backgroundColor: statusColor.withValues(alpha: 0.18),
+                borderColor: statusColor.withValues(alpha: 0.36),
+              ),
+            ),
+            Positioned.fill(
+              child: Padding(
+                padding: const EdgeInsets.all(18),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.92),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          height: 1.2,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.18),
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          _initials,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -336,78 +402,112 @@ class _CourseCardState extends State<CourseCard>
     );
   }
 
-  Widget _buildActionButtons(bool isDark) {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF2B7FFF), Color(0xFF155DFC)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF155DFC).withOpacity(0.3),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: ElevatedButton(
-              onPressed: () {
-                context.push('/course-details', extra: widget.enrollment);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              child: const Text(
-                'Continue',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-              ),
+  Widget _buildBannerChip({
+    required String label,
+    required Color backgroundColor,
+    Color? borderColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: StudentCoursesTheme.pillRadius,
+        border: Border.all(
+          color: borderColor ?? Colors.white.withValues(alpha: 0.14),
+        ),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMetaChip({
+    required bool isDark,
+    required IconData icon,
+    required String label,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      decoration: BoxDecoration(
+        color: StudentCoursesTheme.chipBackground(isDark),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: StudentCoursesTheme.secondaryText(isDark),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: StudentCoursesTheme.primaryText(isDark),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
             ),
           ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              foregroundColor: const Color(0xFF155DFC),
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              side: BorderSide(
-                color: isDark
-                    ? const Color(0xff8EC5FF)
-                    : const Color(0xFF155DFC),
-                width: 1.5,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressRow(bool isDark, AppLocalizations l10n) {
+    final double progress = _progressFraction!.clamp(0.0, 1.0);
+    final int progressPercent = (progress * 100).round();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                l10n.progress,
+                style: TextStyle(
+                  color: StudentCoursesTheme.secondaryText(isDark),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
-            child: Text(
-              'Materials',
+            Text(
+              '$progressPercent%',
               style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: isDark
-                    ? const Color(0xff8EC5FF)
-                    : const Color(0xFF155DFC),
+                color: StudentCoursesTheme.primaryText(isDark),
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
               ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(999),
+          child: LinearProgressIndicator(
+            value: progress,
+            minHeight: 8,
+            backgroundColor: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : const Color(0xFFE4E7EC),
+            valueColor: AlwaysStoppedAnimation<Color>(
+              StudentCoursesTheme.statusColor(_normalizedStatus),
             ),
           ),
         ),
       ],
     );
+  }
+
+  void _openCourse(BuildContext context) {
+    context.push('/course-details', extra: enrollment);
   }
 }

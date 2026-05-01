@@ -594,6 +594,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get searchCourseNameOrInstructor => 'ابحث عن اسم المقرر أو المدرس';
 
   @override
+  String get studentCourseHeroSubtitle =>
+      'تصفّح مقرراتك المسجلة وتابع التقدم فيها ونظّمها من مساحة تعلم واحدة مركزة.';
+
+  @override
   String get filter => 'تصفية';
 
   @override
@@ -616,6 +620,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get joinCourse => 'الانضمام إلى دورة';
+
+  @override
+  String get studentCourseJoinHint => 'يفتح خيارات التسجيل في المقررات المتاحة';
 
   @override
   String get nextLecture => 'المحاضرة التالية';
@@ -12963,6 +12970,58 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get coursesShellSearchSemanticsHint =>
       'ابحث برمز المقرر أو الاسم أو الشعبة أو الفصل الدراسي أو اسم المدرس';
+
+  @override
+  String get studentCourseDropped => 'منسحب';
+
+  @override
+  String get studentCourseOverviewTitle => 'حافظ على تقدمك';
+
+  @override
+  String get studentCourseOverviewSubtitle =>
+      'تابع العبء الدراسي الحالي والمقررات المكتملة ومستوى التقدم العام بسرعة.';
+
+  @override
+  String get studentCourseTotalCourses => 'إجمالي المقررات';
+
+  @override
+  String get studentCourseActiveCourses => 'النشطة الآن';
+
+  @override
+  String get studentCourseCompletedCourses => 'المكتملة';
+
+  @override
+  String get studentCourseAverageProgress => 'متوسط التقدم';
+
+  @override
+  String get studentCourseResultsLabel => 'مقرر';
+
+  @override
+  String get studentCourseOfflineCached =>
+      'أنت غير متصل: يتم عرض بيانات المقررات المحفوظة.';
+
+  @override
+  String get studentCourseEmptyDescription =>
+      'أنت غير مسجل في أي مقررات بعد. عند فتح التسجيل ستظهر مكتبة مقرراتك هنا.';
+
+  @override
+  String get studentCourseConnectionErrorTitle => 'خطأ في الاتصال';
+
+  @override
+  String get studentCourseConnectionErrorDescription =>
+      'تعذر تحميل مقرراتك الآن. تحقق من الاتصال ثم حاول مرة أخرى.';
+
+  @override
+  String get studentCourseAccessRestrictedTitle => 'الوصول مقيّد';
+
+  @override
+  String get studentCourseUnknownInstructor => 'معلومات المدرس غير متاحة';
+
+  @override
+  String get studentCourseSectionFallback => 'الشعبة -';
+
+  @override
+  String get studentCourseNoSemester => 'بدون فصل دراسي';
 
   @override
   String get adminUseTimeFormat => 'استخدم تنسيق HH:mm للأوقات.';

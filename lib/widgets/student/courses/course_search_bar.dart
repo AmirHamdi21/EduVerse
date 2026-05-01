@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
+import '../../../common/utils/student_courses_theme.dart';
 import '../../../generated_l10n/app_localizations.dart';
 
 class CourseSearchBar extends StatefulWidget {
@@ -14,7 +16,7 @@ class CourseSearchBar extends StatefulWidget {
 }
 
 class _CourseSearchBarState extends State<CourseSearchBar> {
-  late TextEditingController _controller;
+  late final TextEditingController _controller;
 
   @override
   void initState() {
@@ -36,19 +38,23 @@ class _CourseSearchBarState extends State<CourseSearchBar> {
         final l10n = AppLocalizations.of(context);
 
         return Container(
-          height: 48,
+          height: 56,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF16213E) : Colors.white,
-            borderRadius: BorderRadius.circular(14),
+            color: isDark
+                ? StudentCoursesTheme.darkSurfaceRaised
+                : Colors.white.withValues(alpha: 0.98),
+            borderRadius: StudentCoursesTheme.pillRadius,
             border: Border.all(
-              color: isDark ? Colors.white10 : const Color(0xFFD1D5DC),
-              width: 1,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.12)
+                  : const Color(0xFFD5E1F3),
+              width: 1.2,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
-                blurRadius: 3,
-                offset: const Offset(0, 1),
+                color: Colors.black.withValues(alpha: isDark ? 0.16 : 0.07),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
@@ -62,43 +68,79 @@ class _CourseSearchBarState extends State<CourseSearchBar> {
                 setState(() {});
                 widget.onSearchChanged(value);
               },
-              cursorColor: const Color(0xFF155DFC),
+              cursorColor: StudentCoursesTheme.brandBlue,
               style: TextStyle(
-                color: isDark ? Colors.white : const Color(0xFF101727),
-                fontSize: 16,
+                color: StudentCoursesTheme.primaryText(isDark),
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
               ),
               decoration: InputDecoration(
                 hintText: l10n.searchCourseNameOrInstructor,
                 hintStyle: TextStyle(
-                  color: isDark ? Colors.white54 : const Color(0xFF717182),
-                  fontSize: 16,
+                  color: isDark ? Colors.white54 : const Color(0xFF667085),
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
                 ),
-                prefixIcon: Icon(
-                  Icons.search,
-                  color: isDark ? Colors.white54 : const Color(0xFF717182),
-                  size: 20,
+                prefixIcon: Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                    start: 10,
+                    end: 10,
+                    top: 10,
+                    bottom: 10,
+                  ),
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : const Color(0xFFEAF2FF),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(
+                      Icons.search_rounded,
+                      color: isDark
+                          ? Colors.white70
+                          : StudentCoursesTheme.brandBlue,
+                      size: 20,
+                    ),
+                  ),
                 ),
-                suffixIcon: _controller.text.isNotEmpty
-                    ? IconButton(
-                        tooltip: l10n.clearSearch,
-                        onPressed: () {
-                          _controller.clear();
-                          widget.onSearchChanged('');
-                          setState(() {});
-                        },
-                        icon: Icon(
-                          Icons.clear,
-                          color: isDark
-                              ? Colors.white54
-                              : const Color(0xFF717182),
-                          size: 20,
+                prefixIconConstraints: const BoxConstraints(
+                  minWidth: 60,
+                  minHeight: 56,
+                ),
+                suffixIcon: AnimatedSwitcher(
+                  duration: StudentCoursesTheme.controlAnimationDuration,
+                  child: _controller.text.isEmpty
+                      ? const SizedBox(key: ValueKey('search-empty'))
+                      : IconButton(
+                          key: const ValueKey('search-clear'),
+                          tooltip: l10n.clearSearch,
+                          onPressed: () {
+                            _controller.clear();
+                            widget.onSearchChanged('');
+                            setState(() {});
+                          },
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: isDark
+                                ? Colors.white70
+                                : const Color(0xFF667085),
+                            size: 20,
+                          ),
                         ),
-                      )
-                    : null,
+                ),
+                suffixIconConstraints: const BoxConstraints(
+                  minWidth: 44,
+                  minHeight: 56,
+                ),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 16,
+                isDense: true,
+                contentPadding: const EdgeInsetsDirectional.only(
+                  end: 14,
+                  top: 16,
+                  bottom: 16,
                 ),
               ),
             ),

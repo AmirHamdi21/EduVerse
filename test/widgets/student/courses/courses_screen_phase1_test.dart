@@ -16,11 +16,11 @@ import 'package:edu_verse/services/api/course_service.dart';
 import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/api/material_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
-import 'package:edu_verse/widgets/student/courses/course_filter_bar.dart';
 import 'package:edu_verse/widgets/student/courses/course_search_bar.dart';
 import 'package:edu_verse/widgets/student/courses/courses_header.dart';
 import 'package:edu_verse/widgets/student/courses/filter_button.dart';
 import 'package:edu_verse/widgets/student/courses/join_course_button.dart';
+import 'package:edu_verse/widgets/student/courses/semester_filter_menu_button.dart';
 import 'package:edu_verse/widgets/student/courses/sort_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -95,7 +95,6 @@ Future<void> _pumpCoursesScreen(WidgetTester tester, CoursesBloc bloc) async {
   );
 }
 
-@Timeout(Duration(seconds: 30))
 void main() {
   group('CoursesScreen Phase 1 scaffold', () {
     setUp(() {
@@ -145,6 +144,7 @@ void main() {
               body: CoursesHeader(
                 title: 'My Courses',
                 subtitle: 'All enrolled courses this semester',
+                tabBar: SizedBox.shrink(),
               ),
             ),
           ),
@@ -155,7 +155,7 @@ void main() {
 
       expect(find.text('My Courses'), findsOneWidget);
       expect(find.text('All enrolled courses this semester'), findsOneWidget);
-      expect(find.byIcon(Icons.school_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsOneWidget);
     });
 
     testWidgets('courses header uses light-mode shell gradient tokens', (
@@ -176,6 +176,7 @@ void main() {
               body: CoursesHeader(
                 title: 'My Courses',
                 subtitle: 'All enrolled courses this semester',
+                tabBar: SizedBox.shrink(),
               ),
             ),
           ),
@@ -183,22 +184,32 @@ void main() {
       );
 
       final Container outerContainer = tester.widget<Container>(
-        find.byType(Container).first,
+        find.byWidgetPredicate((widget) {
+          if (widget is! Container) {
+            return false;
+          }
+          final decoration = widget.decoration;
+          return decoration is BoxDecoration &&
+              decoration.gradient == StudentCoursesTheme.heroGradientLight;
+        }).first,
       );
       final BoxDecoration decoration =
           outerContainer.decoration! as BoxDecoration;
       final LinearGradient gradient = decoration.gradient! as LinearGradient;
 
-      expect(gradient.colors, StudentCoursesTheme.primaryGradient.colors);
+      expect(gradient.colors, StudentCoursesTheme.heroGradientLight.colors);
     });
 
     test('student courses theme exposes dark shell token palette', () {
       expect(StudentCoursesTheme.headerGradientDark.colors, hasLength(2));
       expect(
         StudentCoursesTheme.scaffoldBackground(true),
-        const Color(0xFF1A1A2E),
+        StudentCoursesTheme.darkScaffold,
       );
-      expect(StudentCoursesTheme.cardBackground(true), const Color(0xFF16213E));
+      expect(
+        StudentCoursesTheme.cardBackground(true),
+        StudentCoursesTheme.darkSurface,
+      );
     });
 
     testWidgets('search bar preserves expected shell control dimensions', (
@@ -233,14 +244,12 @@ void main() {
       final BorderRadius borderRadius =
           decoration.borderRadius! as BorderRadius;
 
-      expect(searchContainerSize.height, 48);
-      expect(borderRadius.topLeft.x, 14);
+      expect(searchContainerSize.height, 56);
+      expect(borderRadius.topLeft.x, 999);
       expect(find.byType(TextField), findsOneWidget);
     });
 
-    testWidgets('filter bar keeps expected shell structure sections', (
-      tester,
-    ) async {
+    testWidgets('semester filter button shows shell labels', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
@@ -253,9 +262,7 @@ void main() {
           home: BlocProvider<ThemeBloc>(
             create: (_) => ThemeBloc(storageService: StorageService()),
             child: Scaffold(
-              body: CourseFilterBar(
-                selectedFilter: 'all',
-                onFilterChanged: _noop,
+              body: SemesterFilterMenuButton(
                 selectedSemesterId: null,
                 semesterOptions: const <SemesterFilterOption>[
                   SemesterFilterOption(id: 1, label: 'Fall 2026'),
@@ -267,13 +274,8 @@ void main() {
         ),
       );
 
-      expect(find.byType(SingleChildScrollView), findsOneWidget);
-      expect(find.text('All'), findsOneWidget);
-      expect(find.text('Active'), findsOneWidget);
-      expect(find.text('Completed'), findsOneWidget);
-      expect(find.text('Dropped'), findsOneWidget);
+      expect(find.text('Semester'), findsOneWidget);
       expect(find.text('All Semesters'), findsOneWidget);
-      expect(find.text('Fall 2026'), findsOneWidget);
     });
 
     testWidgets('search bar emits query changes and clear action', (
@@ -307,18 +309,17 @@ void main() {
       await tester.pump();
       expect(latestQuery, 'math');
 
-      final clearButton = find.byIcon(Icons.clear);
+      final clearButton = find.byIcon(Icons.close_rounded);
       expect(clearButton, findsOneWidget);
       await tester.tap(clearButton);
       await tester.pump();
       expect(latestQuery, isEmpty);
     });
 
-    testWidgets('filter button emits semester callback from sheet selection', (
+    testWidgets('filter button emits status callback from popup selection', (
       tester,
     ) async {
       String selectedFilter = 'all';
-      int? selectedSemester;
 
       await tester.pumpWidget(
         MaterialApp(
@@ -343,6 +344,46 @@ void main() {
                     onFilterChanged: (String value) {
                       selectedFilter = value;
                     },
+                    onSemesterChanged: _noopSemester,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.tap(find.byIcon(Icons.tune_rounded));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Completed'));
+      await tester.tap(find.text('Completed'));
+      await tester.pumpAndSettle();
+
+      expect(selectedFilter, 'completed');
+    });
+
+    testWidgets('semester menu button emits selected semester', (tester) async {
+      int? selectedSemester;
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: const <LocalizationsDelegate<dynamic>>[
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const <Locale>[Locale('en'), Locale('ar')],
+          home: BlocProvider<ThemeBloc>(
+            create: (_) => ThemeBloc(storageService: StorageService()),
+            child: Scaffold(
+              body: Row(
+                children: [
+                  SemesterFilterMenuButton(
+                    selectedSemesterId: null,
+                    semesterOptions: const <SemesterFilterOption>[
+                      SemesterFilterOption(id: 1, label: 'Fall 2026'),
+                    ],
                     onSemesterChanged: (int? value) {
                       selectedSemester = value;
                     },
@@ -354,15 +395,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byIcon(Icons.tune));
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('Completed'));
-      await tester.tap(find.text('Completed'));
-      await tester.pumpAndSettle();
-
-      expect(selectedFilter, 'completed');
-
-      await tester.tap(find.byIcon(Icons.tune));
+      await tester.tap(find.byIcon(Icons.school_rounded));
       await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('Fall 2026'));
       await tester.tap(find.text('Fall 2026'));
@@ -403,7 +436,7 @@ void main() {
         ),
       );
 
-      await tester.tap(find.byIcon(Icons.swap_vert));
+      await tester.tap(find.byIcon(Icons.swap_vert_rounded));
       await tester.pumpAndSettle();
 
       final ascendingCreditsOption = find.byWidgetPredicate((widget) {
@@ -527,8 +560,8 @@ void main() {
           await tester.pump(const Duration(milliseconds: 100));
         }
 
-        expect(find.text('Discrete Mathematics'), findsOneWidget);
-        expect(find.text('MATH201'), findsOneWidget);
+        expect(find.text('Discrete Mathematics'), findsWidgets);
+        expect(find.text('MATH201'), findsWidgets);
 
         bloc.close();
         await tester.pump(const Duration(milliseconds: 100));

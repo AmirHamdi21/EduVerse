@@ -1238,6 +1238,12 @@ abstract class AppLocalizations {
   /// **'Search course name or instructor'**
   String get searchCourseNameOrInstructor;
 
+  /// No description provided for @studentCourseHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse, continue, and organize every enrolled course from one focused learning space.'**
+  String get studentCourseHeroSubtitle;
+
   /// No description provided for @filter.
   ///
   /// In en, this message translates to:
@@ -1285,6 +1291,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Join Course'**
   String get joinCourse;
+
+  /// No description provided for @studentCourseJoinHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens available course enrollment options'**
+  String get studentCourseJoinHint;
 
   /// No description provided for @nextLecture.
   ///
@@ -25300,6 +25312,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search by course code, title, section, semester, or instructor'**
   String get coursesShellSearchSemanticsHint;
+
+  /// No description provided for @studentCourseDropped.
+  ///
+  /// In en, this message translates to:
+  /// **'Dropped'**
+  String get studentCourseDropped;
+
+  /// No description provided for @studentCourseOverviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your momentum'**
+  String get studentCourseOverviewTitle;
+
+  /// No description provided for @studentCourseOverviewSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your active load, completed work, and overall progress at a glance.'**
+  String get studentCourseOverviewSubtitle;
+
+  /// No description provided for @studentCourseTotalCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Total courses'**
+  String get studentCourseTotalCourses;
+
+  /// No description provided for @studentCourseActiveCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Active now'**
+  String get studentCourseActiveCourses;
+
+  /// No description provided for @studentCourseCompletedCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get studentCourseCompletedCourses;
+
+  /// No description provided for @studentCourseAverageProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Average progress'**
+  String get studentCourseAverageProgress;
+
+  /// No description provided for @studentCourseResultsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'courses'**
+  String get studentCourseResultsLabel;
+
+  /// No description provided for @studentCourseOfflineCached.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline: showing cached course data.'**
+  String get studentCourseOfflineCached;
+
+  /// No description provided for @studentCourseEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not enrolled in any courses yet. Once registration opens, your course library will appear here.'**
+  String get studentCourseEmptyDescription;
+
+  /// No description provided for @studentCourseConnectionErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Error'**
+  String get studentCourseConnectionErrorTitle;
+
+  /// No description provided for @studentCourseConnectionErrorDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your courses right now. Check your connection and try again.'**
+  String get studentCourseConnectionErrorDescription;
+
+  /// No description provided for @studentCourseAccessRestrictedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Access Restricted'**
+  String get studentCourseAccessRestrictedTitle;
+
+  /// No description provided for @studentCourseUnknownInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor information unavailable'**
+  String get studentCourseUnknownInstructor;
+
+  /// No description provided for @studentCourseSectionFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Section -'**
+  String get studentCourseSectionFallback;
+
+  /// No description provided for @studentCourseNoSemester.
+  ///
+  /// In en, this message translates to:
+  /// **'No semester'**
+  String get studentCourseNoSemester;
 
   /// No description provided for @adminUseTimeFormat.
   ///
