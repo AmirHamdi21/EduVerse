@@ -4899,7 +4899,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'استعرض ملخصات الجلسات وأعد فتح أي كشف تحتاجه.';
 
   @override
-  String get attendanceNoSessionsYet => 'لا توجد جلسات حضور بعد.';
+  String get attendanceNoSessionsYet => 'لا توجد جلسات حضور بعد';
 
   @override
   String get attendanceOpen => 'فتح';
@@ -14348,6 +14348,51 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get calendarAllDay => 'طوال اليوم';
+
+  @override
+  String get attendanceLoadingData => 'جار تحميل بيانات الحضور...';
+
+  @override
+  String get attendanceFaceSetupTitle => 'إعداد الوجه';
+
+  @override
+  String get attendanceFaceSetupDescription =>
+      'ارفع صور وجه واضحة لتحسين مطابقة الحضور بالذكاء الاصطناعي.';
+
+  @override
+  String get attendanceUploadFacePhoto => 'رفع صورة الوجه';
+
+  @override
+  String get attendanceNoFaceReferences =>
+      'لا توجد صور مرجعية مرفوعة حتى الآن.';
+
+  @override
+  String get attendancePrimaryReference => 'الصورة المرجعية الأساسية';
+
+  @override
+  String get attendanceReferenceImage => 'صورة مرجعية';
+
+  @override
+  String get attendanceCourseSnapshot =>
+      'اطلع على نسبة حضورك وراجع الجلسات الأخيرة وحافظ على مسار هذا المقرر.';
+
+  @override
+  String get attendanceStatusFilter => 'الحالة';
+
+  @override
+  String get attendanceSessionView => 'الجلسات';
+
+  @override
+  String get attendanceSessionsSubtitle =>
+      'راجع الجلسات المتاحة حالياً لهذا المقرر.';
+
+  @override
+  String get attendanceCalendarSubtitle =>
+      'شاهد كيف يتوزع حضور هذا المقرر عبر الشهر.';
+
+  @override
+  String get attendanceNoSessionsMatchFilters =>
+      'لا توجد جلسات تطابق هذا العرض';
 
   @override
   String get chatVideoCallTooltip => 'مكالمة فيديو';

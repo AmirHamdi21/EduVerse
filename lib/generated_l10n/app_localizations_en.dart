@@ -4914,7 +4914,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Browse session summaries and reopen any roster you need.';
 
   @override
-  String get attendanceNoSessionsYet => 'No attendance sessions yet.';
+  String get attendanceNoSessionsYet => 'No attendance sessions yet';
 
   @override
   String get attendanceOpen => 'Open';
@@ -14401,6 +14401,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get calendarAllDay => 'All day';
+
+  @override
+  String get attendanceLoadingData => 'Loading attendance data...';
+
+  @override
+  String get attendanceFaceSetupTitle => 'Face Setup';
+
+  @override
+  String get attendanceFaceSetupDescription =>
+      'Upload clear face photos to improve AI attendance matching.';
+
+  @override
+  String get attendanceUploadFacePhoto => 'Upload Face Photo';
+
+  @override
+  String get attendanceNoFaceReferences => 'No face references uploaded yet.';
+
+  @override
+  String get attendancePrimaryReference => 'Primary reference';
+
+  @override
+  String get attendanceReferenceImage => 'Reference image';
+
+  @override
+  String get attendanceCourseSnapshot =>
+      'See your attendance rate, review recent sessions, and keep this course on track.';
+
+  @override
+  String get attendanceStatusFilter => 'Status';
+
+  @override
+  String get attendanceSessionView => 'Sessions';
+
+  @override
+  String get attendanceSessionsSubtitle =>
+      'Review the sessions currently available for this course.';
+
+  @override
+  String get attendanceCalendarSubtitle =>
+      'See how this course attendance lands across the month.';
+
+  @override
+  String get attendanceNoSessionsMatchFilters => 'No sessions match this view';
 
   @override
   String get chatVideoCallTooltip => 'Video call';

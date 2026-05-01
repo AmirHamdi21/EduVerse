@@ -237,12 +237,12 @@ class AttendanceCubit extends Cubit<AttendanceState> {
     List<StudentAttendanceSummaryModel> summaries,
   ) {
     final gradientColors = [
-      [0xFF6366F1, 0xFF8B5CF6],
       [0xFF3B82F6, 0xFF06B6D4],
-      [0xFF10B981, 0xFF059669],
-      [0xFFF59E0B, 0xFFEF4444],
-      [0xFFEC4899, 0xFF8B5CF6],
-      [0xFF14B8A6, 0xFF22D3EE],
+      [0xFF2563EB, 0xFF38BDF8],
+      [0xFF0EA5E9, 0xFF22C55E],
+      [0xFF1D4ED8, 0xFF06B6D4],
+      [0xFF0284C7, 0xFF60A5FA],
+      [0xFF0891B2, 0xFF2DD4BF],
     ];
     return summaries.asMap().entries.map((entry) {
       return CourseAttendance.fromApi(

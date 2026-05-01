@@ -88,11 +88,13 @@ class _CourseAttendanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final percentage = course.attendancePercentage;
+    final accent = Color(course.gradientColors[0]);
+    final accentSoft = Color(course.gradientColors[1]);
     final statusLabel = percentage >= 90
-        ? 'Excellent'
+        ? l10n.excellent
         : percentage >= 80
-        ? 'Good'
-        : 'Warning';
+        ? l10n.good
+        : l10n.warning;
     final statusColor = percentage >= 90
         ? const Color(0xFF10B981)
         : percentage >= 80
@@ -104,21 +106,17 @@ class _CourseAttendanceCard extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           gradient: isSelected
-              ? LinearGradient(
-                  colors: [
-                    Color(course.gradientColors[0]),
-                    Color(course.gradientColors[1]),
-                  ],
-                )
+              ? LinearGradient(colors: [accent, accentSoft])
               : null,
           color: isSelected
               ? null
               : isDark
               ? const Color(0xFF1E293B)
               : Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isSelected
                 ? Colors.transparent
@@ -130,42 +128,48 @@ class _CourseAttendanceCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: isSelected
-                  ? Color(course.gradientColors[0]).withValues(alpha: 0.3)
+                  ? accent.withValues(alpha: 0.28)
                   : isDark
                   ? Colors.black.withValues(alpha: 0.2)
                   : Colors.black.withValues(alpha: 0.05),
-              blurRadius: isSelected ? 16 : 8,
-              offset: const Offset(0, 4),
+              blurRadius: isSelected ? 20 : 10,
+              offset: const Offset(0, 6),
             ),
           ],
         ),
         child: Column(
           children: [
-            // Colored top bar
             if (!isSelected)
               Container(
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                height: 4,
+                height: 5,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(course.gradientColors[0]),
-                      Color(course.gradientColors[1]),
-                    ],
-                  ),
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
-                  ),
+                  gradient: LinearGradient(colors: [accent, accentSoft]),
                 ),
               ),
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? Colors.white.withValues(alpha: 0.14)
+                              : accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Icon(
+                          Icons.school_rounded,
+                          color: isSelected ? Colors.white : accent,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,7 +178,7 @@ class _CourseAttendanceCard extends StatelessWidget {
                               course.courseName,
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.w800,
                                 color: isSelected
                                     ? Colors.white
                                     : isDark
@@ -187,6 +191,7 @@ class _CourseAttendanceCard extends StatelessWidget {
                               course.courseCode,
                               style: TextStyle(
                                 fontSize: 13,
+                                fontWeight: FontWeight.w500,
                                 color: isSelected
                                     ? Colors.white.withValues(alpha: 0.8)
                                     : isDark
@@ -197,17 +202,17 @@ class _CourseAttendanceCard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // Status badge
+                      const SizedBox(width: 10),
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
-                          vertical: 5,
+                          vertical: 7,
                         ),
                         decoration: BoxDecoration(
                           color: isSelected
                               ? Colors.white.withValues(alpha: 0.2)
                               : statusColor.withValues(alpha: 0.12),
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: isSelected
                                 ? Colors.white.withValues(alpha: 0.3)
@@ -218,37 +223,23 @@ class _CourseAttendanceCard extends StatelessWidget {
                           '${percentage.toStringAsFixed(1)}%',
                           style: TextStyle(
                             fontSize: 13,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800,
                             color: isSelected ? Colors.white : statusColor,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  // Stats grid matching web (4 columns)
+                  const SizedBox(height: 14),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 4,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
                     decoration: BoxDecoration(
-                      border: Border(
-                        top: BorderSide(
-                          color: isSelected
-                              ? Colors.white.withValues(alpha: 0.15)
-                              : isDark
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFE2E8F0),
-                        ),
-                        bottom: BorderSide(
-                          color: isSelected
-                              ? Colors.white.withValues(alpha: 0.15)
-                              : isDark
-                              ? const Color(0xFF334155)
-                              : const Color(0xFFE2E8F0),
-                        ),
-                      ),
+                      color: isSelected
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : isDark
+                          ? const Color(0xFF172033)
+                          : const Color(0xFFF8FAFC),
+                      borderRadius: BorderRadius.circular(18),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -284,10 +275,9 @@ class _CourseAttendanceCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   _buildProgressBar(percentage, isSelected),
-                  const SizedBox(height: 10),
-                  // Footer with status label
+                  const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -306,7 +296,7 @@ class _CourseAttendanceCard extends StatelessWidget {
                           statusLabel,
                           style: TextStyle(
                             fontSize: 11,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w700,
                             color: isSelected ? Colors.white : statusColor,
                           ),
                         ),
@@ -323,10 +313,10 @@ class _CourseAttendanceCard extends StatelessWidget {
                                 : const Color(0xFF64748B),
                           ),
                           Text(
-                            'Details',
+                            l10n.details,
                             style: TextStyle(
                               fontSize: 12,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w700,
                               color: isSelected
                                   ? Colors.white.withValues(alpha: 0.7)
                                   : isDark
