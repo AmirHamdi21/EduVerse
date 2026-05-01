@@ -36,6 +36,9 @@ class InstructorAssignmentModel extends Equatable {
     final userMap = rawUser is Map<String, dynamic>
         ? rawUser
         : <String, dynamic>{};
+    final rawFullName =
+        json['fullName']?.toString() ?? userMap['fullName']?.toString() ?? '';
+    final parsedName = _splitFullName(rawFullName);
 
     return InstructorAssignmentModel(
       id: _parseInt(json['id']),
@@ -49,9 +52,13 @@ class InstructorAssignmentModel extends Equatable {
       firstName:
           json['firstName']?.toString() ??
           userMap['firstName']?.toString() ??
+          parsedName.$1 ??
           '',
       lastName:
-          json['lastName']?.toString() ?? userMap['lastName']?.toString() ?? '',
+          json['lastName']?.toString() ??
+          userMap['lastName']?.toString() ??
+          parsedName.$2 ??
+          '',
       email: json['email']?.toString() ?? userMap['email']?.toString() ?? '',
     );
   }
@@ -75,6 +82,20 @@ class InstructorAssignmentModel extends Equatable {
       return value;
     }
     return int.tryParse(value?.toString() ?? '') ?? 0;
+  }
+
+  static (String?, String?) _splitFullName(String value) {
+    final normalized = value.trim();
+    if (normalized.isEmpty) {
+      return (null, null);
+    }
+
+    final parts = normalized.split(RegExp(r'\s+'));
+    if (parts.length == 1) {
+      return (parts.first, '');
+    }
+
+    return (parts.first, parts.sublist(1).join(' '));
   }
 
   @override

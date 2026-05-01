@@ -257,9 +257,28 @@ class EnrollmentService {
         );
       }
 
-      return _extractStaffMaps(
-        response.data,
-      ).map(InstructorAssignmentModel.fromJson).toList();
+      final payload = response.data;
+      final summaryMap = _extractMap(payload);
+      final staffMaps = _extractStaffMaps(payload);
+
+      final normalized = staffMaps
+          .map((item) {
+            if (summaryMap['instructor'] == item) {
+              return <String, dynamic>{
+                'id':
+                    summaryMap['instructorId'] ?? item['userId'] ?? item['id'],
+                'sectionId': _parseInt(sectionId),
+                'userId':
+                    summaryMap['instructorId'] ?? item['userId'] ?? item['id'],
+                'role': 'primary',
+                ...item,
+              };
+            }
+            return item;
+          })
+          .toList(growable: false);
+
+      return normalized.map(InstructorAssignmentModel.fromJson).toList();
     }, fallbackMessage: 'Failed to load section instructors');
   }
 

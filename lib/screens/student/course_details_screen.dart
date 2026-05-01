@@ -15,7 +15,6 @@ import '../../models/courses/instructor_assignment_model.dart';
 import '../../models/ta/ta_assignment_model.dart';
 import '../../widgets/student/courses/course_model.dart';
 import '../../widgets/student/course_details/course_tabs.dart';
-import '../../widgets/shared/course_structure_viewer.dart';
 
 /// Course detail drill-down screen consuming live [CourseEnrollmentModel].
 ///
@@ -135,11 +134,23 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
     return [const Color(0xFF2B7FFF), const Color(0xFF155DFC)];
   }
 
-  /// Legacy progress value (from old model) or status-derived value.
+  /// Legacy progress value (from old model) or backend enrollment progress.
   double get _progress {
     if (widget.legacyCourse != null) {
       return widget.legacyCourse!.progress;
     }
+
+    final progressPercentage = widget.enrollment?.progressPercentage;
+    if (progressPercentage != null) {
+      return (progressPercentage / 100).clamp(0.0, 1.0);
+    }
+
+    final materialsViewed = widget.enrollment?.materialsViewed ?? 0;
+    final totalMaterials = widget.enrollment?.totalMaterials ?? 0;
+    if (totalMaterials > 0) {
+      return (materialsViewed / totalMaterials).clamp(0.0, 1.0);
+    }
+
     switch (widget.enrollment?.status.toLowerCase() ?? 'active') {
       case 'completed':
         return 1.0;
@@ -424,7 +435,10 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                                       ),
                                       const SizedBox(height: 24),
                                       // Progress section
-                                      _buildProgressSection(isDark),
+                                      _buildProgressSection(
+                                        isDark,
+                                        detailState,
+                                      ),
                                       const SizedBox(height: 24),
                                       // T008: Course Structure Viewer
                                       // if (widget.enrollment != null)
@@ -1007,7 +1021,30 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
     );
   }
 
-  Widget _buildProgressSection(bool isDark) {
+  double _resolveProgressFromEnrollment(CourseDetailState detailState) {
+    final progressPercentage = widget.enrollment?.progressPercentage;
+    if (progressPercentage != null) {
+      return (progressPercentage / 100).clamp(0.0, 1.0);
+    }
+
+    final backendMaterialsViewed = widget.enrollment?.materialsViewed ?? 0;
+    final backendTotalMaterials = widget.enrollment?.totalMaterials ?? 0;
+    final fallbackTotalMaterials = detailState.materials.length;
+
+    final progressTotalMaterials = backendTotalMaterials > 0
+        ? backendTotalMaterials
+        : fallbackTotalMaterials;
+
+    if (progressTotalMaterials > 0) {
+      return (backendMaterialsViewed / progressTotalMaterials).clamp(0.0, 1.0);
+    }
+
+    return _progress;
+  }
+
+  Widget _buildProgressSection(bool isDark, CourseDetailState detailState) {
+    final progress = _resolveProgressFromEnrollment(detailState);
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -1072,7 +1109,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen>
                   ),
                 ),
                 FractionallySizedBox(
-                  widthFactor: _progress,
+                  widthFactor: progress,
                   child: Container(
                     height: 12,
                     decoration: BoxDecoration(

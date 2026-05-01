@@ -33,6 +33,9 @@ class CourseEnrollmentModel extends Equatable {
   final DateTime enrollmentDate;
   final bool canDrop;
   final DateTime? dropDeadline;
+  final int? materialsViewed;
+  final int? totalMaterials;
+  final double? progressPercentage;
   final String
   role; // kept for backward compat — 'student' | 'instructor' | 'ta'
 
@@ -53,6 +56,9 @@ class CourseEnrollmentModel extends Equatable {
     required this.enrollmentDate,
     this.canDrop = false,
     this.dropDeadline,
+    this.materialsViewed,
+    this.totalMaterials,
+    this.progressPercentage,
     this.role = 'student',
     this.course,
     this.section,
@@ -92,6 +98,9 @@ class CourseEnrollmentModel extends Equatable {
       dropDeadline: json['dropDeadline'] != null
           ? DateTime.tryParse(json['dropDeadline'].toString())
           : null,
+      materialsViewed: _parseNullableInt(json['materialsViewed']),
+      totalMaterials: _parseNullableInt(json['totalMaterials']),
+      progressPercentage: _parseNullableDouble(json['progressPercentage']),
       role: json['role'] as String? ?? 'student',
       course: json['course'] != null
           ? CourseModel.fromJson(json['course'] as Map<String, dynamic>)
@@ -124,6 +133,20 @@ class CourseEnrollmentModel extends Equatable {
     return DateTime.now();
   }
 
+  static int? _parseNullableInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is num) return value.toInt();
+    return int.tryParse(value.toString());
+  }
+
+  static double? _parseNullableDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is double) return value;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString());
+  }
+
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -135,6 +158,9 @@ class CourseEnrollmentModel extends Equatable {
       'enrollmentDate': enrollmentDate.toIso8601String(),
       'canDrop': canDrop,
       'dropDeadline': dropDeadline?.toIso8601String(),
+      'materialsViewed': materialsViewed,
+      'totalMaterials': totalMaterials,
+      'progressPercentage': progressPercentage,
       'role': role,
       'course': course?.toJson(),
       'section': section?.toJson(),
@@ -162,6 +188,9 @@ class CourseEnrollmentModel extends Equatable {
     enrollmentDate,
     canDrop,
     dropDeadline,
+    materialsViewed,
+    totalMaterials,
+    progressPercentage,
     role,
     course,
     section,
