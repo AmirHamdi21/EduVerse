@@ -6202,6 +6202,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taCourseDetail => 'Course Detail';
 
   @override
+  String get taCourseDetailHeroSubtitle =>
+      'Stay on top of materials, labs, grading, and students for this teaching section.';
+
+  @override
+  String get taCourseDetailContentEmpty =>
+      'Course materials will appear here once they are published for your section.';
+
+  @override
+  String get taCourseDetailOtherMaterials => 'Other materials';
+
+  @override
+  String get taCourseDetailOpenLabsWorkspace => 'Open labs workspace';
+
+  @override
+  String get taCourseDetailNoAttendance =>
+      'Attendance summaries will appear here after lab sessions are recorded.';
+
+  @override
+  String get taCourseDetailNoStudents =>
+      'No students are currently assigned to this section.';
+
+  @override
   String get taCourseStudents => 'Students';
 
   @override
@@ -6344,6 +6366,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taCourseDiscussionsTab => 'Discussions';
+
+  @override
+  String get taCoursesShellSubtitle =>
+      'Stay on top of your assigned sections, grading queues, labs, and discussion activity from one focused workspace.';
+
+  @override
+  String get taCoursesAllSpaces => 'All support spaces';
+
+  @override
+  String get taCoursesAvgFill => 'Avg fill';
+
+  @override
+  String get taCoursesCourseActions => 'Course actions';
+
+  @override
+  String get taCoursesSectionFill => 'Section fill';
+
+  @override
+  String taCoursesEnrolledCount(int current, int capacity) {
+    return '$current/$capacity enrolled';
+  }
+
+  @override
+  String get taCoursesNoAssignedTitle => 'No teaching courses found';
+
+  @override
+  String get taCoursesNoAssignedSubtitle =>
+      'Your assigned courses will appear here once they are available.';
+
+  @override
+  String get taCoursesNoMatchingTitle => 'No courses match these filters';
+
+  @override
+  String get taCoursesNoMatchingSubtitle =>
+      'Try adjusting your search, status tab, or level filter to bring more courses back into view.';
 
   @override
   String get mainMenu => 'Main Menu';
@@ -14667,6 +14724,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendanceNoSessionsMatchFilters => 'No sessions match this view';
+
+  @override
+  String get instructorCourseDetailHeroSubtitle =>
+      'Manage course content, monitor engagement, and keep teaching workflows focused from one polished workspace.';
+
+  @override
+  String get instructorCourseDetailNoSchedule =>
+      'No schedule is available for this section yet.';
+
+  @override
+  String get instructorCourseDetailNoActivity =>
+      'No upcoming activity is available yet.';
 
   @override
   String get chatVideoCallTooltip => 'Video call';

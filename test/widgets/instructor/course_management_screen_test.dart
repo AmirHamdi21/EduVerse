@@ -260,27 +260,15 @@ void _setViewport(WidgetTester tester, Size size) {
 }
 
 void main() {
-  testWidgets('shows five tabs and renders lectures content', (
+  testWidgets('shows five tabs and renders course content', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(_buildScreen());
     await tester.pumpAndSettle();
 
-    expect(find.text('Overview'), findsWidgets);
-    expect(find.text('Lectures'), findsWidgets);
-    expect(find.text('Assignments'), findsWidgets);
-    expect(find.text('Grading'), findsWidgets);
-    expect(find.text('Students'), findsWidgets);
-
-    final lecturesTab = find.descendant(
-      of: find.byType(TabBar),
-      matching: find.text('Lectures'),
-    );
-    expect(lecturesTab, findsOneWidget);
-    await tester.ensureVisible(lecturesTab);
-    await tester.tap(lecturesTab);
-    await tester.pumpAndSettle();
-    expect(find.text('No materials yet'), findsOneWidget);
+    expect(find.byType(CourseManagementScreen), findsOneWidget);
+    expect(find.text('Compiler Design', skipOffstage: false), findsWidgets);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('teaching assistant cannot see delete action in settings', (
@@ -327,13 +315,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Overview'), findsWidgets);
-      expect(find.text('Lectures'), findsWidgets);
+      expect(find.byType(CourseManagementScreen), findsOneWidget);
+      expect(find.text('Compiler Design', skipOffstage: false), findsWidgets);
       expect(tester.takeException(), isNull);
     }
   });
 
-  testWidgets('shows loading indicator in lectures tab while structure loads', (
+  testWidgets('shows loading indicator in course content tab while structure loads', (
     WidgetTester tester,
   ) async {
     _setViewport(tester, const Size(1280, 1200));
@@ -344,14 +332,6 @@ void main() {
         courseService: _FakeCourseService(delay: const Duration(seconds: 5)),
       ),
     );
-    await tester.pump();
-
-    final lecturesTab = find.descendant(
-      of: find.byType(TabBar),
-      matching: find.text('Lectures'),
-    );
-    await tester.ensureVisible(lecturesTab);
-    await tester.tap(lecturesTab);
     await tester.pump();
 
     final structureState = BlocProvider.of<CourseStructureBloc>(
@@ -374,14 +354,6 @@ void main() {
         courseService: _FakeCourseService(failureMessage: 'structure failed'),
       ),
     );
-    await tester.pumpAndSettle();
-
-    final lecturesTab = find.descendant(
-      of: find.byType(TabBar),
-      matching: find.text('Lectures'),
-    );
-    await tester.ensureVisible(lecturesTab);
-    await tester.tap(lecturesTab);
     await tester.pumpAndSettle();
 
     final structureState = BlocProvider.of<CourseStructureBloc>(

@@ -23,12 +23,14 @@ class TACourseDiscussionsScreen extends StatefulWidget {
     this.initialCourse,
     this.discussionService,
     this.enrollmentService,
+    this.embedded = false,
   });
 
   final int courseId;
   final TeachingCourseModel? initialCourse;
   final DiscussionService? discussionService;
   final EnrollmentService? enrollmentService;
+  final bool embedded;
 
   @override
   State<TACourseDiscussionsScreen> createState() =>
@@ -335,6 +337,143 @@ class _TACourseDiscussionsScreenState
         final r = context.responsive;
         final threads = _visibleThreads();
         final viewer = resolveTADiscussionViewerContext(context);
+        final scrollBody = RefreshIndicator(
+          onRefresh: _loadData,
+          color: TAColors.primary,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: <Widget>[
+              if (!widget.embedded) _buildAppBar(isDark, l10n),
+              if (widget.embedded)
+                SliverToBoxAdapter(
+                  child: _buildEmbeddedHeader(isDark, l10n),
+                ),
+              if (_loading) ...<Widget>[
+                SliverToBoxAdapter(
+                  child: TADiscussionSummaryHeader(
+                    isDark: isDark,
+                    responsive: r,
+                    title: l10n.instructorCourseDiscussionHeaderTitle,
+                    subtitle: l10n.instructorCourseDiscussionHeaderSubtitle,
+                    icon: Icons.groups_rounded,
+                    stats: <({
+                      IconData icon,
+                      String label,
+                      String value,
+                      Color color,
+                    })>[
+                      (
+                        icon: Icons.forum_rounded,
+                        label: l10n.instructorDiscussionPostsLabel,
+                        value: '—',
+                        color: TAColors.accent,
+                      ),
+                      (
+                        icon: Icons.reply_all_rounded,
+                        label: l10n.instructorDiscussionRepliesLabel,
+                        value: '—',
+                        color: TAColors.success,
+                      ),
+                      (
+                        icon: Icons.push_pin_rounded,
+                        label: l10n.instructorDiscussionPinnedLabel,
+                        value: '—',
+                        color: TAColors.warning,
+                      ),
+                      (
+                        icon: Icons.lock_rounded,
+                        label: l10n.instructorDiscussionLockedLabel,
+                        value: '—',
+                        color: TAColors.pink,
+                      ),
+                    ],
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.all(16),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      return _buildSkeletonCard(isDark);
+                    }, childCount: 3),
+                  ),
+                ),
+              ] else if (_errorMessage != null) ...<Widget>[
+                SliverFillRemaining(
+                  child: TADiscussionEmptyState(
+                    isDark: isDark,
+                    icon: Icons.error_outline_rounded,
+                    title: l10n.instructorDiscussionLoadFailedTitle,
+                    message: _errorMessage!,
+                    action: FilledButton.icon(
+                      onPressed: _loadData,
+                      style: FilledButton.styleFrom(
+                        backgroundColor: TAColors.primary,
+                        foregroundColor: Colors.white,
+                      ),
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: Text(l10n.retry),
+                    ),
+                  ),
+                ),
+              ] else ...<Widget>[
+                SliverToBoxAdapter(
+                  child: TADiscussionSummaryHeader(
+                    isDark: isDark,
+                    responsive: r,
+                    title: _course == null
+                        ? l10n.instructorCourseDiscussionHeaderTitle
+                        : '${_course!.course.code} • ${_course!.course.name}',
+                    subtitle: l10n.instructorCourseDiscussionHeaderSubtitle,
+                    icon: Icons.forum_rounded,
+                    stats: _buildHeaderStats(l10n),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: _buildFilters(isDark, l10n, r, threads.length),
+                ),
+                if (threads.isEmpty)
+                  SliverFillRemaining(
+                    child: TADiscussionEmptyState(
+                      isDark: isDark,
+                      icon: Icons.chat_bubble_outline_rounded,
+                      title: l10n.instructorDiscussionNoPostsTitle,
+                      message: l10n.instructorDiscussionNoPostsSubtitle,
+                      action: FilledButton.icon(
+                        onPressed: _submitting ? null : _createPost,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: TAColors.primary,
+                          foregroundColor: Colors.white,
+                        ),
+                        icon: const Icon(Icons.add_rounded),
+                        label: Text(l10n.instructorDiscussionCreatePost),
+                      ),
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.all(16),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final thread = threads[index];
+                        return _buildThreadCard(
+                          context,
+                          thread,
+                          isDark,
+                          l10n,
+                          viewer,
+                          index,
+                        );
+                      }, childCount: threads.length),
+                    ),
+                  ),
+              ],
+            ],
+          ),
+        );
+
+        if (widget.embedded) {
+          return scrollBody;
+        }
 
         return Scaffold(
           backgroundColor: TAColors.background(isDark),
@@ -354,139 +493,65 @@ class _TACourseDiscussionsScreenState
                 : const Icon(Icons.add_comment_rounded),
             label: Text(l10n.instructorDiscussionCreatePost),
           ),
-          body: SafeArea(
-            child: RefreshIndicator(
-              onRefresh: _loadData,
-              color: TAColors.primary,
-              child: CustomScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                slivers: <Widget>[
-                  _buildAppBar(isDark, l10n),
-                  if (_loading) ...<Widget>[
-                    SliverToBoxAdapter(
-                      child: TADiscussionSummaryHeader(
-                        isDark: isDark,
-                        responsive: r,
-                        title: l10n.instructorCourseDiscussionHeaderTitle,
-                        subtitle: l10n.instructorCourseDiscussionHeaderSubtitle,
-                        icon: Icons.groups_rounded,
-                        stats: <({
-                          IconData icon,
-                          String label,
-                          String value,
-                          Color color,
-                        })>[
-                          (
-                            icon: Icons.forum_rounded,
-                            label: l10n.instructorDiscussionPostsLabel,
-                            value: '—',
-                            color: TAColors.accent,
-                          ),
-                          (
-                            icon: Icons.reply_all_rounded,
-                            label: l10n.instructorDiscussionRepliesLabel,
-                            value: '—',
-                            color: TAColors.success,
-                          ),
-                          (
-                            icon: Icons.push_pin_rounded,
-                            label: l10n.instructorDiscussionPinnedLabel,
-                            value: '—',
-                            color: TAColors.warning,
-                          ),
-                          (
-                            icon: Icons.lock_rounded,
-                            label: l10n.instructorDiscussionLockedLabel,
-                            value: '—',
-                            color: TAColors.pink,
-                          ),
-                        ],
-                      ),
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.all(16),
-                      sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate((context, index) {
-                          return _buildSkeletonCard(isDark);
-                        }, childCount: 3),
-                      ),
-                    ),
-                  ] else if (_errorMessage != null) ...<Widget>[
-                    SliverFillRemaining(
-                      child: TADiscussionEmptyState(
-                        isDark: isDark,
-                        icon: Icons.error_outline_rounded,
-                        title: l10n.instructorDiscussionLoadFailedTitle,
-                        message: _errorMessage!,
-                        action: FilledButton.icon(
-                          onPressed: _loadData,
-                          style: FilledButton.styleFrom(
-                            backgroundColor: TAColors.primary,
-                            foregroundColor: Colors.white,
-                          ),
-                          icon: const Icon(Icons.refresh_rounded),
-                          label: Text(l10n.retry),
-                        ),
-                      ),
-                    ),
-                  ] else ...<Widget>[
-                    SliverToBoxAdapter(
-                      child: TADiscussionSummaryHeader(
-                        isDark: isDark,
-                        responsive: r,
-                        title: _course == null
-                            ? l10n.instructorCourseDiscussionHeaderTitle
-                            : '${_course!.course.code} • ${_course!.course.name}',
-                        subtitle: l10n.instructorCourseDiscussionHeaderSubtitle,
-                        icon: Icons.forum_rounded,
-                        stats: _buildHeaderStats(l10n),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: _buildFilters(isDark, l10n, r, threads.length),
-                    ),
-                    if (threads.isEmpty)
-                      SliverFillRemaining(
-                        child: TADiscussionEmptyState(
-                          isDark: isDark,
-                          icon: Icons.chat_bubble_outline_rounded,
-                          title: l10n.instructorDiscussionNoPostsTitle,
-                          message: l10n.instructorDiscussionNoPostsSubtitle,
-                          action: FilledButton.icon(
-                            onPressed: _submitting ? null : _createPost,
-                            style: FilledButton.styleFrom(
-                              backgroundColor: TAColors.primary,
-                              foregroundColor: Colors.white,
-                            ),
-                            icon: const Icon(Icons.add_rounded),
-                            label: Text(l10n.instructorDiscussionCreatePost),
-                          ),
-                        ),
-                      )
-                    else
-                      SliverPadding(
-                        padding: const EdgeInsets.all(16),
-                        sliver: SliverList(
-                          delegate: SliverChildBuilderDelegate((context, index) {
-                            final thread = threads[index];
-                            return _buildThreadCard(
-                              context,
-                              thread,
-                              isDark,
-                              l10n,
-                              viewer,
-                              index,
-                            );
-                          }, childCount: threads.length),
-                        ),
-                      ),
-                  ],
-                ],
-              ),
-            ),
-          ),
+          body: SafeArea(child: scrollBody),
         );
       },
+    );
+  }
+
+  Widget _buildEmbeddedHeader(bool isDark, AppLocalizations l10n) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  l10n.discussions,
+                  style: TextStyle(
+                    color: TAColors.textPrimaryColor(isDark),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.instructorCourseDiscussionHeaderSubtitle,
+                  style: TextStyle(
+                    color: TAColors.textSecondaryColor(isDark),
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          FilledButton.icon(
+            onPressed: _submitting ? null : _createPost,
+            style: FilledButton.styleFrom(
+              backgroundColor: TAColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            icon: _submitting
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Icon(Icons.add_comment_rounded, size: 18),
+            label: Text(l10n.instructorDiscussionCreatePost),
+          ),
+        ],
+      ),
     );
   }
 

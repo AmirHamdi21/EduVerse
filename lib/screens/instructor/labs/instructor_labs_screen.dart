@@ -30,6 +30,7 @@ class InstructorLabsScreen extends StatelessWidget {
     this.storageService,
     this.canManageLabs = true,
     this.initialCourseId,
+    this.embedded = false,
   });
 
   final LabService? labService;
@@ -37,6 +38,7 @@ class InstructorLabsScreen extends StatelessWidget {
   final StorageService? storageService;
   final bool canManageLabs;
   final int? initialCourseId;
+  final bool embedded;
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,7 @@ class InstructorLabsScreen extends StatelessWidget {
       child: _InstructorLabsView(
         canManageLabs: canManageLabs,
         storageService: resolvedStorage,
+        embedded: embedded,
       ),
     );
   }
@@ -67,10 +70,12 @@ class _InstructorLabsView extends StatefulWidget {
   const _InstructorLabsView({
     required this.canManageLabs,
     required this.storageService,
+    required this.embedded,
   });
 
   final bool canManageLabs;
   final StorageService storageService;
+  final bool embedded;
 
   @override
   State<_InstructorLabsView> createState() => _InstructorLabsViewState();
@@ -145,6 +150,56 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
           },
           builder: (context, state) {
             final cubit = context.read<InstructorLabsCubit>();
+
+            if (widget.embedded) {
+              return Container(
+                color: InstructorColors.background(isDark),
+                child: RefreshIndicator(
+                  onRefresh: () => cubit.loadLabs(),
+                  color: InstructorColors.primary,
+                  child: CustomScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    slivers: [
+                      if (_resolvedCanManage && state is InstructorLabsLoaded)
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: FilledButton.icon(
+                                onPressed: () => _openCreateOrEditSheet(context, state),
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: InstructorColors.primary,
+                                  foregroundColor: Colors.white,
+                                ),
+                                icon: const Icon(Icons.add_rounded),
+                                label: Text(l10n.taLabsCreateLab),
+                              ),
+                            ),
+                          ),
+                        ),
+                      if (state is InstructorLabsLoading ||
+                          state is InstructorLabsInitial) ...[
+                        _buildLoadingHeader(isDark, l10n),
+                        _buildLoadingSkeleton(isDark),
+                      ] else if (state is InstructorLabsError) ...[
+                        SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: _buildErrorState(isDark, l10n, state.message),
+                        ),
+                      ] else ...[
+                        _buildLoadedContent(
+                          context,
+                          isDark,
+                          l10n,
+                          state as InstructorLabsLoaded,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              );
+            }
 
             return Scaffold(
               backgroundColor: InstructorColors.background(isDark),

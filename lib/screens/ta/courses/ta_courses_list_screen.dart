@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../bloc/theme/theme_bloc.dart';
-import '../../../bloc/theme/theme_state.dart';
-import '../../../bloc/theme/theme_event.dart';
+
 import '../../../bloc/ta/ta_courses_cubit.dart';
 import '../../../bloc/ta/ta_courses_state.dart';
-import '../../../models/instructor/teaching_course_model.dart';
+import '../../../bloc/theme/theme_bloc.dart';
+import '../../../bloc/theme/theme_event.dart';
+import '../../../bloc/theme/theme_state.dart';
+import '../../../common/utils/ta_courses_theme.dart';
 import '../../../generated_l10n/app_localizations.dart';
-import '../../../widgets/ta/shared/ta_colors.dart';
+import '../../../models/instructor/extended_course_model.dart';
+import '../../../models/instructor/teaching_course_model.dart';
+import '../../../widgets/ta/courses/ta_course_search_bar.dart';
+import '../../../widgets/ta/courses/ta_courses_header.dart';
+import '../../../widgets/ta/courses/ta_courses_list_view.dart';
+import '../../../widgets/ta/courses/ta_level_filter_button.dart';
+import '../../../widgets/ta/courses/ta_sort_button.dart';
 import '../../../widgets/ta/dashboard/ta_drawer.dart';
 
 class TACoursesListScreen extends StatefulWidget {
@@ -20,13 +27,167 @@ class TACoursesListScreen extends StatefulWidget {
 
 class _TACoursesListScreenState extends State<TACoursesListScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String _selectedFilter = 'all';
+  final TextEditingController _searchController = TextEditingController();
+
+  String _searchQuery = '';
+  String _selectedStatus = 'all';
+  String _selectedCategory = 'all';
+  CourseSortOption _sortOption = CourseSortOption.newest;
+  CourseViewType _viewType = CourseViewType.grid;
+
+  final List<String> _categories = <String>[
+    'all',
+    'FRESHMAN',
+    'SOPHOMORE',
+    'JUNIOR',
+    'SENIOR',
+    'GRADUATE',
+  ];
+
+  static const Map<String, String> _levelLabels = <String, String>{
+    'all': 'All Levels',
+    'FRESHMAN': 'Freshman',
+    'SOPHOMORE': 'Sophomore',
+    'JUNIOR': 'Junior',
+    'SENIOR': 'Senior',
+    'GRADUATE': 'Graduate',
+  };
 
   @override
   void initState() {
     super.initState();
-    // T006: Dispatch TA-specific cubit fetch
     context.read<TACoursesCubit>().fetchTACourses();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<TeachingCourseModel> _coursesFromState(TACoursesState state) {
+    final status = state.coursesStatus;
+    if (status is TASubTabLoaded<List<TeachingCourseModel>>) {
+      return status.data;
+    }
+    return <TeachingCourseModel>[];
+  }
+
+  int _studentCountFor(TACoursesState state, TeachingCourseModel course) {
+    return state.sectionStudentCounts[course.sectionId] ?? course.enrolledCount;
+  }
+
+  int _totalStudents(TACoursesState state, List<TeachingCourseModel> courses) {
+    return courses.fold<int>(
+      0,
+      (sum, course) => sum + _studentCountFor(state, course),
+    );
+  }
+
+  String _normalizeStatus(String? value) {
+    switch ((value ?? '').trim().toLowerCase()) {
+      case 'draft':
+        return 'draft';
+      case 'archived':
+      case 'inactive':
+        return 'archived';
+      case 'published':
+      case 'active':
+      default:
+        return 'active';
+    }
+  }
+
+  String _normalizeLevel(String? value) {
+    final normalized = (value ?? '').trim().toUpperCase();
+    if (normalized.isEmpty || normalized == 'UNKNOWN') {
+      return 'UNKNOWN';
+    }
+    return normalized;
+  }
+
+  String _levelLabel(String level) {
+    return _levelLabels[level] ?? level;
+  }
+
+  List<TeachingCourseModel> _filteredCourses(
+    TACoursesState state,
+    List<TeachingCourseModel> courses,
+  ) {
+    final filtered = courses.where((course) {
+      final query = _searchQuery.toLowerCase();
+      final matchesSearch =
+          query.isEmpty ||
+          course.course.courseName.toLowerCase().contains(query) ||
+          course.course.courseCode.toLowerCase().contains(query) ||
+          (course.course.departmentName ?? '').toLowerCase().contains(query) ||
+          course.semester.name.toLowerCase().contains(query);
+
+      final matchesStatus =
+          _selectedStatus == 'all' ||
+          _normalizeStatus(course.course.status) == _selectedStatus;
+      final matchesCategory =
+          _selectedCategory == 'all' ||
+          _normalizeLevel(course.course.level) == _selectedCategory;
+
+      return matchesSearch && matchesStatus && matchesCategory;
+    }).toList();
+
+    switch (_sortOption) {
+      case CourseSortOption.newest:
+        filtered.sort((a, b) {
+          final aDate =
+              a.course.createdAt ?? a.semester.startDate ?? DateTime.now();
+          final bDate =
+              b.course.createdAt ?? b.semester.startDate ?? DateTime.now();
+          return bDate.compareTo(aDate);
+        });
+        break;
+      case CourseSortOption.oldest:
+        filtered.sort((a, b) {
+          final aDate =
+              a.course.createdAt ?? a.semester.startDate ?? DateTime.now();
+          final bDate =
+              b.course.createdAt ?? b.semester.startDate ?? DateTime.now();
+          return aDate.compareTo(bDate);
+        });
+        break;
+      case CourseSortOption.mostStudents:
+        filtered.sort(
+          (a, b) =>
+              _studentCountFor(state, b).compareTo(_studentCountFor(state, a)),
+        );
+        break;
+      case CourseSortOption.leastStudents:
+        filtered.sort(
+          (a, b) =>
+              _studentCountFor(state, a).compareTo(_studentCountFor(state, b)),
+        );
+        break;
+      case CourseSortOption.alphabetical:
+        filtered.sort(
+          (a, b) => a.course.courseName.compareTo(b.course.courseName),
+        );
+        break;
+      case CourseSortOption.reverseAlphabetical:
+        filtered.sort(
+          (a, b) => b.course.courseName.compareTo(a.course.courseName),
+        );
+        break;
+      case CourseSortOption.mostEngagement:
+        filtered.sort((a, b) {
+          final aScore =
+              (a.attendanceRate ?? (_studentCountFor(state, a) / (a.capacity <= 0 ? 1 : a.capacity))) *
+              100;
+          final bScore =
+              (b.attendanceRate ?? (_studentCountFor(state, b) / (b.capacity <= 0 ? 1 : b.capacity))) *
+              100;
+          return bScore.compareTo(aScore);
+        });
+        break;
+    }
+
+    return filtered;
   }
 
   @override
@@ -38,31 +199,104 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
 
         return Scaffold(
           key: _scaffoldKey,
-          backgroundColor: TAColors.scaffoldColor(isDark),
+          backgroundColor: TACoursesTheme.scaffoldBackground(isDark),
           drawer: TADrawer(currentRoute: '/ta/courses', isDark: isDark),
-          body: SafeArea(
-            // T006: Wrap with BlocBuilder for CoursesBloc state management
-            child: BlocBuilder<TACoursesCubit, TACoursesState>(
-              builder: (context, taState) {
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    await context.read<TACoursesCubit>().fetchTACourses();
-                  },
-                  color: TAColors.primary,
-                  child: CustomScrollView(
-                    slivers: [
-                      _buildAppBar(isDark, l10n),
-                      SliverToBoxAdapter(
-                        child: _buildSummaryStats(isDark, l10n, taState),
-                      ),
-                      SliverToBoxAdapter(
-                        child: _buildFilterChips(isDark, l10n, taState),
-                      ),
-                      _buildContent(isDark, l10n, taState),
-                    ],
-                  ),
-                );
-              },
+          body: DecoratedBox(
+            decoration: TACoursesTheme.scaffoldDecoration(isDark),
+            child: SafeArea(
+              child: BlocBuilder<TACoursesCubit, TACoursesState>(
+                builder: (context, taState) {
+                  final courses = _coursesFromState(taState);
+                  final filteredCourses = _filteredCourses(taState, courses);
+
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      final maxWidth = TACoursesTheme.maxContentWidth(
+                        constraints.maxWidth,
+                      );
+                      final screenPadding = TACoursesTheme.screenPadding(
+                        constraints.maxWidth,
+                      );
+
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          await context.read<TACoursesCubit>().fetchTACourses();
+                        },
+                        color: TACoursesTheme.brandPrimary,
+                        backgroundColor: TACoursesTheme.cardBackground(isDark),
+                        child: CustomScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(
+                            parent: ClampingScrollPhysics(),
+                          ),
+                          slivers: [
+                            SliverToBoxAdapter(
+                              child: Center(
+                                child: ConstrainedBox(
+                                  constraints: BoxConstraints(maxWidth: maxWidth),
+                                  child: Padding(
+                                    padding: screenPadding,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        TACoursesHeader(
+                                          title: l10n.taCourses,
+                                          subtitle: l10n.taCoursesShellSubtitle,
+                                          onMenuTap: () {
+                                            _scaffoldKey.currentState?.openDrawer();
+                                          },
+                                          searchBar: TACourseSearchBar(
+                                            controller: _searchController,
+                                            onSearchChanged: (query) {
+                                              setState(() {
+                                                _searchQuery = query;
+                                              });
+                                            },
+                                            hintText: l10n.searchCourses,
+                                            clearTooltip: l10n.clearFilters,
+                                          ),
+                                          trailingAction: _buildHeaderActions(
+                                            isDark,
+                                          ),
+                                          stats: _buildHeroStats(
+                                            isDark: isDark,
+                                            l10n: l10n,
+                                            courses: courses,
+                                            state: taState,
+                                            maxWidth: maxWidth,
+                                          ),
+                                          tabBar: _buildStatusTabs(l10n),
+                                        ),
+                                        const SizedBox(height: 18),
+                                        _buildToolbar(
+                                          isDark: isDark,
+                                          l10n: l10n,
+                                          filteredCount: filteredCourses.length,
+                                          maxWidth: maxWidth,
+                                        ),
+                                        const SizedBox(height: 22),
+                                        _buildContent(
+                                          state: taState,
+                                          isDark: isDark,
+                                          l10n: l10n,
+                                          courses: courses,
+                                          filteredCourses: filteredCourses,
+                                          maxWidth: maxWidth,
+                                        ),
+                                        const SizedBox(height: 24),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ),
         );
@@ -70,442 +304,502 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
     );
   }
 
-  /// Extract the list of teaching courses from the current cubit state.
-  List<TeachingCourseModel> _getCoursesFromState(TACoursesState state) {
-    final status = state.coursesStatus;
-    if (status is TASubTabLoaded<List<TeachingCourseModel>>) {
-      return status.data;
-    }
-    return [];
-  }
-
-  List<TeachingCourseModel> _getFilteredCourses(TACoursesState state) {
-    final courses = _getCoursesFromState(state);
-    if (_selectedFilter == 'all') return courses;
-
-    if (_selectedFilter == 'pending') {
-      // Filter courses with pending grading
-      // Note: Pending grading data needs to be loaded first via cubit.fetchPendingGrading(courseId)
-      // For now, show all courses as fallback
-      return courses;
-    }
-
-    return courses;
-  }
-
-  int _getTotalStudents(TACoursesState state) {
-    final courses = _getCoursesFromState(state);
-
-    // Use live counts if available
-    if (state.sectionStudentCounts.isNotEmpty) {
-      return courses.fold<int>(
-        0,
-        (sum, tc) => sum + (state.sectionStudentCounts[tc.sectionId] ?? 0),
-      );
-    }
-
-    // Fallback to section counter
-    return courses.fold<int>(
-      0,
-      (sum, tc) => sum + tc.section.currentEnrollment,
-    );
-  }
-
-  SliverAppBar _buildAppBar(bool isDark, AppLocalizations l10n) {
-    return SliverAppBar(
-      backgroundColor: TAColors.scaffoldColor(isDark),
-      surfaceTintColor: Colors.transparent,
-      leading: IconButton(
-        onPressed: () => _scaffoldKey.currentState?.openDrawer(),
-        icon: Icon(
-          Icons.menu_rounded,
-          color: TAColors.textPrimaryColor(isDark),
-        ),
-      ),
-      title: Text(
-        l10n.taCourses,
-        style: TextStyle(
-          color: TAColors.textPrimaryColor(isDark),
-          fontSize: 20,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-      actions: [
-        IconButton(
-          onPressed: () {
-            context.read<ThemeBloc>().add(const ToggleThemeEvent());
-          },
-          icon: Icon(
-            isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-            color: TAColors.textSecondaryColor(isDark),
+  Widget _buildHeaderActions(bool isDark) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(3),
+          decoration: BoxDecoration(
+            color: isDark
+                ? TACoursesTheme.darkSurfaceRaised
+                : Colors.white.withValues(alpha: 0.96),
+            borderRadius: TACoursesTheme.pillRadius,
+            border: Border.all(color: TACoursesTheme.borderColor(isDark)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.12 : 0.08),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildViewToggle(
+                icon: Icons.grid_view_rounded,
+                type: CourseViewType.grid,
+                isDark: isDark,
+              ),
+              const SizedBox(width: 2),
+              _buildViewToggle(
+                icon: Icons.view_list_rounded,
+                type: CourseViewType.list,
+                isDark: isDark,
+              ),
+              const SizedBox(width: 2),
+              _buildViewToggle(
+                icon: Icons.view_headline_rounded,
+                type: CourseViewType.compact,
+                isDark: isDark,
+              ),
+            ],
           ),
         ),
         const SizedBox(width: 8),
-      ],
-      floating: true,
-      snap: true,
-    );
-  }
-
-  Widget _buildSummaryStats(
-    bool isDark,
-    AppLocalizations l10n,
-    TACoursesState state,
-  ) {
-    final courses = _getCoursesFromState(state);
-    final totalStudents = _getTotalStudents(state);
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            TAColors.primary.withValues(alpha: isDark ? 0.25 : 0.15),
-            TAColors.primary.withValues(alpha: isDark ? 0.1 : 0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+        SizedBox(
+          width: 52,
+          height: 52,
+          child: IconButton(
+            padding: EdgeInsets.zero,
+            onPressed: () {
+              context.read<ThemeBloc>().add(const ToggleThemeEvent());
+            },
+            icon: AnimatedContainer(
+              duration: const Duration(milliseconds: 220),
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? TACoursesTheme.darkSurfaceRaised
+                    : Colors.white.withValues(alpha: 0.96),
+                borderRadius: TACoursesTheme.pillRadius,
+                border: Border.all(color: TACoursesTheme.borderColor(isDark)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.12 : 0.08),
+                    blurRadius: 14,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Icon(
+                isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                color: TACoursesTheme.primaryText(isDark),
+                size: 20,
+              ),
+            ),
+          ),
         ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: TAColors.primary.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildSummaryStatItem(
-              icon: Icons.school_rounded,
-              value: '${courses.length}',
-              label: l10n.courses,
-              color: TAColors.primary,
-              isDark: isDark,
-            ),
-          ),
-          Container(width: 1, height: 40, color: TAColors.borderColor(isDark)),
-          Expanded(
-            child: _buildSummaryStatItem(
-              icon: Icons.people_rounded,
-              value: '$totalStudents',
-              label: l10n.taCourseStudents,
-              color: TAColors.teal,
-              isDark: isDark,
-            ),
-          ),
-          Container(width: 1, height: 40, color: TAColors.borderColor(isDark)),
-          Expanded(
-            child: _buildSummaryStatItem(
-              icon: Icons.assignment_late_rounded,
-              value: '0',
-              label: l10n.pending,
-              color: TAColors.warning,
-              isDark: isDark,
-            ),
-          ),
-        ],
-      ),
+      ],
     );
   }
 
-  Widget _buildSummaryStatItem({
+  Widget _buildViewToggle({
     required IconData icon,
-    required String value,
-    required String label,
-    required Color color,
+    required CourseViewType type,
     required bool isDark,
   }) {
-    return Column(
-      children: [
-        Icon(icon, size: 22, color: color),
-        const SizedBox(height: 6),
-        Text(
-          value,
-          style: TextStyle(
-            color: TAColors.textPrimaryColor(isDark),
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
+    final isSelected = _viewType == type;
+    return SizedBox(
+      width: 48,
+      height: 48,
+      child: GestureDetector(
+        onTap: () => setState(() => _viewType = type),
+        child: Center(
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              gradient: isSelected ? TACoursesTheme.primaryGradient : null,
+              color: isSelected ? null : Colors.transparent,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: isSelected
+                  ? [
+                      BoxShadow(
+                        color: TACoursesTheme.brandPrimary.withValues(
+                          alpha: 0.28,
+                        ),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Icon(
+              icon,
+              size: 18,
+              color: isSelected
+                  ? Colors.white
+                  : TACoursesTheme.secondaryText(isDark),
+            ),
           ),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            color: TAColors.textSecondaryColor(isDark),
-            fontSize: 11,
-          ),
-        ),
-      ],
+      ),
     );
   }
 
-  Widget _buildFilterChips(
-    bool isDark,
-    AppLocalizations l10n,
-    TACoursesState state,
-  ) {
+  Widget _buildStatusTabs(AppLocalizations l10n) {
+    Widget buildTab({required String label, required String value}) {
+      final selected = _selectedStatus == value;
+      return GestureDetector(
+        onTap: () {
+          setState(() {
+            _selectedStatus = value;
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.only(bottom: 10),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: selected ? Colors.white : Colors.transparent,
+                width: 3,
+              ),
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: selected
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.68),
+              fontSize: 14,
+              fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          _buildFilterChip(
-            label: l10n.taCourseFilterAll,
-            value: 'all',
-            isDark: isDark,
-          ),
-          const SizedBox(width: 8),
-          _buildFilterChip(
-            label: l10n.taCourseGradingPending,
-            value: 'pending',
-            isDark: isDark,
-          ),
+          buildTab(label: l10n.all, value: 'all'),
+          const SizedBox(width: 20),
+          buildTab(label: l10n.activeLabel, value: 'active'),
+          const SizedBox(width: 20),
+          buildTab(label: l10n.draft, value: 'draft'),
+          const SizedBox(width: 20),
+          buildTab(label: l10n.archived, value: 'archived'),
         ],
       ),
     );
   }
 
-  Widget _buildFilterChip({
-    required String label,
-    required String value,
+  Widget _buildHeroStats({
     required bool isDark,
-    String? badge,
+    required AppLocalizations l10n,
+    required List<TeachingCourseModel> courses,
+    required TACoursesState state,
+    required double maxWidth,
   }) {
-    final isSelected = _selectedFilter == value;
+    final activeCourses = courses
+        .where((course) => _normalizeStatus(course.course.status) == 'active')
+        .length;
+    final averageFill = courses.isEmpty
+        ? 0
+        : (courses.fold<double>(0, (sum, course) {
+            final count = _studentCountFor(state, course);
+            final fill = course.capacity <= 0 ? 0 : count / course.capacity;
+            return sum + fill.clamp(0.0, 1.0);
+          }) /
+                  courses.length *
+                  100)
+              .round();
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () => setState(() => _selectedFilter = value),
-        borderRadius: BorderRadius.circular(10),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected ? TAColors.primary : TAColors.cardColor(isDark),
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: isSelected
-                  ? TAColors.primary
-                  : TAColors.borderColor(isDark),
-            ),
-          ),
-          child: Row(
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  color: isSelected
-                      ? Colors.white
-                      : TAColors.textPrimaryColor(isDark),
-                  fontSize: 13,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                ),
-              ),
-              if (badge != null) ...[
-                const SizedBox(width: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? Colors.white.withValues(alpha: 0.2)
-                        : TAColors.warning.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    badge,
-                    style: TextStyle(
-                      color: isSelected ? Colors.white : TAColors.warning,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
+    final stats = <({IconData icon, String value, String label, Color color})>[
+      (
+        icon: Icons.library_books_outlined,
+        value: '${courses.length}',
+        label: l10n.totalCourses,
+        color: const Color(0xFF34D399),
+      ),
+      (
+        icon: Icons.groups_rounded,
+        value: '${_totalStudents(state, courses)}',
+        label: l10n.totalStudentsLabel,
+        color: const Color(0xFF60A5FA),
+      ),
+      (
+        icon: Icons.check_circle_outline_rounded,
+        value: '$activeCourses',
+        label: l10n.activeLabel,
+        color: const Color(0xFFF472B6),
+      ),
+      (
+        icon: Icons.pie_chart_outline_rounded,
+        value: '$averageFill%',
+        label: l10n.taCoursesAvgFill,
+        color: const Color(0xFFFBBF24),
+      ),
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth = constraints.maxWidth > 0
+            ? constraints.maxWidth
+            : maxWidth;
+        final crossAxisCount = availableWidth < 360
+            ? 2
+            : (availableWidth >= 720 ? 4 : 2);
+        const spacing = 8.0;
+        final itemWidth =
+            (availableWidth - (spacing * (crossAxisCount - 1))) /
+            crossAxisCount;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: stats
+              .map(
+                (stat) => SizedBox(
+                  width: itemWidth,
+                  child: Container(
+                    constraints: const BoxConstraints(minHeight: 76),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.12),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(stat.icon, color: stat.color, size: 14),
+                        const SizedBox(height: 8),
+                        Text(
+                          stat.value,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          stat.label,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white.withValues(alpha: 0.82),
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w600,
+                            height: 1.2,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ],
-          ),
-        ),
-      ),
+              )
+              .toList(growable: false),
+        );
+      },
     );
   }
 
-  Widget _buildContent(
-    bool isDark,
-    AppLocalizations l10n,
-    TACoursesState state,
-  ) {
-    final status = state.coursesStatus;
+  Widget _buildToolbar({
+    required bool isDark,
+    required AppLocalizations l10n,
+    required int filteredCount,
+    required double maxWidth,
+  }) {
+    final description = _toolbarDescription(l10n);
 
-    // Loading state — show skeleton loaders
-    if (status is TASubTabLoading<List<TeachingCourseModel>>) {
-      return SliverPadding(
-        padding: const EdgeInsets.all(16),
-        sliver: SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => _buildSkeletonCard(isDark),
-            childCount: 3,
+    final menus = Row(
+      children: [
+        Expanded(
+          child: TASortButton(
+            selectedSort: _sortOption,
+            onSortChanged: (sort) {
+              setState(() {
+                _sortOption = sort;
+              });
+            },
           ),
         ),
-      );
-    }
-
-    // Error state — show retry
-    if (status is TASubTabError<List<TeachingCourseModel>>) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: TAColors.error.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.error_outline_rounded,
-                  size: 48,
-                  color: TAColors.error,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'Failed to load courses',
-                style: TextStyle(
-                  color: TAColors.textPrimaryColor(isDark),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                status.message,
-                style: TextStyle(
-                  color: TAColors.textSecondaryColor(isDark),
-                  fontSize: 14,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: () {
-                  context.read<TACoursesCubit>().fetchTACourses();
-                },
-                icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Retry'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: TAColors.primary,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ],
+        const SizedBox(width: 10),
+        Expanded(
+          child: TALevelFilterButton(
+            selectedCategory: _selectedCategory,
+            categories: _categories,
+            labelBuilder: _levelLabel,
+            onCategoryChanged: (category) {
+              setState(() {
+                _selectedCategory = category;
+              });
+            },
           ),
         ),
-      );
-    }
-
-    final filteredCourses = _getFilteredCourses(state);
-
-    // T008: Empty state
-    if (filteredCourses.isEmpty) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: TAColors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.school_rounded,
-                  size: 48,
-                  color: TAColors.primary,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                'No Courses Assigned',
-                style: TextStyle(
-                  color: TAColors.textPrimaryColor(isDark),
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'You are not assigned to any courses yet.',
-                style: TextStyle(
-                  color: TAColors.textSecondaryColor(isDark),
-                  fontSize: 14,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    // T007: Render TeachingCourseModel instances into list UI elements
-    return SliverPadding(
-      padding: const EdgeInsets.all(16),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-          final course = filteredCourses[index];
-          return _buildCourseCard(course, isDark, l10n, state);
-        }, childCount: filteredCourses.length),
-      ),
+      ],
     );
-  }
 
-  /// Skeleton loading card for Constitution Principle IV compliance.
-  Widget _buildSkeletonCard(bool isDark) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: TAColors.cardColor(isDark),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
-        ),
-      ),
-      child: Column(
+    if (maxWidth < 760) {
+      return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              _skeletonBox(isDark, width: 52, height: 52, radius: 14),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _skeletonBox(isDark, width: 80, height: 12, radius: 4),
-                    const SizedBox(height: 6),
-                    _skeletonBox(isDark, width: 160, height: 16, radius: 4),
-                    const SizedBox(height: 4),
-                    _skeletonBox(isDark, width: 120, height: 12, radius: 4),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _skeletonBox(isDark, width: double.infinity, height: 3, radius: 2),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(child: _skeletonBox(isDark, height: 60, radius: 10)),
-              const SizedBox(width: 10),
-              Expanded(child: _skeletonBox(isDark, height: 60, radius: 10)),
-              const SizedBox(width: 10),
-              Expanded(child: _skeletonBox(isDark, height: 60, radius: 10)),
-            ],
-          ),
+          _buildToolbarHeading(isDark, l10n, filteredCount, description),
+          const SizedBox(height: 12),
+          menus,
         ],
+      );
+    }
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _buildToolbarHeading(isDark, l10n, filteredCount, description),
+        ),
+        const SizedBox(width: 16),
+        Expanded(flex: 2, child: menus),
+      ],
+    );
+  }
+
+  String _toolbarDescription(AppLocalizations l10n) {
+    final statusLabel = switch (_selectedStatus) {
+      'active' => l10n.activeLabel,
+      'draft' => l10n.draft,
+      'archived' => l10n.archived,
+      _ => l10n.all,
+    };
+    final levelLabel = _levelLabel(_selectedCategory);
+
+    if (_selectedStatus == 'all' && _selectedCategory == 'all') {
+      return l10n.taCoursesAllSpaces;
+    }
+    if (_selectedStatus != 'all' && _selectedCategory != 'all') {
+      return '$statusLabel • $levelLabel';
+    }
+    return _selectedStatus != 'all' ? statusLabel : levelLabel;
+  }
+
+  Widget _buildToolbarHeading(
+    bool isDark,
+    AppLocalizations l10n,
+    int filteredCount,
+    String description,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$filteredCount ${l10n.courses}',
+          style: TextStyle(
+            color: TACoursesTheme.primaryText(isDark),
+            fontSize: 26,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          description,
+          style: TextStyle(
+            color: TACoursesTheme.secondaryText(isDark),
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContent({
+    required TACoursesState state,
+    required bool isDark,
+    required AppLocalizations l10n,
+    required List<TeachingCourseModel> courses,
+    required List<TeachingCourseModel> filteredCourses,
+    required double maxWidth,
+  }) {
+    final status = state.coursesStatus;
+
+    if (status is TASubTabLoading<List<TeachingCourseModel>> && courses.isEmpty) {
+      return _buildSkeletonLoader(isDark, maxWidth);
+    }
+
+    if (status is TASubTabError<List<TeachingCourseModel>> && courses.isEmpty) {
+      return _buildErrorState(isDark, l10n, status.message);
+    }
+
+    if (courses.isEmpty) {
+      return _buildEmptyState(isDark, l10n);
+    }
+
+    if (filteredCourses.isEmpty) {
+      return _buildNoFilterResults(isDark, l10n);
+    }
+
+    return TACoursesListView(
+      courses: filteredCourses,
+      studentCounts: state.sectionStudentCounts,
+      viewType: _viewType,
+      onTap: (course) => context.push('/ta/course/${course.sectionId}'),
+      onLabsTap: (_) => context.push('/ta/labs'),
+      onGradingTap: (course) => context.push('/ta/grading?courseId=${course.courseId}'),
+      onDiscussionsTap: (course) =>
+          context.push('/ta/course/${course.courseId}/discussions'),
+    );
+  }
+
+  Widget _buildSkeletonLoader(bool isDark, double maxWidth) {
+    final count = maxWidth >= 960 ? 2 : 3;
+    return Column(
+      children: List<Widget>.generate(
+        count,
+        (index) => Padding(
+          padding: const EdgeInsets.only(bottom: 18),
+          child: Container(
+            height: 260,
+            decoration: BoxDecoration(
+              color: TACoursesTheme.cardBackground(isDark),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(color: TACoursesTheme.borderColor(isDark)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  height: 110,
+                  decoration: BoxDecoration(
+                    color: (isDark ? Colors.white : TACoursesTheme.brandPrimary)
+                        .withValues(alpha: 0.12),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(27),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _skeletonBox(isDark, width: 170, height: 16),
+                      const SizedBox(height: 8),
+                      _skeletonBox(isDark, width: 120, height: 12),
+                      const SizedBox(height: 18),
+                      Row(
+                        children: List.generate(
+                          3,
+                          (index) => Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                right: index == 2 ? 0 : 10,
+                              ),
+                              child: _skeletonBox(
+                                isDark,
+                                height: 42,
+                                radius: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -520,341 +814,179 @@ class _TACoursesListScreenState extends State<TACoursesListScreen> {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: TAColors.borderColor(isDark).withValues(alpha: 0.4),
+        color: TACoursesTheme.borderColor(isDark).withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(radius),
       ),
     );
   }
 
-  /// T007: Build a course card from a live TeachingCourseModel instance.
-  Widget _buildCourseCard(
-    TeachingCourseModel tc,
-    bool isDark,
-    AppLocalizations l10n,
-    TACoursesState state,
-  ) {
-    final courseColor = _getCourseColor(tc.courseId);
+  Widget _buildEmptyState(bool isDark, AppLocalizations l10n) {
+    return _buildEmptyMessage(
+      isDark: isDark,
+      title: l10n.taCoursesNoAssignedTitle,
+      subtitle: l10n.taCoursesNoAssignedSubtitle,
+      buttonLabel: l10n.refresh,
+      icon: Icons.school_rounded,
+      onPressed: () {
+        context.read<TACoursesCubit>().fetchTACourses();
+      },
+    );
+  }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      decoration: BoxDecoration(
-        color: TAColors.cardColor(isDark),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: TAColors.borderColor(isDark).withValues(alpha: 0.5),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () => context.push('/ta/course/${tc.sectionId}'),
-          borderRadius: BorderRadius.circular(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with gradient
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      courseColor.withValues(alpha: isDark ? 0.25 : 0.15),
-                      courseColor.withValues(alpha: isDark ? 0.1 : 0.05),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(16),
-                    topRight: Radius.circular(16),
-                  ),
+  Widget _buildNoFilterResults(bool isDark, AppLocalizations l10n) {
+    return _buildEmptyMessage(
+      isDark: isDark,
+      title: l10n.taCoursesNoMatchingTitle,
+      subtitle: l10n.taCoursesNoMatchingSubtitle,
+      buttonLabel: l10n.clearFilters,
+      icon: Icons.filter_alt_off_rounded,
+      onPressed: _clearAllFilters,
+    );
+  }
+
+  Widget _buildErrorState(bool isDark, AppLocalizations l10n, String message) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: TACoursesTheme.errorRed.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.wifi_off_rounded,
+                size: 40,
+                color: TACoursesTheme.errorRed,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              'Unable to load courses',
+              style: TextStyle(
+                color: TACoursesTheme.primaryText(isDark),
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: TACoursesTheme.secondaryText(isDark),
+                fontSize: 14,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 18),
+            ElevatedButton.icon(
+              onPressed: () {
+                context.read<TACoursesCubit>().fetchTACourses();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: TACoursesTheme.brandPrimary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
                 ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 52,
-                      height: 52,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            courseColor,
-                            courseColor.withValues(alpha: 0.7),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: [
-                          BoxShadow(
-                            color: courseColor.withValues(alpha: 0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          tc.course.courseCode.replaceAll(
-                            RegExp(r'[^A-Z]'),
-                            '',
-                          ),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                tc.course.courseCode,
-                                style: TextStyle(
-                                  color: courseColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 6,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: TAColors.teal.withValues(alpha: 0.15),
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
-                                child: Text(
-                                  'Sec ${tc.section.sectionNumber}',
-                                  style: TextStyle(
-                                    color: TAColors.teal,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            tc.course.courseName,
-                            style: TextStyle(
-                              color: TAColors.textPrimaryColor(isDark),
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          Text(
-                            '${tc.semester.name} • ${tc.course.credits} credits',
-                            style: TextStyle(
-                              color: TAColors.textSecondaryColor(isDark),
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(
-                      Icons.arrow_forward_ios_rounded,
-                      size: 16,
-                      color: TAColors.textTertiaryColor(isDark),
-                    ),
-                  ],
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              // Stats Grid
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildStatCard(
-                        icon: Icons.people_rounded,
-                        value:
-                            '${state.sectionStudentCounts[tc.sectionId] ?? tc.section.currentEnrollment}',
-                        label: l10n.taCourseStudents,
-                        color: TAColors.primary,
-                        isDark: isDark,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _buildStatCard(
-                        icon: Icons.event_seat_rounded,
-                        value: '${tc.section.maxCapacity}',
-                        label: 'Capacity',
-                        color: TAColors.teal,
-                        isDark: isDark,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _buildStatCard(
-                        icon: Icons.location_on_rounded,
-                        value: tc.section.location ?? 'TBA',
-                        label: 'Location',
-                        color: TAColors.info,
-                        isDark: isDark,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Quick Actions
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                child: Row(
-                  children: [
-                    _buildQuickAction(
-                      icon: Icons.science_rounded,
-                      label: l10n.taCourseViewLabs,
-                      color: TAColors.primary,
-                      isDark: isDark,
-                      onTap: () => context.push('/ta/labs'),
-                    ),
-                    const SizedBox(width: 8),
-                    _buildQuickAction(
-                      icon: Icons.grading_rounded,
-                      label: l10n.taGrading,
-                      color: TAColors.warning,
-                      isDark: isDark,
-                      onTap: () {
-                        context.push('/ta/grading');
-                      },
-                    ),
-                    const SizedBox(width: 8),
-                    _buildQuickAction(
-                      icon: Icons.forum_rounded,
-                      label: l10n.taCourseDiscussionBtn,
-                      color: TAColors.teal,
-                      isDark: isDark,
-                      onTap: () {
-                        context.push('/ta/discussions');
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+              icon: const Icon(Icons.refresh_rounded),
+              label: Text(l10n.refresh),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildStatCard({
-    required IconData icon,
-    required String value,
-    required String label,
-    required Color color,
+  Widget _buildEmptyMessage({
     required bool isDark,
-    bool highlighted = false,
+    required String title,
+    required String subtitle,
+    required String buttonLabel,
+    required IconData icon,
+    required VoidCallback onPressed,
   }) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: highlighted
-            ? color.withValues(alpha: 0.1)
-            : TAColors.surfaceColor(isDark),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: highlighted
-              ? color.withValues(alpha: 0.3)
-              : TAColors.borderColor(isDark).withValues(alpha: 0.5),
-        ),
-      ),
+    return Padding(
+      padding: const EdgeInsets.all(32),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 16, color: color),
-          const SizedBox(height: 6),
+          Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  TACoursesTheme.brandPrimary.withValues(alpha: 0.1),
+                  TACoursesTheme.accentBlue.withValues(alpha: 0.1),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 64, color: TACoursesTheme.brandPrimary),
+          ),
+          const SizedBox(height: 24),
           Text(
-            value,
+            title,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: TAColors.textPrimaryColor(isDark),
-              fontSize: 16,
+              color: isDark ? Colors.white : TACoursesTheme.primaryText(isDark),
+              fontSize: 22,
               fontWeight: FontWeight.w700,
             ),
-            overflow: TextOverflow.ellipsis,
           ),
+          const SizedBox(height: 12),
           Text(
-            label,
+            subtitle,
+            textAlign: TextAlign.center,
             style: TextStyle(
-              color: TAColors.textSecondaryColor(isDark),
-              fontSize: 10,
+              color: isDark ? Colors.white60 : TACoursesTheme.secondaryText(isDark),
+              fontSize: 15,
+              height: 1.5,
             ),
-            overflow: TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 32),
+          ElevatedButton.icon(
+            onPressed: onPressed,
+            icon: Icon(icon == Icons.filter_alt_off_rounded
+                ? Icons.filter_alt_off_rounded
+                : Icons.refresh_rounded),
+            label: Text(buttonLabel),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: TACoursesTheme.brandPrimary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 16,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 0,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildQuickAction({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required bool isDark,
-    required VoidCallback onTap,
-  }) {
-    return Expanded(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: isDark ? 0.15 : 0.1),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: color.withValues(alpha: 0.3)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(icon, size: 14, color: color),
-                const SizedBox(width: 6),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// Deterministic color assignment based on courseId.
-  Color _getCourseColor(int courseId) {
-    final colors = [
-      TAColors.primary,
-      TAColors.teal,
-      TAColors.warning,
-      TAColors.info,
-      TAColors.success,
-    ];
-    return colors[courseId % colors.length];
+  void _clearAllFilters() {
+    _searchController.clear();
+    setState(() {
+      _searchQuery = '';
+      _selectedStatus = 'all';
+      _selectedCategory = 'all';
+      _sortOption = CourseSortOption.newest;
+    });
   }
 }

@@ -2271,6 +2271,12 @@
   "taAIAssistant": "مساعد الذكاء الاصطناعي للمعيد",
   "taCourses": "مقررات المعيد",
   "taCourseDetail": "تفاصيل المقرر",
+  "taCourseDetailHeroSubtitle": "تابع المواد والمعامل والتصحيح والطلاب لهذه الشعبة التعليمية من مكان واحد.",
+  "taCourseDetailContentEmpty": "ستظهر مواد المقرر هنا بمجرد نشرها لهذه الشعبة.",
+  "taCourseDetailOtherMaterials": "مواد أخرى",
+  "taCourseDetailOpenLabsWorkspace": "فتح مساحة المعامل",
+  "taCourseDetailNoAttendance": "ستظهر ملخصات الحضور هنا بعد تسجيل جلسات المعمل.",
+  "taCourseDetailNoStudents": "لا يوجد طلاب مخصصون لهذه الشعبة حالياً.",
   "taCourseStudents": "الطلاب",
   "taCourseLabs": "المختبرات",
   "taCourseAssignments": "الواجبات",
@@ -2319,6 +2325,26 @@
   "taCourseLabsTab": "المختبرات",
   "taCourseGradingTab": "التصحيح",
   "taCourseDiscussionsTab": "المناقشات",
+  "taCoursesShellSubtitle": "تابع الشعب المسندة إليك، وأعمال التصحيح، والمعامل، ونشاط النقاشات من مساحة عمل واحدة مركزة.",
+  "taCoursesAllSpaces": "كل مساحات الدعم",
+  "taCoursesAvgFill": "متوسط الامتلاء",
+  "taCoursesCourseActions": "إجراءات المقرر",
+  "taCoursesSectionFill": "نسبة امتلاء الشعبة",
+  "taCoursesEnrolledCount": "{current}/{capacity} مسجلون",
+  "@taCoursesEnrolledCount": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "taCoursesNoAssignedTitle": "لا توجد مقررات تدريس مسندة",
+  "taCoursesNoAssignedSubtitle": "ستظهر هنا المقررات المسندة إليك بمجرد توفرها.",
+  "taCoursesNoMatchingTitle": "لا توجد مقررات مطابقة لهذه الفلاتر",
+  "taCoursesNoMatchingSubtitle": "جرّب تعديل البحث أو تبويب الحالة أو فلتر المستوى لإظهار المزيد من المقررات.",
   "mainMenu": "القائمة الرئيسية",
   "aiTools": "أدوات الذكاء الاصطناعي",
   "connect": "التواصل",
@@ -5776,6 +5802,9 @@
   "attendanceCalendarSubtitle": "شاهد كيف يتوزع حضور هذا المقرر عبر الشهر.",
   "attendanceNoSessionsYet": "لا توجد جلسات حضور بعد",
   "attendanceNoSessionsMatchFilters": "لا توجد جلسات تطابق هذا العرض",
+  "instructorCourseDetailHeroSubtitle": "أدر محتوى المقرر وتابع التفاعل وحافظ على سير التدريس من مساحة واحدة مصقولة.",
+  "instructorCourseDetailNoSchedule": "لا يوجد جدول متاح لهذا القسم حتى الآن.",
+  "instructorCourseDetailNoActivity": "لا توجد أنشطة قادمة متاحة حتى الآن.",
   "chatVideoCallTooltip": "مكالمة فيديو",
   "chatVoiceCallTooltip": "مكالمة صوتية"
 }

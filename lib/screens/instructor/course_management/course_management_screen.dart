@@ -11,6 +11,7 @@ import '../../../bloc/materials/materials_event.dart';
 import '../../../bloc/materials/materials_state.dart';
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
+import '../../../common/utils/instructor_courses_theme.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/instructor/instructor_course_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
@@ -19,6 +20,7 @@ import '../../../models/materials/material_bundle_model.dart';
 import '../../../services/storage_service.dart';
 import '../materials/material_preview_screen.dart';
 import '../../../widgets/instructor/course_management/course_management_barrel.dart';
+import '../../../widgets/student/course_details/video_player_widget.dart';
 
 class CourseManagementScreen extends StatefulWidget {
   final InstructorCourseModel? course;
@@ -38,7 +40,10 @@ class CourseManagementScreen extends StatefulWidget {
 
 class _CourseManagementScreenState extends State<CourseManagementScreen>
     with SingleTickerProviderStateMixin {
+  static const int _studentsTabIndex = 7;
+
   late final StorageService _storageService;
+  final ScrollController _outerScrollController = ScrollController();
 
   late TabController _tabController;
   late InstructorCourseModel _course;
@@ -52,12 +57,13 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
   bool _hasCourseAccess = true;
   bool _canDeleteCourse = true;
   List<SectionStudentModel> _persistedStudents = const <SectionStudentModel>[];
+  String? _selectedHeroMaterialId;
 
   @override
   void initState() {
     super.initState();
     _storageService = widget.storageService ?? StorageService();
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 8, vsync: this);
     _tabController.addListener(_handleTabControllerChanged);
     _resolveRoleAccess();
     _course =
@@ -229,6 +235,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
 
   @override
   void dispose() {
+    _outerScrollController.dispose();
     _tabController.removeListener(_handleTabControllerChanged);
     _tabController.dispose();
     super.dispose();
@@ -267,6 +274,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
           students,
         );
 
+        final heroVideo = _resolveHeroVideo(materials);
+        final tabs = _buildTabs(l10n);
+
         return MultiBlocListener(
           listeners: [
             BlocListener<InstructorCoursesBloc, InstructorCoursesState>(
@@ -289,98 +299,769 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
             ),
           ],
           child: Scaffold(
-            backgroundColor: CMColors.bg(isDark),
-            body: NestedScrollView(
-              headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                CourseManagementAppBar(
-                  courseName: displayCourse.name,
-                  courseCode: displayCourse.code,
-                  isDark: isDark,
-                  onSettings: () => _showCourseSettings(context, isDark),
-                ),
-                SliverToBoxAdapter(
-                  child: CourseManagementHeader(
-                    course: displayCourse,
-                    isDark: isDark,
-                    l10n: l10n,
-                    tabController: _tabController,
-                    onTabSelected: _handleTabSelected,
-                    studentsCount: studentsCount,
-                    assignmentsCount: deadlines
-                        .where((item) => item.type == DeadlineType.assignment)
-                        .length,
-                    materialsCount: materials.length,
-                  ),
-                ),
-              ],
-              body: TabBarView(
-                controller: _tabController,
+            backgroundColor: InstructorCoursesTheme.scaffoldBackground(isDark),
+            floatingActionButton: _buildFAB(isDark, l10n),
+            body: Container(
+              decoration: InstructorCoursesTheme.scaffoldDecoration(isDark),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final maxWidth = InstructorCoursesTheme.maxContentWidth(
+                    constraints.maxWidth,
+                  );
+                  final screenPadding = InstructorCoursesTheme.screenPadding(
+                    constraints.maxWidth,
+                  );
+
+                  return NestedScrollView(
+                    controller: _outerScrollController,
+                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                      SliverToBoxAdapter(
+                        child: Center(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: maxWidth),
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                screenPadding.left,
+                                10,
+                                screenPadding.right,
+                                0,
+                              ),
+                              child: _buildTopChrome(
+                                context: context,
+                                isDark: isDark,
+                                l10n: l10n,
+                                displayCourse: displayCourse,
+                                heroVideo: heroVideo,
+                                materials: materials,
+                                studentsCount: overviewStudentsCount,
+                                assignmentsCount: deadlines
+                                    .where(
+                                      (item) =>
+                                          item.type == DeadlineType.assignment,
+                                    )
+                                    .length,
+                                averageGrade: teachingCourse?.averageGrade,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SliverPersistentHeader(
+                        pinned: true,
+                        delegate: _CourseManagementTabsHeaderDelegate(
+                          height: 86,
+                          child: Container(
+                            color: InstructorCoursesTheme.scaffoldBackground(
+                              isDark,
+                            ),
+                            child: Center(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(maxWidth: maxWidth),
+                                child: Padding(
+                                  padding: EdgeInsets.fromLTRB(
+                                    screenPadding.left,
+                                    12,
+                                    screenPadding.right,
+                                    12,
+                                  ),
+                                  child: _buildTabBar(
+                                    isDark: isDark,
+                                    tabs: tabs,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                    body: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: maxWidth),
+                        child: TabBarView(
+                          controller: _tabController,
+                          children: [
+                            MaterialsTab(
+                              materials: materials.isNotEmpty
+                                  ? materials.map(_mapCourseMaterialToLegacy).toList()
+                                  : displayCourse.materials,
+                              courseMaterials: materials,
+                              bundles: bundles,
+                              materialCountsByWeek: materialCountsByWeek,
+                              partialFailureMessage: _materialsFailureMessage,
+                              failedMaterialIds: _failedMaterialIds,
+                              onRetryFailedMaterials: _retryFailedMaterials,
+                              onToggleMaterialVisibility: _toggleMaterialVisibility,
+                              onEditMaterial: _editMaterial,
+                              onDeleteMaterial: _deleteMaterial,
+                              onToggleBundleVisibility:
+                                  _toggleBundleVisibility,
+                              onEditBundle: _editBundle,
+                              onDeleteBundle: _deleteBundle,
+                              onViewMaterial: (material) =>
+                                  _handleViewMaterial(material, materials),
+                              isDark: isDark,
+                              l10n: l10n,
+                            ),
+                            OverviewTab(
+                              course: displayCourse,
+                              isDark: isDark,
+                              l10n: l10n,
+                              courseId: _resolvedCourseId,
+                              deadlines: deadlines,
+                              studentsCount: overviewStudentsCount,
+                              averageGrade: teachingCourse?.averageGrade,
+                              engagementMetrics: engagementMetrics,
+                              schedules:
+                                  teachingCourse?.section.schedules ??
+                                  const [],
+                              onCreateAssignment: () =>
+                                  context.push('/instructor/assignments/create'),
+                              onUploadMaterial: () =>
+                                  context.push('/instructor/upload-materials'),
+                              onPostAnnouncement: () =>
+                                  context.push('/instructor/announcements'),
+                            ),
+                            AssignmentsTab(
+                              isDark: isDark,
+                              l10n: l10n,
+                              courseId: _resolvedCourseId,
+                            ),
+                            LabsTab(
+                              isDark: isDark,
+                              l10n: l10n,
+                              courseId: _resolvedCourseId,
+                            ),
+                            AnnouncementsTab(
+                              isDark: isDark,
+                              l10n: l10n,
+                              courseId: _resolvedCourseId,
+                            ),
+                            DiscussionsTab(
+                              isDark: isDark,
+                              l10n: l10n,
+                              courseId: _resolvedCourseId,
+                              initialCourse: teachingCourse,
+                            ),
+                            GradingTab(
+                              isDark: isDark,
+                              l10n: l10n,
+                              courseId: _resolvedCourseId,
+                            ),
+                            StudentsTab(
+                              students: students,
+                              isDark: isDark,
+                              l10n: l10n,
+                              onRefreshRequested: _refreshStudents,
+                              emptyStateTitleOverride: hasValidSection
+                                  ? null
+                                  : 'No section assigned',
+                              emptyStateSubtitleOverride: hasValidSection
+                                  ? null
+                                  : 'Assign a valid section to load enrolled students.',
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  List<_CourseManagementTabSpec> _buildTabs(AppLocalizations l10n) {
+    return <_CourseManagementTabSpec>[
+      _CourseManagementTabSpec(
+        icon: Icons.video_library_outlined,
+        label: l10n.studentCourseDetailCourseContent,
+      ),
+      _CourseManagementTabSpec(
+        icon: Icons.grid_view_rounded,
+        label: l10n.overview,
+      ),
+      _CourseManagementTabSpec(
+        icon: Icons.assignment_outlined,
+        label: l10n.assignments,
+      ),
+      _CourseManagementTabSpec(
+        icon: Icons.science_outlined,
+        label: l10n.labs,
+      ),
+      _CourseManagementTabSpec(
+        icon: Icons.campaign_outlined,
+        label: l10n.announcements,
+      ),
+      _CourseManagementTabSpec(
+        icon: Icons.forum_outlined,
+        label: l10n.discussions,
+      ),
+      _CourseManagementTabSpec(
+        icon: Icons.grading_outlined,
+        label: l10n.gradingCenter,
+      ),
+      _CourseManagementTabSpec(
+        icon: Icons.people_outline_rounded,
+        label: l10n.students,
+      ),
+    ];
+  }
+
+  Widget _buildTabBar({
+    required bool isDark,
+    required List<_CourseManagementTabSpec> tabs,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: InstructorCoursesTheme.cardBackground(isDark),
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: InstructorCoursesTheme.borderColor(isDark)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.16 : 0.04),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(6),
+      child: TabBar(
+        controller: _tabController,
+        onTap: _handleTabSelected,
+        isScrollable: true,
+        tabAlignment: TabAlignment.start,
+        dividerColor: Colors.transparent,
+        indicatorSize: TabBarIndicatorSize.tab,
+        indicator: BoxDecoration(
+          gradient: InstructorCoursesTheme.primaryGradient,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: InstructorCoursesTheme.brandBlue.withValues(alpha: 0.22),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        labelColor: Colors.white,
+        unselectedLabelColor: InstructorCoursesTheme.primaryText(isDark),
+        labelPadding: const EdgeInsets.symmetric(horizontal: 6),
+        padding: EdgeInsets.zero,
+        splashFactory: NoSplash.splashFactory,
+        overlayColor: WidgetStateProperty.all(Colors.transparent),
+        tabs: tabs.map((tab) {
+          return Tab(
+            height: 52,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  OverviewTab(
-                    course: displayCourse,
-                    isDark: isDark,
-                    l10n: l10n,
-                    courseId: _resolvedCourseId,
-                    deadlines: deadlines,
-                    studentsCount: overviewStudentsCount,
-                    averageGrade: teachingCourse?.averageGrade,
-                    engagementMetrics: engagementMetrics,
-                    schedules: teachingCourse?.section.schedules ?? const [],
-                    onCreateAssignment: () =>
-                        context.push('/instructor/assignments/create'),
-                    onUploadMaterial: () =>
-                        context.push('/instructor/upload-materials'),
-                    onPostAnnouncement: () =>
-                        context.push('/instructor/announcements'),
-                  ),
-                  MaterialsTab(
-                    materials: materials.isNotEmpty
-                        ? materials.map(_mapCourseMaterialToLegacy).toList()
-                        : displayCourse.materials,
-                    bundles: bundles,
-                    materialCountsByWeek: materialCountsByWeek,
-                    partialFailureMessage: _materialsFailureMessage,
-                    failedMaterialIds: _failedMaterialIds,
-                    onRetryFailedMaterials: _retryFailedMaterials,
-                    onToggleMaterialVisibility: _toggleMaterialVisibility,
-                    onEditMaterial: _editMaterial,
-                    onDeleteMaterial: _deleteMaterial,
-                    onToggleBundleVisibility: _toggleBundleVisibility,
-                    onEditBundle: _editBundle,
-                    onDeleteBundle: _deleteBundle,
-                    onViewMaterial: _handleViewMaterial,
-                    isDark: isDark,
-                    l10n: l10n,
-                  ),
-                  AssignmentsTab(
-                    isDark: isDark,
-                    l10n: l10n,
-                    courseId: _resolvedCourseId,
-                  ),
-                  GradingTab(
-                    isDark: isDark,
-                    l10n: l10n,
-                    courseId: _resolvedCourseId,
-                  ),
-                  StudentsTab(
-                    students: students,
-                    isDark: isDark,
-                    l10n: l10n,
-                    onRefreshRequested: _refreshStudents,
-                    emptyStateTitleOverride: hasValidSection
-                        ? null
-                        : 'No section assigned',
-                    emptyStateSubtitleOverride: hasValidSection
-                        ? null
-                        : 'Assign a valid section to load enrolled students.',
+                  Icon(tab.icon, size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    tab.label,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ],
               ),
             ),
-            floatingActionButton: _buildFAB(isDark, l10n),
+          );
+        }).toList(growable: false),
+      ),
+    );
+  }
+
+  Widget _buildTopChrome({
+    required BuildContext context,
+    required bool isDark,
+    required AppLocalizations l10n,
+    required InstructorCourseModel displayCourse,
+    required CourseMaterialModel? heroVideo,
+    required List<CourseMaterialModel> materials,
+    required int studentsCount,
+    required int assignmentsCount,
+    required double? averageGrade,
+  }) {
+    final actionButtonColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.white;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SafeArea(
+          bottom: false,
+          child: Row(
+            children: [
+              _buildTopIconButton(
+                icon: Icons.arrow_back_ios_new_rounded,
+                isDark: isDark,
+                backgroundColor: actionButtonColor,
+                onTap: () => context.pop(),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  displayCourse.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: InstructorCoursesTheme.primaryText(isDark),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              _buildTopIconButton(
+                icon: Icons.settings_rounded,
+                isDark: isDark,
+                backgroundColor: actionButtonColor,
+                onTap: () => _showCourseSettings(context, isDark),
+              ),
+            ],
           ),
-        );
-      },
+        ),
+        const SizedBox(height: 14),
+        if (heroVideo != null)
+          _buildVideoHero(
+            isDark: isDark,
+            displayCourse: displayCourse,
+            heroVideo: heroVideo,
+            materials: materials,
+            l10n: l10n,
+          )
+        else
+          _buildFallbackHero(
+            isDark: isDark,
+            displayCourse: displayCourse,
+            studentsCount: studentsCount,
+            assignmentsCount: assignmentsCount,
+            materialsCount: materials.length,
+            averageGrade: averageGrade,
+            l10n: l10n,
+          ),
+      ],
+    );
+  }
+
+  Widget _buildTopIconButton({
+    required IconData icon,
+    required bool isDark,
+    required Color backgroundColor,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      width: 46,
+      height: 46,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : const Color(0xFFD8E1EF),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: IconButton(
+        onPressed: onTap,
+        icon: Icon(
+          icon,
+          size: 18,
+          color: isDark ? Colors.white : const Color(0xFF111827),
+        ),
+      ),
+    );
+  }
+
+  List<CourseMaterialModel> _orderedCourseMaterials(
+    List<CourseMaterialModel> materials,
+  ) {
+    final ordered = List<CourseMaterialModel>.from(materials);
+    ordered.sort((a, b) {
+      final weekCompare = (a.weekNumber ?? 0).compareTo(b.weekNumber ?? 0);
+      if (weekCompare != 0) {
+        return weekCompare;
+      }
+
+      final orderCompare = (a.orderIndex ?? 0).compareTo(b.orderIndex ?? 0);
+      if (orderCompare != 0) {
+        return orderCompare;
+      }
+
+      return a.createdAt.compareTo(b.createdAt);
+    });
+    return ordered;
+  }
+
+  List<CourseMaterialModel> _videoMaterials(List<CourseMaterialModel> materials) {
+    return _orderedCourseMaterials(
+      materials,
+    ).where(_isVideoMaterial).toList(growable: false);
+  }
+
+  bool _isVideoMaterial(CourseMaterialModel material) {
+    final type = material.materialType.trim().toLowerCase();
+    final hasPlayableSource =
+        (material.youtubeVideoId?.trim().isNotEmpty ?? false) ||
+        (material.externalUrl?.trim().isNotEmpty ?? false) ||
+        (material.url?.trim().isNotEmpty ?? false);
+
+    return (type == 'video' || type == 'lecture') && hasPlayableSource;
+  }
+
+  CourseMaterialModel? _resolveHeroVideo(List<CourseMaterialModel> materials) {
+    final videos = _videoMaterials(materials);
+    if (videos.isEmpty) {
+      return null;
+    }
+
+    if (_selectedHeroMaterialId != null) {
+      for (final material in videos) {
+        if (material.materialId == _selectedHeroMaterialId) {
+          return material;
+        }
+      }
+    }
+
+    return videos.first;
+  }
+
+  void _selectHeroVideo(CourseMaterialModel material) {
+    if (!_isVideoMaterial(material)) {
+      return;
+    }
+
+    setState(() => _selectedHeroMaterialId = material.materialId);
+    if (_outerScrollController.hasClients) {
+      _outerScrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 280),
+        curve: Curves.easeOutCubic,
+      );
+    }
+  }
+
+  void _playNextVideo(List<CourseMaterialModel> materials) {
+    final videos = _videoMaterials(materials);
+    if (videos.isEmpty) {
+      return;
+    }
+
+    final current = _resolveHeroVideo(materials);
+    final currentIndex = current == null
+        ? -1
+        : videos.indexWhere((item) => item.materialId == current.materialId);
+
+    final nextIndex = currentIndex >= 0 && currentIndex < videos.length - 1
+        ? currentIndex + 1
+        : 0;
+    _selectHeroVideo(videos[nextIndex]);
+  }
+
+  Widget _buildVideoHero({
+    required bool isDark,
+    required InstructorCourseModel displayCourse,
+    required CourseMaterialModel heroVideo,
+    required List<CourseMaterialModel> materials,
+    required AppLocalizations l10n,
+  }) {
+    final weekLabel = heroVideo.weekNumber != null && heroVideo.weekNumber! > 0
+        ? '${l10n.week} ${heroVideo.weekNumber}'
+        : displayCourse.code;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.16),
+                blurRadius: 22,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(30),
+            child: Stack(
+              children: [
+                VideoPlayerWidget(
+                  courseId: _resolvedCourseId,
+                  material: heroVideo,
+                ),
+                Positioned(
+                  top: 14,
+                  right: 14,
+                  child: _buildVideoHeroSquareButton(
+                    icon: Icons.arrow_forward_ios_rounded,
+                    onTap: () => _playNextVideo(materials),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                heroVideo.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: InstructorCoursesTheme.primaryText(isDark),
+                  fontSize: 21,
+                  fontWeight: FontWeight.w800,
+                  height: 1.15,
+                ),
+              ),
+              if (weekLabel.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Text(
+                  weekLabel,
+                  style: TextStyle(
+                    color: InstructorCoursesTheme.secondaryText(isDark),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildVideoHeroSquareButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Ink(
+          width: 46,
+          height: 46,
+          decoration: BoxDecoration(
+            gradient: InstructorCoursesTheme.primaryGradient,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(icon, color: Colors.white, size: 18),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFallbackHero({
+    required bool isDark,
+    required InstructorCourseModel displayCourse,
+    required int studentsCount,
+    required int assignmentsCount,
+    required int materialsCount,
+    required double? averageGrade,
+    required AppLocalizations l10n,
+  }) {
+    final description = displayCourse.description.trim().isNotEmpty
+        ? displayCourse.description.trim()
+        : l10n.instructorCourseDetailHeroSubtitle;
+
+    final metrics = <_HeroMetric>[
+      _HeroMetric(
+        icon: Icons.people_alt_outlined,
+        value: '$studentsCount',
+        label: l10n.students,
+      ),
+      _HeroMetric(
+        icon: Icons.assignment_outlined,
+        value: '$assignmentsCount',
+        label: l10n.assignments,
+      ),
+      _HeroMetric(
+        icon: Icons.video_library_outlined,
+        value: '$materialsCount',
+        label: l10n.courseMaterials,
+      ),
+      _HeroMetric(
+        icon: Icons.insights_outlined,
+        value: averageGrade == null ? '--' : '${averageGrade.toStringAsFixed(1)}%',
+        label: l10n.averageGrade,
+      ),
+    ];
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        gradient: isDark
+            ? InstructorCoursesTheme.headerGradientDark
+            : InstructorCoursesTheme.heroGradientLight,
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: InstructorCoursesTheme.brandBlue.withValues(alpha: 0.20),
+            blurRadius: 30,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildHeroChip(label: displayCourse.code, icon: Icons.sell_outlined),
+              _buildHeroChip(
+                label: displayCourse.isActive ? l10n.activeLabel : l10n.archived,
+                icon: displayCourse.isActive
+                    ? Icons.verified_outlined
+                    : Icons.archive_outlined,
+              ),
+              if (displayCourse.semester.trim().isNotEmpty)
+                _buildHeroChip(
+                  label: displayCourse.semester.trim(),
+                  icon: Icons.calendar_today_outlined,
+                ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          Text(
+            displayCourse.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              height: 1.1,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            description,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              color: Color(0xFFE5EEFF),
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              height: 1.55,
+            ),
+          ),
+          const SizedBox(height: 18),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final columns = constraints.maxWidth >= 940
+                  ? 4
+                  : constraints.maxWidth >= 620
+                  ? 2
+                  : 1;
+              final spacing = 12.0;
+              final tileWidth = columns == 1
+                  ? constraints.maxWidth
+                  : (constraints.maxWidth - (spacing * (columns - 1))) /
+                        columns;
+
+              return Wrap(
+                spacing: spacing,
+                runSpacing: spacing,
+                children: metrics
+                    .map(
+                      (metric) => SizedBox(
+                        width: tileWidth,
+                        child: _buildHeroMetricCard(metric),
+                      ),
+                    )
+                    .toList(growable: false),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeroChip({required String label, required IconData icon}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.14)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 15, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeroMetricCard(_HeroMetric metric) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(metric.icon, size: 20, color: Colors.white),
+          const SizedBox(height: 16),
+          Text(
+            metric.value,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            metric.label,
+            style: const TextStyle(
+              color: Color(0xFFDCE9FF),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -553,8 +1234,12 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       );
   }
 
-  void _handleViewMaterial(MaterialModel material) {
-    if (material.type.toLowerCase() != 'video') {
+  void _handleViewMaterial(
+    MaterialModel material,
+    List<CourseMaterialModel> materials,
+  ) {
+    if (material.type.toLowerCase() != 'video' &&
+        material.type.toLowerCase() != 'lecture') {
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -575,46 +1260,38 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       return;
     }
 
-    final videoId = _extractYoutubeVideoId(rawUrl);
-    if (videoId == null || videoId.isEmpty) {
+    CourseMaterialModel? resolvedMaterial;
+    for (final item in materials) {
+      if (item.materialId == material.id) {
+        resolvedMaterial = item;
+        break;
+      }
+    }
+
+    resolvedMaterial ??= CourseMaterialModel(
+      materialId: material.id.isNotEmpty
+          ? material.id
+          : 'material-${material.title.hashCode}',
+      courseId: (_resolvedCourseId ?? 0).toString(),
+      materialType: material.type,
+      title: material.title,
+      url: rawUrl,
+      externalUrl: rawUrl,
+      isPublished: material.isPublished,
+      createdAt: material.uploadedAt ?? DateTime.now(),
+    );
+
+    if (!_isVideoMaterial(resolvedMaterial)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Could not parse a valid YouTube video ID.'),
+          content: Text('Could not prepare this video for inline playback.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
       return;
     }
 
-    final courseId = _resolvedCourseId;
-    if (courseId == null || courseId <= 0 || !mounted) {
-      return;
-    }
-
-    final encodedTitle = Uri.encodeComponent(material.title);
-    final route =
-        '/instructor/courses/$courseId/video/$videoId?title=$encodedTitle';
-    context.push(route, extra: _course);
-  }
-
-  String? _extractYoutubeVideoId(String url) {
-    final uri = Uri.tryParse(url);
-    if (uri == null) {
-      return null;
-    }
-
-    if (uri.host.contains('youtu.be')) {
-      return uri.pathSegments.isNotEmpty ? uri.pathSegments.first : null;
-    }
-
-    if (uri.queryParameters.containsKey('v')) {
-      return uri.queryParameters['v'];
-    }
-
-    final match = RegExp(
-      r'(?:embed/|shorts/)([A-Za-z0-9_-]{11})',
-    ).firstMatch(url);
-    return match?.group(1);
+    _selectHeroVideo(resolvedMaterial);
   }
 
   void _toggleMaterialVisibility(MaterialModel material) {
@@ -900,7 +1577,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
   }
 
   void _handleTabSelected(int index) {
-    if (index != 4) {
+    if (index != _studentsTabIndex) {
       return;
     }
 
@@ -909,7 +1586,8 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
   }
 
   void _handleTabControllerChanged() {
-    if (_tabController.indexIsChanging || _tabController.index != 4) {
+    if (_tabController.indexIsChanging ||
+        _tabController.index != _studentsTabIndex) {
       return;
     }
 
@@ -1129,5 +1807,58 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       return '${(bytes / 1024).toStringAsFixed(1)} KB';
     }
     return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
+  }
+}
+
+class _CourseManagementTabSpec {
+  final IconData icon;
+  final String label;
+
+  const _CourseManagementTabSpec({
+    required this.icon,
+    required this.label,
+  });
+}
+
+class _HeroMetric {
+  final IconData icon;
+  final String value;
+  final String label;
+
+  const _HeroMetric({
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
+}
+
+class _CourseManagementTabsHeaderDelegate
+    extends SliverPersistentHeaderDelegate {
+  final double height;
+  final Widget child;
+
+  const _CourseManagementTabsHeaderDelegate({
+    required this.height,
+    required this.child,
+  });
+
+  @override
+  double get minExtent => height;
+
+  @override
+  double get maxExtent => height;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return child;
+  }
+
+  @override
+  bool shouldRebuild(covariant _CourseManagementTabsHeaderDelegate oldDelegate) {
+    return oldDelegate.height != height || oldDelegate.child != child;
   }
 }

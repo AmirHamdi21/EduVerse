@@ -12020,6 +12020,42 @@ abstract class AppLocalizations {
   /// **'Course Detail'**
   String get taCourseDetail;
 
+  /// No description provided for @taCourseDetailHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on top of materials, labs, grading, and students for this teaching section.'**
+  String get taCourseDetailHeroSubtitle;
+
+  /// No description provided for @taCourseDetailContentEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Course materials will appear here once they are published for your section.'**
+  String get taCourseDetailContentEmpty;
+
+  /// No description provided for @taCourseDetailOtherMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Other materials'**
+  String get taCourseDetailOtherMaterials;
+
+  /// No description provided for @taCourseDetailOpenLabsWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Open labs workspace'**
+  String get taCourseDetailOpenLabsWorkspace;
+
+  /// No description provided for @taCourseDetailNoAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance summaries will appear here after lab sessions are recorded.'**
+  String get taCourseDetailNoAttendance;
+
+  /// No description provided for @taCourseDetailNoStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'No students are currently assigned to this section.'**
+  String get taCourseDetailNoStudents;
+
   /// No description provided for @taCourseStudents.
   ///
   /// In en, this message translates to:
@@ -12307,6 +12343,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discussions'**
   String get taCourseDiscussionsTab;
+
+  /// No description provided for @taCoursesShellSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on top of your assigned sections, grading queues, labs, and discussion activity from one focused workspace.'**
+  String get taCoursesShellSubtitle;
+
+  /// No description provided for @taCoursesAllSpaces.
+  ///
+  /// In en, this message translates to:
+  /// **'All support spaces'**
+  String get taCoursesAllSpaces;
+
+  /// No description provided for @taCoursesAvgFill.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg fill'**
+  String get taCoursesAvgFill;
+
+  /// No description provided for @taCoursesCourseActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Course actions'**
+  String get taCoursesCourseActions;
+
+  /// No description provided for @taCoursesSectionFill.
+  ///
+  /// In en, this message translates to:
+  /// **'Section fill'**
+  String get taCoursesSectionFill;
+
+  /// No description provided for @taCoursesEnrolledCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{current}/{capacity} enrolled'**
+  String taCoursesEnrolledCount(int current, int capacity);
+
+  /// No description provided for @taCoursesNoAssignedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No teaching courses found'**
+  String get taCoursesNoAssignedTitle;
+
+  /// No description provided for @taCoursesNoAssignedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your assigned courses will appear here once they are available.'**
+  String get taCoursesNoAssignedSubtitle;
+
+  /// No description provided for @taCoursesNoMatchingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No courses match these filters'**
+  String get taCoursesNoMatchingTitle;
+
+  /// No description provided for @taCoursesNoMatchingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search, status tab, or level filter to bring more courses back into view.'**
+  String get taCoursesNoMatchingSubtitle;
 
   /// No description provided for @mainMenu.
   ///
@@ -28258,6 +28354,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No sessions match this view'**
   String get attendanceNoSessionsMatchFilters;
+
+  /// No description provided for @instructorCourseDetailHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage course content, monitor engagement, and keep teaching workflows focused from one polished workspace.'**
+  String get instructorCourseDetailHeroSubtitle;
+
+  /// No description provided for @instructorCourseDetailNoSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'No schedule is available for this section yet.'**
+  String get instructorCourseDetailNoSchedule;
+
+  /// No description provided for @instructorCourseDetailNoActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming activity is available yet.'**
+  String get instructorCourseDetailNoActivity;
 
   /// No description provided for @chatVideoCallTooltip.
   ///

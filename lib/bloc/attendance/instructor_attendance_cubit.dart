@@ -23,7 +23,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
          InstructorAttendanceState(newSessionDate: _dateOnly(DateTime.now())),
        );
 
-  Future<void> loadTeachingSections() async {
+  Future<void> loadTeachingSections({int? preferredSectionId}) async {
     emit(state.copyWith(isLoading: true, clearError: true));
 
     final result = await _enrollmentService.getTeachingCourses();
@@ -39,7 +39,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
 
     final sections = result.data!;
     final selectedSection = _resolveSelectedSection(
-      state.selectedSectionId,
+      preferredSectionId ?? state.selectedSectionId,
       sections,
     );
 

@@ -26,7 +26,16 @@ import '../../../widgets/instructor/labs/lab_create_form.dart';
 /// T029: TA Labs List Screen — fully refactored from mock data to TALabsCubit.
 /// All mock model classes (TACourseWithLabs, TALabListItem) removed.
 class TALabsListScreen extends StatefulWidget {
-  const TALabsListScreen({super.key});
+  const TALabsListScreen({
+    super.key,
+    this.initialCourseId,
+    this.lockCourseSelection = false,
+    this.embedded = false,
+  });
+
+  final int? initialCourseId;
+  final bool lockCourseSelection;
+  final bool embedded;
 
   @override
   State<TALabsListScreen> createState() => _TALabsListScreenState();
@@ -45,6 +54,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
   @override
   void initState() {
     super.initState();
+    _selectedCourseId = widget.initialCourseId;
     // Always fetch - cubit now handles caching properly to prevent infinite loading
     context.read<TALabsCubit>().fetchTALabs();
 
@@ -65,28 +75,42 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
         return Scaffold(
           key: _scaffoldKey,
           backgroundColor: TAColors.scaffoldColor(isDark),
-          drawer: TADrawer(currentRoute: '/ta/labs', isDark: isDark),
+          drawer: widget.embedded
+              ? null
+              : TADrawer(currentRoute: '/ta/labs', isDark: isDark),
           // T031: Create Lab FAB
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => _openCreateLabForm(isDark),
-            backgroundColor: TAColors.primary,
-            foregroundColor: Colors.white,
-            icon: const Icon(Icons.add_rounded),
-            label: Text(l10n.taLabsCreateLab),
-          ),
+          floatingActionButton: widget.embedded
+              ? null
+              : FloatingActionButton.extended(
+                  onPressed: () => _openCreateLabForm(isDark),
+                  backgroundColor: TAColors.primary,
+                  foregroundColor: Colors.white,
+                  icon: const Icon(Icons.add_rounded),
+                  label: Text(l10n.taLabsCreateLab),
+                ),
           body: SafeArea(
+            top: !widget.embedded,
             child: BlocBuilder<TALabsCubit, TALabsState>(
               builder: (context, labsState) {
-                return RefreshIndicator(
+                final content = RefreshIndicator(
                   onRefresh: () => context.read<TALabsCubit>().fetchTALabs(),
                   color: TAColors.primary,
                   child: CustomScrollView(
                     slivers: [
-                      _buildAppBar(isDark, l10n),
+                      if (!widget.embedded) _buildAppBar(isDark, l10n),
                       _buildContent(isDark, l10n, labsState),
                     ],
                   ),
                 );
+
+                if (widget.embedded) {
+                  return Container(
+                    color: TAColors.scaffoldColor(isDark),
+                    child: content,
+                  );
+                }
+
+                return content;
               },
             ),
           ),
@@ -599,106 +623,167 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
               ],
             ),
             const SizedBox(height: 14),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _buildModernDropdown<int?>(
-                    isDark: isDark,
-                    label: l10n.course,
-                    value: _selectedCourseId,
-                    icon: Icons.menu_book_rounded,
-                    menuMaxHeight: r.screenHeight * 0.45,
-                    items: <DropdownMenuItem<int?>>[
-                      DropdownMenuItem<int?>(
-                        value: null,
-                        child: Text(
-                          l10n.allCourses,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      ...assignedCourses.map((course) {
-                        return DropdownMenuItem<int?>(
-                          value: course.courseId,
+            if (widget.lockCourseSelection)
+              _buildModernDropdown<_TALabStateFilter>(
+                isDark: isDark,
+                label: l10n.status,
+                value: _selectedStateFilter,
+                icon: Icons.tune_rounded,
+                menuMaxHeight: r.screenHeight * 0.45,
+                items: <DropdownMenuItem<_TALabStateFilter>>[
+                  DropdownMenuItem<_TALabStateFilter>(
+                    value: _TALabStateFilter.all,
+                    child: Text(
+                      l10n.taLabsAllStates,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  DropdownMenuItem<_TALabStateFilter>(
+                    value: _TALabStateFilter.active,
+                    child: Text(
+                      l10n.taLabActive,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  DropdownMenuItem<_TALabStateFilter>(
+                    value: _TALabStateFilter.draft,
+                    child: Text(
+                      l10n.draft,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  DropdownMenuItem<_TALabStateFilter>(
+                    value: _TALabStateFilter.closed,
+                    child: Text(
+                      l10n.taLabClosed,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  DropdownMenuItem<_TALabStateFilter>(
+                    value: _TALabStateFilter.archived,
+                    child: Text(
+                      l10n.archived,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+                onChanged: (value) {
+                  if (value == null) {
+                    return;
+                  }
+                  setState(() => _selectedStateFilter = value);
+                },
+                selectedLabel: _stateFilterLabel(
+                  l10n,
+                  _selectedStateFilter,
+                ),
+              )
+            else
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: _buildModernDropdown<int?>(
+                      isDark: isDark,
+                      label: l10n.course,
+                      value: _selectedCourseId,
+                      icon: Icons.menu_book_rounded,
+                      menuMaxHeight: r.screenHeight * 0.45,
+                      items: <DropdownMenuItem<int?>>[
+                        DropdownMenuItem<int?>(
+                          value: null,
                           child: Text(
-                            '${course.course.courseCode} • ${course.course.courseName}',
+                            l10n.allCourses,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                        );
-                      }),
-                    ],
-                    onChanged: (value) {
-                      setState(() => _selectedCourseId = value);
-                    },
-                    selectedLabel: selectedCourseLabel,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildModernDropdown<_TALabStateFilter>(
-                    isDark: isDark,
-                    label: l10n.status,
-                    value: _selectedStateFilter,
-                    icon: Icons.tune_rounded,
-                    menuMaxHeight: r.screenHeight * 0.45,
-                    items: <DropdownMenuItem<_TALabStateFilter>>[
-                      DropdownMenuItem<_TALabStateFilter>(
-                        value: _TALabStateFilter.all,
-                        child: Text(
-                          l10n.taLabsAllStates,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      DropdownMenuItem<_TALabStateFilter>(
-                        value: _TALabStateFilter.active,
-                        child: Text(
-                          l10n.taLabActive,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      DropdownMenuItem<_TALabStateFilter>(
-                        value: _TALabStateFilter.draft,
-                        child: Text(
-                          l10n.draft,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      DropdownMenuItem<_TALabStateFilter>(
-                        value: _TALabStateFilter.closed,
-                        child: Text(
-                          l10n.taLabClosed,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      DropdownMenuItem<_TALabStateFilter>(
-                        value: _TALabStateFilter.archived,
-                        child: Text(
-                          l10n.archived,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      if (value == null) {
-                        return;
-                      }
-                      setState(() => _selectedStateFilter = value);
-                    },
-                    selectedLabel: _stateFilterLabel(
-                      l10n,
-                      _selectedStateFilter,
+                        ...assignedCourses.map((course) {
+                          return DropdownMenuItem<int?>(
+                            value: course.courseId,
+                            child: Text(
+                              '${course.course.courseCode} • ${course.course.courseName}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        }),
+                      ],
+                      onChanged: (value) {
+                        setState(() => _selectedCourseId = value);
+                      },
+                      selectedLabel: selectedCourseLabel,
                     ),
                   ),
-                ),
-              ],
-            ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildModernDropdown<_TALabStateFilter>(
+                      isDark: isDark,
+                      label: l10n.status,
+                      value: _selectedStateFilter,
+                      icon: Icons.tune_rounded,
+                      menuMaxHeight: r.screenHeight * 0.45,
+                      items: <DropdownMenuItem<_TALabStateFilter>>[
+                        DropdownMenuItem<_TALabStateFilter>(
+                          value: _TALabStateFilter.all,
+                          child: Text(
+                            l10n.taLabsAllStates,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        DropdownMenuItem<_TALabStateFilter>(
+                          value: _TALabStateFilter.active,
+                          child: Text(
+                            l10n.taLabActive,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        DropdownMenuItem<_TALabStateFilter>(
+                          value: _TALabStateFilter.draft,
+                          child: Text(
+                            l10n.draft,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        DropdownMenuItem<_TALabStateFilter>(
+                          value: _TALabStateFilter.closed,
+                          child: Text(
+                            l10n.taLabClosed,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        DropdownMenuItem<_TALabStateFilter>(
+                          value: _TALabStateFilter.archived,
+                          child: Text(
+                            l10n.archived,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        if (value == null) {
+                          return;
+                        }
+                        setState(() => _selectedStateFilter = value);
+                      },
+                      selectedLabel: _stateFilterLabel(
+                        l10n,
+                        _selectedStateFilter,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),

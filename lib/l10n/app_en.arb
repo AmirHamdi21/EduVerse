@@ -2396,6 +2396,12 @@
   "taAIAssistant": "TA AI Assistant",
   "taCourses": "TA Courses",
   "taCourseDetail": "Course Detail",
+  "taCourseDetailHeroSubtitle": "Stay on top of materials, labs, grading, and students for this teaching section.",
+  "taCourseDetailContentEmpty": "Course materials will appear here once they are published for your section.",
+  "taCourseDetailOtherMaterials": "Other materials",
+  "taCourseDetailOpenLabsWorkspace": "Open labs workspace",
+  "taCourseDetailNoAttendance": "Attendance summaries will appear here after lab sessions are recorded.",
+  "taCourseDetailNoStudents": "No students are currently assigned to this section.",
   "taCourseStudents": "Students",
   "taCourseLabs": "Labs",
   "taCourseAssignments": "Assignments",
@@ -2444,6 +2450,26 @@
   "taCourseLabsTab": "Labs",
   "taCourseGradingTab": "Grading",
   "taCourseDiscussionsTab": "Discussions",
+  "taCoursesShellSubtitle": "Stay on top of your assigned sections, grading queues, labs, and discussion activity from one focused workspace.",
+  "taCoursesAllSpaces": "All support spaces",
+  "taCoursesAvgFill": "Avg fill",
+  "taCoursesCourseActions": "Course actions",
+  "taCoursesSectionFill": "Section fill",
+  "taCoursesEnrolledCount": "{current}/{capacity} enrolled",
+  "@taCoursesEnrolledCount": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "taCoursesNoAssignedTitle": "No teaching courses found",
+  "taCoursesNoAssignedSubtitle": "Your assigned courses will appear here once they are available.",
+  "taCoursesNoMatchingTitle": "No courses match these filters",
+  "taCoursesNoMatchingSubtitle": "Try adjusting your search, status tab, or level filter to bring more courses back into view.",
   "mainMenu": "Main Menu",
   "aiTools": "AI Tools",
   "connect": "Connect",
@@ -5779,6 +5805,9 @@
   "attendanceCalendarSubtitle": "See how this course attendance lands across the month.",
   "attendanceNoSessionsYet": "No attendance sessions yet",
   "attendanceNoSessionsMatchFilters": "No sessions match this view",
+  "instructorCourseDetailHeroSubtitle": "Manage course content, monitor engagement, and keep teaching workflows focused from one polished workspace.",
+  "instructorCourseDetailNoSchedule": "No schedule is available for this section yet.",
+  "instructorCourseDetailNoActivity": "No upcoming activity is available yet.",
   "chatVideoCallTooltip": "Video call",
   "chatVoiceCallTooltip": "Voice call"
 }

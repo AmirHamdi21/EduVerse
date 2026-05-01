@@ -6177,6 +6177,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get taCourseDetail => 'تفاصيل المقرر';
 
   @override
+  String get taCourseDetailHeroSubtitle =>
+      'تابع المواد والمعامل والتصحيح والطلاب لهذه الشعبة التعليمية من مكان واحد.';
+
+  @override
+  String get taCourseDetailContentEmpty =>
+      'ستظهر مواد المقرر هنا بمجرد نشرها لهذه الشعبة.';
+
+  @override
+  String get taCourseDetailOtherMaterials => 'مواد أخرى';
+
+  @override
+  String get taCourseDetailOpenLabsWorkspace => 'فتح مساحة المعامل';
+
+  @override
+  String get taCourseDetailNoAttendance =>
+      'ستظهر ملخصات الحضور هنا بعد تسجيل جلسات المعمل.';
+
+  @override
+  String get taCourseDetailNoStudents =>
+      'لا يوجد طلاب مخصصون لهذه الشعبة حالياً.';
+
+  @override
   String get taCourseStudents => 'الطلاب';
 
   @override
@@ -6319,6 +6341,41 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get taCourseDiscussionsTab => 'المناقشات';
+
+  @override
+  String get taCoursesShellSubtitle =>
+      'تابع الشعب المسندة إليك، وأعمال التصحيح، والمعامل، ونشاط النقاشات من مساحة عمل واحدة مركزة.';
+
+  @override
+  String get taCoursesAllSpaces => 'كل مساحات الدعم';
+
+  @override
+  String get taCoursesAvgFill => 'متوسط الامتلاء';
+
+  @override
+  String get taCoursesCourseActions => 'إجراءات المقرر';
+
+  @override
+  String get taCoursesSectionFill => 'نسبة امتلاء الشعبة';
+
+  @override
+  String taCoursesEnrolledCount(int current, int capacity) {
+    return '$current/$capacity مسجلون';
+  }
+
+  @override
+  String get taCoursesNoAssignedTitle => 'لا توجد مقررات تدريس مسندة';
+
+  @override
+  String get taCoursesNoAssignedSubtitle =>
+      'ستظهر هنا المقررات المسندة إليك بمجرد توفرها.';
+
+  @override
+  String get taCoursesNoMatchingTitle => 'لا توجد مقررات مطابقة لهذه الفلاتر';
+
+  @override
+  String get taCoursesNoMatchingSubtitle =>
+      'جرّب تعديل البحث أو تبويب الحالة أو فلتر المستوى لإظهار المزيد من المقررات.';
 
   @override
   String get mainMenu => 'القائمة الرئيسية';
@@ -14613,6 +14670,18 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get attendanceNoSessionsMatchFilters =>
       'لا توجد جلسات تطابق هذا العرض';
+
+  @override
+  String get instructorCourseDetailHeroSubtitle =>
+      'أدر محتوى المقرر وتابع التفاعل وحافظ على سير التدريس من مساحة واحدة مصقولة.';
+
+  @override
+  String get instructorCourseDetailNoSchedule =>
+      'لا يوجد جدول متاح لهذا القسم حتى الآن.';
+
+  @override
+  String get instructorCourseDetailNoActivity =>
+      'لا توجد أنشطة قادمة متاحة حتى الآن.';
 
   @override
   String get chatVideoCallTooltip => 'مكالمة فيديو';

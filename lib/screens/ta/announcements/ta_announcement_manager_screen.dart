@@ -12,7 +12,14 @@ import '../../../services/api/enrollment_service.dart';
 import '../../../widgets/instructor/announcements/announcement_barrel.dart';
 
 class TAAnnouncementManagerScreen extends StatefulWidget {
-  const TAAnnouncementManagerScreen({super.key});
+  const TAAnnouncementManagerScreen({
+    super.key,
+    this.courseId,
+    this.embedded = false,
+  });
+
+  final int? courseId;
+  final bool embedded;
 
   @override
   State<TAAnnouncementManagerScreen> createState() =>
@@ -103,7 +110,11 @@ class _TAAnnouncementManagerScreenState
     });
 
     try {
-      final apiList = await _communicationService.getAnnouncements();
+      final apiList = widget.courseId == null
+          ? await _communicationService.getAnnouncements()
+          : await _communicationService.getAnnouncementsByCourseId(
+              widget.courseId!,
+            );
 
       if (!mounted) return;
 
@@ -210,7 +221,7 @@ class _TAAnnouncementManagerScreenState
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AnnouncementColors.delete.withOpacity(0.1),
+                color: AnnouncementColors.delete.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
@@ -369,7 +380,7 @@ class _TAAnnouncementManagerScreenState
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -402,39 +413,112 @@ class _TAAnnouncementManagerScreenState
           value: isDark
               ? SystemUiOverlayStyle.light
               : SystemUiOverlayStyle.dark,
-          child: Scaffold(
-            backgroundColor: AnnouncementColors.background(isDark),
-            body: SafeArea(
-              child: Container(
-                decoration: isDark
-                    ? null
-                    : BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            const Color(0xFFEEF5FE),
-                            Colors.white,
-                            const Color(0xFFFAF5FE),
-                          ],
+          child: widget.embedded
+              ? Container(
+                  decoration: isDark
+                      ? null
+                      : BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: const [
+                              Color(0xFFEEF5FE),
+                              Colors.white,
+                              Color(0xFFFAF5FE),
+                            ],
+                          ),
                         ),
+                  child: Column(
+                    children: [
+                      _buildEmbeddedHeader(isDark, l10n),
+                      _buildSearchBar(isDark, l10n),
+                      const SizedBox(height: 16),
+                      _buildFilterChips(isDark),
+                      const SizedBox(height: 8),
+                      Expanded(child: _buildContent(isDark, l10n)),
+                    ],
+                  ),
+                )
+              : Scaffold(
+                  backgroundColor: AnnouncementColors.background(isDark),
+                  body: SafeArea(
+                    child: Container(
+                      decoration: isDark
+                          ? null
+                          : BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: const [
+                                  Color(0xFFEEF5FE),
+                                  Colors.white,
+                                  Color(0xFFFAF5FE),
+                                ],
+                              ),
+                            ),
+                      child: Column(
+                        children: [
+                          _buildAppBar(isDark, l10n),
+                          _buildSearchBar(isDark, l10n),
+                          const SizedBox(height: 16),
+                          _buildFilterChips(isDark),
+                          const SizedBox(height: 8),
+                          Expanded(child: _buildContent(isDark, l10n)),
+                        ],
                       ),
-                child: Column(
-                  children: [
-                    _buildAppBar(isDark, l10n),
-                    _buildSearchBar(isDark, l10n),
-                    const SizedBox(height: 16),
-                    _buildFilterChips(isDark),
-                    const SizedBox(height: 8),
-                    Expanded(child: _buildContent(isDark, l10n)),
-                  ],
+                    ),
+                  ),
+                  floatingActionButton: _buildFAB(isDark, l10n),
                 ),
-              ),
-            ),
-            floatingActionButton: _buildFAB(isDark, l10n),
-          ),
         );
       },
+    );
+  }
+
+  Widget _buildEmbeddedHeader(bool isDark, AppLocalizations l10n) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.announcements,
+                  style: TextStyle(
+                    color: AnnouncementColors.textPrimaryColor(isDark),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.announcementsManagerSubtitle,
+                  style: TextStyle(
+                    color: AnnouncementColors.textSecondaryColor(isDark),
+                    fontSize: 13,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          FilledButton.icon(
+            onPressed: () => _showCreateDialog(isDark),
+            style: FilledButton.styleFrom(
+              backgroundColor: AnnouncementColors.primary,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            icon: const Icon(Icons.add_rounded, size: 18),
+            label: Text(l10n.newAnnouncement),
+          ),
+        ],
+      ),
     );
   }
 
@@ -497,7 +581,7 @@ class _TAAnnouncementManagerScreenState
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),

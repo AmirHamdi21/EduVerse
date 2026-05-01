@@ -21,12 +21,14 @@ class InstructorCourseDiscussionsScreen extends StatefulWidget {
     super.key,
     required this.courseId,
     this.initialCourse,
+    this.embedded = false,
     this.discussionService,
     this.enrollmentService,
   });
 
   final int courseId;
   final TeachingCourseModel? initialCourse;
+  final bool embedded;
   final DiscussionService? discussionService;
   final EnrollmentService? enrollmentService;
 
@@ -335,6 +337,168 @@ class _InstructorCourseDiscussionsScreenState
         final r = context.responsive;
         final threads = _visibleThreads();
         final viewer = resolveInstructorDiscussionViewerContext(context);
+
+        if (widget.embedded) {
+          return Container(
+            color: InstructorColors.background(isDark),
+            child: RefreshIndicator(
+              onRefresh: _loadData,
+              color: InstructorColors.primary,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: <Widget>[
+                  if (_loading) ...<Widget>[
+                    SliverToBoxAdapter(
+                      child: InstructorDiscussionSummaryHeader(
+                        isDark: isDark,
+                        responsive: r,
+                        title: l10n.instructorCourseDiscussionHeaderTitle,
+                        subtitle: l10n.instructorCourseDiscussionHeaderSubtitle,
+                        icon: Icons.groups_rounded,
+                        stats: <({
+                          IconData icon,
+                          String label,
+                          String value,
+                          Color color,
+                        })>[
+                          (
+                            icon: Icons.forum_rounded,
+                            label: l10n.instructorDiscussionPostsLabel,
+                            value: '—',
+                            color: InstructorColors.accent,
+                          ),
+                          (
+                            icon: Icons.reply_all_rounded,
+                            label: l10n.instructorDiscussionRepliesLabel,
+                            value: '—',
+                            color: InstructorColors.success,
+                          ),
+                          (
+                            icon: Icons.push_pin_rounded,
+                            label: l10n.instructorDiscussionPinnedLabel,
+                            value: '—',
+                            color: InstructorColors.warning,
+                          ),
+                          (
+                            icon: Icons.lock_rounded,
+                            label: l10n.instructorDiscussionLockedLabel,
+                            value: '—',
+                            color: InstructorColors.pink,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SliverPadding(
+                      padding: const EdgeInsets.all(16),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          return _buildSkeletonCard(isDark);
+                        }, childCount: 3),
+                      ),
+                    ),
+                  ] else if (_errorMessage != null) ...<Widget>[
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: InstructorDiscussionEmptyState(
+                        isDark: isDark,
+                        icon: Icons.error_outline_rounded,
+                        title: l10n.instructorDiscussionLoadFailedTitle,
+                        message: _errorMessage!,
+                        action: FilledButton.icon(
+                          onPressed: _loadData,
+                          style: FilledButton.styleFrom(
+                            backgroundColor: InstructorColors.primary,
+                            foregroundColor: Colors.white,
+                          ),
+                          icon: const Icon(Icons.refresh_rounded),
+                          label: Text(l10n.retry),
+                        ),
+                      ),
+                    ),
+                  ] else ...<Widget>[
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: FilledButton.icon(
+                            onPressed: _submitting ? null : _createPost,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: InstructorColors.primary,
+                              foregroundColor: Colors.white,
+                            ),
+                            icon: _submitting
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Icon(Icons.add_comment_rounded),
+                            label: Text(l10n.instructorDiscussionCreatePost),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: InstructorDiscussionSummaryHeader(
+                        isDark: isDark,
+                        responsive: r,
+                        title: _course == null
+                            ? l10n.instructorCourseDiscussionHeaderTitle
+                            : '${_course!.course.code} • ${_course!.course.name}',
+                        subtitle: l10n.instructorCourseDiscussionHeaderSubtitle,
+                        icon: Icons.forum_rounded,
+                        stats: _buildHeaderStats(l10n),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: _buildFilters(isDark, l10n, r, threads.length),
+                    ),
+                    if (threads.isEmpty)
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: InstructorDiscussionEmptyState(
+                          isDark: isDark,
+                          icon: Icons.chat_bubble_outline_rounded,
+                          title: l10n.instructorDiscussionNoPostsTitle,
+                          message: l10n.instructorDiscussionNoPostsSubtitle,
+                          action: FilledButton.icon(
+                            onPressed: _submitting ? null : _createPost,
+                            style: FilledButton.styleFrom(
+                              backgroundColor: InstructorColors.primary,
+                              foregroundColor: Colors.white,
+                            ),
+                            icon: const Icon(Icons.add_rounded),
+                            label: Text(l10n.instructorDiscussionCreatePost),
+                          ),
+                        ),
+                      )
+                    else
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate((context, index) {
+                            final thread = threads[index];
+                            return _buildThreadCard(
+                              context,
+                              thread,
+                              isDark,
+                              l10n,
+                              viewer,
+                              index,
+                            );
+                          }, childCount: threads.length),
+                        ),
+                      ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        }
 
         return Scaffold(
           backgroundColor: InstructorColors.background(isDark),

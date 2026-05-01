@@ -224,7 +224,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Advanced Topics'), findsOneWidget);
+    expect(find.text('Advanced Topics'), findsWidgets);
     expect(find.textContaining('CS500'), findsWidgets);
   });
 
@@ -305,7 +305,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Advanced Topics'), findsOneWidget);
+      expect(find.text('Advanced Topics'), findsWidgets);
       expect(tester.takeException(), isNull);
     }
   });

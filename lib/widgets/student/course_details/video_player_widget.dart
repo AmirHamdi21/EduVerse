@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -246,12 +247,50 @@ class _YoutubeInlinePlayerState extends State<_YoutubeInlinePlayer> {
     super.dispose();
   }
 
+  Future<void> _openFullscreenPlayer() async {
+    final position = _controller.value.position;
+    final wasPlaying = _controller.value.isPlaying;
+    _controller.pause();
+
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => _YoutubeFullscreenPlayerScreen(
+          videoId: widget.videoId,
+          startAt: position,
+          autoPlay: wasPlaying,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return YoutubePlayerBuilder(
       player: YoutubePlayer(
         controller: _controller,
         showVideoProgressIndicator: true,
+        bottomActions: <Widget>[
+          const CurrentPosition(),
+          const SizedBox(width: 8),
+          Expanded(
+            child: ProgressBar(
+              isExpanded: true,
+              colors: const ProgressBarColors(
+                playedColor: Color(0xFF2563EB),
+                handleColor: Color(0xFF60A5FA),
+                bufferedColor: Colors.white54,
+                backgroundColor: Colors.white24,
+              ),
+            ),
+          ),
+          const RemainingDuration(),
+          const PlaybackSpeedButton(),
+          IconButton(
+            onPressed: _openFullscreenPlayer,
+            icon: const Icon(Icons.fullscreen_rounded, color: Colors.white),
+            tooltip: 'Fullscreen',
+          ),
+        ],
         progressIndicatorColor: Colors.white,
         progressColors: const ProgressBarColors(
           playedColor: Color(0xFF2563EB),
@@ -333,6 +372,144 @@ class _YoutubeInlinePlayerState extends State<_YoutubeInlinePlayer> {
                 ),
               ),
           ],
+        );
+      },
+    );
+  }
+}
+
+class _YoutubeFullscreenPlayerScreen extends StatefulWidget {
+  final String videoId;
+  final Duration startAt;
+  final bool autoPlay;
+
+  const _YoutubeFullscreenPlayerScreen({
+    required this.videoId,
+    required this.startAt,
+    required this.autoPlay,
+  });
+
+  @override
+  State<_YoutubeFullscreenPlayerScreen> createState() =>
+      _YoutubeFullscreenPlayerScreenState();
+}
+
+class _YoutubeFullscreenPlayerScreenState
+    extends State<_YoutubeFullscreenPlayerScreen> {
+  late final YoutubePlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = YoutubePlayerController(
+      initialVideoId: widget.videoId,
+      flags: YoutubePlayerFlags(
+        autoPlay: widget.autoPlay,
+        enableCaption: true,
+        controlsVisibleAtStart: true,
+        hideControls: false,
+        startAt: widget.startAt.inSeconds,
+      ),
+    );
+    _enterFullscreenMode();
+  }
+
+  Future<void> _enterFullscreenMode() async {
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    await SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+  }
+
+  Future<void> _exitFullscreenMode() async {
+    await SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
+    await SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _exitFullscreenMode();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return YoutubePlayerBuilder(
+      player: YoutubePlayer(
+        controller: _controller,
+        showVideoProgressIndicator: true,
+        bottomActions: <Widget>[
+          const CurrentPosition(),
+          const SizedBox(width: 8),
+          Expanded(
+            child: ProgressBar(
+              isExpanded: true,
+              colors: const ProgressBarColors(
+                playedColor: Color(0xFF2563EB),
+                handleColor: Color(0xFF60A5FA),
+                bufferedColor: Colors.white54,
+                backgroundColor: Colors.white24,
+              ),
+            ),
+          ),
+          const RemainingDuration(),
+          const PlaybackSpeedButton(),
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.fullscreen_exit_rounded, color: Colors.white),
+            tooltip: 'Exit fullscreen',
+          ),
+        ],
+        progressIndicatorColor: Colors.white,
+        progressColors: const ProgressBarColors(
+          playedColor: Color(0xFF2563EB),
+          handleColor: Color(0xFF60A5FA),
+          bufferedColor: Colors.white54,
+          backgroundColor: Colors.white24,
+        ),
+      ),
+      builder: (context, player) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Stack(
+            children: [
+              Positioned.fill(child: Center(child: player)),
+              Positioned(
+                top: 18,
+                left: 18,
+                child: SafeArea(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).pop(),
+                      borderRadius: BorderRadius.circular(18),
+                      child: Ink(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.45),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: Colors.white24),
+                        ),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
