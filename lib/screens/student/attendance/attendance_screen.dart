@@ -13,7 +13,6 @@ import '../../../services/api/attendance_service.dart';
 import '../../../widgets/student/attendance/attendance_stats_card.dart';
 import '../../../widgets/student/attendance/attendance_calendar.dart';
 import '../../../widgets/student/attendance/course_attendance_list.dart';
-import '../../../widgets/student/attendance/attendance_records_list.dart';
 
 class AttendanceScreen extends StatefulWidget {
   const AttendanceScreen({super.key});
@@ -31,7 +30,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(_onTabChanged);
   }
 
@@ -97,7 +96,6 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                           children: [
                             _buildOverviewTab(state, isDark),
                             _buildCalendarTab(state, isDark),
-                            _buildRecordsTab(state, isDark),
                           ],
                         );
                       },
@@ -250,16 +248,6 @@ class _AttendanceScreenState extends State<AttendanceScreen>
               ],
             ),
           ),
-          Tab(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.format_list_bulleted_rounded, size: 18),
-                const SizedBox(width: 6),
-                Text(l10n.records),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -277,7 +265,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
           ),
           const SizedBox(height: 16),
           Text(
-            'Loading attendance data...',
+            AppLocalizations.of(context).attendanceLoadingData,
             style: TextStyle(
               color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
             ),
@@ -313,17 +301,9 @@ class _AttendanceScreenState extends State<AttendanceScreen>
     );
   }
 
-  Widget _buildRecordsTab(AttendanceState state, bool isDark) {
-    return SingleChildScrollView(
-      physics: const BouncingScrollPhysics(),
-      child: Column(
-        children: [const AttendanceRecordsList(), const SizedBox(height: 24)],
-      ),
-    );
-  }
-
   Widget _buildFaceSetupSection(AttendanceState state, bool isDark) {
     final cubit = context.read<AttendanceCubit>();
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -355,7 +335,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
               ),
               const SizedBox(width: 8),
               Text(
-                'Face Setup',
+                l10n.attendanceFaceSetupTitle,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -366,7 +346,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
           ),
           const SizedBox(height: 6),
           Text(
-            'Upload clear face photos to improve AI attendance matching.',
+            l10n.attendanceFaceSetupDescription,
             style: TextStyle(
               fontSize: 12,
               color: isDark ? const Color(0xFF94A3B8) : const Color(0xFF64748B),
@@ -387,7 +367,9 @@ class _AttendanceScreenState extends State<AttendanceScreen>
                     )
                   : const Icon(Icons.upload_rounded),
               label: Text(
-                state.isFaceUploading ? 'Uploading...' : 'Upload Face Photo',
+                state.isFaceUploading
+                    ? '${l10n.uploading}...'
+                    : l10n.attendanceUploadFacePhoto,
               ),
             ),
           ),
@@ -405,7 +387,7 @@ class _AttendanceScreenState extends State<AttendanceScreen>
           const SizedBox(height: 12),
           if (state.faceReferences.isEmpty)
             Text(
-              'No face references uploaded yet.',
+              l10n.attendanceNoFaceReferences,
               style: TextStyle(
                 color: isDark
                     ? const Color(0xFF94A3B8)
@@ -472,6 +454,8 @@ class _FaceReferenceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(10),
@@ -503,7 +487,9 @@ class _FaceReferenceTile extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  reference.isPrimary ? 'Primary reference' : 'Reference image',
+                  reference.isPrimary
+                      ? l10n.attendancePrimaryReference
+                      : l10n.attendanceReferenceImage,
                   style: TextStyle(
                     color: isDark
                         ? const Color(0xFF94A3B8)

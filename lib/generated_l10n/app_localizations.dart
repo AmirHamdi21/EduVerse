@@ -9557,7 +9557,7 @@ abstract class AppLocalizations {
   /// No description provided for @attendanceNoSessionsYet.
   ///
   /// In en, this message translates to:
-  /// **'No attendance sessions yet.'**
+  /// **'No attendance sessions yet'**
   String get attendanceNoSessionsYet;
 
   /// No description provided for @attendanceOpen.
@@ -27784,6 +27784,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'All day'**
   String get calendarAllDay;
+
+  /// No description provided for @attendanceLoadingData.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading attendance data...'**
+  String get attendanceLoadingData;
+
+  /// No description provided for @attendanceFaceSetupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Face Setup'**
+  String get attendanceFaceSetupTitle;
+
+  /// No description provided for @attendanceFaceSetupDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload clear face photos to improve AI attendance matching.'**
+  String get attendanceFaceSetupDescription;
+
+  /// No description provided for @attendanceUploadFacePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Face Photo'**
+  String get attendanceUploadFacePhoto;
+
+  /// No description provided for @attendanceNoFaceReferences.
+  ///
+  /// In en, this message translates to:
+  /// **'No face references uploaded yet.'**
+  String get attendanceNoFaceReferences;
+
+  /// No description provided for @attendancePrimaryReference.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary reference'**
+  String get attendancePrimaryReference;
+
+  /// No description provided for @attendanceReferenceImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference image'**
+  String get attendanceReferenceImage;
+
+  /// No description provided for @attendanceCourseSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'See your attendance rate, review recent sessions, and keep this course on track.'**
+  String get attendanceCourseSnapshot;
+
+  /// No description provided for @attendanceStatusFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get attendanceStatusFilter;
+
+  /// No description provided for @attendanceSessionView.
+  ///
+  /// In en, this message translates to:
+  /// **'Sessions'**
+  String get attendanceSessionView;
+
+  /// No description provided for @attendanceSessionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the sessions currently available for this course.'**
+  String get attendanceSessionsSubtitle;
+
+  /// No description provided for @attendanceCalendarSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'See how this course attendance lands across the month.'**
+  String get attendanceCalendarSubtitle;
+
+  /// No description provided for @attendanceNoSessionsMatchFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'No sessions match this view'**
+  String get attendanceNoSessionsMatchFilters;
 
   /// No description provided for @chatVideoCallTooltip.
   ///
