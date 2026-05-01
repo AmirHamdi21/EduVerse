@@ -556,8 +556,7 @@ class _TACalendarScreenState extends State<TACalendarScreen> {
                 : '$teachingCount ${l10n.events}',
             color: InstructorColors.primary,
             isDark: isDark,
-            onTapDown: (details) =>
-                _showTeachingMenu(context, details.globalPosition, isDark),
+            onTap: (buttonContext) => _showTeachingMenu(buttonContext, isDark),
           ),
         ),
         const SizedBox(width: 10),
@@ -570,8 +569,7 @@ class _TACalendarScreenState extends State<TACalendarScreen> {
                 : '$supportCount ${l10n.events}',
             color: InstructorColors.accent,
             isDark: isDark,
-            onTapDown: (details) =>
-                _showSupportMenu(context, details.globalPosition, isDark),
+            onTap: (buttonContext) => _showSupportMenu(buttonContext, isDark),
           ),
         ),
       ],
@@ -584,69 +582,71 @@ class _TACalendarScreenState extends State<TACalendarScreen> {
     required String subtitle,
     required Color color,
     required bool isDark,
-    required GestureTapDownCallback onTapDown,
+    required ValueChanged<BuildContext> onTap,
   }) {
-    return GestureDetector(
-      onTapDown: onTapDown,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        decoration: BoxDecoration(
-          color: InstructorColors.cardColor(isDark),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: InstructorColors.borderColor(isDark)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
-              blurRadius: 14,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
+    return Builder(
+      builder: (buttonContext) => GestureDetector(
+        onTap: () => onTap(buttonContext),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: InstructorColors.cardColor(isDark),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: InstructorColors.borderColor(isDark)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
               ),
-              child: Icon(icon, color: color, size: 18),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: InstructorColors.textPrimaryColor(isDark),
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: InstructorColors.textSecondaryColor(isDark),
-                      fontSize: 11.5,
-                    ),
-                  ),
-                ],
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: color, size: 18),
               ),
-            ),
-            Icon(
-              Icons.keyboard_arrow_down_rounded,
-              size: 20,
-              color: InstructorColors.textSecondaryColor(isDark),
-            ),
-          ],
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: InstructorColors.textPrimaryColor(isDark),
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: InstructorColors.textSecondaryColor(isDark),
+                        fontSize: 11.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.keyboard_arrow_down_rounded,
+                size: 20,
+                color: InstructorColors.textSecondaryColor(isDark),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1667,14 +1667,27 @@ class _TACalendarScreenState extends State<TACalendarScreen> {
     );
   }
 
-  void _showTeachingMenu(
-    BuildContext context,
-    Offset globalPosition,
-    bool isDark,
-  ) {
+  RelativeRect _menuPositionForButton(BuildContext buttonContext) {
+    final overlay =
+        Overlay.of(buttonContext).context.findRenderObject()! as RenderBox;
+    final button = buttonContext.findRenderObject()! as RenderBox;
+    final topLeft = button.localToGlobal(Offset.zero, ancestor: overlay);
+    final bottomRight = button.localToGlobal(
+      button.size.bottomRight(Offset.zero),
+      ancestor: overlay,
+    );
+    final top = bottomRight.dy + 8;
+    return RelativeRect.fromLTRB(
+      topLeft.dx,
+      top,
+      overlay.size.width - bottomRight.dx,
+      overlay.size.height - top,
+    );
+  }
+
+  void _showTeachingMenu(BuildContext context, bool isDark) {
     final cubit = context.read<TACalendarCubit>();
     final l10n = AppLocalizations.of(context);
-    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
     showMenu<void>(
       context: context,
@@ -1682,12 +1695,7 @@ class _TACalendarScreenState extends State<TACalendarScreen> {
       surfaceTintColor: Colors.transparent,
       elevation: 14,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      position: RelativeRect.fromLTRB(
-        globalPosition.dx - 8,
-        globalPosition.dy + 8,
-        overlay.size.width - globalPosition.dx,
-        overlay.size.height - globalPosition.dy,
-      ),
+      position: _menuPositionForButton(context),
       items: [
         _buildMenuOption(
           label: l10n.taLabs,
@@ -1707,14 +1715,9 @@ class _TACalendarScreenState extends State<TACalendarScreen> {
     );
   }
 
-  void _showSupportMenu(
-    BuildContext context,
-    Offset globalPosition,
-    bool isDark,
-  ) {
+  void _showSupportMenu(BuildContext context, bool isDark) {
     final cubit = context.read<TACalendarCubit>();
     final l10n = AppLocalizations.of(context);
-    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
 
     showMenu<void>(
       context: context,
@@ -1722,12 +1725,7 @@ class _TACalendarScreenState extends State<TACalendarScreen> {
       surfaceTintColor: Colors.transparent,
       elevation: 14,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      position: RelativeRect.fromLTRB(
-        globalPosition.dx - 8,
-        globalPosition.dy + 8,
-        overlay.size.width - globalPosition.dx,
-        overlay.size.height - globalPosition.dy,
-      ),
+      position: _menuPositionForButton(context),
       items: [
         _buildMenuOption(
           label: l10n.pendingGrading,
