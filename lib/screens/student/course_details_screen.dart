@@ -48,6 +48,10 @@ class CourseDetailsScreen extends StatefulWidget {
 }
 
 class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
+  static const List<Color> _studentAccentGradient = <Color>[
+    Color(0xFF2B7FFF),
+    Color(0xFF155DFC),
+  ];
   static const int _searchTabIndex = 0;
   static const int _contentTabIndex = 1;
   static const int _overviewTabIndex = 2;
@@ -877,7 +881,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
           width: 46,
           height: 46,
           decoration: BoxDecoration(
-            color: const Color(0xFF6D28D9),
+            gradient: const LinearGradient(
+              colors: <Color>[Color(0xFF2563EB), Color(0xFF155DFC)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Icon(icon, color: Colors.white, size: 18),
@@ -1265,7 +1273,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   mainAxisExtent: columns == 1 ? 64 : 72,
                 ),
                 itemBuilder: (context, index) {
-                  final chip = infoChips[index];
+              final chip = infoChips[index];
                   return Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -1332,7 +1340,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: _gradientColors),
+              gradient: const LinearGradient(colors: _studentAccentGradient),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(metric.icon, color: Colors.white, size: 20),
@@ -1505,7 +1513,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                 height: 56,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
-                  gradient: LinearGradient(colors: _gradientColors),
+                  gradient: const LinearGradient(colors: _studentAccentGradient),
                 ),
                 child: const Icon(
                   Icons.person_rounded,
@@ -1808,7 +1816,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                             height: 48,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16),
-                              gradient: LinearGradient(colors: _gradientColors),
+                              gradient: const LinearGradient(
+                                colors: _studentAccentGradient,
+                              ),
                             ),
                             child: const Icon(
                               Icons.groups_rounded,
@@ -1933,11 +1943,11 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: _gradientColors),
+        gradient: const LinearGradient(colors: _studentAccentGradient),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: _gradientColors.last.withValues(alpha: 0.22),
+            color: _studentAccentGradient.last.withValues(alpha: 0.22),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
@@ -2086,7 +2096,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   child: Container(
                     height: 12,
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: _gradientColors),
+                      gradient: const LinearGradient(
+                        colors: _studentAccentGradient,
+                      ),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),

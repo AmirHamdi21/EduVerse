@@ -264,25 +264,6 @@ Future<void> _waitForWidget(
   expect(finder, findsWidgets);
 }
 
-Future<void> _confirmDatePicker(WidgetTester tester) async {
-  final dateDialog = find.byType(DatePickerDialog);
-  Finder confirmFinder = find.descendant(
-    of: dateDialog,
-    matching: find.text('OK'),
-  );
-
-  if (confirmFinder.evaluate().isEmpty) {
-    confirmFinder = find.descendant(
-      of: dateDialog,
-      matching: find.text('Save'),
-    );
-  }
-
-  expect(confirmFinder, findsOneWidget);
-  await tester.tap(confirmFinder);
-  await _pumpUi(tester);
-}
-
 void main() {
   testWidgets(
     'Staff & Booking tab loads profile and renders slots',
@@ -476,14 +457,15 @@ void main() {
       await _waitForWidget(tester, bookButton);
       await tester.tap(bookButton.first);
       await _pumpUi(tester);
+      await tester.pumpAndSettle();
 
-      final dateDialog = find.byType(DatePickerDialog);
-      expect(dateDialog, findsOneWidget);
+      expect(find.text('Select date'), findsOneWidget);
 
-      await _confirmDatePicker(tester);
+      await tester.tap(find.text('Continue').last);
+      await _pumpUi(tester);
+      await tester.pumpAndSettle();
 
-      final bookingDialog = find.byType(AlertDialog);
-      expect(bookingDialog, findsOneWidget);
+      expect(find.text('Book Appointment'), findsOneWidget);
 
       await tester.enterText(
         _textFieldByLabel('Topic (optional)'),
@@ -495,10 +477,14 @@ void main() {
       );
 
       await tester.tap(
-        find.descendant(
-          of: bookingDialog,
-          matching: find.widgetWithText(FilledButton, 'Book'),
-        ),
+        find.text('Book').last,
+      );
+      await _pumpUi(tester);
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Capstone guidance'),
+        250,
+        scrollable: _verticalScrollable().first,
       );
       await _pumpUi(tester);
 

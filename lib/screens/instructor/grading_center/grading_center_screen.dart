@@ -347,8 +347,8 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
         final l10n = AppLocalizations.of(context);
         final tabContent = Column(
           children: [
-            _buildSearchFilterBar(isDark, l10n),
-            _buildTabBar(isDark, l10n),
+            _buildSearchFilterBar(isDark, l10n, compact: widget.embedded),
+            _buildTabBar(isDark, l10n, compact: widget.embedded),
             Expanded(
               child: TabBarView(
                 controller: _tabController,
@@ -366,15 +366,11 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
         if (widget.embedded) {
           return Container(
             color: GradingColors.background(isDark),
-            child: NestedScrollView(
-              headerSliverBuilder: (context, innerBoxIsScrolled) {
-                return <Widget>[
-                  SliverToBoxAdapter(
-                    child: _buildHeaderSection(isDark, l10n),
-                  ),
-                ];
-              },
-              body: tabContent,
+            child: Column(
+              children: [
+                _buildEmbeddedHeaderSection(isDark, l10n),
+                Expanded(child: tabContent),
+              ],
             ),
           );
         }
@@ -393,6 +389,185 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
           ),
         );
       },
+    );
+  }
+
+  Widget _buildEmbeddedHeaderSection(bool isDark, AppLocalizations l10n) {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        gradient: isDark
+            ? GradingColors.darkHeaderGradient
+            : GradingColors.headerGradient,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: GradingColors.primary.withValues(alpha: isDark ? 0.16 : 0.14),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.grading_rounded,
+                  color: Colors.white,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.gradingCenter,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${_submissions.length} submissions to review',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.82),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          _isLoading
+              ? _buildEmbeddedStatsSkeleton()
+              : Row(
+                  children: [
+                    _buildEmbeddedStatCard(
+                      label: l10n.pending,
+                      count: _pendingCount,
+                      color: GradingColors.pending,
+                      icon: Icons.pending_actions_rounded,
+                      isDark: isDark,
+                      onTap: () => _tabController.animateTo(1),
+                    ),
+                    const SizedBox(width: 10),
+                    _buildEmbeddedStatCard(
+                      label: l10n.graded,
+                      count: _gradedCount,
+                      color: GradingColors.graded,
+                      icon: Icons.check_circle_rounded,
+                      isDark: isDark,
+                      onTap: () => _tabController.animateTo(2),
+                    ),
+                    const SizedBox(width: 10),
+                    _buildEmbeddedStatCard(
+                      label: l10n.late,
+                      count: _lateCount,
+                      color: GradingColors.late,
+                      icon: Icons.warning_rounded,
+                      isDark: isDark,
+                      onTap: () => _tabController.animateTo(3),
+                    ),
+                  ],
+                ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmbeddedStatCard({
+    required String label,
+    required int count,
+    required Color color,
+    required IconData icon,
+    required bool isDark,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: isDark ? 0.10 : 0.14),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: isDark ? 0.14 : 0.18),
+            ),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: color, size: 18),
+              const SizedBox(height: 8),
+              Text(
+                count.toString(),
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.82),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmbeddedStatsSkeleton() {
+    Widget skeletonCard() {
+      return Expanded(
+        child: Container(
+          height: 84,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+          ),
+        ),
+      );
+    }
+
+    return Row(
+      children: [
+        skeletonCard(),
+        const SizedBox(width: 10),
+        skeletonCard(),
+        const SizedBox(width: 10),
+        skeletonCard(),
+      ],
     );
   }
 
@@ -893,9 +1068,13 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
   //   );
   // }
 
-  Widget _buildSearchFilterBar(bool isDark, AppLocalizations l10n) {
+  Widget _buildSearchFilterBar(
+    bool isDark,
+    AppLocalizations l10n, {
+    bool compact = false,
+  }) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+      padding: EdgeInsets.fromLTRB(16, compact ? 10 : 16, 16, compact ? 8 : 12),
       decoration: BoxDecoration(
         color: GradingColors.cardColor(isDark),
         boxShadow: [
@@ -1033,9 +1212,13 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
     );
   }
 
-  Widget _buildTabBar(bool isDark, AppLocalizations l10n) {
+  Widget _buildTabBar(
+    bool isDark,
+    AppLocalizations l10n, {
+    bool compact = false,
+  }) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      margin: EdgeInsets.fromLTRB(16, compact ? 4 : 8, 16, compact ? 4 : 8),
       decoration: BoxDecoration(
         color: isDark ? GradingColors.darkCard : GradingColors.surface,
         borderRadius: BorderRadius.circular(16),
@@ -1077,7 +1260,7 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
 
   Widget _buildTabWithBadge(String label, int count, bool isDark) {
     return Tab(
-      height: 40,
+      height: 38,
       child: Column(
         // Changed from Row to Column
         mainAxisAlignment: MainAxisAlignment.center,
@@ -1115,7 +1298,10 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
   ) {
     if (_isLoading) {
       return ListView.builder(
-        physics: widget.embedded ? const ClampingScrollPhysics() : null,
+        primary: false,
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: ClampingScrollPhysics(),
+        ),
         padding: const EdgeInsets.all(16),
         itemCount: 4,
         itemBuilder: (context, index) {
@@ -1135,7 +1321,10 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
       color: GradingColors.primary,
       backgroundColor: GradingColors.cardColor(isDark),
       child: ListView.builder(
-        physics: widget.embedded ? const ClampingScrollPhysics() : null,
+        primary: false,
+        physics: const AlwaysScrollableScrollPhysics(
+          parent: ClampingScrollPhysics(),
+        ),
         padding: const EdgeInsets.all(16),
         itemCount: submissions.length,
         itemBuilder: (context, index) {

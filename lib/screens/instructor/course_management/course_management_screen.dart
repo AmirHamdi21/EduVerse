@@ -79,7 +79,11 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
   void initState() {
     super.initState();
     _storageService = widget.storageService ?? StorageService();
-    _tabController = TabController(length: 9, vsync: this);
+    _tabController = TabController(
+      length: 9,
+      vsync: this,
+      initialIndex: _courseContentTabIndex,
+    );
     _tabController.addListener(_handleTabControllerChanged);
     _resolveRoleAccess();
     _course =
@@ -507,6 +511,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       _CourseManagementTabSpec(
         icon: Icons.search_rounded,
         label: l10n.search,
+        compact: true,
       ),
       _CourseManagementTabSpec(
         icon: Icons.video_library_outlined,
@@ -587,19 +592,23 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
               return Tab(
                 height: 52,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: tab.compact ? 10 : 12,
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(tab.icon, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        tab.label,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
+                      if (!tab.compact) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          tab.label,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -2251,15 +2260,18 @@ class _InstructorCourseSearchTabState extends State<_InstructorCourseSearchTab> 
 
   @override
   Widget build(BuildContext context) {
-    return CourseDetailSearchTab(
-      isDark: widget.isDark,
-      accentColor: CMColors.primary,
-      hintText: widget.l10n.studentCourseDetailSearchHint,
-      promptTitle: widget.l10n.studentCourseDetailSearchPromptTitle,
-      promptSubtitle: widget.l10n.studentCourseDetailSearchPromptSubtitle,
-      noResultsTitle: widget.l10n.studentCourseDetailSearchNoResultsTitle,
-      noResultsSubtitle: widget.l10n.studentCourseDetailSearchNoResultsSubtitle,
-      entries: _entries,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      child: CourseDetailSearchTab(
+        isDark: widget.isDark,
+        accentColor: CMColors.primary,
+        hintText: widget.l10n.studentCourseDetailSearchHint,
+        promptTitle: widget.l10n.studentCourseDetailSearchPromptTitle,
+        promptSubtitle: widget.l10n.studentCourseDetailSearchPromptSubtitle,
+        noResultsTitle: widget.l10n.studentCourseDetailSearchNoResultsTitle,
+        noResultsSubtitle: widget.l10n.studentCourseDetailSearchNoResultsSubtitle,
+        entries: _entries,
+      ),
     );
   }
 }
@@ -2267,8 +2279,13 @@ class _InstructorCourseSearchTabState extends State<_InstructorCourseSearchTab> 
 class _CourseManagementTabSpec {
   final IconData icon;
   final String label;
+  final bool compact;
 
-  const _CourseManagementTabSpec({required this.icon, required this.label});
+  const _CourseManagementTabSpec({
+    required this.icon,
+    required this.label,
+    this.compact = false,
+  });
 }
 
 class _HeroMetric {

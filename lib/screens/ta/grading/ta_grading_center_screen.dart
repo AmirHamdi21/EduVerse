@@ -338,72 +338,78 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen>
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
+        final bodyContent = _isLoading
+            ? Center(
+                child: CircularProgressIndicator(color: TAColors.primary),
+              )
+            : Column(
+                children: [
+                  _buildStatsBar(isDark),
+                  _buildFilterTabs(isDark, l10n),
+                  _buildSearchBar(isDark),
+                  _buildCourseFilter(isDark),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      children: [
+                        _buildSubmissionList('all', isDark),
+                        _buildSubmissionList('pending', isDark),
+                        _buildSubmissionList('graded', isDark),
+                        _buildSubmissionList('late', isDark),
+                      ],
+                    ),
+                  ),
+                ],
+              );
+
+        if (widget.embedded) {
+          return Container(
+            color: TAColors.scaffoldColor(isDark),
+            child: bodyContent,
+          );
+        }
 
         return Scaffold(
           backgroundColor: TAColors.scaffoldColor(isDark),
-          appBar: widget.embedded
-              ? null
-              : AppBar(
-                  backgroundColor: TAColors.scaffoldColor(isDark),
-                  leading: IconButton(
-                    onPressed: () {
-                      if (context.canPop()) {
-                        context.pop();
-                      } else {
-                        context.go('/ta/dashboard');
-                      }
-                    },
-                    icon: Icon(
-                      Icons.arrow_back_rounded,
-                      color: TAColors.textPrimaryColor(isDark),
-                    ),
-                  ),
-                  title: Text(
-                    'Grading Center',
-                    style: TextStyle(
-                      color: TAColors.textPrimaryColor(isDark),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  actions: [
-                    IconButton(
-                      onPressed: () => context.read<ThemeBloc>().add(
-                        const ToggleThemeEvent(),
-                      ),
-                      icon: Icon(
-                        isDark
-                            ? Icons.light_mode_rounded
-                            : Icons.dark_mode_rounded,
-                        color: TAColors.textSecondaryColor(isDark),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                  ],
+          appBar: AppBar(
+            backgroundColor: TAColors.scaffoldColor(isDark),
+            leading: IconButton(
+              onPressed: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go('/ta/dashboard');
+                }
+              },
+              icon: Icon(
+                Icons.arrow_back_rounded,
+                color: TAColors.textPrimaryColor(isDark),
+              ),
+            ),
+            title: Text(
+              'Grading Center',
+              style: TextStyle(
+                color: TAColors.textPrimaryColor(isDark),
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            actions: [
+              IconButton(
+                onPressed: () => context.read<ThemeBloc>().add(
+                  const ToggleThemeEvent(),
                 ),
-          body: _isLoading
-              ? Center(
-                  child: CircularProgressIndicator(color: TAColors.primary),
-                )
-              : Column(
-                  children: [
-                    _buildStatsBar(isDark),
-                    _buildFilterTabs(isDark, l10n),
-                    _buildSearchBar(isDark),
-                    _buildCourseFilter(isDark),
-                    Expanded(
-                      child: TabBarView(
-                        controller: _tabController,
-                        children: [
-                          _buildSubmissionList('all', isDark),
-                          _buildSubmissionList('pending', isDark),
-                          _buildSubmissionList('graded', isDark),
-                          _buildSubmissionList('late', isDark),
-                        ],
-                      ),
-                    ),
-                  ],
+                icon: Icon(
+                  isDark
+                      ? Icons.light_mode_rounded
+                      : Icons.dark_mode_rounded,
+                  color: TAColors.textSecondaryColor(isDark),
                 ),
+              ),
+              const SizedBox(width: 8),
+            ],
+          ),
+          body: bodyContent,
         );
       },
     );
@@ -616,7 +622,11 @@ class _TAGradingCenterScreenState extends State<TAGradingCenterScreen>
               onRefresh: _refreshData,
               color: TAColors.primary,
               child: ListView.builder(
+                primary: false,
                 padding: const EdgeInsets.all(16),
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: ClampingScrollPhysics(),
+                ),
                 itemCount: filtered.length,
                 itemBuilder: (context, index) {
                   final entry = filtered[index];

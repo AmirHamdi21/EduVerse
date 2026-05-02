@@ -65,7 +65,11 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 10, vsync: this);
+    _tabController = TabController(
+      length: 10,
+      vsync: this,
+      initialIndex: _courseContentTabIndex,
+    );
     _tabController.addListener(_handleTabChanged);
 
     final cubit = context.read<TACoursesCubit>();
@@ -535,7 +539,11 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
 
   List<_TACourseDetailTabSpec> _buildTabs(AppLocalizations l10n) {
     return <_TACourseDetailTabSpec>[
-      _TACourseDetailTabSpec(icon: Icons.search_rounded, label: l10n.search),
+      _TACourseDetailTabSpec(
+        icon: Icons.search_rounded,
+        label: l10n.search,
+        compact: true,
+      ),
       _TACourseDetailTabSpec(
         icon: Icons.video_library_outlined,
         label: l10n.studentCourseDetailCourseContent,
@@ -1047,19 +1055,23 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
               return Tab(
                 height: 52,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: tab.compact ? 10 : 12,
+                  ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(tab.icon, size: 18),
-                      const SizedBox(width: 8),
-                      Text(
-                        tab.label,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
+                      if (!tab.compact) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          tab.label,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),
@@ -2507,15 +2519,18 @@ class _TACourseSearchTabState extends State<_TACourseSearchTab> {
 
   @override
   Widget build(BuildContext context) {
-    return CourseDetailSearchTab(
-      isDark: widget.isDark,
-      accentColor: TAColors.primary,
-      hintText: widget.l10n.studentCourseDetailSearchHint,
-      promptTitle: widget.l10n.studentCourseDetailSearchPromptTitle,
-      promptSubtitle: widget.l10n.studentCourseDetailSearchPromptSubtitle,
-      noResultsTitle: widget.l10n.studentCourseDetailSearchNoResultsTitle,
-      noResultsSubtitle: widget.l10n.studentCourseDetailSearchNoResultsSubtitle,
-      entries: _entries,
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      child: CourseDetailSearchTab(
+        isDark: widget.isDark,
+        accentColor: TAColors.primary,
+        hintText: widget.l10n.studentCourseDetailSearchHint,
+        promptTitle: widget.l10n.studentCourseDetailSearchPromptTitle,
+        promptSubtitle: widget.l10n.studentCourseDetailSearchPromptSubtitle,
+        noResultsTitle: widget.l10n.studentCourseDetailSearchNoResultsTitle,
+        noResultsSubtitle: widget.l10n.studentCourseDetailSearchNoResultsSubtitle,
+        entries: _entries,
+      ),
     );
   }
 }
@@ -2523,8 +2538,13 @@ class _TACourseSearchTabState extends State<_TACourseSearchTab> {
 class _TACourseDetailTabSpec {
   final IconData icon;
   final String label;
+  final bool compact;
 
-  const _TACourseDetailTabSpec({required this.icon, required this.label});
+  const _TACourseDetailTabSpec({
+    required this.icon,
+    required this.label,
+    this.compact = false,
+  });
 }
 
 class _TADetailHeroMetric {

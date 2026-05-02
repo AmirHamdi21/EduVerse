@@ -208,6 +208,12 @@ Future<void> _pumpUi(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 300));
 }
 
+Finder _verticalScrollable() {
+  return find.byWidgetPredicate((widget) {
+    return widget is Scrollable && widget.axisDirection == AxisDirection.down;
+  });
+}
+
 void main() {
   testWidgets(
     'renders profile slots and appointments',
@@ -260,6 +266,12 @@ void main() {
       expect(find.text('Lina Ali'), findsWidgets);
       expect(find.text('Office Hour Slots'), findsOneWidget);
       expect(find.textContaining('10:00 - 11:00'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('My Appointments'),
+        250,
+        scrollable: _verticalScrollable().first,
+      );
+      await _pumpUi(tester);
       expect(find.text('My Appointments'), findsOneWidget);
       expect(find.text('Capstone Review'), findsOneWidget);
 
@@ -320,6 +332,12 @@ void main() {
             notes: 'Need feedback',
           ),
         );
+      await _pumpUi(tester);
+      await tester.scrollUntilVisible(
+        find.text('Capstone guidance'),
+        250,
+        scrollable: _verticalScrollable().first,
+      );
       await _pumpUi(tester);
 
       expect(officeHoursService.bookingCalls, 1);

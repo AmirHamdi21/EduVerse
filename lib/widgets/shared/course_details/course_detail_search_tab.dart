@@ -70,14 +70,22 @@ class _CourseDetailSearchTabState extends State<CourseDetailSearchTab> {
                 : const Color(0xFFD8E1EF),
           ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: TextField(
           controller: _searchController,
           onChanged: (_) => setState(() {}),
           decoration: InputDecoration(
             border: InputBorder.none,
             hintText: widget.hintText,
-            prefixIcon: const Icon(Icons.search_rounded),
+            isDense: true,
+            contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            prefixIconConstraints: const BoxConstraints(
+              minWidth: 44,
+              minHeight: 44,
+            ),
+            prefixIcon: const Padding(
+              padding: EdgeInsets.only(left: 12, right: 8),
+              child: Icon(Icons.search_rounded),
+            ),
             suffixIcon: hasQuery
                 ? IconButton(
                     onPressed: () {
@@ -87,6 +95,10 @@ class _CourseDetailSearchTabState extends State<CourseDetailSearchTab> {
                     icon: const Icon(Icons.close_rounded),
                   )
                 : null,
+            suffixIconConstraints: const BoxConstraints(
+              minWidth: 44,
+              minHeight: 44,
+            ),
           ),
         ),
       ),
@@ -132,17 +144,14 @@ class _CourseDetailSearchTabState extends State<CourseDetailSearchTab> {
     return LayoutBuilder(
       builder: (context, constraints) {
         if (!constraints.hasBoundedHeight) {
-          return Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: bodyChildren,
-            ),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: bodyChildren,
           );
         }
 
         return ListView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+          padding: EdgeInsets.zero,
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: bodyChildren,
         );
