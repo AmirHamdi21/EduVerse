@@ -50,6 +50,7 @@ class _FlowAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<PaginatedResponse<AssignmentModel>>.success(
       PaginatedResponse<AssignmentModel>(
@@ -63,7 +64,10 @@ class _FlowAssignmentService extends AssignmentService {
   }
 
   @override
-  Future<ServiceResult<AssignmentModel>> getById(dynamic id) async {
+  Future<ServiceResult<AssignmentModel>> getById(
+    dynamic id, {
+    CancelToken? cancelToken,
+  }) async {
     final resolved = _resolveId(id);
     final assignment = assignments.firstWhere(
       (item) => item.assignmentId == resolved,
@@ -75,8 +79,9 @@ class _FlowAssignmentService extends AssignmentService {
 
   @override
   Future<ServiceResult<AssignmentSubmissionModel>> getMySubmission(
-    dynamic assignmentId,
-  ) async {
+    dynamic assignmentId, {
+    CancelToken? cancelToken,
+  }) async {
     final id = _resolveId(assignmentId);
     final submission = submissions[id];
 
@@ -98,6 +103,7 @@ class _FlowAssignmentService extends AssignmentService {
     dynamic assignmentId, {
     String? submissionText,
     String? submissionLink,
+    CancelToken? cancelToken,
   }) async {
     textSubmitCalls += 1;
     final id = _resolveId(assignmentId);
@@ -124,6 +130,7 @@ class _FlowAssignmentService extends AssignmentService {
     String? submissionText,
     String? submissionLink,
     ProgressCallback? onSendProgress,
+    CancelToken? cancelToken,
   }) async {
     fileSubmitCalls += 1;
     return submit(

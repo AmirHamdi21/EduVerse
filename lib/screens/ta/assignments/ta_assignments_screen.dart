@@ -15,6 +15,7 @@ import '../../../bloc/theme/theme_state.dart';
 import '../../../models/assignments/assignment_model.dart';
 import '../../../models/core/enums/assignment_enums.dart' as api;
 import '../../../models/instructor/teaching_course_model.dart';
+import '../../../widgets/student/academic/academic_list_skeleton.dart';
 import '../../../widgets/shared/modern_action_sheet.dart';
 import '../../instructor/create_assignment_screen.dart';
 
@@ -68,9 +69,6 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     }
 
     final courses = status.data;
-    if (courses.isEmpty) {
-      return;
-    }
 
     final preferredCourseId =
         widget.initialCourseId != null &&
@@ -81,12 +79,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
         _selectedCourseId != null &&
         courses.any((course) => course.courseId == _selectedCourseId);
     final nextCourseId =
-        preferredCourseId ??
-        (hasSelected ? _selectedCourseId : courses.first.courseId);
-
-    if (nextCourseId == null) {
-      return;
-    }
+        preferredCourseId ?? (hasSelected ? _selectedCourseId : null);
 
     final assignmentsState = state.assignmentsData;
     final shouldFetch =
@@ -124,9 +117,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                   return;
                 }
                 final courseId = _selectedCourseId;
-                if (courseId != null) {
-                  await cubit.fetchCourseAssignments(courseId);
-                }
+                await cubit.fetchCourseAssignments(courseId);
               },
               child: CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -385,12 +376,13 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     final subtitle = selectedCourse == null
         ? l10n.taAssignmentsHeaderSubtitle
         : '${selectedCourse.course.code} • ${selectedCourse.course.name}';
+    final courseCount = selectedCourse == null ? courses.length : 1;
 
     final stats = <({IconData icon, String label, String value, Color color})>[
       (
         icon: Icons.menu_book_rounded,
         label: l10n.course,
-        value: selectedCourse == null ? '0' : '1',
+        value: '$courseCount',
         color: TAColors.teal,
       ),
       (
@@ -609,13 +601,18 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     List<TeachingCourseModel> courses,
     int visibleCount,
   ) {
-    String selectedCourseLabel = l10n.course;
+    String selectedCourseLabel = l10n.allCourses;
     for (final course in courses) {
       if (course.courseId == _selectedCourseId) {
         selectedCourseLabel = '${course.course.code} • ${course.course.name}';
         break;
       }
     }
+    final selectedCourseValue = courses.any(
+      (course) => course.courseId == _selectedCourseId,
+    )
+        ? _selectedCourseId
+        : null;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -708,16 +705,24 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Expanded(
-                    child: _buildModernDropdown<int>(
+                    child: _buildModernDropdown<int?>(
                       isDark: isDark,
                       label: l10n.course,
                       selectedLabel: selectedCourseLabel,
-                      value: _selectedCourseId ?? 0,
+                      value: selectedCourseValue,
                       icon: Icons.menu_book_rounded,
                       menuMaxHeight: r.screenHeight * 0.45,
-                      items: courses
-                          .map((course) {
-                            return DropdownMenuItem<int>(
+                      items: <DropdownMenuItem<int?>>[
+                        DropdownMenuItem<int?>(
+                          value: null,
+                          child: Text(
+                            l10n.allCourses,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        ...courses.map((course) {
+                          return DropdownMenuItem<int?>(
                               value: course.courseId,
                               child: Text(
                                 '${course.course.code} • ${course.course.name}',
@@ -725,12 +730,9 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             );
-                          })
-                          .toList(growable: false),
+                          }),
+                      ],
                       onChanged: (value) {
-                        if (value == null) {
-                          return;
-                        }
                         setState(() => _selectedCourseId = value);
                         context.read<TACoursesCubit>().fetchCourseAssignments(
                           value,
@@ -792,7 +794,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     required bool isDark,
     required String label,
     required String selectedLabel,
-    required T value,
+    required T? value,
     required IconData icon,
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
@@ -1132,19 +1134,15 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
   }
 
   Widget _buildLoadingSkeleton(bool isDark) {
-    return SliverPadding(
-      padding: const EdgeInsets.all(16),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            height: 210,
-            decoration: BoxDecoration(
-              color: TAColors.cardColor(isDark),
-              borderRadius: BorderRadius.circular(22),
-            ),
-          );
-        }, childCount: 3),
+    return SliverToBoxAdapter(
+      child: IgnorePointer(
+        child: AcademicListSkeleton(
+          isDark: isDark,
+          itemCount: 4,
+          topPadding: 16,
+          bottomPadding: 24,
+          sliverFriendly: true,
+        ),
       ),
     );
   }
@@ -1242,12 +1240,9 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
             const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: () {
-                final courseId = _selectedCourseId;
-                if (courseId != null) {
-                  context.read<TACoursesCubit>().fetchCourseAssignments(
-                    courseId,
-                  );
-                }
+                context.read<TACoursesCubit>().fetchCourseAssignments(
+                  _selectedCourseId,
+                );
               },
               icon: const Icon(Icons.refresh_rounded),
               label: Text(l10n.retry),
@@ -1289,7 +1284,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     BuildContext context, {
     AssignmentModel? assignment,
   }) async {
-    final courseId = _selectedCourseId;
+    final courseId = _selectedCourseId ?? assignment?.courseId;
     if (courseId == null) {
       return;
     }
@@ -1379,7 +1374,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
       '/ta/assignments/${assignment.assignmentId}',
       extra: assignment,
     );
-    if (mounted && courseId != null) {
+    if (mounted) {
       await context.read<TACoursesCubit>().fetchCourseAssignments(courseId);
     }
   }
@@ -1388,10 +1383,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     BuildContext context,
     AssignmentModel assignment,
   ) async {
-    final courseId = _selectedCourseId;
-    if (courseId == null) {
-      return;
-    }
+    final courseId = _selectedCourseId ?? assignment.courseId;
     final cubit = context.read<TACoursesCubit>();
     final l10n = AppLocalizations.of(context);
 
@@ -1427,10 +1419,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     AssignmentModel assignment,
     api.AssignmentStatus status,
   ) async {
-    final courseId = _selectedCourseId;
-    if (courseId == null) {
-      return;
-    }
+    final courseId = _selectedCourseId ?? assignment.courseId;
 
     final cubit = context.read<TACoursesCubit>();
     final message = await cubit.updateAssignmentStatus(

@@ -366,11 +366,15 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
         if (widget.embedded) {
           return Container(
             color: GradingColors.background(isDark),
-            child: Column(
-              children: [
-                _buildHeaderSection(isDark, l10n),
-                Expanded(child: tabContent),
-              ],
+            child: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                return <Widget>[
+                  SliverToBoxAdapter(
+                    child: _buildHeaderSection(isDark, l10n),
+                  ),
+                ];
+              },
+              body: tabContent,
             ),
           );
         }

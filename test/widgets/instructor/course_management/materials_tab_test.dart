@@ -89,16 +89,18 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final keys = <String>[
-      'material-action-visibility',
-      'material-action-edit',
-      'material-action-delete',
-    ];
+    await tester.tap(find.byIcon(Icons.more_horiz_rounded).first);
+    await tester.pumpAndSettle();
 
-    for (final key in keys) {
-      final size = tester.getSize(find.byKey(ValueKey<String>(key)).first);
-      expect(size.width >= 48, isTrue);
-      expect(size.height >= 48, isTrue);
+    for (final label in <String>['Hide', 'Edit', 'Delete']) {
+      final menuItem = find.ancestor(
+        of: find.text(label).first,
+        matching: find.byWidgetPredicate(
+          (widget) => widget.runtimeType.toString().startsWith('PopupMenuItem'),
+        ),
+      );
+      final menuSize = tester.getSize(menuItem.first);
+      expect(menuSize.height >= 48, isTrue);
     }
   });
 

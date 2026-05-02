@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/attendance/admin_attendance_cubit.dart';
@@ -20,12 +21,14 @@ class _FakeAttendanceService implements AttendanceService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async => sessionsResult;
 
   @override
   Future<ServiceResult<AttendanceSessionModel>> getSessionDetails(
-    int id,
-  ) async =>
+    int id, {
+    CancelToken? cancelToken,
+  }) async =>
       sessionDetailsResult ??
       ServiceResult<AttendanceSessionModel>.success(
         AttendanceSessionModel.fromJson(<String, dynamic>{

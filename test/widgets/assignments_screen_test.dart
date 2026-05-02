@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -9,12 +10,18 @@ import 'package:edu_verse/common/service_error.dart';
 import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/models/assignments/assignment_model.dart';
 import 'package:edu_verse/models/assignments/assignment_submission_model.dart';
+import 'package:edu_verse/models/core/course_model.dart';
 import 'package:edu_verse/models/core/enums/assignment_enums.dart' as api;
+import 'package:edu_verse/models/core/enums/course_enums.dart';
+import 'package:edu_verse/models/core/enums/enrollment_enums.dart';
+import 'package:edu_verse/models/core/enrollment_model.dart';
 import 'package:edu_verse/models/core/paginated_response.dart';
 import 'package:edu_verse/screens/student/assignments_screen.dart';
 import 'package:edu_verse/services/api/assignment_service.dart';
 import 'package:edu_verse/services/api/core_api_client.dart';
+import 'package:edu_verse/services/api/enrollment_service.dart';
 import 'package:edu_verse/services/storage_service.dart';
+import 'package:edu_verse/widgets/student/academic/academic_list_skeleton.dart';
 
 class _FakeStorageService extends StorageService {
   @override
@@ -49,6 +56,7 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     if (delay != Duration.zero) {
       await Future<void>.delayed(delay);
@@ -67,14 +75,48 @@ class _FakeAssignmentService extends AssignmentService {
 
   @override
   Future<ServiceResult<AssignmentSubmissionModel>> getMySubmission(
-    dynamic assignmentId,
-  ) async {
+    dynamic assignmentId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<AssignmentSubmissionModel>.failure(
       const ServiceError(
         type: ServiceErrorType.server,
         statusCode: 404,
         message: 'No submission found',
       ),
+    );
+  }
+}
+
+class _FakeEnrollmentService extends EnrollmentService {
+  _FakeEnrollmentService() : super(coreApiClient: CoreApiClient.test());
+
+  @override
+  Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses({
+    int? semester,
+    CancelToken? cancelToken,
+  }) async {
+    return ServiceResult<List<CourseEnrollmentModel>>.success(
+      <CourseEnrollmentModel>[
+        CourseEnrollmentModel(
+          id: '1',
+          userId: 7,
+          sectionId: 11,
+          enrollmentStatus: EnrollmentStatus.enrolled,
+          enrollmentDate: DateTime(2026, 1, 1),
+          course: CourseModel(
+            id: 1,
+            departmentId: 1,
+            code: 'CS301',
+            name: 'Algorithms',
+            credits: 3,
+            courseLevel: CourseLevel.freshman,
+            courseStatus: CourseStatus.active,
+            createdAt: DateTime(2026, 1, 1),
+            updatedAt: DateTime(2026, 1, 1),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -104,7 +146,10 @@ AssignmentModel _assignment({required String title}) {
 
 Widget _buildScreen(AssignmentService assignmentService) {
   final themeBloc = ThemeBloc(storageService: _FakeStorageService());
-  final assignmentBloc = AssignmentBloc(assignmentService: assignmentService);
+  final assignmentBloc = AssignmentBloc(
+    assignmentService: assignmentService,
+    enrollmentService: _FakeEnrollmentService(),
+  );
 
   return MultiBlocProvider(
     providers: [
@@ -157,7 +202,7 @@ void main() {
     );
 
     await tester.pump();
-    expect(find.byType(CircularProgressIndicator), findsWidgets);
+    expect(find.byType(AcademicListSkeleton), findsOneWidget);
 
     await tester.pumpAndSettle();
 

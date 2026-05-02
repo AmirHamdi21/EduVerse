@@ -22,6 +22,7 @@ class MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     final queryParams = <String, dynamic>{};
     if (materialType != null) queryParams['materialType'] = materialType;
@@ -32,6 +33,7 @@ class MaterialService {
       '/courses/$courseId/materials',
       queryParameters: queryParams.isNotEmpty ? queryParams : null,
       options: _client.materialTimeoutOptions(),
+      cancelToken: cancelToken,
     );
     final List data = response.data is List
         ? response.data as List

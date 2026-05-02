@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/admin_course_management/course_wizard_bloc.dart';
@@ -138,8 +139,9 @@ class _AddFailsBeforeRemovalEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<InstructorAssignmentModel>>.success(
       <InstructorAssignmentModel>[
         InstructorAssignmentModel(
@@ -157,8 +159,9 @@ class _AddFailsBeforeRemovalEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<TAAssignmentModel>>> getSectionTAs(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TAAssignmentModel>>.success(
       const <TAAssignmentModel>[],
     );
@@ -198,8 +201,9 @@ class _RoleUpdateEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<InstructorAssignmentModel>>.success(
       <InstructorAssignmentModel>[
         InstructorAssignmentModel(
@@ -217,8 +221,9 @@ class _RoleUpdateEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<TAAssignmentModel>>> getSectionTAs(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TAAssignmentModel>>.success(
       const <TAAssignmentModel>[],
     );

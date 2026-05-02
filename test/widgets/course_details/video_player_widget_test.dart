@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/features/courses/bloc/material_viewer/material_viewer_bloc.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/services/api/core_api_client.dart';
 import 'package:edu_verse/services/api/material_service.dart';
 import 'package:edu_verse/models/materials/course_material_model.dart';
@@ -17,7 +19,7 @@ class _NoopMaterialService extends MaterialService {
 
 void main() {
   testWidgets(
-    'VideoPlayerWidget shows player container and controls',
+    'VideoPlayerWidget shows unavailable state when embedded player is disabled',
     (tester) async {
       final material = CourseMaterialModel(
         materialId: '101',
@@ -31,6 +33,13 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           home: BlocProvider(
             create: (_) =>
                 MaterialViewerBloc(materialService: _NoopMaterialService()),
@@ -47,10 +56,9 @@ void main() {
 
       await tester.pumpAndSettle();
 
-      expect(find.text('Intro Lecture'), findsOneWidget);
-      expect(find.byIcon(Icons.play_arrow_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.pause_rounded), findsOneWidget);
-      expect(find.byIcon(Icons.fullscreen_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.ondemand_video_rounded), findsOneWidget);
+      expect(find.text('Open'), findsOneWidget);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
     },
     timeout: const Timeout(Duration(seconds: 20)),
   );

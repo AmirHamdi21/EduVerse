@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/lab_detail/lab_detail_cubit.dart';
@@ -30,6 +31,7 @@ class _FakeEnrollmentService extends EnrollmentService {
   @override
   Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses({
     int? semester,
+    CancelToken? cancelToken,
   }) async {
     return result;
   }
@@ -57,33 +59,40 @@ class _FakeLabService extends LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     return allResult;
   }
 
   @override
-  Future<ServiceResult<LabModel>> getById(dynamic id) async {
+  Future<ServiceResult<LabModel>> getById(
+    dynamic id, {
+    CancelToken? cancelToken,
+  }) async {
     return byIdResult;
   }
 
   @override
   Future<ServiceResult<List<LabInstructionModel>>> getInstructions(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return instructionsResult;
   }
 
   @override
   Future<ServiceResult<List<LabSubmissionModel>>> getMySubmission(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return submissionsResult;
   }
 
   @override
   Future<ServiceResult<List<LabAttendanceModel>>> getAttendance(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return attendanceResult;
   }
 }

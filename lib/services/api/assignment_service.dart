@@ -26,6 +26,7 @@ class AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<PaginatedResponse<AssignmentModel>>(() async {
       final query = <String, dynamic>{};
@@ -43,6 +44,7 @@ class AssignmentService {
       final response = await _client.dio.get(
         '/assignments',
         queryParameters: query.isEmpty ? null : query,
+        cancelToken: cancelToken,
       );
 
       final payload = _extractPaginatedPayload(response.data);
@@ -53,55 +55,77 @@ class AssignmentService {
     }, fallbackMessage: 'Failed to load assignments');
   }
 
-  Future<ServiceResult<AssignmentModel>> getById(dynamic id) {
+  Future<ServiceResult<AssignmentModel>> getById(
+    dynamic id, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<AssignmentModel>(() async {
-      final response = await _client.dio.get('/assignments/$id');
+      final response = await _client.dio.get(
+        '/assignments/$id',
+        cancelToken: cancelToken,
+      );
       return AssignmentModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to load assignment');
   }
 
-  Future<ServiceResult<AssignmentModel>> create(Map<String, dynamic> data) {
+  Future<ServiceResult<AssignmentModel>> create(
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<AssignmentModel>(() async {
-      final response = await _client.dio.post('/assignments', data: data);
+      final response = await _client.dio.post(
+        '/assignments',
+        data: data,
+        cancelToken: cancelToken,
+      );
       return AssignmentModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to create assignment');
   }
 
   Future<ServiceResult<AssignmentModel>> update(
     dynamic id,
-    Map<String, dynamic> data,
-  ) {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<AssignmentModel>(() async {
-      final response = await _client.dio.patch('/assignments/$id', data: data);
+      final response = await _client.dio.patch(
+        '/assignments/$id',
+        data: data,
+        cancelToken: cancelToken,
+      );
       return AssignmentModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to update assignment');
   }
 
-  Future<ServiceResult<void>> delete(dynamic id) {
+  Future<ServiceResult<void>> delete(dynamic id, {CancelToken? cancelToken}) {
     return RetryHelper.executeVoid(() async {
-      await _client.dio.delete('/assignments/$id');
+      await _client.dio.delete('/assignments/$id', cancelToken: cancelToken);
     }, fallbackMessage: 'Failed to delete assignment');
   }
 
   Future<ServiceResult<AssignmentModel>> updateStatus(
     dynamic id,
-    api.AssignmentStatus status,
-  ) {
+    api.AssignmentStatus status, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<AssignmentModel>(() async {
       final response = await _client.dio.patch(
         '/assignments/$id/status',
         data: <String, dynamic>{'status': status.toJson()},
+        cancelToken: cancelToken,
       );
       return AssignmentModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to update assignment status');
   }
 
   Future<ServiceResult<List<AssignmentSubmissionModel>>> getSubmissions(
-    dynamic assignmentId,
-  ) {
+    dynamic assignmentId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<AssignmentSubmissionModel>>(() async {
       final response = await _client.dio.get(
         '/assignments/$assignmentId/submissions',
+        cancelToken: cancelToken,
       );
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
@@ -114,6 +138,7 @@ class AssignmentService {
     dynamic assignmentId, {
     String? submissionText,
     String? submissionLink,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<AssignmentSubmissionModel>(() async {
       final body = <String, dynamic>{};
@@ -123,6 +148,7 @@ class AssignmentService {
       final response = await _client.dio.post(
         '/assignments/$assignmentId/submit',
         data: body,
+        cancelToken: cancelToken,
       );
       return AssignmentSubmissionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to submit assignment');
@@ -134,6 +160,7 @@ class AssignmentService {
     String? submissionText,
     String? submissionLink,
     ProgressCallback? onSendProgress,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<AssignmentSubmissionModel>(() async {
       final formData = FormData.fromMap(<String, dynamic>{
@@ -149,6 +176,7 @@ class AssignmentService {
         '/assignments/$assignmentId/submissions/upload',
         data: formData,
         onSendProgress: onSendProgress,
+        cancelToken: cancelToken,
       );
       return AssignmentSubmissionModel.fromJson(
         _extractSubmissionPayload(response.data),
@@ -157,11 +185,13 @@ class AssignmentService {
   }
 
   Future<ServiceResult<AssignmentSubmissionModel>> getMySubmission(
-    dynamic assignmentId,
-  ) {
+    dynamic assignmentId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<AssignmentSubmissionModel>(() async {
       final response = await _client.dio.get(
         '/assignments/$assignmentId/submissions/my',
+        cancelToken: cancelToken,
       );
       return AssignmentSubmissionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to load your assignment submission');
@@ -172,6 +202,7 @@ class AssignmentService {
     dynamic submissionId,
     double score, {
     String? feedback,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<Map<String, dynamic>>(() async {
       final response = await _client.dio.patch(
@@ -180,6 +211,7 @@ class AssignmentService {
           'score': score,
           if (feedback != null) 'feedback': feedback,
         },
+        cancelToken: cancelToken,
       );
       return _extractMap(response.data);
     }, fallbackMessage: 'Failed to grade assignment submission');
@@ -191,6 +223,7 @@ class AssignmentService {
     String? title,
     int? orderIndex,
     ProgressCallback? onSendProgress,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<DriveFileModel>(() async {
       final formData = FormData.fromMap(<String, dynamic>{
@@ -206,6 +239,7 @@ class AssignmentService {
         '/assignments/$assignmentId/instructions/upload',
         data: formData,
         onSendProgress: onSendProgress,
+        cancelToken: cancelToken,
       );
       final payload = _extractMap(response.data);
       final driveFileData = payload['driveFile'];
@@ -222,11 +256,13 @@ class AssignmentService {
 
   Future<ServiceResult<void>> deleteInstructionFile(
     int assignmentId,
-    String driveId,
-  ) {
+    String driveId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.executeVoid(() async {
       await _client.dio.delete(
         '/assignments/$assignmentId/instructions/$driveId',
+        cancelToken: cancelToken,
       );
     }, fallbackMessage: 'Failed to delete instruction file');
   }

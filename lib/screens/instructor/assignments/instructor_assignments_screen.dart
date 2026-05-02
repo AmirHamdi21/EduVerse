@@ -18,6 +18,7 @@ import '../../../services/api/assignment_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/storage_service.dart';
+import '../../../widgets/student/academic/academic_list_skeleton.dart';
 import '../../../widgets/shared/modern_action_sheet.dart';
 
 class InstructorAssignmentsScreen extends StatelessWidget {
@@ -347,12 +348,13 @@ class _InstructorAssignmentsViewState
     final subtitle = selectedCourse == null
         ? l10n.instructorAssignmentsHeaderSubtitle
         : '${selectedCourse.course.code} • ${selectedCourse.course.name}';
+    final courseCount = selectedCourse == null ? state.teachingCourses.length : 1;
 
     final stats = <({IconData icon, String label, String value, Color color})>[
       (
         icon: Icons.menu_book_rounded,
         label: l10n.course,
-        value: selectedCourse == null ? '0' : '1',
+        value: '$courseCount',
         color: InstructorColors.teal,
       ),
       (
@@ -575,8 +577,13 @@ class _InstructorAssignmentsViewState
   ) {
     final selectedCourse = _selectedCourse(state);
     final selectedCourseLabel = selectedCourse == null
-        ? l10n.course
+        ? l10n.allCourses
         : '${selectedCourse.course.code} • ${selectedCourse.course.name}';
+    final selectedCourseValue = state.teachingCourses.any(
+      (course) => course.courseId == state.selectedCourseId,
+    )
+        ? state.selectedCourseId
+        : null;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -628,17 +635,25 @@ class _InstructorAssignmentsViewState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(
-                  child: _buildModernDropdown<int>(
+                  child: _buildModernDropdown<int?>(
                     isDark: isDark,
                     label: l10n.course,
                     selectedLabel: selectedCourseLabel,
-                    value: state.selectedCourseId ?? 0,
+                    value: selectedCourseValue,
                     icon: Icons.menu_book_rounded,
                     menuMaxHeight: r.screenHeight * 0.45,
                     enabled: !widget.lockCourseSelection,
-                    items: state.teachingCourses
-                        .map((course) {
-                          return DropdownMenuItem<int>(
+                    items: <DropdownMenuItem<int?>>[
+                      DropdownMenuItem<int?>(
+                        value: null,
+                        child: Text(
+                          l10n.allCourses,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      ...state.teachingCourses.map((course) {
+                          return DropdownMenuItem<int?>(
                             value: course.courseId,
                             child: Text(
                               '${course.course.code} • ${course.course.name}',
@@ -646,12 +661,9 @@ class _InstructorAssignmentsViewState
                               overflow: TextOverflow.ellipsis,
                             ),
                           );
-                        })
-                        .toList(growable: false),
+                        }),
+                    ],
                     onChanged: (value) {
-                      if (value == null) {
-                        return;
-                      }
                       context.read<InstructorAssignmentsCubit>().selectCourse(
                         value,
                       );
@@ -714,7 +726,7 @@ class _InstructorAssignmentsViewState
     required bool isDark,
     required String label,
     required String selectedLabel,
-    required T value,
+    required T? value,
     required IconData icon,
     required List<DropdownMenuItem<T>> items,
     required ValueChanged<T?> onChanged,
@@ -1066,19 +1078,15 @@ class _InstructorAssignmentsViewState
   }
 
   Widget _buildLoadingSkeleton(bool isDark) {
-    return SliverPadding(
-      padding: const EdgeInsets.all(16),
-      sliver: SliverList(
-        delegate: SliverChildBuilderDelegate((context, index) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            height: 210,
-            decoration: BoxDecoration(
-              color: InstructorColors.cardColor(isDark),
-              borderRadius: BorderRadius.circular(22),
-            ),
-          );
-        }, childCount: 3),
+    return SliverToBoxAdapter(
+      child: IgnorePointer(
+        child: AcademicListSkeleton(
+          isDark: isDark,
+          itemCount: 4,
+          topPadding: 16,
+          bottomPadding: 24,
+          sliverFriendly: true,
+        ),
       ),
     );
   }

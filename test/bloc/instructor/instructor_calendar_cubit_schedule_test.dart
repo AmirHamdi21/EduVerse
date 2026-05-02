@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/instructor/instructor_calendar_cubit.dart';
@@ -67,6 +68,7 @@ class _FakeScheduleApiService extends ScheduleApiService {
   @override
   Future<ServiceResult<DailyScheduleResponse>> getDailySchedule({
     String? date,
+    CancelToken? cancelToken,
   }) async {
     return dailyResult;
   }
@@ -74,14 +76,16 @@ class _FakeScheduleApiService extends ScheduleApiService {
   @override
   Future<ServiceResult<WeeklyScheduleResponse>> getWeeklySchedule({
     String? startDate,
+    CancelToken? cancelToken,
   }) async {
     return weeklyResult;
   }
 
   @override
   Future<ServiceResult<List<DailyScheduleResponse>>> getMonthSchedule(
-    DateTime referenceDate,
-  ) async {
+    DateTime referenceDate, {
+    CancelToken? cancelToken,
+  }) async {
     monthCalls += 1;
     return monthResult;
   }
@@ -90,6 +94,7 @@ class _FakeScheduleApiService extends ScheduleApiService {
   Future<ServiceResult<PaginatedResult<CampusEventModel>>> getMyCampusEvents({
     int page = 1,
     int limit = 10,
+    CancelToken? cancelToken,
   }) async {
     myCampusCalls += 1;
     return myCampusResult;
@@ -105,6 +110,7 @@ class _FakeOfficeHoursService extends OfficeHoursService {
     int limit = 10,
     int? instructorId,
     String? dayOfWeek,
+    CancelToken? cancelToken,
   }) async {
     return const PaginatedResult<OfficeHourSlotModel>(
       items: <OfficeHourSlotModel>[],

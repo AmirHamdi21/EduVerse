@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,6 +31,7 @@ class _StubCourseService extends CourseService {
   Future<List<CourseStructureModel>> getCourseStructure(
     dynamic courseId, {
     bool forceRefresh = false,
+    CancelToken? cancelToken,
   }) async {
     return const <CourseStructureModel>[];
   }
@@ -44,6 +46,7 @@ class _StubMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     return const <CourseMaterialModel>[];
   }
@@ -58,15 +61,17 @@ class _StubEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<InstructorAssignmentModel>>.success(instructors);
   }
 
   @override
   Future<ServiceResult<List<TAAssignmentModel>>> getSectionTAs(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TAAssignmentModel>>.success(tas);
   }
 }
@@ -79,8 +84,9 @@ class _StubCommunicationService extends CommunicationService {
 
   @override
   Future<List<AnnouncementModel>> getAnnouncementsByCourseId(
-    dynamic courseId,
-  ) async {
+    dynamic courseId, {
+    CancelToken? cancelToken,
+  }) async {
     return announcements;
   }
 }
@@ -93,7 +99,10 @@ class _StubPublicProfileService extends PublicProfileService {
     : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<PublicProfileModel> getPublicProfile(dynamic userId) async {
+  Future<PublicProfileModel> getPublicProfile(
+    dynamic userId, {
+    CancelToken? cancelToken,
+  }) async {
     requests += 1;
     return profile;
   }
@@ -123,6 +132,7 @@ class _SpyOfficeHoursService extends OfficeHoursService {
     int limit = 10,
     int? instructorId,
     String? dayOfWeek,
+    CancelToken? cancelToken,
   }) async {
     slotLoadCalls += 1;
     return PaginatedResult<OfficeHourSlotModel>(
@@ -132,7 +142,9 @@ class _SpyOfficeHoursService extends OfficeHoursService {
   }
 
   @override
-  Future<List<OfficeHourAppointmentModel>> getMyAppointments() async {
+  Future<List<OfficeHourAppointmentModel>> getMyAppointments({
+    CancelToken? cancelToken,
+  }) async {
     return List<OfficeHourAppointmentModel>.from(_appointments);
   }
 
@@ -142,6 +154,7 @@ class _SpyOfficeHoursService extends OfficeHoursService {
     required String appointmentDate,
     String? topic,
     String? notes,
+    CancelToken? cancelToken,
   }) async {
     bookingCalls += 1;
     lastBookedSlotId = slotId;

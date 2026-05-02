@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/attendance/attendance_cubit.dart';
@@ -25,17 +26,20 @@ class _FakeAttendanceService implements AttendanceService {
   ServiceResult<void> deleteFaceResult = ServiceResult<void>.success(null);
 
   @override
-  Future<ServiceResult<List<StudentAttendanceSummaryModel>>>
-  getMyAttendance() async => myAttendanceResult;
+  Future<ServiceResult<List<StudentAttendanceSummaryModel>>> getMyAttendance({
+    CancelToken? cancelToken,
+  }) async => myAttendanceResult;
 
   @override
-  Future<ServiceResult<List<StudentFaceReferenceModel>>>
-  listMyFaceReferences() async => faceReferencesResult;
+  Future<ServiceResult<List<StudentFaceReferenceModel>>> listMyFaceReferences({
+    CancelToken? cancelToken,
+  }) async => faceReferencesResult;
 
   @override
   Future<ServiceResult<StudentFaceReferenceModel>> uploadMyFaceReference(
-    File image,
-  ) async =>
+    File image, {
+    CancelToken? cancelToken,
+  }) async =>
       uploadFaceResult ??
       ServiceResult<StudentFaceReferenceModel>.failure(
         const ServiceError(
@@ -45,8 +49,10 @@ class _FakeAttendanceService implements AttendanceService {
       );
 
   @override
-  Future<ServiceResult<void>> deleteMyFaceReference(int id) async =>
-      deleteFaceResult;
+  Future<ServiceResult<void>> deleteMyFaceReference(
+    int id, {
+    CancelToken? cancelToken,
+  }) async => deleteFaceResult;
 
   // --- Stubs for unused methods ---
   @override

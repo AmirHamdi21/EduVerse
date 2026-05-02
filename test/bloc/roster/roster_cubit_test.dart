@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -86,7 +87,9 @@ class _FakeEnrollmentService implements EnrollmentService {
       );
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) async {
     if (teachingDelay > Duration.zero) {
       await Future<void>.delayed(teachingDelay);
     }
@@ -95,8 +98,9 @@ class _FakeEnrollmentService implements EnrollmentService {
 
   @override
   Future<ServiceResult<List<SectionStudentModel>>> getSectionStudentsLite(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     if (studentsDelay > Duration.zero) {
       await Future<void>.delayed(studentsDelay);
     }
@@ -105,8 +109,9 @@ class _FakeEnrollmentService implements EnrollmentService {
 
   @override
   Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     if (instructorsDelay > Duration.zero) {
       await Future<void>.delayed(instructorsDelay);
     }

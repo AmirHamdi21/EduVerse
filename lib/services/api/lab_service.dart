@@ -23,6 +23,7 @@ class LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     final paginated = await getAllPaginated(
       courseId: courseId,
@@ -30,6 +31,7 @@ class LabService {
       search: search,
       page: page,
       limit: limit,
+      cancelToken: cancelToken,
     );
 
     if (!paginated.isSuccess || paginated.data == null) {
@@ -51,6 +53,7 @@ class LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<PaginatedResponse<LabModel>>(() async {
       final query = <String, dynamic>{'page': page, 'limit': limit};
@@ -64,58 +67,89 @@ class LabService {
         query['search'] = search.trim();
       }
 
-      final response = await _client.dio.get('/labs', queryParameters: query);
+      final response = await _client.dio.get(
+        '/labs',
+        queryParameters: query,
+        cancelToken: cancelToken,
+      );
 
       final payload = _extractPaginatedPayload(response.data);
       return PaginatedResponse<LabModel>.fromJson(payload, LabModel.fromJson);
     }, fallbackMessage: 'Failed to load labs');
   }
 
-  Future<ServiceResult<LabModel>> getById(dynamic id) {
+  Future<ServiceResult<LabModel>> getById(
+    dynamic id, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<LabModel>(() async {
-      final response = await _client.dio.get('/labs/$id');
+      final response = await _client.dio.get(
+        '/labs/$id',
+        cancelToken: cancelToken,
+      );
       return LabModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to load lab');
   }
 
-  Future<ServiceResult<LabModel>> create(Map<String, dynamic> data) {
+  Future<ServiceResult<LabModel>> create(
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<LabModel>(() async {
-      final response = await _client.dio.post('/labs', data: data);
+      final response = await _client.dio.post(
+        '/labs',
+        data: data,
+        cancelToken: cancelToken,
+      );
       return LabModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to create lab');
   }
 
   Future<ServiceResult<LabModel>> update(
     dynamic id,
-    Map<String, dynamic> data,
-  ) {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<LabModel>(() async {
-      final response = await _client.dio.put('/labs/$id', data: data);
+      final response = await _client.dio.put(
+        '/labs/$id',
+        data: data,
+        cancelToken: cancelToken,
+      );
       return LabModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to update lab');
   }
 
-  Future<ServiceResult<void>> delete(dynamic id) {
+  Future<ServiceResult<void>> delete(dynamic id, {CancelToken? cancelToken}) {
     return RetryHelper.executeVoid(() async {
-      await _client.dio.delete('/labs/$id');
+      await _client.dio.delete('/labs/$id', cancelToken: cancelToken);
     }, fallbackMessage: 'Failed to delete lab');
   }
 
-  Future<ServiceResult<LabModel>> updateStatus(dynamic id, api.LabStatus status) {
+  Future<ServiceResult<LabModel>> updateStatus(
+    dynamic id,
+    api.LabStatus status, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<LabModel>(() async {
       final response = await _client.dio.patch(
         '/labs/$id/status',
         data: <String, dynamic>{'status': status.toJson()},
+        cancelToken: cancelToken,
       );
       return LabModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to update lab status');
   }
 
   Future<ServiceResult<List<LabInstructionModel>>> getInstructions(
-    dynamic labId,
-  ) {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<LabInstructionModel>>(() async {
-      final response = await _client.dio.get('/labs/$labId/instructions');
+      final response = await _client.dio.get(
+        '/labs/$labId/instructions',
+        cancelToken: cancelToken,
+      );
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
           .map(LabInstructionModel.fromJson)
@@ -125,12 +159,14 @@ class LabService {
 
   Future<ServiceResult<LabInstructionModel>> addInstruction(
     dynamic labId,
-    Map<String, dynamic> data,
-  ) {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<LabInstructionModel>(() async {
       final response = await _client.dio.post(
         '/labs/$labId/instructions',
         data: data,
+        cancelToken: cancelToken,
       );
       return LabInstructionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to add lab instruction');
@@ -139,12 +175,14 @@ class LabService {
   Future<ServiceResult<LabInstructionModel>> updateInstruction(
     dynamic labId,
     dynamic instructionId,
-    Map<String, dynamic> data,
-  ) {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<LabInstructionModel>(() async {
       final response = await _client.dio.patch(
         '/labs/$labId/instructions/$instructionId',
         data: data,
+        cancelToken: cancelToken,
       );
       return LabInstructionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to update lab instruction');
@@ -152,10 +190,14 @@ class LabService {
 
   Future<ServiceResult<void>> deleteInstruction(
     dynamic labId,
-    dynamic instructionId,
-  ) {
+    dynamic instructionId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.executeVoid(() async {
-      await _client.dio.delete('/labs/$labId/instructions/$instructionId');
+      await _client.dio.delete(
+        '/labs/$labId/instructions/$instructionId',
+        cancelToken: cancelToken,
+      );
     }, fallbackMessage: 'Failed to delete lab instruction');
   }
 
@@ -165,6 +207,7 @@ class LabService {
     String? title,
     int? orderIndex,
     ProgressCallback? onSendProgress,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<DriveFileModel>(() async {
       final formData = FormData.fromMap(<String, dynamic>{
@@ -180,6 +223,7 @@ class LabService {
         '/labs/$labId/instructions/upload',
         data: formData,
         onSendProgress: onSendProgress,
+        cancelToken: cancelToken,
       );
       final payload = _extractMap(response.data);
       final fileData = payload['file'];
@@ -194,10 +238,14 @@ class LabService {
   }
 
   Future<ServiceResult<List<LabSubmissionModel>>> getSubmissions(
-    dynamic labId,
-  ) {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<LabSubmissionModel>>(() async {
-      final response = await _client.dio.get('/labs/$labId/submissions');
+      final response = await _client.dio.get(
+        '/labs/$labId/submissions',
+        cancelToken: cancelToken,
+      );
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
           .map(LabSubmissionModel.fromJson)
@@ -209,6 +257,7 @@ class LabService {
     dynamic labId, {
     String? submissionText,
     String? submissionLink,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<LabSubmissionModel>(() async {
       final body = <String, dynamic>{};
@@ -218,6 +267,7 @@ class LabService {
       final response = await _client.dio.post(
         '/labs/$labId/submit',
         data: body,
+        cancelToken: cancelToken,
       );
       return LabSubmissionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to submit lab');
@@ -228,6 +278,7 @@ class LabService {
     File file, {
     String? submissionText,
     ProgressCallback? onSendProgress,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<LabSubmissionModel>(() async {
       final formData = FormData.fromMap(<String, dynamic>{
@@ -242,6 +293,7 @@ class LabService {
         '/labs/$labId/submissions/upload',
         data: formData,
         onSendProgress: onSendProgress,
+        cancelToken: cancelToken,
       );
       return LabSubmissionModel.fromJson(
         _extractSubmissionPayload(response.data),
@@ -250,10 +302,14 @@ class LabService {
   }
 
   Future<ServiceResult<List<LabSubmissionModel>>> getMySubmission(
-    dynamic labId,
-  ) {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<LabSubmissionModel>>(() async {
-      final response = await _client.dio.get('/labs/$labId/submissions/my');
+      final response = await _client.dio.get(
+        '/labs/$labId/submissions/my',
+        cancelToken: cancelToken,
+      );
 
       final listPayload = _extractList(response.data)
           .whereType<Map<String, dynamic>>()
@@ -279,6 +335,7 @@ class LabService {
     double score, {
     String status = 'graded',
     String? feedback,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<Map<String, dynamic>>(() async {
       final response = await _client.dio.patch(
@@ -288,14 +345,21 @@ class LabService {
           'score': score,
           if (feedback != null) 'feedback': feedback,
         },
+        cancelToken: cancelToken,
       );
       return _extractMap(response.data);
     }, fallbackMessage: 'Failed to grade lab submission');
   }
 
-  Future<ServiceResult<List<LabAttendanceModel>>> getAttendance(dynamic labId) {
+  Future<ServiceResult<List<LabAttendanceModel>>> getAttendance(
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<LabAttendanceModel>>(() async {
-      final response = await _client.dio.get('/labs/$labId/attendance');
+      final response = await _client.dio.get(
+        '/labs/$labId/attendance',
+        cancelToken: cancelToken,
+      );
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
           .map(LabAttendanceModel.fromJson)
@@ -305,12 +369,14 @@ class LabService {
 
   Future<ServiceResult<LabAttendanceModel>> markAttendance(
     dynamic labId,
-    Map<String, dynamic> data,
-  ) {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<LabAttendanceModel>(() async {
       final response = await _client.dio.post(
         '/labs/$labId/attendance',
         data: data,
+        cancelToken: cancelToken,
       );
       return LabAttendanceModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to mark lab attendance');
@@ -318,12 +384,14 @@ class LabService {
 
   Future<ServiceResult<List<LabAttendanceModel>>> markAttendanceBulk(
     dynamic labId,
-    List<Map<String, dynamic>> data,
-  ) {
+    List<Map<String, dynamic>> data, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<LabAttendanceModel>>(() async {
       final response = await _client.dio.post(
         '/labs/$labId/attendance',
         data: data,
+        cancelToken: cancelToken,
       );
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
@@ -334,8 +402,9 @@ class LabService {
 
   Future<ServiceResult<DriveFileModel>> uploadTaMaterial(
     dynamic labId,
-    File file,
-  ) {
+    File file, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<DriveFileModel>(() async {
       final formData = FormData.fromMap(<String, dynamic>{
         'file': await MultipartFile.fromFile(
@@ -347,6 +416,7 @@ class LabService {
       final response = await _client.dio.post(
         '/labs/$labId/ta-materials/upload',
         data: formData,
+        cancelToken: cancelToken,
       );
       return DriveFileModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to upload TA material');

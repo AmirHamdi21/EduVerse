@@ -1,6 +1,4 @@
-@Timeout(Duration(seconds: 30))
-library;
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -60,7 +58,9 @@ class _FakeEnrollmentService extends EnrollmentService {
   _FakeEnrollmentService() : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TeachingCourseModel>>.success(
       const <TeachingCourseModel>[],
     );
@@ -80,6 +80,7 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<PaginatedResponse<AssignmentModel>>.success(
       const PaginatedResponse<AssignmentModel>(
@@ -103,6 +104,7 @@ class _FakeLabService extends LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<List<LabModel>>.success(const <LabModel>[]);
   }
@@ -125,6 +127,7 @@ class _FakeMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     if (delay > Duration.zero) {
       await Future<void>.delayed(delay);
@@ -321,27 +324,28 @@ void main() {
     }
   });
 
-  testWidgets('shows loading indicator in course content tab while structure loads', (
-    WidgetTester tester,
-  ) async {
-    _setViewport(tester, const Size(1280, 1200));
+  testWidgets(
+    'shows loading indicator in course content tab while structure loads',
+    (WidgetTester tester) async {
+      _setViewport(tester, const Size(1280, 1200));
 
-    await tester.pumpWidget(
-      _buildScreen(
-        courseId: 56,
-        courseService: _FakeCourseService(delay: const Duration(seconds: 5)),
-      ),
-    );
-    await tester.pump();
+      await tester.pumpWidget(
+        _buildScreen(
+          courseId: 56,
+          courseService: _FakeCourseService(delay: const Duration(seconds: 5)),
+        ),
+      );
+      await tester.pump();
 
-    final structureState = BlocProvider.of<CourseStructureBloc>(
-      tester.element(find.byType(CourseManagementScreen)),
-    ).state;
-    expect(structureState, isA<StructureLoading>());
-    expect(tester.takeException(), isNull);
+      final structureState = BlocProvider.of<CourseStructureBloc>(
+        tester.element(find.byType(CourseManagementScreen)),
+      ).state;
+      expect(structureState, isA<StructureLoading>());
+      expect(tester.takeException(), isNull);
 
-    await tester.pump(const Duration(seconds: 5));
-  });
+      await tester.pump(const Duration(seconds: 5));
+    },
+  );
 
   testWidgets('shows structure error with retry action when load fails', (
     WidgetTester tester,

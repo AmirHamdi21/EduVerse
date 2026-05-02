@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -54,7 +55,9 @@ class _FakeEnrollmentService extends EnrollmentService {
   final List<TeachingCourseModel> courses;
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TeachingCourseModel>>.success(courses);
   }
 }
@@ -72,6 +75,7 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<PaginatedResponse<AssignmentModel>>.success(
       PaginatedResponse<AssignmentModel>(
@@ -95,6 +99,7 @@ class _FakeLabService extends LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<List<LabModel>>.success(const <LabModel>[]);
   }
@@ -117,6 +122,7 @@ class _FakeMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     if (delay > Duration.zero) {
       await Future<void>.delayed(delay);

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/common/service_error.dart';
@@ -38,6 +39,7 @@ class _FakeCourseService extends CourseService {
   Future<List<CourseStructureModel>> getCourseStructure(
     dynamic courseId, {
     bool forceRefresh = false,
+    CancelToken? cancelToken,
   }) async {
     if (throwsError) {
       throw Exception('structure failed');
@@ -59,6 +61,7 @@ class _FakeMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     if (throwsError) {
       throw Exception('materials failed');
@@ -95,6 +98,7 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     if (failGetAll) {
       return ServiceResult<PaginatedResponse<AssignmentModel>>.failure(
@@ -122,8 +126,9 @@ class _FakeAssignmentService extends AssignmentService {
 
   @override
   Future<ServiceResult<AssignmentSubmissionModel>> getMySubmission(
-    dynamic assignmentId,
-  ) async {
+    dynamic assignmentId, {
+    CancelToken? cancelToken,
+  }) async {
     if (failGetMySubmission) {
       return ServiceResult<AssignmentSubmissionModel>.failure(
         const ServiceError(
@@ -171,6 +176,7 @@ class _FakeLabService extends LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     if (failGetAll) {
       return ServiceResult<List<LabModel>>.failure(
@@ -189,8 +195,9 @@ class _FakeLabService extends LabService {
 
   @override
   Future<ServiceResult<List<LabSubmissionModel>>> getMySubmission(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     if (failGetMySubmission) {
       return ServiceResult<List<LabSubmissionModel>>.failure(
         const ServiceError(
@@ -220,8 +227,9 @@ class _FakeCommunicationService extends CommunicationService {
 
   @override
   Future<List<AnnouncementModel>> getAnnouncementsByCourseId(
-    dynamic courseId,
-  ) async {
+    dynamic courseId, {
+    CancelToken? cancelToken,
+  }) async {
     return announcements;
   }
 }
@@ -239,15 +247,17 @@ class _FakeEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<InstructorAssignmentModel>>.success(instructors);
   }
 
   @override
   Future<ServiceResult<List<TAAssignmentModel>>> getSectionTAs(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     if (failTAs) {
       return ServiceResult<List<TAAssignmentModel>>.failure(
         const ServiceError(
@@ -269,7 +279,10 @@ class _FakePublicProfileService extends PublicProfileService {
     : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<PublicProfileModel> getPublicProfile(dynamic userId) async {
+  Future<PublicProfileModel> getPublicProfile(
+    dynamic userId, {
+    CancelToken? cancelToken,
+  }) async {
     if (throwsError) {
       throw Exception('profile failed');
     }
@@ -290,6 +303,7 @@ class _FakeOfficeHoursService extends OfficeHoursService {
     int limit = 10,
     int? instructorId,
     String? dayOfWeek,
+    CancelToken? cancelToken,
   }) async {
     return PaginatedResult<OfficeHourSlotModel>(
       items: slots,
@@ -298,7 +312,9 @@ class _FakeOfficeHoursService extends OfficeHoursService {
   }
 
   @override
-  Future<List<OfficeHourAppointmentModel>> getMyAppointments() async {
+  Future<List<OfficeHourAppointmentModel>> getMyAppointments({
+    CancelToken? cancelToken,
+  }) async {
     return appointments;
   }
 
@@ -308,6 +324,7 @@ class _FakeOfficeHoursService extends OfficeHoursService {
     required String appointmentDate,
     String? topic,
     String? notes,
+    CancelToken? cancelToken,
   }) async {
     return OfficeHourAppointmentModel(
       appointmentId: 99,

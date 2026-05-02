@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,11 +15,20 @@ import '../../../bloc/theme/theme_state.dart';
 import '../../../common/utils/instructor_courses_theme.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/core/schedule_model.dart';
+import '../../../models/assignments/assignment_model.dart' as api_assignment;
 import '../../../models/instructor/instructor_course_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
+import '../../../models/labs/lab_model.dart';
+import '../../../models/materials/announcement_model.dart' as course_announcement;
 import '../../../models/materials/course_material_model.dart';
 import '../../../models/materials/material_bundle_model.dart';
+import '../../../services/api/assignment_service.dart';
+import '../../../services/api/communication_service.dart';
+import '../../../services/api/core_api_client.dart';
+import '../../../services/api/lab_service.dart';
+import '../../../services/api/material_service.dart';
 import '../../../services/storage_service.dart';
+import '../../../widgets/shared/course_details/course_detail_search_tab.dart';
 import '../materials/material_preview_screen.dart';
 import '../../../widgets/instructor/course_management/course_management_barrel.dart';
 import '../../../widgets/student/course_details/video_player_widget.dart';
@@ -41,7 +51,11 @@ class CourseManagementScreen extends StatefulWidget {
 
 class _CourseManagementScreenState extends State<CourseManagementScreen>
     with SingleTickerProviderStateMixin {
-  static const int _studentsTabIndex = 7;
+  static const int _courseContentTabIndex = 1;
+  static const int _assignmentsTabIndex = 3;
+  static const int _labsTabIndex = 4;
+  static const int _announcementsTabIndex = 5;
+  static const int _studentsTabIndex = 8;
 
   late final StorageService _storageService;
   final ScrollController _outerScrollController = ScrollController();
@@ -58,13 +72,14 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
   bool _hasCourseAccess = true;
   bool _canDeleteCourse = true;
   List<SectionStudentModel> _persistedStudents = const <SectionStudentModel>[];
+  bool _isPreparingExit = false;
   String? _selectedHeroMaterialId;
 
   @override
   void initState() {
     super.initState();
     _storageService = widget.storageService ?? StorageService();
-    _tabController = TabController(length: 8, vsync: this);
+    _tabController = TabController(length: 9, vsync: this);
     _tabController.addListener(_handleTabControllerChanged);
     _resolveRoleAccess();
     _course =
@@ -303,23 +318,39 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
               listener: _onMaterialsStateChanged,
             ),
           ],
-          child: Scaffold(
-            backgroundColor: InstructorCoursesTheme.scaffoldBackground(isDark),
-            floatingActionButton: _buildFAB(isDark, l10n),
-            body: Container(
-              decoration: InstructorCoursesTheme.scaffoldDecoration(isDark),
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final maxWidth = InstructorCoursesTheme.maxContentWidth(
-                    constraints.maxWidth,
-                  );
-                  final screenPadding = InstructorCoursesTheme.screenPadding(
-                    constraints.maxWidth,
-                  );
+          child: PopScope<Object?>(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) {
+              if (!didPop) {
+                _handleBackPressed();
+              }
+            },
+            child: Scaffold(
+              backgroundColor: InstructorCoursesTheme.scaffoldBackground(
+                isDark,
+              ),
+              floatingActionButton: _isPreparingExit
+                  ? null
+                  : _buildFAB(isDark, l10n),
+              body: Container(
+                decoration: InstructorCoursesTheme.scaffoldDecoration(isDark),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final maxWidth = InstructorCoursesTheme.maxContentWidth(
+                      constraints.maxWidth,
+                    );
+                    final screenPadding = InstructorCoursesTheme.screenPadding(
+                      constraints.maxWidth,
+                    );
 
-                  return NestedScrollView(
-                    controller: _outerScrollController,
-                    headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                    return IgnorePointer(
+                      ignoring: _isPreparingExit,
+                      child: NestedScrollView(
+                        controller: _outerScrollController,
+                        physics: _isPreparingExit
+                            ? const NeverScrollableScrollPhysics()
+                            : null,
+                        headerSliverBuilder: (context, innerBoxIsScrolled) => [
                       SliverToBoxAdapter(
                         child: Center(
                           child: ConstrainedBox(
@@ -381,12 +412,24 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                         ),
                       ),
                     ],
-                    body: Center(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: maxWidth),
-                        child: TabBarView(
-                          controller: _tabController,
-                          children: [
+                        body: Center(
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: maxWidth),
+                            child: TabBarView(
+                              controller: _tabController,
+                              children: [
+                            _InstructorCourseSearchTab(
+                              isDark: isDark,
+                              l10n: l10n,
+                              courseId: _resolvedCourseId,
+                              onOpenContent: () =>
+                                  _switchTab(_courseContentTabIndex),
+                              onOpenAssignments: () =>
+                                  _switchTab(_assignmentsTabIndex),
+                              onOpenLabs: () => _switchTab(_labsTabIndex),
+                              onOpenAnnouncements: () =>
+                                  _switchTab(_announcementsTabIndex),
+                            ),
                             _buildMaterialsTabContent(
                               materialsState: materialsState,
                               materials: materials,
@@ -443,12 +486,14 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                               isDark: isDark,
                               l10n: l10n,
                             ),
-                          ],
+                              ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),
@@ -459,6 +504,10 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
 
   List<_CourseManagementTabSpec> _buildTabs(AppLocalizations l10n) {
     return <_CourseManagementTabSpec>[
+      _CourseManagementTabSpec(
+        icon: Icons.search_rounded,
+        label: l10n.search,
+      ),
       _CourseManagementTabSpec(
         icon: Icons.video_library_outlined,
         label: l10n.studentCourseDetailCourseContent,
@@ -471,10 +520,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
         icon: Icons.assignment_outlined,
         label: l10n.assignments,
       ),
-      _CourseManagementTabSpec(
-        icon: Icons.science_outlined,
-        label: l10n.labs,
-      ),
+      _CourseManagementTabSpec(icon: Icons.science_outlined, label: l10n.labs),
       _CourseManagementTabSpec(
         icon: Icons.campaign_outlined,
         label: l10n.announcements,
@@ -536,28 +582,30 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
         padding: EdgeInsets.zero,
         splashFactory: NoSplash.splashFactory,
         overlayColor: WidgetStateProperty.all(Colors.transparent),
-        tabs: tabs.map((tab) {
-          return Tab(
-            height: 52,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(tab.icon, size: 18),
-                  const SizedBox(width: 8),
-                  Text(
-                    tab.label,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
+        tabs: tabs
+            .map((tab) {
+              return Tab(
+                height: 52,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(tab.icon, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        tab.label,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          );
-        }).toList(growable: false),
+                ),
+              );
+            })
+            .toList(growable: false),
       ),
     );
   }
@@ -589,7 +637,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                 icon: Icons.arrow_back_ios_new_rounded,
                 isDark: isDark,
                 backgroundColor: actionButtonColor,
-                onTap: () => context.pop(),
+                onTap: _handleBackPressed,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -695,7 +743,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     return ordered;
   }
 
-  List<CourseMaterialModel> _videoMaterials(List<CourseMaterialModel> materials) {
+  List<CourseMaterialModel> _videoMaterials(
+    List<CourseMaterialModel> materials,
+  ) {
     return _orderedCourseMaterials(
       materials,
     ).where(_isVideoMaterial).toList(growable: false);
@@ -736,6 +786,10 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     MaterialsState materialsState,
     CourseMaterialModel? heroVideo,
   ) {
+    if (_isPreparingExit) {
+      return true;
+    }
+
     if (heroVideo != null) {
       return false;
     }
@@ -745,7 +799,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
   }
 
   void _selectHeroVideo(CourseMaterialModel material) {
-    if (!_isVideoMaterial(material)) {
+    if (_isPreparingExit || !_isVideoMaterial(material)) {
       return;
     }
 
@@ -943,7 +997,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
       ),
       _HeroMetric(
         icon: Icons.insights_outlined,
-        value: averageGrade == null ? '--' : '${averageGrade.toStringAsFixed(1)}%',
+        value: averageGrade == null
+            ? '--'
+            : '${averageGrade.toStringAsFixed(1)}%',
         label: l10n.averageGrade,
       ),
     ];
@@ -971,9 +1027,14 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
             spacing: 8,
             runSpacing: 8,
             children: [
-              _buildHeroChip(label: displayCourse.code, icon: Icons.sell_outlined),
               _buildHeroChip(
-                label: displayCourse.isActive ? l10n.activeLabel : l10n.archived,
+                label: displayCourse.code,
+                icon: Icons.sell_outlined,
+              ),
+              _buildHeroChip(
+                label: displayCourse.isActive
+                    ? l10n.activeLabel
+                    : l10n.archived,
                 icon: displayCourse.isActive
                     ? Icons.verified_outlined
                     : Icons.archive_outlined,
@@ -1024,7 +1085,11 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                   crossAxisCount: columns,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
-                  childAspectRatio: constraints.maxWidth >= 620 ? 2.35 : 2.1,
+                  childAspectRatio: constraints.maxWidth >= 900
+                      ? 2.1
+                      : constraints.maxWidth >= 620
+                      ? 1.75
+                      : 1.35,
                 ),
                 itemBuilder: (context, index) {
                   return _buildHeroMetricCard(metrics[index]);
@@ -1065,7 +1130,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
 
   Widget _buildHeroMetricCard(_HeroMetric metric) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(18),
@@ -1075,17 +1140,18 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            width: 38,
-            height: 38,
+            width: 34,
+            height: 34,
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(metric.icon, size: 18, color: Colors.white),
+            child: Icon(metric.icon, size: 17, color: Colors.white),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -1095,18 +1161,18 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1),
                 Text(
                   metric.label,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Color(0xFFDCE9FF),
-                    fontSize: 12,
+                    fontSize: 11,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1787,6 +1853,13 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     _refreshStudents();
   }
 
+  void _switchTab(int index) {
+    if (_tabController.index == index) {
+      return;
+    }
+    _tabController.animateTo(index);
+  }
+
   void _refreshStudents() {
     final courseId = _resolvedCourseId;
     if (courseId == null || courseId <= 0) {
@@ -1794,6 +1867,24 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     }
 
     context.read<InstructorCoursesBloc>().add(LoadCourseStudents(courseId));
+  }
+
+  void _handleBackPressed() {
+    if (_isPreparingExit) {
+      return;
+    }
+
+    setState(() => _isPreparingExit = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/instructor/courses');
+      }
+    });
   }
 
   Widget _buildFAB(bool isDark, AppLocalizations l10n) {
@@ -1998,14 +2089,186 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
   }
 }
 
+class _InstructorCourseSearchTab extends StatefulWidget {
+  const _InstructorCourseSearchTab({
+    required this.isDark,
+    required this.l10n,
+    required this.courseId,
+    required this.onOpenContent,
+    required this.onOpenAssignments,
+    required this.onOpenLabs,
+    required this.onOpenAnnouncements,
+  });
+
+  final bool isDark;
+  final AppLocalizations l10n;
+  final int? courseId;
+  final VoidCallback onOpenContent;
+  final VoidCallback onOpenAssignments;
+  final VoidCallback onOpenLabs;
+  final VoidCallback onOpenAnnouncements;
+
+  @override
+  State<_InstructorCourseSearchTab> createState() =>
+      _InstructorCourseSearchTabState();
+}
+
+class _InstructorCourseSearchTabState extends State<_InstructorCourseSearchTab> {
+  late final MaterialService _materialService;
+  late final AssignmentService _assignmentService;
+  late final LabService _labService;
+  late final CommunicationService _communicationService;
+  CancelToken? _cancelToken;
+  List<CourseDetailSearchEntry> _entries = const <CourseDetailSearchEntry>[];
+
+  @override
+  void initState() {
+    super.initState();
+    final coreApiClient = CoreApiClient();
+    _materialService = MaterialService(coreApiClient: coreApiClient);
+    _assignmentService = AssignmentService(coreApiClient: coreApiClient);
+    _labService = LabService(coreApiClient: coreApiClient);
+    _communicationService = CommunicationService(coreApiClient: coreApiClient);
+    _loadEntries();
+  }
+
+  @override
+  void didUpdateWidget(covariant _InstructorCourseSearchTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.courseId != widget.courseId) {
+      _loadEntries();
+    }
+  }
+
+  @override
+  void dispose() {
+    _cancelToken?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadEntries() async {
+    final courseId = widget.courseId;
+    _cancelToken?.cancel();
+
+    if (courseId == null || courseId <= 0) {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _entries = const <CourseDetailSearchEntry>[]);
+      return;
+    }
+
+    final cancelToken = CancelToken();
+    _cancelToken = cancelToken;
+
+    try {
+      final results = await Future.wait<Object>([
+        _materialService.getMaterials(courseId, cancelToken: cancelToken),
+        _assignmentService.getAll(
+          courseId: courseId,
+          limit: 100,
+          cancelToken: cancelToken,
+        ),
+        _labService.getAll(
+          courseId: courseId,
+          limit: 100,
+          cancelToken: cancelToken,
+        ),
+        _communicationService.getAnnouncementsByCourseId(
+          courseId,
+          cancelToken: cancelToken,
+        ),
+      ]);
+
+      if (!mounted || cancelToken.isCancelled) {
+        return;
+      }
+
+      final materials = results[0] as List<CourseMaterialModel>;
+      final dynamic assignmentsResult = results[1];
+      final dynamic labsResult = results[2];
+      final announcements =
+          results[3] as List<course_announcement.AnnouncementModel>;
+
+      final List<api_assignment.AssignmentModel> assignmentItems =
+          assignmentsResult.isSuccess && assignmentsResult.data != null
+          ? assignmentsResult.data!.data
+          : const <api_assignment.AssignmentModel>[];
+      final List<LabModel> labItems =
+          labsResult.isSuccess && labsResult.data != null
+          ? labsResult.data!
+          : const <LabModel>[];
+      final List<course_announcement.AnnouncementModel> announcementItems =
+          announcements;
+
+      setState(() {
+        _entries = [
+          ...materials.map(
+            (item) => CourseDetailSearchEntry(
+              title: item.title,
+              subtitle: widget.l10n.studentCourseDetailSearchMaterialsLabel,
+              description: item.description,
+              icon: Icons.video_library_outlined,
+              onTap: widget.onOpenContent,
+            ),
+          ),
+          ...assignmentItems.map(
+            (item) => CourseDetailSearchEntry(
+              title: item.title,
+              subtitle: widget.l10n.assignments,
+              description: item.description,
+              icon: Icons.assignment_outlined,
+              onTap: widget.onOpenAssignments,
+            ),
+          ),
+          ...labItems.map(
+            (item) => CourseDetailSearchEntry(
+              title: item.title,
+              subtitle: widget.l10n.labs,
+              description: item.description,
+              icon: Icons.science_outlined,
+              onTap: widget.onOpenLabs,
+            ),
+          ),
+          ...announcementItems.map(
+            (item) => CourseDetailSearchEntry(
+              title: item.title,
+              subtitle: widget.l10n.announcements,
+              description: item.content,
+              icon: Icons.campaign_outlined,
+              onTap: widget.onOpenAnnouncements,
+            ),
+          ),
+        ];
+      });
+    } catch (_) {
+      if (!mounted || cancelToken.isCancelled) {
+        return;
+      }
+      setState(() => _entries = const <CourseDetailSearchEntry>[]);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CourseDetailSearchTab(
+      isDark: widget.isDark,
+      accentColor: CMColors.primary,
+      hintText: widget.l10n.studentCourseDetailSearchHint,
+      promptTitle: widget.l10n.studentCourseDetailSearchPromptTitle,
+      promptSubtitle: widget.l10n.studentCourseDetailSearchPromptSubtitle,
+      noResultsTitle: widget.l10n.studentCourseDetailSearchNoResultsTitle,
+      noResultsSubtitle: widget.l10n.studentCourseDetailSearchNoResultsSubtitle,
+      entries: _entries,
+    );
+  }
+}
+
 class _CourseManagementTabSpec {
   final IconData icon;
   final String label;
 
-  const _CourseManagementTabSpec({
-    required this.icon,
-    required this.label,
-  });
+  const _CourseManagementTabSpec({required this.icon, required this.label});
 }
 
 class _HeroMetric {
@@ -2046,7 +2309,9 @@ class _CourseManagementTabsHeaderDelegate
   }
 
   @override
-  bool shouldRebuild(covariant _CourseManagementTabsHeaderDelegate oldDelegate) {
+  bool shouldRebuild(
+    covariant _CourseManagementTabsHeaderDelegate oldDelegate,
+  ) {
     return oldDelegate.height != height || oldDelegate.child != child;
   }
 }

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/admin_course_management/course_list_bloc.dart';
@@ -76,8 +77,9 @@ class _FakeEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
-    dynamic sectionId,
-  ) {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) {
     return Future<ServiceResult<List<InstructorAssignmentModel>>>.value(
       ServiceResult<List<InstructorAssignmentModel>>.success(
         <InstructorAssignmentModel>[
@@ -97,8 +99,9 @@ class _FakeEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<TAAssignmentModel>>> getSectionTAs(
-    dynamic sectionId,
-  ) {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) {
     return Future<ServiceResult<List<TAAssignmentModel>>>.value(
       ServiceResult<List<TAAssignmentModel>>.success(<TAAssignmentModel>[
         TAAssignmentModel(

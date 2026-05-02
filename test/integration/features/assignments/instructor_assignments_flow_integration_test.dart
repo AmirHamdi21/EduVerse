@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/instructor/instructor_assignments_cubit.dart';
@@ -19,7 +20,9 @@ class _FakeEnrollmentService extends EnrollmentService {
   final List<TeachingCourseModel> courses;
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TeachingCourseModel>>.success(courses);
   }
 }
@@ -47,6 +50,7 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<PaginatedResponse<AssignmentModel>>.success(
       PaginatedResponse<AssignmentModel>(
@@ -61,8 +65,9 @@ class _FakeAssignmentService extends AssignmentService {
 
   @override
   Future<ServiceResult<AssignmentModel>> create(
-    Map<String, dynamic> data,
-  ) async {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) async {
     final created = _assignment(
       id: assignments.length + 1,
       title: data['title']?.toString() ?? 'Untitled',
@@ -76,8 +81,9 @@ class _FakeAssignmentService extends AssignmentService {
 
   @override
   Future<ServiceResult<List<AssignmentSubmissionModel>>> getSubmissions(
-    dynamic assignmentId,
-  ) async {
+    dynamic assignmentId, {
+    CancelToken? cancelToken,
+  }) async {
     final id = assignmentId as int;
     return ServiceResult<List<AssignmentSubmissionModel>>.success(
       List<AssignmentSubmissionModel>.from(
@@ -92,6 +98,7 @@ class _FakeAssignmentService extends AssignmentService {
     dynamic submissionId,
     double score, {
     String? feedback,
+    CancelToken? cancelToken,
   }) async {
     gradedAssignmentId = assignmentId as int;
     gradedSubmissionId = submissionId as int;

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/bloc/route_request_controller.dart';
 import '../../models/core/enums/assignment_enums.dart' as assignment_api;
 import '../../models/core/enums/lab_enums.dart';
 import '../../models/core/lab_instruction_model.dart';
@@ -29,20 +30,62 @@ class AttendanceData {
   }
 }
 
-class LabDetailCubit extends Cubit<LabDetailState> {
+class LabDetailCubit extends Cubit<LabDetailState>
+    with SafeRouteCubitMixin<LabDetailState> {
   LabDetailCubit({required LabService labService})
     : _labService = labService,
       super(const LabDetailInitial());
 
   final LabService _labService;
+  late final RouteRequestController _labRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _instructionsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _submissionsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _attendanceRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _instructionMutationRequest =
+      trackRouteRequest(RouteRequestController());
+  late final RouteRequestController _gradeRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _attendanceMutationRequest =
+      trackRouteRequest(RouteRequestController());
+
+  Future<void> initialize(String labId) async {
+    await loadLabDetail(labId);
+    final loaded = _loadedOrNull;
+    if (loaded == null) {
+      return;
+    }
+
+    await Future.wait<void>(<Future<void>>[
+      loadInstructions(labId),
+      loadSubmissions(labId),
+      loadAttendance(labId),
+    ]);
+  }
 
   Future<void> loadLabDetail(String labId) async {
     final cached = _cachedLabOrNull;
-    emit(LabDetailLoading(cachedLab: cached));
+    final requestId = _labRequest.begin();
+    emitIfOpen(LabDetailLoading(cachedLab: cached));
 
-    final result = await _labService.getById(labId);
+    final result = await _labService.getById(
+      labId,
+      cancelToken: _labRequest.token,
+    );
+    if (!isRequestCurrent(_labRequest, requestId)) {
+      return;
+    }
+
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         LabDetailError(
           message: result.error?.message ?? 'Failed to load lab details',
           statusCode: result.error?.statusCode,
@@ -52,7 +95,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    emit(LabDetailLoaded(lab: result.data!));
+    emitIfOpen(LabDetailLoaded(lab: result.data!));
   }
 
   Future<void> loadInstructions(String labId) async {
@@ -61,14 +104,21 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    final result = await _labService.getInstructions(labId);
+    final requestId = _instructionsRequest.begin();
+    final result = await _labService.getInstructions(
+      labId,
+      cancelToken: _instructionsRequest.token,
+    );
+    if (!isRequestCurrent(_instructionsRequest, requestId)) {
+      return;
+    }
     final refreshed = _loadedOrNull;
     if (refreshed == null) {
       return;
     }
 
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         refreshed.copyWith(
           errorMessage: result.error?.message ?? 'Failed to load instructions',
           clearMessage: true,
@@ -80,7 +130,9 @@ class LabDetailCubit extends Cubit<LabDetailState> {
     final sorted = List<LabInstructionModel>.from(result.data!)
       ..sort((a, b) => a.orderIndex.compareTo(b.orderIndex));
 
-    emit(refreshed.copyWith(instructions: sorted, clearErrorMessage: true));
+    emitIfOpen(
+      refreshed.copyWith(instructions: sorted, clearErrorMessage: true),
+    );
   }
 
   Future<void> loadSubmissions(String labId) async {
@@ -89,14 +141,21 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    final result = await _labService.getSubmissions(labId);
+    final requestId = _submissionsRequest.begin();
+    final result = await _labService.getSubmissions(
+      labId,
+      cancelToken: _submissionsRequest.token,
+    );
+    if (!isRequestCurrent(_submissionsRequest, requestId)) {
+      return;
+    }
     final refreshed = _loadedOrNull;
     if (refreshed == null) {
       return;
     }
 
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         refreshed.copyWith(
           errorMessage: result.error?.message ?? 'Failed to load submissions',
           clearMessage: true,
@@ -108,7 +167,9 @@ class LabDetailCubit extends Cubit<LabDetailState> {
     final sorted = List<LabSubmissionModel>.from(result.data!)
       ..sort((a, b) => b.submittedAt.compareTo(a.submittedAt));
 
-    emit(refreshed.copyWith(submissions: sorted, clearErrorMessage: true));
+    emitIfOpen(
+      refreshed.copyWith(submissions: sorted, clearErrorMessage: true),
+    );
   }
 
   Future<void> loadAttendance(String labId) async {
@@ -117,14 +178,21 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    final result = await _labService.getAttendance(labId);
+    final requestId = _attendanceRequest.begin();
+    final result = await _labService.getAttendance(
+      labId,
+      cancelToken: _attendanceRequest.token,
+    );
+    if (!isRequestCurrent(_attendanceRequest, requestId)) {
+      return;
+    }
     final refreshed = _loadedOrNull;
     if (refreshed == null) {
       return;
     }
 
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         refreshed.copyWith(
           errorMessage: result.error?.message ?? 'Failed to load attendance',
           clearMessage: true,
@@ -133,7 +201,9 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    emit(refreshed.copyWith(attendance: result.data, clearErrorMessage: true));
+    emitIfOpen(
+      refreshed.copyWith(attendance: result.data, clearErrorMessage: true),
+    );
   }
 
   Future<void> addTextInstruction(
@@ -146,7 +216,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    emit(
+    emitIfOpen(
       LabInstructionUpdating(
         lab: current.lab,
         instructions: current.instructions,
@@ -155,15 +225,19 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       ),
     );
 
+    final requestId = _instructionMutationRequest.begin();
     final result = await _labService.addInstruction(labId, <String, dynamic>{
       'instructionText': text,
       'orderIndex': orderIndex,
-    });
+    }, cancelToken: _instructionMutationRequest.token);
+    if (!isRequestCurrent(_instructionMutationRequest, requestId)) {
+      return;
+    }
 
     if (!result.isSuccess || result.data == null) {
       final refreshed = _loadedOrNull;
       if (refreshed != null) {
-        emit(
+        emitIfOpen(
           refreshed.copyWith(
             errorMessage: result.error?.message ?? 'Failed to add instruction',
             clearMessage: true,
@@ -188,7 +262,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    emit(
+    emitIfOpen(
       LabInstructionUpdating(
         lab: current.lab,
         instructions: current.instructions,
@@ -197,22 +271,29 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       ),
     );
 
+    final requestId = _instructionMutationRequest.begin();
     final result = await _labService.uploadInstructionFile(
       labId,
       file,
       orderIndex: orderIndex,
+      cancelToken: _instructionMutationRequest.token,
       onSendProgress: (sent, total) {
-        if (total <= 0 || onProgress == null) {
+        if (total <= 0 ||
+            onProgress == null ||
+            !isRequestCurrent(_instructionMutationRequest, requestId)) {
           return;
         }
         onProgress((sent / total).clamp(0, 1).toDouble());
       },
     );
+    if (!isRequestCurrent(_instructionMutationRequest, requestId)) {
+      return;
+    }
 
     if (!result.isSuccess || result.data == null) {
       final refreshed = _loadedOrNull;
       if (refreshed != null) {
-        emit(
+        emitIfOpen(
           refreshed.copyWith(
             errorMessage: result.error?.message ?? 'Failed to upload file',
             clearMessage: true,
@@ -238,7 +319,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
 
     final parsedInstructionId = int.tryParse(instructionId);
 
-    emit(
+    emitIfOpen(
       LabInstructionUpdating(
         lab: current.lab,
         instructions: current.instructions,
@@ -248,16 +329,21 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       ),
     );
 
+    final requestId = _instructionMutationRequest.begin();
     final result = await _labService.updateInstruction(
       labId,
       instructionId,
       <String, dynamic>{'instructionText': text},
+      cancelToken: _instructionMutationRequest.token,
     );
+    if (!isRequestCurrent(_instructionMutationRequest, requestId)) {
+      return;
+    }
 
     if (!result.isSuccess || result.data == null) {
       final refreshed = _loadedOrNull;
       if (refreshed != null) {
-        emit(
+        emitIfOpen(
           refreshed.copyWith(
             errorMessage:
                 result.error?.message ?? 'Failed to update instruction',
@@ -278,7 +364,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    emit(
+    emitIfOpen(
       LabInstructionUpdating(
         lab: current.lab,
         instructions: current.instructions,
@@ -288,11 +374,19 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       ),
     );
 
-    final result = await _labService.deleteInstruction(labId, instructionId);
+    final requestId = _instructionMutationRequest.begin();
+    final result = await _labService.deleteInstruction(
+      labId,
+      instructionId,
+      cancelToken: _instructionMutationRequest.token,
+    );
+    if (!isRequestCurrent(_instructionMutationRequest, requestId)) {
+      return;
+    }
     if (!result.isSuccess) {
       final refreshed = _loadedOrNull;
       if (refreshed != null) {
-        emit(
+        emitIfOpen(
           refreshed.copyWith(
             errorMessage:
                 result.error?.message ?? 'Failed to delete instruction',
@@ -335,7 +429,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       }
     }
 
-    emit(
+    emitIfOpen(
       LabInstructionUpdating(
         lab: current.lab,
         instructions: current.instructions,
@@ -344,13 +438,18 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       ),
     );
 
+    final requestId = _instructionMutationRequest.begin();
     var failedCount = 0;
     for (var index = 0; index < reordered.length; index++) {
+      if (!isRequestCurrent(_instructionMutationRequest, requestId)) {
+        return;
+      }
       final instruction = reordered[index];
       final result = await _labService.updateInstruction(
         labId,
         instruction.id,
         <String, dynamic>{'orderIndex': index},
+        cancelToken: _instructionMutationRequest.token,
       );
       if (!result.isSuccess) {
         failedCount++;
@@ -360,7 +459,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
     if (failedCount > 0) {
       final refreshed = _loadedOrNull;
       if (refreshed != null) {
-        emit(
+        emitIfOpen(
           refreshed.copyWith(
             errorMessage: 'Failed to reorder some instructions. Please retry.',
             clearMessage: true,
@@ -389,7 +488,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
     }
 
     if (score < 0 || score > current.lab.maxScore) {
-      emit(
+      emitIfOpen(
         current.copyWith(
           errorMessage:
               'Score must be between 0 and ${current.lab.maxScore.toStringAsFixed(1)}.',
@@ -399,7 +498,8 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    emit(
+    final requestId = _gradeRequest.begin();
+    emitIfOpen(
       current.copyWith(
         isSubmittingGrade: true,
         clearMessage: true,
@@ -413,7 +513,11 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       score,
       status: status.toJson(),
       feedback: feedback,
+      cancelToken: _gradeRequest.token,
     );
+    if (!isRequestCurrent(_gradeRequest, requestId)) {
+      return;
+    }
 
     final refreshed = _loadedOrNull;
     if (refreshed == null) {
@@ -421,7 +525,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
     }
 
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         refreshed.copyWith(
           isSubmittingGrade: false,
           errorMessage: result.error?.message ?? 'Failed to save grade',
@@ -447,7 +551,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
             })
             .toList(growable: false);
 
-    emit(
+    emitIfOpen(
       refreshed.copyWith(
         submissions: updatedSubmissions,
         isSubmittingGrade: false,
@@ -467,7 +571,8 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    emit(
+    final requestId = _attendanceMutationRequest.begin();
+    emitIfOpen(
       current.copyWith(
         isSubmittingAttendance: true,
         clearMessage: true,
@@ -477,13 +582,23 @@ class LabDetailCubit extends Cubit<LabDetailState> {
 
     var failedCount = 0;
     for (final entry in attendanceList) {
-      final result = await _labService.markAttendance(labId, entry.toJson());
+      if (!isRequestCurrent(_attendanceMutationRequest, requestId)) {
+        return;
+      }
+      final result = await _labService.markAttendance(
+        labId,
+        entry.toJson(),
+        cancelToken: _attendanceMutationRequest.token,
+      );
       if (!result.isSuccess) {
         failedCount++;
       }
     }
 
     await loadAttendance(labId);
+    if (!isRequestCurrent(_attendanceMutationRequest, requestId)) {
+      return;
+    }
 
     final refreshed = _loadedOrNull;
     if (refreshed == null) {
@@ -491,7 +606,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
     }
 
     if (failedCount == 0) {
-      emit(
+      emitIfOpen(
         refreshed.copyWith(
           isSubmittingAttendance: false,
           message: 'Attendance updated.',
@@ -501,7 +616,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    emit(
+    emitIfOpen(
       refreshed.copyWith(
         isSubmittingAttendance: false,
         errorMessage:
@@ -517,7 +632,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    emit(current.copyWith(clearMessage: true, clearErrorMessage: true));
+    emitIfOpen(current.copyWith(clearMessage: true, clearErrorMessage: true));
   }
 
   void _emitMessage(String message) {
@@ -526,7 +641,7 @@ class LabDetailCubit extends Cubit<LabDetailState> {
       return;
     }
 
-    emit(current.copyWith(message: message, clearErrorMessage: true));
+    emitIfOpen(current.copyWith(message: message, clearErrorMessage: true));
   }
 
   LabDetailLoaded? get _loadedOrNull {

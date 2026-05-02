@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/instructor/instructor_labs_cubit.dart';
@@ -19,7 +20,9 @@ class _FakeEnrollmentService extends EnrollmentService {
   ServiceResult<List<TeachingCourseModel>> result;
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) async {
     return result;
   }
 }
@@ -50,6 +53,7 @@ class _FakeLabService extends LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     lastCourseId = courseId;
     lastPage = page;
@@ -62,7 +66,10 @@ class _FakeLabService extends LabService {
   }
 
   @override
-  Future<ServiceResult<LabModel>> create(Map<String, dynamic> data) async {
+  Future<ServiceResult<LabModel>> create(
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) async {
     lastCreatePayload = data;
     return createResult ??
         ServiceResult<LabModel>.failure(
@@ -76,8 +83,9 @@ class _FakeLabService extends LabService {
   @override
   Future<ServiceResult<LabModel>> update(
     dynamic id,
-    Map<String, dynamic> data,
-  ) async {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) async {
     lastUpdateId = id;
     lastUpdatePayload = data;
     return updateResult ??
@@ -90,7 +98,10 @@ class _FakeLabService extends LabService {
   }
 
   @override
-  Future<ServiceResult<void>> delete(dynamic id) async {
+  Future<ServiceResult<void>> delete(
+    dynamic id, {
+    CancelToken? cancelToken,
+  }) async {
     lastDeleteId = id;
     return deleteResult ??
         ServiceResult<void>.failure(

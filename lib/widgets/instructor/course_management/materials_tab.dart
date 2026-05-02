@@ -89,7 +89,9 @@ class MaterialsTab extends StatelessWidget {
     final grouped = <int, List<CourseMaterialModel>>{};
     for (final material in _resolvedMaterials) {
       final weekNumber = material.weekNumber ?? 0;
-      grouped.putIfAbsent(weekNumber, () => <CourseMaterialModel>[]).add(material);
+      grouped
+          .putIfAbsent(weekNumber, () => <CourseMaterialModel>[])
+          .add(material);
     }
 
     final weeks = grouped.keys.toList(growable: false)
@@ -124,7 +126,8 @@ class MaterialsTab extends StatelessWidget {
                     return _WeekAccordionCard(
                       key: ValueKey<String>('instructor-week-$weekNumber'),
                       weekNumber: weekNumber,
-                      materials: grouped[weekNumber] ?? const <CourseMaterialModel>[],
+                      materials:
+                          grouped[weekNumber] ?? const <CourseMaterialModel>[],
                       isDark: isDark,
                       l10n: l10n,
                       initiallyExpanded: index == 0,
@@ -162,10 +165,14 @@ class _PartialFailureBanner extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFF59E0B).withValues(alpha: isDark ? 0.16 : 0.12),
+          color: const Color(
+            0xFFF59E0B,
+          ).withValues(alpha: isDark ? 0.16 : 0.12),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: const Color(0xFFF59E0B).withValues(alpha: isDark ? 0.42 : 0.3),
+            color: const Color(
+              0xFFF59E0B,
+            ).withValues(alpha: isDark ? 0.42 : 0.3),
           ),
         ),
         child: Row(
@@ -208,7 +215,9 @@ class _EmptyState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF172033) : const Color(0xFFEFF6FF),
+                color: isDark
+                    ? const Color(0xFF172033)
+                    : const Color(0xFFEFF6FF),
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -317,8 +326,14 @@ class _WeekAccordionCardState extends State<_WeekAccordionCard> {
               child: Row(
                 children: [
                   Container(
-                    constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    constraints: const BoxConstraints(
+                      minWidth: 48,
+                      minHeight: 48,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFDBEAFE),
                       borderRadius: BorderRadius.circular(12),
@@ -339,7 +354,9 @@ class _WeekAccordionCardState extends State<_WeekAccordionCard> {
                         Text(
                           weekLabel,
                           style: TextStyle(
-                            color: widget.isDark ? Colors.white : const Color(0xFF0F172A),
+                            color: widget.isDark
+                                ? Colors.white
+                                : const Color(0xFF0F172A),
                             fontSize: 14,
                             fontWeight: FontWeight.w700,
                           ),
@@ -348,7 +365,9 @@ class _WeekAccordionCardState extends State<_WeekAccordionCard> {
                         Text(
                           '${widget.materials.length} materials',
                           style: TextStyle(
-                            color: widget.isDark ? Colors.white60 : const Color(0xFF64748B),
+                            color: widget.isDark
+                                ? Colors.white60
+                                : const Color(0xFF64748B),
                             fontSize: 12,
                           ),
                         ),
@@ -357,7 +376,9 @@ class _WeekAccordionCardState extends State<_WeekAccordionCard> {
                   ),
                   Icon(
                     _expanded ? Icons.expand_less : Icons.expand_more,
-                    color: widget.isDark ? Colors.white70 : const Color(0xFF475569),
+                    color: widget.isDark
+                        ? Colors.white70
+                        : const Color(0xFF475569),
                   ),
                 ],
               ),
@@ -378,7 +399,8 @@ class _WeekAccordionCardState extends State<_WeekAccordionCard> {
                           widget.legacyMaterials,
                         ),
                         onViewMaterial: widget.onViewMaterial,
-                        onToggleMaterialVisibility: widget.onToggleMaterialVisibility,
+                        onToggleMaterialVisibility:
+                            widget.onToggleMaterialVisibility,
                         onEditMaterial: widget.onEditMaterial,
                         onDeleteMaterial: widget.onDeleteMaterial,
                       ),
@@ -461,7 +483,9 @@ class _InstructorMaterialCard extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: onViewMaterial == null ? null : () => onViewMaterial!(legacyMaterial),
+          onTap: onViewMaterial == null
+              ? null
+              : () => onViewMaterial!(legacyMaterial),
           borderRadius: BorderRadius.circular(14),
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -491,12 +515,20 @@ class _InstructorMaterialCard extends StatelessWidget {
                           PopupMenuButton<_MaterialAction>(
                             tooltip: '',
                             padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(
+                              minWidth: 48,
+                              minHeight: 48,
+                            ),
                             splashRadius: 20,
-                            color: isDark ? const Color(0xFF111827) : Colors.white,
+                            color: isDark
+                                ? const Color(0xFF111827)
+                                : Colors.white,
                             onSelected: (action) {
                               switch (action) {
                                 case _MaterialAction.toggleVisibility:
-                                  onToggleMaterialVisibility?.call(legacyMaterial);
+                                  onToggleMaterialVisibility?.call(
+                                    legacyMaterial,
+                                  );
                                   break;
                                 case _MaterialAction.edit:
                                   onEditMaterial?.call(legacyMaterial);
@@ -562,7 +594,8 @@ class _InstructorMaterialCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      if (material.description != null && material.description!.trim().isNotEmpty)
+                      if (material.description != null &&
+                          material.description!.trim().isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(top: 4),
                           child: Text(
@@ -587,7 +620,8 @@ class _InstructorMaterialCard extends StatelessWidget {
                             isDark: isDark,
                           ),
                           _StatChip(
-                            label: '${l10n.download} ${material.downloadCount ?? 0}',
+                            label:
+                                '${l10n.download} ${material.downloadCount ?? 0}',
                             icon: Icons.download_outlined,
                             isDark: isDark,
                           ),
@@ -727,7 +761,9 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isPublished ? const Color(0xFF16A34A) : const Color(0xFFF59E0B);
+    final color = isPublished
+        ? const Color(0xFF16A34A)
+        : const Color(0xFFF59E0B);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

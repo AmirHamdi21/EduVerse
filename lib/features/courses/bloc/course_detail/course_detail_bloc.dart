@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../models/assignments/assignment_model.dart';
@@ -30,6 +31,18 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
   final CommunicationService? _communicationService;
   final PublicProfileService? _publicProfileService;
   final OfficeHoursService? _officeHoursService;
+  int _requestVersion = 0;
+  CancelToken? _structureToken;
+  CancelToken? _materialsToken;
+  CancelToken? _assignmentsToken;
+  CancelToken? _labsToken;
+  CancelToken? _announcementsToken;
+  CancelToken? _staffToken;
+  CancelToken? _submissionsToken;
+  CancelToken? _profileToken;
+  CancelToken? _officeHoursToken;
+  CancelToken? _appointmentsToken;
+  CancelToken? _bookingToken;
 
   CourseDetailBloc({
     required CourseService courseService,
@@ -67,10 +80,56 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     on<BookOfficeHourAppointment>(_onBookOfficeHourAppointment);
   }
 
+  int _beginRequestCycle() => ++_requestVersion;
+
+  bool _isRequestCurrent(int version) => version == _requestVersion;
+
+  CancelToken _replaceToken(
+    CancelToken? current,
+    void Function(CancelToken?) set,
+  ) {
+    if (current != null && !current.isCancelled) {
+      current.cancel('superseded');
+    }
+    final next = CancelToken();
+    set(next);
+    return next;
+  }
+
+  void _cancelAllRequests() {
+    final tokens = <CancelToken?>[
+      _structureToken,
+      _materialsToken,
+      _assignmentsToken,
+      _labsToken,
+      _announcementsToken,
+      _staffToken,
+      _submissionsToken,
+      _profileToken,
+      _officeHoursToken,
+      _appointmentsToken,
+      _bookingToken,
+    ];
+    for (final token in tokens) {
+      if (token != null && !token.isCancelled) {
+        token.cancel('bloc_closed');
+      }
+    }
+  }
+
+  @override
+  Future<void> close() async {
+    _requestVersion++;
+    _cancelAllRequests();
+    await super.close();
+  }
+
   Future<void> _onLoadCourseDetail(
     LoadCourseDetail event,
     Emitter<CourseDetailState> emit,
   ) async {
+    final requestVersion = _beginRequestCycle();
+    _cancelAllRequests();
     emit(
       state.copyWith(
         selectedTabIndex: event.initialTabIndex,
@@ -96,22 +155,36 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     );
 
     final futures = <Future<void>>[
-      _fetchStructure(event.courseId, emit),
-      _fetchMaterials(event.courseId, emit),
-      _fetchAssignments(event.courseId, emit),
-      _fetchLabs(event.courseId, emit),
+      _fetchStructure(event.courseId, emit, requestVersion: requestVersion),
+      _fetchMaterials(event.courseId, emit, requestVersion: requestVersion),
+      _fetchAssignments(event.courseId, emit, requestVersion: requestVersion),
+      _fetchLabs(event.courseId, emit, requestVersion: requestVersion),
     ];
 
     if (event.courseId != null) {
-      futures.add(_fetchAnnouncements(event.courseId, emit));
+      futures.add(
+        _fetchAnnouncements(
+          event.courseId,
+          emit,
+          requestVersion: requestVersion,
+        ),
+      );
     }
 
     if (event.sectionId != null && event.sectionId! > 0) {
-      futures.add(_fetchStaff(event.sectionId!, emit));
+      futures.add(
+        _fetchStaff(event.sectionId!, emit, requestVersion: requestVersion),
+      );
     }
 
     if (event.prerequisites != null) {
-      futures.add(_fetchPrerequisitesFromPayload(event.prerequisites!, emit));
+      futures.add(
+        _fetchPrerequisitesFromPayload(
+          event.prerequisites!,
+          emit,
+          requestVersion: requestVersion,
+        ),
+      );
     }
 
     await Future.wait<void>(futures);
@@ -122,7 +195,11 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     Emitter<CourseDetailState> emit,
   ) async {
     emit(state.copyWith(isLoadingStructure: true, clearError: true));
-    await _fetchStructure(event.courseId, emit);
+    await _fetchStructure(
+      event.courseId,
+      emit,
+      requestVersion: _requestVersion,
+    );
   }
 
   Future<void> _onLoadMaterials(
@@ -130,7 +207,12 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     Emitter<CourseDetailState> emit,
   ) async {
     emit(state.copyWith(isLoadingMaterials: true, clearError: true));
-    await _fetchMaterials(event.courseId, emit, weekNumber: event.weekNumber);
+    await _fetchMaterials(
+      event.courseId,
+      emit,
+      weekNumber: event.weekNumber,
+      requestVersion: _requestVersion,
+    );
   }
 
   Future<void> _onLoadAssignments(
@@ -144,7 +226,11 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         clearError: true,
       ),
     );
-    await _fetchAssignments(event.courseId, emit);
+    await _fetchAssignments(
+      event.courseId,
+      emit,
+      requestVersion: _requestVersion,
+    );
   }
 
   Future<void> _onLoadLabs(
@@ -158,7 +244,7 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         clearError: true,
       ),
     );
-    await _fetchLabs(event.courseId, emit);
+    await _fetchLabs(event.courseId, emit, requestVersion: _requestVersion);
   }
 
   Future<void> _onLoadAssignmentSubmissions(
@@ -180,14 +266,28 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
       state.copyWith(isLoadingAssignmentSubmissions: true, clearError: true),
     );
     try {
+      final requestVersion = _requestVersion;
+      final token = _replaceToken(
+        _submissionsToken,
+        (next) => _submissionsToken = next,
+      );
       final snapshots = <int, AssignmentSubmissionModel?>{};
       for (final assignment in event.assignments) {
+        if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+          return;
+        }
         final assignmentId = assignment.assignmentId;
         if (assignmentId <= 0) {
           continue;
         }
 
-        final result = await assignmentService.getMySubmission(assignmentId);
+        final result = await assignmentService.getMySubmission(
+          assignmentId,
+          cancelToken: token,
+        );
+        if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+          return;
+        }
         if (!result.isSuccess) {
           snapshots[assignmentId] = null;
           continue;
@@ -204,6 +304,9 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         ),
       );
     } catch (e) {
+      if (emit.isDone) {
+        return;
+      }
       emit(
         state.copyWith(
           isLoadingAssignmentSubmissions: false,
@@ -231,14 +334,28 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     emit(state.copyWith(isLoadingLabSubmissions: true, clearError: true));
 
     try {
+      final requestVersion = _requestVersion;
+      final token = _replaceToken(
+        _submissionsToken,
+        (next) => _submissionsToken = next,
+      );
       final snapshots = <int, LabSubmissionModel?>{};
       for (final lab in event.labs) {
+        if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+          return;
+        }
         final labId = lab.labId ?? int.tryParse(lab.id) ?? 0;
         if (labId <= 0) {
           continue;
         }
 
-        final result = await labService.getMySubmission(labId);
+        final result = await labService.getMySubmission(
+          labId,
+          cancelToken: token,
+        );
+        if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+          return;
+        }
         if (!result.isSuccess) {
           snapshots[labId] = null;
           continue;
@@ -263,6 +380,9 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         ),
       );
     } catch (e) {
+      if (emit.isDone) {
+        return;
+      }
       emit(
         state.copyWith(isLoadingLabSubmissions: false, error: _toMessage(e)),
       );
@@ -274,7 +394,11 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     Emitter<CourseDetailState> emit,
   ) async {
     emit(state.copyWith(isLoadingPrerequisites: true, clearError: true));
-    await _fetchPrerequisitesFromPayload(event.prerequisites, emit);
+    await _fetchPrerequisitesFromPayload(
+      event.prerequisites,
+      emit,
+      requestVersion: _requestVersion,
+    );
   }
 
   void _onExpandWeek(ExpandWeek event, Emitter<CourseDetailState> emit) {
@@ -290,7 +414,11 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     Emitter<CourseDetailState> emit,
   ) async {
     emit(state.copyWith(isLoadingAnnouncements: true, clearError: true));
-    await _fetchAnnouncements(event.courseId, emit);
+    await _fetchAnnouncements(
+      event.courseId,
+      emit,
+      requestVersion: _requestVersion,
+    );
   }
 
   Future<void> _onLoadSectionStaff(
@@ -298,7 +426,7 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     Emitter<CourseDetailState> emit,
   ) async {
     emit(state.copyWith(isLoadingStaff: true, clearError: true));
-    await _fetchStaff(event.sectionId, emit);
+    await _fetchStaff(event.sectionId, emit, requestVersion: _requestVersion);
   }
 
   Future<void> _onLoadInstructorProfile(
@@ -319,9 +447,17 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     );
 
     try {
+      final token = _replaceToken(
+        _profileToken,
+        (next) => _profileToken = next,
+      );
       final profile = await _publicProfileService.getPublicProfile(
         event.userId,
+        cancelToken: token,
       );
+      if (emit.isDone) {
+        return;
+      }
       emit(
         state.copyWith(
           selectedProfile: profile,
@@ -332,6 +468,9 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
 
       add(LoadOfficeHourSlots(instructorId: event.userId));
     } catch (e) {
+      if (emit.isDone) {
+        return;
+      }
       emit(state.copyWith(isLoadingProfile: false, error: _toMessage(e)));
       add(LoadOfficeHourSlots(instructorId: event.userId));
     }
@@ -348,10 +487,18 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     emit(state.copyWith(isLoadingOfficeHours: true, clearError: true));
 
     try {
+      final token = _replaceToken(
+        _officeHoursToken,
+        (next) => _officeHoursToken = next,
+      );
       final response = await _officeHoursService.getSlots(
         instructorId: event.instructorId,
         limit: 50,
+        cancelToken: token,
       );
+      if (emit.isDone) {
+        return;
+      }
 
       final slots = response.items.where((slot) => slot.isActive).toList()
         ..sort((a, b) {
@@ -372,6 +519,9 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         ),
       );
     } catch (e) {
+      if (emit.isDone) {
+        return;
+      }
       emit(state.copyWith(isLoadingOfficeHours: false, error: _toMessage(e)));
     }
   }
@@ -387,7 +537,16 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     emit(state.copyWith(isLoadingAppointments: true, clearError: true));
 
     try {
-      final appointments = await _officeHoursService.getMyAppointments();
+      final token = _replaceToken(
+        _appointmentsToken,
+        (next) => _appointmentsToken = next,
+      );
+      final appointments = await _officeHoursService.getMyAppointments(
+        cancelToken: token,
+      );
+      if (emit.isDone) {
+        return;
+      }
       appointments.sort((a, b) {
         final left = a.appointmentDate ?? DateTime(1970);
         final right = b.appointmentDate ?? DateTime(1970);
@@ -402,6 +561,9 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         ),
       );
     } catch (e) {
+      if (emit.isDone) {
+        return;
+      }
       emit(state.copyWith(isLoadingAppointments: false, error: _toMessage(e)));
     }
   }
@@ -423,12 +585,20 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     );
 
     try {
+      final token = _replaceToken(
+        _bookingToken,
+        (next) => _bookingToken = next,
+      );
       final appointment = await _officeHoursService.bookAppointment(
         slotId: event.slotId,
         appointmentDate: event.appointmentDate,
         topic: event.topic,
         notes: event.notes,
+        cancelToken: token,
       );
+      if (emit.isDone) {
+        return;
+      }
 
       final updated = <int, OfficeHourAppointmentModel>{
         for (final item in state.appointments) item.appointmentId: item,
@@ -449,16 +619,30 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         add(LoadOfficeHourSlots(instructorId: event.instructorId!));
       }
     } catch (e) {
+      if (emit.isDone) {
+        return;
+      }
       emit(state.copyWith(isBookingAppointment: false, error: _toMessage(e)));
     }
   }
 
   Future<void> _fetchStructure(
     dynamic courseId,
-    Emitter<CourseDetailState> emit,
-  ) async {
+    Emitter<CourseDetailState> emit, {
+    required int requestVersion,
+  }) async {
     try {
-      final structure = await _courseService.getCourseStructure(courseId);
+      final token = _replaceToken(
+        _structureToken,
+        (next) => _structureToken = next,
+      );
+      final structure = await _courseService.getCourseStructure(
+        courseId,
+        cancelToken: token,
+      );
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
       emit(
         state.copyWith(
           structure: structure,
@@ -467,6 +651,9 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         ),
       );
     } catch (e) {
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
       emit(state.copyWith(isLoadingStructure: false, error: _toMessage(e)));
     }
   }
@@ -475,12 +662,21 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     dynamic courseId,
     Emitter<CourseDetailState> emit, {
     int? weekNumber,
+    required int requestVersion,
   }) async {
     try {
+      final token = _replaceToken(
+        _materialsToken,
+        (next) => _materialsToken = next,
+      );
       final materials = await _materialService.getMaterials(
         courseId,
         weekNumber: weekNumber,
+        cancelToken: token,
       );
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
 
       final merged = _mergeMaterials(
         existing: state.materials,
@@ -496,14 +692,18 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         ),
       );
     } catch (e) {
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
       emit(state.copyWith(isLoadingMaterials: false, error: _toMessage(e)));
     }
   }
 
   Future<void> _fetchAssignments(
     dynamic courseId,
-    Emitter<CourseDetailState> emit,
-  ) async {
+    Emitter<CourseDetailState> emit, {
+    required int requestVersion,
+  }) async {
     final normalizedCourseId = _parsePositiveInt(courseId);
     if (normalizedCourseId == null) {
       emit(
@@ -522,11 +722,19 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     String? primaryError;
 
     if (_assignmentService != null) {
+      final token = _replaceToken(
+        _assignmentsToken,
+        (next) => _assignmentsToken = next,
+      );
       final response = await _assignmentService.getAll(
         courseId: normalizedCourseId,
         page: 1,
         limit: 100,
+        cancelToken: token,
       );
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
 
       if (response.isSuccess && response.data != null) {
         assignments = response.data!.data
@@ -543,7 +751,11 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         final materials = await _materialService.getMaterials(
           courseId,
           materialType: 'assignment',
+          cancelToken: _assignmentsToken,
         );
+        if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+          return;
+        }
 
         assignments = materials
             .where(_isAssignmentMaterial)
@@ -554,6 +766,9 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
             .map(_normalizeAssignment)
             .toList(growable: false);
       } catch (e) {
+        if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+          return;
+        }
         emit(
           state.copyWith(
             assignments: const <AssignmentModel>[],
@@ -592,8 +807,9 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
 
   Future<void> _fetchLabs(
     dynamic courseId,
-    Emitter<CourseDetailState> emit,
-  ) async {
+    Emitter<CourseDetailState> emit, {
+    required int requestVersion,
+  }) async {
     final normalizedCourseId = _parsePositiveInt(courseId);
     if (normalizedCourseId == null) {
       emit(
@@ -612,11 +828,16 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
     String? primaryError;
 
     if (_labService != null) {
+      final token = _replaceToken(_labsToken, (next) => _labsToken = next);
       final response = await _labService.getAll(
         courseId: normalizedCourseId,
         page: 1,
         limit: 100,
+        cancelToken: token,
       );
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
 
       if (response.isSuccess && response.data != null) {
         labs = response.data!.map(_normalizeLab).toList(growable: false);
@@ -631,7 +852,11 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         final materials = await _materialService.getMaterials(
           courseId,
           materialType: 'lab',
+          cancelToken: _labsToken,
         );
+        if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+          return;
+        }
 
         labs = materials
             .where(_isLabMaterial)
@@ -639,6 +864,9 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
             .map(_normalizeLab)
             .toList(growable: false);
       } catch (e) {
+        if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+          return;
+        }
         emit(
           state.copyWith(
             labs: const <LabModel>[],
@@ -677,8 +905,12 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
 
   Future<void> _fetchPrerequisitesFromPayload(
     List<EnrollmentPrerequisite> prerequisites,
-    Emitter<CourseDetailState> emit,
-  ) async {
+    Emitter<CourseDetailState> emit, {
+    required int requestVersion,
+  }) async {
+    if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+      return;
+    }
     emit(
       state.copyWith(
         prerequisites: prerequisites,
@@ -690,16 +922,29 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
 
   Future<void> _fetchAnnouncements(
     dynamic courseId,
-    Emitter<CourseDetailState> emit,
-  ) async {
+    Emitter<CourseDetailState> emit, {
+    required int requestVersion,
+  }) async {
     if (_communicationService == null) {
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
       emit(state.copyWith(isLoadingAnnouncements: false));
       return;
     }
 
     try {
       final announcements = await _communicationService
-          .getAnnouncementsByCourseId(courseId);
+          .getAnnouncementsByCourseId(
+            courseId,
+            cancelToken: _replaceToken(
+              _announcementsToken,
+              (next) => _announcementsToken = next,
+            ),
+          );
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
       announcements.sort(
         (a, b) => (b.publishedAt ?? b.createdAt).compareTo(
           a.publishedAt ?? a.createdAt,
@@ -714,24 +959,42 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         ),
       );
     } catch (e) {
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
       emit(state.copyWith(isLoadingAnnouncements: false, error: _toMessage(e)));
     }
   }
 
   Future<void> _fetchStaff(
     dynamic sectionId,
-    Emitter<CourseDetailState> emit,
-  ) async {
+    Emitter<CourseDetailState> emit, {
+    required int requestVersion,
+  }) async {
     if (_enrollmentService == null) {
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
       emit(state.copyWith(isLoadingStaff: false));
       return;
     }
 
     try {
+      final token = _replaceToken(_staffToken, (next) => _staffToken = next);
       final instructorsResult = await _enrollmentService.getSectionInstructors(
         sectionId,
+        cancelToken: token,
       );
-      final tasResult = await _enrollmentService.getSectionTAs(sectionId);
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
+      final tasResult = await _enrollmentService.getSectionTAs(
+        sectionId,
+        cancelToken: token,
+      );
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
 
       final parsedSectionId = _parsePositiveInt(sectionId);
 
@@ -790,6 +1053,9 @@ class CourseDetailBloc extends Bloc<CourseDetailEvent, CourseDetailState> {
         ),
       );
     } catch (e) {
+      if (emit.isDone || !_isRequestCurrent(requestVersion)) {
+        return;
+      }
       emit(state.copyWith(isLoadingStaff: false, error: _toMessage(e)));
     }
   }

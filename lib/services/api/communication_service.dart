@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import 'core_api_client.dart';
 import '../../models/materials/announcement_model.dart';
 import '../../models/materials/assignment_model.dart';
@@ -25,11 +27,13 @@ class CommunicationService {
 
   /// GET /api/announcements?courseId={id}
   Future<List<AnnouncementModel>> getAnnouncementsByCourseId(
-    dynamic courseId,
-  ) async {
+    dynamic courseId, {
+    CancelToken? cancelToken,
+  }) async {
     final response = await _client.dio.get(
       '/announcements',
       queryParameters: <String, dynamic>{'courseId': courseId},
+      cancelToken: cancelToken,
     );
 
     final List data = _extractList(response.data);

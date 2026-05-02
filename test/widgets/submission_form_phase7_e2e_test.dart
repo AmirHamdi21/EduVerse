@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,6 +29,7 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<PaginatedResponse<AssignmentModel>>.success(
       PaginatedResponse<AssignmentModel>(
@@ -42,8 +44,9 @@ class _FakeAssignmentService extends AssignmentService {
 
   @override
   Future<ServiceResult<AssignmentSubmissionModel>> getMySubmission(
-    dynamic assignmentId,
-  ) async {
+    dynamic assignmentId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<AssignmentSubmissionModel>.failure(
       const ServiceError(
         type: ServiceErrorType.server,

@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/bloc/route_request_controller.dart';
 import '../../models/admin/admin_periods_models.dart';
 import '../../models/schedule/schedule_models.dart';
 import '../../services/api/office_hours_service.dart';
@@ -7,9 +8,16 @@ import '../../services/api/schedule_api_service.dart';
 import '../schedule/schedule_item_builder.dart';
 import 'instructor_calendar_state.dart';
 
-class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
+class InstructorCalendarCubit extends Cubit<InstructorCalendarState>
+    with SafeRouteCubitMixin<InstructorCalendarState> {
   final ScheduleApiService _scheduleService;
   final OfficeHoursService _officeHoursService;
+  late final RouteRequestController _scheduleRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _mutationRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
 
   InstructorCalendarCubit({
     required ScheduleApiService scheduleService,
@@ -21,22 +29,27 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
   }
 
   Future<void> _initialize() async {
-    emit(state.copyWith(reminders: _getMockReminders()));
+    emitIfOpen(state.copyWith(reminders: _getMockReminders()));
     await loadSchedule();
   }
 
   Future<void> loadSchedule() async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _scheduleRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
 
     List<DailyScheduleResponse> days = const <DailyScheduleResponse>[];
 
     if (state.viewType == CalendarViewType.day) {
       final result = await _scheduleService.getDailySchedule(
         date: toISODate(state.selectedDate),
+        cancelToken: _scheduleRequest.token,
       );
+      if (!isRequestCurrent(_scheduleRequest, requestId)) {
+        return;
+      }
 
       if (result.isFailure || result.data == null) {
-        emit(
+        emitIfOpen(
           state.copyWith(
             isLoading: false,
             error: result.error?.message ?? 'Failed to load schedule',
@@ -50,10 +63,14 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     } else if (state.viewType == CalendarViewType.week) {
       final result = await _scheduleService.getWeeklySchedule(
         startDate: toISODate(startOfWeek(state.selectedDate)),
+        cancelToken: _scheduleRequest.token,
       );
+      if (!isRequestCurrent(_scheduleRequest, requestId)) {
+        return;
+      }
 
       if (result.isFailure || result.data == null) {
-        emit(
+        emitIfOpen(
           state.copyWith(
             isLoading: false,
             error: result.error?.message ?? 'Failed to load schedule',
@@ -67,10 +84,14 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     } else {
       final result = await _scheduleService.getMonthSchedule(
         state.focusedMonth,
+        cancelToken: _scheduleRequest.token,
       );
+      if (!isRequestCurrent(_scheduleRequest, requestId)) {
+        return;
+      }
 
       if (result.isFailure || result.data == null) {
-        emit(
+        emitIfOpen(
           state.copyWith(
             isLoading: false,
             error: result.error?.message ?? 'Failed to load schedule',
@@ -83,7 +104,10 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
       days = result.data!;
     }
 
-    final slots = await _loadOfficeHoursSlots();
+    final slots = await _loadOfficeHoursSlots(requestId);
+    if (!isRequestCurrent(_scheduleRequest, requestId)) {
+      return;
+    }
 
     var items = ScheduleItemBuilder.build(
       days: days,
@@ -96,7 +120,11 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
       final myCampusResult = await _scheduleService.getMyCampusEvents(
         page: 1,
         limit: 100,
+        cancelToken: _scheduleRequest.token,
       );
+      if (!isRequestCurrent(_scheduleRequest, requestId)) {
+        return;
+      }
 
       if (!myCampusResult.isFailure && myCampusResult.data != null) {
         final myCampusItems = myCampusResult.data!.items
@@ -118,7 +146,7 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
       }
     }
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         rawDays: days,
@@ -128,9 +156,16 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     );
   }
 
-  Future<List<OfficeHourSlotModel>> _loadOfficeHoursSlots() async {
+  Future<List<OfficeHourSlotModel>> _loadOfficeHoursSlots(int requestId) async {
     try {
-      final slots = await _officeHoursService.getSlots(page: 1, limit: 200);
+      final slots = await _officeHoursService.getSlots(
+        page: 1,
+        limit: 200,
+        cancelToken: _scheduleRequest.token,
+      );
+      if (!isRequestCurrent(_scheduleRequest, requestId)) {
+        return const <OfficeHourSlotModel>[];
+      }
       return slots.items;
     } catch (_) {
       return const <OfficeHourSlotModel>[];
@@ -138,7 +173,9 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
   }
 
   void setViewType(CalendarViewType type) {
-    emit(state.copyWith(viewType: type, clearError: true, clearSuccess: true));
+    emitIfOpen(
+      state.copyWith(viewType: type, clearError: true, clearSuccess: true),
+    );
     loadSchedule();
   }
 
@@ -147,7 +184,7 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     final focusedMonth = DateTime(normalized.year, normalized.month);
     final needsReload = _shouldReloadForSelectedDate(normalized);
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         selectedDate: normalized,
         focusedMonth: focusedMonth,
@@ -166,7 +203,7 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
       state.focusedMonth.year,
       state.focusedMonth.month + 1,
     );
-    emit(state.copyWith(focusedMonth: newMonth));
+    emitIfOpen(state.copyWith(focusedMonth: newMonth));
     if (state.viewType == CalendarViewType.month) {
       loadSchedule();
     }
@@ -177,7 +214,7 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
       state.focusedMonth.year,
       state.focusedMonth.month - 1,
     );
-    emit(state.copyWith(focusedMonth: newMonth));
+    emitIfOpen(state.copyWith(focusedMonth: newMonth));
     if (state.viewType == CalendarViewType.month) {
       loadSchedule();
     }
@@ -185,12 +222,12 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
 
   void goToToday() {
     final now = DateTime.now();
-    emit(state.copyWith(selectedDate: now, focusedMonth: now));
+    emitIfOpen(state.copyWith(selectedDate: now, focusedMonth: now));
     loadSchedule();
   }
 
   void toggleFilterVisibility() {
-    emit(state.copyWith(isFilterVisible: !state.isFilterVisible));
+    emitIfOpen(state.copyWith(isFilterVisible: !state.isFilterVisible));
   }
 
   void toggleFilterType(InstructorEventType type) {
@@ -223,11 +260,11 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
         break;
     }
 
-    emit(state.copyWith(filter: newFilter));
+    emitIfOpen(state.copyWith(filter: newFilter));
   }
 
   void resetFilters() {
-    emit(state.copyWith(filter: const InstructorEventFilter()));
+    emitIfOpen(state.copyWith(filter: const InstructorEventFilter()));
   }
 
   void setCampusSource(String source) {
@@ -236,17 +273,17 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
       return;
     }
 
-    emit(state.copyWith(campusSource: normalized));
+    emitIfOpen(state.copyWith(campusSource: normalized));
     loadSchedule();
   }
 
   void setKindFilter(ScheduleItemKind? kind) {
-    emit(state.copyWith(kindFilter: kind));
+    emitIfOpen(state.copyWith(kindFilter: kind));
   }
 
   void setCourseFilter(String? courseCode) {
     final normalized = courseCode?.trim();
-    emit(
+    emitIfOpen(
       state.copyWith(
         courseFilter: normalized == null || normalized.isEmpty
             ? null
@@ -256,7 +293,8 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
   }
 
   Future<void> addEvent(InstructorCalendarEvent event) async {
-    emit(state.copyWith(isLoading: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true));
 
     final start = _combineDateAndTime(event.date, event.time);
     final end = event.endTime == null || event.endTime!.trim().isEmpty
@@ -283,9 +321,15 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
       payload['courseId'] = courseId;
     }
 
-    final result = await _scheduleService.createCalendarEvent(payload);
+    final result = await _scheduleService.createCalendarEvent(
+      payload,
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
     if (result.isFailure) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to add event',
@@ -296,19 +340,23 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     }
 
     await loadSchedule();
-    emit(state.copyWith(successMessage: 'Event added successfully'));
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
+    emitIfOpen(state.copyWith(successMessage: 'Event added successfully'));
     _clearSuccess();
   }
 
   Future<void> updateEvent(InstructorCalendarEvent event) async {
-    emit(state.copyWith(isLoading: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true));
 
     final personalEventId = _resolvePersonalEventId(
       event.id,
       fallback: event.eventId,
     );
     if (personalEventId == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: 'Only personal events can be updated',
@@ -341,10 +389,14 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     final result = await _scheduleService.updateCalendarEvent(
       personalEventId,
       payload,
+      cancelToken: _mutationRequest.token,
     );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
 
     if (result.isFailure) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to update event',
@@ -355,16 +407,20 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     }
 
     await loadSchedule();
-    emit(state.copyWith(successMessage: 'Event updated successfully'));
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
+    emitIfOpen(state.copyWith(successMessage: 'Event updated successfully'));
     _clearSuccess();
   }
 
   Future<void> deleteEvent(String eventId) async {
-    emit(state.copyWith(isLoading: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true));
 
     final personalEventId = _resolvePersonalEventId(eventId);
     if (personalEventId == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: 'Only personal events can be deleted',
@@ -374,9 +430,15 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
       return;
     }
 
-    final result = await _scheduleService.deleteCalendarEvent(personalEventId);
+    final result = await _scheduleService.deleteCalendarEvent(
+      personalEventId,
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
     if (result.isFailure) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to delete event',
@@ -387,20 +449,28 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     }
 
     await loadSchedule();
-    emit(state.copyWith(successMessage: 'Event deleted successfully'));
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
+    emitIfOpen(state.copyWith(successMessage: 'Event deleted successfully'));
     _clearSuccess();
   }
 
   Future<void> registerForCampusEvent(int eventId, {String? notes}) async {
-    emit(state.copyWith(isLoading: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true));
 
     final result = await _scheduleService.registerForCampusEvent(
       eventId,
       notes: notes,
+      cancelToken: _mutationRequest.token,
     );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
 
     if (result.isFailure) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to register for event',
@@ -411,17 +481,27 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     }
 
     await loadSchedule();
-    emit(state.copyWith(successMessage: 'Registered for event'));
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
+    emitIfOpen(state.copyWith(successMessage: 'Registered for event'));
     _clearSuccess();
   }
 
   Future<void> unregisterFromCampusEvent(int eventId) async {
-    emit(state.copyWith(isLoading: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true));
 
-    final result = await _scheduleService.unregisterFromCampusEvent(eventId);
+    final result = await _scheduleService.unregisterFromCampusEvent(
+      eventId,
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
 
     if (result.isFailure) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to unregister from event',
@@ -432,7 +512,10 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
     }
 
     await loadSchedule();
-    emit(state.copyWith(successMessage: 'Unregistered from event'));
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
+    emitIfOpen(state.copyWith(successMessage: 'Unregistered from event'));
     _clearSuccess();
   }
 
@@ -446,7 +529,7 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
         })
         .toList(growable: false);
 
-    emit(state.copyWith(events: updatedEvents));
+    emitIfOpen(state.copyWith(events: updatedEvents));
   }
 
   void dismissReminder(String reminderId) {
@@ -465,7 +548,7 @@ class InstructorCalendarCubit extends Cubit<InstructorCalendarState> {
         )
         .toList(growable: false);
 
-    emit(state.copyWith(reminders: updatedReminders));
+    emitIfOpen(state.copyWith(reminders: updatedReminders));
   }
 
   List<InstructorReminder> _getMockReminders() {

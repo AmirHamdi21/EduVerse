@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -15,7 +16,9 @@ class _FakeEnrollmentService extends EnrollmentService {
   _FakeEnrollmentService() : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TeachingCourseModel>>.success(
       const <TeachingCourseModel>[],
     );
@@ -36,8 +39,9 @@ class _FakeAssignmentService extends AssignmentService {
 
   @override
   Future<ServiceResult<List<AssignmentSubmissionModel>>> getSubmissions(
-    dynamic assignmentId,
-  ) async {
+    dynamic assignmentId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<AssignmentSubmissionModel>>.success(submissions);
   }
 
@@ -47,6 +51,7 @@ class _FakeAssignmentService extends AssignmentService {
     dynamic submissionId,
     double score, {
     String? feedback,
+    CancelToken? cancelToken,
   }) async {
     gradedAssignmentId = assignmentId as int;
     gradedSubmissionId = submissionId as int;

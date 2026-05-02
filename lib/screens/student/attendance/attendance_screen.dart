@@ -9,7 +9,6 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/attendance/student_face_reference_model.dart';
-import '../../../services/api/attendance_service.dart';
 import '../../../widgets/student/attendance/attendance_stats_card.dart';
 import '../../../widgets/student/attendance/attendance_calendar.dart';
 import '../../../widgets/student/attendance/course_attendance_list.dart';
@@ -51,11 +50,12 @@ class _AttendanceScreenState extends State<AttendanceScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          AttendanceCubit(attendanceService: context.read<AttendanceService>())
-            ..loadAttendance()
-            ..loadFaceReferences(),
+    final attendanceCubit = context.read<AttendanceCubit>()
+      ..loadAttendance()
+      ..loadFaceReferences();
+
+    return BlocProvider.value(
+      value: attendanceCubit,
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {
           final isDark = themeState.isDark;

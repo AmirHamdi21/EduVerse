@@ -10,12 +10,9 @@ import '../../bloc/theme/theme_bloc.dart';
 import '../../bloc/theme/theme_state.dart';
 import '../../common/utils/course_ui_utils.dart';
 import '../../generated_l10n/app_localizations.dart';
-import '../../models/assignments/assignment_model.dart' as api_assignment;
 import '../../models/core/enrollment_model.dart';
 import '../../models/core/course_structure_model.dart';
 import '../../models/courses/instructor_assignment_model.dart';
-import '../../models/labs/lab_model.dart' as api_lab;
-import '../../models/materials/announcement_model.dart';
 import '../../models/materials/course_material_model.dart';
 import '../../models/ta/ta_assignment_model.dart';
 import '../../widgets/student/course_details/announcements_tab_content.dart';
@@ -26,6 +23,7 @@ import '../../widgets/student/course_details/labs_tab_content.dart';
 import '../../widgets/student/course_details/prerequisites_tab_content.dart';
 import '../../widgets/student/course_details/video_player_widget.dart';
 import '../../widgets/student/courses/course_model.dart';
+import '../../widgets/shared/course_details/course_detail_search_tab.dart';
 
 /// Course detail drill-down screen consuming live [CourseEnrollmentModel].
 ///
@@ -61,6 +59,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
 
   late final CourseDetailBloc _courseDetailBloc;
   final ScrollController _scrollController = ScrollController();
+  bool _isPreparingExit = false;
   String? _selectedHeroMaterialId;
 
   // ── Safe accessors with SC-003 null-coalescing ─────────────────────────
@@ -213,8 +212,12 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
             : const Color(0xFFF5F7FA);
 
         return PopScope<Object?>(
-          canPop: true,
-          onPopInvokedWithResult: _onPopInvoked,
+          canPop: false,
+          onPopInvokedWithResult: (didPop, result) {
+            if (!didPop) {
+              _handleBackPressed();
+            }
+          },
           child: Scaffold(
             backgroundColor: bgColor,
             body: BlocProvider.value(
@@ -247,9 +250,14 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   );
                   final tabs = _buildTabs(l10n);
 
-                  return CustomScrollView(
-                    controller: _scrollController,
-                    slivers: [
+                  return IgnorePointer(
+                    ignoring: _isPreparingExit,
+                    child: CustomScrollView(
+                      controller: _scrollController,
+                      physics: _isPreparingExit
+                          ? const NeverScrollableScrollPhysics()
+                          : null,
+                      slivers: [
                       SliverToBoxAdapter(
                         child: _buildTopChrome(
                           context,
@@ -290,7 +298,8 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                           ),
                         ),
                       ),
-                    ],
+                      ],
+                    ),
                   );
                 },
               ),
@@ -372,18 +381,52 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   ) {
     switch (selectedTabIndex) {
       case _searchTabIndex:
-        return _CourseDetailSearchTab(
+        return CourseDetailSearchTab(
           isDark: isDark,
-          materials: detailState.materials,
-          assignments: detailState.assignments,
-          labs: detailState.labs,
-          announcements: detailState.announcements,
-          onOpenContent: () => _switchTab(context, _contentTabIndex),
-          onOpenAssignments: () => _switchTab(context, _assignmentsTabIndex),
-          onOpenLabs: () => _switchTab(context, _labsTabIndex),
-          onOpenAnnouncements: () =>
-              _switchTab(context, _announcementsTabIndex),
-          l10n: l10n,
+          accentColor: const Color(0xFF155DFC),
+          hintText: l10n.studentCourseDetailSearchHint,
+          promptTitle: l10n.studentCourseDetailSearchPromptTitle,
+          promptSubtitle: l10n.studentCourseDetailSearchPromptSubtitle,
+          noResultsTitle: l10n.studentCourseDetailSearchNoResultsTitle,
+          noResultsSubtitle: l10n.studentCourseDetailSearchNoResultsSubtitle,
+          entries: [
+            ...detailState.materials.map(
+              (item) => CourseDetailSearchEntry(
+                title: item.title,
+                subtitle: l10n.studentCourseDetailSearchMaterialsLabel,
+                description: item.description,
+                icon: Icons.video_library_outlined,
+                onTap: () => _switchTab(context, _contentTabIndex),
+              ),
+            ),
+            ...detailState.assignments.map(
+              (item) => CourseDetailSearchEntry(
+                title: item.title,
+                subtitle: l10n.assignments,
+                description: item.description,
+                icon: Icons.assignment_outlined,
+                onTap: () => _switchTab(context, _assignmentsTabIndex),
+              ),
+            ),
+            ...detailState.labs.map(
+              (item) => CourseDetailSearchEntry(
+                title: item.title,
+                subtitle: l10n.labs,
+                description: item.description,
+                icon: Icons.science_outlined,
+                onTap: () => _switchTab(context, _labsTabIndex),
+              ),
+            ),
+            ...detailState.announcements.map(
+              (item) => CourseDetailSearchEntry(
+                title: item.title,
+                subtitle: l10n.announcements,
+                description: item.content,
+                icon: Icons.campaign_outlined,
+                onTap: () => _switchTab(context, _announcementsTabIndex),
+              ),
+            ),
+          ],
         );
       case _contentTabIndex:
         return CourseTabContent(
@@ -643,6 +686,10 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     CourseDetailState detailState,
     CourseMaterialModel? heroVideo,
   ) {
+    if (_isPreparingExit) {
+      return true;
+    }
+
     if (heroVideo != null) {
       return false;
     }
@@ -664,7 +711,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   }
 
   bool _handleInlineMaterialTap(CourseMaterialModel material) {
-    if (!_isVideoMaterial(material)) {
+    if (_isPreparingExit || !_isVideoMaterial(material)) {
       return false;
     }
 
@@ -680,6 +727,10 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
   }
 
   void _playNextVideo(CourseDetailState detailState) {
+    if (_isPreparingExit) {
+      return;
+    }
+
     final videos = _videoMaterials(detailState);
     if (videos.isEmpty) {
       return;
@@ -762,6 +813,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                 VideoPlayerWidget(
                   courseId: _resolvedCourseId,
                   material: heroVideo,
+                  enableEmbeddedPlayer: !_isPreparingExit,
                 ),
                 Positioned(
                   top: 14,
@@ -1391,18 +1443,22 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     ).format(date.toLocal());
   }
 
-  void _onPopInvoked(bool didPop, Object? result) {
-    if (!didPop) {
-      context.go('/courses');
-    }
-  }
-
   void _handleBackPressed() {
-    if (context.canPop()) {
-      context.pop();
+    if (_isPreparingExit) {
       return;
     }
-    context.go('/courses');
+
+    setState(() => _isPreparingExit = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/courses');
+      }
+    });
   }
 
   /// Builds a legacy [CourseModel] for backwards compatibility with
@@ -2271,321 +2327,6 @@ class _OverviewInfoChip {
   final String label;
 }
 
-class _CourseDetailSearchTab extends StatefulWidget {
-  const _CourseDetailSearchTab({
-    required this.isDark,
-    required this.materials,
-    required this.assignments,
-    required this.labs,
-    required this.announcements,
-    required this.onOpenContent,
-    required this.onOpenAssignments,
-    required this.onOpenLabs,
-    required this.onOpenAnnouncements,
-    required this.l10n,
-  });
-
-  final bool isDark;
-  final List<CourseMaterialModel> materials;
-  final List<api_assignment.AssignmentModel> assignments;
-  final List<api_lab.LabModel> labs;
-  final List<AnnouncementModel> announcements;
-  final VoidCallback onOpenContent;
-  final VoidCallback onOpenAssignments;
-  final VoidCallback onOpenLabs;
-  final VoidCallback onOpenAnnouncements;
-  final AppLocalizations l10n;
-
-  @override
-  State<_CourseDetailSearchTab> createState() => _CourseDetailSearchTabState();
-}
-
-class _CourseDetailSearchTabState extends State<_CourseDetailSearchTab> {
-  final TextEditingController _searchController = TextEditingController();
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final query = _searchController.text.trim().toLowerCase();
-    final hasQuery = query.isNotEmpty;
-
-    final results = <_SearchResultEntry>[
-      ...widget.materials
-          .where((item) => _matches(query, item.title, item.description))
-          .map(
-            (item) => _SearchResultEntry(
-              title: item.title,
-              subtitle: widget.l10n.studentCourseDetailSearchMaterialsLabel,
-              icon: Icons.video_library_outlined,
-              onTap: widget.onOpenContent,
-            ),
-          ),
-      ...widget.assignments
-          .where((item) => _matches(query, item.title, item.description))
-          .map(
-            (item) => _SearchResultEntry(
-              title: item.title,
-              subtitle: widget.l10n.assignments,
-              icon: Icons.assignment_outlined,
-              onTap: widget.onOpenAssignments,
-            ),
-          ),
-      ...widget.labs
-          .where((item) => _matches(query, item.title, item.description))
-          .map(
-            (item) => _SearchResultEntry(
-              title: item.title,
-              subtitle: widget.l10n.labs,
-              icon: Icons.science_outlined,
-              onTap: widget.onOpenLabs,
-            ),
-          ),
-      ...widget.announcements
-          .where((item) => _matches(query, item.title, item.content))
-          .map(
-            (item) => _SearchResultEntry(
-              title: item.title,
-              subtitle: widget.l10n.announcements,
-              icon: Icons.campaign_outlined,
-              onTap: widget.onOpenAnnouncements,
-            ),
-          ),
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: widget.isDark ? const Color(0xFF121C35) : Colors.white,
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(
-              color: widget.isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : const Color(0xFFD8E1EF),
-            ),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: TextField(
-            controller: _searchController,
-            onChanged: (_) => setState(() {}),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: widget.l10n.studentCourseDetailSearchHint,
-              prefixIcon: const Icon(Icons.search_rounded),
-              suffixIcon: hasQuery
-                  ? IconButton(
-                      onPressed: () {
-                        _searchController.clear();
-                        setState(() {});
-                      },
-                      icon: const Icon(Icons.close_rounded),
-                    )
-                  : null,
-            ),
-          ),
-        ),
-        const SizedBox(height: 18),
-        if (!hasQuery)
-          _SearchEmptyState(
-            isDark: widget.isDark,
-            title: widget.l10n.studentCourseDetailSearchPromptTitle,
-            subtitle: widget.l10n.studentCourseDetailSearchPromptSubtitle,
-          )
-        else if (results.isEmpty)
-          _SearchEmptyState(
-            isDark: widget.isDark,
-            title: widget.l10n.studentCourseDetailSearchNoResultsTitle,
-            subtitle: widget.l10n.studentCourseDetailSearchNoResultsSubtitle,
-          )
-        else
-          ...List<Widget>.generate(
-            results.length,
-            (index) => Padding(
-              padding: EdgeInsets.only(
-                bottom: index == results.length - 1 ? 0 : 12,
-              ),
-              child: _SearchResultCard(
-                isDark: widget.isDark,
-                entry: results[index],
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  bool _matches(String query, String primary, String? secondary) {
-    if (query.isEmpty) {
-      return false;
-    }
-
-    return primary.toLowerCase().contains(query) ||
-        (secondary?.toLowerCase().contains(query) ?? false);
-  }
-}
-
-class _SearchResultEntry {
-  const _SearchResultEntry({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final VoidCallback onTap;
-}
-
-class _SearchResultCard extends StatelessWidget {
-  const _SearchResultCard({required this.isDark, required this.entry});
-
-  final bool isDark;
-  final _SearchResultEntry entry;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: entry.onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Ink(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF121C35) : Colors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : const Color(0xFFD8E1EF),
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF155DFC).withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(entry.icon, color: const Color(0xFF155DFC)),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      entry.title,
-                      style: TextStyle(
-                        color: isDark ? Colors.white : const Color(0xFF101828),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      entry.subtitle,
-                      style: TextStyle(
-                        color: isDark
-                            ? const Color(0xFFCBD5E1)
-                            : const Color(0xFF667085),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 16,
-                color: isDark ? Colors.white54 : const Color(0xFF98A2B3),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SearchEmptyState extends StatelessWidget {
-  const _SearchEmptyState({
-    required this.isDark,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final bool isDark;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF121C35) : Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : const Color(0xFFD8E1EF),
-        ),
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: const Color(0xFF155DFC).withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: const Icon(
-              Icons.travel_explore_rounded,
-              color: Color(0xFF155DFC),
-              size: 30,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: isDark ? Colors.white : const Color(0xFF101828),
-              fontSize: 24,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: isDark ? const Color(0xFFCBD5E1) : const Color(0xFF667085),
-              fontSize: 15,
-              height: 1.6,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _CourseDetailNotesTab extends StatefulWidget {
   const _CourseDetailNotesTab({required this.isDark, required this.l10n});
 
@@ -2701,10 +2442,59 @@ class _CourseDetailNotesTabState extends State<_CourseDetailNotesTab> {
         ),
         const SizedBox(height: 18),
         if (notes.isEmpty)
-          _SearchEmptyState(
-            isDark: widget.isDark,
-            title: widget.l10n.studentCourseDetailNotesEmptyTitle,
-            subtitle: widget.l10n.studentCourseDetailNotesEmptySubtitle,
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(28),
+            decoration: BoxDecoration(
+              color: widget.isDark ? const Color(0xFF121C35) : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: widget.isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : const Color(0xFFD8E1EF),
+              ),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF155DFC).withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: const Icon(
+                    Icons.note_alt_outlined,
+                    color: Color(0xFF155DFC),
+                    size: 30,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  widget.l10n.studentCourseDetailNotesEmptyTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: widget.isDark
+                        ? Colors.white
+                        : const Color(0xFF101828),
+                    fontSize: 24,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  widget.l10n.studentCourseDetailNotesEmptySubtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: widget.isDark
+                        ? const Color(0xFFCBD5E1)
+                        : const Color(0xFF667085),
+                    fontSize: 15,
+                    height: 1.6,
+                  ),
+                ),
+              ],
+            ),
           )
         else
           ...List<Widget>.generate(

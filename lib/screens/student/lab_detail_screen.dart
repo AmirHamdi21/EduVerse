@@ -47,10 +47,7 @@ class LabDetailScreen extends StatelessWidget {
           cubit.seedWithLab(lab!);
         }
 
-        cubit.loadLab(labId).then((_) {
-          cubit.loadInstructions(labId);
-          cubit.loadMySubmissions(labId);
-        });
+        cubit.initialize(labId);
 
         return cubit;
       },

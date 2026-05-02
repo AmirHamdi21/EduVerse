@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/models/assignments/assignment_form_data.dart';
 import 'package:edu_verse/models/core/enums/assignment_enums.dart' as api;
 import 'package:edu_verse/models/instructor/teaching_course_model.dart';
@@ -45,18 +47,29 @@ TeachingCourseModel _course() {
   });
 }
 
+Widget _buildTestHost(Widget child) {
+  return MaterialApp(
+    localizationsDelegates: const [
+      AppLocalizations.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: Scaffold(body: child),
+  );
+}
+
 void main() {
   testWidgets('rejects empty title', (WidgetTester tester) async {
     AssignmentFormData? submitted;
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: AssignmentCreateForm(
-            courses: <TeachingCourseModel>[_course()],
-            assignmentService: _FakeAssignmentService(),
-            onSubmit: (data) => submitted = data,
-          ),
+      _buildTestHost(
+        AssignmentCreateForm(
+          courses: <TeachingCourseModel>[_course()],
+          assignmentService: _FakeAssignmentService(),
+          onSubmit: (data) => submitted = data,
         ),
       ),
     );
@@ -79,18 +92,16 @@ void main() {
     AssignmentFormData? submitted;
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: AssignmentCreateForm(
-            courses: <TeachingCourseModel>[_course()],
-            assignmentService: _FakeAssignmentService(),
-            onSubmit: (data) => submitted = data,
-          ),
+      _buildTestHost(
+        AssignmentCreateForm(
+          courses: <TeachingCourseModel>[_course()],
+          assignmentService: _FakeAssignmentService(),
+          onSubmit: (data) => submitted = data,
         ),
       ),
     );
 
-    await tester.enterText(find.widgetWithText(TextFormField, 'Title *'), 'A1');
+    await tester.enterText(find.byType(TextFormField).first, 'A1');
     final saveButton = find.text('Save Assignment');
     await tester.scrollUntilVisible(
       saveButton,
@@ -108,27 +119,25 @@ void main() {
     AssignmentFormData? submitted;
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: AssignmentCreateForm(
-            courses: <TeachingCourseModel>[_course()],
-            assignmentService: _FakeAssignmentService(),
-            initialData: AssignmentFormData(
-              title: 'Existing title',
-              dueDate: DateTime(2026, 12, 25, 10, 0),
-              maxScore: 100,
-              submissionType: api.SubmissionType.file,
-              status: api.AssignmentStatus.draft,
-              courseId: 99,
-            ),
-            onSubmit: (data) => submitted = data,
+      _buildTestHost(
+        AssignmentCreateForm(
+          courses: <TeachingCourseModel>[_course()],
+          assignmentService: _FakeAssignmentService(),
+          initialData: AssignmentFormData(
+            title: 'Existing title',
+            dueDate: DateTime(2026, 12, 25, 10, 0),
+            maxScore: 100,
+            submissionType: api.SubmissionType.file,
+            status: api.AssignmentStatus.draft,
+            courseId: 99,
           ),
+          onSubmit: (data) => submitted = data,
         ),
       ),
     );
 
     await tester.enterText(
-      find.widgetWithText(TextFormField, 'Title *'),
+      find.byType(TextFormField).first,
       'Compiler Assignment',
     );
     final saveButton = find.text('Save Assignment');

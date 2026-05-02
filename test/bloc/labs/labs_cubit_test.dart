@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/labs/labs_cubit.dart';
@@ -23,6 +24,7 @@ class _FakeEnrollmentService extends EnrollmentService {
   @override
   Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses({
     int? semester,
+    CancelToken? cancelToken,
   }) async {
     called = true;
     return result;
@@ -42,6 +44,7 @@ class _FakeLabService extends LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     lastCourseId = courseId;
     return result;

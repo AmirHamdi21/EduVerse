@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../common/bloc/route_request_controller.dart';
 import '../../models/assignments/assignment_submission_model.dart';
 import '../../services/api/assignment_service.dart';
 
@@ -50,26 +52,42 @@ final class TASubsGradeError extends TASubsState {
 
 // ── Cubit ──────────────────────────────────────────────────────
 
-class TAAssignmentSubmissionsCubit extends Cubit<TASubsState> {
+class TAAssignmentSubmissionsCubit extends Cubit<TASubsState>
+    with SafeRouteCubitMixin<TASubsState> {
   final AssignmentService _assignmentService;
+  late final RouteRequestController _submissionsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _gradingRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
 
   TAAssignmentSubmissionsCubit({required AssignmentService assignmentService})
     : _assignmentService = assignmentService,
       super(const TASubsInitial());
 
   Future<void> fetchSubmissions(int assignmentId) async {
-    emit(const TASubsLoading());
+    final requestId = _submissionsRequest.begin();
+    emitIfOpen(const TASubsLoading());
     try {
-      final result = await _assignmentService.getSubmissions(assignmentId);
+      final result = await _assignmentService.getSubmissions(
+        assignmentId,
+        cancelToken: _submissionsRequest.token,
+      );
+      if (!isRequestCurrent(_submissionsRequest, requestId)) {
+        return;
+      }
       if (result.isSuccess && result.data != null) {
-        emit(TASubsLoaded(result.data!));
+        emitIfOpen(TASubsLoaded(result.data!));
       } else {
-        emit(
+        emitIfOpen(
           TASubsError(result.error?.toString() ?? 'Failed to load submissions'),
         );
       }
     } catch (e) {
-      emit(TASubsError(e.toString()));
+      if (isRequestCurrent(_submissionsRequest, requestId)) {
+        emitIfOpen(TASubsError(e.toString()));
+      }
     }
   }
 
@@ -79,27 +97,34 @@ class TAAssignmentSubmissionsCubit extends Cubit<TASubsState> {
     double score,
     String? feedback,
   ) async {
-    emit(const TASubsGrading());
+    final requestId = _gradingRequest.begin();
+    emitIfOpen(const TASubsGrading());
     try {
       final result = await _assignmentService.gradeSubmission(
         assignmentId,
         submissionId,
         score,
         feedback: feedback,
+        cancelToken: _gradingRequest.token,
       );
+      if (!isRequestCurrent(_gradingRequest, requestId)) {
+        return;
+      }
       if (result.isSuccess) {
         // T023: Emit success BEFORE refreshing so BlocListener captures it
-        emit(const TASubsGradeSuccess());
+        emitIfOpen(const TASubsGradeSuccess());
         await fetchSubmissions(assignmentId);
       } else {
-        emit(
+        emitIfOpen(
           TASubsGradeError(
             result.error?.toString() ?? 'Failed to grade submission',
           ),
         );
       }
     } catch (e) {
-      emit(TASubsGradeError(e.toString()));
+      if (isRequestCurrent(_gradingRequest, requestId)) {
+        emitIfOpen(TASubsGradeError(e.toString()));
+      }
     }
   }
 }

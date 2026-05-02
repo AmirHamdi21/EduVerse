@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -13,9 +14,18 @@ import '../../../models/assignments/assignment_model.dart';
 import '../../../models/instructor/instructor_course_model.dart'
     show MaterialModel, SectionStudentModel;
 import '../../../models/instructor/teaching_course_model.dart';
+import '../../../models/labs/lab_model.dart';
+import '../../../models/materials/announcement_model.dart' as course_announcement;
 import '../../../models/materials/course_material_model.dart';
+import '../../../services/api/assignment_service.dart';
+import '../../../services/api/communication_service.dart';
+import '../../../services/api/core_api_client.dart';
+import '../../../services/api/lab_service.dart';
+import '../../../services/api/material_service.dart';
 import '../../../screens/instructor/materials/material_preview_screen.dart';
+import '../../../widgets/shared/course_details/course_detail_search_tab.dart';
 import '../../../widgets/student/course_details/video_player_widget.dart';
+import '../../../widgets/ta/courses/ta_students_tab.dart';
 import '../../../widgets/ta/shared/ta_colors.dart';
 import '../announcements/ta_announcement_manager_screen.dart';
 import '../assignments/ta_assignments_screen.dart';
@@ -35,15 +45,27 @@ class TACourseDetailScreen extends StatefulWidget {
 
 class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     with SingleTickerProviderStateMixin {
+  static const int _searchTabIndex = 0;
+  static const int _courseContentTabIndex = 1;
+  static const int _overviewTabIndex = 2;
+  static const int _assignmentsTabIndex = 3;
+  static const int _labsTabIndex = 4;
+  static const int _announcementsTabIndex = 5;
+  static const int _discussionsTabIndex = 6;
+  static const int _gradingTabIndex = 7;
+  static const int _attendanceTabIndex = 8;
+  static const int _studentsTabIndex = 9;
+
   late final TabController _tabController;
   final ScrollController _outerScrollController = ScrollController();
   final Set<int> _loadedTabs = <int>{};
   String? _selectedHeroMaterialId;
+  bool _isPreparingExit = false;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 9, vsync: this);
+    _tabController = TabController(length: 10, vsync: this);
     _tabController.addListener(_handleTabChanged);
 
     final cubit = context.read<TACoursesCubit>();
@@ -58,7 +80,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
       }
       final course = _findCourse(cubit.state);
       if (course != null) {
-        _loadTabData(0, course);
+        _loadTabData(_courseContentTabIndex, course);
       }
     });
   }
@@ -82,7 +104,18 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     }
   }
 
+  void _switchTab(int index) {
+    if (_tabController.index == index) {
+      return;
+    }
+    _tabController.animateTo(index);
+  }
+
   void _loadTabData(int tabIndex, TeachingCourseModel course) {
+    if (_isPreparingExit) {
+      return;
+    }
+
     if (_loadedTabs.contains(tabIndex)) {
       return;
     }
@@ -90,29 +123,31 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
 
     final cubit = context.read<TACoursesCubit>();
     switch (tabIndex) {
-      case 0:
+      case _searchTabIndex:
+        break;
+      case _courseContentTabIndex:
         cubit.fetchCourseMaterials(course.courseId);
         break;
-      case 1:
+      case _overviewTabIndex:
         cubit.fetchCourseOverview(course.courseId);
         break;
-      case 2:
+      case _assignmentsTabIndex:
         cubit.fetchCourseAssignments(course.courseId);
         break;
-      case 3:
+      case _labsTabIndex:
         cubit.fetchCourseSectionsAndLabs(course.courseId);
         break;
-      case 4:
+      case _announcementsTabIndex:
         break;
-      case 5:
+      case _discussionsTabIndex:
         break;
-      case 6:
+      case _gradingTabIndex:
         cubit.fetchPendingGrading(course.courseId);
         break;
-      case 7:
+      case _attendanceTabIndex:
         cubit.fetchAttendanceSummary(course.courseId);
         break;
-      case 8:
+      case _studentsTabIndex:
         cubit.fetchSectionStudents(course.sectionId);
         break;
     }
@@ -216,7 +251,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
   }
 
   void _selectHeroVideo(CourseMaterialModel material) {
-    if (!_isVideoMaterial(material)) {
+    if (_isPreparingExit || !_isVideoMaterial(material)) {
       return;
     }
 
@@ -257,6 +292,10 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     List<CourseMaterialModel> materials,
     CourseMaterialModel? heroVideo,
   ) {
+    if (_isPreparingExit) {
+      return true;
+    }
+
     if (heroVideo != null) {
       return false;
     }
@@ -376,101 +415,127 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
               : 0);
     final tabs = _buildTabs(l10n);
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final maxWidth = TACoursesTheme.maxContentWidth(constraints.maxWidth);
-        final screenPadding = TACoursesTheme.screenPadding(
-          constraints.maxWidth,
-        );
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _handleBackPressed();
+        }
+      },
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final maxWidth = TACoursesTheme.maxContentWidth(constraints.maxWidth);
+          final screenPadding = TACoursesTheme.screenPadding(
+            constraints.maxWidth,
+          );
 
-        return NestedScrollView(
-          controller: _outerScrollController,
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverToBoxAdapter(
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: maxWidth),
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      screenPadding.left,
-                      10,
-                      screenPadding.right,
-                      0,
-                    ),
-                    child: _buildTopChrome(
-                      isDark: isDark,
-                      l10n: l10n,
-                      course: course,
-                      showHeroSkeleton: showHeroSkeleton,
-                      heroVideo: heroVideo,
-                      materials: materials,
-                      studentsCount: _studentCountFor(state, course),
-                      assignmentsCount: assignmentsCount,
-                      labsCount: labsCount,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _TACourseTabsHeaderDelegate(
-                height: 86,
-                child: Container(
-                  color: TACoursesTheme.scaffoldBackground(isDark),
+          return IgnorePointer(
+            ignoring: _isPreparingExit,
+            child: NestedScrollView(
+              controller: _outerScrollController,
+              physics: _isPreparingExit
+                  ? const NeverScrollableScrollPhysics()
+                  : null,
+              headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                SliverToBoxAdapter(
                   child: Center(
                     child: ConstrainedBox(
                       constraints: BoxConstraints(maxWidth: maxWidth),
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(
                           screenPadding.left,
-                          12,
+                          10,
                           screenPadding.right,
-                          12,
+                          0,
                         ),
-                        child: _buildTabBar(isDark: isDark, tabs: tabs),
+                        child: _buildTopChrome(
+                          isDark: isDark,
+                          l10n: l10n,
+                          course: course,
+                          showHeroSkeleton: showHeroSkeleton,
+                          heroVideo: heroVideo,
+                          materials: materials,
+                          studentsCount: _studentCountFor(state, course),
+                          assignmentsCount: assignmentsCount,
+                          labsCount: labsCount,
+                        ),
                       ),
                     ),
                   ),
                 ),
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _TACourseTabsHeaderDelegate(
+                    height: 86,
+                    child: Container(
+                      color: TACoursesTheme.scaffoldBackground(isDark),
+                      child: Center(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: maxWidth),
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(
+                              screenPadding.left,
+                              12,
+                              screenPadding.right,
+                              12,
+                            ),
+                            child: _buildTabBar(isDark: isDark, tabs: tabs),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              body: Center(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: maxWidth),
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _TACourseSearchTab(
+                        isDark: isDark,
+                        l10n: l10n,
+                        courseId: course.courseId,
+                        onOpenContent: () => _switchTab(_courseContentTabIndex),
+                        onOpenAssignments: () =>
+                            _switchTab(_assignmentsTabIndex),
+                        onOpenLabs: () => _switchTab(_labsTabIndex),
+                        onOpenAnnouncements: () =>
+                            _switchTab(_announcementsTabIndex),
+                      ),
+                      _buildCourseContentTab(
+                        isDark,
+                        l10n,
+                        course,
+                        state,
+                        materials,
+                      ),
+                      _buildOverviewTab(isDark, l10n, course, state, materials),
+                      _buildAssignmentsTab(isDark, l10n, state, course),
+                      _buildLabsTab(isDark, l10n, state, course),
+                      _buildAnnouncementsTab(isDark, l10n, course),
+                      _buildDiscussionsTab(isDark, l10n, course),
+                      TAGradingCenterScreen(
+                        courseId: course.courseId,
+                        embedded: true,
+                      ),
+                      _buildAttendanceTab(isDark, l10n, state),
+                      _buildStudentsTab(isDark, l10n, state, course),
+                    ],
+                  ),
+                ),
               ),
             ),
-          ],
-          body: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildCourseContentTab(
-                    isDark,
-                    l10n,
-                    course,
-                    state,
-                    materials,
-                  ),
-                  _buildOverviewTab(isDark, l10n, course, state, materials),
-                  _buildAssignmentsTab(isDark, l10n, state, course),
-                  _buildLabsTab(isDark, l10n, state, course),
-                  _buildAnnouncementsTab(isDark, l10n, course),
-                  _buildDiscussionsTab(isDark, l10n, course),
-                  TAGradingCenterScreen(
-                    courseId: course.courseId,
-                    embedded: true,
-                  ),
-                  _buildAttendanceTab(isDark, l10n, state),
-                  _buildStudentsTab(isDark, l10n, state, course),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
   List<_TACourseDetailTabSpec> _buildTabs(AppLocalizations l10n) {
     return <_TACourseDetailTabSpec>[
+      _TACourseDetailTabSpec(icon: Icons.search_rounded, label: l10n.search),
       _TACourseDetailTabSpec(
         icon: Icons.video_library_outlined,
         label: l10n.studentCourseDetailCourseContent,
@@ -533,13 +598,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
                 icon: Icons.arrow_back_ios_new_rounded,
                 isDark: isDark,
                 backgroundColor: actionButtonColor,
-                onTap: () {
-                  if (context.canPop()) {
-                    context.pop();
-                  } else {
-                    context.go('/ta/courses');
-                  }
-                },
+                onTap: _handleBackPressed,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -661,6 +720,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
                 VideoPlayerWidget(
                   courseId: course.courseId,
                   material: heroVideo,
+                  enableEmbeddedPlayer: !_isPreparingExit,
                 ),
                 Positioned(
                   top: 14,
@@ -1335,7 +1395,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
               ? 3.2
               : constraints.maxWidth >= 980
               ? 2.4
-              : 1.8;
+              : 2.5;
 
           return GridView.builder(
             shrinkWrap: true,
@@ -1377,7 +1437,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             width: 40,
@@ -1556,7 +1616,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
               ? 3.2
               : constraints.maxWidth >= 980
               ? 2.1
-              : 1.7;
+              : 2.5;
 
           return GridView.builder(
             shrinkWrap: true,
@@ -1835,74 +1895,91 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     TACoursesState state,
     TeachingCourseModel course,
   ) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-      child: _buildSubTabContent<List<dynamic>>(
+    final students = _resolveSectionStudents(state.studentsData);
+    final isStudentsLoading =
+        state.studentsData is TASubTabInitial<List<dynamic>> ||
+        state.studentsData is TASubTabLoading<List<dynamic>>;
+
+    if (isStudentsLoading && students.isEmpty) {
+      return _buildDetailTabSkeleton(
+        isDark,
+        itemHeights: const <double>[56, 120, 120, 120],
+      );
+    }
+
+    return _buildSubTabContent<List<dynamic>>(
+      isDark: isDark,
+      subTabState: state.studentsData,
+      emptyBuilder: () => _buildCenteredEmptyState(
         isDark: isDark,
-        subTabState: state.studentsData,
-        emptyBuilder: () => _buildCenteredEmptyState(
-          isDark: isDark,
-          icon: Icons.people_outline_rounded,
-          title: l10n.students,
-          message: l10n.taCourseDetailNoStudents,
-        ),
-        builder: (students) {
-          if (students.isEmpty) {
-            return _buildCenteredEmptyState(
-              isDark: isDark,
-              icon: Icons.people_outline_rounded,
-              title: l10n.students,
-              message: l10n.taCourseDetailNoStudents,
-            );
-          }
-          return Column(
-            children: students
-                .map((student) => _buildStudentCard(isDark, student))
-                .toList(growable: false),
-          );
-        },
+        icon: Icons.people_outline_rounded,
+        title: l10n.students,
+        message: l10n.taCourseDetailNoStudents,
       ),
+      builder: (_) {
+        if (students.isEmpty) {
+          return _buildCenteredEmptyState(
+            isDark: isDark,
+            icon: Icons.people_outline_rounded,
+            title: l10n.students,
+            message: l10n.taCourseDetailNoStudents,
+          );
+        }
+        return TAStudentsTab(
+          students: students,
+          isDark: isDark,
+          l10n: l10n,
+          onRefreshRequested: () => context
+              .read<TACoursesCubit>()
+              .fetchSectionStudents(course.sectionId),
+          emptyStateSubtitleOverride: l10n.taCourseDetailNoStudents,
+        );
+      },
     );
   }
 
-  Widget _buildStudentCard(bool isDark, dynamic student) {
-    String displayName;
-    String subtitle;
-    String trailing;
-
-    if (student is SectionStudentModel) {
-      displayName = student.displayName;
-      subtitle = student.courseCode != null
-          ? '${student.courseCode} - Section ${student.sectionId}'
-          : 'Enrolled';
-      trailing = student.status.toUpperCase();
-    } else if (student is Map) {
-      final courseData = student['course'] as Map<String, dynamic>?;
-      final userId = student['userId'] as int? ?? 0;
-      final firstName = student['firstName'] as String?;
-      final lastName = student['lastName'] as String?;
-
-      displayName = (firstName != null || lastName != null)
-          ? '$firstName $lastName'.trim()
-          : 'Student #$userId';
-      subtitle = courseData != null
-          ? '${courseData['code']} - Section ${student['sectionId']}'
-          : 'Enrolled';
-      trailing = (student['status'] as String? ?? 'enrolled').toUpperCase();
-    } else {
-      displayName = 'Student';
-      subtitle = '';
-      trailing = '';
+  List<SectionStudentModel> _resolveSectionStudents(
+    TASubTabState<List<dynamic>> subTabState,
+  ) {
+    if (subTabState is! TASubTabLoaded<List<dynamic>>) {
+      return const <SectionStudentModel>[];
     }
 
-    return _buildInfoCard(
-      isDark: isDark,
-      title: displayName,
-      subtitle: subtitle,
-      trailing: trailing,
-      icon: Icons.person_rounded,
-      color: TACoursesTheme.brandPrimary,
-    );
+    return subTabState.data
+        .map((student) {
+          if (student is SectionStudentModel) {
+            return student;
+          }
+          if (student is Map<String, dynamic>) {
+            return SectionStudentModel.fromJson(student);
+          }
+          if (student is Map) {
+            return SectionStudentModel.fromJson(
+              Map<String, dynamic>.from(student),
+            );
+          }
+          return null;
+        })
+        .whereType<SectionStudentModel>()
+        .toList(growable: false);
+  }
+
+  void _handleBackPressed() {
+    if (_isPreparingExit) {
+      return;
+    }
+
+    setState(() => _isPreparingExit = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/ta/courses');
+      }
+    });
   }
 
   Widget _buildSubTabContent<T>({
@@ -2142,7 +2219,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
                 child: Column(
@@ -2176,95 +2253,6 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
           const SizedBox(height: 16),
           child,
         ],
-      ),
-    );
-  }
-
-  Widget _buildInfoCard({
-    required bool isDark,
-    required String title,
-    required String subtitle,
-    required String trailing,
-    required IconData icon,
-    required Color color,
-    VoidCallback? onTap,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: TACoursesTheme.cardBackground(isDark),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: TACoursesTheme.borderColor(isDark)),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(18),
-          child: Padding(
-            padding: const EdgeInsets.all(14),
-            child: Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Icon(icon, size: 20, color: color),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: TextStyle(
-                          color: TACoursesTheme.primaryText(isDark),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      if (subtitle.isNotEmpty) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          subtitle,
-                          style: TextStyle(
-                            color: TACoursesTheme.secondaryText(isDark),
-                            fontSize: 12.5,
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-
-                if (trailing.isNotEmpty)
-                  Flexible(
-                    child: Text(
-                      trailing,
-                      textAlign: TextAlign.end,
-                      style: TextStyle(
-                        color: TACoursesTheme.secondaryText(isDark),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                if (onTap != null) ...[
-                  const SizedBox(width: 8),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 20,
-                    color: TACoursesTheme.secondaryText(isDark),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -2365,6 +2353,170 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
       default:
         return Icons.insert_drive_file_outlined;
     }
+  }
+}
+
+class _TACourseSearchTab extends StatefulWidget {
+  const _TACourseSearchTab({
+    required this.isDark,
+    required this.l10n,
+    required this.courseId,
+    required this.onOpenContent,
+    required this.onOpenAssignments,
+    required this.onOpenLabs,
+    required this.onOpenAnnouncements,
+  });
+
+  final bool isDark;
+  final AppLocalizations l10n;
+  final int courseId;
+  final VoidCallback onOpenContent;
+  final VoidCallback onOpenAssignments;
+  final VoidCallback onOpenLabs;
+  final VoidCallback onOpenAnnouncements;
+
+  @override
+  State<_TACourseSearchTab> createState() => _TACourseSearchTabState();
+}
+
+class _TACourseSearchTabState extends State<_TACourseSearchTab> {
+  late final MaterialService _materialService;
+  late final AssignmentService _assignmentService;
+  late final LabService _labService;
+  late final CommunicationService _communicationService;
+  CancelToken? _cancelToken;
+  List<CourseDetailSearchEntry> _entries = const <CourseDetailSearchEntry>[];
+
+  @override
+  void initState() {
+    super.initState();
+    final coreApiClient = CoreApiClient();
+    _materialService = MaterialService(coreApiClient: coreApiClient);
+    _assignmentService = AssignmentService(coreApiClient: coreApiClient);
+    _labService = LabService(coreApiClient: coreApiClient);
+    _communicationService = CommunicationService(coreApiClient: coreApiClient);
+    _loadEntries();
+  }
+
+  @override
+  void didUpdateWidget(covariant _TACourseSearchTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.courseId != widget.courseId) {
+      _loadEntries();
+    }
+  }
+
+  @override
+  void dispose() {
+    _cancelToken?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _loadEntries() async {
+    _cancelToken?.cancel();
+    final cancelToken = CancelToken();
+    _cancelToken = cancelToken;
+
+    try {
+      final results = await Future.wait<Object>([
+        _materialService.getMaterials(widget.courseId, cancelToken: cancelToken),
+        _assignmentService.getAll(
+          courseId: widget.courseId,
+          limit: 100,
+          cancelToken: cancelToken,
+        ),
+        _labService.getAll(
+          courseId: widget.courseId,
+          limit: 100,
+          cancelToken: cancelToken,
+        ),
+        _communicationService.getAnnouncementsByCourseId(
+          widget.courseId,
+          cancelToken: cancelToken,
+        ),
+      ]);
+
+      if (!mounted || cancelToken.isCancelled) {
+        return;
+      }
+
+      final materials = results[0] as List<CourseMaterialModel>;
+      final dynamic assignmentsResult = results[1];
+      final dynamic labsResult = results[2];
+      final announcements =
+          results[3] as List<course_announcement.AnnouncementModel>;
+
+      final List<AssignmentModel> assignmentItems =
+          assignmentsResult.isSuccess && assignmentsResult.data != null
+          ? assignmentsResult.data!.data
+          : const <AssignmentModel>[];
+      final List<LabModel> labItems =
+          labsResult.isSuccess && labsResult.data != null
+          ? labsResult.data!
+          : const <LabModel>[];
+      final List<course_announcement.AnnouncementModel> announcementItems =
+          announcements;
+
+      setState(() {
+        _entries = [
+          ...materials.map(
+            (item) => CourseDetailSearchEntry(
+              title: item.title,
+              subtitle: widget.l10n.studentCourseDetailSearchMaterialsLabel,
+              description: item.description,
+              icon: Icons.video_library_outlined,
+              onTap: widget.onOpenContent,
+            ),
+          ),
+          ...assignmentItems.map(
+            (item) => CourseDetailSearchEntry(
+              title: item.title,
+              subtitle: widget.l10n.assignments,
+              description: item.description,
+              icon: Icons.assignment_outlined,
+              onTap: widget.onOpenAssignments,
+            ),
+          ),
+          ...labItems.map(
+            (item) => CourseDetailSearchEntry(
+              title: item.title,
+              subtitle: widget.l10n.labs,
+              description: item.description,
+              icon: Icons.science_outlined,
+              onTap: widget.onOpenLabs,
+            ),
+          ),
+          ...announcementItems.map(
+            (item) => CourseDetailSearchEntry(
+              title: item.title,
+              subtitle: widget.l10n.announcements,
+              description: item.content,
+              icon: Icons.campaign_outlined,
+              onTap: widget.onOpenAnnouncements,
+            ),
+          ),
+        ];
+      });
+    } catch (_) {
+      if (!mounted || cancelToken.isCancelled) {
+        return;
+      }
+      setState(() => _entries = const <CourseDetailSearchEntry>[]);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CourseDetailSearchTab(
+      isDark: widget.isDark,
+      accentColor: TAColors.primary,
+      hintText: widget.l10n.studentCourseDetailSearchHint,
+      promptTitle: widget.l10n.studentCourseDetailSearchPromptTitle,
+      promptSubtitle: widget.l10n.studentCourseDetailSearchPromptSubtitle,
+      noResultsTitle: widget.l10n.studentCourseDetailSearchNoResultsTitle,
+      noResultsSubtitle: widget.l10n.studentCourseDetailSearchNoResultsSubtitle,
+      entries: _entries,
+    );
   }
 }
 

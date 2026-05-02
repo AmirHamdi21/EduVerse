@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:edu_verse/bloc/student_registration/student_registration_cubit.dart';
 import 'package:edu_verse/common/service_error.dart';
 import 'package:edu_verse/models/admin/admin_periods_models.dart';
@@ -30,6 +31,7 @@ class _FakeEnrollmentService extends EnrollmentService {
   @override
   Future<ServiceResult<List<CourseEnrollmentModel>>> getMyEnrollments({
     int? semester,
+    CancelToken? cancelToken,
   }) async {
     getMyEnrollmentsCalls += 1;
     return myEnrollmentsResult;

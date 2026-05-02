@@ -59,11 +59,7 @@ class LabDetailScreen extends StatelessWidget {
     return BlocProvider<LabDetailCubit>(
       create: (_) {
         final cubit = LabDetailCubit(labService: resolvedLabService);
-        cubit.loadLabDetail(labId).then((_) {
-          cubit.loadInstructions(labId);
-          cubit.loadSubmissions(labId);
-          cubit.loadAttendance(labId);
-        });
+        cubit.initialize(labId);
         return cubit;
       },
       child: _LabDetailView(
@@ -1342,10 +1338,7 @@ class _LabDetailViewState extends State<_LabDetailView>
     );
 
     final cubit = context.read<LabDetailCubit>();
-    await cubit.loadLabDetail(widget.labId);
-    await cubit.loadInstructions(widget.labId);
-    await cubit.loadSubmissions(widget.labId);
-    await cubit.loadAttendance(widget.labId);
+    await cubit.initialize(widget.labId);
   }
 
   String _formatDueDate(

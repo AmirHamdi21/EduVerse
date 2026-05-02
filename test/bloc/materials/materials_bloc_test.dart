@@ -31,6 +31,7 @@ class _FakeMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     getMaterialsCalls += 1;
     return List<CourseMaterialModel>.from(materials);
