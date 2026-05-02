@@ -53,6 +53,9 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
       final course = _findCourse(cubit.state);
       if (course != null) {
         _loadTabData(0, course);
@@ -244,6 +247,57 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     _selectHeroVideo(videos[nextIndex]);
   }
 
+  bool _isMaterialsPending(TACoursesState state) {
+    return state.materialsData is TASubTabInitial<List<CourseMaterialModel>> ||
+        state.materialsData is TASubTabLoading<List<CourseMaterialModel>>;
+  }
+
+  bool _shouldShowHeroSkeleton(
+    TACoursesState state,
+    List<CourseMaterialModel> materials,
+    CourseMaterialModel? heroVideo,
+  ) {
+    if (heroVideo != null) {
+      return false;
+    }
+
+    return _isMaterialsPending(state) && materials.isEmpty;
+  }
+
+  Widget _buildHeroSkeleton(bool isDark) {
+    final surfaceColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : const Color(0xFFE5E7EB);
+
+    Widget skeletonBox({
+      double? width,
+      required double height,
+      double radius = 16,
+    }) {
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        skeletonBox(height: 220, radius: 30),
+        const SizedBox(height: 14),
+        skeletonBox(width: 180, height: 14, radius: 999),
+        const SizedBox(height: 10),
+        skeletonBox(width: double.infinity, height: 28, radius: 12),
+        const SizedBox(height: 8),
+        skeletonBox(width: 240, height: 28, radius: 12),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
@@ -294,6 +348,11 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
 
     final materials = _materialsForCourse(state, course);
     final heroVideo = _resolveHeroVideo(materials);
+    final showHeroSkeleton = _shouldShowHeroSkeleton(
+      state,
+      materials,
+      heroVideo,
+    );
     final assignmentsCount =
         state.assignmentsData is TASubTabLoaded<List<AssignmentModel>>
         ? (state.assignmentsData as TASubTabLoaded<List<AssignmentModel>>)
@@ -342,6 +401,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
                       isDark: isDark,
                       l10n: l10n,
                       course: course,
+                      showHeroSkeleton: showHeroSkeleton,
                       heroVideo: heroVideo,
                       materials: materials,
                       studentsCount: _studentCountFor(state, course),
@@ -451,6 +511,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     required bool isDark,
     required AppLocalizations l10n,
     required TeachingCourseModel course,
+    required bool showHeroSkeleton,
     required CourseMaterialModel? heroVideo,
     required List<CourseMaterialModel> materials,
     required int studentsCount,
@@ -508,7 +569,9 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
           ),
         ),
         const SizedBox(height: 14),
-        if (heroVideo != null)
+        if (showHeroSkeleton)
+          _buildHeroSkeleton(isDark)
+        else if (heroVideo != null)
           _buildVideoHero(
             isDark: isDark,
             course: course,
@@ -706,7 +769,7 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: isDark
             ? TACoursesTheme.headerGradientDark
@@ -745,53 +808,50 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
               ),
             ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 14),
           Text(
             course.course.courseName,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 28,
+              fontSize: 22,
               fontWeight: FontWeight.w800,
               height: 1.1,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Text(
             description,
-            maxLines: 3,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               color: Color(0xFFEDE9FE),
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w500,
-              height: 1.55,
+              height: 1.45,
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 14),
           LayoutBuilder(
             builder: (context, constraints) {
               final columns = constraints.maxWidth >= 940
                   ? 4
                   : constraints.maxWidth >= 620
                   ? 2
-                  : 1;
-              const spacing = 12.0;
-              final tileWidth = columns == 1
-                  ? constraints.maxWidth
-                  : (constraints.maxWidth - (spacing * (columns - 1))) /
-                        columns;
+                  : 2;
 
-              return Wrap(
-                spacing: spacing,
-                runSpacing: spacing,
-                children: metrics
-                    .map(
-                      (metric) => SizedBox(
-                        width: tileWidth,
-                        child: _buildHeroMetricCard(metric),
-                      ),
-                    )
-                    .toList(growable: false),
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: metrics.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: constraints.maxWidth >= 620 ? 2.35 : 2.1,
+                ),
+                itemBuilder: (context, index) {
+                  return _buildHeroMetricCard(metrics[index]);
+                },
               );
             },
           ),
@@ -828,32 +888,52 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
 
   Widget _buildHeroMetricCard(_TADetailHeroMetric metric) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(metric.icon, color: Colors.white, size: 18),
-          const SizedBox(height: 10),
-          Text(
-            metric.value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(12),
             ),
+            child: Icon(metric.icon, color: Colors.white, size: 18),
           ),
-          const SizedBox(height: 4),
-          Text(
-            metric.label,
-            style: const TextStyle(
-              color: Color(0xFFEDE9FE),
-              fontSize: 12.5,
-              fontWeight: FontWeight.w600,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  metric.value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  metric.label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFFEDE9FE),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -939,8 +1019,9 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
   ) {
     return switch (state.materialsData) {
       TASubTabInitial<List<CourseMaterialModel>>() ||
-      TASubTabLoading<List<CourseMaterialModel>>() => Center(
-        child: CircularProgressIndicator(color: TACoursesTheme.brandPrimary),
+      TASubTabLoading<List<CourseMaterialModel>>() => _buildDetailTabSkeleton(
+        isDark,
+        itemHeights: const <double>[72, 150, 150],
       ),
       TASubTabError<List<CourseMaterialModel>>(message: final message) =>
         _buildInlineErrorState(isDark, message),
@@ -1165,6 +1246,14 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     TACoursesState state,
     List<CourseMaterialModel> materials,
   ) {
+    if (state.overviewData is TASubTabInitial<TACourseOverview> ||
+        state.overviewData is TASubTabLoading<TACourseOverview>) {
+      return _buildDetailTabSkeleton(
+        isDark,
+        itemHeights: const <double>[180, 180, 140],
+      );
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
       child: Column(
@@ -1823,11 +1912,9 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
     required Widget Function(T data) builder,
   }) {
     return switch (subTabState) {
-      TASubTabInitial<T>() || TASubTabLoading<T>() => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(40),
-          child: CircularProgressIndicator(color: TACoursesTheme.brandPrimary),
-        ),
+      TASubTabInitial<T>() || TASubTabLoading<T>() => _buildDetailTabSkeleton(
+        isDark,
+        itemHeights: const <double>[72, 120, 120],
       ),
       TASubTabError<T>(message: final message) => _buildInlineErrorState(
         isDark,
@@ -1870,6 +1957,25 @@ class _TACourseDetailScreenState extends State<TACourseDetailScreen>
         color: TACoursesTheme.borderColor(isDark).withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(radius),
       ),
+    );
+  }
+
+  Widget _buildDetailTabSkeleton(
+    bool isDark, {
+    required List<double> itemHeights,
+  }) {
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      itemCount: itemHeights.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 14),
+      itemBuilder: (context, index) {
+        return _skeletonBox(
+          isDark,
+          width: double.infinity,
+          height: itemHeights[index],
+          radius: 22,
+        );
+      },
     );
   }
 

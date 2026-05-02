@@ -13,6 +13,7 @@ import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../common/utils/instructor_courses_theme.dart';
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../models/core/schedule_model.dart';
 import '../../../models/instructor/instructor_course_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/materials/course_material_model.dart';
@@ -275,6 +276,10 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
         );
 
         final heroVideo = _resolveHeroVideo(materials);
+        final showHeroSkeleton = _shouldShowHeroSkeleton(
+          materialsState,
+          heroVideo,
+        );
         final tabs = _buildTabs(l10n);
 
         return MultiBlocListener(
@@ -331,6 +336,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                                 isDark: isDark,
                                 l10n: l10n,
                                 displayCourse: displayCourse,
+                                showHeroSkeleton: showHeroSkeleton,
                                 heroVideo: heroVideo,
                                 materials: materials,
                                 studentsCount: overviewStudentsCount,
@@ -381,46 +387,28 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                         child: TabBarView(
                           controller: _tabController,
                           children: [
-                            MaterialsTab(
-                              materials: materials.isNotEmpty
-                                  ? materials.map(_mapCourseMaterialToLegacy).toList()
-                                  : displayCourse.materials,
-                              courseMaterials: materials,
+                            _buildMaterialsTabContent(
+                              materialsState: materialsState,
+                              materials: materials,
+                              displayCourse: displayCourse,
                               bundles: bundles,
                               materialCountsByWeek: materialCountsByWeek,
-                              partialFailureMessage: _materialsFailureMessage,
-                              failedMaterialIds: _failedMaterialIds,
-                              onRetryFailedMaterials: _retryFailedMaterials,
-                              onToggleMaterialVisibility: _toggleMaterialVisibility,
-                              onEditMaterial: _editMaterial,
-                              onDeleteMaterial: _deleteMaterial,
-                              onToggleBundleVisibility:
-                                  _toggleBundleVisibility,
-                              onEditBundle: _editBundle,
-                              onDeleteBundle: _deleteBundle,
-                              onViewMaterial: (material) =>
-                                  _handleViewMaterial(material, materials),
                               isDark: isDark,
                               l10n: l10n,
                             ),
-                            OverviewTab(
+                            _buildOverviewTabContent(
+                              instructorState: instructorState,
+                              materialsState: materialsState,
                               course: displayCourse,
-                              isDark: isDark,
-                              l10n: l10n,
-                              courseId: _resolvedCourseId,
                               deadlines: deadlines,
                               studentsCount: overviewStudentsCount,
                               averageGrade: teachingCourse?.averageGrade,
                               engagementMetrics: engagementMetrics,
                               schedules:
                                   teachingCourse?.section.schedules ??
-                                  const [],
-                              onCreateAssignment: () =>
-                                  context.push('/instructor/assignments/create'),
-                              onUploadMaterial: () =>
-                                  context.push('/instructor/upload-materials'),
-                              onPostAnnouncement: () =>
-                                  context.push('/instructor/announcements'),
+                                  const <ScheduleModel>[],
+                              isDark: isDark,
+                              l10n: l10n,
                             ),
                             AssignmentsTab(
                               isDark: isDark,
@@ -448,17 +436,12 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                               l10n: l10n,
                               courseId: _resolvedCourseId,
                             ),
-                            StudentsTab(
+                            _buildStudentsTabContent(
+                              instructorState: instructorState,
                               students: students,
+                              hasValidSection: hasValidSection,
                               isDark: isDark,
                               l10n: l10n,
-                              onRefreshRequested: _refreshStudents,
-                              emptyStateTitleOverride: hasValidSection
-                                  ? null
-                                  : 'No section assigned',
-                              emptyStateSubtitleOverride: hasValidSection
-                                  ? null
-                                  : 'Assign a valid section to load enrolled students.',
                             ),
                           ],
                         ),
@@ -584,6 +567,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     required bool isDark,
     required AppLocalizations l10n,
     required InstructorCourseModel displayCourse,
+    required bool showHeroSkeleton,
     required CourseMaterialModel? heroVideo,
     required List<CourseMaterialModel> materials,
     required int studentsCount,
@@ -631,7 +615,9 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
           ),
         ),
         const SizedBox(height: 14),
-        if (heroVideo != null)
+        if (showHeroSkeleton)
+          _buildHeroSkeleton(isDark)
+        else if (heroVideo != null)
           _buildVideoHero(
             isDark: isDark,
             displayCourse: displayCourse,
@@ -742,6 +728,22 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
     return videos.first;
   }
 
+  bool _isMaterialsLoading(MaterialsState state) {
+    return state is MaterialsInitial || state is MaterialsLoading;
+  }
+
+  bool _shouldShowHeroSkeleton(
+    MaterialsState materialsState,
+    CourseMaterialModel? heroVideo,
+  ) {
+    if (heroVideo != null) {
+      return false;
+    }
+
+    return _isMaterialsLoading(materialsState) &&
+        _resolveMaterials(materialsState).isEmpty;
+  }
+
   void _selectHeroVideo(CourseMaterialModel material) {
     if (!_isVideoMaterial(material)) {
       return;
@@ -772,6 +774,40 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
         ? currentIndex + 1
         : 0;
     _selectHeroVideo(videos[nextIndex]);
+  }
+
+  Widget _buildHeroSkeleton(bool isDark) {
+    final surfaceColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : const Color(0xFFE5E7EB);
+
+    Widget skeletonBox({
+      double? width,
+      required double height,
+      double radius = 16,
+    }) {
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        skeletonBox(height: 220, radius: 30),
+        const SizedBox(height: 14),
+        skeletonBox(width: 180, height: 14, radius: 999),
+        const SizedBox(height: 10),
+        skeletonBox(width: double.infinity, height: 28, radius: 12),
+        const SizedBox(height: 8),
+        skeletonBox(width: 240, height: 28, radius: 12),
+      ],
+    );
   }
 
   Widget _buildVideoHero({
@@ -914,7 +950,7 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(22),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         gradient: isDark
             ? InstructorCoursesTheme.headerGradientDark
@@ -949,53 +985,50 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
                 ),
             ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 14),
           Text(
             displayCourse.name,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 28,
+              fontSize: 22,
               fontWeight: FontWeight.w800,
               height: 1.1,
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           Text(
             description,
-            maxLines: 3,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               color: Color(0xFFE5EEFF),
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w500,
-              height: 1.55,
+              height: 1.45,
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 14),
           LayoutBuilder(
             builder: (context, constraints) {
               final columns = constraints.maxWidth >= 940
                   ? 4
                   : constraints.maxWidth >= 620
                   ? 2
-                  : 1;
-              final spacing = 12.0;
-              final tileWidth = columns == 1
-                  ? constraints.maxWidth
-                  : (constraints.maxWidth - (spacing * (columns - 1))) /
-                        columns;
+                  : 2;
 
-              return Wrap(
-                spacing: spacing,
-                runSpacing: spacing,
-                children: metrics
-                    .map(
-                      (metric) => SizedBox(
-                        width: tileWidth,
-                        child: _buildHeroMetricCard(metric),
-                      ),
-                    )
-                    .toList(growable: false),
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: metrics.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: constraints.maxWidth >= 620 ? 2.35 : 2.1,
+                ),
+                itemBuilder: (context, index) {
+                  return _buildHeroMetricCard(metrics[index]);
+                },
               );
             },
           ),
@@ -1032,36 +1065,191 @@ class _CourseManagementScreenState extends State<CourseManagementScreen>
 
   Widget _buildHeroMetricCard(_HeroMetric metric) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(metric.icon, size: 20, color: Colors.white),
-          const SizedBox(height: 16),
-          Text(
-            metric.value,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.w800,
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(12),
             ),
+            child: Icon(metric.icon, size: 18, color: Colors.white),
           ),
-          const SizedBox(height: 4),
-          Text(
-            metric.label,
-            style: const TextStyle(
-              color: Color(0xFFDCE9FF),
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  metric.value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  metric.label,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFFDCE9FF),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMaterialsTabContent({
+    required MaterialsState materialsState,
+    required List<CourseMaterialModel> materials,
+    required InstructorCourseModel displayCourse,
+    required List<MaterialBundleModel> bundles,
+    required Map<int, int> materialCountsByWeek,
+    required bool isDark,
+    required AppLocalizations l10n,
+  }) {
+    if (_isMaterialsLoading(materialsState) && materials.isEmpty) {
+      return _buildDetailTabSkeleton(
+        isDark,
+        itemHeights: const <double>[72, 140, 140],
+      );
+    }
+
+    return MaterialsTab(
+      materials: materials.isNotEmpty
+          ? materials.map(_mapCourseMaterialToLegacy).toList()
+          : displayCourse.materials,
+      courseMaterials: materials,
+      bundles: bundles,
+      materialCountsByWeek: materialCountsByWeek,
+      partialFailureMessage: _materialsFailureMessage,
+      failedMaterialIds: _failedMaterialIds,
+      onRetryFailedMaterials: _retryFailedMaterials,
+      onToggleMaterialVisibility: _toggleMaterialVisibility,
+      onEditMaterial: _editMaterial,
+      onDeleteMaterial: _deleteMaterial,
+      onToggleBundleVisibility: _toggleBundleVisibility,
+      onEditBundle: _editBundle,
+      onDeleteBundle: _deleteBundle,
+      onViewMaterial: (material) => _handleViewMaterial(material, materials),
+      isDark: isDark,
+      l10n: l10n,
+    );
+  }
+
+  Widget _buildOverviewTabContent({
+    required InstructorCoursesState instructorState,
+    required MaterialsState materialsState,
+    required InstructorCourseModel course,
+    required List<DeadlineCardModel> deadlines,
+    required int studentsCount,
+    required double? averageGrade,
+    required EngagementMetricsModel? engagementMetrics,
+    required List<ScheduleModel> schedules,
+    required bool isDark,
+    required AppLocalizations l10n,
+  }) {
+    final isInitialLoad =
+        instructorState is! InstructorCoursesLoaded &&
+        _isMaterialsLoading(materialsState) &&
+        deadlines.isEmpty &&
+        engagementMetrics == null &&
+        schedules.isEmpty;
+
+    if (isInitialLoad) {
+      return _buildDetailTabSkeleton(
+        isDark,
+        itemHeights: const <double>[180, 180, 120, 160],
+      );
+    }
+
+    return OverviewTab(
+      course: course,
+      isDark: isDark,
+      l10n: l10n,
+      courseId: _resolvedCourseId,
+      deadlines: deadlines,
+      studentsCount: studentsCount,
+      averageGrade: averageGrade,
+      engagementMetrics: engagementMetrics,
+      schedules: schedules,
+      onCreateAssignment: () => context.push('/instructor/assignments/create'),
+      onUploadMaterial: () => context.push('/instructor/upload-materials'),
+      onPostAnnouncement: () => context.push('/instructor/announcements'),
+    );
+  }
+
+  Widget _buildStudentsTabContent({
+    required InstructorCoursesState instructorState,
+    required List<SectionStudentModel> students,
+    required bool hasValidSection,
+    required bool isDark,
+    required AppLocalizations l10n,
+  }) {
+    final isStudentsLoading =
+        instructorState is InstructorCoursesLoaded &&
+        instructorState.studentsStatus == CourseStudentsStatus.loading &&
+        students.isEmpty;
+
+    if (isStudentsLoading) {
+      return _buildDetailTabSkeleton(
+        isDark,
+        itemHeights: const <double>[56, 120, 120, 120],
+      );
+    }
+
+    return StudentsTab(
+      students: students,
+      isDark: isDark,
+      l10n: l10n,
+      onRefreshRequested: _refreshStudents,
+      emptyStateTitleOverride: hasValidSection ? null : 'No section assigned',
+      emptyStateSubtitleOverride: hasValidSection
+          ? null
+          : 'Assign a valid section to load enrolled students.',
+    );
+  }
+
+  Widget _buildDetailTabSkeleton(
+    bool isDark, {
+    required List<double> itemHeights,
+  }) {
+    final surfaceColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : const Color(0xFFE5E7EB);
+
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+      itemCount: itemHeights.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 14),
+      itemBuilder: (context, index) {
+        return Container(
+          height: itemHeights[index],
+          decoration: BoxDecoration(
+            color: surfaceColor,
+            borderRadius: BorderRadius.circular(24),
+          ),
+        );
+      },
     );
   }
 

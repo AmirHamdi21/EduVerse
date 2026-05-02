@@ -430,6 +430,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     AppLocalizations l10n,
   ) {
     final heroVideo = _resolveHeroVideo(detailState);
+    final showHeroSkeleton = _shouldShowHeroSkeleton(detailState, heroVideo);
     final themeButtonColor = isDark
         ? Colors.white.withValues(alpha: 0.1)
         : Colors.white;
@@ -483,7 +484,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
             ),
           ),
           const SizedBox(height: 14),
-          if (heroVideo != null)
+          if (showHeroSkeleton)
+            _buildHeroSkeleton(isDark)
+          else if (heroVideo != null)
             _buildVideoHero(context, isDark, detailState, l10n, heroVideo)
           else
             _buildFallbackHero(context, isDark, detailState, l10n),
@@ -636,6 +639,21 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
     return videos.first;
   }
 
+  bool _shouldShowHeroSkeleton(
+    CourseDetailState detailState,
+    CourseMaterialModel? heroVideo,
+  ) {
+    if (heroVideo != null) {
+      return false;
+    }
+
+    if (!detailState.isLoadingMaterials && !detailState.isLoadingStructure) {
+      return false;
+    }
+
+    return detailState.materials.isEmpty && detailState.structure.isEmpty;
+  }
+
   bool _isVideoMaterial(CourseMaterialModel material) {
     final type = material.materialType.trim().toLowerCase();
     final hasPlayableSource =
@@ -676,6 +694,40 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
         ? currentIndex + 1
         : 0;
     setState(() => _selectedHeroMaterialId = videos[nextIndex].materialId);
+  }
+
+  Widget _buildHeroSkeleton(bool isDark) {
+    final surfaceColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : const Color(0xFFE5E7EB);
+
+    Widget skeletonBox({
+      double? width,
+      required double height,
+      double radius = 16,
+    }) {
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: surfaceColor,
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        skeletonBox(height: 220, radius: 30),
+        const SizedBox(height: 14),
+        skeletonBox(width: 180, height: 14, radius: 999),
+        const SizedBox(height: 10),
+        skeletonBox(width: double.infinity, height: 28, radius: 12),
+        const SizedBox(height: 8),
+        skeletonBox(width: 220, height: 28, radius: 12),
+      ],
+    );
   }
 
   Widget _buildVideoHero(

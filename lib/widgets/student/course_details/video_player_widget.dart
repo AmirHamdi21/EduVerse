@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +29,11 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
+  static const Duration _playerMountDelay = Duration(milliseconds: 350);
+
   bool _hasTrackedView = false;
+  Timer? _mountTimer;
+  bool _shouldMountPlayer = false;
 
   String? get _youtubeVideoId => widget.material.youtubeVideoId?.trim().isNotEmpty == true
       ? widget.material.youtubeVideoId!.trim()
@@ -56,11 +62,42 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _schedulePlayerMount();
+  }
+
+  @override
   void didUpdateWidget(covariant VideoPlayerWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.material.materialId != widget.material.materialId) {
+    if (oldWidget.material.materialId != widget.material.materialId ||
+        oldWidget.enableEmbeddedPlayer != widget.enableEmbeddedPlayer) {
       _hasTrackedView = false;
+      _schedulePlayerMount();
     }
+  }
+
+  @override
+  void dispose() {
+    _mountTimer?.cancel();
+    super.dispose();
+  }
+
+  void _schedulePlayerMount() {
+    _mountTimer?.cancel();
+
+    if (!widget.enableEmbeddedPlayer) {
+      _shouldMountPlayer = false;
+      return;
+    }
+
+    _shouldMountPlayer = false;
+    _mountTimer = Timer(_playerMountDelay, () {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _shouldMountPlayer = true);
+    });
   }
 
   void _recordView() {
@@ -96,6 +133,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
     if (!widget.enableEmbeddedPlayer) {
       content = _buildUnavailableState(context, l10n);
+    } else if (!_shouldMountPlayer) {
+      content = _buildPlayerSkeleton();
     } else {
       final youtubeVideoId = _youtubeVideoId;
       if (youtubeVideoId != null) {
@@ -125,6 +164,18 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: content,
+    );
+  }
+
+  Widget _buildPlayerSkeleton() {
+    return const ColoredBox(
+      color: Color(0xFF111827),
+      child: Center(
+        child: CircularProgressIndicator(
+          color: Colors.white,
+          strokeWidth: 2.5,
+        ),
+      ),
     );
   }
 
@@ -272,15 +323,13 @@ class _YoutubeInlinePlayerState extends State<_YoutubeInlinePlayer> {
         bottomActions: <Widget>[
           const CurrentPosition(),
           const SizedBox(width: 8),
-          Expanded(
-            child: ProgressBar(
-              isExpanded: true,
-              colors: const ProgressBarColors(
-                playedColor: Color(0xFF2563EB),
-                handleColor: Color(0xFF60A5FA),
-                bufferedColor: Colors.white54,
-                backgroundColor: Colors.white24,
-              ),
+          ProgressBar(
+            isExpanded: true,
+            colors: const ProgressBarColors(
+              playedColor: Color(0xFF2563EB),
+              handleColor: Color(0xFF60A5FA),
+              bufferedColor: Colors.white54,
+              backgroundColor: Colors.white24,
             ),
           ),
           const RemainingDuration(),
@@ -449,15 +498,13 @@ class _YoutubeFullscreenPlayerScreenState
         bottomActions: <Widget>[
           const CurrentPosition(),
           const SizedBox(width: 8),
-          Expanded(
-            child: ProgressBar(
-              isExpanded: true,
-              colors: const ProgressBarColors(
-                playedColor: Color(0xFF2563EB),
-                handleColor: Color(0xFF60A5FA),
-                bufferedColor: Colors.white54,
-                backgroundColor: Colors.white24,
-              ),
+          ProgressBar(
+            isExpanded: true,
+            colors: const ProgressBarColors(
+              playedColor: Color(0xFF2563EB),
+              handleColor: Color(0xFF60A5FA),
+              bufferedColor: Colors.white54,
+              backgroundColor: Colors.white24,
             ),
           ),
           const RemainingDuration(),
