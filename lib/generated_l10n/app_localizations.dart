@@ -9146,6 +9146,228 @@ abstract class AppLocalizations {
   /// **'View Details'**
   String get viewDetails;
 
+  /// No description provided for @gradingCenterHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading Pulse'**
+  String get gradingCenterHeroTitle;
+
+  /// No description provided for @gradingCenterHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track the grading queue, open submissions, and update scores without leaving the flow.'**
+  String get gradingCenterHeroSubtitle;
+
+  /// No description provided for @gradingCenterCoursesStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Courses'**
+  String get gradingCenterCoursesStat;
+
+  /// No description provided for @gradingCenterSubmissionsStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Submissions'**
+  String get gradingCenterSubmissionsStat;
+
+  /// No description provided for @gradingCenterSubmissionsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 submission} other{{count} submissions}}'**
+  String gradingCenterSubmissionsCount(int count);
+
+  /// No description provided for @gradingCenterCourseFilterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get gradingCenterCourseFilterLabel;
+
+  /// No description provided for @gradingCenterStatusFilterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get gradingCenterStatusFilterLabel;
+
+  /// No description provided for @gradingCenterAllStates.
+  ///
+  /// In en, this message translates to:
+  /// **'All States'**
+  String get gradingCenterAllStates;
+
+  /// No description provided for @gradingCenterStudentFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Student #{id}'**
+  String gradingCenterStudentFallback(int id);
+
+  /// No description provided for @gradingCenterSubmissionTypeFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get gradingCenterSubmissionTypeFile;
+
+  /// No description provided for @gradingCenterSubmissionTypeLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Link'**
+  String get gradingCenterSubmissionTypeLink;
+
+  /// No description provided for @gradingCenterSubmissionTypeText.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get gradingCenterSubmissionTypeText;
+
+  /// No description provided for @gradingCenterAttemptNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt {count}'**
+  String gradingCenterAttemptNumber(int count);
+
+  /// No description provided for @gradingCenterNotGradedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not graded yet'**
+  String get gradingCenterNotGradedYet;
+
+  /// No description provided for @gradingCenterLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load the grading queue.'**
+  String get gradingCenterLoadErrorTitle;
+
+  /// No description provided for @gradingCenterNoCoursesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No teaching courses available yet.'**
+  String get gradingCenterNoCoursesAvailable;
+
+  /// No description provided for @gradingCenterPendingEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything currently visible in this course has already been graded.'**
+  String get gradingCenterPendingEmptySubtitle;
+
+  /// No description provided for @gradingCenterGradedEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No graded submissions match the current course filter yet.'**
+  String get gradingCenterGradedEmptySubtitle;
+
+  /// No description provided for @gradingCenterLateEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No late work is showing for the current course filter.'**
+  String get gradingCenterLateEmptySubtitle;
+
+  /// No description provided for @gradingCenterAllEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Once students submit their work, it will appear here for review.'**
+  String get gradingCenterAllEmptySubtitle;
+
+  /// No description provided for @gradingCenterSubmissionSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Snapshot'**
+  String get gradingCenterSubmissionSnapshot;
+
+  /// No description provided for @gradingCenterStudentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Student'**
+  String get gradingCenterStudentLabel;
+
+  /// No description provided for @gradingCenterCourseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get gradingCenterCourseLabel;
+
+  /// No description provided for @gradingCenterStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get gradingCenterStatusLabel;
+
+  /// No description provided for @gradingCenterSubmittedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get gradingCenterSubmittedLabel;
+
+  /// No description provided for @gradingCenterAttemptLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt'**
+  String get gradingCenterAttemptLabel;
+
+  /// No description provided for @gradingCenterCurrentGradeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Grade'**
+  String get gradingCenterCurrentGradeLabel;
+
+  /// No description provided for @gradingCenterTextSubmissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Submission'**
+  String get gradingCenterTextSubmissionTitle;
+
+  /// No description provided for @gradingCenterLinkSubmissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Submission'**
+  String get gradingCenterLinkSubmissionTitle;
+
+  /// No description provided for @gradingCenterFileSubmissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File Submission'**
+  String get gradingCenterFileSubmissionTitle;
+
+  /// No description provided for @gradingCenterInvalidGradeRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a score between 0 and {maxScore}.'**
+  String gradingCenterInvalidGradeRange(String maxScore);
+
+  /// No description provided for @gradingCenterSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to submit grade.'**
+  String get gradingCenterSaveFailed;
+
+  /// No description provided for @gradingCenterCurrentScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Current score {value}%'**
+  String gradingCenterCurrentScore(int value);
+
+  /// No description provided for @gradingCenterLatePenalty.
+  ///
+  /// In en, this message translates to:
+  /// **'Late penalty {value}%'**
+  String gradingCenterLatePenalty(String value);
+
+  /// No description provided for @gradingCenterFeedbackHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share strengths, gaps, and next steps for the student...'**
+  String get gradingCenterFeedbackHint;
+
+  /// No description provided for @gradingCenterSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get gradingCenterSaving;
+
+  /// No description provided for @gradingCenterOpenLinkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open the link right now.'**
+  String get gradingCenterOpenLinkError;
+
   /// No description provided for @assignmentDetails.
   ///
   /// In en, this message translates to:

@@ -1708,6 +1708,85 @@
   "gradeSubmitted": "تم إرسال الدرجة بنجاح",
   "editGrade": "تعديل الدرجة",
   "viewDetails": "عرض التفاصيل",
+  "gradingCenterHeroTitle": "نبض التصحيح",
+  "gradingCenterHeroSubtitle": "تابع قائمة التصحيح، وافتح التسليمات، وحدّث الدرجات من نفس المساحة دون مغادرة التدفق.",
+  "gradingCenterCoursesStat": "المواد",
+  "gradingCenterSubmissionsStat": "التسليمات",
+  "gradingCenterSubmissionsCount": "{count, plural, =1{تسليم واحد} other{{count} تسليمات}}",
+  "@gradingCenterSubmissionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterCourseFilterLabel": "المادة",
+  "gradingCenterStatusFilterLabel": "الحالة",
+  "gradingCenterAllStates": "كل الحالات",
+  "gradingCenterStudentFallback": "الطالب #{id}",
+  "@gradingCenterStudentFallback": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterSubmissionTypeFile": "ملف",
+  "gradingCenterSubmissionTypeLink": "رابط",
+  "gradingCenterSubmissionTypeText": "نصي",
+  "gradingCenterAttemptNumber": "المحاولة {count}",
+  "@gradingCenterAttemptNumber": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterNotGradedYet": "لم يتم التصحيح بعد",
+  "gradingCenterLoadErrorTitle": "تعذر تحميل قائمة التصحيح.",
+  "gradingCenterNoCoursesAvailable": "لا توجد مواد تدريسية متاحة بعد.",
+  "gradingCenterPendingEmptySubtitle": "كل ما هو ظاهر حالياً في هذه المادة تم تصحيحه بالفعل.",
+  "gradingCenterGradedEmptySubtitle": "لا توجد تسليمات مصححة تطابق فلتر المادة الحالي بعد.",
+  "gradingCenterLateEmptySubtitle": "لا توجد أعمال متأخرة ظاهرة مع فلتر المادة الحالي.",
+  "gradingCenterAllEmptySubtitle": "عندما يرسل الطلاب أعمالهم ستظهر هنا للمراجعة.",
+  "gradingCenterSubmissionSnapshot": "ملخص التسليم",
+  "gradingCenterStudentLabel": "الطالب",
+  "gradingCenterCourseLabel": "المادة",
+  "gradingCenterStatusLabel": "الحالة",
+  "gradingCenterSubmittedLabel": "تاريخ التسليم",
+  "gradingCenterAttemptLabel": "المحاولة",
+  "gradingCenterCurrentGradeLabel": "الدرجة الحالية",
+  "gradingCenterTextSubmissionTitle": "التسليم النصي",
+  "gradingCenterLinkSubmissionTitle": "تسليم الرابط",
+  "gradingCenterFileSubmissionTitle": "تسليم الملف",
+  "gradingCenterInvalidGradeRange": "أدخل درجة بين 0 و {maxScore}.",
+  "@gradingCenterInvalidGradeRange": {
+    "placeholders": {
+      "maxScore": {
+        "type": "String"
+      }
+    }
+  },
+  "gradingCenterSaveFailed": "فشل إرسال الدرجة.",
+  "gradingCenterCurrentScore": "الدرجة الحالية {value}%",
+  "@gradingCenterCurrentScore": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterLatePenalty": "خصم التأخير {value}%",
+  "@gradingCenterLatePenalty": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "gradingCenterFeedbackHint": "شارك نقاط القوة والفجوات والخطوات التالية للطالب...",
+  "gradingCenterSaving": "جارٍ الحفظ...",
+  "gradingCenterOpenLinkError": "تعذر فتح الرابط الآن.",
   "assignmentDetails": "تفاصيل الواجب",
   "assignment": "الواجب",
   "submitted": "تم التسليم",

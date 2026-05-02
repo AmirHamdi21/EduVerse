@@ -4699,6 +4699,142 @@ class AppLocalizationsAr extends AppLocalizations {
   String get viewDetails => 'عرض التفاصيل';
 
   @override
+  String get gradingCenterHeroTitle => 'نبض التصحيح';
+
+  @override
+  String get gradingCenterHeroSubtitle =>
+      'تابع قائمة التصحيح، وافتح التسليمات، وحدّث الدرجات من نفس المساحة دون مغادرة التدفق.';
+
+  @override
+  String get gradingCenterCoursesStat => 'المواد';
+
+  @override
+  String get gradingCenterSubmissionsStat => 'التسليمات';
+
+  @override
+  String gradingCenterSubmissionsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تسليمات',
+      one: 'تسليم واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get gradingCenterCourseFilterLabel => 'المادة';
+
+  @override
+  String get gradingCenterStatusFilterLabel => 'الحالة';
+
+  @override
+  String get gradingCenterAllStates => 'كل الحالات';
+
+  @override
+  String gradingCenterStudentFallback(int id) {
+    return 'الطالب #$id';
+  }
+
+  @override
+  String get gradingCenterSubmissionTypeFile => 'ملف';
+
+  @override
+  String get gradingCenterSubmissionTypeLink => 'رابط';
+
+  @override
+  String get gradingCenterSubmissionTypeText => 'نصي';
+
+  @override
+  String gradingCenterAttemptNumber(int count) {
+    return 'المحاولة $count';
+  }
+
+  @override
+  String get gradingCenterNotGradedYet => 'لم يتم التصحيح بعد';
+
+  @override
+  String get gradingCenterLoadErrorTitle => 'تعذر تحميل قائمة التصحيح.';
+
+  @override
+  String get gradingCenterNoCoursesAvailable =>
+      'لا توجد مواد تدريسية متاحة بعد.';
+
+  @override
+  String get gradingCenterPendingEmptySubtitle =>
+      'كل ما هو ظاهر حالياً في هذه المادة تم تصحيحه بالفعل.';
+
+  @override
+  String get gradingCenterGradedEmptySubtitle =>
+      'لا توجد تسليمات مصححة تطابق فلتر المادة الحالي بعد.';
+
+  @override
+  String get gradingCenterLateEmptySubtitle =>
+      'لا توجد أعمال متأخرة ظاهرة مع فلتر المادة الحالي.';
+
+  @override
+  String get gradingCenterAllEmptySubtitle =>
+      'عندما يرسل الطلاب أعمالهم ستظهر هنا للمراجعة.';
+
+  @override
+  String get gradingCenterSubmissionSnapshot => 'ملخص التسليم';
+
+  @override
+  String get gradingCenterStudentLabel => 'الطالب';
+
+  @override
+  String get gradingCenterCourseLabel => 'المادة';
+
+  @override
+  String get gradingCenterStatusLabel => 'الحالة';
+
+  @override
+  String get gradingCenterSubmittedLabel => 'تاريخ التسليم';
+
+  @override
+  String get gradingCenterAttemptLabel => 'المحاولة';
+
+  @override
+  String get gradingCenterCurrentGradeLabel => 'الدرجة الحالية';
+
+  @override
+  String get gradingCenterTextSubmissionTitle => 'التسليم النصي';
+
+  @override
+  String get gradingCenterLinkSubmissionTitle => 'تسليم الرابط';
+
+  @override
+  String get gradingCenterFileSubmissionTitle => 'تسليم الملف';
+
+  @override
+  String gradingCenterInvalidGradeRange(String maxScore) {
+    return 'أدخل درجة بين 0 و $maxScore.';
+  }
+
+  @override
+  String get gradingCenterSaveFailed => 'فشل إرسال الدرجة.';
+
+  @override
+  String gradingCenterCurrentScore(int value) {
+    return 'الدرجة الحالية $value%';
+  }
+
+  @override
+  String gradingCenterLatePenalty(String value) {
+    return 'خصم التأخير $value%';
+  }
+
+  @override
+  String get gradingCenterFeedbackHint =>
+      'شارك نقاط القوة والفجوات والخطوات التالية للطالب...';
+
+  @override
+  String get gradingCenterSaving => 'جارٍ الحفظ...';
+
+  @override
+  String get gradingCenterOpenLinkError => 'تعذر فتح الرابط الآن.';
+
+  @override
   String get assignmentDetails => 'تفاصيل الواجب';
 
   @override

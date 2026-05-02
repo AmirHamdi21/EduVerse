@@ -1,18 +1,26 @@
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
+import 'package:edu_verse/widgets/instructor/shared/instructor_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../../bloc/theme/theme_bloc.dart';
+import '../../../bloc/theme/theme_event.dart';
 import '../../../bloc/theme/theme_state.dart';
-import '../../../generated_l10n/app_localizations.dart';
+import '../../../models/assignments/assignment_model.dart';
 import '../../../models/assignments/assignment_submission_model.dart';
 import '../../../models/core/enums/assignment_enums.dart' as api;
+import '../../../models/instructor/teaching_course_model.dart';
+import '../../../common/utils/responsive.dart';
 import '../../../services/api/assignment_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../services/storage_service.dart';
-import '../../../widgets/instructor/grading/grading_barrel.dart';
+import '../../../widgets/student/shared/drive_file_preview_screen.dart';
+import '../../../widgets/student/academic/academic_list_skeleton.dart';
 
 class GradingCenterScreen extends StatefulWidget {
   const GradingCenterScreen({super.key, this.courseId, this.embedded = false});
@@ -24,21 +32,21 @@ class GradingCenterScreen extends StatefulWidget {
   State<GradingCenterScreen> createState() => _GradingCenterScreenState();
 }
 
-class _GradingCenterScreenState extends State<GradingCenterScreen>
-    with TickerProviderStateMixin {
-  late TabController _tabController;
-  late AnimationController _statsAnimController;
-  late AnimationController _listAnimController;
-  late Animation<double> _statsAnimation;
+enum _GradingSubmissionFilter { all, pending, graded, late }
 
-  String _searchQuery = '';
-  String _selectedCourse = 'All';
-  bool _isLoading = true;
-  List<_SubmissionEntry> _submissions = [];
-  List<String> _courses = <String>['All'];
-
+class _GradingCenterScreenState extends State<GradingCenterScreen> {
   late final AssignmentService _assignmentService;
   late final EnrollmentService _enrollmentService;
+
+  bool _isLoading = true;
+  bool _isRefreshing = false;
+  String? _errorMessage;
+
+  List<TeachingCourseModel> _teachingCourses = <TeachingCourseModel>[];
+  List<_SubmissionEntry> _submissions = <_SubmissionEntry>[];
+
+  int? _selectedCourseId;
+  _GradingSubmissionFilter _selectedFilter = _GradingSubmissionFilter.all;
 
   @override
   void initState() {
@@ -46,73 +54,52 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
     final coreApiClient = CoreApiClient(storageService: StorageService());
     _assignmentService = AssignmentService(coreApiClient: coreApiClient);
     _enrollmentService = EnrollmentService(coreApiClient: coreApiClient);
-    _tabController = TabController(length: 4, vsync: this);
-    _statsAnimController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-    _listAnimController = AnimationController(
-      duration: const Duration(milliseconds: 600),
-      vsync: this,
-    );
-    _statsAnimation = CurvedAnimation(
-      parent: _statsAnimController,
-      curve: Curves.easeOutCubic,
-    );
-    _loadSubmissions();
+    _selectedCourseId = widget.courseId;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      _loadSubmissions();
+    });
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _statsAnimController.dispose();
-    _listAnimController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _loadSubmissions() async {
-    if (!mounted) return;
+  Future<void> _loadSubmissions({bool refresh = false}) async {
+    if (!mounted) {
+      return;
+    }
 
     setState(() {
-      _isLoading = true;
+      if (refresh) {
+        _isRefreshing = true;
+      } else {
+        _isLoading = true;
+      }
+      _errorMessage = null;
     });
-    _statsAnimController.reset();
-    _listAnimController.reset();
 
     try {
+      final failureMessage = AppLocalizations.of(context).operationFailed;
       final teachingCoursesResult = await _enrollmentService
           .getTeachingCourses();
       if (!teachingCoursesResult.isSuccess ||
           teachingCoursesResult.data == null) {
-        throw Exception(
-          teachingCoursesResult.error?.message ??
-              'Failed to load teaching courses',
-        );
+        throw Exception(teachingCoursesResult.error?.message ?? failureMessage);
       }
 
-      final loadedCourses = widget.courseId == null
-          ? <String>['All']
-          : <String>[];
-      final loadedSubmissions = <_SubmissionEntry>[];
+      final relevantCourses = teachingCoursesResult.data!
+          .where(
+            (course) =>
+                widget.courseId == null || course.courseId == widget.courseId,
+          )
+          .toList(growable: false);
 
-      for (final teachingCourse in teachingCoursesResult.data!) {
-        if (widget.courseId != null &&
-            teachingCourse.courseId != widget.courseId) {
-          continue;
-        }
+      final entries = <_SubmissionEntry>[];
 
-        final courseLabel = _buildCourseLabel(
-          teachingCourse.course.code,
-          teachingCourse.course.name,
-        );
-        if (!loadedCourses.contains(courseLabel)) {
-          loadedCourses.add(courseLabel);
-        }
-
+      for (final teachingCourse in relevantCourses) {
         final assignmentsResult = await _assignmentService.getAll(
           courseId: teachingCourse.courseId,
           page: 1,
-          limit: 20,
+          limit: 50,
           sortBy: 'dueDate',
           sortOrder: 'DESC',
         );
@@ -130,214 +117,120 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
             continue;
           }
 
-          for (final apiSubmission in submissionsResult.data!) {
-            final studentFirstName = apiSubmission.user?.firstName ?? '';
-            final studentLastName = apiSubmission.user?.lastName ?? '';
-            final studentName =
-                '$studentFirstName $studentLastName'.trim().isEmpty
-                ? 'Student #${apiSubmission.userId}'
-                : '$studentFirstName $studentLastName'.trim();
-
-            loadedSubmissions.add(
+          for (final submission in submissionsResult.data!) {
+            entries.add(
               _SubmissionEntry(
-                submission: apiSubmission,
-                studentName: studentName,
-                assignmentTitle: assignment.title,
-                courseName: courseLabel,
-                maxGrade: assignment.maxGrade > 0
-                    ? assignment.maxGrade.round()
-                    : 100,
-                dueDate: assignment.dueDate,
-                latePenaltyPercent: assignment.latePenaltyPercent,
+                courseId: teachingCourse.courseId,
+                courseCode: teachingCourse.course.code.trim(),
+                courseName: teachingCourse.course.name.trim(),
+                sectionCode: teachingCourse.section.sectionNumber.trim(),
+                assignment: assignment,
+                submission: submission,
+                studentName: _resolveStudentName(submission),
+                studentEmail: submission.user?.email.trim() ?? '',
               ),
             );
           }
         }
       }
 
-      loadedSubmissions.sort(
-        (a, b) => b.submission.submittedAt.compareTo(a.submission.submittedAt),
+      entries.sort(
+        (left, right) =>
+            right.submission.submittedAt.compareTo(left.submission.submittedAt),
       );
 
-      if (mounted) {
-        setState(() {
-          _courses = loadedCourses;
-          if (widget.courseId != null && _courses.isNotEmpty) {
-            _selectedCourse = _courses.first;
-          } else if (!_courses.contains(_selectedCourse)) {
-            _selectedCourse = 'All';
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _teachingCourses = relevantCourses;
+        _submissions = entries;
+        if (widget.courseId != null) {
+          _selectedCourseId = widget.courseId;
+        } else if (_selectedCourseId != null &&
+            !_teachingCourses.any(
+              (course) => course.courseId == _selectedCourseId,
+            )) {
+          _selectedCourseId = null;
+        }
+        _isLoading = false;
+        _isRefreshing = false;
+      });
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _isLoading = false;
+        _isRefreshing = false;
+        _errorMessage = error.toString();
+      });
+    }
+  }
+
+  String _resolveStudentName(AssignmentSubmissionModel submission) {
+    final firstName = submission.user?.firstName.trim() ?? '';
+    final lastName = submission.user?.lastName.trim() ?? '';
+    final fullName = '$firstName $lastName'.trim();
+    if (fullName.isNotEmpty) {
+      return fullName;
+    }
+
+    final email = submission.user?.email.trim() ?? '';
+    if (email.isNotEmpty) {
+      return email.split('@').first;
+    }
+
+    return AppLocalizations.of(
+      context,
+    ).gradingCenterStudentFallback(submission.userId);
+  }
+
+  List<_SubmissionEntry> get _courseScopedSubmissions {
+    return _submissions
+        .where(
+          (entry) =>
+              _selectedCourseId == null || entry.courseId == _selectedCourseId,
+        )
+        .toList(growable: false);
+  }
+
+  List<_SubmissionEntry> get _filteredSubmissions {
+    return _courseScopedSubmissions
+        .where((entry) {
+          switch (_selectedFilter) {
+            case _GradingSubmissionFilter.pending:
+              return !entry.isGraded;
+            case _GradingSubmissionFilter.graded:
+              return entry.isGraded;
+            case _GradingSubmissionFilter.late:
+              return entry.submission.isLate;
+            case _GradingSubmissionFilter.all:
+              return true;
           }
-          _submissions = loadedSubmissions;
-          _isLoading = false;
-        });
-        _statsAnimController.forward();
-        _listAnimController.forward();
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Failed to load submissions'),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            backgroundColor: GradingColors.late,
-            action: SnackBarAction(
-              label: 'Retry',
-              textColor: Colors.white,
-              onPressed: _loadSubmissions,
-            ),
-          ),
-        );
-      }
+        })
+        .toList(growable: false);
+  }
+
+  Map<int, List<_SubmissionEntry>> get _groupedSubmissions {
+    final grouped = <int, List<_SubmissionEntry>>{};
+    for (final entry in _filteredSubmissions) {
+      grouped
+          .putIfAbsent(entry.courseId, () => <_SubmissionEntry>[])
+          .add(entry);
     }
+    return grouped;
   }
 
-  String _buildCourseLabel(String code, String name) {
-    final cleanCode = code.trim();
-    final cleanName = name.trim();
-    if (cleanCode.isEmpty) {
-      return cleanName;
-    }
-    return '$cleanCode - $cleanName';
-  }
-
-  bool _isGradedStatus(api.SubmissionStatus status) {
-    return status == api.SubmissionStatus.graded ||
-        status == api.SubmissionStatus.returned;
-  }
-
-  AssignmentSubmissionModel _copySubmissionWithGrade(
-    AssignmentSubmissionModel submission,
-    double grade,
-    String? feedback,
-  ) {
-    return AssignmentSubmissionModel(
-      id: submission.id,
-      assignmentId: submission.assignmentId,
-      userId: submission.userId,
-      submissionText: submission.submissionText,
-      submissionLink: submission.submissionLink,
-      fileId: submission.fileId,
-      submissionStatus: api.SubmissionStatus.graded,
-      isLate: submission.isLate,
-      attemptNumber: submission.attemptNumber,
-      submittedAt: submission.submittedAt,
-      score: grade,
-      feedback: feedback,
-      gradedBy: submission.gradedBy,
-      gradedAt: DateTime.now(),
-      user: submission.user,
-      driveFile: submission.driveFile,
-    );
-  }
-
-  List<_SubmissionEntry> _getFilteredSubmissions(String filter) {
-    return _submissions.where((s) {
-      final matchesSearch =
-          s.studentName.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          s.assignmentTitle.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesCourse =
-          _selectedCourse == 'All' || s.courseName == _selectedCourse;
-      final isGraded = _isGradedStatus(s.submission.submissionStatus);
-      final matchesFilter =
-          filter == 'all' ||
-          (filter == 'pending' && !isGraded) ||
-          (filter == 'graded' && isGraded) ||
-          (filter == 'late' && s.submission.isLate);
-      return matchesSearch && matchesCourse && matchesFilter;
-    }).toList();
-  }
-
-  int get _pendingCount => _submissions
-      .where((s) => !_isGradedStatus(s.submission.submissionStatus))
-      .length;
-  int get _gradedCount => _submissions
-      .where((s) => _isGradedStatus(s.submission.submissionStatus))
-      .length;
-  int get _lateCount => _submissions.where((s) => s.submission.isLate).length;
-
-  Future<void> _handleGradeSubmission(
-    _SubmissionEntry submissionEntry,
-    double grade,
-    String? feedback,
-  ) async {
-    final assignmentId = submissionEntry.submission.assignmentId;
-    final submissionId = submissionEntry.submission.id;
-
-    final gradeResult = await _assignmentService.gradeSubmission(
-      assignmentId,
-      submissionId,
-      grade,
-      feedback: feedback,
-    );
-
-    if (!gradeResult.isSuccess) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            gradeResult.error?.message ?? 'Failed to save grade. Please retry.',
-          ),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          backgroundColor: GradingColors.late,
-        ),
-      );
-      return;
-    }
-
-    if (!mounted) return;
-
-    setState(() {
-      final index = _submissions.indexWhere(
-        (s) => s.submission.id == submissionEntry.submission.id,
-      );
-      if (index != -1) {
-        _submissions[index] = _submissions[index].copyWith(
-          submission: _copySubmissionWithGrade(
-            _submissions[index].submission,
-            grade,
-            feedback,
-          ),
-        );
-      }
-    });
-
-    HapticFeedback.mediumImpact();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(
-                Icons.check_circle_rounded,
-                color: Colors.white,
-                size: 18,
-              ),
-            ),
-            const SizedBox(width: 12),
-            const Text('Grade submitted successfully!'),
-          ],
-        ),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor: GradingColors.graded,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
+  int get _totalCourses => _teachingCourses.length;
+  int get _pendingCount =>
+      _courseScopedSubmissions.where((entry) => !entry.isGraded).length;
+  int get _gradedCount =>
+      _courseScopedSubmissions.where((entry) => entry.isGraded).length;
+  int get _lateCount =>
+      _courseScopedSubmissions.where((entry) => entry.submission.isLate).length;
 
   @override
   Widget build(BuildContext context) {
@@ -345,112 +238,710 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
       builder: (context, themeState) {
         final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
-        final tabContent = Column(
-          children: [
-            _buildSearchFilterBar(isDark, l10n, compact: widget.embedded),
-            _buildTabBar(isDark, l10n, compact: widget.embedded),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildSubmissionsList(isDark, l10n, 'all'),
-                  _buildSubmissionsList(isDark, l10n, 'pending'),
-                  _buildSubmissionsList(isDark, l10n, 'graded'),
-                  _buildSubmissionsList(isDark, l10n, 'late'),
-                ],
-              ),
-            ),
-          ],
+
+        final content = RefreshIndicator(
+          onRefresh: () => _loadSubmissions(refresh: true),
+          color: InstructorColors.primary,
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: <Widget>[
+              if (!widget.embedded) _buildAppBar(isDark, l10n),
+              if (_isLoading && _submissions.isEmpty) ...<Widget>[
+                _buildLoadingHeader(isDark),
+                _buildLoadingSkeleton(isDark),
+              ] else if (_errorMessage != null && _submissions.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _buildErrorState(isDark),
+                )
+              else if (!_isLoading && _teachingCourses.isEmpty)
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: _buildNoCoursesState(isDark),
+                )
+              else
+                _buildLoadedContent(isDark, l10n),
+            ],
+          ),
         );
 
         if (widget.embedded) {
           return Container(
-            color: GradingColors.background(isDark),
-            child: Column(
-              children: [
-                _buildEmbeddedHeaderSection(isDark, l10n),
-                Expanded(child: tabContent),
-              ],
-            ),
+            color: InstructorColors.background(isDark),
+            child: content,
           );
         }
 
         return Scaffold(
-          backgroundColor: GradingColors.background(isDark),
-          body: NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) {
-              return [
-                _buildSliverAppBar(isDark, l10n),
-                // Header scrolls away with the header
-                SliverToBoxAdapter(child: _buildHeaderSection(isDark, l10n)),
-              ];
-            },
-            body: tabContent,
-          ),
+          backgroundColor: InstructorColors.background(isDark),
+          body: SafeArea(child: content),
         );
       },
     );
   }
 
-  Widget _buildEmbeddedHeaderSection(bool isDark, AppLocalizations l10n) {
+  SliverAppBar _buildAppBar(bool isDark, AppLocalizations l10n) {
+    return SliverAppBar(
+      backgroundColor: InstructorColors.background(isDark),
+      surfaceTintColor: Colors.transparent,
+      leading: IconButton(
+        onPressed: () => context.pop(),
+        icon: Icon(
+          Icons.arrow_back_rounded,
+          color: InstructorColors.textPrimaryColor(isDark),
+        ),
+      ),
+      title: Text(
+        l10n.gradingCenter,
+        style: TextStyle(
+          color: InstructorColors.textPrimaryColor(isDark),
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () =>
+              context.read<ThemeBloc>().add(const ToggleThemeEvent()),
+          icon: Icon(
+            isDark ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+            color: InstructorColors.textSecondaryColor(isDark),
+          ),
+        ),
+        const SizedBox(width: 8),
+      ],
+      floating: true,
+      snap: true,
+    );
+  }
+
+  SliverToBoxAdapter _buildLoadingHeader(bool isDark) {
+    final l10n = AppLocalizations.of(context);
+    return SliverToBoxAdapter(
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: isDark
+              ? InstructorColors.darkHeaderGradient
+              : const LinearGradient(
+                  colors: <Color>[
+                    Color(0xFF155CFB),
+                    Color(0xFF3B82F6),
+                    Color(0xFF14B8A6),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(
+              l10n.gradingCenterHeroTitle,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l10n.gradingCenterHeroSubtitle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color(0xD9FFFFFF),
+                fontSize: 11.5,
+                height: 1.3,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  SliverToBoxAdapter _buildLoadingSkeleton(bool isDark) {
+    return SliverToBoxAdapter(
+      child: IgnorePointer(
+        child: AcademicListSkeleton(
+          isDark: isDark,
+          itemCount: 4,
+          topPadding: 16,
+          bottomPadding: 24,
+          sliverFriendly: true,
+        ),
+      ),
+    );
+  }
+
+  SliverMainAxisGroup _buildLoadedContent(bool isDark, AppLocalizations l10n) {
+    final grouped = _groupedSubmissions;
+    final courseIds = grouped.keys.toList(growable: false);
+
+    return SliverMainAxisGroup(
+      slivers: <Widget>[
+        SliverToBoxAdapter(child: _buildSummaryHeader(isDark, l10n)),
+        SliverToBoxAdapter(child: _buildFilterCard(isDark, l10n)),
+        if (courseIds.isEmpty)
+          SliverFillRemaining(
+            hasScrollBody: false,
+            child: _buildEmptySubmissionsState(isDark, l10n),
+          )
+        else
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final courseId = courseIds[index];
+                final entries = grouped[courseId] ?? const <_SubmissionEntry>[];
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: index == courseIds.length - 1 ? 0 : 16,
+                  ),
+                  child: _buildCourseSubmissionCard(isDark, l10n, entries),
+                );
+              }, childCount: courseIds.length),
+            ),
+          ),
+        if (_isRefreshing)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+              child: LinearProgressIndicator(
+                color: InstructorColors.primary,
+                backgroundColor: InstructorColors.primary.withValues(
+                  alpha: 0.12,
+                ),
+                borderRadius: BorderRadius.circular(999),
+                minHeight: 4,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildSummaryHeader(bool isDark, AppLocalizations l10n) {
+    final r = context.responsive;
+    final totalSubmissions = _courseScopedSubmissions.length;
+    final statCards = <_HeroStat>[
+      _HeroStat(
+        icon: Icons.menu_book_rounded,
+        label: l10n.gradingCenterCoursesStat,
+        value: _totalCourses.toString(),
+        color: const Color(0xFF22C55E),
+      ),
+      _HeroStat(
+        icon: Icons.assignment_turned_in_rounded,
+        label: l10n.gradingCenterSubmissionsStat,
+        value: totalSubmissions.toString(),
+        color: const Color(0xFFD946EF),
+      ),
+      _HeroStat(
+        icon: Icons.pending_actions_rounded,
+        label: l10n.pending,
+        value: _pendingCount.toString(),
+        color: InstructorColors.warning,
+      ),
+      _HeroStat(
+        icon: Icons.check_circle_rounded,
+        label: l10n.graded,
+        value: _gradedCount.toString(),
+        color: InstructorColors.success,
+      ),
+      _HeroStat(
+        icon: Icons.timer_off_rounded,
+        label: l10n.late,
+        value: _lateCount.toString(),
+        color: InstructorColors.error,
+      ),
+    ];
+
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 10, 16, 6),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 18),
+      padding: EdgeInsets.all(r.isMobile ? 14 : 16),
       decoration: BoxDecoration(
         gradient: isDark
-            ? GradingColors.darkHeaderGradient
-            : GradingColors.headerGradient,
-        borderRadius: BorderRadius.circular(22),
-        boxShadow: [
+            ? InstructorColors.darkHeaderGradient
+            : const LinearGradient(
+                colors: <Color>[
+                  Color(0xFF155CFB),
+                  Color(0xFF3B82F6),
+                  Color(0xFF14B8A6),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            top: -22,
+            right: -18,
+            child: Container(
+              width: 86,
+              height: 86,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.10),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -30,
+            left: -14,
+            child: Container(
+              width: 78,
+              height: 78,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.08),
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    width: r.isMobile ? 36 : 40,
+                    height: r.isMobile ? 36 : 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(
+                      Icons.fact_check_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          l10n.gradingCenterHeroTitle,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: r.isMobile ? 16 : 18,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          l10n.gradingCenterHeroSubtitle,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Color(0xD9FFFFFF),
+                            fontSize: r.isMobile ? 10.5 : 11.5,
+                            height: 1.25,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: statCards.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: _heroStatsColumns(r),
+                  mainAxisSpacing: 8,
+                  crossAxisSpacing: 8,
+                  childAspectRatio: r.isMobile ? 1.5 : 1.95,
+                ),
+                itemBuilder: (context, index) {
+                  return _buildHeroStatCard(statCards[index], r);
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  int _heroStatsColumns(ResponsiveUtil r) {
+    if (r.screenWidth < 340) {
+      return 2;
+    }
+    if (r.isMobile || r.isTablet) {
+      return 3;
+    }
+    return 5;
+  }
+
+  Widget _buildHeroStatCard(_HeroStat stat, ResponsiveUtil r) {
+    return Container(
+      padding: EdgeInsets.all(r.isMobile ? 9 : 11),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(stat.icon, size: r.isMobile ? 15 : 17, color: stat.color),
+          const SizedBox(height: 6),
+          Text(
+            stat.value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: r.isMobile ? 14 : 16,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            stat.label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: const Color(0xE6FFFFFF),
+              fontSize: r.isMobile ? 10 : 11,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterCard(bool isDark, AppLocalizations l10n) {
+    final totalFiltered = _filteredSubmissions.length;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 18),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: InstructorColors.cardColor(isDark),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: InstructorColors.borderColor(isDark).withValues(alpha: 0.9),
+        ),
+        boxShadow: <BoxShadow>[
           BoxShadow(
-            color: GradingColors.primary.withValues(alpha: isDark ? 0.16 : 0.14),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
+            color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: InstructorColors.primary.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(
+              l10n.gradingCenterSubmissionsCount(totalFiltered),
+              style: const TextStyle(
+                color: InstructorColors.primary,
+                fontWeight: FontWeight.w700,
+                fontSize: 13,
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
           Row(
-            children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.18),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: const Icon(
-                  Icons.grading_rounded,
-                  color: Colors.white,
-                  size: 22,
+            children: <Widget>[
+              Expanded(
+                child: _buildModernDropdown<int?>(
+                  isDark: isDark,
+                  title: l10n.gradingCenterCourseFilterLabel,
+                  icon: Icons.menu_book_rounded,
+                  value: _selectedCourseId,
+                  selectedLabel: _selectedCourseLabel(l10n),
+                  items: <DropdownMenuItem<int?>>[
+                    DropdownMenuItem<int?>(
+                      value: null,
+                      child: Text(l10n.allCourses),
+                    ),
+                    ..._teachingCourses.map((course) {
+                      return DropdownMenuItem<int?>(
+                        value: course.courseId,
+                        child: Text(_courseChipLabel(course)),
+                      );
+                    }),
+                  ],
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedCourseId = value;
+                    });
+                  },
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.gradingCenter,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
+                child: _buildModernDropdown<_GradingSubmissionFilter>(
+                  isDark: isDark,
+                  title: l10n.gradingCenterStatusFilterLabel,
+                  icon: Icons.tune_rounded,
+                  value: _selectedFilter,
+                  selectedLabel: _filterLabel(l10n, _selectedFilter),
+                  items: _GradingSubmissionFilter.values
+                      .map((filter) {
+                        return DropdownMenuItem<_GradingSubmissionFilter>(
+                          value: filter,
+                          child: Text(_filterLabel(l10n, filter)),
+                        );
+                      })
+                      .toList(growable: false),
+                  onChanged: (value) {
+                    if (value == null) {
+                      return;
+                    }
+                    setState(() {
+                      _selectedFilter = value;
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCourseSubmissionCard(
+    bool isDark,
+    AppLocalizations l10n,
+    List<_SubmissionEntry> entries,
+  ) {
+    final r = context.responsive;
+    final course = entries.first;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: InstructorColors.cardColor(isDark),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: InstructorColors.borderColor(isDark).withValues(alpha: 0.82),
+        ),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.18 : 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.fromLTRB(
+              r.isMobile ? 14 : 16,
+              r.isMobile ? 14 : 16,
+              r.isMobile ? 14 : 16,
+              r.isMobile ? 14 : 18,
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: <Color>[
+                  const Color(0xFFEAF3FF),
+                  InstructorColors.tealLight.withValues(alpha: 0.85),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
+            ),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: r.isMobile ? 42 : 46,
+                  height: r.isMobile ? 42 : 46,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: <Color>[Color(0xFF14B8A6), Color(0xFF0EA5E9)],
+                    ),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  alignment: Alignment.center,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        _courseBadgeLabel(course.courseCode, course.courseName),
+                        maxLines: 1,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: r.isMobile ? 15 : 17,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 2),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        course.courseCode,
+                        style: TextStyle(
+                          color: InstructorColors.primary,
+                          fontWeight: FontWeight.w800,
+                          fontSize: r.isMobile ? 10.5 : 11.5,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        course.courseName,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: InstructorColors.textPrimary,
+                          fontWeight: FontWeight.w800,
+                          fontSize: r.isMobile ? 13 : 14.5,
+                          height: 1.2,
+                        ),
+                      ),
+                      if (course.sectionCode.isNotEmpty) ...<Widget>[
+                        const SizedBox(height: 4),
+                        Text(
+                          course.sectionCode,
+                          style: TextStyle(
+                            color: InstructorColors.textSecondary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: r.isMobile ? 10.5 : 11.5,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: r.isMobile ? 10 : 12,
+                    vertical: r.isMobile ? 7 : 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: InstructorColors.successLight,
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    l10n.gradingCenterSubmissionsCount(entries.length),
+                    style: TextStyle(
+                      color: InstructorColors.success,
+                      fontWeight: FontWeight.w800,
+                      fontSize: r.isMobile ? 10.5 : 11.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ...entries.asMap().entries.map((entry) {
+            final index = entry.key;
+            final item = entry.value;
+            return Column(
+              children: <Widget>[
+                if (index > 0)
+                  Divider(
+                    height: 1,
+                    color: InstructorColors.borderColor(isDark),
+                  ),
+                _buildSubmissionRow(isDark, l10n, item),
+              ],
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSubmissionRow(
+    bool isDark,
+    AppLocalizations l10n,
+    _SubmissionEntry entry,
+  ) {
+    final badge = _statusBadge(entry);
+    final r = context.responsive;
+    final gradeText = entry.submission.score == null
+        ? l10n.gradingCenterNotGradedYet
+        : '${_formatScore(entry.submission.score!)} / ${entry.assignment.maxGrade.toStringAsFixed(entry.assignment.maxGrade.truncateToDouble() == entry.assignment.maxGrade ? 0 : 1)}';
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                width: 50,
+                height: r.isMobile ? 46 : 50,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: InstructorColors.primary, width: 2),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  _initials(entry.studentName),
+                  style: const TextStyle(
+                    color: InstructorColors.primary,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: Text(
+                            entry.studentName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: InstructorColors.textPrimaryColor(isDark),
+                              fontWeight: FontWeight.w800,
+                              fontSize: r.isMobile ? 15 : 16,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        _buildStatusChip(badge),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
                     Text(
-                      '${_submissions.length} submissions to review',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      entry.assignment.title,
                       style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.82),
-                        fontSize: 12,
+                        color: InstructorColors.textSecondaryColor(isDark),
                         fontWeight: FontWeight.w500,
+                        fontSize: 13,
                       ),
                     ),
                   ],
@@ -459,752 +950,241 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
             ],
           ),
           const SizedBox(height: 14),
-          _isLoading
-              ? _buildEmbeddedStatsSkeleton()
-              : Row(
-                  children: [
-                    _buildEmbeddedStatCard(
-                      label: l10n.pending,
-                      count: _pendingCount,
-                      color: GradingColors.pending,
-                      icon: Icons.pending_actions_rounded,
-                      isDark: isDark,
-                      onTap: () => _tabController.animateTo(1),
-                    ),
-                    const SizedBox(width: 10),
-                    _buildEmbeddedStatCard(
-                      label: l10n.graded,
-                      count: _gradedCount,
-                      color: GradingColors.graded,
-                      icon: Icons.check_circle_rounded,
-                      isDark: isDark,
-                      onTap: () => _tabController.animateTo(2),
-                    ),
-                    const SizedBox(width: 10),
-                    _buildEmbeddedStatCard(
-                      label: l10n.late,
-                      count: _lateCount,
-                      color: GradingColors.late,
-                      icon: Icons.warning_rounded,
-                      isDark: isDark,
-                      onTap: () => _tabController.animateTo(3),
-                    ),
-                  ],
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: InstructorColors.surfaceColor(isDark),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: _buildMetaItem(
+                    icon: Icons.calendar_today_rounded,
+                    text: _formatRelativeDate(entry.submission.submittedAt),
+                    isDark: isDark,
+                  ),
                 ),
+                Expanded(
+                  child: _buildMetaItem(
+                    icon: entry.submission.driveFile != null
+                        ? Icons.attach_file_rounded
+                        : entry.submission.submissionLink?.trim().isNotEmpty ==
+                              true
+                        ? Icons.link_rounded
+                        : Icons.notes_rounded,
+                    text: entry.submission.driveFile != null
+                        ? l10n.gradingCenterSubmissionTypeFile
+                        : entry.submission.submissionLink?.trim().isNotEmpty ==
+                              true
+                        ? l10n.gradingCenterSubmissionTypeLink
+                        : l10n.gradingCenterSubmissionTypeText,
+                    isDark: isDark,
+                  ),
+                ),
+                Expanded(
+                  child: _buildMetaItem(
+                    icon: Icons.repeat_rounded,
+                    text: l10n.gradingCenterAttemptNumber(
+                      entry.submission.attemptNumber,
+                    ),
+                    isDark: isDark,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: <Color>[
+                  InstructorColors.successLight.withValues(alpha: 0.92),
+                  InstructorColors.tealLight.withValues(alpha: 0.84),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: InstructorColors.success.withValues(alpha: 0.18),
+              ),
+            ),
+            child: Row(
+              children: <Widget>[
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: InstructorColors.success,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    entry.submission.score == null
+                        ? '--'
+                        : _letterFromScore(
+                            entry.submission.score!,
+                            entry.assignment.maxGrade,
+                          ),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        gradeText,
+                        style: const TextStyle(
+                          color: InstructorColors.success,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: LinearProgressIndicator(
+                          value: entry.submission.score == null
+                              ? 0
+                              : (entry.submission.score! /
+                                        entry.assignment.maxGrade)
+                                    .clamp(0, 1),
+                          minHeight: 6,
+                          color: InstructorColors.success,
+                          backgroundColor: Colors.white.withValues(alpha: 0.60),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.54),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Text(
+                    entry.submission.score == null
+                        ? l10n.pending
+                        : '${((entry.submission.score! / entry.assignment.maxGrade) * 100).round()}%',
+                    style: const TextStyle(
+                      color: InstructorColors.success,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _openDetailsSheet(entry),
+                  icon: const Icon(Icons.visibility_outlined, size: 18),
+                  label: Text(l10n.viewDetails),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: InstructorColors.primary,
+                    side: BorderSide(
+                      color: InstructorColors.primary.withValues(alpha: 0.30),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: () => _openGradeSheet(entry),
+                  icon: const Icon(Icons.edit_rounded, size: 18),
+                  label: Text(
+                    entry.submission.score == null
+                        ? l10n.grade
+                        : l10n.editGrade,
+                  ),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: InstructorColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildEmbeddedStatCard({
-    required String label,
-    required int count,
-    required Color color,
+  Widget _buildMetaItem({
     required IconData icon,
+    required String text,
     required bool isDark,
-    required VoidCallback onTap,
   }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: isDark ? 0.10 : 0.14),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: isDark ? 0.14 : 0.18),
+    return Row(
+      children: <Widget>[
+        Icon(icon, size: 16, color: InstructorColors.textTertiaryColor(isDark)),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: InstructorColors.textSecondaryColor(isDark),
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 18),
-              const SizedBox(height: 8),
-              Text(
-                count.toString(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.82),
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildEmbeddedStatsSkeleton() {
-    Widget skeletonCard() {
-      return Expanded(
-        child: Container(
-          height: 84,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
-          ),
-        ),
-      );
-    }
-
-    return Row(
-      children: [
-        skeletonCard(),
-        const SizedBox(width: 10),
-        skeletonCard(),
-        const SizedBox(width: 10),
-        skeletonCard(),
       ],
     );
   }
 
-  Widget _buildSliverAppBar(bool isDark, AppLocalizations l10n) {
-    return SliverAppBar(
-      floating: true,
-      pinned: true,
-      elevation: 0,
-      backgroundColor: isDark ? GradingColors.darkBg : GradingColors.primary,
-      surfaceTintColor: isDark ? GradingColors.darkBg : GradingColors.primary,
-      leading: null,
-      leadingWidth: 0,
-      titleSpacing: 8,
-      automaticallyImplyLeading: false,
-
-      title: Row(
-        children: [
-          // Back button
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            icon: Container(
-              width: 32,
-              height: 32,
-              padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: isDark
-                      ? [
-                          Colors.white.withValues(alpha: 0.15),
-                          Colors.white.withValues(alpha: 0.1),
-                        ]
-                      : [
-                          Colors.white.withValues(alpha: 0.25),
-                          Colors.white.withValues(alpha: 0.15),
-                        ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: isDark ? 0.2 : 0.3),
-                  width: 1,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.1 : 0.15),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Colors.white,
-                size: 16,
-              ),
-            ),
-            onPressed: () => context.pop(),
-          ),
-          const SizedBox(width: 8),
-          // Grading Center title with icon
-          Container(
-            padding: const EdgeInsets.all(5),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: isDark
-                    ? [
-                        Colors.white.withValues(alpha: 0.2),
-                        Colors.white.withValues(alpha: 0.15),
-                      ]
-                    : [
-                        Colors.white.withValues(alpha: 0.25),
-                        Colors.white.withValues(alpha: 0.15),
-                      ],
-              ),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(Icons.grading_rounded, color: Colors.white, size: 16),
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              l10n.gradingCenter,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.5,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isDark
-                  ? [GradingColors.darkBg, GradingColors.darkCard]
-                  : [GradingColors.primary, GradingColors.primaryLight],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: Stack(
-            children: [
-              // Decorative circles
-              Positioned(
-                top: -50,
-                right: -30,
-                child: Container(
-                  width: 150,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        Colors.white.withValues(alpha: 0.08),
-                        Colors.white.withValues(alpha: 0.0),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 40,
-                left: -40,
-                child: Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        Colors.white.withValues(alpha: 0.06),
-                        Colors.white.withValues(alpha: 0.0),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              // Subtle pattern overlay
-              Positioned.fill(
-                child: CustomPaint(
-                  painter: _GradingPatternPainter(
-                    color: Colors.white.withValues(alpha: 0.03),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeaderSection(bool isDark, AppLocalizations l10n) {
+  Widget _buildStatusChip(_StatusBadge badge) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        gradient: isDark
-            ? GradingColors.darkHeaderGradient
-            : GradingColors.headerGradient,
-      ),
-      child: Stack(
-        children: [
-          // Decorative circles
-          Positioned(
-            top: -60,
-            right: -40,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.05),
-              ),
-            ),
-          ),
-          Positioned(
-            top: 80,
-            left: -60,
-            child: Container(
-              width: 150,
-              height: 150,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.03),
-              ),
-            ),
-          ),
-          // Pattern overlay
-          Positioned.fill(
-            child: CustomPaint(
-              painter: _GradingPatternPainter(
-                color: Colors.white.withValues(alpha: 0.03),
-              ),
-            ),
-          ),
-          // Content
-          Column(
-            children: [
-              // Title section
-              // Row(
-              //   children: [
-              //     Container(
-              //       padding: const EdgeInsets.all(14),
-              //       decoration: BoxDecoration(
-              //         gradient: LinearGradient(
-              //           colors: [
-              //             Colors.white.withValues(alpha: 0.25),
-              //             Colors.white.withValues(alpha: 0.1),
-              //           ],
-              //           begin: Alignment.topLeft,
-              //           end: Alignment.bottomRight,
-              //         ),
-              //         borderRadius: BorderRadius.circular(16),
-              //         boxShadow: [
-              //           BoxShadow(
-              //             color: Colors.black.withValues(alpha: 0.1),
-              //             blurRadius: 10,
-              //             offset: const Offset(0, 4),
-              //           ),
-              //         ],
-              //       ),
-              //       child: const Icon(
-              //         Icons.grading_rounded,
-              //         color: Colors.white,
-              //         size: 28,
-              //       ),
-              //     ),
-              //     const SizedBox(width: 16),
-              //     Expanded(
-              //       child: Column(
-              //         crossAxisAlignment: CrossAxisAlignment.start,
-              //         children: [
-              //           Text(
-              //             l10n.gradingCenter,
-              //             style: const TextStyle(
-              //               color: Colors.white,
-              //               fontSize: 26,
-              //               fontWeight: FontWeight.bold,
-              //               letterSpacing: -0.5,
-              //             ),
-              //           ),
-              //           const SizedBox(height: 4),
-              //           Text(
-              //             '${_submissions.length} submissions to review',
-              //             style: TextStyle(
-              //               color: Colors.white.withValues(alpha: 0.8),
-              //               fontSize: 14,
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              // const SizedBox(height: 16),
-              // Stats dashboard
-              _isLoading
-                  ? StatsSkeletonDashboard(isDark: isDark)
-                  : FadeTransition(
-                      opacity: _statsAnimation,
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0, 0.2),
-                          end: Offset.zero,
-                        ).animate(_statsAnimation),
-                        child: StatsDashboard(
-                          pendingCount: _pendingCount,
-                          gradedCount: _gradedCount,
-                          lateCount: _lateCount,
-                          totalCount: _submissions.length,
-                          isDark: isDark,
-                          onStatTap: (status) {
-                            switch (status) {
-                              case 'pending':
-                                _tabController.animateTo(1);
-                                break;
-                              case 'graded':
-                                _tabController.animateTo(2);
-                                break;
-                              case 'late':
-                                _tabController.animateTo(3);
-                                break;
-                            }
-                          },
-                        ),
-                      ),
-                    ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Widget _buildSliverAppBar(
-  //   bool isDark,
-  //   AppLocalizations l10n,
-  //   bool innerBoxIsScrolled,
-  // ) {
-  //   return SliverAppBar(
-  //     expandedHeight: 280,
-  //     floating: false,
-  //     pinned: true,
-  //     elevation: 0,
-  //     backgroundColor: Colors.transparent,
-  //     surfaceTintColor: Colors.transparent,
-  //     leading: Padding(
-  //       padding: const EdgeInsets.only(left: 8),
-  //       child: Center(
-  //         child: Container(
-  //           decoration: BoxDecoration(
-  //             gradient: LinearGradient(
-  //               colors: isDark
-  //                   ? [
-  //                       Colors.white.withValues(alpha: 0.15),
-  //                       Colors.white.withValues(alpha: 0.08),
-  //                     ]
-  //                   : [
-  //                       Colors.white.withValues(alpha: 0.9),
-  //                       Colors.white.withValues(alpha: 0.7),
-  //                     ],
-  //               begin: Alignment.topLeft,
-  //               end: Alignment.bottomRight,
-  //             ),
-  //             borderRadius: BorderRadius.circular(12),
-  //             boxShadow: [
-  //               BoxShadow(
-  //                 color: Colors.black.withValues(alpha: 0.1),
-  //                 blurRadius: 8,
-  //                 offset: const Offset(0, 2),
-  //               ),
-  //             ],
-  //           ),
-  //           child: IconButton(
-  //             icon: Icon(
-  //               Icons.arrow_back_rounded,
-  //               color: isDark ? Colors.white : GradingColors.primary,
-  //             ),
-  //             onPressed: () => context.pop(),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //     flexibleSpace: FlexibleSpaceBar(
-  //       background: Stack(
-  //         children: [
-  //           // Gradient background
-  //           Container(
-  //             decoration: BoxDecoration(
-  //               gradient: isDark
-  //                   ? GradingColors.darkHeaderGradient
-  //                   : GradingColors.headerGradient,
-  //             ),
-  //           ),
-  //           // Decorative circles
-  //           Positioned(
-  //             top: -60,
-  //             right: -40,
-  //             child: Container(
-  //               width: 200,
-  //               height: 200,
-  //               decoration: BoxDecoration(
-  //                 shape: BoxShape.circle,
-  //                 color: Colors.white.withValues(alpha: 0.05),
-  //               ),
-  //             ),
-  //           ),
-  //           Positioned(
-  //             top: 80,
-  //             left: -60,
-  //             child: Container(
-  //               width: 150,
-  //               height: 150,
-  //               decoration: BoxDecoration(
-  //                 shape: BoxShape.circle,
-  //                 color: Colors.white.withValues(alpha: 0.03),
-  //               ),
-  //             ),
-  //           ),
-  //           // Pattern overlay
-  //           Positioned.fill(
-  //             child: CustomPaint(
-  //               painter: _GradingPatternPainter(
-  //                 color: Colors.white.withValues(alpha: 0.03),
-  //               ),
-  //             ),
-  //           ),
-  //           // Content
-  //           Positioned(
-  //             left: 0,
-  //             right: 0,
-  //             bottom: 0,
-  //             child: Column(
-  //               children: [
-  //                 // Title section
-  //                 Padding(
-  //                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-  //                   child: Row(
-  //                     children: [
-  //                       Container(
-  //                         padding: const EdgeInsets.all(14),
-  //                         decoration: BoxDecoration(
-  //                           gradient: LinearGradient(
-  //                             colors: [
-  //                               Colors.white.withValues(alpha: 0.25),
-  //                               Colors.white.withValues(alpha: 0.1),
-  //                             ],
-  //                             begin: Alignment.topLeft,
-  //                             end: Alignment.bottomRight,
-  //                           ),
-  //                           borderRadius: BorderRadius.circular(16),
-  //                           boxShadow: [
-  //                             BoxShadow(
-  //                               color: Colors.black.withValues(alpha: 0.1),
-  //                               blurRadius: 10,
-  //                               offset: const Offset(0, 4),
-  //                             ),
-  //                           ],
-  //                         ),
-  //                         child: const Icon(
-  //                           Icons.grading_rounded,
-  //                           color: Colors.white,
-  //                           size: 28,
-  //                         ),
-  //                       ),
-  //                       const SizedBox(width: 16),
-  //                       Expanded(
-  //                         child: Column(
-  //                           crossAxisAlignment: CrossAxisAlignment.start,
-  //                           children: [
-  //                             Text(
-  //                               l10n.gradingCenter,
-  //                               style: const TextStyle(
-  //                                 color: Colors.white,
-  //                                 fontSize: 26,
-  //                                 fontWeight: FontWeight.bold,
-  //                                 letterSpacing: -0.5,
-  //                               ),
-  //                             ),
-  //                             const SizedBox(height: 4),
-  //                             Text(
-  //                               '${_submissions.length} submissions to review',
-  //                               style: TextStyle(
-  //                                 color: Colors.white.withValues(alpha: 0.8),
-  //                                 fontSize: 14,
-  //                               ),
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //                 // Stats dashboard
-  //                 FadeTransition(
-  //                   opacity: _statsAnimation,
-  //                   child: SlideTransition(
-  //                     position: Tween<Offset>(
-  //                       begin: const Offset(0, 0.2),
-  //                       end: Offset.zero,
-  //                     ).animate(_statsAnimation),
-  //                     child: _isLoading
-  //                         ? StatsSkeletonDashboard(isDark: isDark)
-  //                         : StatsDashboard(
-  //                             pendingCount: _pendingCount,
-  //                             gradedCount: _gradedCount,
-  //                             lateCount: _lateCount,
-  //                             totalCount: _submissions.length,
-  //                             isDark: isDark,
-  //                             onStatTap: (status) {
-  //                               switch (status) {
-  //                                 case 'pending':
-  //                                   _tabController.animateTo(1);
-  //                                   break;
-  //                                 case 'graded':
-  //                                   _tabController.animateTo(2);
-  //                                   break;
-  //                                 case 'late':
-  //                                   _tabController.animateTo(3);
-  //                                   break;
-  //                               }
-  //                             },
-  //                           ),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  Widget _buildSearchFilterBar(
-    bool isDark,
-    AppLocalizations l10n, {
-    bool compact = false,
-  }) {
-    return Container(
-      padding: EdgeInsets.fromLTRB(16, compact ? 10 : 16, 16, compact ? 8 : 12),
-      decoration: BoxDecoration(
-        color: GradingColors.cardColor(isDark),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.1 : 0.03),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: badge.background,
+        borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
-        children: [
-          // Search field
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: GradingColors.primary.withValues(
-                      alpha: isDark ? 0.08 : 0.04,
-                    ),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: TextField(
-                onChanged: (v) => setState(() {
-                  _searchQuery = v;
-                }),
-                style: TextStyle(
-                  color: GradingColors.textPrimaryColor(isDark),
-                  fontSize: 14,
-                ),
-                decoration: InputDecoration(
-                  hintText: l10n.searchStudents,
-                  hintStyle: TextStyle(
-                    color: GradingColors.textTertiaryColor(isDark),
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search_rounded,
-                    color: GradingColors.primary,
-                    size: 20,
-                  ),
-                  suffixIcon: _searchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: Icon(
-                            Icons.close_rounded,
-                            color: GradingColors.textTertiaryColor(isDark),
-                            size: 18,
-                          ),
-                          onPressed: () => setState(() {
-                            _searchQuery = '';
-                          }),
-                        )
-                      : null,
-                  filled: true,
-                  fillColor: isDark
-                      ? GradingColors.darkSurface
-                      : GradingColors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide.none,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(
-                      color: GradingColors.borderColor(isDark),
-                      width: 1,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(14),
-                    borderSide: BorderSide(
-                      color: GradingColors.primary,
-                      width: 2,
-                    ),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          // Course filter dropdown
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+            width: 8,
+            height: 8,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: isDark
-                    ? [GradingColors.darkSurface, GradingColors.darkCard]
-                    : [GradingColors.surface, Colors.white],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: GradingColors.borderColor(isDark),
-                width: 1,
-              ),
+              color: badge.foreground,
+              shape: BoxShape.circle,
             ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<String>(
-                value: _selectedCourse,
-                dropdownColor: GradingColors.cardColor(isDark),
-                icon: Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  color: GradingColors.primary,
-                ),
-                style: TextStyle(
-                  color: GradingColors.textPrimaryColor(isDark),
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                ),
-                items: _courses.map((c) {
-                  return DropdownMenuItem(
-                    value: c,
-                    child: Text(c.length > 15 ? '${c.substring(0, 15)}...' : c),
-                  );
-                }).toList(),
-                onChanged: widget.courseId != null
-                    ? null
-                    : (v) => setState(() {
-                        _selectedCourse = v ?? 'All';
-                      }),
-              ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            badge.label,
+            style: TextStyle(
+              color: badge.foreground,
+              fontWeight: FontWeight.w800,
+              fontSize: 12,
             ),
           ),
         ],
@@ -1212,257 +1192,276 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
     );
   }
 
-  Widget _buildTabBar(
-    bool isDark,
-    AppLocalizations l10n, {
-    bool compact = false,
-  }) {
-    return Container(
-      margin: EdgeInsets.fromLTRB(16, compact ? 4 : 8, 16, compact ? 4 : 8),
-      decoration: BoxDecoration(
-        color: isDark ? GradingColors.darkCard : GradingColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: GradingColors.borderColor(isDark), width: 1),
-      ),
-      child: TabBar(
-        controller: _tabController,
-        labelColor: Colors.white,
-        unselectedLabelColor: GradingColors.textSecondaryColor(isDark),
-        labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
-        unselectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 13,
-        ),
-        indicator: BoxDecoration(
-          gradient: GradingColors.headerGradient,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: GradingColors.primary.withValues(alpha: 0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        indicatorSize: TabBarIndicatorSize.tab,
-        dividerColor: Colors.transparent,
-        padding: const EdgeInsets.all(4),
-        tabAlignment: TabAlignment.fill, // Added this
-        tabs: [
-          _buildTabWithBadge(l10n.all, _submissions.length, isDark),
-          _buildTabWithBadge(l10n.pending, _pendingCount, isDark),
-          _buildTabWithBadge(l10n.graded, _gradedCount, isDark),
-          _buildTabWithBadge(l10n.late, _lateCount, isDark),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabWithBadge(String label, int count, bool isDark) {
-    return Tab(
-      height: 38,
-      child: Column(
-        // Changed from Row to Column
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(label),
-          if (count > 0) ...[
-            const SizedBox(height: 2),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.15)
-                    : GradingColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                count.toString(),
-                style: TextStyle(
-                  fontSize: 9,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white70 : Colors.black,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSubmissionsList(
-    bool isDark,
-    AppLocalizations l10n,
-    String filter,
-  ) {
-    if (_isLoading) {
-      return ListView.builder(
-        primary: false,
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: ClampingScrollPhysics(),
-        ),
-        padding: const EdgeInsets.all(16),
-        itemCount: 4,
-        itemBuilder: (context, index) {
-          return GradingSkeleton(isDark: isDark);
-        },
+  _StatusBadge _statusBadge(_SubmissionEntry entry) {
+    if (entry.isGraded) {
+      return _StatusBadge(
+        label: AppLocalizations.of(context).graded,
+        foreground: InstructorColors.success,
+        background: InstructorColors.successLight,
       );
     }
-
-    final submissions = _getFilteredSubmissions(filter);
-
-    if (submissions.isEmpty) {
-      return _buildEmptyState(isDark, l10n, filter);
+    if (entry.submission.isLate) {
+      return _StatusBadge(
+        label: AppLocalizations.of(context).late,
+        foreground: InstructorColors.error,
+        background: InstructorColors.errorLight,
+      );
     }
+    return _StatusBadge(
+      label: AppLocalizations.of(context).pending,
+      foreground: InstructorColors.warning,
+      background: InstructorColors.warningLight,
+    );
+  }
 
-    return RefreshIndicator(
-      onRefresh: _loadSubmissions,
-      color: GradingColors.primary,
-      backgroundColor: GradingColors.cardColor(isDark),
-      child: ListView.builder(
-        primary: false,
-        physics: const AlwaysScrollableScrollPhysics(
-          parent: ClampingScrollPhysics(),
-        ),
-        padding: const EdgeInsets.all(16),
-        itemCount: submissions.length,
-        itemBuilder: (context, index) {
-          final submissionEntry = submissions[index];
-          final itemAnimation = Tween<double>(begin: 0, end: 1).animate(
-            CurvedAnimation(
-              parent: _listAnimController,
-              curve: Interval(
-                (index / submissions.length) * 0.5,
-                ((index + 1) / submissions.length) * 0.5 + 0.5,
-                curve: Curves.easeOutCubic,
+  Widget _buildErrorState(bool isDark) {
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: InstructorColors.error.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.wifi_off_rounded,
+                size: 46,
+                color: InstructorColors.error,
               ),
             ),
-          );
-
-          return SubmissionCard(
-            submission: submissionEntry.submission,
-            studentName: submissionEntry.studentName,
-            assignmentTitle: submissionEntry.assignmentTitle,
-            courseName: submissionEntry.courseName,
-            maxGrade: submissionEntry.maxGrade,
-            dueDate: submissionEntry.dueDate,
-            isDark: isDark,
-            animation: itemAnimation,
-            onGrade: () => GradeDialog.show(
-              context: context,
-              submission: submissionEntry.submission,
-              studentName: submissionEntry.studentName,
-              assignmentTitle: submissionEntry.assignmentTitle,
-              courseName: submissionEntry.courseName,
-              maxGrade: submissionEntry.maxGrade,
-              dueDate: submissionEntry.dueDate,
-              latePenaltyPercent: submissionEntry.latePenaltyPercent,
-              isDark: isDark,
-              onSubmit: (grade, feedback) =>
-                  _handleGradeSubmission(submissionEntry, grade, feedback),
+            const SizedBox(height: 16),
+            Text(
+              l10n.gradingCenterLoadErrorTitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-            onViewDetails: () =>
-                _showSubmissionDetails(context, submissionEntry, isDark),
-          );
-        },
+            const SizedBox(height: 8),
+            Text(
+              _errorMessage ?? l10n.tryAgain,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton.icon(
+              onPressed: _loadSubmissions,
+              icon: const Icon(Icons.refresh_rounded),
+              label: Text(l10n.tryAgain),
+              style: FilledButton.styleFrom(
+                backgroundColor: InstructorColors.primary,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  void _showSubmissionDetails(
-    BuildContext context,
-    _SubmissionEntry submissionEntry,
-    bool isDark,
-  ) {
-    final submission = submissionEntry.submission;
-    final studentEmail = submission.user?.email.trim() ?? '';
-    final lateDays = _calculateLateDays(submissionEntry);
-    final submissionText = submission.submissionText?.trim() ?? '';
-    final submissionLink = submission.submissionLink?.trim() ?? '';
-    final feedback = submission.feedback?.trim() ?? '';
-    final driveFile = submission.driveFile;
-    final fileName = driveFile?.fileName.trim().isNotEmpty == true
-        ? driveFile!.fileName
-        : (submission.fileId != null
-              ? 'Attached file #${submission.fileId}'
-              : '');
+  Widget _buildNoCoursesState(bool isDark) {
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: InstructorColors.infoLight,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.school_outlined,
+                size: 48,
+                color: InstructorColors.info,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              l10n.gradingCenterNoCoursesAvailable,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-    HapticFeedback.lightImpact();
+  Widget _buildEmptySubmissionsState(bool isDark, AppLocalizations l10n) {
+    String title;
+    String subtitle;
+    IconData icon;
 
-    showModalBottomSheet<void>(
+    switch (_selectedFilter) {
+      case _GradingSubmissionFilter.pending:
+        title = l10n.noPendingSubmissions;
+        subtitle = l10n.gradingCenterPendingEmptySubtitle;
+        icon = Icons.pending_actions_rounded;
+        break;
+      case _GradingSubmissionFilter.graded:
+        title = l10n.noGradedSubmissions;
+        subtitle = l10n.gradingCenterGradedEmptySubtitle;
+        icon = Icons.check_circle_outline_rounded;
+        break;
+      case _GradingSubmissionFilter.late:
+        title = l10n.noLateSubmissions;
+        subtitle = l10n.gradingCenterLateEmptySubtitle;
+        icon = Icons.schedule_rounded;
+        break;
+      case _GradingSubmissionFilter.all:
+        title = l10n.noSubmissionsFound;
+        subtitle = l10n.gradingCenterAllEmptySubtitle;
+        icon = Icons.inbox_rounded;
+        break;
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Container(
+              padding: const EdgeInsets.all(22),
+              decoration: BoxDecoration(
+                color: InstructorColors.primary.withValues(alpha: 0.10),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 48, color: InstructorColors.primary),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: InstructorColors.textSecondaryColor(isDark),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openDetailsSheet(_SubmissionEntry entry) async {
+    final isDark = context.read<ThemeBloc>().state.isDark;
+    final l10n = AppLocalizations.of(context);
+    final studentInfo = entry.studentEmail.isNotEmpty
+        ? '${entry.studentName} (${entry.studentEmail})'
+        : entry.studentName;
+    final fileName = entry.submission.driveFile?.fileName.trim() ?? '';
+    final submissionText = entry.submission.submissionText?.trim() ?? '';
+    final submissionLink = entry.submission.submissionLink?.trim() ?? '';
+    final feedback = entry.submission.feedback?.trim() ?? '';
+
+    await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (sheetContext) {
         return DraggableScrollableSheet(
-          initialChildSize: 0.68,
-          minChildSize: 0.35,
-          maxChildSize: 0.92,
           expand: false,
-          builder: (_, scrollController) {
+          initialChildSize: 0.78,
+          minChildSize: 0.56,
+          maxChildSize: 0.92,
+          builder: (context, scrollController) {
             return Container(
               decoration: BoxDecoration(
-                color: GradingColors.cardColor(isDark),
+                color: InstructorColors.cardColor(isDark),
                 borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(24),
+                  top: Radius.circular(32),
                 ),
               ),
               child: Column(
-                children: [
+                children: <Widget>[
+                  const SizedBox(height: 12),
                   Container(
-                    margin: const EdgeInsets.only(top: 12, bottom: 8),
-                    width: 42,
-                    height: 4,
+                    width: 46,
+                    height: 5,
                     decoration: BoxDecoration(
-                      color: GradingColors.borderColor(isDark),
-                      borderRadius: BorderRadius.circular(2),
+                      color: InstructorColors.borderColor(isDark),
+                      borderRadius: BorderRadius.circular(999),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 8, 12, 12),
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
                     child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundColor: GradingColors.primary.withValues(
-                            alpha: 0.14,
+                      children: <Widget>[
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: InstructorColors.primary.withValues(
+                              alpha: 0.10,
+                            ),
+                            shape: BoxShape.circle,
                           ),
+                          alignment: Alignment.center,
                           child: Text(
-                            submissionEntry.studentName.isNotEmpty
-                                ? submissionEntry.studentName[0].toUpperCase()
-                                : '?',
+                            _initials(entry.studentName),
                             style: const TextStyle(
-                              color: GradingColors.primary,
-                              fontWeight: FontWeight.w700,
+                              color: InstructorColors.primary,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 18,
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        const SizedBox(width: 14),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: <Widget>[
                               Text(
-                                submissionEntry.studentName,
+                                entry.studentName,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: GradingColors.textPrimaryColor(isDark),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                submissionEntry.assignmentTitle,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: GradingColors.textSecondaryColor(
+                                  color: InstructorColors.textPrimaryColor(
                                     isDark,
                                   ),
-                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                entry.assignment.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: InstructorColors.textSecondaryColor(
+                                    isDark,
+                                  ),
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
                                 ),
                               ),
                             ],
@@ -1472,104 +1471,172 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
                           onPressed: () => Navigator.of(sheetContext).pop(),
                           icon: Icon(
                             Icons.close_rounded,
-                            color: GradingColors.textSecondaryColor(isDark),
+                            color: InstructorColors.textSecondaryColor(isDark),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Divider(height: 1, color: GradingColors.borderColor(isDark)),
                   Expanded(
                     child: ListView(
                       controller: scrollController,
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-                      children: [
-                        _buildDetailsTile(
-                          icon: Icons.person_outline_rounded,
-                          label: 'Student',
-                          value: studentEmail.isNotEmpty
-                              ? '${submissionEntry.studentName} ($studentEmail)'
-                              : submissionEntry.studentName,
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+                      children: <Widget>[
+                        _buildSheetSection(
                           isDark: isDark,
-                        ),
-                        _buildDetailsTile(
-                          icon: Icons.class_rounded,
-                          label: 'Course',
-                          value: submissionEntry.courseName,
-                          isDark: isDark,
-                        ),
-                        _buildDetailsTile(
-                          icon: Icons.assignment_outlined,
-                          label: 'Status',
-                          value: _formatSubmissionStatus(
-                            submission.submissionStatus,
+                          icon: Icons.dashboard_customize_rounded,
+                          title: l10n.gradingCenterSubmissionSnapshot,
+                          child: Column(
+                            children: <Widget>[
+                              _buildDetailRow(
+                                isDark,
+                                l10n.gradingCenterStudentLabel,
+                                studentInfo,
+                              ),
+                              _buildDetailRow(
+                                isDark,
+                                l10n.gradingCenterCourseLabel,
+                                '${entry.courseCode} - ${entry.courseName}',
+                              ),
+                              _buildDetailRow(
+                                isDark,
+                                l10n.gradingCenterStatusLabel,
+                                _statusBadge(entry).label,
+                              ),
+                              _buildDetailRow(
+                                isDark,
+                                l10n.gradingCenterSubmittedLabel,
+                                _formatFullDate(entry.submission.submittedAt),
+                              ),
+                              _buildDetailRow(
+                                isDark,
+                                l10n.gradingCenterAttemptLabel,
+                                l10n.gradingCenterAttemptNumber(
+                                  entry.submission.attemptNumber,
+                                ),
+                              ),
+                              _buildDetailRow(
+                                isDark,
+                                l10n.gradingCenterCurrentGradeLabel,
+                                entry.submission.score == null
+                                    ? l10n.gradingCenterNotGradedYet
+                                    : '${_formatScore(entry.submission.score!)} / ${entry.assignment.maxGrade.toStringAsFixed(entry.assignment.maxGrade.truncateToDouble() == entry.assignment.maxGrade ? 0 : 1)}',
+                              ),
+                            ],
                           ),
-                          isDark: isDark,
                         ),
-                        _buildDetailsTile(
-                          icon: Icons.calendar_today_rounded,
-                          label: 'Submitted',
-                          value: _formatDateTime(submission.submittedAt),
-                          isDark: isDark,
-                        ),
-                        _buildDetailsTile(
-                          icon: Icons.repeat_rounded,
-                          label: 'Attempt',
-                          value: 'Attempt ${submission.attemptNumber}',
-                          isDark: isDark,
-                        ),
-                        if (submission.isLate)
-                          _buildDetailsTile(
-                            icon: Icons.warning_amber_rounded,
-                            label: 'Late Submission',
-                            value: '$lateDays day(s) late',
-                            valueColor: GradingColors.late,
+                        if (feedback.isNotEmpty) ...<Widget>[
+                          const SizedBox(height: 14),
+                          _buildSheetSection(
                             isDark: isDark,
-                          ),
-                        if (submission.score != null)
-                          _buildDetailsTile(
-                            icon: Icons.grade_rounded,
-                            label: 'Current Grade',
-                            value:
-                                '${_formatScore(submission.score!)} / ${submissionEntry.maxGrade}',
-                            isDark: isDark,
-                          ),
-                        if (feedback.isNotEmpty) ...[
-                          const SizedBox(height: 12),
-                          _buildLongTextBlock(
                             icon: Icons.feedback_outlined,
-                            label: 'Feedback',
-                            value: feedback,
-                            isDark: isDark,
+                            title: l10n.feedback,
+                            child: Text(
+                              feedback,
+                              style: TextStyle(
+                                color: InstructorColors.textPrimaryColor(
+                                  isDark,
+                                ),
+                                height: 1.45,
+                              ),
+                            ),
                           ),
                         ],
-                        if (submissionText.isNotEmpty) ...[
-                          const SizedBox(height: 12),
-                          _buildLongTextBlock(
+                        if (submissionText.isNotEmpty) ...<Widget>[
+                          const SizedBox(height: 14),
+                          _buildSheetSection(
+                            isDark: isDark,
                             icon: Icons.notes_rounded,
-                            label: 'Text Submission',
-                            value: submissionText,
-                            isDark: isDark,
+                            title: l10n.gradingCenterTextSubmissionTitle,
+                            child: SelectableText(
+                              submissionText,
+                              style: TextStyle(
+                                color: InstructorColors.textPrimaryColor(
+                                  isDark,
+                                ),
+                                height: 1.45,
+                              ),
+                            ),
                           ),
                         ],
-                        if (submissionLink.isNotEmpty) ...[
-                          const SizedBox(height: 12),
-                          _buildDetailsTile(
+                        if (submissionLink.isNotEmpty) ...<Widget>[
+                          const SizedBox(height: 14),
+                          _buildSheetSection(
+                            isDark: isDark,
                             icon: Icons.link_rounded,
-                            label: 'Link Submission',
-                            value: submissionLink,
-                            isDark: isDark,
-                            isLink: true,
-                            onTap: () => _openExternalUrl(submissionLink),
+                            title: l10n.gradingCenterLinkSubmissionTitle,
+                            child: InkWell(
+                              onTap: () => _openExternalUrl(submissionLink),
+                              child: Text(
+                                submissionLink,
+                                style: const TextStyle(
+                                  color: InstructorColors.primary,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
-                        if (fileName.isNotEmpty) ...[
-                          const SizedBox(height: 12),
-                          _buildFileSection(
-                            fileName: fileName,
-                            openUrl: driveFile?.webViewLink ?? '',
-                            downloadUrl: driveFile?.downloadUrl ?? '',
+                        if (fileName.isNotEmpty) ...<Widget>[
+                          const SizedBox(height: 14),
+                          _buildSheetSection(
                             isDark: isDark,
+                            icon: Icons.attach_file_rounded,
+                            title: l10n.gradingCenterFileSubmissionTitle,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  fileName,
+                                  style: TextStyle(
+                                    color: InstructorColors.textPrimaryColor(
+                                      isDark,
+                                    ),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: <Widget>[
+                                    if ((entry.submission.driveFile?.webViewLink
+                                                .trim() ??
+                                            '')
+                                        .isNotEmpty)
+                                      OutlinedButton.icon(
+                                        onPressed: () => openDriveFilePreviewScreen(
+                                          sheetContext,
+                                          file: entry.submission.driveFile!,
+                                          isDark: isDark,
+                                        ),
+                                        icon: const Icon(
+                                          Icons.visibility_outlined,
+                                        ),
+                                        label: Text(l10n.preview),
+                                      ),
+                                    if ((entry.submission.driveFile?.downloadUrl
+                                                .trim() ??
+                                            '')
+                                        .isNotEmpty)
+                                      OutlinedButton.icon(
+                                        onPressed: () => _openExternalUrl(
+                                          entry
+                                              .submission
+                                              .driveFile!
+                                              .downloadUrl,
+                                        ),
+                                        icon: const Icon(
+                                          Icons.download_rounded,
+                                        ),
+                                        label: Text(
+                                          l10n.studentCourseDetailDownload,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ],
@@ -1584,435 +1651,1100 @@ class _GradingCenterScreenState extends State<GradingCenterScreen>
     );
   }
 
-  Widget _buildDetailsTile({
-    required IconData icon,
-    required String label,
-    required String value,
+  Widget _buildSheetSection({
     required bool isDark,
-    Color? valueColor,
-    bool isLink = false,
-    VoidCallback? onTap,
+    required IconData icon,
+    required String title,
+    required Widget child,
   }) {
-    final valueTextStyle = TextStyle(
-      color: valueColor ?? GradingColors.textPrimaryColor(isDark),
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-      height: 1.35,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: InstructorColors.surfaceColor(isDark),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: InstructorColors.borderColor(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: InstructorColors.primary.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: InstructorColors.primary, size: 18),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                title,
+                style: TextStyle(
+                  color: InstructorColors.textPrimaryColor(isDark),
+                  fontWeight: FontWeight.w800,
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          child,
+        ],
+      ),
     );
+  }
 
+  Widget _buildDetailRow(bool isDark, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 18, color: GradingColors.textTertiaryColor(isDark)),
-          const SizedBox(width: 12),
+        children: <Widget>[
+          SizedBox(
+            width: 92,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: InstructorColors.textTertiaryColor(isDark),
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: GradingColors.textTertiaryColor(isDark),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
+            child: Text(
+              value,
+              style: TextStyle(
+                color: InstructorColors.textPrimaryColor(isDark),
+                fontWeight: FontWeight.w600,
+                height: 1.35,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _openGradeSheet(_SubmissionEntry entry) async {
+    final isDark = context.read<ThemeBloc>().state.isDark;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final l10n = AppLocalizations.of(context);
+    final r = context.responsive;
+    final scoreController = TextEditingController(
+      text: entry.submission.score == null
+          ? ''
+          : _formatScore(entry.submission.score!),
+    );
+    final feedbackController = TextEditingController(
+      text: entry.submission.feedback ?? '',
+    );
+    String? errorText;
+    bool isSubmitting = false;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            Future<void> submitGrade() async {
+              final rawScore = scoreController.text.trim();
+              final parsedScore = double.tryParse(rawScore);
+              if (parsedScore == null ||
+                  parsedScore < 0 ||
+                  parsedScore > entry.assignment.maxGrade) {
+                setModalState(() {
+                  errorText = l10n.gradingCenterInvalidGradeRange(
+                    entry.assignment.maxGrade.toStringAsFixed(
+                      entry.assignment.maxGrade.truncateToDouble() ==
+                              entry.assignment.maxGrade
+                          ? 0
+                          : 1,
+                    ),
+                  );
+                });
+                return;
+              }
+
+              setModalState(() {
+                errorText = null;
+                isSubmitting = true;
+              });
+
+              final result = await _assignmentService.gradeSubmission(
+                entry.assignment.assignmentId,
+                entry.submission.id,
+                parsedScore,
+                feedback: feedbackController.text.trim().isEmpty
+                    ? null
+                    : feedbackController.text.trim(),
+              );
+
+              if (!mounted) {
+                return;
+              }
+
+              if (!result.isSuccess) {
+                setModalState(() {
+                  isSubmitting = false;
+                  errorText =
+                      result.error?.message ?? l10n.gradingCenterSaveFailed;
+                });
+                return;
+              }
+
+              setState(() {
+                final index = _submissions.indexWhere(
+                  (item) => item.submission.id == entry.submission.id,
+                );
+                if (index != -1) {
+                  _submissions[index] = _submissions[index].copyWith(
+                    submission: AssignmentSubmissionModel(
+                      id: entry.submission.id,
+                      assignmentId: entry.submission.assignmentId,
+                      userId: entry.submission.userId,
+                      submissionText: entry.submission.submissionText,
+                      submissionLink: entry.submission.submissionLink,
+                      fileId: entry.submission.fileId,
+                      submissionStatus: api.SubmissionStatus.graded,
+                      isLate: entry.submission.isLate,
+                      attemptNumber: entry.submission.attemptNumber,
+                      submittedAt: entry.submission.submittedAt,
+                      score: parsedScore,
+                      feedback: feedbackController.text.trim().isEmpty
+                          ? null
+                          : feedbackController.text.trim(),
+                      gradedBy: entry.submission.gradedBy,
+                      gradedAt: DateTime.now(),
+                      user: entry.submission.user,
+                      driveFile: entry.submission.driveFile,
+                    ),
+                  );
+                }
+              });
+
+              HapticFeedback.mediumImpact();
+              if (sheetContext.mounted) {
+                Navigator.of(sheetContext).pop();
+              }
+              if (!mounted) {
+                return;
+              }
+              scaffoldMessenger.showSnackBar(
+                SnackBar(
+                  content: Text(l10n.gradeSubmitted),
+                  behavior: SnackBarBehavior.floating,
+                  backgroundColor: InstructorColors.success,
                 ),
-                const SizedBox(height: 3),
-                if (isLink)
-                  InkWell(
-                    onTap: onTap,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Text(
-                      value,
-                      style: valueTextStyle.copyWith(
-                        color: GradingColors.primary,
-                        decoration: TextDecoration.underline,
+              );
+            }
+
+            final quickScores = <int>[100, 90, 80, 70, 60, 50];
+            final currentPercent = entry.submission.score == null
+                ? null
+                : (entry.submission.score! / entry.assignment.maxGrade) * 100;
+
+            final maxGradeLabel = entry.assignment.maxGrade.toStringAsFixed(
+              entry.assignment.maxGrade.truncateToDouble() ==
+                      entry.assignment.maxGrade
+                  ? 0
+                  : 1,
+            );
+
+            return Padding(
+              padding: EdgeInsets.only(
+                left: 12,
+                right: 12,
+                bottom: MediaQuery.of(sheetContext).viewInsets.bottom + 12,
+              ),
+              child: SafeArea(
+                top: false,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: r.isMobile ? double.infinity : 640,
+                      maxHeight:
+                          MediaQuery.of(sheetContext).size.height *
+                          (r.isMobile ? 0.66 : 0.60),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: InstructorColors.cardColor(isDark),
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: <BoxShadow>[
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.16),
+                            blurRadius: 28,
+                            offset: const Offset(0, 12),
+                          ),
+                        ],
+                      ),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 18),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Center(
+                              child: Container(
+                                width: 46,
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  color: InstructorColors.borderColor(isDark),
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                gradient: isDark
+                                    ? InstructorColors.darkHeaderGradient
+                                    : InstructorColors.headerGradient,
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    width: 42,
+                                    height: 42,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.16,
+                                      ),
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: const Icon(
+                                      Icons.fact_check_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          l10n.gradeSubmission,
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: r.isMobile ? 19 : 21,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          entry.studentName,
+                                          style: TextStyle(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.84,
+                                            ),
+                                            fontSize: 12.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () =>
+                                        Navigator.of(sheetContext).pop(),
+                                    icon: const Icon(
+                                      Icons.close_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: InstructorColors.surfaceColor(isDark),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: InstructorColors.borderColor(isDark),
+                                ),
+                              ),
+                              child: Row(
+                                children: <Widget>[
+                                  Container(
+                                    width: 42,
+                                    height: 42,
+                                    decoration: BoxDecoration(
+                                      color: InstructorColors.primary,
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: const Icon(
+                                      Icons.assignment_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          entry.assignment.title,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color:
+                                                InstructorColors.textPrimaryColor(
+                                                  isDark,
+                                                ),
+                                            fontWeight: FontWeight.w800,
+                                            fontSize: 15.5,
+                                            height: 1.2,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${entry.courseCode} - ${entry.courseName}',
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            color:
+                                                InstructorColors.textSecondaryColor(
+                                                  isDark,
+                                                ),
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 11.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            Container(
+                              padding: const EdgeInsets.all(14),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: <Color>[
+                                    InstructorColors.primary.withValues(
+                                      alpha: 0.06,
+                                    ),
+                                    InstructorColors.tealLight.withValues(
+                                      alpha: 0.18,
+                                    ),
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: InstructorColors.borderColor(isDark),
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Text(
+                                          l10n.grade,
+                                          style: TextStyle(
+                                            color:
+                                                InstructorColors.textPrimaryColor(
+                                                  isDark,
+                                                ),
+                                            fontWeight: FontWeight.w800,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                      if (currentPercent != null)
+                                        Flexible(
+                                          child: _buildInfoPill(
+                                            icon: Icons.analytics_rounded,
+                                            label: l10n
+                                                .gradingCenterCurrentScore(
+                                                  currentPercent.round(),
+                                                ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 14,
+                                            vertical: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: InstructorColors.cardColor(
+                                              isDark,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              18,
+                                            ),
+                                            border: Border.all(
+                                              color: InstructorColors.primary
+                                                  .withValues(alpha: 0.18),
+                                            ),
+                                          ),
+                                          child: TextField(
+                                            controller: scoreController,
+                                            keyboardType:
+                                                const TextInputType.numberWithOptions(
+                                                  decimal: true,
+                                                ),
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color:
+                                                  InstructorColors.textPrimaryColor(
+                                                    isDark,
+                                                  ),
+                                              fontSize: r.isMobile ? 24 : 28,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                            decoration: const InputDecoration(
+                                              isDense: true,
+                                              border: InputBorder.none,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 12,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.72,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '/ $maxGradeLabel',
+                                          style: TextStyle(
+                                            color:
+                                                InstructorColors.textSecondaryColor(
+                                                  isDark,
+                                                ),
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: <Widget>[
+                                      _buildInfoPill(
+                                        icon: Icons.schedule_rounded,
+                                        label: l10n.gradingCenterLatePenalty(
+                                          entry.assignment.latePenaltyPercent
+                                              .toStringAsFixed(0),
+                                        ),
+                                      ),
+                                      _buildInfoPill(
+                                        icon: Icons.flag_rounded,
+                                        label: entry.submission.isLate
+                                            ? l10n.late
+                                            : l10n.pending,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 14),
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: InstructorColors.cardColor(isDark),
+                                      borderRadius: BorderRadius.circular(18),
+                                      border: Border.all(
+                                        color: InstructorColors.borderColor(
+                                          isDark,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text(
+                                          l10n.quickGrade,
+                                          style: TextStyle(
+                                            color:
+                                                InstructorColors.textSecondaryColor(
+                                                  isDark,
+                                                ),
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 12.5,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: quickScores
+                                              .map((percent) {
+                                                final value =
+                                                    ((entry
+                                                            .assignment
+                                                            .maxGrade *
+                                                        percent) /
+                                                    100);
+                                                return InkWell(
+                                                  onTap: () {
+                                                    scoreController.text =
+                                                        _formatScore(value);
+                                                    setModalState(() {
+                                                      errorText = null;
+                                                    });
+                                                  },
+                                                  borderRadius:
+                                                      BorderRadius.circular(14),
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 12,
+                                                          vertical: 10,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color: _quickGradeColor(
+                                                        percent,
+                                                      ).withValues(alpha: 0.10),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            14,
+                                                          ),
+                                                      border: Border.all(
+                                                        color:
+                                                            _quickGradeColor(
+                                                              percent,
+                                                            ).withValues(
+                                                              alpha: 0.25,
+                                                            ),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      '$percent%',
+                                                      style: TextStyle(
+                                                        color: _quickGradeColor(
+                                                          percent,
+                                                        ),
+                                                        fontWeight:
+                                                            FontWeight.w800,
+                                                        fontSize: 16,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                );
+                                              })
+                                              .toList(growable: false),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 14),
+                            Text(
+                              l10n.feedback,
+                              style: TextStyle(
+                                color: InstructorColors.textPrimaryColor(
+                                  isDark,
+                                ),
+                                fontWeight: FontWeight.w800,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            TextField(
+                              controller: feedbackController,
+                              minLines: 3,
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                hintText: l10n.gradingCenterFeedbackHint,
+                                filled: true,
+                                fillColor: InstructorColors.cardColor(isDark),
+                                contentPadding: const EdgeInsets.all(16),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide(
+                                    color: InstructorColors.borderColor(isDark),
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: BorderSide(
+                                    color: InstructorColors.borderColor(isDark),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  borderSide: const BorderSide(
+                                    color: InstructorColors.primary,
+                                    width: 1.4,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            if (errorText != null) ...<Widget>[
+                              const SizedBox(height: 12),
+                              Text(
+                                errorText!,
+                                style: const TextStyle(
+                                  color: InstructorColors.error,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                            const SizedBox(height: 14),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () =>
+                                        Navigator.of(sheetContext).pop(),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor:
+                                          InstructorColors.textPrimaryColor(
+                                            isDark,
+                                          ),
+                                      side: BorderSide(
+                                        color: InstructorColors.borderColor(
+                                          isDark,
+                                        ),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(18),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 15,
+                                      ),
+                                    ),
+                                    child: Text(l10n.cancel),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: FilledButton.icon(
+                                    onPressed: isSubmitting
+                                        ? null
+                                        : submitGrade,
+                                    icon: isSubmitting
+                                        ? const SizedBox(
+                                            width: 18,
+                                            height: 18,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2.2,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : const Icon(
+                                            Icons.check_circle_rounded,
+                                          ),
+                                    label: Text(
+                                      isSubmitting
+                                          ? l10n.gradingCenterSaving
+                                          : l10n.submitGrade,
+                                    ),
+                                    style: FilledButton.styleFrom(
+                                      backgroundColor: InstructorColors.primary,
+                                      foregroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(18),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 15,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  )
-                else
-                  Text(value, style: valueTextStyle),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLongTextBlock({
-    required IconData icon,
-    required String label,
-    required String value,
-    required bool isDark,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: GradingColors.surfaceColor(
-          isDark,
-        ).withValues(alpha: isDark ? 0.35 : 1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: GradingColors.borderColor(isDark)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                icon,
-                size: 18,
-                color: GradingColors.textTertiaryColor(isDark),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  color: GradingColors.textTertiaryColor(isDark),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          SelectableText(
-            value,
-            style: TextStyle(
-              color: GradingColors.textPrimaryColor(isDark),
-              fontSize: 14,
-              height: 1.45,
-            ),
-          ),
-        ],
-      ),
+            );
+          },
+        );
+      },
     );
+
+    scoreController.dispose();
+    feedbackController.dispose();
   }
 
-  Widget _buildFileSection({
-    required String fileName,
-    required String openUrl,
-    required String downloadUrl,
-    required bool isDark,
-  }) {
-    final hasOpenUrl = openUrl.trim().isNotEmpty;
-    final hasDownloadUrl = downloadUrl.trim().isNotEmpty;
-
+  Widget _buildInfoPill({required IconData icon, required String label}) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
       decoration: BoxDecoration(
-        color: GradingColors.surfaceColor(
-          isDark,
-        ).withValues(alpha: isDark ? 0.35 : 1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: GradingColors.borderColor(isDark)),
+        color: InstructorColors.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(999),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                Icons.attach_file_rounded,
-                size: 18,
-                color: GradingColors.textTertiaryColor(isDark),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'File Submission',
-                style: TextStyle(
-                  color: GradingColors.textTertiaryColor(isDark),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(icon, size: 15, color: InstructorColors.primary),
+          const SizedBox(width: 6),
           Text(
-            fileName,
-            style: TextStyle(
-              color: GradingColors.textPrimaryColor(isDark),
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
+            label,
+            style: const TextStyle(
+              color: InstructorColors.primary,
+              fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            'Size: unavailable',
-            style: TextStyle(
-              color: GradingColors.textSecondaryColor(isDark),
-              fontSize: 12,
-            ),
-          ),
-          if (hasOpenUrl || hasDownloadUrl) ...[
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                if (hasOpenUrl)
-                  OutlinedButton.icon(
-                    onPressed: () => _openExternalUrl(openUrl),
-                    icon: const Icon(Icons.visibility_outlined, size: 18),
-                    label: const Text('Preview'),
-                  ),
-                if (hasDownloadUrl)
-                  OutlinedButton.icon(
-                    onPressed: () => _openExternalUrl(downloadUrl),
-                    icon: const Icon(Icons.download_rounded, size: 18),
-                    label: const Text('Download'),
-                  ),
-              ],
-            ),
-          ],
         ],
       ),
     );
   }
 
   Future<void> _openExternalUrl(String rawUrl) async {
-    final normalizedUrl = rawUrl.trim();
-    if (normalizedUrl.isEmpty) {
-      _showInlineMessage('No link available for this submission.');
+    final url = rawUrl.trim();
+    if (url.isEmpty) {
       return;
     }
 
-    final uri = Uri.tryParse(normalizedUrl);
+    final uri = Uri.tryParse(url);
     if (uri == null) {
-      _showInlineMessage('Invalid URL format.');
-      return;
-    }
-
-    final canOpen = await canLaunchUrl(uri);
-    if (!canOpen) {
-      _showInlineMessage('No app available to open this link.');
       return;
     }
 
     try {
-      final launched = await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
-      if (!launched) {
-        _showInlineMessage('No app available to open this link.');
-      }
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (_) {
-      _showInlineMessage('Failed to open link.');
+      if (!mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).gradingCenterOpenLinkError,
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
 
-  void _showInlineMessage(String message) {
-    if (!mounted) {
-      return;
+  String _selectedCourseLabel(AppLocalizations l10n) {
+    if (_selectedCourseId == null) {
+      return l10n.allCourses;
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+    final match = _teachingCourses.where(
+      (course) => course.courseId == _selectedCourseId,
     );
+    if (match.isEmpty) {
+      return l10n.allCourses;
+    }
+    return _courseChipLabel(match.first);
   }
 
-  int _calculateLateDays(_SubmissionEntry submissionEntry) {
-    if (!submissionEntry.submission.isLate) {
-      return 0;
+  String _courseChipLabel(TeachingCourseModel course) {
+    final code = course.course.code.trim();
+    final name = course.course.name.trim();
+    if (code.isEmpty) {
+      return name;
+    }
+    return '$code - $name';
+  }
+
+  String _courseBadgeLabel(String code, String name) {
+    final cleanCode = code.trim();
+    if (cleanCode.isNotEmpty) {
+      return cleanCode;
     }
 
-    final lateDuration = submissionEntry.submission.submittedAt.difference(
-      submissionEntry.dueDate,
-    );
-
-    if (lateDuration.isNegative) {
-      return 1;
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList(growable: false);
+    if (parts.isEmpty) {
+      return '?';
     }
-
-    final lateDays = (lateDuration.inHours / 24).ceil();
-    return lateDays <= 0 ? 1 : lateDays;
-  }
-
-  String _formatDateTime(DateTime dateTime) {
-    final day = dateTime.day.toString().padLeft(2, '0');
-    final month = dateTime.month.toString().padLeft(2, '0');
-    final year = dateTime.year;
-    final hour = dateTime.hour.toString().padLeft(2, '0');
-    final minute = dateTime.minute.toString().padLeft(2, '0');
-    return '$day/$month/$year $hour:$minute';
-  }
-
-  String _formatScore(double score) {
-    if (score == score.roundToDouble()) {
-      return score.toInt().toString();
+    if (parts.length == 1) {
+      return parts.first.characters.take(2).toString().toUpperCase();
     }
-    return score.toStringAsFixed(1);
+    return (parts.first.characters.first + parts.last.characters.first)
+        .toUpperCase();
   }
 
-  String _formatSubmissionStatus(api.SubmissionStatus status) {
-    switch (status) {
-      case api.SubmissionStatus.submitted:
-        return 'Submitted';
-      case api.SubmissionStatus.graded:
-        return 'Graded';
-      case api.SubmissionStatus.returned:
-        return 'Returned';
-      case api.SubmissionStatus.resubmit:
-        return 'Resubmitted';
-      case api.SubmissionStatus.unknown:
-        return 'Unknown';
-    }
-  }
-
-  Widget _buildEmptyState(bool isDark, AppLocalizations l10n, String filter) {
-    IconData icon;
-    String message;
-    Color color;
-
+  String _filterLabel(AppLocalizations l10n, _GradingSubmissionFilter filter) {
     switch (filter) {
-      case 'pending':
-        icon = Icons.pending_actions_rounded;
-        message = l10n.noPendingSubmissions;
-        color = GradingColors.pending;
-        break;
-      case 'graded':
-        icon = Icons.check_circle_outline_rounded;
-        message = l10n.noGradedSubmissions;
-        color = GradingColors.graded;
-        break;
-      case 'late':
-        icon = Icons.schedule_rounded;
-        message = l10n.noLateSubmissions;
-        color = GradingColors.late;
-        break;
-      default:
-        icon = Icons.inbox_rounded;
-        message = l10n.noSubmissionsFound;
-        color = GradingColors.primary;
+      case _GradingSubmissionFilter.pending:
+        return l10n.pending;
+      case _GradingSubmissionFilter.graded:
+        return l10n.graded;
+      case _GradingSubmissionFilter.late:
+        return l10n.late;
+      case _GradingSubmissionFilter.all:
+        return l10n.gradingCenterAllStates;
     }
+  }
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final minHeight = constraints.hasBoundedHeight
-            ? constraints.maxHeight
-            : 0.0;
+  String _initials(String value) {
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) {
+      return '?';
+    }
+    final parts = trimmed
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+    if (parts.length == 1) {
+      return parts.first.substring(0, 1).toUpperCase();
+    }
+    return (parts.first.substring(0, 1) + parts.last.substring(0, 1))
+        .toUpperCase();
+  }
 
-        return SingleChildScrollView(
-          physics: widget.embedded ? const ClampingScrollPhysics() : null,
-          child: ConstrainedBox(
-            constraints: BoxConstraints(minHeight: minHeight),
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(24),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            color.withValues(alpha: 0.15),
-                            color.withValues(alpha: 0.05),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: color.withValues(alpha: 0.2),
-                          width: 2,
-                        ),
-                      ),
-                      child: Icon(icon, size: 48, color: color),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      message,
-                      style: TextStyle(
-                        color: GradingColors.textSecondaryColor(isDark),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      filter == 'all'
-                          ? 'All caught up! Check back later.'
-                          : 'No submissions in this category',
-                      style: TextStyle(
-                        color: GradingColors.textTertiaryColor(isDark),
-                        fontSize: 13,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+  String _formatRelativeDate(DateTime date) {
+    final l10n = AppLocalizations.of(context);
+    final now = DateTime.now();
+    final difference = now.difference(date);
+    if (difference.inMinutes < 60) {
+      final minutes = difference.inMinutes.clamp(1, 59);
+      return l10n.notificationMinutesAgo(minutes);
+    }
+    if (difference.inHours < 24) {
+      return l10n.notificationHoursAgo(difference.inHours);
+    }
+    if (difference.inDays < 7) {
+      return l10n.notificationDaysAgo(difference.inDays);
+    }
+    return DateFormat.yMMMd(
+      Localizations.localeOf(context).toLanguageTag(),
+    ).format(date);
+  }
+
+  String _formatFullDate(DateTime date) {
+    return DateFormat.yMMMd(
+      Localizations.localeOf(context).toLanguageTag(),
+    ).add_jm().format(date);
+  }
+
+  String _formatScore(double value) {
+    if (value == value.roundToDouble()) {
+      return value.toInt().toString();
+    }
+    return value.toStringAsFixed(1);
+  }
+
+  String _letterFromScore(double score, double maxGrade) {
+    if (maxGrade <= 0) {
+      return 'A';
+    }
+    final ratio = score / maxGrade;
+    if (ratio >= 0.9) {
+      return 'A';
+    }
+    if (ratio >= 0.8) {
+      return 'B';
+    }
+    if (ratio >= 0.7) {
+      return 'C';
+    }
+    if (ratio >= 0.6) {
+      return 'D';
+    }
+    return 'F';
+  }
+
+  Color _quickGradeColor(int percent) {
+    if (percent >= 90) {
+      return InstructorColors.success;
+    }
+    if (percent >= 80) {
+      return InstructorColors.teal;
+    }
+    if (percent >= 70) {
+      return InstructorColors.warning;
+    }
+    if (percent >= 60) {
+      return InstructorColors.orange;
+    }
+    return InstructorColors.error;
+  }
+
+  Widget _buildModernDropdown<T>({
+    required bool isDark,
+    required String title,
+    required IconData icon,
+    required T value,
+    required String selectedLabel,
+    required List<DropdownMenuItem<T>> items,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 6),
+          child: Text(
+            title,
+            style: TextStyle(
+              color: InstructorColors.textSecondaryColor(isDark),
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        DropdownButtonFormField<T>(
+          initialValue: value,
+          onChanged: onChanged,
+          isExpanded: true,
+          decoration: InputDecoration(
+            prefixIcon: Icon(icon, color: InstructorColors.primary, size: 20),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: 12,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide(
+                color: InstructorColors.borderColor(
+                  isDark,
+                ).withValues(alpha: 0.9),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide(
+                color: InstructorColors.borderColor(
+                  isDark,
+                ).withValues(alpha: 0.9),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: const BorderSide(
+                color: InstructorColors.primary,
+                width: 1.4,
               ),
             ),
           ),
-        );
-      },
+          dropdownColor: InstructorColors.cardColor(isDark),
+          icon: const Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: InstructorColors.primary,
+          ),
+          style: TextStyle(
+            color: InstructorColors.textPrimaryColor(isDark),
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
+          selectedItemBuilder: (context) {
+            return items
+                .map((_) {
+                  return Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(
+                      selectedLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: InstructorColors.textPrimaryColor(isDark),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                })
+                .toList(growable: false);
+          },
+          items: items,
+        ),
+      ],
     );
   }
 }
 
 class _SubmissionEntry {
   const _SubmissionEntry({
+    required this.courseId,
+    required this.courseCode,
+    required this.courseName,
+    required this.sectionCode,
+    required this.assignment,
     required this.submission,
     required this.studentName,
-    required this.assignmentTitle,
-    required this.courseName,
-    required this.maxGrade,
-    required this.dueDate,
-    required this.latePenaltyPercent,
+    required this.studentEmail,
   });
 
+  final int courseId;
+  final String courseCode;
+  final String courseName;
+  final String sectionCode;
+  final AssignmentModel assignment;
   final AssignmentSubmissionModel submission;
   final String studentName;
-  final String assignmentTitle;
-  final String courseName;
-  final int maxGrade;
-  final DateTime dueDate;
-  final double latePenaltyPercent;
+  final String studentEmail;
+
+  bool get isGraded {
+    return submission.submissionStatus == api.SubmissionStatus.graded ||
+        submission.submissionStatus == api.SubmissionStatus.returned;
+  }
 
   _SubmissionEntry copyWith({AssignmentSubmissionModel? submission}) {
     return _SubmissionEntry(
+      courseId: courseId,
+      courseCode: courseCode,
+      courseName: courseName,
+      sectionCode: sectionCode,
+      assignment: assignment,
       submission: submission ?? this.submission,
       studentName: studentName,
-      assignmentTitle: assignmentTitle,
-      courseName: courseName,
-      maxGrade: maxGrade,
-      dueDate: dueDate,
-      latePenaltyPercent: latePenaltyPercent,
+      studentEmail: studentEmail,
     );
   }
 }
 
-/// Pattern painter for app bar decoration
-class _GradingPatternPainter extends CustomPainter {
+class _HeroStat {
+  const _HeroStat({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
   final Color color;
+}
 
-  _GradingPatternPainter({required this.color});
+class _StatusBadge {
+  const _StatusBadge({
+    required this.label,
+    required this.foreground,
+    required this.background,
+  });
 
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    const spacing = 30.0;
-    const dotRadius = 1.5;
-
-    for (var x = 0.0; x < size.width; x += spacing) {
-      for (var y = 0.0; y < size.height; y += spacing) {
-        canvas.drawCircle(Offset(x, y), dotRadius, paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  final String label;
+  final Color foreground;
+  final Color background;
 }

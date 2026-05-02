@@ -4714,6 +4714,142 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewDetails => 'View Details';
 
   @override
+  String get gradingCenterHeroTitle => 'Grading Pulse';
+
+  @override
+  String get gradingCenterHeroSubtitle =>
+      'Track the grading queue, open submissions, and update scores without leaving the flow.';
+
+  @override
+  String get gradingCenterCoursesStat => 'Courses';
+
+  @override
+  String get gradingCenterSubmissionsStat => 'Submissions';
+
+  @override
+  String gradingCenterSubmissionsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count submissions',
+      one: '1 submission',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get gradingCenterCourseFilterLabel => 'Course';
+
+  @override
+  String get gradingCenterStatusFilterLabel => 'Status';
+
+  @override
+  String get gradingCenterAllStates => 'All States';
+
+  @override
+  String gradingCenterStudentFallback(int id) {
+    return 'Student #$id';
+  }
+
+  @override
+  String get gradingCenterSubmissionTypeFile => 'File';
+
+  @override
+  String get gradingCenterSubmissionTypeLink => 'Link';
+
+  @override
+  String get gradingCenterSubmissionTypeText => 'Text';
+
+  @override
+  String gradingCenterAttemptNumber(int count) {
+    return 'Attempt $count';
+  }
+
+  @override
+  String get gradingCenterNotGradedYet => 'Not graded yet';
+
+  @override
+  String get gradingCenterLoadErrorTitle => 'Unable to load the grading queue.';
+
+  @override
+  String get gradingCenterNoCoursesAvailable =>
+      'No teaching courses available yet.';
+
+  @override
+  String get gradingCenterPendingEmptySubtitle =>
+      'Everything currently visible in this course has already been graded.';
+
+  @override
+  String get gradingCenterGradedEmptySubtitle =>
+      'No graded submissions match the current course filter yet.';
+
+  @override
+  String get gradingCenterLateEmptySubtitle =>
+      'No late work is showing for the current course filter.';
+
+  @override
+  String get gradingCenterAllEmptySubtitle =>
+      'Once students submit their work, it will appear here for review.';
+
+  @override
+  String get gradingCenterSubmissionSnapshot => 'Submission Snapshot';
+
+  @override
+  String get gradingCenterStudentLabel => 'Student';
+
+  @override
+  String get gradingCenterCourseLabel => 'Course';
+
+  @override
+  String get gradingCenterStatusLabel => 'Status';
+
+  @override
+  String get gradingCenterSubmittedLabel => 'Submitted';
+
+  @override
+  String get gradingCenterAttemptLabel => 'Attempt';
+
+  @override
+  String get gradingCenterCurrentGradeLabel => 'Current Grade';
+
+  @override
+  String get gradingCenterTextSubmissionTitle => 'Text Submission';
+
+  @override
+  String get gradingCenterLinkSubmissionTitle => 'Link Submission';
+
+  @override
+  String get gradingCenterFileSubmissionTitle => 'File Submission';
+
+  @override
+  String gradingCenterInvalidGradeRange(String maxScore) {
+    return 'Enter a score between 0 and $maxScore.';
+  }
+
+  @override
+  String get gradingCenterSaveFailed => 'Failed to submit grade.';
+
+  @override
+  String gradingCenterCurrentScore(int value) {
+    return 'Current score $value%';
+  }
+
+  @override
+  String gradingCenterLatePenalty(String value) {
+    return 'Late penalty $value%';
+  }
+
+  @override
+  String get gradingCenterFeedbackHint =>
+      'Share strengths, gaps, and next steps for the student...';
+
+  @override
+  String get gradingCenterSaving => 'Saving...';
+
+  @override
+  String get gradingCenterOpenLinkError => 'Unable to open the link right now.';
+
+  @override
   String get assignmentDetails => 'Assignment Details';
 
   @override

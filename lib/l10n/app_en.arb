@@ -1711,6 +1711,85 @@
   "gradeSubmitted": "Grade submitted successfully",
   "editGrade": "Edit Grade",
   "viewDetails": "View Details",
+  "gradingCenterHeroTitle": "Grading Pulse",
+  "gradingCenterHeroSubtitle": "Track the grading queue, open submissions, and update scores without leaving the flow.",
+  "gradingCenterCoursesStat": "Courses",
+  "gradingCenterSubmissionsStat": "Submissions",
+  "gradingCenterSubmissionsCount": "{count, plural, =1{1 submission} other{{count} submissions}}",
+  "@gradingCenterSubmissionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterCourseFilterLabel": "Course",
+  "gradingCenterStatusFilterLabel": "Status",
+  "gradingCenterAllStates": "All States",
+  "gradingCenterStudentFallback": "Student #{id}",
+  "@gradingCenterStudentFallback": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterSubmissionTypeFile": "File",
+  "gradingCenterSubmissionTypeLink": "Link",
+  "gradingCenterSubmissionTypeText": "Text",
+  "gradingCenterAttemptNumber": "Attempt {count}",
+  "@gradingCenterAttemptNumber": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterNotGradedYet": "Not graded yet",
+  "gradingCenterLoadErrorTitle": "Unable to load the grading queue.",
+  "gradingCenterNoCoursesAvailable": "No teaching courses available yet.",
+  "gradingCenterPendingEmptySubtitle": "Everything currently visible in this course has already been graded.",
+  "gradingCenterGradedEmptySubtitle": "No graded submissions match the current course filter yet.",
+  "gradingCenterLateEmptySubtitle": "No late work is showing for the current course filter.",
+  "gradingCenterAllEmptySubtitle": "Once students submit their work, it will appear here for review.",
+  "gradingCenterSubmissionSnapshot": "Submission Snapshot",
+  "gradingCenterStudentLabel": "Student",
+  "gradingCenterCourseLabel": "Course",
+  "gradingCenterStatusLabel": "Status",
+  "gradingCenterSubmittedLabel": "Submitted",
+  "gradingCenterAttemptLabel": "Attempt",
+  "gradingCenterCurrentGradeLabel": "Current Grade",
+  "gradingCenterTextSubmissionTitle": "Text Submission",
+  "gradingCenterLinkSubmissionTitle": "Link Submission",
+  "gradingCenterFileSubmissionTitle": "File Submission",
+  "gradingCenterInvalidGradeRange": "Enter a score between 0 and {maxScore}.",
+  "@gradingCenterInvalidGradeRange": {
+    "placeholders": {
+      "maxScore": {
+        "type": "String"
+      }
+    }
+  },
+  "gradingCenterSaveFailed": "Failed to submit grade.",
+  "gradingCenterCurrentScore": "Current score {value}%",
+  "@gradingCenterCurrentScore": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterLatePenalty": "Late penalty {value}%",
+  "@gradingCenterLatePenalty": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "gradingCenterFeedbackHint": "Share strengths, gaps, and next steps for the student...",
+  "gradingCenterSaving": "Saving...",
+  "gradingCenterOpenLinkError": "Unable to open the link right now.",
   "assignmentDetails": "Assignment Details",
   "assignment": "Assignment",
   "submitted": "Submitted",
