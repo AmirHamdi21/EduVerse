@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -30,6 +31,7 @@ class _StubCourseService extends CourseService {
   Future<List<CourseStructureModel>> getCourseStructure(
     dynamic courseId, {
     bool forceRefresh = false,
+    CancelToken? cancelToken,
   }) async {
     return const <CourseStructureModel>[];
   }
@@ -44,6 +46,7 @@ class _StubMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     return const <CourseMaterialModel>[];
   }
@@ -58,15 +61,17 @@ class _StubEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<InstructorAssignmentModel>>.success(instructors);
   }
 
   @override
   Future<ServiceResult<List<TAAssignmentModel>>> getSectionTAs(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TAAssignmentModel>>.success(tas);
   }
 }
@@ -79,8 +84,9 @@ class _StubCommunicationService extends CommunicationService {
 
   @override
   Future<List<AnnouncementModel>> getAnnouncementsByCourseId(
-    dynamic courseId,
-  ) async {
+    dynamic courseId, {
+    CancelToken? cancelToken,
+  }) async {
     return announcements;
   }
 }
@@ -93,7 +99,10 @@ class _StubPublicProfileService extends PublicProfileService {
     : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<PublicProfileModel> getPublicProfile(dynamic userId) async {
+  Future<PublicProfileModel> getPublicProfile(
+    dynamic userId, {
+    CancelToken? cancelToken,
+  }) async {
     requests += 1;
     return profile;
   }
@@ -123,6 +132,7 @@ class _SpyOfficeHoursService extends OfficeHoursService {
     int limit = 10,
     int? instructorId,
     String? dayOfWeek,
+    CancelToken? cancelToken,
   }) async {
     slotLoadCalls += 1;
     return PaginatedResult<OfficeHourSlotModel>(
@@ -132,7 +142,9 @@ class _SpyOfficeHoursService extends OfficeHoursService {
   }
 
   @override
-  Future<List<OfficeHourAppointmentModel>> getMyAppointments() async {
+  Future<List<OfficeHourAppointmentModel>> getMyAppointments({
+    CancelToken? cancelToken,
+  }) async {
     return List<OfficeHourAppointmentModel>.from(_appointments);
   }
 
@@ -142,6 +154,7 @@ class _SpyOfficeHoursService extends OfficeHoursService {
     required String appointmentDate,
     String? topic,
     String? notes,
+    CancelToken? cancelToken,
   }) async {
     bookingCalls += 1;
     lastBookedSlotId = slotId;
@@ -249,25 +262,6 @@ Future<void> _waitForWidget(
     await tester.pump(const Duration(milliseconds: 100));
   }
   expect(finder, findsWidgets);
-}
-
-Future<void> _confirmDatePicker(WidgetTester tester) async {
-  final dateDialog = find.byType(DatePickerDialog);
-  Finder confirmFinder = find.descendant(
-    of: dateDialog,
-    matching: find.text('OK'),
-  );
-
-  if (confirmFinder.evaluate().isEmpty) {
-    confirmFinder = find.descendant(
-      of: dateDialog,
-      matching: find.text('Save'),
-    );
-  }
-
-  expect(confirmFinder, findsOneWidget);
-  await tester.tap(confirmFinder);
-  await _pumpUi(tester);
 }
 
 void main() {
@@ -463,14 +457,15 @@ void main() {
       await _waitForWidget(tester, bookButton);
       await tester.tap(bookButton.first);
       await _pumpUi(tester);
+      await tester.pumpAndSettle();
 
-      final dateDialog = find.byType(DatePickerDialog);
-      expect(dateDialog, findsOneWidget);
+      expect(find.text('Select date'), findsOneWidget);
 
-      await _confirmDatePicker(tester);
+      await tester.tap(find.text('Continue').last);
+      await _pumpUi(tester);
+      await tester.pumpAndSettle();
 
-      final bookingDialog = find.byType(AlertDialog);
-      expect(bookingDialog, findsOneWidget);
+      expect(find.text('Book Appointment'), findsOneWidget);
 
       await tester.enterText(
         _textFieldByLabel('Topic (optional)'),
@@ -482,10 +477,14 @@ void main() {
       );
 
       await tester.tap(
-        find.descendant(
-          of: bookingDialog,
-          matching: find.widgetWithText(FilledButton, 'Book'),
-        ),
+        find.text('Book').last,
+      );
+      await _pumpUi(tester);
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Capstone guidance'),
+        250,
+        scrollable: _verticalScrollable().first,
       );
       await _pumpUi(tester);
 

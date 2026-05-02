@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -6,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:edu_verse/bloc/courses/courses_bloc.dart';
 import 'package:edu_verse/bloc/theme/theme_bloc.dart';
 import 'package:edu_verse/common/service_error.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/models/admin/admin_periods_models.dart';
 import 'package:edu_verse/models/core/course_structure_model.dart';
 import 'package:edu_verse/models/core/enrollment_model.dart';
@@ -30,6 +32,7 @@ class _StubCourseService extends CourseService {
   Future<List<CourseStructureModel>> getCourseStructure(
     dynamic courseId, {
     bool forceRefresh = false,
+    CancelToken? cancelToken,
   }) async {
     return const <CourseStructureModel>[];
   }
@@ -44,6 +47,7 @@ class _StubMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     return const <CourseMaterialModel>[];
   }
@@ -54,8 +58,9 @@ class _StubEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<InstructorAssignmentModel>>.success(
       const <InstructorAssignmentModel>[
         InstructorAssignmentModel(
@@ -73,8 +78,9 @@ class _StubEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<TAAssignmentModel>>> getSectionTAs(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TAAssignmentModel>>.success(
       const <TAAssignmentModel>[],
     );
@@ -86,8 +92,9 @@ class _StubCommunicationService extends CommunicationService {
 
   @override
   Future<List<AnnouncementModel>> getAnnouncementsByCourseId(
-    dynamic courseId,
-  ) async {
+    dynamic courseId, {
+    CancelToken? cancelToken,
+  }) async {
     return const <AnnouncementModel>[];
   }
 }
@@ -100,7 +107,9 @@ class _StubOfficeHoursService extends OfficeHoursService {
   _StubOfficeHoursService() : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<List<OfficeHourAppointmentModel>> getMyAppointments() async {
+  Future<List<OfficeHourAppointmentModel>> getMyAppointments({
+    CancelToken? cancelToken,
+  }) async {
     return const <OfficeHourAppointmentModel>[];
   }
 }
@@ -182,10 +191,22 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: router,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+        ),
+      );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.byIcon(Icons.message_outlined).first);
+      await tester.tap(find.text('Overview'));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text('Open profile & booking'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Open profile & booking'));
       await tester.pumpAndSettle();
 
       expect(find.text('Instructor Route Hit'), findsOneWidget);

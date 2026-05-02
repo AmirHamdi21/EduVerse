@@ -33,9 +33,14 @@ class AttendanceService {
 
   // ── Student Endpoints ──────────────────────────────────────────────────
 
-  Future<ServiceResult<List<StudentAttendanceSummaryModel>>> getMyAttendance() {
+  Future<ServiceResult<List<StudentAttendanceSummaryModel>>> getMyAttendance({
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<StudentAttendanceSummaryModel>>(() async {
-      final response = await _client.dio.get('$_base/attendance/my');
+      final response = await _client.dio.get(
+        '$_base/attendance/my',
+        cancelToken: cancelToken,
+      );
       final payload = response.data;
 
       List<dynamic> list;
@@ -64,11 +69,13 @@ class AttendanceService {
   }
 
   Future<ServiceResult<List<StudentAttendanceSummaryModel>>> getByStudent(
-    int userId,
-  ) {
+    int userId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<StudentAttendanceSummaryModel>>(() async {
       final response = await _client.dio.get(
         '$_base/attendance/by-student/$userId',
+        cancelToken: cancelToken,
       );
       final payload = response.data;
 
@@ -95,6 +102,7 @@ class AttendanceService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<List<AttendanceSessionModel>>(() async {
       final params = <String, dynamic>{};
@@ -108,6 +116,7 @@ class AttendanceService {
       final response = await _client.dio.get(
         '$_base/attendance/sessions',
         queryParameters: params.isEmpty ? null : params,
+        cancelToken: cancelToken,
       );
 
       return _extractList(response.data)
@@ -122,6 +131,7 @@ class AttendanceService {
     required String sessionDate,
     required String sessionType,
     int? totalMinutes,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<AttendanceSessionModel>(() async {
       final body = <String, dynamic>{
@@ -134,40 +144,58 @@ class AttendanceService {
       final response = await _client.dio.post(
         '$_base/attendance/sessions',
         data: body,
+        cancelToken: cancelToken,
       );
       return AttendanceSessionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to create attendance session');
   }
 
-  Future<ServiceResult<AttendanceSessionModel>> getSessionDetails(int id) {
+  Future<ServiceResult<AttendanceSessionModel>> getSessionDetails(
+    int id, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<AttendanceSessionModel>(() async {
-      final response = await _client.dio.get('$_base/attendance/sessions/$id');
+      final response = await _client.dio.get(
+        '$_base/attendance/sessions/$id',
+        cancelToken: cancelToken,
+      );
       return AttendanceSessionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to load session details');
   }
 
   Future<ServiceResult<AttendanceSessionModel>> updateSession(
     int id,
-    Map<String, dynamic> data,
-  ) {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<AttendanceSessionModel>(() async {
       final response = await _client.dio.put(
         '$_base/attendance/sessions/$id',
         data: data,
+        cancelToken: cancelToken,
       );
       return AttendanceSessionModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to update session');
   }
 
-  Future<ServiceResult<void>> deleteSession(int id) {
+  Future<ServiceResult<void>> deleteSession(
+    int id, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.executeVoid(() async {
-      await _client.dio.delete('$_base/attendance/sessions/$id');
+      await _client.dio.delete(
+        '$_base/attendance/sessions/$id',
+        cancelToken: cancelToken,
+      );
     }, fallbackMessage: 'Failed to delete session');
   }
 
-  Future<ServiceResult<void>> closeSession(int id) {
+  Future<ServiceResult<void>> closeSession(int id, {CancelToken? cancelToken}) {
     return RetryHelper.executeVoid(() async {
-      await _client.dio.patch('$_base/attendance/sessions/$id/close');
+      await _client.dio.patch(
+        '$_base/attendance/sessions/$id/close',
+        cancelToken: cancelToken,
+      );
     }, fallbackMessage: 'Failed to close session');
   }
 
@@ -176,19 +204,25 @@ class AttendanceService {
   Future<ServiceResult<void>> markBatchAttendance({
     required int sessionId,
     required List<Map<String, dynamic>> records,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.executeVoid(() async {
       await _client.dio.post(
         '$_base/attendance/records/batch',
         data: <String, dynamic>{'sessionId': sessionId, 'records': records},
+        cancelToken: cancelToken,
       );
     }, fallbackMessage: 'Failed to save attendance');
   }
 
-  Future<ServiceResult<Map<String, dynamic>>> getSectionSummary(int sectionId) {
+  Future<ServiceResult<Map<String, dynamic>>> getSectionSummary(
+    int sectionId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<Map<String, dynamic>>(() async {
       final response = await _client.dio.get(
         '$_base/attendance/summary/$sectionId',
+        cancelToken: cancelToken,
       );
       return _extractMap(response.data);
     }, fallbackMessage: 'Failed to load section summary');
@@ -197,8 +231,9 @@ class AttendanceService {
   // ── Face Reference Endpoints (Student) ─────────────────────────────────
 
   Future<ServiceResult<StudentFaceReferenceModel>> uploadMyFaceReference(
-    File image,
-  ) {
+    File image, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<StudentFaceReferenceModel>(() async {
       final formData = FormData.fromMap(<String, dynamic>{
         'image': await MultipartFile.fromFile(
@@ -209,16 +244,19 @@ class AttendanceService {
       final response = await _client.dio.post(
         '$_base/attendance/face-references/me',
         data: formData,
+        cancelToken: cancelToken,
       );
       return StudentFaceReferenceModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to upload face reference');
   }
 
-  Future<ServiceResult<List<StudentFaceReferenceModel>>>
-  listMyFaceReferences() {
+  Future<ServiceResult<List<StudentFaceReferenceModel>>> listMyFaceReferences({
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<StudentFaceReferenceModel>>(() async {
       final response = await _client.dio.get(
         '$_base/attendance/face-references/me',
+        cancelToken: cancelToken,
       );
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
@@ -227,9 +265,15 @@ class AttendanceService {
     }, fallbackMessage: 'Failed to load face references');
   }
 
-  Future<ServiceResult<void>> deleteMyFaceReference(int id) {
+  Future<ServiceResult<void>> deleteMyFaceReference(
+    int id, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.executeVoid(() async {
-      await _client.dio.delete('$_base/attendance/face-references/me/$id');
+      await _client.dio.delete(
+        '$_base/attendance/face-references/me/$id',
+        cancelToken: cancelToken,
+      );
     }, fallbackMessage: 'Failed to delete face reference');
   }
 
@@ -238,6 +282,7 @@ class AttendanceService {
   Future<ServiceResult<AiProcessingResultModel>> uploadAiPhoto({
     required int sessionId,
     required File photo,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<AiProcessingResultModel>(() async {
       final formData = FormData.fromMap(<String, dynamic>{
@@ -251,17 +296,20 @@ class AttendanceService {
       final response = await _client.dio.post(
         '$_base/attendance/ai-photo',
         data: formData,
+        cancelToken: cancelToken,
       );
       return AiProcessingResultModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to upload AI attendance photo');
   }
 
   Future<ServiceResult<AiProcessingResultModel>> getAiProcessingResult(
-    int processingId,
-  ) {
+    int processingId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<AiProcessingResultModel>(() async {
       final response = await _client.dio.get(
         '$_base/attendance/ai-photo/$processingId',
+        cancelToken: cancelToken,
       );
       return AiProcessingResultModel.fromJson(_extractMap(response.data));
     }, fallbackMessage: 'Failed to get AI processing result');
@@ -271,6 +319,7 @@ class AttendanceService {
     int processingId, {
     Duration timeout = const Duration(seconds: 120),
     Duration interval = const Duration(milliseconds: 2500),
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<AiProcessingResultModel>(() async {
       final deadline = DateTime.now().add(timeout);
@@ -278,6 +327,7 @@ class AttendanceService {
       while (DateTime.now().isBefore(deadline)) {
         final response = await _client.dio.get(
           '$_base/attendance/ai-photo/$processingId',
+          cancelToken: cancelToken,
         );
         final model = AiProcessingResultModel.fromJson(
           _extractMap(response.data),

@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import 'core_api_client.dart';
 import '../../common/retry_helper.dart';
 import '../../common/service_error.dart';
@@ -21,6 +23,7 @@ class EnrollmentService {
   /// GET /api/enrollments/my-courses
   Future<ServiceResult<List<CourseEnrollmentModel>>> getMyEnrollments({
     int? semester,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<List<CourseEnrollmentModel>>(() async {
       final int? normalizedSemester = (semester != null && semester > 0)
@@ -34,6 +37,7 @@ class EnrollmentService {
       final response = await _client.dio.get(
         '/enrollments/my-courses',
         queryParameters: queryParams,
+        cancelToken: cancelToken,
       );
 
       return _extractList(response.data)
@@ -46,14 +50,20 @@ class EnrollmentService {
   /// GET /api/enrollments/my-courses
   Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses({
     int? semester,
+    CancelToken? cancelToken,
   }) {
-    return getMyEnrollments(semester: semester);
+    return getMyEnrollments(semester: semester, cancelToken: cancelToken);
   }
 
   /// GET /api/enrollments/teaching
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<TeachingCourseModel>>(() async {
-      final response = await _client.dio.get('/enrollments/teaching');
+      final response = await _client.dio.get(
+        '/enrollments/teaching',
+        cancelToken: cancelToken,
+      );
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
           .map(TeachingCourseModel.fromJson)
@@ -168,11 +178,13 @@ class EnrollmentService {
 
   /// GET /api/enrollments/section/{sectionId}/students
   Future<ServiceResult<List<SectionStudentModel>>> getSectionStudentsLite(
-    dynamic sectionId,
-  ) {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<SectionStudentModel>>(() async {
       final response = await _client.dio.get(
         '/enrollments/section/$sectionId/students',
+        cancelToken: cancelToken,
       );
       return _extractList(response.data)
           .whereType<Map<String, dynamic>>()
@@ -224,16 +236,21 @@ class EnrollmentService {
 
   /// GET /api/enrollments/sections/{sectionId}/tas
   Future<ServiceResult<List<TAAssignmentModel>>> getSectionTAs(
-    dynamic sectionId,
-  ) {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<TAAssignmentModel>>(() async {
       dynamic response;
       try {
         response = await _client.dio.get(
           '/enrollments/sections/$sectionId/tas',
+          cancelToken: cancelToken,
         );
       } on Exception {
-        response = await _client.dio.get('/enrollments/section/$sectionId/tas');
+        response = await _client.dio.get(
+          '/enrollments/section/$sectionId/tas',
+          cancelToken: cancelToken,
+        );
       }
       return _extractStaffMaps(
         response.data,
@@ -243,17 +260,20 @@ class EnrollmentService {
 
   /// GET /api/enrollments/sections/:id/instructors
   Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
-    dynamic sectionId,
-  ) {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<InstructorAssignmentModel>>(() async {
       dynamic response;
       try {
         response = await _client.dio.get(
           '/enrollments/sections/$sectionId/instructors',
+          cancelToken: cancelToken,
         );
       } on Exception {
         response = await _client.dio.get(
           '/enrollments/section/$sectionId/instructor',
+          cancelToken: cancelToken,
         );
       }
 

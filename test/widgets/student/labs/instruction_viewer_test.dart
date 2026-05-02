@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -30,14 +31,18 @@ class _FakeLabService extends LabService {
   final List<LabAttendanceModel> attendance;
 
   @override
-  Future<ServiceResult<LabModel>> getById(dynamic id) async {
+  Future<ServiceResult<LabModel>> getById(
+    dynamic id, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<LabModel>.success(lab);
   }
 
   @override
   Future<ServiceResult<List<LabInstructionModel>>> getInstructions(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<LabInstructionModel>>.success(
       const <LabInstructionModel>[],
     );
@@ -45,8 +50,9 @@ class _FakeLabService extends LabService {
 
   @override
   Future<ServiceResult<List<LabSubmissionModel>>> getMySubmission(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<LabSubmissionModel>>.success(
       const <LabSubmissionModel>[],
     );
@@ -54,8 +60,9 @@ class _FakeLabService extends LabService {
 
   @override
   Future<ServiceResult<List<LabAttendanceModel>>> getAttendance(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<LabAttendanceModel>>.success(attendance);
   }
 }
@@ -66,6 +73,7 @@ class _FakeEnrollmentService extends EnrollmentService {
   @override
   Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses({
     int? semester,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<List<CourseEnrollmentModel>>.success(
       const <CourseEnrollmentModel>[],
@@ -205,6 +213,12 @@ void main() {
     );
 
     await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('Attendance: Present'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
 
     expect(find.text('Attendance: Present'), findsOneWidget);
   });

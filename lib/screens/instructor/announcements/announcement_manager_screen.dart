@@ -12,7 +12,14 @@ import '../../../services/api/enrollment_service.dart';
 import '../../../widgets/instructor/announcements/announcement_barrel.dart';
 
 class AnnouncementManagerScreen extends StatefulWidget {
-  const AnnouncementManagerScreen({super.key});
+  const AnnouncementManagerScreen({
+    super.key,
+    this.embedded = false,
+    this.initialCourseId,
+  });
+
+  final bool embedded;
+  final int? initialCourseId;
 
   @override
   State<AnnouncementManagerScreen> createState() =>
@@ -87,9 +94,15 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
             .toList() ??
         <Map<String, String>>[];
 
+    final filteredOptions = widget.initialCourseId == null
+        ? options
+        : options
+            .where((option) => option['id'] == widget.initialCourseId.toString())
+            .toList(growable: false);
+
     if (!mounted) return;
     setState(() {
-      _courseOptions = options;
+      _courseOptions = filteredOptions;
     });
   }
 
@@ -125,6 +138,13 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
 
   List<AnnouncementItem> get _filteredAnnouncements {
     var filtered = _announcements;
+
+    if (widget.initialCourseId != null) {
+      final targetCourseId = widget.initialCourseId.toString();
+      filtered = filtered
+          .where((announcement) => (announcement.courseId ?? '').trim() == targetCourseId)
+          .toList(growable: false);
+    }
 
     // Apply status filter
     if (_selectedFilter != AnnouncementFilterType.all) {
@@ -209,7 +229,7 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: AnnouncementColors.delete.withOpacity(0.1),
+                color: AnnouncementColors.delete.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
@@ -368,7 +388,7 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
             Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
@@ -396,6 +416,67 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
         final isDark = themeState.isDark;
+
+        if (widget.embedded) {
+          return Container(
+            color: AnnouncementColors.background(isDark),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              l10n.announcementsManager,
+                              style: TextStyle(
+                                color: AnnouncementColors.textPrimaryColor(isDark),
+                                fontSize: 20,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              l10n.announcementsManagerSubtitle,
+                              style: TextStyle(
+                                color: AnnouncementColors.textSecondaryColor(isDark),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      FilledButton.icon(
+                        onPressed: () => _showCreateDialog(isDark),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AnnouncementColors.primary,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        icon: const Icon(Icons.add_rounded, size: 18),
+                        label: Text(l10n.newAnnouncement),
+                      ),
+                    ],
+                  ),
+                ),
+                _buildSearchBar(isDark, l10n),
+                const SizedBox(height: 12),
+                _buildFilterChips(isDark),
+                const SizedBox(height: 8),
+                Expanded(child: _buildContent(isDark, l10n)),
+              ],
+            ),
+          );
+        }
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
           value: isDark
@@ -496,7 +577,7 @@ class _AnnouncementManagerScreenState extends State<AnnouncementManagerScreen>
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),

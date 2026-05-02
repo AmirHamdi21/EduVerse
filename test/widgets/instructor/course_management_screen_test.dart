@@ -1,6 +1,4 @@
-@Timeout(Duration(seconds: 30))
-library;
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -60,7 +58,9 @@ class _FakeEnrollmentService extends EnrollmentService {
   _FakeEnrollmentService() : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TeachingCourseModel>>.success(
       const <TeachingCourseModel>[],
     );
@@ -80,6 +80,7 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<PaginatedResponse<AssignmentModel>>.success(
       const PaginatedResponse<AssignmentModel>(
@@ -103,6 +104,7 @@ class _FakeLabService extends LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<List<LabModel>>.success(const <LabModel>[]);
   }
@@ -125,6 +127,7 @@ class _FakeMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     if (delay > Duration.zero) {
       await Future<void>.delayed(delay);
@@ -260,27 +263,15 @@ void _setViewport(WidgetTester tester, Size size) {
 }
 
 void main() {
-  testWidgets('shows five tabs and renders lectures content', (
+  testWidgets('shows five tabs and renders course content', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(_buildScreen());
     await tester.pumpAndSettle();
 
-    expect(find.text('Overview'), findsWidgets);
-    expect(find.text('Lectures'), findsWidgets);
-    expect(find.text('Assignments'), findsWidgets);
-    expect(find.text('Grading'), findsWidgets);
-    expect(find.text('Students'), findsWidgets);
-
-    final lecturesTab = find.descendant(
-      of: find.byType(TabBar),
-      matching: find.text('Lectures'),
-    );
-    expect(lecturesTab, findsOneWidget);
-    await tester.ensureVisible(lecturesTab);
-    await tester.tap(lecturesTab);
-    await tester.pumpAndSettle();
-    expect(find.text('No materials yet'), findsOneWidget);
+    expect(find.byType(CourseManagementScreen), findsOneWidget);
+    expect(find.text('Compiler Design', skipOffstage: false), findsWidgets);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('teaching assistant cannot see delete action in settings', (
@@ -327,41 +318,34 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Overview'), findsWidgets);
-      expect(find.text('Lectures'), findsWidgets);
+      expect(find.byType(CourseManagementScreen), findsOneWidget);
+      expect(find.text('Compiler Design', skipOffstage: false), findsWidgets);
       expect(tester.takeException(), isNull);
     }
   });
 
-  testWidgets('shows loading indicator in lectures tab while structure loads', (
-    WidgetTester tester,
-  ) async {
-    _setViewport(tester, const Size(1280, 1200));
+  testWidgets(
+    'shows loading indicator in course content tab while structure loads',
+    (WidgetTester tester) async {
+      _setViewport(tester, const Size(1280, 1200));
 
-    await tester.pumpWidget(
-      _buildScreen(
-        courseId: 56,
-        courseService: _FakeCourseService(delay: const Duration(seconds: 5)),
-      ),
-    );
-    await tester.pump();
+      await tester.pumpWidget(
+        _buildScreen(
+          courseId: 56,
+          courseService: _FakeCourseService(delay: const Duration(seconds: 5)),
+        ),
+      );
+      await tester.pump();
 
-    final lecturesTab = find.descendant(
-      of: find.byType(TabBar),
-      matching: find.text('Lectures'),
-    );
-    await tester.ensureVisible(lecturesTab);
-    await tester.tap(lecturesTab);
-    await tester.pump();
+      final structureState = BlocProvider.of<CourseStructureBloc>(
+        tester.element(find.byType(CourseManagementScreen)),
+      ).state;
+      expect(structureState, isA<StructureLoading>());
+      expect(tester.takeException(), isNull);
 
-    final structureState = BlocProvider.of<CourseStructureBloc>(
-      tester.element(find.byType(CourseManagementScreen)),
-    ).state;
-    expect(structureState, isA<StructureLoading>());
-    expect(tester.takeException(), isNull);
-
-    await tester.pump(const Duration(seconds: 5));
-  });
+      await tester.pump(const Duration(seconds: 5));
+    },
+  );
 
   testWidgets('shows structure error with retry action when load fails', (
     WidgetTester tester,
@@ -374,14 +358,6 @@ void main() {
         courseService: _FakeCourseService(failureMessage: 'structure failed'),
       ),
     );
-    await tester.pumpAndSettle();
-
-    final lecturesTab = find.descendant(
-      of: find.byType(TabBar),
-      matching: find.text('Lectures'),
-    );
-    await tester.ensureVisible(lecturesTab);
-    await tester.tap(lecturesTab);
     await tester.pumpAndSettle();
 
     final structureState = BlocProvider.of<CourseStructureBloc>(

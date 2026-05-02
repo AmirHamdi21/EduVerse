@@ -198,6 +198,55 @@
   "myCoursesHeader": "دوراتي",
   "allEnrolledCoursesThisSemester": "جميع الدورات المسجلة هذا الفصل الدراسي",
   "searchCourseNameOrInstructor": "ابحث عن اسم المقرر أو المدرس",
+  "studentCourseHeroSubtitle": "تصفّح مقرراتك المسجلة وتابع التقدم فيها ونظّمها من مساحة تعلم واحدة مركزة.",
+  "studentCourseDetailCourseContent": "محتوى المقرر",
+  "studentCourseDetailPrerequisites": "المتطلبات السابقة",
+  "studentCourseDetailHeroFallback": "ابقَ على اطلاع بالمحتوى ودعم فريق التدريس والتحديثات من مساحة مقرر مصقولة واحدة.",
+  "studentCourseDetailItemsLabel": "عناصر",
+  "studentCourseDetailItemsCompleted": "عناصر مكتملة",
+  "studentCourseDetailEnrolledOn": "تاريخ التسجيل",
+  "studentCourseDetailOverviewHeading": "نظرة عامة على المقرر",
+  "studentCourseDetailOverviewFallback": "هذا المقرر جاهز لخطوتك التعليمية التالية. استكشف المحتوى وتواصل مع فريق التدريس وواصل تقدمك بثبات.",
+  "studentCourseDetailInstructorTitle": "المدرس",
+  "studentCourseDetailInstructorSubtitle": "افتح صفحة ملف المدرس والحجز لمراجعة التفاصيل وحجز دعم الساعات المكتبية.",
+  "studentCourseDetailOpenProfileBooking": "فتح الملف والحجز",
+  "studentCourseDetailLoadingInstructor": "جارٍ تحميل بيانات المدرس...",
+  "studentCourseDetailUnknownInstructor": "مدرس غير معروف",
+  "studentCourseDetailInstructorLoadingMessage": "معلومات المدرس ما زالت قيد التحميل.",
+  "studentCourseDetailNoInstructorAssigned": "لم يتم تعيين مدرس بعد.",
+  "studentCourseDetailTeachingAssistantsTitle": "المعيدون",
+  "studentCourseDetailTeachingAssistantsSubtitle": "تواصل بسرعة مع فريق دعم الشعبة عندما تحتاج متابعة أو تفاصيل الحجز.",
+  "studentCourseDetailLoadingTeachingAssistants": "جارٍ تحميل بيانات المعيدين...",
+  "studentCourseDetailNoTeachingAssistants": "لا يوجد معيدون معينون بعد.",
+  "studentCourseDetailTeachingAssistantRole": "معيد",
+  "studentCourseDetailNoTaProfile": "لا يوجد ملف متاح للمعيد حالياً.",
+  "studentCourseDetailProgressTitle": "تقدم المقرر",
+  "studentCourseDetailProgressSubtitle": "تابع ما أنجزته بالفعل وكم تبقى من محتوى المقرر.",
+  "studentCourseDetailDropped": "منسحب",
+  "studentCourseDetailWaitlisted": "على قائمة الانتظار",
+  "studentCourseDetailBeginner": "مبتدئ",
+  "studentCourseDetailIntermediate": "متوسط",
+  "studentCourseDetailSearchHint": "ابحث في محتوى المقرر أو الواجبات أو المعامل أو الإعلانات",
+  "studentCourseDetailSearchPromptTitle": "ابدأ بحثاً جديداً",
+  "studentCourseDetailSearchPromptSubtitle": "اكتب كلمة مفتاحية للعثور على المحاضرات أو الواجبات أو المعامل أو الإعلانات المرتبطة بهذا المقرر.",
+  "studentCourseDetailSearchNoResultsTitle": "لا توجد نتائج مطابقة",
+  "studentCourseDetailSearchNoResultsSubtitle": "جرّب كلمة أخرى أو افتح أحد تبويبات المقرر لتصفح كل شيء مباشرة.",
+  "studentCourseDetailSearchMaterialsLabel": "محتوى المقرر",
+  "studentCourseDetailNotesHint": "أنشئ ملاحظة سريعة لهذا المقرر",
+  "studentCourseDetailNotesAllItems": "كل الملاحظات",
+  "studentCourseDetailNotesSessionOnly": "ملاحظات هذه الجلسة فقط",
+  "studentCourseDetailNotesSortRecent": "الأحدث",
+  "studentCourseDetailNotesSortOldest": "الأقدم أولاً",
+  "studentCourseDetailNotesEmptyTitle": "لا توجد ملاحظات بعد",
+  "studentCourseDetailNotesEmptySubtitle": "دوّن ملاحظة سريعة لهذا المقرر وستبقى ظاهرة ما دامت هذه الصفحة مفتوحة.",
+  "studentCourseDetailDownload": "تنزيل",
+  "studentCourseDetailVideoLessons": "دروس فيديو",
+  "studentCourseDetailUnableToOpenVideo": "يتعذر فتح هذا الفيديو الآن.",
+  "studentCourseDetailPlay": "تشغيل",
+  "studentCourseDetailPause": "إيقاف",
+  "studentCourseDetailOpenInBrowser": "فتح في المتصفح",
+  "studentCourseDetailNormalSpeed": "السرعة العادية",
+  "studentCourseDetailVideoPreviewUnavailable": "معاينة الفيديو غير متاحة.",
   "filter": "تصفية",
   "sort": "ترتيب",
   "all": "الكل",
@@ -206,6 +255,7 @@
   "completed": "مكتملة",
   "missed": "مفقودة",
   "joinCourse": "الانضمام إلى دورة",
+  "studentCourseJoinHint": "يفتح خيارات التسجيل في المقررات المتاحة",
   "nextLecture": "المحاضرة التالية",
   "aiLab": "مختبر الذكاء الاصطناعي",
   "nextAssignment": "المهمة التالية",
@@ -1658,6 +1708,85 @@
   "gradeSubmitted": "تم إرسال الدرجة بنجاح",
   "editGrade": "تعديل الدرجة",
   "viewDetails": "عرض التفاصيل",
+  "gradingCenterHeroTitle": "نبض التصحيح",
+  "gradingCenterHeroSubtitle": "تابع قائمة التصحيح، وافتح التسليمات، وحدّث الدرجات من نفس المساحة دون مغادرة التدفق.",
+  "gradingCenterCoursesStat": "المواد",
+  "gradingCenterSubmissionsStat": "التسليمات",
+  "gradingCenterSubmissionsCount": "{count, plural, =1{تسليم واحد} other{{count} تسليمات}}",
+  "@gradingCenterSubmissionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterCourseFilterLabel": "المادة",
+  "gradingCenterStatusFilterLabel": "الحالة",
+  "gradingCenterAllStates": "كل الحالات",
+  "gradingCenterStudentFallback": "الطالب #{id}",
+  "@gradingCenterStudentFallback": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterSubmissionTypeFile": "ملف",
+  "gradingCenterSubmissionTypeLink": "رابط",
+  "gradingCenterSubmissionTypeText": "نصي",
+  "gradingCenterAttemptNumber": "المحاولة {count}",
+  "@gradingCenterAttemptNumber": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterNotGradedYet": "لم يتم التصحيح بعد",
+  "gradingCenterLoadErrorTitle": "تعذر تحميل قائمة التصحيح.",
+  "gradingCenterNoCoursesAvailable": "لا توجد مواد تدريسية متاحة بعد.",
+  "gradingCenterPendingEmptySubtitle": "كل ما هو ظاهر حالياً في هذه المادة تم تصحيحه بالفعل.",
+  "gradingCenterGradedEmptySubtitle": "لا توجد تسليمات مصححة تطابق فلتر المادة الحالي بعد.",
+  "gradingCenterLateEmptySubtitle": "لا توجد أعمال متأخرة ظاهرة مع فلتر المادة الحالي.",
+  "gradingCenterAllEmptySubtitle": "عندما يرسل الطلاب أعمالهم ستظهر هنا للمراجعة.",
+  "gradingCenterSubmissionSnapshot": "ملخص التسليم",
+  "gradingCenterStudentLabel": "الطالب",
+  "gradingCenterCourseLabel": "المادة",
+  "gradingCenterStatusLabel": "الحالة",
+  "gradingCenterSubmittedLabel": "تاريخ التسليم",
+  "gradingCenterAttemptLabel": "المحاولة",
+  "gradingCenterCurrentGradeLabel": "الدرجة الحالية",
+  "gradingCenterTextSubmissionTitle": "التسليم النصي",
+  "gradingCenterLinkSubmissionTitle": "تسليم الرابط",
+  "gradingCenterFileSubmissionTitle": "تسليم الملف",
+  "gradingCenterInvalidGradeRange": "أدخل درجة بين 0 و {maxScore}.",
+  "@gradingCenterInvalidGradeRange": {
+    "placeholders": {
+      "maxScore": {
+        "type": "String"
+      }
+    }
+  },
+  "gradingCenterSaveFailed": "فشل إرسال الدرجة.",
+  "gradingCenterCurrentScore": "الدرجة الحالية {value}%",
+  "@gradingCenterCurrentScore": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterLatePenalty": "خصم التأخير {value}%",
+  "@gradingCenterLatePenalty": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "gradingCenterFeedbackHint": "شارك نقاط القوة والفجوات والخطوات التالية للطالب...",
+  "gradingCenterSaving": "جارٍ الحفظ...",
+  "gradingCenterOpenLinkError": "تعذر فتح الرابط الآن.",
   "assignmentDetails": "تفاصيل الواجب",
   "assignment": "الواجب",
   "submitted": "تم التسليم",
@@ -2221,6 +2350,12 @@
   "taAIAssistant": "مساعد الذكاء الاصطناعي للمعيد",
   "taCourses": "مقررات المعيد",
   "taCourseDetail": "تفاصيل المقرر",
+  "taCourseDetailHeroSubtitle": "تابع المواد والمعامل والتصحيح والطلاب لهذه الشعبة التعليمية من مكان واحد.",
+  "taCourseDetailContentEmpty": "ستظهر مواد المقرر هنا بمجرد نشرها لهذه الشعبة.",
+  "taCourseDetailOtherMaterials": "مواد أخرى",
+  "taCourseDetailOpenLabsWorkspace": "فتح مساحة المعامل",
+  "taCourseDetailNoAttendance": "ستظهر ملخصات الحضور هنا بعد تسجيل جلسات المعمل.",
+  "taCourseDetailNoStudents": "لا يوجد طلاب مخصصون لهذه الشعبة حالياً.",
   "taCourseStudents": "الطلاب",
   "taCourseLabs": "المختبرات",
   "taCourseAssignments": "الواجبات",
@@ -2269,6 +2404,26 @@
   "taCourseLabsTab": "المختبرات",
   "taCourseGradingTab": "التصحيح",
   "taCourseDiscussionsTab": "المناقشات",
+  "taCoursesShellSubtitle": "تابع الشعب المسندة إليك، وأعمال التصحيح، والمعامل، ونشاط النقاشات من مساحة عمل واحدة مركزة.",
+  "taCoursesAllSpaces": "كل مساحات الدعم",
+  "taCoursesAvgFill": "متوسط الامتلاء",
+  "taCoursesCourseActions": "إجراءات المقرر",
+  "taCoursesSectionFill": "نسبة امتلاء الشعبة",
+  "taCoursesEnrolledCount": "{current}/{capacity} مسجلون",
+  "@taCoursesEnrolledCount": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "taCoursesNoAssignedTitle": "لا توجد مقررات تدريس مسندة",
+  "taCoursesNoAssignedSubtitle": "ستظهر هنا المقررات المسندة إليك بمجرد توفرها.",
+  "taCoursesNoMatchingTitle": "لا توجد مقررات مطابقة لهذه الفلاتر",
+  "taCoursesNoMatchingSubtitle": "جرّب تعديل البحث أو تبويب الحالة أو فلتر المستوى لإظهار المزيد من المقررات.",
   "mainMenu": "القائمة الرئيسية",
   "aiTools": "أدوات الذكاء الاصطناعي",
   "connect": "التواصل",
@@ -5195,6 +5350,22 @@
   "coursesShellReauthenticate": "إعادة تسجيل الدخول",
   "coursesShellNoSemesterMatches": "لا توجد مقررات في هذا الفصل الدراسي",
   "coursesShellSearchSemanticsHint": "ابحث برمز المقرر أو الاسم أو الشعبة أو الفصل الدراسي أو اسم المدرس",
+  "studentCourseDropped": "منسحب",
+  "studentCourseOverviewTitle": "حافظ على تقدمك",
+  "studentCourseOverviewSubtitle": "تابع العبء الدراسي الحالي والمقررات المكتملة ومستوى التقدم العام بسرعة.",
+  "studentCourseTotalCourses": "إجمالي المقررات",
+  "studentCourseActiveCourses": "النشطة الآن",
+  "studentCourseCompletedCourses": "المكتملة",
+  "studentCourseAverageProgress": "متوسط التقدم",
+  "studentCourseResultsLabel": "مقرر",
+  "studentCourseOfflineCached": "أنت غير متصل: يتم عرض بيانات المقررات المحفوظة.",
+  "studentCourseEmptyDescription": "أنت غير مسجل في أي مقررات بعد. عند فتح التسجيل ستظهر مكتبة مقرراتك هنا.",
+  "studentCourseConnectionErrorTitle": "خطأ في الاتصال",
+  "studentCourseConnectionErrorDescription": "تعذر تحميل مقرراتك الآن. تحقق من الاتصال ثم حاول مرة أخرى.",
+  "studentCourseAccessRestrictedTitle": "الوصول مقيّد",
+  "studentCourseUnknownInstructor": "معلومات المدرس غير متاحة",
+  "studentCourseSectionFallback": "الشعبة -",
+  "studentCourseNoSemester": "بدون فصل دراسي",
   "adminUseTimeFormat": "استخدم تنسيق HH:mm للأوقات.",
 
   "quizManagement": "إدارة الاختبارات",
@@ -5710,6 +5881,9 @@
   "attendanceCalendarSubtitle": "شاهد كيف يتوزع حضور هذا المقرر عبر الشهر.",
   "attendanceNoSessionsYet": "لا توجد جلسات حضور بعد",
   "attendanceNoSessionsMatchFilters": "لا توجد جلسات تطابق هذا العرض",
+  "instructorCourseDetailHeroSubtitle": "أدر محتوى المقرر وتابع التفاعل وحافظ على سير التدريس من مساحة واحدة مصقولة.",
+  "instructorCourseDetailNoSchedule": "لا يوجد جدول متاح لهذا القسم حتى الآن.",
+  "instructorCourseDetailNoActivity": "لا توجد أنشطة قادمة متاحة حتى الآن.",
   "chatVideoCallTooltip": "مكالمة فيديو",
   "chatVoiceCallTooltip": "مكالمة صوتية"
 }

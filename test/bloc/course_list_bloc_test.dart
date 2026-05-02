@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/common/service_error.dart';
@@ -19,6 +20,7 @@ class _FakeEnrollmentService extends EnrollmentService {
   @override
   Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses({
     int? semester,
+    CancelToken? cancelToken,
   }) async {
     return result;
   }

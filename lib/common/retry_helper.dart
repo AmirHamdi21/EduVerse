@@ -87,6 +87,10 @@ class RetryHelper {
     }
 
     if (error is DioException) {
+      if (error.type == DioExceptionType.cancel) {
+        return false;
+      }
+
       final statusCode = error.response?.statusCode;
       if (statusCode != null && statusCode >= 500 && statusCode <= 599) {
         return true;
@@ -152,6 +156,10 @@ class RetryHelper {
       return ServiceErrorType.auth;
     }
 
+    if (error.type == DioExceptionType.cancel) {
+      return ServiceErrorType.network;
+    }
+
     if (statusCode == 404 || statusCode == 409) {
       return ServiceErrorType.server;
     }
@@ -171,6 +179,10 @@ class RetryHelper {
   }
 
   static String _resolveDioMessage(DioException error, String fallbackMessage) {
+    if (error.type == DioExceptionType.cancel) {
+      return 'Request cancelled';
+    }
+
     final responseData = error.response?.data;
     if (responseData is Map<String, dynamic>) {
       final message = responseData['message'];

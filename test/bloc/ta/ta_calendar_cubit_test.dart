@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/ta/ta_calendar_cubit.dart';
@@ -53,6 +54,7 @@ class _FakeScheduleApiService extends ScheduleApiService {
   @override
   Future<ServiceResult<DailyScheduleResponse>> getDailySchedule({
     String? date,
+    CancelToken? cancelToken,
   }) async {
     dailyCalls += 1;
     return dailyResult;
@@ -61,6 +63,7 @@ class _FakeScheduleApiService extends ScheduleApiService {
   @override
   Future<ServiceResult<WeeklyScheduleResponse>> getWeeklySchedule({
     String? startDate,
+    CancelToken? cancelToken,
   }) async {
     weeklyCalls += 1;
     return weeklyResult;
@@ -68,22 +71,27 @@ class _FakeScheduleApiService extends ScheduleApiService {
 
   @override
   Future<ServiceResult<List<DailyScheduleResponse>>> getMonthSchedule(
-    DateTime referenceDate,
-  ) async {
+    DateTime referenceDate, {
+    CancelToken? cancelToken,
+  }) async {
     monthCalls += 1;
     return monthResult;
   }
 
   @override
   Future<ServiceResult<PersonalEventItem>> createCalendarEvent(
-    Map<String, dynamic> data,
-  ) async {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) async {
     lastCreatePayload = Map<String, dynamic>.from(data);
     return createResult;
   }
 
   @override
-  Future<ServiceResult<void>> deleteCalendarEvent(int eventId) async {
+  Future<ServiceResult<void>> deleteCalendarEvent(
+    int eventId, {
+    CancelToken? cancelToken,
+  }) async {
     lastDeleteEventId = eventId;
     return deleteResult;
   }
@@ -103,6 +111,7 @@ class _FakeOfficeHoursService extends OfficeHoursService {
     int limit = 10,
     int? instructorId,
     String? dayOfWeek,
+    CancelToken? cancelToken,
   }) async {
     return slots;
   }

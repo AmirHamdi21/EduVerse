@@ -3,28 +3,49 @@ import 'dart:io';
 import 'package:flutter/material.dart' show TimeOfDay;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/bloc/route_request_controller.dart';
 import '../../models/attendance/student_attendance_summary_model.dart';
 import '../../services/api/attendance_service.dart';
 import 'attendance_state.dart';
 
-class AttendanceCubit extends Cubit<AttendanceState> {
+class AttendanceCubit extends Cubit<AttendanceState>
+    with SafeRouteCubitMixin<AttendanceState> {
   final AttendanceService _attendanceService;
+  late final RouteRequestController _attendanceRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _faceReferencesRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _faceUploadRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _faceDeleteRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
 
   AttendanceCubit({required AttendanceService attendanceService})
     : _attendanceService = attendanceService,
       super(AttendanceState());
 
   Future<void> loadAttendance() async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _attendanceRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
 
     try {
-      final result = await _attendanceService.getMyAttendance();
+      final result = await _attendanceService.getMyAttendance(
+        cancelToken: _attendanceRequest.token,
+      );
+      if (!isRequestCurrent(_attendanceRequest, requestId)) {
+        return;
+      }
+
       if (result.isSuccess && result.data != null) {
         final apiSummaries = result.data!;
         final records = _mapApiToRecords(apiSummaries);
         final courseAttendances = _mapApiToCourseAttendances(apiSummaries);
         final statistics = _calculateStatisticsFromApi(apiSummaries, records);
-        emit(
+        emitIfOpen(
           state.copyWith(
             isLoading: false,
             allRecords: records,
@@ -39,7 +60,7 @@ class AttendanceCubit extends Cubit<AttendanceState> {
           ),
         );
       } else {
-        emit(
+        emitIfOpen(
           state.copyWith(
             isLoading: false,
             errorMessage: result.error?.message ?? 'Failed to load attendance',
@@ -47,7 +68,10 @@ class AttendanceCubit extends Cubit<AttendanceState> {
         );
       }
     } catch (e) {
-      emit(
+      if (!isRequestCurrent(_attendanceRequest, requestId)) {
+        return;
+      }
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           errorMessage: 'Failed to load attendance: $e',
@@ -118,16 +142,23 @@ class AttendanceCubit extends Cubit<AttendanceState> {
   }
 
   Future<void> loadFaceReferences() async {
-    final result = await _attendanceService.listMyFaceReferences();
+    final requestId = _faceReferencesRequest.begin();
+    final result = await _attendanceService.listMyFaceReferences(
+      cancelToken: _faceReferencesRequest.token,
+    );
+    if (!isRequestCurrent(_faceReferencesRequest, requestId)) {
+      return;
+    }
+
     if (result.isSuccess && result.data != null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           faceReferences: result.data!,
           clearFaceUploadError: true,
         ),
       );
     } else {
-      emit(
+      emitIfOpen(
         state.copyWith(
           faceUploadError:
               result.error?.message ?? 'Failed to load face references',
@@ -137,18 +168,28 @@ class AttendanceCubit extends Cubit<AttendanceState> {
   }
 
   Future<void> uploadFaceReference(File image) async {
-    emit(state.copyWith(isFaceUploading: true, clearFaceUploadError: true));
+    final requestId = _faceUploadRequest.begin();
+    emitIfOpen(
+      state.copyWith(isFaceUploading: true, clearFaceUploadError: true),
+    );
 
-    final result = await _attendanceService.uploadMyFaceReference(image);
+    final result = await _attendanceService.uploadMyFaceReference(
+      image,
+      cancelToken: _faceUploadRequest.token,
+    );
+    if (!isRequestCurrent(_faceUploadRequest, requestId)) {
+      return;
+    }
+
     if (result.isSuccess && result.data != null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isFaceUploading: false,
           faceReferences: [result.data!, ...state.faceReferences],
         ),
       );
     } else {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isFaceUploading: false,
           faceUploadError:
@@ -159,9 +200,17 @@ class AttendanceCubit extends Cubit<AttendanceState> {
   }
 
   Future<void> deleteFaceReference(int id) async {
-    final result = await _attendanceService.deleteMyFaceReference(id);
+    final requestId = _faceDeleteRequest.begin();
+    final result = await _attendanceService.deleteMyFaceReference(
+      id,
+      cancelToken: _faceDeleteRequest.token,
+    );
+    if (!isRequestCurrent(_faceDeleteRequest, requestId)) {
+      return;
+    }
+
     if (result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           faceReferences: state.faceReferences
               .where((e) => e.id != id)
@@ -169,7 +218,7 @@ class AttendanceCubit extends Cubit<AttendanceState> {
         ),
       );
     } else {
-      emit(
+      emitIfOpen(
         state.copyWith(
           faceUploadError:
               result.error?.message ?? 'Failed to delete face reference',

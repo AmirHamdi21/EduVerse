@@ -20,7 +20,14 @@ const List<List<Color>> _kTaAttendanceGradients = <List<Color>>[
 ];
 
 class TAAttendanceScreen extends StatelessWidget {
-  const TAAttendanceScreen({super.key});
+  const TAAttendanceScreen({
+    super.key,
+    this.embedded = false,
+    this.initialSectionId,
+  });
+
+  final bool embedded;
+  final int? initialSectionId;
 
   @override
   Widget build(BuildContext context) {
@@ -28,13 +35,14 @@ class TAAttendanceScreen extends StatelessWidget {
       create: (context) => InstructorAttendanceCubit(
         attendanceService: context.read<AttendanceService>(),
         enrollmentService: context.read<EnrollmentService>(),
-      )..loadTeachingSections(),
+      )..loadTeachingSections(preferredSectionId: initialSectionId),
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {
           final isDark = themeState.isDark;
           final l10n = AppLocalizations.of(context);
           return SharedAttendanceManagerScreen(
             isDark: isDark,
+            embedded: embedded,
             theme: SharedAttendanceTheme(
               title: l10n.attendanceManager,
               subtitle: l10n.trackStudentAttendance,

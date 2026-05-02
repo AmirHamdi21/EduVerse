@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import '../../common/retry_helper.dart';
 import '../../common/service_error.dart';
 import '../../models/admin/admin_periods_models.dart';
@@ -12,6 +14,7 @@ class ScheduleApiService {
 
   Future<ServiceResult<DailyScheduleResponse>> getDailySchedule({
     String? date,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<DailyScheduleResponse>(() async {
       final query = <String, dynamic>{};
@@ -22,6 +25,7 @@ class ScheduleApiService {
       final response = await _client.dio.get(
         '/schedule/my/daily',
         queryParameters: query,
+        cancelToken: cancelToken,
       );
       final data = _extractMap(response.data);
       return DailyScheduleResponse.fromJson(data);
@@ -30,6 +34,7 @@ class ScheduleApiService {
 
   Future<ServiceResult<WeeklyScheduleResponse>> getWeeklySchedule({
     String? startDate,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<WeeklyScheduleResponse>(() async {
       final query = <String, dynamic>{};
@@ -40,6 +45,7 @@ class ScheduleApiService {
       final response = await _client.dio.get(
         '/schedule/my/weekly',
         queryParameters: query,
+        cancelToken: cancelToken,
       );
       final data = _extractMap(response.data);
       return WeeklyScheduleResponse.fromJson(data);
@@ -47,8 +53,9 @@ class ScheduleApiService {
   }
 
   Future<ServiceResult<List<DailyScheduleResponse>>> getMonthSchedule(
-    DateTime referenceDate,
-  ) {
+    DateTime referenceDate, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<List<DailyScheduleResponse>>(() async {
       final weekStarts = monthWeekStartDates(referenceDate);
 
@@ -57,6 +64,7 @@ class ScheduleApiService {
           final response = await _client.dio.get(
             '/schedule/my/weekly',
             queryParameters: <String, dynamic>{'startDate': startDate},
+            cancelToken: cancelToken,
           );
           return WeeklyScheduleResponse.fromJson(_extractMap(response.data));
         }),
@@ -97,10 +105,15 @@ class ScheduleApiService {
   }
 
   Future<ServiceResult<PersonalEventItem>> createCalendarEvent(
-    Map<String, dynamic> data,
-  ) {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<PersonalEventItem>(() async {
-      final response = await _client.dio.post('/calendar/events', data: data);
+      final response = await _client.dio.post(
+        '/calendar/events',
+        data: data,
+        cancelToken: cancelToken,
+      );
       final payload = _extractMap(response.data);
       return PersonalEventItem.fromJson(payload);
     }, fallbackMessage: 'Failed to create event');
@@ -108,21 +121,29 @@ class ScheduleApiService {
 
   Future<ServiceResult<PersonalEventItem>> updateCalendarEvent(
     int eventId,
-    Map<String, dynamic> data,
-  ) {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.execute<PersonalEventItem>(() async {
       final response = await _client.dio.put(
         '/calendar/events/$eventId',
         data: data,
+        cancelToken: cancelToken,
       );
       final payload = _extractMap(response.data);
       return PersonalEventItem.fromJson(payload);
     }, fallbackMessage: 'Failed to update event');
   }
 
-  Future<ServiceResult<void>> deleteCalendarEvent(int eventId) {
+  Future<ServiceResult<void>> deleteCalendarEvent(
+    int eventId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.executeVoid(() async {
-      await _client.dio.delete('/calendar/events/$eventId');
+      await _client.dio.delete(
+        '/calendar/events/$eventId',
+        cancelToken: cancelToken,
+      );
     }, fallbackMessage: 'Failed to delete event');
   }
 
@@ -136,6 +157,7 @@ class ScheduleApiService {
     String? search,
     int page = 1,
     int limit = 10,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<PaginatedResult<CampusEventModel>>(() async {
       final query = <String, dynamic>{'page': page, 'limit': limit};
@@ -165,6 +187,7 @@ class ScheduleApiService {
       final response = await _client.dio.get(
         '/campus-events',
         queryParameters: query,
+        cancelToken: cancelToken,
       );
 
       return _extractPaginated(response.data, CampusEventModel.fromJson);
@@ -174,11 +197,13 @@ class ScheduleApiService {
   Future<ServiceResult<PaginatedResult<CampusEventModel>>> getMyCampusEvents({
     int page = 1,
     int limit = 10,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.execute<PaginatedResult<CampusEventModel>>(() async {
       final response = await _client.dio.get(
         '/campus-events/my',
         queryParameters: <String, dynamic>{'page': page, 'limit': limit},
+        cancelToken: cancelToken,
       );
 
       return _extractPaginated(response.data, CampusEventModel.fromJson);
@@ -188,6 +213,7 @@ class ScheduleApiService {
   Future<ServiceResult<void>> registerForCampusEvent(
     int eventId, {
     String? notes,
+    CancelToken? cancelToken,
   }) {
     return RetryHelper.executeVoid(() async {
       final payload = <String, dynamic>{};
@@ -195,13 +221,23 @@ class ScheduleApiService {
         payload['notes'] = notes.trim();
       }
 
-      await _client.dio.post('/campus-events/$eventId/register', data: payload);
+      await _client.dio.post(
+        '/campus-events/$eventId/register',
+        data: payload,
+        cancelToken: cancelToken,
+      );
     }, fallbackMessage: 'Failed to register for campus event');
   }
 
-  Future<ServiceResult<void>> unregisterFromCampusEvent(int eventId) {
+  Future<ServiceResult<void>> unregisterFromCampusEvent(
+    int eventId, {
+    CancelToken? cancelToken,
+  }) {
     return RetryHelper.executeVoid(() async {
-      await _client.dio.delete('/campus-events/$eventId/register');
+      await _client.dio.delete(
+        '/campus-events/$eventId/register',
+        cancelToken: cancelToken,
+      );
     }, fallbackMessage: 'Failed to unregister from campus event');
   }
 

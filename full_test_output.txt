@@ -1,0 +1,1116 @@
+00:00 +0: loading D:/Graduation/EduVerse/edu_verse/test/bloc/admin_course_management/course_list_bloc_filter_staff_test.dart
+00:00 +0: D:/Graduation/EduVerse/edu_verse/test/bloc/admin_course_management/course_list_bloc_filter_staff_test.dart: CourseListBloc staff-based filters needs_instructor and needs_ta use staffByCourse when available
+00:00 +1: D:/Graduation/EduVerse/edu_verse/test/bloc/admin_course_management/course_wizard_bloc_test.dart: CourseWizardBloc create contract safety strips course status on create and applies INACTIVE via patch
+00:00 +2: D:/Graduation/EduVerse/edu_verse/test/bloc/admin_course_management/course_wizard_bloc_test.dart: CourseWizardBloc create contract safety strips section status on create and applies CLOSED via patch
+00:00 +3: D:/Graduation/EduVerse/edu_verse/test/bloc/admin_course_management/course_wizard_bloc_test.dart: CourseWizardBloc step-2 failure fallback marks draft course INACTIVE when step 2 section save fails
+00:00 +4: D:/Graduation/EduVerse/edu_verse/test/bloc/admin_course_management/course_wizard_bloc_test.dart: CourseWizardBloc edit-mode staff replacement safety does not remove existing instructors before add succeeds
+00:00 +5: D:/Graduation/EduVerse/edu_verse/test/bloc/admin_course_management/course_wizard_bloc_test.dart: CourseWizardBloc edit-mode staff replacement safety replaces instructor assignment when only role changes
+00:00 +6: D:/Graduation/EduVerse/edu_verse/test/bloc/assignments/assignment_bloc_test.dart: AssignmentBloc fetch computes counters from backend and submission state
+00:00 +7: D:/Graduation/EduVerse/edu_verse/test/bloc/assignments/assignment_bloc_test.dart: AssignmentBloc status filter and search query update filtered list
+00:00 +8: D:/Graduation/EduVerse/edu_verse/test/bloc/assignments/assignment_bloc_test.dart: AssignmentBloc selecting assignment without submission clears stale mySubmission
+00:01 +9: D:/Graduation/EduVerse/edu_verse/test/bloc/assignments/assignment_phase7_e2e_test.dart: Phase 7 end-to-end assignment flows T081: fetch -> filter submitted -> select -> submit text -> grade
+00:01 +10: D:/Graduation/EduVerse/edu_verse/test/bloc/assignments/assignment_phase7_e2e_test.dart: Phase 7 end-to-end assignment flows T082: fetch -> filter overdue keeps overdue/no-late assignments
+00:01 +11: D:/Graduation/EduVerse/edu_verse/test/bloc/assignments/assignment_phase7_e2e_test.dart: Phase 7 end-to-end assignment flows T083: file submission flow succeeds for file-type assignment
+00:01 +12: D:/Graduation/EduVerse/edu_verse/test/bloc/assignments/assignment_phase7_e2e_test.dart: Phase 7 end-to-end assignment flows T084: graded submission can be resubmitted as new attempt
+00:01 +13: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceCubit initial state has overview tab and empty data
+00:01 +14: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceCubit setActiveTab changes active tab
+00:01 +15: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceCubit setCourseSearch updates search query
+00:01 +16: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceCubit setDepartmentFilter updates filter
+00:01 +17: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceCubit setStudentSearch updates search query
+00:01 +18: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceCubit setStatusFilter updates filter
+00:01 +19: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceCubit loadOverviewStats computes stats from sessions
+00:02 +20: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceCubit loadCourses groups by section
+00:02 +21: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceState — filteredCourses filteredCourses applies courseSearch filter
+00:02 +22: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceState — filteredCourses filteredCourses applies departmentFilter
+00:02 +23: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceState — filteredStudents filteredStudents applies statusFilter
+00:02 +24: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/admin_attendance_cubit_test.dart: AdminAttendanceState — filteredStudents StudentAttendanceInfoAdmin risk levels work correctly
+00:02 +25: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/attendance_cubit_test.dart: AttendanceCubit initial state has default values
+00:02 +26: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/attendance_cubit_test.dart: AttendanceCubit loadAttendance emits loading then success
+00:02 +27: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/attendance_cubit_test.dart: AttendanceCubit loadAttendance emits error on failure
+00:02 +28: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/attendance_cubit_test.dart: AttendanceCubit setFilter updates filtered records
+00:02 +29: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/attendance_cubit_test.dart: AttendanceCubit setSelectedCourse filters by course
+00:02 +30: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/attendance_cubit_test.dart: AttendanceCubit setViewMode updates view mode
+00:02 +31: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/attendance_cubit_test.dart: AttendanceCubit setSelectedTab updates tab index
+00:02 +32: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/attendance_cubit_test.dart: AttendanceCubit clearError clears errorMessage
+00:02 +33: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/attendance_cubit_test.dart: AttendanceCubit loadFaceReferences populates state
+00:02 +34: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/attendance_cubit_test.dart: AttendanceCubit deleteFaceReference removes from state
+00:03 +35: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/instructor_attendance_cubit_test.dart: InstructorAttendanceCubit initial state is classes view
+00:03 +36: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/instructor_attendance_cubit_test.dart: InstructorAttendanceCubit loadTeachingSections populates sections
+00:03 +37: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/instructor_attendance_cubit_test.dart: InstructorAttendanceCubit backToClasses resets to classes view
+00:03 +38: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/instructor_attendance_cubit_test.dart: InstructorAttendanceCubit backToSection resets roster state
+00:03 +39: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/instructor_attendance_cubit_test.dart: InstructorAttendanceCubit applyStatus modifies roster row status
+00:03 +40: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/instructor_attendance_cubit_test.dart: InstructorAttendanceCubit applyStatus is no-op when read-only
+00:03 +41: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/instructor_attendance_cubit_test.dart: InstructorAttendanceCubit setAllStatus updates all roster rows
+00:03 +42: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/instructor_attendance_cubit_test.dart: InstructorAttendanceCubit updateNewSessionDate and updateNewSessionType update state
+00:03 +43: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/instructor_attendance_cubit_test.dart: InstructorAttendanceCubit setUiMode switches to session table mode and selects the first section
+00:03 +44: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/instructor_attendance_cubit_test.dart: InstructorAttendanceCubit loadRosterData prefers section student identity over fallback ids
+00:04 +45: D:/Graduation/EduVerse/edu_verse/test/bloc/attendance/instructor_attendance_cubit_test.dart: InstructorAttendanceCubit applyAiResultsToRoster updates statuses from AI suggestions
+00:04 +46: D:/Graduation/EduVerse/edu_verse/test/bloc/calendar/calendar_cubit_schedule_test.dart: CalendarCubit schedule migration initializes and loads month schedule
+00:04 +47: D:/Graduation/EduVerse/edu_verse/test/bloc/calendar/calendar_cubit_schedule_test.dart: CalendarCubit schedule migration addEvent maps EventType to API payload
+00:04 +48: D:/Graduation/EduVerse/edu_verse/test/bloc/calendar/calendar_cubit_schedule_test.dart: CalendarCubit schedule migration kind and course filters narrow the visible list
+00:04 +49: D:/Graduation/EduVerse/edu_verse/test/bloc/calendar/calendar_cubit_schedule_test.dart: CalendarCubit schedule migration deleteEvent returns user-facing error for non-personal ids
+00:05 +50: D:/Graduation/EduVerse/edu_verse/test/bloc/calendar/calendar_cubit_schedule_test.dart: CalendarCubit schedule migration day view triggers daily endpoint
+00:05 +51: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_bloc_test.dart: ChatBloc loads conversations through LoadConversations event
+00:05 +52: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_bloc_test.dart: ChatBloc derives frequentlyContacted and participantCache on load
+00:05 +53: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_bloc_test.dart: ChatBloc SelectConversation emits join/leave socket lifecycle and loads messages
+00:05 +54: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_bloc_test.dart: ChatBloc marks optimistic message failed when socket and REST fallback both fail
+00:05 +55: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_bloc_test.dart: ChatBloc retry sends a previously failed optimistic message
+00:05 +56: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_bloc_test.dart: ChatBloc StartNewConversation uses existing direct conversation seamlessly
+00:06 +57: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_bloc_test.dart: ChatBloc websocket inbound events mutate typing, online, message and read states
+00:06 +58: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_bloc_test.dart: ChatBloc tracks online users list and lastSeen for offline transitions
+00:06 +59: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_bloc_test.dart: ChatBloc requests online users when explicit refresh event is dispatched
+00:06 +60: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-001: Find participant quickly via search
+00:07 +61: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-002: Create conversation within expected timeframe
+00:07 +62: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:07 +63: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:07 +64: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:07 +65: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:07 +66: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:07 +67: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:07 +68: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:07 +69: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:07 +70: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:07 +71: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:07 +72: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:08 +73: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:08 +74: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:08 +75: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:08 +76: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:08 +77: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:09 +78: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:09 +79: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:09 +80: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:09 +81: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:09 +82: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:09 +83: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:09 +84: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:09 +85: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:09 +86: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:09 +87: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:09 +88: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:10 +89: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:10 +90: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:10 +91: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:10 +92: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:11 +93: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:11 +94: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:11 +95: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:11 +96: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:11 +97: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:11 +98: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:11 +99: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:12 +100: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:12 +101: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:12 +102: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:12 +103: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:12 +104: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:12 +105: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:12 +106: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:12 +107: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:12 +108: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:13 +109: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:13 +110: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:13 +111: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:13 +112: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:13 +113: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:13 +114: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:13 +115: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:13 +116: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:13 +117: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:14 +118: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:14 +119: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:14 +120: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:14 +121: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:14 +122: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:14 +123: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:14 +124: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:14 +125: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:14 +126: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:15 +127: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:15 +128: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:15 +129: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +130: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +131: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +132: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +133: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +134: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +135: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +136: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +137: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +138: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +139: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +140: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +141: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +142: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +143: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:16 +144: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:17 +145: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:17 +146: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:17 +147: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:17 +148: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:17 +149: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:17 +150: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:17 +151: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:17 +152: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:17 +153: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:18 +154: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:18 +155: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:18 +156: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:18 +157: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:18 +158: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:18 +159: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:18 +160: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:18 +161: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:18 +162: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:18 +163: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:19 +164: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:19 +165: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:19 +166: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:19 +167: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:19 +168: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:19 +169: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T085: Success Criteria Validation SC-003: Search returns results quickly
+00:19 +170: D:/Graduation/EduVerse/edu_verse/test/bloc/ta/ta_calendar_cubit_test.dart: TACalendarCubit deleteEvent uses resolved personal id and rejects non-personal ids
+00:19 +171: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T088: Error Preservation preserves participants on creation error
+00:19 +172: D:/Graduation/EduVerse/edu_verse/test/bloc/ta/ta_calendar_cubit_test.dart: TACalendarCubit setView day loads daily schedule
+00:19 +173: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T088: Error Preservation preserves conversation mode on creation error
+00:20 +174: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T088: Error Preservation retry clears error and attempts again
+00:20 +175: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:20 +176: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:20 +177: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:20 +178: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +179: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +180: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +181: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +182: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +183: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +184: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +185: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +186: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +187: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +188: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +189: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:21 +190: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +191: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +192: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +193: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +194: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +195: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +196: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +197: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +198: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +199: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +200: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +201: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +202: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +203: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +204: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +205: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +206: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +207: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +208: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +209: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +210: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +211: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +212: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +213: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +214: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +215: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +216: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:22 +217: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:23 +218: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:23 +219: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries transient timeout errors and eventually succeeds
+00:23 +220: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T097: Accessibility error messages are human readable
+00:23 +221: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T097: Accessibility error messages are human readable
+00:23 +222: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +223: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +224: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +225: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +226: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +227: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +228: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +229: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +230: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +231: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +232: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +233: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +234: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +235: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +236: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:23 +237: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:24 +238: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:24 +239: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:24 +240: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:25 +241: D:/Graduation/EduVerse/edu_verse/test/common/retry_helper_test.dart: RetryHelper retries 500 errors then returns server failure
+00:26 +242: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:26 +243: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:29 +244: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:29 +245: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:29 +246: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:31 +247: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:31 +248: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:31 +249: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:31 +250: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:34 +251: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:34 +252: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:34 +253: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:34 +254: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +255: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +256: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +257: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +258: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +259: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +260: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +261: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +262: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +263: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +264: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +265: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +266: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +267: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +268: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +269: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +270: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +271: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +272: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +273: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +274: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +275: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +276: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +277: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +278: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +279: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +280: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:35 +281: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +282: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +283: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +284: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +285: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +286: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +287: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +288: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +288: D:/Graduation/EduVerse/edu_verse/test/services/api/assignment_upload_performance_test.dart: T080: 10MB upload path completes under 30 seconds
+T080 measured_upload_ms=77
+00:36 +289: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +290: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +291: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +292: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +293: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +294: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +295: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +296: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +297: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +298: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +299: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +300: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +301: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +302: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:36 +303: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +304: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +305: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +306: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +307: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +308: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +309: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +310: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +311: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +312: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +313: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +314: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation 20+ searches complete with 95% under 2 seconds
+00:37 +315: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:37 +316: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +317: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +318: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +319: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +320: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +321: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +322: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +323: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +324: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +325: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +326: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +327: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:38 +328: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:39 +329: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:39 +330: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:39 +331: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:39 +332: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:39 +333: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:39 +334: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:39 +335: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:39 +336: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:39 +337: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:39 +338: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:39 +339: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:40 +340: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:40 +341: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:40 +342: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:40 +343: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:40 +344: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:41 +345: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:41 +346: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:41 +347: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:41 +348: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:41 +349: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:41 +350: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:41 +351: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:41 +352: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:41 +353: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:42 +354: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:42 +355: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:42 +356: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:42 +357: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:42 +358: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:42 +359: D:/Graduation/EduVerse/edu_verse/test/bloc/chat_conversation_flow_test.dart: T102: Search Performance Validation varied query types all complete quickly
+00:42 +360: D:/Graduation/EduVerse/edu_verse/test/unit/bloc/instructor/instructor_labs_cubit_test.dart: InstructorLabsCubit loadLabs emits loading then loaded state
+00:42 +361: D:/Graduation/EduVerse/edu_verse/test/unit/bloc/instructor/instructor_labs_cubit_test.dart: InstructorLabsCubit loadLabs emits error state when API fails
+00:42 +362: D:/Graduation/EduVerse/edu_verse/test/unit/bloc/instructor/instructor_labs_cubit_test.dart: InstructorLabsCubit filterLabs applies search and status filters
+00:42 +363: D:/Graduation/EduVerse/edu_verse/test/unit/bloc/instructor/instructor_labs_cubit_test.dart: InstructorLabsCubit clearFilters resets search and status filters
+00:53 +364: D:/Graduation/EduVerse/edu_verse/test/unit/bloc/instructor/lab_detail_cubit_test.dart: LabDetailCubit (instructor) addTextInstruction calls service and refreshes instructions
+00:53 +365: D:/Graduation/EduVerse/edu_verse/test/unit/bloc/instructor/lab_detail_cubit_test.dart: LabDetailCubit (instructor) uploadInstructionFile calls upload endpoint and reports progress
+00:53 +366: D:/Graduation/EduVerse/edu_verse/test/unit/bloc/instructor/lab_detail_cubit_test.dart: LabDetailCubit (instructor) gradeSubmission rejects score above maxScore
+00:53 +367: D:/Graduation/EduVerse/edu_verse/test/unit/bloc/instructor/lab_detail_cubit_test.dart: LabDetailCubit (instructor) reorderInstructions updates order index for all instructions
+00:53 +368: D:/Graduation/EduVerse/edu_verse/test/unit/bloc/route_lifecycle_regression_test.dart: InstructorAssignmentsCubit ignores delayed responses after close
+00:53 +369: D:/Graduation/EduVerse/edu_verse/test/unit/bloc/route_lifecycle_regression_test.dart: InstructorAttendanceCubit ignores delayed section load after close
+00:53 +370: D:/Graduation/EduVerse/edu_verse/test/unit/bloc/route_lifecycle_regression_test.dart: CourseDetailBloc ignores delayed load responses after close
+00:53 +371: D:/Graduation/EduVerse/edu_verse/test/unit/models/assignments/assignment_submission_model_test.dart: AssignmentSubmissionModel.fromJson isLate parsing parses int 0 as false
+00:53 +372: D:/Graduation/EduVerse/edu_verse/test/unit/models/assignments/assignment_submission_model_test.dart: AssignmentSubmissionModel.fromJson isLate parsing parses int 1 as true
+00:53 +373: D:/Graduation/EduVerse/edu_verse/test/unit/models/assignments/assignment_submission_model_test.dart: AssignmentSubmissionModel.fromJson isLate parsing parses bool false as false
+00:53 +374: D:/Graduation/EduVerse/edu_verse/test/unit/models/assignments/assignment_submission_model_test.dart: AssignmentSubmissionModel.fromJson isLate parsing parses bool true as true
+00:53 +375: D:/Graduation/EduVerse/edu_verse/test/unit/models/assignments/assignment_submission_model_test.dart: AssignmentSubmissionModel.fromJson isLate parsing parses string "0" as false
+00:53 +376: D:/Graduation/EduVerse/edu_verse/test/unit/models/assignments/assignment_submission_model_test.dart: AssignmentSubmissionModel.fromJson isLate parsing parses string "1" as true
+00:53 +377: D:/Graduation/EduVerse/edu_verse/test/unit/models/assignments/assignment_submission_model_test.dart: AssignmentSubmissionModel.fromJson isLate parsing parses null as false
+00:54 +378: D:/Graduation/EduVerse/edu_verse/test/unit/models/assignment_form_data_test.dart: AssignmentFormData fromJson parses numeric strings and allowed file types JSON
+00:54 +379: D:/Graduation/EduVerse/edu_verse/test/unit/models/assignment_form_data_test.dart: AssignmentFormData toJson emits backend payload with encoded allowed file types
+00:54 +380: D:/Graduation/EduVerse/edu_verse/test/unit/models/labs/lab_submission_model_test.dart: LabSubmissionModel.fromJson isLate parsing parses boolean true correctly
+00:54 +381: D:/Graduation/EduVerse/edu_verse/test/unit/models/labs/lab_submission_model_test.dart: LabSubmissionModel.fromJson isLate parsing parses boolean false correctly
+00:54 +382: D:/Graduation/EduVerse/edu_verse/test/unit/models/labs/lab_submission_model_test.dart: LabSubmissionModel.fromJson isLate parsing parses int 1 as true
+00:55 +383: D:/Graduation/EduVerse/edu_verse/test/unit/models/labs/lab_submission_model_test.dart: LabSubmissionModel.fromJson isLate parsing parses int 0 as false
+00:55 +384: D:/Graduation/EduVerse/edu_verse/test/unit/models/labs/lab_submission_model_test.dart: LabSubmissionModel.fromJson isLate parsing parses string "1" as true
+00:55 +385: D:/Graduation/EduVerse/edu_verse/test/unit/models/labs/lab_submission_model_test.dart: LabSubmissionModel.fromJson isLate parsing parses string "0" as false
+00:55 +386: D:/Graduation/EduVerse/edu_verse/test/unit/models/labs/lab_submission_model_test.dart: LabSubmissionModel.fromJson isLate parsing parses null as false
+00:55 +387: D:/Graduation/EduVerse/edu_verse/test/unit/utils/late_penalty_calculator_test.dart: calculateFinalScore returns original score when daysLate is zero
+00:55 +388: D:/Graduation/EduVerse/edu_verse/test/unit/utils/late_penalty_calculator_test.dart: calculateFinalScore applies one-day late penalty correctly
+00:55 +389: D:/Graduation/EduVerse/edu_verse/test/unit/utils/late_penalty_calculator_test.dart: calculateFinalScore applies multi-day penalty and clamps to zero minimum
+00:55 +390: D:/Graduation/EduVerse/edu_verse/test/unit/utils/late_penalty_calculator_test.dart: calculateFinalScore supports zero penalty and preserves original score
+00:55 +391: D:/Graduation/EduVerse/edu_verse/test/unit/utils/late_penalty_calculator_test.dart: calculateFinalScore 100 percent one-day penalty returns zero
+00:55 +392: D:/Graduation/EduVerse/edu_verse/test/unit/widgets/grading_panel_late_penalty_test.dart: shows late penalty breakdown and computed final score
+00:57 +393: D:/Graduation/EduVerse/edu_verse/test/unit/widgets/grading_panel_late_penalty_test.dart: hides late penalty breakdown for on-time submissions
+00:57 +394: D:/Graduation/EduVerse/edu_verse/test/utils/bundle_detector_test.dart: BundleDetector.groupMaterialsIntoBundles normalizes suffixes and separates bundles by week
+00:57 +395: D:/Graduation/EduVerse/edu_verse/test/utils/bundle_detector_test.dart: BundleDetector.groupMaterialsIntoBundles returns empty list for empty input
+00:57 +396: D:/Graduation/EduVerse/edu_verse/test/utils/bundle_detector_test.dart: BundleDetector.groupMaterialsIntoBundles keeps a single item as a valid bundle bucket
+00:57 +397: D:/Graduation/EduVerse/edu_verse/test/utils/bundle_detector_test.dart: BundleDetector.groupMaterialsIntoBundles orders video first inside each grouped bundle
+00:57 +398: D:/Graduation/EduVerse/edu_verse/test/utils/bundle_detector_test.dart: BundleDetector.groupMaterialsIntoBundles groups materials with different whitespace as same bundle
+00:57 +399: D:/Graduation/EduVerse/edu_verse/test/utils/bundle_detector_test.dart: BundleDetector.groupMaterialsIntoBundles groups materials case-insensitively
+00:58 +400: D:/Graduation/EduVerse/edu_verse/test/utils/file_validator_test.dart: FileValidator.validate accepts valid document under size limit
+00:58 +401: D:/Graduation/EduVerse/edu_verse/test/utils/file_validator_test.dart: FileValidator.validate rejects oversized document
+00:58 +402: D:/Graduation/EduVerse/edu_verse/test/utils/file_validator_test.dart: FileValidator.validate rejects unsupported document extension
+00:58 +403: D:/Graduation/EduVerse/edu_verse/test/utils/file_validator_test.dart: FileValidator.validate accepts valid image and rejects wrong image mime
+00:58 +404: D:/Graduation/EduVerse/edu_verse/test/utils/file_validator_test.dart: FileValidator.validate video has no client-side size cap but validates mime prefix
+00:58 +405: D:/Graduation/EduVerse/edu_verse/test/utils/submission_event_tracker_test.dart: SubmissionEventTracker logSubmission stores successful event and updates success rate
+00:58 +406: D:/Graduation/EduVerse/edu_verse/test/utils/submission_event_tracker_test.dart: SubmissionEventTracker logSubmissionFailure stores error and computes success percentage
+00:58 +407: D:/Graduation/EduVerse/edu_verse/test/utils/submission_event_tracker_test.dart: SubmissionEventTracker prunes events older than 30 days
+00:58 +408: D:/Graduation/EduVerse/edu_verse/test/widget/instructor/assignment_card_test.dart: renders status badges for all lifecycle statuses
+01:00 +409: D:/Graduation/EduVerse/edu_verse/test/widget/instructor/assignment_create_form_test.dart: rejects empty title
+01:00 +410: D:/Graduation/EduVerse/edu_verse/test/widget/instructor/assignment_create_form_test.dart: rejects empty title
+01:01 +411: D:/Graduation/EduVerse/edu_verse/test/widget/instructor/assignment_create_form_test.dart: rejects empty title
+01:01 +412: D:/Graduation/EduVerse/edu_verse/test/widget/instructor/assignment_create_form_test.dart: rejects empty title
+01:02 +412: D:/Graduation/EduVerse/edu_verse/test/widget/screens/create_assignment_screen_test.dart: re-opening edit screen shows previously uploaded instruction files
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following _TypeError was thrown building _CreateAssignmentView(dirty, dependencies:
+[InheritedCupertinoTheme, _InheritedTheme, _LocalizationsScope-[GlobalKey#d607d]], state:
+_CreateAssignmentViewState#1824b):
+Null check operator used on a null value
+
+The relevant error-causing widget was:
+  _CreateAssignmentView
+  _CreateAssignmentView:file:///D:/Graduation/EduVerse/edu_verse/lib/screens/instructor/create_assignment_screen.dart:50:14
+
+When the exception was thrown, this was the stack:
+#0      AppLocalizations.of (package:edu_verse/generated_l10n/app_localizations.dart:71:73)
+#1      _CreateAssignmentViewState.build (package:edu_verse/screens/instructor/create_assignment_screen.dart:127:35)
+#2      StatefulElement.build (package:flutter/src/widgets/framework.dart:5833:27)
+#3      ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5723:15)
+#4      StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5884:11)
+#5      Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#6      ComponentElement._firstBuild (package:flutter/src/widgets/framework.dart:5705:5)
+#7      StatefulElement._firstBuild (package:flutter/src/widgets/framework.dart:5875:11)
+#8      ComponentElement.mount (package:flutter/src/widgets/framework.dart:5699:5)
+...     Normal element mounting (7 frames)
+#15     _InheritedProviderScopeElement.mount (package:provider/src/inherited_provider.dart:424:11)
+...     Normal element mounting (7 frames)
+#22     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (7 frames)
+#29     SingleChildWidgetElementMixin.mount (package:nested/nested.dart:222:11)
+...     Normal element mounting (234 frames)
+#263    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4548:16)
+#264    MultiChildRenderObjectElement.inflateWidget (package:flutter/src/widgets/framework.dart:7169:36)
+#265    MultiChildRenderObjectElement.mount (package:flutter/src/widgets/framework.dart:7185:32)
+...     Normal element mounting (465 frames)
+#730    Element.inflateWidget (package:flutter/src/widgets/framework.dart:4548:16)
+#731    Element.updateChild (package:flutter/src/widgets/framework.dart:3998:20)
+#732    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5747:16)
+#733    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#734    ProxyElement.update (package:flutter/src/widgets/framework.dart:6051:5)
+#735    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#736    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#737    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5747:16)
+#738    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5884:11)
+#739    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#740    StatefulElement.update (package:flutter/src/widgets/framework.dart:5909:5)
+#741    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#742    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5747:16)
+#743    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#744    ProxyElement.update (package:flutter/src/widgets/framework.dart:6051:5)
+#745    _InheritedNotifierElement.update (package:flutter/src/widgets/inherited_notifier.dart:108:11)
+#746    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#747    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5747:16)
+#748    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5884:11)
+#749    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#750    StatefulElement.update (package:flutter/src/widgets/framework.dart:5909:5)
+#751    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#752    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5747:16)
+#753    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5884:11)
+#754    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#755    StatefulElement.update (package:flutter/src/widgets/framework.dart:5909:5)
+#756    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#757    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5747:16)
+#758    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#759    ProxyElement.update (package:flutter/src/widgets/framework.dart:6051:5)
+#760    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#761    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5747:16)
+#762    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5884:11)
+#763    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#764    StatefulElement.update (package:flutter/src/widgets/framework.dart:5909:5)
+#765    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#766    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5747:16)
+#767    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#768    ProxyElement.update (package:flutter/src/widgets/framework.dart:6051:5)
+#769    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#770    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5747:16)
+#771    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#772    ProxyElement.update (package:flutter/src/widgets/framework.dart:6051:5)
+#773    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#774    _RawViewElement._updateChild (package:flutter/src/widgets/view.dart:481:16)
+#775    _RawViewElement.update (package:flutter/src/widgets/view.dart:568:5)
+#776    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#777    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5747:16)
+#778    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#779    StatelessElement.update (package:flutter/src/widgets/framework.dart:5797:5)
+#780    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#781    ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5747:16)
+#782    StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5884:11)
+#783    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#784    StatefulElement.update (package:flutter/src/widgets/framework.dart:5909:5)
+#785    Element.updateChild (package:flutter/src/widgets/framework.dart:3982:15)
+#786    RootElement._rebuild (package:flutter/src/widgets/binding.dart:1716:16)
+#787    RootElement.update (package:flutter/src/widgets/binding.dart:1694:5)
+#788    RootElement.performRebuild (package:flutter/src/widgets/binding.dart:1708:7)
+#789    Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#790    BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2695:15)
+#791    BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2752:11)
+#792    BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3056:18)
+#793    AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:1506:19)
+#794    RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:495:5)
+#795    SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1434:15)
+#796    SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1347:9)
+#797    AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:1335:9)
+#800    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#801    AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1324:27)
+#802    WidgetTester.pumpWidget.<anonymous closure> (package:flutter_test/src/widget_tester.dart:598:22)
+#805    TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#806    WidgetTester.pumpWidget (package:flutter_test/src/widget_tester.dart:595:27)
+#807    main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widget/screens/create_assignment_screen_test.dart:140:20)
+#808    testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:29)
+<asynchronous suspension>
+#809    TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY WIDGETS LIBRARY ╞═══════════════════════════════════════════════════════════
+The following _TypeError was thrown building _CreateAssignmentView(dirty, dependencies:
+[InheritedCupertinoTheme, _InheritedTheme, _LocalizationsScope-[GlobalKey#d607d]], state:
+_CreateAssignmentViewState#1824b):
+Null check operator used on a null value
+
+The relevant error-causing widget was:
+  _CreateAssignmentView
+  _CreateAssignmentView:file:///D:/Graduation/EduVerse/edu_verse/lib/screens/instructor/create_assignment_screen.dart:50:14
+
+When the exception was thrown, this was the stack:
+#0      AppLocalizations.of (package:edu_verse/generated_l10n/app_localizations.dart:71:73)
+#1      _CreateAssignmentViewState.build (package:edu_verse/screens/instructor/create_assignment_screen.dart:127:35)
+#2      StatefulElement.build (package:flutter/src/widgets/framework.dart:5833:27)
+#3      ComponentElement.performRebuild (package:flutter/src/widgets/framework.dart:5723:15)
+#4      StatefulElement.performRebuild (package:flutter/src/widgets/framework.dart:5884:11)
+#5      Element.rebuild (package:flutter/src/widgets/framework.dart:5435:7)
+#6      BuildScope._tryRebuild (package:flutter/src/widgets/framework.dart:2695:15)
+#7      BuildScope._flushDirtyElements (package:flutter/src/widgets/framework.dart:2752:11)
+#8      BuildOwner.buildScope (package:flutter/src/widgets/framework.dart:3056:18)
+#9      AutomatedTestWidgetsFlutterBinding.drawFrame (package:flutter_test/src/binding.dart:1506:19)
+#10     RendererBinding._handlePersistentFrameCallback (package:flutter/src/rendering/binding.dart:495:5)
+#11     SchedulerBinding._invokeFrameCallback (package:flutter/src/scheduler/binding.dart:1434:15)
+#12     SchedulerBinding.handleDrawFrame (package:flutter/src/scheduler/binding.dart:1347:9)
+#13     AutomatedTestWidgetsFlutterBinding.pump.<anonymous closure> (package:flutter_test/src/binding.dart:1335:9)
+#16     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#17     AutomatedTestWidgetsFlutterBinding.pump (package:flutter_test/src/binding.dart:1324:27)
+#18     WidgetTester.pumpAndSettle.<anonymous closure> (package:flutter_test/src/widget_tester.dart:719:23)
+#21     TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#22     WidgetTester.pumpAndSettle (package:flutter_test/src/widget_tester.dart:712:27)
+#23     main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widget/screens/create_assignment_screen_test.dart:153:20)
+<asynchronous suspension>
+#24     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#25     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 5 frames from dart:async and package:stack_trace)
+
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.first (dart:core/iterable.dart:663:7)
+#1      _FirstFinderMixin.filter (package:flutter_test/src/finders.dart:1332:28)
+#3      Iterable.single (dart:core/iterable.dart:694:13)
+#4      WidgetController.widget (package:flutter_test/src/controller.dart:804:30)
+#5      WidgetController.scrollUntilVisible.<anonymous closure> (package:flutter_test/src/controller.dart:2341:15)
+#8      TestAsyncUtils.guard (package:flutter_test/src/test_async_utils.dart:74:41)
+#9      WidgetController.scrollUntilVisible (package:flutter_test/src/controller.dart:2339:27)
+#10     main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widget/screens/create_assignment_screen_test.dart:156:20)
+<asynchronous suspension>
+#11     testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#12     TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 4 frames from dart:async, dart:async-patch, and package:stack_trace)
+
+The test description was:
+  re-opening edit screen shows previously uploaded instruction files
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following message was thrown:
+Multiple exceptions (3) were detected during the running of the current test, and at least one was
+unexpected.
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:02 +412 -1: D:/Graduation/EduVerse/edu_verse/test/widget/instructor/assignment_create_form_test.dart: rejects empty title
+01:02 +412 -1: D:/Graduation/EduVerse/edu_verse/test/widget/screens/create_assignment_screen_test.dart: re-opening edit screen shows previously uploaded instruction files [E]
+  Test failed. See exception logs above.
+  The test description was: re-opening edit screen shows previously uploaded instruction files
+  
+01:03 +413 -1: D:/Graduation/EduVerse/edu_verse/test/widget/instructor/assignment_create_form_test.dart: rejects empty title
+01:03 +414 -1: D:/Graduation/EduVerse/edu_verse/test/widget/screens/submission_grading_screen_test.dart: submits entered score/feedback and keeps values on failure
+01:04 +415 -1: D:/Graduation/EduVerse/edu_verse/test/widget/screens/submission_grading_screen_test.dart: submits entered score/feedback and keeps values on failure
+01:05 +416 -1: D:/Graduation/EduVerse/edu_verse/test/widget/screens/submission_grading_screen_test.dart: submits entered score/feedback and keeps values on failure
+01:05 +417 -1: D:/Graduation/EduVerse/edu_verse/test/widgets/admin/events/admin_campus_events_screen_test.dart: renders event card with localized capacity and spots chips
+01:05 +418 -1: D:/Graduation/EduVerse/edu_verse/test/widgets/admin/events/admin_campus_events_screen_test.dart: renders event card with localized capacity and spots chips
+01:05 +419 -1: D:/Graduation/EduVerse/edu_verse/test/widgets/admin/events/admin_campus_events_screen_test.dart: renders event card with localized capacity and spots chips
+01:05 +420 -1: D:/Graduation/EduVerse/edu_verse/test/widgets/admin/courses/course_staff_assignment_test.dart: does not overflow on narrow width
+01:06 +421 -1: D:/Graduation/EduVerse/edu_verse/test/widget/instructor/assignment_create_form_test.dart: submits valid form data
+01:09 +422 -1: D:/Graduation/EduVerse/edu_verse/test/widgets/admin/office_hours/admin_office_hours_screen_test.dart: renders localized office-hours filters and slot summary
+01:13 +423 -1: D:/Graduation/EduVerse/edu_verse/test/widgets/admin/periods/admin_enrollment_periods_screen_test.dart: renders localized enrollment period details
+01:15 +424 -1: D:/Graduation/EduVerse/edu_verse/test/widgets/admin/templates/admin_schedule_templates_screen_test.dart: renders localized slots preview and creator summary
+01:16 +425 -1: D:/Graduation/EduVerse/edu_verse/test/widgets/admin/users/admin_user_management_screen_test.dart: renders endpoint-backed student rows
+01:17 +426 -1: D:/Graduation/EduVerse/edu_verse/test/widgets/admin/users/admin_user_management_screen_test.dart: shows error state when endpoint load fails
+01:18 +427 -1: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T075: screen renders correctly at 375px width
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Assignment 375": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart:197:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart line 197
+The test description was:
+  T075: screen renders correctly at 375px width
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:20 +427 -2: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_screen_test.dart: shows empty state when assignments list is empty
+01:20 +427 -2: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T075: screen renders correctly at 375px width [E]
+  Test failed. See exception logs above.
+  The test description was: T075: screen renders correctly at 375px width
+  
+01:20 +428 -2: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_screen_test.dart: shows empty state when assignments list is empty
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "No assignments are available yet. Enroll in
+a course to get started.": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_screen_test.dart:142:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_screen_test.dart line 142
+The test description was:
+  shows empty state when assignments list is empty
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:21 +428 -3: D:/Graduation/EduVerse/edu_verse/test/widgets/assignment_detail_screen_test.dart: renders assignment detail content and submit action
+01:21 +428 -3: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_screen_test.dart: shows empty state when assignments list is empty [E]
+  Test failed. See exception logs above.
+  The test description was: shows empty state when assignments list is empty
+  
+01:21 +428 -3: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T076: screen renders correctly at 768px width
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Assignment 768": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart:206:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart line 206
+The test description was:
+  T076: screen renders correctly at 768px width
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:21 +428 -4: D:/Graduation/EduVerse/edu_verse/test/widgets/assignment_detail_screen_test.dart: renders assignment detail content and submit action
+01:21 +428 -4: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T076: screen renders correctly at 768px width [E]
+  Test failed. See exception logs above.
+  The test description was: T076: screen renders correctly at 768px width
+  
+01:21 +429 -4: D:/Graduation/EduVerse/edu_verse/test/widgets/course_details/course_detail_phase3_tabs_test.dart: AssignmentsTabContent card taps navigate to assignments with course prefilter
+01:21 +429 -4: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T077: screen renders correctly at 1024px+ width
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Assignment 1024": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart:215:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart line 215
+The test description was:
+  T077: screen renders correctly at 1024px+ width
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:21 +429 -5: D:/Graduation/EduVerse/edu_verse/test/widgets/course_details/course_detail_phase3_tabs_test.dart: AssignmentsTabContent card taps navigate to assignments with course prefilter
+01:21 +429 -5: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T077: screen renders correctly at 1024px+ width [E]
+  Test failed. See exception logs above.
+  The test description was: T077: screen renders correctly at 1024px+ width
+  
+01:22 +430 -5: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_screen_test.dart: shows loading then renders assignments list
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: at least one matching candidate
+  Actual: _TypeWidgetFinder:<Found 0 widgets with type "CircularProgressIndicator": []>
+   Which: means none were found but some were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_screen_test.dart:163:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_screen_test.dart line 163
+The test description was:
+  shows loading then renders assignments list
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:22 +430 -6: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T078: interactive controls meet 48x48 touch target minimum
+01:22 +430 -6: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_screen_test.dart: shows loading then renders assignments list [E]
+  Test failed. See exception logs above.
+  The test description was: shows loading then renders assignments list
+  
+01:22 +430 -6: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T078: interactive controls meet 48x48 touch target minimum
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.first (dart:core/iterable.dart:663:7)
+#1      _FirstFinderMixin.filter (package:flutter_test/src/finders.dart:1332:28)
+#3      Iterable.single (dart:core/iterable.dart:694:13)
+#4      WidgetController.getSize (package:flutter_test/src/controller.dart:2090:47)
+#5      _expectMinTouchTarget (file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart:166:23)
+#6      main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart:256:5)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 2 frames from dart:async-patch and package:stack_trace)
+
+The test description was:
+  T078: interactive controls meet 48x48 touch target minimum
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:22 +430 -7: D:/Graduation/EduVerse/edu_verse/test/widgets/course_details/course_detail_phase3_tabs_test.dart: LabsTabContent card taps navigate to labs with course prefilter
+01:22 +430 -7: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T078: interactive controls meet 48x48 touch target minimum [E]
+  Test failed. See exception logs above.
+  The test description was: T078: interactive controls meet 48x48 touch target minimum
+  
+01:22 +431 -7: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T079: assignment list first render is below 3 seconds
+01:22 +432 -7: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T079: assignment list first render is below 3 seconds
+01:22 +433 -7: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T079: assignment list first render is below 3 seconds
+01:22 +434 -7: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T079: assignment list first render is below 3 seconds
+01:23 +435 -7: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T079: assignment list first render is below 3 seconds
+01:23 +436 -7: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T079: assignment list first render is below 3 seconds
+01:23 +437 -7: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T079: assignment list first render is below 3 seconds
+01:23 +438 -7: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T079: assignment list first render is below 3 seconds
+01:23 +439 -7: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T079: assignment list first render is below 3 seconds
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Performance Assignment": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart:287:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart line 287
+The test description was:
+  T079: assignment list first render is below 3 seconds
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:25 +439 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/course_details/course_detail_screen_staff_booking_test.dart: Staff & Booking tab loads profile and renders slots
+01:25 +439 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/assignments_phase7_validation_test.dart: T079: assignment list first render is below 3 seconds [E]
+  Test failed. See exception logs above.
+  The test description was: T079: assignment list first render is below 3 seconds
+  
+01:26 +440 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/course_details/course_detail_screen_staff_booking_test.dart: Staff & Booking tab loads profile and renders slots
+01:26 +441 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/course_details/course_detail_screen_staff_booking_test.dart: Staff & Booking tab loads profile and renders slots
+01:26 +442 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/course_details/legacy_course_details_instructor_navigation_test.dart: legacy course details opens instructor info route
+01:28 +443 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/course_details/legacy_course_details_instructor_navigation_test.dart: legacy course details opens instructor info route
+01:29 +444 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/course_details/legacy_course_details_instructor_navigation_test.dart: legacy course details opens instructor info route
+01:32 +445 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/course_details/video_player_widget_test.dart: VideoPlayerWidget shows unavailable state when embedded player is disabled
+01:35 +446 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/course_details/week_accordion_test.dart: WeekAccordion expands and shows material title
+01:37 +447 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/course_list_screen_test.dart: courses list view renders enrollment payload fields
+01:39 +448 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/course_list_screen_test.dart: courses list view renders enrollment payload fields
+01:39 +449 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/materials_tab_test.dart: shows empty state when there are no materials
+01:39 +450 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/materials_tab_test.dart: shows empty state when there are no materials
+01:40 +451 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/students_tab_test.dart: renders students list with grade and score
+01:40 +452 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/students_tab_test.dart: renders students list with grade and score
+01:41 +453 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/students_tab_test.dart: renders students list with grade and score
+01:41 +453 -8: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/materials_tab_test.dart: keeps material action buttons at least 48x48
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.first (dart:core/iterable.dart:663:7)
+#1      _FirstFinderMixin.filter (package:flutter_test/src/finders.dart:1332:28)
+#3      Iterable.single (dart:core/iterable.dart:694:13)
+#4      WidgetController.getSize (package:flutter_test/src/controller.dart:2090:47)
+#5      main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/materials_tab_test.dart:99:27)
+<asynchronous suspension>
+#6      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#7      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided 2 frames from dart:async-patch and package:stack_trace)
+
+The test description was:
+  keeps material action buttons at least 48x48
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:41 +453 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/students_tab_test.dart: renders students list with grade and score
+01:41 +453 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/materials_tab_test.dart: keeps material action buttons at least 48x48 [E]
+  Test failed. See exception logs above.
+  The test description was: keeps material action buttons at least 48x48
+  
+01:41 +454 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/students_tab_test.dart: renders students list with grade and score
+01:41 +455 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/students_tab_test.dart: renders students list with grade and score
+01:42 +456 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/students_tab_test.dart: renders students list with grade and score
+01:42 +457 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management/students_tab_test.dart: renders students list with grade and score
+01:42 +458 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management_screen_test.dart: shows five tabs and renders course content
+01:42 +459 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management_screen_test.dart: shows five tabs and renders course content
+01:42 +460 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management_screen_test.dart: shows five tabs and renders course content
+01:43 +461 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management_screen_test.dart: shows five tabs and renders course content
+01:44 +462 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_courses_screen_test.dart: shows loading skeleton while teaching courses load
+01:46 +463 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_courses_screen_test.dart: shows loading skeleton while teaching courses load
+01:47 +464 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_courses_screen_test.dart: shows loading skeleton while teaching courses load
+01:47 +465 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_courses_screen_test.dart: shows loading skeleton while teaching courses load
+01:47 +466 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_courses_screen_test.dart: shows loading skeleton while teaching courses load
+01:48 +467 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_courses_screen_test.dart: shows loading skeleton while teaching courses load
+01:48 +468 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T038: labs CRUD controls are visible for instructor only
+01:48 +469 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T038: labs CRUD controls are visible for instructor only
+01:48 +470 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T038: labs CRUD controls are visible for instructor only
+01:49 +471 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/upload_materials_screen_test.dart: shows week selector and all upload option paths
+01:49 +471 -9: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management_screen_test.dart: renders correctly across 375, 768, and 1024+ widths
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 17 pixels on the bottom.
+
+The relevant error-causing widget was:
+  Column
+  Column:file:///D:/Graduation/EduVerse/edu_verse/lib/screens/instructor/course_management/course_management_screen.dart:1088:20
+
+The overflowing RenderFlex has an orientation of Axis.vertical.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#22172 relayoutBoundary=up1 OVERFLOWING:
+  creator: Column ← Expanded ← Row ← Padding ← DecoratedBox ← Container ← RepaintBoundary ←
+    IndexedSemantics ← _SelectionKeepAlive ← NotificationListener<KeepAliveNotification> ← KeepAlive ←
+    AutomaticKeepAlive ← ⋯
+  parentData: offset=Offset(48.0, 0.0); flex=1; fit=FlexFit.tight (can use size)
+  constraints: BoxConstraints(w=74.5, 0.0<=h<=44.7)
+  size: Size(74.5, 44.7)
+  direction: vertical
+  mainAxisAlignment: center
+  mainAxisSize: max
+  crossAxisAlignment: start
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 17 pixels on the bottom.
+
+The relevant error-causing widget was:
+  Column
+  Column:file:///D:/Graduation/EduVerse/edu_verse/lib/screens/instructor/course_management/course_management_screen.dart:1088:20
+
+The overflowing RenderFlex has an orientation of Axis.vertical.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#d1d6f relayoutBoundary=up1 OVERFLOWING:
+  creator: Column ← Expanded ← Row ← Padding ← DecoratedBox ← Container ← RepaintBoundary ←
+    IndexedSemantics ← _SelectionKeepAlive ← NotificationListener<KeepAliveNotification> ← KeepAlive ←
+    AutomaticKeepAlive ← ⋯
+  parentData: offset=Offset(48.0, 0.0); flex=1; fit=FlexFit.tight (can use size)
+  constraints: BoxConstraints(w=74.5, 0.0<=h<=44.7)
+  size: Size(74.5, 44.7)
+  direction: vertical
+  mainAxisAlignment: center
+  mainAxisSize: max
+  crossAxisAlignment: start
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 17 pixels on the bottom.
+
+The relevant error-causing widget was:
+  Column
+  Column:file:///D:/Graduation/EduVerse/edu_verse/lib/screens/instructor/course_management/course_management_screen.dart:1088:20
+
+The overflowing RenderFlex has an orientation of Axis.vertical.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#bb2ea relayoutBoundary=up1 OVERFLOWING:
+  creator: Column ← Expanded ← Row ← Padding ← DecoratedBox ← Container ← RepaintBoundary ←
+    IndexedSemantics ← _SelectionKeepAlive ← NotificationListener<KeepAliveNotification> ← KeepAlive ←
+    AutomaticKeepAlive ← ⋯
+  parentData: offset=Offset(48.0, 0.0); flex=1; fit=FlexFit.tight (can use size)
+  constraints: BoxConstraints(w=74.5, 0.0<=h<=44.7)
+  size: Size(74.5, 44.7)
+  direction: vertical
+  mainAxisAlignment: center
+  mainAxisSize: max
+  crossAxisAlignment: start
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 17 pixels on the bottom.
+
+The relevant error-causing widget was:
+  Column
+  Column:file:///D:/Graduation/EduVerse/edu_verse/lib/screens/instructor/course_management/course_management_screen.dart:1088:20
+
+The overflowing RenderFlex has an orientation of Axis.vertical.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#d23d8 relayoutBoundary=up1 OVERFLOWING:
+  creator: Column ← Expanded ← Row ← Padding ← DecoratedBox ← Container ← RepaintBoundary ←
+    IndexedSemantics ← _SelectionKeepAlive ← NotificationListener<KeepAliveNotification> ← KeepAlive ←
+    AutomaticKeepAlive ← ⋯
+  parentData: offset=Offset(48.0, 0.0); flex=1; fit=FlexFit.tight (can use size)
+  constraints: BoxConstraints(w=74.5, 0.0<=h<=44.7)
+  size: Size(74.5, 44.7)
+  direction: vertical
+  mainAxisAlignment: center
+  mainAxisSize: max
+  crossAxisAlignment: start
+  textDirection: ltr
+  verticalDirection: down
+  spacing: 0.0
+◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (4) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management_screen_test.dart:323:7)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management_screen_test.dart line 323
+The test description was:
+  renders correctly across 375, 768, and 1024+ widths
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:49 +471 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/upload_materials_screen_test.dart: shows week selector and all upload option paths
+01:49 +471 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/course_management_screen_test.dart: renders correctly across 375, 768, and 1024+ widths [E]
+  Test failed. See exception logs above.
+  The test description was: renders correctly across 375, 768, and 1024+ widths
+  
+01:50 +472 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/upload_materials_screen_test.dart: shows week selector and all upload option paths
+01:50 +473 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/upload_materials_screen_test.dart: shows week selector and all upload option paths
+01:51 +474 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/upload_materials_screen_test.dart: shows week selector and all upload option paths
+01:51 +475 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/upload_materials_screen_test.dart: shows week selector and all upload option paths
+01:51 +476 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/upload_materials_screen_test.dart: shows week selector and all upload option paths
+01:51 +477 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/upload_materials_screen_test.dart: shows week selector and all upload option paths
+01:52 +478 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/student/courses/courses_screen_phase1_test.dart: CoursesScreen Phase 1 scaffold courses header renders redesign copy
+01:52 +479 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/student/courses/courses_screen_phase1_test.dart: CoursesScreen Phase 1 scaffold courses header renders redesign copy
+01:52 +480 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/instruction_viewer_test.dart: renders markdown text and file action buttons
+01:52 +481 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/instruction_viewer_test.dart: renders markdown text and file action buttons
+01:52 +482 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/instruction_viewer_test.dart: renders markdown text and file action buttons
+01:52 +483 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/instruction_viewer_test.dart: renders markdown text and file action buttons
+01:52 +484 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T037: labs list and detail screens render across 375/768/1024 without overflow and with minimum touch targets
+01:52 +485 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T037: labs list and detail screens render across 375/768/1024 without overflow and with minimum touch targets
+01:53 +486 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T037: labs list and detail screens render across 375/768/1024 without overflow and with minimum touch targets
+01:53 +487 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T037: labs list and detail screens render across 375/768/1024 without overflow and with minimum touch targets
+01:53 +488 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T037: labs list and detail screens render across 375/768/1024 without overflow and with minimum touch targets
+01:53 +489 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T037: labs list and detail screens render across 375/768/1024 without overflow and with minimum touch targets
+01:54 +490 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T037: labs list and detail screens render across 375/768/1024 without overflow and with minimum touch targets
+01:54 +491 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T037: labs list and detail screens render across 375/768/1024 without overflow and with minimum touch targets
+01:54 +492 -10: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/instruction_viewer_test.dart: LabDetailScreen renders attendance badge when present
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: exactly one matching candidate
+  Actual: _TextWidgetFinder:<Found 0 widgets with text "Attendance: Present": []>
+   Which: means none were found but one was expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/instruction_viewer_test.dart:217:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1059:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/instruction_viewer_test.dart line 217
+The test description was:
+  LabDetailScreen renders attendance badge when present
+════════════════════════════════════════════════════════════════════════════════════════════════════
+01:54 +492 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/lab_submission_sheet_test.dart: renders text input, file picker section and submit button
+01:54 +492 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/instruction_viewer_test.dart: LabDetailScreen renders attendance badge when present [E]
+  Test failed. See exception logs above.
+  The test description was: LabDetailScreen renders attendance badge when present
+  
+01:56 +493 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/lab_submission_sheet_test.dart: renders text input, file picker section and submit button
+01:56 +494 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/lab_submission_sheet_test.dart: renders text input, file picker section and submit button
+01:56 +495 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T040: late penalty is displayed, final score override is saved, and grading interaction is under 30 seconds
+01:56 +496 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/upload_materials_screen_test.dart: shows error state feedback when MaterialsBloc emits error
+01:56 +497 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/upload_materials_screen_test.dart: shows error state feedback when MaterialsBloc emits error
+01:56 +498 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/upload_materials_screen_test.dart: shows error state feedback when MaterialsBloc emits error
+01:56 +499 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/courses/courses_screen_phase1_test.dart: CoursesScreen Phase 1 scaffold filter button emits status callback from popup selection
+01:56 +500 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T040: lab creation flow completes under 60 seconds and list load/search performance thresholds are met
+01:57 +501 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T040: lab creation flow completes under 60 seconds and list load/search performance thresholds are met
+01:57 +502 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T040: lab creation flow completes under 60 seconds and list load/search performance thresholds are met
+01:57 +503 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T040: lab creation flow completes under 60 seconds and list load/search performance thresholds are met
+01:57 +504 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T040: lab creation flow completes under 60 seconds and list load/search performance thresholds are met
+01:58 +505 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/instructor/instructor_labs_phase9_verification_test.dart: Phase 9 verification (T037-T040) T040: lab creation flow completes under 60 seconds and list load/search performance thresholds are met
+01:58 +506 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/courses/courses_screen_phase1_test.dart: CoursesScreen Phase 1 scaffold screen shows loaded course list state when backend returns data
+01:58 +507 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/courses/courses_screen_phase1_test.dart: CoursesScreen Phase 1 scaffold screen shows loaded course list state when backend returns data
+01:58 +508 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/courses/courses_screen_phase1_test.dart: CoursesScreen Phase 1 scaffold screen shows empty state when backend returns no enrollments
+01:59 +509 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/submission_history_view_test.dart: renders graded, pending, late indicators and attempts list
+01:59 +510 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/submission_history_view_test.dart: renders graded, pending, late indicators and attempts list
+01:59 +511 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/labs/submission_history_view_test.dart: renders graded, pending, late indicators and attempts list
+02:00 +512 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/registration/student_registration_screen_test.dart: StudentRegistrationScreen renders loading state before API completes
+02:00 +513 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/registration/student_registration_screen_test.dart: StudentRegistrationScreen renders loading state before API completes
+02:00 +514 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/registration/student_registration_screen_test.dart: StudentRegistrationScreen renders loading state before API completes
+02:00 +515 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/registration/student_registration_screen_test.dart: StudentRegistrationScreen renders loading state before API completes
+02:00 +516 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/registration/student_registration_screen_test.dart: StudentRegistrationScreen renders loading state before API completes
+02:01 +517 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/submission_form_phase7_e2e_test.dart: T082: overdue filter result opens blocked submission form when late not allowed
+02:01 +518 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/submission_form_test.dart: validates empty text submission before dispatch
+02:01 +519 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/submission_form_test.dart: validates empty text submission before dispatch
+02:02 +520 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/submission_form_test.dart: validates empty text submission before dispatch
+02:02 +521 -11: D:/Graduation/EduVerse/edu_verse/test/widget_test.dart: Test-safe root smoke tests renders visible app shell with mocked blocs/services
+02:02 +522 -11: D:/Graduation/EduVerse/edu_verse/test/widgets/student/registration/student_registration_screen_test.dart: StudentRegistrationScreen opens section selection sheet for multi-section course
+02:02 +523 -11: D:/Graduation/EduVerse/edu_verse/test/widget_test.dart: Test-safe root smoke tests updates visible UI when mocked blocs change state
+02:02 +524 -11: D:/Graduation/EduVerse/edu_verse/test/widget_test.dart: Test-safe root smoke tests updates visible UI when mocked blocs change state
+02:02 +525 -11: Some tests failed.

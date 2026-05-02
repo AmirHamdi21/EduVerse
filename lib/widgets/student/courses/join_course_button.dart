@@ -8,8 +8,17 @@ import '../../../generated_l10n/app_localizations.dart';
 
 class JoinCourseButton extends StatefulWidget {
   final VoidCallback? onPressed;
+  final bool compact;
+  final bool showPulse;
+  final bool useHeroGradient;
 
-  const JoinCourseButton({super.key, this.onPressed});
+  const JoinCourseButton({
+    super.key,
+    this.onPressed,
+    this.compact = false,
+    this.showPulse = true,
+    this.useHeroGradient = false,
+  });
 
   @override
   State<JoinCourseButton> createState() => _JoinCourseButtonState();
@@ -38,7 +47,7 @@ class _JoinCourseButtonState extends State<JoinCourseButton>
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final bool shouldAnimate = TickerMode.of(context);
+    final bool shouldAnimate = widget.showPulse && TickerMode.of(context);
     if (shouldAnimate && !_isRepeating) {
       _controller.repeat(reverse: true);
       _isRepeating = true;
@@ -59,28 +68,36 @@ class _JoinCourseButtonState extends State<JoinCourseButton>
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeBloc, ThemeState>(
       builder: (context, themeState) {
+        final isDark = themeState.isDark;
         final l10n = AppLocalizations.of(context);
+        final gradient = widget.useHeroGradient
+            ? (isDark
+                  ? StudentCoursesTheme.headerGradientDark
+                  : StudentCoursesTheme.heroGradientLight)
+            : StudentCoursesTheme.primaryGradient;
 
         return Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: widget.compact ? EdgeInsets.zero : const EdgeInsets.all(4),
           child: Semantics(
             button: true,
             label: l10n.joinCourse,
-            hint: 'Opens available course enrollment options',
+            hint: l10n.studentCourseJoinHint,
             child: ScaleTransition(
               scale: _scaleAnimation,
               child: Container(
                 decoration: BoxDecoration(
-                  gradient: StudentCoursesTheme.primaryGradient,
-                  borderRadius: BorderRadius.circular(28),
+                  gradient: gradient,
+                  borderRadius: BorderRadius.circular(widget.compact ? 22 : 28),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF155DFC).withOpacity(0.4),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+                      color: StudentCoursesTheme.brandBlue.withValues(
+                        alpha: 0.36,
+                      ),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
                     ),
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -93,18 +110,20 @@ class _JoinCourseButtonState extends State<JoinCourseButton>
                     foregroundColor: Colors.white,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 28,
-                      vertical: 14,
+                      horizontal: 22,
+                      vertical: 15,
                     ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: BorderRadius.circular(
+                        widget.compact ? 22 : 28,
+                      ),
                     ),
                   ),
-                  icon: const Icon(Icons.add, size: 20),
+                  icon: Icon(Icons.add_rounded, size: widget.compact ? 18 : 20),
                   label: Text(
                     l10n.joinCourse,
-                    style: const TextStyle(
-                      fontSize: 14,
+                    style: TextStyle(
+                      fontSize: widget.compact ? 13 : 14,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

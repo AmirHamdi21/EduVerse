@@ -60,19 +60,24 @@ class _FakeLabService extends LabService {
   bool submitFileCalled = false;
 
   @override
-  Future<ServiceResult<LabModel>> getById(dynamic id) async => labResult;
+  Future<ServiceResult<LabModel>> getById(
+    dynamic id, {
+    CancelToken? cancelToken,
+  }) async => labResult;
 
   @override
   Future<ServiceResult<List<LabInstructionModel>>> getInstructions(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return instructionsResult;
   }
 
   @override
   Future<ServiceResult<List<LabSubmissionModel>>> getMySubmission(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return submissionsResult;
   }
 
@@ -81,6 +86,7 @@ class _FakeLabService extends LabService {
     dynamic labId, {
     String? submissionText,
     String? submissionLink,
+    CancelToken? cancelToken,
   }) async {
     submitCalled = true;
     return submitResult;
@@ -92,6 +98,7 @@ class _FakeLabService extends LabService {
     File file, {
     String? submissionText,
     ProgressCallback? onSendProgress,
+    CancelToken? cancelToken,
   }) async {
     submitFileCalled = true;
     onSendProgress?.call(1, 1);
@@ -100,8 +107,9 @@ class _FakeLabService extends LabService {
 
   @override
   Future<ServiceResult<List<LabAttendanceModel>>> getAttendance(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return attendanceResult;
   }
 }
@@ -115,6 +123,7 @@ class _FakeEnrollmentService extends EnrollmentService {
   @override
   Future<ServiceResult<List<CourseEnrollmentModel>>> getMyCourses({
     int? semester,
+    CancelToken? cancelToken,
   }) async {
     return result;
   }

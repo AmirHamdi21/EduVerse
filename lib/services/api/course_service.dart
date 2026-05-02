@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/retry_helper.dart';
@@ -147,6 +148,7 @@ class CourseService {
   Future<List<CourseStructureModel>> getCourseStructure(
     dynamic courseId, {
     bool forceRefresh = false,
+    CancelToken? cancelToken,
   }) async {
     if (!forceRefresh) {
       final cached = await _loadCachedStructure(courseId);
@@ -155,7 +157,10 @@ class CourseService {
       }
     }
 
-    final response = await _client.dio.get('/courses/$courseId/structure');
+    final response = await _client.dio.get(
+      '/courses/$courseId/structure',
+      cancelToken: cancelToken,
+    );
     final structure = _extractStructureList(response.data, courseId);
     await _cacheStructure(courseId, response.data, structure);
     return structure;

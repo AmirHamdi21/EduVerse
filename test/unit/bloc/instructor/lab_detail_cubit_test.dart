@@ -71,20 +71,25 @@ class _FakeLabService extends LabService {
       <Map<String, dynamic>>[];
 
   @override
-  Future<ServiceResult<LabModel>> getById(dynamic id) async => labResult;
+  Future<ServiceResult<LabModel>> getById(
+    dynamic id, {
+    CancelToken? cancelToken,
+  }) async => labResult;
 
   @override
   Future<ServiceResult<List<LabInstructionModel>>> getInstructions(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return instructionsResult;
   }
 
   @override
   Future<ServiceResult<LabInstructionModel>> addInstruction(
     dynamic labId,
-    Map<String, dynamic> data,
-  ) async {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) async {
     lastAddInstructionLabId = labId;
     lastAddInstructionPayload = data;
     return addInstructionResult;
@@ -97,6 +102,7 @@ class _FakeLabService extends LabService {
     String? title,
     int? orderIndex,
     ProgressCallback? onSendProgress,
+    CancelToken? cancelToken,
   }) async {
     uploadInstructionCalled = true;
     lastUploadInstructionLabId = labId;
@@ -107,8 +113,9 @@ class _FakeLabService extends LabService {
 
   @override
   Future<ServiceResult<List<LabSubmissionModel>>> getSubmissions(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return submissionsResult;
   }
 
@@ -119,6 +126,7 @@ class _FakeLabService extends LabService {
     double score, {
     String status = 'graded',
     String? feedback,
+    CancelToken? cancelToken,
   }) async {
     gradeCallCount++;
     lastGradedLabId = labId;
@@ -133,8 +141,9 @@ class _FakeLabService extends LabService {
   Future<ServiceResult<LabInstructionModel>> updateInstruction(
     dynamic labId,
     dynamic instructionId,
-    Map<String, dynamic> data,
-  ) async {
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) async {
     updateInstructionCalls.add(<String, dynamic>{
       'labId': labId,
       'instructionId': instructionId,
@@ -163,8 +172,9 @@ class _FakeLabService extends LabService {
 
   @override
   Future<ServiceResult<List<LabAttendanceModel>>> getAttendance(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     return attendanceResult;
   }
 }

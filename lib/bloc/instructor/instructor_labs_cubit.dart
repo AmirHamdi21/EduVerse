@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/bloc/route_request_controller.dart';
 import '../../models/instructor/teaching_course_model.dart';
 import '../../models/core/enums/lab_enums.dart' as api;
 import '../../models/labs/lab_model.dart';
@@ -7,7 +8,8 @@ import '../../services/api/enrollment_service.dart';
 import '../../services/api/lab_service.dart';
 import 'instructor_labs_state.dart';
 
-class InstructorLabsCubit extends Cubit<InstructorLabsState> {
+class InstructorLabsCubit extends Cubit<InstructorLabsState>
+    with SafeRouteCubitMixin<InstructorLabsState> {
   InstructorLabsCubit({
     required LabService labService,
     required EnrollmentService enrollmentService,
@@ -17,6 +19,15 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
 
   final LabService _labService;
   final EnrollmentService _enrollmentService;
+  late final RouteRequestController _coursesRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _labsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _mutationRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
 
   List<LabModel> _labs = <LabModel>[];
   List<TeachingCourseModel> _teachingCourses = <TeachingCourseModel>[];
@@ -34,10 +45,17 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
   }
 
   Future<void> loadTeachingCourses({int? preferredCourseId}) async {
-    final result = await _enrollmentService.getTeachingCourses();
+    final requestId = _coursesRequest.begin();
+    final result = await _enrollmentService.getTeachingCourses(
+      cancelToken: _coursesRequest.token,
+    );
+    if (!isRequestCurrent(_coursesRequest, requestId)) {
+      return;
+    }
+
     if (!result.isSuccess || result.data == null) {
       if (state is! InstructorLabsLoaded) {
-        emit(
+        emitIfOpen(
           InstructorLabsError(
             message: result.error?.message ?? 'Failed to load teaching courses',
           ),
@@ -72,7 +90,8 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
   }
 
   Future<void> loadLabs({String? courseId}) async {
-    emit(const InstructorLabsLoading());
+    final requestId = _labsRequest.begin();
+    emitIfOpen(const InstructorLabsLoading());
 
     final parsedCourseId = courseId != null
         ? int.tryParse(courseId)
@@ -83,10 +102,14 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
       courseId: parsedCourseId,
       page: 1,
       limit: 50,
+      cancelToken: _labsRequest.token,
     );
+    if (!isRequestCurrent(_labsRequest, requestId)) {
+      return;
+    }
 
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         InstructorLabsError(
           message: result.error?.message ?? 'Failed to load labs',
         ),
@@ -110,14 +133,19 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
       return;
     }
 
-    emit(currentState.copyWith(isLoadingMore: true));
+    emitIfOpen(currentState.copyWith(isLoadingMore: true));
 
     final nextPage = _currentPage + 1;
+    final requestId = _labsRequest.begin();
     final result = await _labService.getAllPaginated(
       courseId: _selectedCourseId,
       page: nextPage,
       limit: 50,
+      cancelToken: _labsRequest.token,
     );
+    if (!isRequestCurrent(_labsRequest, requestId)) {
+      return;
+    }
 
     final refreshedState = state;
     if (refreshedState is! InstructorLabsLoaded) {
@@ -125,7 +153,7 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
     }
 
     if (!result.isSuccess || result.data == null) {
-      emit(refreshedState.copyWith(isLoadingMore: false));
+      emitIfOpen(refreshedState.copyWith(isLoadingMore: false));
       return;
     }
 
@@ -153,7 +181,14 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
   }
 
   Future<String?> createLab(Map<String, dynamic> data) async {
-    final result = await _labService.create(data);
+    final requestId = _mutationRequest.begin();
+    final result = await _labService.create(
+      data,
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return null;
+    }
     if (!result.isSuccess || result.data == null) {
       return result.error?.message ?? 'Failed to create lab';
     }
@@ -169,7 +204,15 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
 
   Future<String?> updateLab(String labId, Map<String, dynamic> data) async {
     final id = int.tryParse(labId) ?? labId;
-    final result = await _labService.update(id, data);
+    final requestId = _mutationRequest.begin();
+    final result = await _labService.update(
+      id,
+      data,
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return null;
+    }
     if (!result.isSuccess || result.data == null) {
       return result.error?.message ?? 'Failed to update lab';
     }
@@ -190,7 +233,14 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
 
   Future<String?> deleteLab(String labId) async {
     final id = int.tryParse(labId) ?? labId;
-    final result = await _labService.delete(id);
+    final requestId = _mutationRequest.begin();
+    final result = await _labService.delete(
+      id,
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return null;
+    }
     if (!result.isSuccess) {
       return result.error?.message ?? 'Failed to delete lab';
     }
@@ -205,7 +255,15 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
 
   Future<String?> updateStatus(String labId, api.LabStatus status) async {
     final id = int.tryParse(labId) ?? labId;
-    final result = await _labService.updateStatus(id, status);
+    final requestId = _mutationRequest.begin();
+    final result = await _labService.updateStatus(
+      id,
+      status,
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return null;
+    }
     if (!result.isSuccess || result.data == null) {
       return result.error?.message ?? 'Failed to update lab status';
     }
@@ -222,7 +280,7 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState> {
   void _emitLoaded({bool isLoadingMore = false}) {
     final filtered = _applyFilters(_labs);
 
-    emit(
+    emitIfOpen(
       InstructorLabsLoaded(
         labs: _labs,
         filteredLabs: filtered,

@@ -6,6 +6,7 @@ class AnnouncementFormDialog extends StatefulWidget {
   final AnnouncementItem? announcement;
   final bool isDark;
   final bool isAdmin;
+  final Color? accentColor;
   final List<Map<String, String>>? courseOptions;
   final Function(AnnouncementItem) onSave;
   final VoidCallback onCancel;
@@ -15,6 +16,7 @@ class AnnouncementFormDialog extends StatefulWidget {
     this.announcement,
     required this.isDark,
     this.isAdmin = false,
+    this.accentColor,
     this.courseOptions,
     required this.onSave,
     required this.onCancel,
@@ -57,6 +59,8 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
       ...provided,
     ];
   }
+
+  Color get _accentColor => widget.accentColor ?? AnnouncementColors.primary;
 
   @override
   void initState() {
@@ -175,7 +179,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.18),
+                color: Colors.black.withValues(alpha: 0.18),
                 blurRadius: 28,
                 offset: const Offset(0, 10),
               ),
@@ -223,7 +227,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
         border: Border(
           bottom: BorderSide(
             color: widget.isDark
-                ? AnnouncementColors.darkBorder.withOpacity(0.3)
+                ? AnnouncementColors.darkBorder.withValues(alpha: 0.3)
                 : AnnouncementColors.border,
           ),
         ),
@@ -356,7 +360,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             color: widget.isDark
-                ? AnnouncementColors.darkSurface.withOpacity(0.5)
+                ? AnnouncementColors.darkSurface.withValues(alpha: 0.5)
                 : AnnouncementColors.surface,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
@@ -411,7 +415,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             color: widget.isDark
-                ? AnnouncementColors.darkSurface.withOpacity(0.5)
+                ? AnnouncementColors.darkSurface.withValues(alpha: 0.5)
                 : AnnouncementColors.surface,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
@@ -455,7 +459,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
         'value': 'all',
         'label': 'All Users',
         'icon': Icons.groups_rounded,
-        'color': AnnouncementColors.primary,
+        'color': _accentColor,
       },
       {
         'value': 'students',
@@ -514,15 +518,15 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                 decoration: BoxDecoration(
                   color: isSelected
                       ? (widget.isDark
-                            ? color.withOpacity(0.2)
-                            : color.withOpacity(0.08))
+                            ? color.withValues(alpha: 0.2)
+                            : color.withValues(alpha: 0.08))
                       : (widget.isDark
-                            ? AnnouncementColors.darkSurface.withOpacity(0.5)
+                            ? AnnouncementColors.darkSurface.withValues(alpha: 0.5)
                             : AnnouncementColors.surface),
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: isSelected
-                        ? color.withOpacity(0.6)
+                        ? color.withValues(alpha: 0.6)
                         : AnnouncementColors.borderColor(widget.isDark),
                     width: isSelected ? 2 : 1,
                   ),
@@ -611,7 +615,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
                 : const Icon(Icons.send_rounded, size: 18),
             label: Text(isEditing ? 'Update & Publish' : 'Publish'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AnnouncementColors.primary,
+              backgroundColor: _accentColor,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
@@ -636,7 +640,7 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
       ),
       filled: true,
       fillColor: widget.isDark
-          ? AnnouncementColors.darkSurface.withOpacity(0.5)
+          ? AnnouncementColors.darkSurface.withValues(alpha: 0.5)
           : AnnouncementColors.surface,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
@@ -657,9 +661,9 @@ class _AnnouncementFormDialogState extends State<AnnouncementFormDialog>
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(
-          color: errorText != null
-              ? AnnouncementColors.delete
-              : AnnouncementColors.primary,
+              color: errorText != null
+                  ? AnnouncementColors.delete
+                  : _accentColor,
           width: 2,
         ),
       ),

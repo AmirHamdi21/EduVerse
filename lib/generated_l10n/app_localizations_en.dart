@@ -596,6 +596,172 @@ class AppLocalizationsEn extends AppLocalizations {
   String get searchCourseNameOrInstructor => 'Search course name or instructor';
 
   @override
+  String get studentCourseHeroSubtitle =>
+      'Browse, continue, and organize every enrolled course from one focused learning space.';
+
+  @override
+  String get studentCourseDetailCourseContent => 'Course content';
+
+  @override
+  String get studentCourseDetailPrerequisites => 'Prerequisites';
+
+  @override
+  String get studentCourseDetailHeroFallback =>
+      'Stay on top of your materials, staff support, and updates from one polished course space.';
+
+  @override
+  String get studentCourseDetailItemsLabel => 'items';
+
+  @override
+  String get studentCourseDetailItemsCompleted => 'items completed';
+
+  @override
+  String get studentCourseDetailEnrolledOn => 'Enrolled on';
+
+  @override
+  String get studentCourseDetailOverviewHeading => 'Course overview';
+
+  @override
+  String get studentCourseDetailOverviewFallback =>
+      'This course is ready for its next learning step. Explore the content, connect with the teaching team, and keep your progress moving.';
+
+  @override
+  String get studentCourseDetailInstructorTitle => 'Instructor';
+
+  @override
+  String get studentCourseDetailInstructorSubtitle =>
+      'Open the instructor profile and booking screen to review details and reserve office-hour support.';
+
+  @override
+  String get studentCourseDetailOpenProfileBooking => 'Open profile & booking';
+
+  @override
+  String get studentCourseDetailLoadingInstructor => 'Loading instructor...';
+
+  @override
+  String get studentCourseDetailUnknownInstructor => 'Unknown instructor';
+
+  @override
+  String get studentCourseDetailInstructorLoadingMessage =>
+      'Instructor information is still loading.';
+
+  @override
+  String get studentCourseDetailNoInstructorAssigned =>
+      'No instructor is assigned yet.';
+
+  @override
+  String get studentCourseDetailTeachingAssistantsTitle =>
+      'Teaching assistants';
+
+  @override
+  String get studentCourseDetailTeachingAssistantsSubtitle =>
+      'Reach the section support team quickly when you need follow-up help or booking details.';
+
+  @override
+  String get studentCourseDetailLoadingTeachingAssistants =>
+      'Loading teaching assistants...';
+
+  @override
+  String get studentCourseDetailNoTeachingAssistants =>
+      'No teaching assistants are assigned yet.';
+
+  @override
+  String get studentCourseDetailTeachingAssistantRole => 'Teaching assistant';
+
+  @override
+  String get studentCourseDetailNoTaProfile =>
+      'No TA profile is available yet.';
+
+  @override
+  String get studentCourseDetailProgressTitle => 'Course progress';
+
+  @override
+  String get studentCourseDetailProgressSubtitle =>
+      'Track what you have already completed and how much course material is still ahead.';
+
+  @override
+  String get studentCourseDetailDropped => 'Dropped';
+
+  @override
+  String get studentCourseDetailWaitlisted => 'Waitlisted';
+
+  @override
+  String get studentCourseDetailBeginner => 'Beginner';
+
+  @override
+  String get studentCourseDetailIntermediate => 'Intermediate';
+
+  @override
+  String get studentCourseDetailSearchHint =>
+      'Search course content, assignments, labs, or announcements';
+
+  @override
+  String get studentCourseDetailSearchPromptTitle => 'Start a new search';
+
+  @override
+  String get studentCourseDetailSearchPromptSubtitle =>
+      'Type a keyword to find lectures, assignments, labs, or announcements tied to this course.';
+
+  @override
+  String get studentCourseDetailSearchNoResultsTitle => 'No matching results';
+
+  @override
+  String get studentCourseDetailSearchNoResultsSubtitle =>
+      'Try another keyword or open one of the course tabs to browse everything directly.';
+
+  @override
+  String get studentCourseDetailSearchMaterialsLabel => 'Course content';
+
+  @override
+  String get studentCourseDetailNotesHint =>
+      'Create a quick note for this course';
+
+  @override
+  String get studentCourseDetailNotesAllItems => 'All notes';
+
+  @override
+  String get studentCourseDetailNotesSessionOnly => 'Session notes only';
+
+  @override
+  String get studentCourseDetailNotesSortRecent => 'Most recent';
+
+  @override
+  String get studentCourseDetailNotesSortOldest => 'Oldest first';
+
+  @override
+  String get studentCourseDetailNotesEmptyTitle => 'No notes yet';
+
+  @override
+  String get studentCourseDetailNotesEmptySubtitle =>
+      'Capture a quick note for this course and it will stay visible while this page remains open.';
+
+  @override
+  String get studentCourseDetailDownload => 'Download';
+
+  @override
+  String get studentCourseDetailVideoLessons => 'video lessons';
+
+  @override
+  String get studentCourseDetailUnableToOpenVideo =>
+      'Unable to open this video right now.';
+
+  @override
+  String get studentCourseDetailPlay => 'Play';
+
+  @override
+  String get studentCourseDetailPause => 'Pause';
+
+  @override
+  String get studentCourseDetailOpenInBrowser => 'Open in browser';
+
+  @override
+  String get studentCourseDetailNormalSpeed => 'Normal speed';
+
+  @override
+  String get studentCourseDetailVideoPreviewUnavailable =>
+      'Video preview is not available.';
+
+  @override
   String get filter => 'Filter';
 
   @override
@@ -618,6 +784,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get joinCourse => 'Join Course';
+
+  @override
+  String get studentCourseJoinHint =>
+      'Opens available course enrollment options';
 
   @override
   String get nextLecture => 'Next Lecture';
@@ -4544,6 +4714,142 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewDetails => 'View Details';
 
   @override
+  String get gradingCenterHeroTitle => 'Grading Pulse';
+
+  @override
+  String get gradingCenterHeroSubtitle =>
+      'Track the grading queue, open submissions, and update scores without leaving the flow.';
+
+  @override
+  String get gradingCenterCoursesStat => 'Courses';
+
+  @override
+  String get gradingCenterSubmissionsStat => 'Submissions';
+
+  @override
+  String gradingCenterSubmissionsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count submissions',
+      one: '1 submission',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get gradingCenterCourseFilterLabel => 'Course';
+
+  @override
+  String get gradingCenterStatusFilterLabel => 'Status';
+
+  @override
+  String get gradingCenterAllStates => 'All States';
+
+  @override
+  String gradingCenterStudentFallback(int id) {
+    return 'Student #$id';
+  }
+
+  @override
+  String get gradingCenterSubmissionTypeFile => 'File';
+
+  @override
+  String get gradingCenterSubmissionTypeLink => 'Link';
+
+  @override
+  String get gradingCenterSubmissionTypeText => 'Text';
+
+  @override
+  String gradingCenterAttemptNumber(int count) {
+    return 'Attempt $count';
+  }
+
+  @override
+  String get gradingCenterNotGradedYet => 'Not graded yet';
+
+  @override
+  String get gradingCenterLoadErrorTitle => 'Unable to load the grading queue.';
+
+  @override
+  String get gradingCenterNoCoursesAvailable =>
+      'No teaching courses available yet.';
+
+  @override
+  String get gradingCenterPendingEmptySubtitle =>
+      'Everything currently visible in this course has already been graded.';
+
+  @override
+  String get gradingCenterGradedEmptySubtitle =>
+      'No graded submissions match the current course filter yet.';
+
+  @override
+  String get gradingCenterLateEmptySubtitle =>
+      'No late work is showing for the current course filter.';
+
+  @override
+  String get gradingCenterAllEmptySubtitle =>
+      'Once students submit their work, it will appear here for review.';
+
+  @override
+  String get gradingCenterSubmissionSnapshot => 'Submission Snapshot';
+
+  @override
+  String get gradingCenterStudentLabel => 'Student';
+
+  @override
+  String get gradingCenterCourseLabel => 'Course';
+
+  @override
+  String get gradingCenterStatusLabel => 'Status';
+
+  @override
+  String get gradingCenterSubmittedLabel => 'Submitted';
+
+  @override
+  String get gradingCenterAttemptLabel => 'Attempt';
+
+  @override
+  String get gradingCenterCurrentGradeLabel => 'Current Grade';
+
+  @override
+  String get gradingCenterTextSubmissionTitle => 'Text Submission';
+
+  @override
+  String get gradingCenterLinkSubmissionTitle => 'Link Submission';
+
+  @override
+  String get gradingCenterFileSubmissionTitle => 'File Submission';
+
+  @override
+  String gradingCenterInvalidGradeRange(String maxScore) {
+    return 'Enter a score between 0 and $maxScore.';
+  }
+
+  @override
+  String get gradingCenterSaveFailed => 'Failed to submit grade.';
+
+  @override
+  String gradingCenterCurrentScore(int value) {
+    return 'Current score $value%';
+  }
+
+  @override
+  String gradingCenterLatePenalty(String value) {
+    return 'Late penalty $value%';
+  }
+
+  @override
+  String get gradingCenterFeedbackHint =>
+      'Share strengths, gaps, and next steps for the student...';
+
+  @override
+  String get gradingCenterSaving => 'Saving...';
+
+  @override
+  String get gradingCenterOpenLinkError => 'Unable to open the link right now.';
+
+  @override
   String get assignmentDetails => 'Assignment Details';
 
   @override
@@ -6032,6 +6338,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taCourseDetail => 'Course Detail';
 
   @override
+  String get taCourseDetailHeroSubtitle =>
+      'Stay on top of materials, labs, grading, and students for this teaching section.';
+
+  @override
+  String get taCourseDetailContentEmpty =>
+      'Course materials will appear here once they are published for your section.';
+
+  @override
+  String get taCourseDetailOtherMaterials => 'Other materials';
+
+  @override
+  String get taCourseDetailOpenLabsWorkspace => 'Open labs workspace';
+
+  @override
+  String get taCourseDetailNoAttendance =>
+      'Attendance summaries will appear here after lab sessions are recorded.';
+
+  @override
+  String get taCourseDetailNoStudents =>
+      'No students are currently assigned to this section.';
+
+  @override
   String get taCourseStudents => 'Students';
 
   @override
@@ -6174,6 +6502,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get taCourseDiscussionsTab => 'Discussions';
+
+  @override
+  String get taCoursesShellSubtitle =>
+      'Stay on top of your assigned sections, grading queues, labs, and discussion activity from one focused workspace.';
+
+  @override
+  String get taCoursesAllSpaces => 'All support spaces';
+
+  @override
+  String get taCoursesAvgFill => 'Avg fill';
+
+  @override
+  String get taCoursesCourseActions => 'Course actions';
+
+  @override
+  String get taCoursesSectionFill => 'Section fill';
+
+  @override
+  String taCoursesEnrolledCount(int current, int capacity) {
+    return '$current/$capacity enrolled';
+  }
+
+  @override
+  String get taCoursesNoAssignedTitle => 'No teaching courses found';
+
+  @override
+  String get taCoursesNoAssignedSubtitle =>
+      'Your assigned courses will appear here once they are available.';
+
+  @override
+  String get taCoursesNoMatchingTitle => 'No courses match these filters';
+
+  @override
+  String get taCoursesNoMatchingSubtitle =>
+      'Try adjusting your search, status tab, or level filter to bring more courses back into view.';
 
   @override
   String get mainMenu => 'Main Menu';
@@ -13020,6 +13383,59 @@ class AppLocalizationsEn extends AppLocalizations {
       'Search by course code, title, section, semester, or instructor';
 
   @override
+  String get studentCourseDropped => 'Dropped';
+
+  @override
+  String get studentCourseOverviewTitle => 'Keep your momentum';
+
+  @override
+  String get studentCourseOverviewSubtitle =>
+      'Track your active load, completed work, and overall progress at a glance.';
+
+  @override
+  String get studentCourseTotalCourses => 'Total courses';
+
+  @override
+  String get studentCourseActiveCourses => 'Active now';
+
+  @override
+  String get studentCourseCompletedCourses => 'Completed';
+
+  @override
+  String get studentCourseAverageProgress => 'Average progress';
+
+  @override
+  String get studentCourseResultsLabel => 'courses';
+
+  @override
+  String get studentCourseOfflineCached =>
+      'Offline: showing cached course data.';
+
+  @override
+  String get studentCourseEmptyDescription =>
+      'You are not enrolled in any courses yet. Once registration opens, your course library will appear here.';
+
+  @override
+  String get studentCourseConnectionErrorTitle => 'Connection Error';
+
+  @override
+  String get studentCourseConnectionErrorDescription =>
+      'We couldn\'t load your courses right now. Check your connection and try again.';
+
+  @override
+  String get studentCourseAccessRestrictedTitle => 'Access Restricted';
+
+  @override
+  String get studentCourseUnknownInstructor =>
+      'Instructor information unavailable';
+
+  @override
+  String get studentCourseSectionFallback => 'Section -';
+
+  @override
+  String get studentCourseNoSemester => 'No semester';
+
+  @override
   String get adminUseTimeFormat => 'Use HH:mm format for times.';
 
   @override
@@ -14444,6 +14860,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get attendanceNoSessionsMatchFilters => 'No sessions match this view';
+
+  @override
+  String get instructorCourseDetailHeroSubtitle =>
+      'Manage course content, monitor engagement, and keep teaching workflows focused from one polished workspace.';
+
+  @override
+  String get instructorCourseDetailNoSchedule =>
+      'No schedule is available for this section yet.';
+
+  @override
+  String get instructorCourseDetailNoActivity =>
+      'No upcoming activity is available yet.';
 
   @override
   String get chatVideoCallTooltip => 'Video call';

@@ -9,65 +9,76 @@ class AcademicListSkeleton extends StatelessWidget {
     this.itemCount = 4,
     this.topPadding = 16,
     this.bottomPadding = 24,
+    this.sliverFriendly = false,
   });
 
   final bool isDark;
   final int itemCount;
   final double topPadding;
   final double bottomPadding;
+  final bool sliverFriendly;
 
   @override
   Widget build(BuildContext context) {
+    final items = List<Widget>.generate(itemCount, (index) {
+      return Container(
+        margin: EdgeInsets.only(bottom: index == itemCount - 1 ? 0 : 12),
+        height: 168,
+        decoration: BoxDecoration(
+          color: StudentCoursesTheme.cardBackground(isDark),
+          borderRadius: StudentCoursesTheme.cardRadius,
+          border: Border.all(color: StudentCoursesTheme.borderColor(isDark)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  _line(width: 84, height: 22),
+                  const SizedBox(width: 8),
+                  _line(width: 96, height: 22),
+                ],
+              ),
+              const SizedBox(height: 14),
+              _line(width: double.infinity, height: 20),
+              const SizedBox(height: 10),
+              _line(width: 220),
+              const SizedBox(height: 12),
+              Row(
+                children: <Widget>[
+                  Expanded(child: _line(width: double.infinity)),
+                  const SizedBox(width: 8),
+                  Expanded(child: _line(width: double.infinity)),
+                ],
+              ),
+              const Spacer(),
+              Row(
+                children: <Widget>[
+                  Expanded(child: _line(width: double.infinity, height: 12)),
+                  const SizedBox(width: 12),
+                  _line(width: 92, height: 28),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+
+    if (sliverFriendly) {
+      return Padding(
+        padding: EdgeInsets.fromLTRB(16, topPadding, 16, bottomPadding),
+        child: Column(children: items),
+      );
+    }
+
     return ListView.builder(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(16, topPadding, 16, bottomPadding),
       itemCount: itemCount,
-      itemBuilder: (context, index) {
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          height: 168,
-          decoration: BoxDecoration(
-            color: StudentCoursesTheme.cardBackground(isDark),
-            borderRadius: StudentCoursesTheme.cardRadius,
-            border: Border.all(color: StudentCoursesTheme.borderColor(isDark)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    _line(width: 84, height: 22),
-                    const SizedBox(width: 8),
-                    _line(width: 96, height: 22),
-                  ],
-                ),
-                const SizedBox(height: 14),
-                _line(width: double.infinity, height: 20),
-                const SizedBox(height: 10),
-                _line(width: 220),
-                const SizedBox(height: 12),
-                Row(
-                  children: <Widget>[
-                    Expanded(child: _line(width: double.infinity)),
-                    const SizedBox(width: 8),
-                    Expanded(child: _line(width: double.infinity)),
-                  ],
-                ),
-                const Spacer(),
-                Row(
-                  children: <Widget>[
-                    Expanded(child: _line(width: double.infinity, height: 12)),
-                    const SizedBox(width: 12),
-                    _line(width: 92, height: 28),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+      itemBuilder: (context, index) => items[index],
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,6 +30,7 @@ class _StubCourseService extends CourseService {
   Future<List<CourseStructureModel>> getCourseStructure(
     dynamic courseId, {
     bool forceRefresh = false,
+    CancelToken? cancelToken,
   }) async {
     return const <CourseStructureModel>[];
   }
@@ -43,6 +45,7 @@ class _StubMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     return const <CourseMaterialModel>[];
   }
@@ -53,8 +56,9 @@ class _StubEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<InstructorAssignmentModel>>> getSectionInstructors(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<InstructorAssignmentModel>>.success(
       const <InstructorAssignmentModel>[
         InstructorAssignmentModel(
@@ -72,8 +76,9 @@ class _StubEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<TAAssignmentModel>>> getSectionTAs(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TAAssignmentModel>>.success(<TAAssignmentModel>[
       TAAssignmentModel(
         id: 2,
@@ -93,8 +98,9 @@ class _StubCommunicationService extends CommunicationService {
 
   @override
   Future<List<AnnouncementModel>> getAnnouncementsByCourseId(
-    dynamic courseId,
-  ) async {
+    dynamic courseId, {
+    CancelToken? cancelToken,
+  }) async {
     return const <AnnouncementModel>[];
   }
 }
@@ -103,7 +109,10 @@ class _StubPublicProfileService extends PublicProfileService {
   _StubPublicProfileService() : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<PublicProfileModel> getPublicProfile(dynamic userId) async {
+  Future<PublicProfileModel> getPublicProfile(
+    dynamic userId, {
+    CancelToken? cancelToken,
+  }) async {
     return const PublicProfileModel(
       userId: 7,
       firstName: 'Lina',
@@ -139,6 +148,7 @@ class _SpyOfficeHoursService extends OfficeHoursService {
     int limit = 10,
     int? instructorId,
     String? dayOfWeek,
+    CancelToken? cancelToken,
   }) async {
     return PaginatedResult<OfficeHourSlotModel>(
       items: slots,
@@ -147,7 +157,9 @@ class _SpyOfficeHoursService extends OfficeHoursService {
   }
 
   @override
-  Future<List<OfficeHourAppointmentModel>> getMyAppointments() async {
+  Future<List<OfficeHourAppointmentModel>> getMyAppointments({
+    CancelToken? cancelToken,
+  }) async {
     return List<OfficeHourAppointmentModel>.from(_appointments);
   }
 
@@ -157,6 +169,7 @@ class _SpyOfficeHoursService extends OfficeHoursService {
     required String appointmentDate,
     String? topic,
     String? notes,
+    CancelToken? cancelToken,
   }) async {
     bookingCalls += 1;
     lastBookedSlotId = slotId;
@@ -193,6 +206,12 @@ CoursesBloc _buildCoursesBloc(OfficeHoursService officeHoursService) {
 Future<void> _pumpUi(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 100));
   await tester.pump(const Duration(milliseconds: 300));
+}
+
+Finder _verticalScrollable() {
+  return find.byWidgetPredicate((widget) {
+    return widget is Scrollable && widget.axisDirection == AxisDirection.down;
+  });
 }
 
 void main() {
@@ -247,6 +266,12 @@ void main() {
       expect(find.text('Lina Ali'), findsWidgets);
       expect(find.text('Office Hour Slots'), findsOneWidget);
       expect(find.textContaining('10:00 - 11:00'), findsOneWidget);
+      await tester.scrollUntilVisible(
+        find.text('My Appointments'),
+        250,
+        scrollable: _verticalScrollable().first,
+      );
+      await _pumpUi(tester);
       expect(find.text('My Appointments'), findsOneWidget);
       expect(find.text('Capstone Review'), findsOneWidget);
 
@@ -307,6 +332,12 @@ void main() {
             notes: 'Need feedback',
           ),
         );
+      await _pumpUi(tester);
+      await tester.scrollUntilVisible(
+        find.text('Capstone guidance'),
+        250,
+        scrollable: _verticalScrollable().first,
+      );
       await _pumpUi(tester);
 
       expect(officeHoursService.bookingCalls, 1);

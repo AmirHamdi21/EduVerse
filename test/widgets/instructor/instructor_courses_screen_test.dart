@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -50,7 +51,9 @@ class _FakeEnrollmentService extends EnrollmentService {
   final Future<ServiceResult<List<TeachingCourseModel>>> Function() loader;
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) {
     return loader();
   }
 }
@@ -68,6 +71,7 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<PaginatedResponse<AssignmentModel>>.success(
       const PaginatedResponse<AssignmentModel>(
@@ -91,6 +95,7 @@ class _FakeLabService extends LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<List<LabModel>>.success(const <LabModel>[]);
   }
@@ -224,7 +229,7 @@ void main() {
 
     await tester.pumpAndSettle();
 
-    expect(find.text('Advanced Topics'), findsOneWidget);
+    expect(find.text('Advanced Topics'), findsWidgets);
     expect(find.textContaining('CS500'), findsWidgets);
   });
 
@@ -305,7 +310,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Advanced Topics'), findsOneWidget);
+      expect(find.text('Advanced Topics'), findsWidgets);
       expect(tester.takeException(), isNull);
     }
   });

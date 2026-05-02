@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/bloc/route_request_controller.dart';
 import '../../models/admin/admin_periods_models.dart';
 import '../../models/schedule/schedule_models.dart';
 import '../../services/api/office_hours_service.dart';
@@ -7,9 +8,16 @@ import '../../services/api/schedule_api_service.dart';
 import '../schedule/schedule_item_builder.dart';
 import 'ta_calendar_state.dart';
 
-class TACalendarCubit extends Cubit<TACalendarState> {
+class TACalendarCubit extends Cubit<TACalendarState>
+    with SafeRouteCubitMixin<TACalendarState> {
   final ScheduleApiService _scheduleService;
   final OfficeHoursService _officeHoursService;
+  late final RouteRequestController _scheduleRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _mutationRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
 
   TACalendarCubit({
     required ScheduleApiService scheduleService,
@@ -25,17 +33,22 @@ class TACalendarCubit extends Cubit<TACalendarState> {
   }
 
   Future<void> loadSchedule() async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _scheduleRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
 
     List<DailyScheduleResponse> days = const <DailyScheduleResponse>[];
 
     if (state.viewType == TACalendarViewType.day) {
       final result = await _scheduleService.getDailySchedule(
         date: toISODate(state.selectedDate),
+        cancelToken: _scheduleRequest.token,
       );
+      if (!isRequestCurrent(_scheduleRequest, requestId)) {
+        return;
+      }
 
       if (result.isFailure || result.data == null) {
-        emit(
+        emitIfOpen(
           state.copyWith(
             isLoading: false,
             error: result.error?.message ?? 'Failed to load schedule',
@@ -49,10 +62,14 @@ class TACalendarCubit extends Cubit<TACalendarState> {
     } else if (state.viewType == TACalendarViewType.week) {
       final result = await _scheduleService.getWeeklySchedule(
         startDate: toISODate(startOfWeek(state.selectedDate)),
+        cancelToken: _scheduleRequest.token,
       );
+      if (!isRequestCurrent(_scheduleRequest, requestId)) {
+        return;
+      }
 
       if (result.isFailure || result.data == null) {
-        emit(
+        emitIfOpen(
           state.copyWith(
             isLoading: false,
             error: result.error?.message ?? 'Failed to load schedule',
@@ -66,10 +83,14 @@ class TACalendarCubit extends Cubit<TACalendarState> {
     } else {
       final result = await _scheduleService.getMonthSchedule(
         state.focusedMonth,
+        cancelToken: _scheduleRequest.token,
       );
+      if (!isRequestCurrent(_scheduleRequest, requestId)) {
+        return;
+      }
 
       if (result.isFailure || result.data == null) {
-        emit(
+        emitIfOpen(
           state.copyWith(
             isLoading: false,
             error: result.error?.message ?? 'Failed to load schedule',
@@ -82,7 +103,10 @@ class TACalendarCubit extends Cubit<TACalendarState> {
       days = result.data!;
     }
 
-    final officeSlots = await _loadOfficeHoursSlots();
+    final officeSlots = await _loadOfficeHoursSlots(requestId);
+    if (!isRequestCurrent(_scheduleRequest, requestId)) {
+      return;
+    }
     final items = ScheduleItemBuilder.build(
       days: days,
       officeHoursSlots: officeSlots,
@@ -90,12 +114,21 @@ class TACalendarCubit extends Cubit<TACalendarState> {
       endDate: toISODate(endOfWeek(state.selectedDate)),
     );
 
-    emit(state.copyWith(isLoading: false, rawDays: days, unifiedItems: items));
+    emitIfOpen(
+      state.copyWith(isLoading: false, rawDays: days, unifiedItems: items),
+    );
   }
 
-  Future<List<OfficeHourSlotModel>> _loadOfficeHoursSlots() async {
+  Future<List<OfficeHourSlotModel>> _loadOfficeHoursSlots(int requestId) async {
     try {
-      final result = await _officeHoursService.getSlots(page: 1, limit: 200);
+      final result = await _officeHoursService.getSlots(
+        page: 1,
+        limit: 200,
+        cancelToken: _scheduleRequest.token,
+      );
+      if (!isRequestCurrent(_scheduleRequest, requestId)) {
+        return const <OfficeHourSlotModel>[];
+      }
       return result.items;
     } catch (_) {
       return const <OfficeHourSlotModel>[];
@@ -117,12 +150,12 @@ class TACalendarCubit extends Cubit<TACalendarState> {
         next = TACalendarViewType.month;
     }
 
-    emit(state.copyWith(viewType: next));
+    emitIfOpen(state.copyWith(viewType: next));
     loadSchedule();
   }
 
   void setViewType(TACalendarViewType viewType) {
-    emit(state.copyWith(viewType: viewType));
+    emitIfOpen(state.copyWith(viewType: viewType));
     loadSchedule();
   }
 
@@ -134,7 +167,7 @@ class TACalendarCubit extends Cubit<TACalendarState> {
       next.add(filterId);
     }
 
-    emit(state.copyWith(activeFilters: next));
+    emitIfOpen(state.copyWith(activeFilters: next));
   }
 
   void selectDate(DateTime date) {
@@ -142,7 +175,9 @@ class TACalendarCubit extends Cubit<TACalendarState> {
     final focusedMonth = DateTime(normalized.year, normalized.month);
     final needsReload = _shouldReloadForSelectedDate(normalized);
 
-    emit(state.copyWith(selectedDate: normalized, focusedMonth: focusedMonth));
+    emitIfOpen(
+      state.copyWith(selectedDate: normalized, focusedMonth: focusedMonth),
+    );
 
     if (needsReload) {
       loadSchedule();
@@ -150,7 +185,7 @@ class TACalendarCubit extends Cubit<TACalendarState> {
   }
 
   void setFocusedMonth(DateTime month) {
-    emit(state.copyWith(focusedMonth: month));
+    emitIfOpen(state.copyWith(focusedMonth: month));
     if (state.viewType == TACalendarViewType.month) {
       loadSchedule();
     }
@@ -161,7 +196,7 @@ class TACalendarCubit extends Cubit<TACalendarState> {
       state.focusedMonth.year,
       state.focusedMonth.month - 1,
     );
-    emit(state.copyWith(focusedMonth: newMonth));
+    emitIfOpen(state.copyWith(focusedMonth: newMonth));
     if (state.viewType == TACalendarViewType.month) {
       loadSchedule();
     }
@@ -172,7 +207,7 @@ class TACalendarCubit extends Cubit<TACalendarState> {
       state.focusedMonth.year,
       state.focusedMonth.month + 1,
     );
-    emit(state.copyWith(focusedMonth: newMonth));
+    emitIfOpen(state.copyWith(focusedMonth: newMonth));
     if (state.viewType == TACalendarViewType.month) {
       loadSchedule();
     }
@@ -180,13 +215,13 @@ class TACalendarCubit extends Cubit<TACalendarState> {
 
   void goToToday() {
     final now = DateTime.now();
-    emit(state.copyWith(selectedDate: now, focusedMonth: now));
+    emitIfOpen(state.copyWith(selectedDate: now, focusedMonth: now));
     loadSchedule();
   }
 
   Future<void> syncCalendar() async {
     await loadSchedule();
-    emit(state.copyWith(successMessage: 'Calendar synced'));
+    emitIfOpen(state.copyWith(successMessage: 'Calendar synced'));
     _clearSuccess();
   }
 
@@ -200,12 +235,13 @@ class TACalendarCubit extends Cubit<TACalendarState> {
     String? description,
   }) async {
     if (title.trim().isEmpty) {
-      emit(state.copyWith(error: 'Event title is required'));
+      emitIfOpen(state.copyWith(error: 'Event title is required'));
       _clearError();
       return;
     }
 
-    emit(state.copyWith(isLoading: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true));
 
     final start = _combineDateAndTime(date, startTime);
     final end = endTime == null || endTime.trim().isEmpty
@@ -227,9 +263,15 @@ class TACalendarCubit extends Cubit<TACalendarState> {
       payload['description'] = description.trim();
     }
 
-    final result = await _scheduleService.createCalendarEvent(payload);
+    final result = await _scheduleService.createCalendarEvent(
+      payload,
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
     if (result.isFailure) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to add event',
@@ -240,16 +282,20 @@ class TACalendarCubit extends Cubit<TACalendarState> {
     }
 
     await loadSchedule();
-    emit(state.copyWith(successMessage: 'Event added'));
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
+    emitIfOpen(state.copyWith(successMessage: 'Event added'));
     _clearSuccess();
   }
 
   Future<void> deleteEvent(String eventId) async {
-    emit(state.copyWith(isLoading: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true));
 
     final personalEventId = _resolvePersonalEventId(eventId);
     if (personalEventId == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: 'Only personal events can be deleted',
@@ -259,9 +305,15 @@ class TACalendarCubit extends Cubit<TACalendarState> {
       return;
     }
 
-    final result = await _scheduleService.deleteCalendarEvent(personalEventId);
+    final result = await _scheduleService.deleteCalendarEvent(
+      personalEventId,
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
     if (result.isFailure) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to delete event',
@@ -272,7 +324,10 @@ class TACalendarCubit extends Cubit<TACalendarState> {
     }
 
     await loadSchedule();
-    emit(state.copyWith(successMessage: 'Event deleted'));
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
+    emitIfOpen(state.copyWith(successMessage: 'Event deleted'));
     _clearSuccess();
   }
 

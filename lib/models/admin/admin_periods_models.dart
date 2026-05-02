@@ -441,17 +441,32 @@ class OfficeHourAppointmentModel {
     final student = json['student'] is Map<String, dynamic>
         ? json['student'] as Map<String, dynamic>
         : const <String, dynamic>{};
+    final studentUser = student['user'] is Map<String, dynamic>
+        ? student['user'] as Map<String, dynamic>
+        : const <String, dynamic>{};
 
-    final studentName = _joinNonEmpty(<String?>[
+    final joinedStudentName = _joinNonEmpty(<String?>[
       _nullableString(student['firstName']),
       _nullableString(student['lastName']),
+      _nullableString(studentUser['firstName']),
+      _nullableString(studentUser['lastName']),
+    ]);
+    final resolvedStudentName = _firstNonEmpty(<String?>[
+      _nullableString(json['studentName']),
+      _nullableString(student['fullName']),
+      _nullableString(student['displayName']),
+      _nullableString(student['name']),
+      _nullableString(studentUser['fullName']),
+      _nullableString(studentUser['displayName']),
+      _nullableString(studentUser['name']),
+      joinedStudentName,
     ]);
 
     return OfficeHourAppointmentModel(
       appointmentId: _parseInt(json['appointmentId'] ?? json['id']),
       studentName: _asString(
-        json['studentName'],
-        fallback: studentName.isEmpty ? 'Unknown Student' : studentName,
+        resolvedStudentName,
+        fallback: 'Unknown Student',
       ),
       topic: _asString(json['topic'], fallback: 'No topic provided'),
       appointmentDate: _parseDateTime(
@@ -460,6 +475,16 @@ class OfficeHourAppointmentModel {
       status: _asString(json['status'], fallback: 'pending'),
     );
   }
+}
+
+String? _firstNonEmpty(Iterable<String?> values) {
+  for (final value in values) {
+    final normalized = value?.trim();
+    if (normalized != null && normalized.isNotEmpty) {
+      return normalized;
+    }
+  }
+  return null;
 }
 
 class AdminStaffSummaryModel {

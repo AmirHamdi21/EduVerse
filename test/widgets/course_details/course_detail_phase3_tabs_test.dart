@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -35,6 +36,7 @@ class _FakeCourseService extends CourseService {
   Future<List<CourseStructureModel>> getCourseStructure(
     dynamic courseId, {
     bool forceRefresh = false,
+    CancelToken? cancelToken,
   }) async {
     return const <CourseStructureModel>[];
   }
@@ -49,6 +51,7 @@ class _FakeMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     return const <CourseMaterialModel>[];
   }
@@ -73,6 +76,7 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     final data = courseId == null
         ? assignments
@@ -91,8 +95,9 @@ class _FakeAssignmentService extends AssignmentService {
 
   @override
   Future<ServiceResult<AssignmentSubmissionModel>> getMySubmission(
-    dynamic assignmentId,
-  ) async {
+    dynamic assignmentId, {
+    CancelToken? cancelToken,
+  }) async {
     final id = assignmentId is int
         ? assignmentId
         : int.tryParse(assignmentId.toString()) ?? 0;
@@ -127,6 +132,7 @@ class _FakeLabService extends LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     final data = courseId == null
         ? labs
@@ -137,8 +143,9 @@ class _FakeLabService extends LabService {
 
   @override
   Future<ServiceResult<List<LabSubmissionModel>>> getMySubmission(
-    dynamic labId,
-  ) async {
+    dynamic labId, {
+    CancelToken? cancelToken,
+  }) async {
     final id = labId is int ? labId : int.tryParse(labId.toString()) ?? 0;
     final submissions = submissionsByLabId[id];
     if (submissions == null) {
@@ -159,8 +166,9 @@ class _FakeCommunicationService extends CommunicationService {
 
   @override
   Future<List<AnnouncementModel>> getAnnouncementsByCourseId(
-    dynamic courseId,
-  ) async {
+    dynamic courseId, {
+    CancelToken? cancelToken,
+  }) async {
     return announcements;
   }
 }

@@ -1238,6 +1238,300 @@ abstract class AppLocalizations {
   /// **'Search course name or instructor'**
   String get searchCourseNameOrInstructor;
 
+  /// No description provided for @studentCourseHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse, continue, and organize every enrolled course from one focused learning space.'**
+  String get studentCourseHeroSubtitle;
+
+  /// No description provided for @studentCourseDetailCourseContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Course content'**
+  String get studentCourseDetailCourseContent;
+
+  /// No description provided for @studentCourseDetailPrerequisites.
+  ///
+  /// In en, this message translates to:
+  /// **'Prerequisites'**
+  String get studentCourseDetailPrerequisites;
+
+  /// No description provided for @studentCourseDetailHeroFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on top of your materials, staff support, and updates from one polished course space.'**
+  String get studentCourseDetailHeroFallback;
+
+  /// No description provided for @studentCourseDetailItemsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'items'**
+  String get studentCourseDetailItemsLabel;
+
+  /// No description provided for @studentCourseDetailItemsCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'items completed'**
+  String get studentCourseDetailItemsCompleted;
+
+  /// No description provided for @studentCourseDetailEnrolledOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Enrolled on'**
+  String get studentCourseDetailEnrolledOn;
+
+  /// No description provided for @studentCourseDetailOverviewHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Course overview'**
+  String get studentCourseDetailOverviewHeading;
+
+  /// No description provided for @studentCourseDetailOverviewFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'This course is ready for its next learning step. Explore the content, connect with the teaching team, and keep your progress moving.'**
+  String get studentCourseDetailOverviewFallback;
+
+  /// No description provided for @studentCourseDetailInstructorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor'**
+  String get studentCourseDetailInstructorTitle;
+
+  /// No description provided for @studentCourseDetailInstructorSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open the instructor profile and booking screen to review details and reserve office-hour support.'**
+  String get studentCourseDetailInstructorSubtitle;
+
+  /// No description provided for @studentCourseDetailOpenProfileBooking.
+  ///
+  /// In en, this message translates to:
+  /// **'Open profile & booking'**
+  String get studentCourseDetailOpenProfileBooking;
+
+  /// No description provided for @studentCourseDetailLoadingInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading instructor...'**
+  String get studentCourseDetailLoadingInstructor;
+
+  /// No description provided for @studentCourseDetailUnknownInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown instructor'**
+  String get studentCourseDetailUnknownInstructor;
+
+  /// No description provided for @studentCourseDetailInstructorLoadingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor information is still loading.'**
+  String get studentCourseDetailInstructorLoadingMessage;
+
+  /// No description provided for @studentCourseDetailNoInstructorAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'No instructor is assigned yet.'**
+  String get studentCourseDetailNoInstructorAssigned;
+
+  /// No description provided for @studentCourseDetailTeachingAssistantsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching assistants'**
+  String get studentCourseDetailTeachingAssistantsTitle;
+
+  /// No description provided for @studentCourseDetailTeachingAssistantsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reach the section support team quickly when you need follow-up help or booking details.'**
+  String get studentCourseDetailTeachingAssistantsSubtitle;
+
+  /// No description provided for @studentCourseDetailLoadingTeachingAssistants.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading teaching assistants...'**
+  String get studentCourseDetailLoadingTeachingAssistants;
+
+  /// No description provided for @studentCourseDetailNoTeachingAssistants.
+  ///
+  /// In en, this message translates to:
+  /// **'No teaching assistants are assigned yet.'**
+  String get studentCourseDetailNoTeachingAssistants;
+
+  /// No description provided for @studentCourseDetailTeachingAssistantRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Teaching assistant'**
+  String get studentCourseDetailTeachingAssistantRole;
+
+  /// No description provided for @studentCourseDetailNoTaProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'No TA profile is available yet.'**
+  String get studentCourseDetailNoTaProfile;
+
+  /// No description provided for @studentCourseDetailProgressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Course progress'**
+  String get studentCourseDetailProgressTitle;
+
+  /// No description provided for @studentCourseDetailProgressSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track what you have already completed and how much course material is still ahead.'**
+  String get studentCourseDetailProgressSubtitle;
+
+  /// No description provided for @studentCourseDetailDropped.
+  ///
+  /// In en, this message translates to:
+  /// **'Dropped'**
+  String get studentCourseDetailDropped;
+
+  /// No description provided for @studentCourseDetailWaitlisted.
+  ///
+  /// In en, this message translates to:
+  /// **'Waitlisted'**
+  String get studentCourseDetailWaitlisted;
+
+  /// No description provided for @studentCourseDetailBeginner.
+  ///
+  /// In en, this message translates to:
+  /// **'Beginner'**
+  String get studentCourseDetailBeginner;
+
+  /// No description provided for @studentCourseDetailIntermediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Intermediate'**
+  String get studentCourseDetailIntermediate;
+
+  /// No description provided for @studentCourseDetailSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search course content, assignments, labs, or announcements'**
+  String get studentCourseDetailSearchHint;
+
+  /// No description provided for @studentCourseDetailSearchPromptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new search'**
+  String get studentCourseDetailSearchPromptTitle;
+
+  /// No description provided for @studentCourseDetailSearchPromptSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a keyword to find lectures, assignments, labs, or announcements tied to this course.'**
+  String get studentCourseDetailSearchPromptSubtitle;
+
+  /// No description provided for @studentCourseDetailSearchNoResultsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching results'**
+  String get studentCourseDetailSearchNoResultsTitle;
+
+  /// No description provided for @studentCourseDetailSearchNoResultsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another keyword or open one of the course tabs to browse everything directly.'**
+  String get studentCourseDetailSearchNoResultsSubtitle;
+
+  /// No description provided for @studentCourseDetailSearchMaterialsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Course content'**
+  String get studentCourseDetailSearchMaterialsLabel;
+
+  /// No description provided for @studentCourseDetailNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a quick note for this course'**
+  String get studentCourseDetailNotesHint;
+
+  /// No description provided for @studentCourseDetailNotesAllItems.
+  ///
+  /// In en, this message translates to:
+  /// **'All notes'**
+  String get studentCourseDetailNotesAllItems;
+
+  /// No description provided for @studentCourseDetailNotesSessionOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Session notes only'**
+  String get studentCourseDetailNotesSessionOnly;
+
+  /// No description provided for @studentCourseDetailNotesSortRecent.
+  ///
+  /// In en, this message translates to:
+  /// **'Most recent'**
+  String get studentCourseDetailNotesSortRecent;
+
+  /// No description provided for @studentCourseDetailNotesSortOldest.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest first'**
+  String get studentCourseDetailNotesSortOldest;
+
+  /// No description provided for @studentCourseDetailNotesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes yet'**
+  String get studentCourseDetailNotesEmptyTitle;
+
+  /// No description provided for @studentCourseDetailNotesEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Capture a quick note for this course and it will stay visible while this page remains open.'**
+  String get studentCourseDetailNotesEmptySubtitle;
+
+  /// No description provided for @studentCourseDetailDownload.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get studentCourseDetailDownload;
+
+  /// No description provided for @studentCourseDetailVideoLessons.
+  ///
+  /// In en, this message translates to:
+  /// **'video lessons'**
+  String get studentCourseDetailVideoLessons;
+
+  /// No description provided for @studentCourseDetailUnableToOpenVideo.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open this video right now.'**
+  String get studentCourseDetailUnableToOpenVideo;
+
+  /// No description provided for @studentCourseDetailPlay.
+  ///
+  /// In en, this message translates to:
+  /// **'Play'**
+  String get studentCourseDetailPlay;
+
+  /// No description provided for @studentCourseDetailPause.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get studentCourseDetailPause;
+
+  /// No description provided for @studentCourseDetailOpenInBrowser.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in browser'**
+  String get studentCourseDetailOpenInBrowser;
+
+  /// No description provided for @studentCourseDetailNormalSpeed.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal speed'**
+  String get studentCourseDetailNormalSpeed;
+
+  /// No description provided for @studentCourseDetailVideoPreviewUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Video preview is not available.'**
+  String get studentCourseDetailVideoPreviewUnavailable;
+
   /// No description provided for @filter.
   ///
   /// In en, this message translates to:
@@ -1285,6 +1579,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Join Course'**
   String get joinCourse;
+
+  /// No description provided for @studentCourseJoinHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Opens available course enrollment options'**
+  String get studentCourseJoinHint;
 
   /// No description provided for @nextLecture.
   ///
@@ -8846,6 +9146,228 @@ abstract class AppLocalizations {
   /// **'View Details'**
   String get viewDetails;
 
+  /// No description provided for @gradingCenterHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading Pulse'**
+  String get gradingCenterHeroTitle;
+
+  /// No description provided for @gradingCenterHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track the grading queue, open submissions, and update scores without leaving the flow.'**
+  String get gradingCenterHeroSubtitle;
+
+  /// No description provided for @gradingCenterCoursesStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Courses'**
+  String get gradingCenterCoursesStat;
+
+  /// No description provided for @gradingCenterSubmissionsStat.
+  ///
+  /// In en, this message translates to:
+  /// **'Submissions'**
+  String get gradingCenterSubmissionsStat;
+
+  /// No description provided for @gradingCenterSubmissionsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 submission} other{{count} submissions}}'**
+  String gradingCenterSubmissionsCount(int count);
+
+  /// No description provided for @gradingCenterCourseFilterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get gradingCenterCourseFilterLabel;
+
+  /// No description provided for @gradingCenterStatusFilterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get gradingCenterStatusFilterLabel;
+
+  /// No description provided for @gradingCenterAllStates.
+  ///
+  /// In en, this message translates to:
+  /// **'All States'**
+  String get gradingCenterAllStates;
+
+  /// No description provided for @gradingCenterStudentFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Student #{id}'**
+  String gradingCenterStudentFallback(int id);
+
+  /// No description provided for @gradingCenterSubmissionTypeFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get gradingCenterSubmissionTypeFile;
+
+  /// No description provided for @gradingCenterSubmissionTypeLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Link'**
+  String get gradingCenterSubmissionTypeLink;
+
+  /// No description provided for @gradingCenterSubmissionTypeText.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get gradingCenterSubmissionTypeText;
+
+  /// No description provided for @gradingCenterAttemptNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt {count}'**
+  String gradingCenterAttemptNumber(int count);
+
+  /// No description provided for @gradingCenterNotGradedYet.
+  ///
+  /// In en, this message translates to:
+  /// **'Not graded yet'**
+  String get gradingCenterNotGradedYet;
+
+  /// No description provided for @gradingCenterLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load the grading queue.'**
+  String get gradingCenterLoadErrorTitle;
+
+  /// No description provided for @gradingCenterNoCoursesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No teaching courses available yet.'**
+  String get gradingCenterNoCoursesAvailable;
+
+  /// No description provided for @gradingCenterPendingEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Everything currently visible in this course has already been graded.'**
+  String get gradingCenterPendingEmptySubtitle;
+
+  /// No description provided for @gradingCenterGradedEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No graded submissions match the current course filter yet.'**
+  String get gradingCenterGradedEmptySubtitle;
+
+  /// No description provided for @gradingCenterLateEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No late work is showing for the current course filter.'**
+  String get gradingCenterLateEmptySubtitle;
+
+  /// No description provided for @gradingCenterAllEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Once students submit their work, it will appear here for review.'**
+  String get gradingCenterAllEmptySubtitle;
+
+  /// No description provided for @gradingCenterSubmissionSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Snapshot'**
+  String get gradingCenterSubmissionSnapshot;
+
+  /// No description provided for @gradingCenterStudentLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Student'**
+  String get gradingCenterStudentLabel;
+
+  /// No description provided for @gradingCenterCourseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get gradingCenterCourseLabel;
+
+  /// No description provided for @gradingCenterStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get gradingCenterStatusLabel;
+
+  /// No description provided for @gradingCenterSubmittedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get gradingCenterSubmittedLabel;
+
+  /// No description provided for @gradingCenterAttemptLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt'**
+  String get gradingCenterAttemptLabel;
+
+  /// No description provided for @gradingCenterCurrentGradeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Grade'**
+  String get gradingCenterCurrentGradeLabel;
+
+  /// No description provided for @gradingCenterTextSubmissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Submission'**
+  String get gradingCenterTextSubmissionTitle;
+
+  /// No description provided for @gradingCenterLinkSubmissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Submission'**
+  String get gradingCenterLinkSubmissionTitle;
+
+  /// No description provided for @gradingCenterFileSubmissionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'File Submission'**
+  String get gradingCenterFileSubmissionTitle;
+
+  /// No description provided for @gradingCenterInvalidGradeRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a score between 0 and {maxScore}.'**
+  String gradingCenterInvalidGradeRange(String maxScore);
+
+  /// No description provided for @gradingCenterSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to submit grade.'**
+  String get gradingCenterSaveFailed;
+
+  /// No description provided for @gradingCenterCurrentScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Current score {value}%'**
+  String gradingCenterCurrentScore(int value);
+
+  /// No description provided for @gradingCenterLatePenalty.
+  ///
+  /// In en, this message translates to:
+  /// **'Late penalty {value}%'**
+  String gradingCenterLatePenalty(String value);
+
+  /// No description provided for @gradingCenterFeedbackHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Share strengths, gaps, and next steps for the student...'**
+  String get gradingCenterFeedbackHint;
+
+  /// No description provided for @gradingCenterSaving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get gradingCenterSaving;
+
+  /// No description provided for @gradingCenterOpenLinkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to open the link right now.'**
+  String get gradingCenterOpenLinkError;
+
   /// No description provided for @assignmentDetails.
   ///
   /// In en, this message translates to:
@@ -11720,6 +12242,42 @@ abstract class AppLocalizations {
   /// **'Course Detail'**
   String get taCourseDetail;
 
+  /// No description provided for @taCourseDetailHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on top of materials, labs, grading, and students for this teaching section.'**
+  String get taCourseDetailHeroSubtitle;
+
+  /// No description provided for @taCourseDetailContentEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Course materials will appear here once they are published for your section.'**
+  String get taCourseDetailContentEmpty;
+
+  /// No description provided for @taCourseDetailOtherMaterials.
+  ///
+  /// In en, this message translates to:
+  /// **'Other materials'**
+  String get taCourseDetailOtherMaterials;
+
+  /// No description provided for @taCourseDetailOpenLabsWorkspace.
+  ///
+  /// In en, this message translates to:
+  /// **'Open labs workspace'**
+  String get taCourseDetailOpenLabsWorkspace;
+
+  /// No description provided for @taCourseDetailNoAttendance.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance summaries will appear here after lab sessions are recorded.'**
+  String get taCourseDetailNoAttendance;
+
+  /// No description provided for @taCourseDetailNoStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'No students are currently assigned to this section.'**
+  String get taCourseDetailNoStudents;
+
   /// No description provided for @taCourseStudents.
   ///
   /// In en, this message translates to:
@@ -12007,6 +12565,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Discussions'**
   String get taCourseDiscussionsTab;
+
+  /// No description provided for @taCoursesShellSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stay on top of your assigned sections, grading queues, labs, and discussion activity from one focused workspace.'**
+  String get taCoursesShellSubtitle;
+
+  /// No description provided for @taCoursesAllSpaces.
+  ///
+  /// In en, this message translates to:
+  /// **'All support spaces'**
+  String get taCoursesAllSpaces;
+
+  /// No description provided for @taCoursesAvgFill.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg fill'**
+  String get taCoursesAvgFill;
+
+  /// No description provided for @taCoursesCourseActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Course actions'**
+  String get taCoursesCourseActions;
+
+  /// No description provided for @taCoursesSectionFill.
+  ///
+  /// In en, this message translates to:
+  /// **'Section fill'**
+  String get taCoursesSectionFill;
+
+  /// No description provided for @taCoursesEnrolledCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{current}/{capacity} enrolled'**
+  String taCoursesEnrolledCount(int current, int capacity);
+
+  /// No description provided for @taCoursesNoAssignedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No teaching courses found'**
+  String get taCoursesNoAssignedTitle;
+
+  /// No description provided for @taCoursesNoAssignedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your assigned courses will appear here once they are available.'**
+  String get taCoursesNoAssignedSubtitle;
+
+  /// No description provided for @taCoursesNoMatchingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No courses match these filters'**
+  String get taCoursesNoMatchingTitle;
+
+  /// No description provided for @taCoursesNoMatchingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search, status tab, or level filter to bring more courses back into view.'**
+  String get taCoursesNoMatchingSubtitle;
 
   /// No description provided for @mainMenu.
   ///
@@ -25301,6 +25919,102 @@ abstract class AppLocalizations {
   /// **'Search by course code, title, section, semester, or instructor'**
   String get coursesShellSearchSemanticsHint;
 
+  /// No description provided for @studentCourseDropped.
+  ///
+  /// In en, this message translates to:
+  /// **'Dropped'**
+  String get studentCourseDropped;
+
+  /// No description provided for @studentCourseOverviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep your momentum'**
+  String get studentCourseOverviewTitle;
+
+  /// No description provided for @studentCourseOverviewSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track your active load, completed work, and overall progress at a glance.'**
+  String get studentCourseOverviewSubtitle;
+
+  /// No description provided for @studentCourseTotalCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Total courses'**
+  String get studentCourseTotalCourses;
+
+  /// No description provided for @studentCourseActiveCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Active now'**
+  String get studentCourseActiveCourses;
+
+  /// No description provided for @studentCourseCompletedCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get studentCourseCompletedCourses;
+
+  /// No description provided for @studentCourseAverageProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Average progress'**
+  String get studentCourseAverageProgress;
+
+  /// No description provided for @studentCourseResultsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'courses'**
+  String get studentCourseResultsLabel;
+
+  /// No description provided for @studentCourseOfflineCached.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline: showing cached course data.'**
+  String get studentCourseOfflineCached;
+
+  /// No description provided for @studentCourseEmptyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You are not enrolled in any courses yet. Once registration opens, your course library will appear here.'**
+  String get studentCourseEmptyDescription;
+
+  /// No description provided for @studentCourseConnectionErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection Error'**
+  String get studentCourseConnectionErrorTitle;
+
+  /// No description provided for @studentCourseConnectionErrorDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your courses right now. Check your connection and try again.'**
+  String get studentCourseConnectionErrorDescription;
+
+  /// No description provided for @studentCourseAccessRestrictedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Access Restricted'**
+  String get studentCourseAccessRestrictedTitle;
+
+  /// No description provided for @studentCourseUnknownInstructor.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor information unavailable'**
+  String get studentCourseUnknownInstructor;
+
+  /// No description provided for @studentCourseSectionFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Section -'**
+  String get studentCourseSectionFallback;
+
+  /// No description provided for @studentCourseNoSemester.
+  ///
+  /// In en, this message translates to:
+  /// **'No semester'**
+  String get studentCourseNoSemester;
+
   /// No description provided for @adminUseTimeFormat.
   ///
   /// In en, this message translates to:
@@ -27862,6 +28576,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No sessions match this view'**
   String get attendanceNoSessionsMatchFilters;
+
+  /// No description provided for @instructorCourseDetailHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage course content, monitor engagement, and keep teaching workflows focused from one polished workspace.'**
+  String get instructorCourseDetailHeroSubtitle;
+
+  /// No description provided for @instructorCourseDetailNoSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'No schedule is available for this section yet.'**
+  String get instructorCourseDetailNoSchedule;
+
+  /// No description provided for @instructorCourseDetailNoActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No upcoming activity is available yet.'**
+  String get instructorCourseDetailNoActivity;
 
   /// No description provided for @chatVideoCallTooltip.
   ///

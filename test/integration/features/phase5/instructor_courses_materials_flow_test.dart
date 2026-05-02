@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/course_structure/course_structure_bloc.dart';
@@ -31,7 +32,9 @@ class _FakeEnrollmentService extends EnrollmentService {
   _FakeEnrollmentService() : super(coreApiClient: CoreApiClient.test());
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TeachingCourseModel>>.success(
       <TeachingCourseModel>[_teachingCourse()],
     );
@@ -39,8 +42,9 @@ class _FakeEnrollmentService extends EnrollmentService {
 
   @override
   Future<ServiceResult<List<SectionStudentModel>>> getSectionStudentsLite(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<SectionStudentModel>>.success(
       const <SectionStudentModel>[
         SectionStudentModel(
@@ -67,6 +71,7 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<PaginatedResponse<AssignmentModel>>.success(
       const PaginatedResponse<AssignmentModel>(
@@ -90,6 +95,7 @@ class _FakeLabService extends LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<List<LabModel>>.success(const <LabModel>[]);
   }
@@ -145,6 +151,7 @@ class _FakeMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     return List<CourseMaterialModel>.from(_materials);
   }

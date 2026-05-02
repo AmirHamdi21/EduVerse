@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import '../../../bloc/courses/courses_bloc.dart';
 import '../../../features/courses/bloc/material_viewer/material_viewer_bloc.dart';
@@ -568,79 +569,382 @@ class _StaffBookingTab extends StatelessWidget {
     BuildContext context,
     OfficeHourSlotModel slot,
   ) async {
-    final selectedDate = await showDatePicker(
-      context: context,
+    final selectedDate = await _pickBookingDate(
+      context,
       initialDate: DateTime.now().add(const Duration(days: 1)),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 180)),
     );
 
     if (selectedDate == null || !context.mounted) {
       return;
     }
 
-    final topicController = TextEditingController();
-    final notesController = TextEditingController();
+    final request = await _openBookingComposer(
+      context,
+      slot: slot,
+      initialDate: selectedDate,
+    );
 
-    final bool shouldBook =
-        await showDialog<bool>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Book Appointment'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('Date: ${_formatDate(selectedDate)}'),
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: topicController,
-                    decoration: const InputDecoration(
-                      labelText: 'Topic (optional)',
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: notesController,
-                    decoration: const InputDecoration(
-                      labelText: 'Notes (optional)',
-                    ),
-                    minLines: 2,
-                    maxLines: 4,
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Cancel'),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('Book'),
-                ),
-              ],
-            );
-          },
-        ) ??
-        false;
-
-    if (!shouldBook || !context.mounted) {
+    if (request == null || !context.mounted) {
       return;
     }
-
-    final apiDate =
-        '${selectedDate.year.toString().padLeft(4, '0')}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}';
 
     context.read<CourseDetailBloc>().add(
       BookOfficeHourAppointment(
         slotId: slot.slotId,
         instructorId: slot.instructorId,
-        appointmentDate: apiDate,
-        topic: topicController.text.trim(),
-        notes: notesController.text.trim(),
+        appointmentDate: _formatDate(request.date),
+        topic: request.topic,
+        notes: request.notes,
       ),
     );
+  }
+
+  Future<DateTime?> _pickBookingDate(
+    BuildContext context, {
+    required DateTime initialDate,
+  }) async {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final accentColor = theme.colorScheme.primary;
+    const accentDeep = Color(0xFF155DFC);
+    DateTime draftDate = initialDate;
+
+    return showModalBottomSheet<DateTime>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF101828) : Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.20),
+                      blurRadius: 34,
+                      offset: const Offset(0, 18),
+                    ),
+                  ],
+                ),
+                child: SafeArea(
+                  top: false,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 48,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.16)
+                                  : const Color(0xFFD8E1EF),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[accentColor, accentDeep],
+                            ),
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Select date',
+                                style: TextStyle(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                DateFormat('EEE, MMM d').format(draftDate),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        Theme(
+                          data: theme.copyWith(
+                            colorScheme: theme.colorScheme.copyWith(
+                              primary: accentColor,
+                            ),
+                          ),
+                          child: CalendarDatePicker(
+                            initialDate: draftDate,
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime.now().add(
+                              const Duration(days: 180),
+                            ),
+                            onDateChanged: (value) {
+                              setSheetState(() => draftDate = value);
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: () =>
+                                    Navigator.of(sheetContext).pop(),
+                                child: const Text('Cancel'),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: FilledButton(
+                                onPressed: () => Navigator.of(
+                                  sheetContext,
+                                ).pop(draftDate),
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: accentColor,
+                                ),
+                                child: const Text('Continue'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<_StaffBookingRequest?> _openBookingComposer(
+    BuildContext context, {
+    required OfficeHourSlotModel slot,
+    required DateTime initialDate,
+  }) async {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final accentColor = theme.colorScheme.primary;
+    const accentDeep = Color(0xFF155DFC);
+    final topicController = TextEditingController();
+    final notesController = TextEditingController();
+    DateTime selectedDate = initialDate;
+
+    final result = await showModalBottomSheet<_StaffBookingRequest>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            final bottomInset = MediaQuery.of(sheetContext).viewInsets.bottom;
+
+            return Padding(
+              padding: EdgeInsets.fromLTRB(12, 0, 12, bottomInset + 12),
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF101828) : Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.22),
+                      blurRadius: 34,
+                      offset: const Offset(0, 18),
+                    ),
+                  ],
+                ),
+                child: SafeArea(
+                  top: false,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 48,
+                            height: 5,
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.16)
+                                  : const Color(0xFFD8E1EF),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Book Appointment',
+                          style: TextStyle(
+                            color: isDark ? Colors.white : const Color(0xFF101828),
+                            fontSize: 28,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: <Color>[
+                                accentColor.withValues(alpha: 0.16),
+                                accentDeep.withValues(alpha: 0.12),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(22),
+                            border: Border.all(
+                              color: accentColor.withValues(alpha: 0.18),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${slot.dayOfWeek.toUpperCase()} • ${slot.startTime} - ${slot.endTime}',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? Colors.white
+                                      : const Color(0xFF101828),
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                '${slot.location} • ${_formatMode(slot.mode)}',
+                                style: TextStyle(
+                                  color: isDark
+                                      ? const Color(0xFFE2E8F0)
+                                      : const Color(0xFF475467),
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              InkWell(
+                                onTap: () async {
+                                  final picked = await _pickBookingDate(
+                                    sheetContext,
+                                    initialDate: selectedDate,
+                                  );
+                                  if (picked != null) {
+                                    setSheetState(() => selectedDate = picked);
+                                  }
+                                },
+                                borderRadius: BorderRadius.circular(16),
+                                child: Ink(
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.76),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.calendar_month_rounded,
+                                        color: accentColor,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Text(
+                                          _formatLongDate(selectedDate),
+                                          style: const TextStyle(
+                                            color: Color(0xFF101828),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                      ),
+                                      Icon(
+                                        Icons.edit_calendar_rounded,
+                                        color: accentColor,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        _StaffBookingTextField(
+                          controller: topicController,
+                          labelText: 'Topic (optional)',
+                          hintText: 'What do you want to discuss?',
+                        ),
+                        const SizedBox(height: 12),
+                        _StaffBookingTextField(
+                          controller: notesController,
+                          labelText: 'Notes (optional)',
+                          hintText:
+                              'Add context, questions, or goals for the meeting.',
+                          minLines: 3,
+                          maxLines: 5,
+                        ),
+                        const SizedBox(height: 18),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: () =>
+                                    Navigator.of(sheetContext).pop(),
+                                child: const Text('Cancel'),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: FilledButton(
+                                onPressed: () {
+                                  Navigator.of(sheetContext).pop(
+                                    _StaffBookingRequest(
+                                      date: selectedDate,
+                                      topic: topicController.text.trim(),
+                                      notes: notesController.text.trim(),
+                                    ),
+                                  );
+                                },
+                                style: FilledButton.styleFrom(
+                                  backgroundColor: accentColor,
+                                ),
+                                child: const Text('Book'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    return result;
   }
 
   String _formatDate(DateTime? date) {
@@ -649,6 +953,32 @@ class _StaffBookingTab extends StatelessWidget {
     }
     final normalized = date.toLocal();
     return '${normalized.year.toString().padLeft(4, '0')}-${normalized.month.toString().padLeft(2, '0')}-${normalized.day.toString().padLeft(2, '0')}';
+  }
+
+  String _formatLongDate(DateTime? date) {
+    if (date == null) {
+      return 'TBD';
+    }
+    return DateFormat('EEE, MMM d, yyyy').format(date.toLocal());
+  }
+
+  String _formatMode(String mode) {
+    final normalized = mode.trim().toLowerCase();
+    switch (normalized) {
+      case 'in_person':
+      case 'in person':
+        return 'In person';
+      case 'online':
+        return 'Online';
+      case 'hybrid':
+        return 'Hybrid';
+      default:
+        return normalized
+            .split(RegExp(r'[_\\s-]+'))
+            .where((part) => part.isNotEmpty)
+            .map((part) => '${part[0].toUpperCase()}${part.substring(1)}')
+            .join(' ');
+    }
   }
 }
 
@@ -690,6 +1020,63 @@ class _EmptyHint extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(message, style: Theme.of(context).textTheme.bodyMedium),
+    );
+  }
+}
+
+class _StaffBookingRequest {
+  final DateTime date;
+  final String topic;
+  final String notes;
+
+  const _StaffBookingRequest({
+    required this.date,
+    required this.topic,
+    required this.notes,
+  });
+}
+
+class _StaffBookingTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String labelText;
+  final String hintText;
+  final int minLines;
+  final int maxLines;
+
+  const _StaffBookingTextField({
+    required this.controller,
+    required this.labelText,
+    required this.hintText,
+    this.minLines = 1,
+    this.maxLines = 1,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: controller,
+      minLines: minLines,
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        labelText: labelText,
+        hintText: hintText,
+        filled: true,
+        fillColor: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF0F172A)
+            : const Color(0xFFF8FAFC),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xFFD8E1EF)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: const BorderSide(color: Color(0xFFD8E1EF)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(18),
+          borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+        ),
+      ),
     );
   }
 }

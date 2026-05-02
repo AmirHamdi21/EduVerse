@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/bloc/route_request_controller.dart';
 import '../../models/assignments/assignment_form_data.dart';
 import '../../models/assignments/assignment_model.dart';
 import '../../models/assignments/assignment_submission_model.dart';
@@ -12,10 +13,8 @@ import '../../services/api/assignment_service.dart';
 import '../../services/api/enrollment_service.dart';
 import 'instructor_assignments_state.dart';
 
-class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
-  final AssignmentService _assignmentService;
-  final EnrollmentService _enrollmentService;
-
+class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState>
+    with SafeRouteCubitMixin<InstructorAssignmentsState> {
   InstructorAssignmentsCubit({
     required AssignmentService assignmentService,
     required EnrollmentService enrollmentService,
@@ -23,12 +22,35 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
        _enrollmentService = enrollmentService,
        super(const InstructorAssignmentsState());
 
-  Future<void> loadTeachingCourses({int? preferredCourseId}) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+  final AssignmentService _assignmentService;
+  final EnrollmentService _enrollmentService;
 
-    final result = await _enrollmentService.getTeachingCourses();
+  late final RouteRequestController _coursesRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _assignmentsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _mutationRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _submissionsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+
+  Future<void> loadTeachingCourses({int? preferredCourseId}) async {
+    final requestId = _coursesRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
+
+    final result = await _enrollmentService.getTeachingCourses(
+      cancelToken: _coursesRequest.token,
+    );
+    if (!isRequestCurrent(_coursesRequest, requestId)) {
+      return;
+    }
+
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           errorMessage:
@@ -52,10 +74,10 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
         selectedCourseId != null &&
         courses.any((course) => course.courseId == selectedCourseId);
     if (!hasSelected) {
-      selectedCourseId = courses.isNotEmpty ? courses.first.courseId : null;
+      selectedCourseId = hasPreferred ? preferredCourseId : null;
     }
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         teachingCourses: courses,
         selectedCourseId: selectedCourseId,
@@ -64,13 +86,11 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
       ),
     );
 
-    if (selectedCourseId != null) {
-      await loadAssignments(page: 1, limit: 20);
-    }
+    await loadAssignments(page: 1, limit: 20);
   }
 
   Future<void> selectCourse(int? courseId) async {
-    emit(
+    emitIfOpen(
       state.copyWith(
         selectedCourseId: courseId,
         currentPage: 1,
@@ -80,9 +100,7 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
       ),
     );
 
-    if (courseId != null) {
-      await loadAssignments(page: 1, limit: 20);
-    }
+    await loadAssignments(page: 1, limit: 20);
   }
 
   Future<void> loadAssignments({
@@ -91,60 +109,136 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
     bool refresh = false,
   }) async {
     final courseId = state.selectedCourseId;
-    if (courseId == null) {
-      emit(
+
+    final requestId = _assignmentsRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
+
+    if (courseId != null) {
+      final result = await _assignmentService.getAll(
+        courseId: courseId,
+        page: page,
+        limit: limit,
+        status: state.statusFilter,
+        sortBy: 'dueDate',
+        sortOrder: 'ASC',
+        cancelToken: _assignmentsRequest.token,
+      );
+      if (!isRequestCurrent(_assignmentsRequest, requestId)) {
+        return;
+      }
+
+      if (!result.isSuccess || result.data == null) {
+        emitIfOpen(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: result.error?.message ?? 'Failed to load assignments',
+          ),
+        );
+        return;
+      }
+
+      final fetchedPage = result.data!;
+      final mergedItems = page == 1 || refresh
+          ? fetchedPage.data
+          : <AssignmentModel>[
+              ...(state.assignments?.data ?? const <AssignmentModel>[]),
+              ...fetchedPage.data,
+            ];
+
+      final mergedPage = PaginatedResponse<AssignmentModel>(
+        data: mergedItems,
+        total: fetchedPage.total,
+        page: fetchedPage.page,
+        limit: fetchedPage.limit,
+        totalPages: fetchedPage.totalPages,
+      );
+
+      emitIfOpen(
         state.copyWith(
-          clearAssignments: true,
+          assignments: mergedPage,
+          currentPage: fetchedPage.page,
+          hasMorePages: fetchedPage.hasNextPage,
+          isLoading: false,
+          clearError: true,
+        ),
+      );
+      return;
+    }
+
+    final courseIds = state.teachingCourses
+        .map((course) => course.courseId)
+        .where((id) => id > 0)
+        .toSet()
+        .toList(growable: false);
+
+    if (courseIds.isEmpty) {
+      emitIfOpen(
+        state.copyWith(
+          assignments: const PaginatedResponse<AssignmentModel>(
+            data: <AssignmentModel>[],
+            total: 0,
+            page: 1,
+            limit: 20,
+            totalPages: 0,
+          ),
+          currentPage: page,
           hasMorePages: false,
           isLoading: false,
-          errorMessage: 'Please select a course first',
+          clearError: true,
         ),
       );
       return;
     }
 
-    emit(state.copyWith(isLoading: true, clearError: true));
-
-    final result = await _assignmentService.getAll(
-      courseId: courseId,
-      page: page,
-      limit: limit,
-      status: state.statusFilter,
-      sortBy: 'dueDate',
-      sortOrder: 'ASC',
-    );
-
-    if (!result.isSuccess || result.data == null) {
-      emit(
-        state.copyWith(
-          isLoading: false,
-          errorMessage: result.error?.message ?? 'Failed to load assignments',
+    final results = await Future.wait(
+      courseIds.map(
+        (id) => _assignmentService.getAll(
+          courseId: id,
+          page: 1,
+          limit: 100,
+          status: state.statusFilter,
+          sortBy: 'dueDate',
+          sortOrder: 'ASC',
+          cancelToken: _assignmentsRequest.token,
         ),
-      );
+      ),
+    );
+    if (!isRequestCurrent(_assignmentsRequest, requestId)) {
       return;
     }
 
-    final fetchedPage = result.data!;
-    final mergedItems = page == 1 || refresh
-        ? fetchedPage.data
-        : <AssignmentModel>[
-            ...(state.assignments?.data ?? const <AssignmentModel>[]),
-            ...fetchedPage.data,
-          ];
+    final mergedById = <int, AssignmentModel>{};
+    for (final result in results) {
+      if (!result.isSuccess || result.data == null) {
+        continue;
+      }
+      for (final assignment in result.data!.data) {
+        mergedById[assignment.assignmentId] = assignment;
+      }
+    }
 
-    final mergedPage = PaginatedResponse<AssignmentModel>(
-      data: mergedItems,
-      total: fetchedPage.total,
-      page: fetchedPage.page,
-      limit: fetchedPage.limit,
-      totalPages: fetchedPage.totalPages,
-    );
+    final mergedItems = mergedById.values.toList(growable: false)
+      ..sort((left, right) {
+        final leftDue = left.dueDate;
+        final rightDue = right.dueDate;
+        final dueCompare = leftDue.compareTo(rightDue);
+        if (dueCompare != 0) {
+          return dueCompare;
+        }
+        return left.title.toLowerCase().compareTo(right.title.toLowerCase());
+      });
 
-    emit(
+    emitIfOpen(
       state.copyWith(
-        assignments: mergedPage,
-        currentPage: fetchedPage.page,
-        hasMorePages: fetchedPage.hasNextPage,
+        assignments: PaginatedResponse<AssignmentModel>(
+          data: mergedItems,
+          total: mergedItems.length,
+          page: page,
+          limit: max(limit, mergedItems.length),
+          totalPages: mergedItems.isEmpty ? 0 : page,
+        ),
+        currentPage: page,
+        hasMorePages: false,
         isLoading: false,
         clearError: true,
       ),
@@ -160,11 +254,19 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
   }
 
   Future<void> createAssignment(AssignmentFormData formData) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
 
-    final result = await _assignmentService.create(formData.toJson());
+    final result = await _assignmentService.create(
+      formData.toJson(),
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
+
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           errorMessage: result.error?.message ?? 'Failed to create assignment',
@@ -180,7 +282,7 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
       ...(current?.data ?? const <AssignmentModel>[]),
     ];
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         assignments: PaginatedResponse<AssignmentModel>(
           data: updatedItems,
@@ -196,11 +298,20 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
   }
 
   Future<void> updateAssignment(int id, AssignmentFormData formData) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
 
-    final result = await _assignmentService.update(id, formData.toJson());
+    final result = await _assignmentService.update(
+      id,
+      formData.toJson(),
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
+
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           errorMessage: result.error?.message ?? 'Failed to update assignment',
@@ -212,7 +323,7 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
     final updated = result.data!;
     final current = state.assignments;
     if (current == null) {
-      emit(state.copyWith(isLoading: false, clearError: true));
+      emitIfOpen(state.copyWith(isLoading: false, clearError: true));
       return;
     }
 
@@ -223,7 +334,7 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
       return item;
     }).toList();
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         assignments: PaginatedResponse<AssignmentModel>(
           data: replaced,
@@ -239,9 +350,17 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
   }
 
   Future<void> deleteAssignment(int id) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
 
-    final result = await _assignmentService.delete(id);
+    final result = await _assignmentService.delete(
+      id,
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
+
     if (!result.isSuccess) {
       final statusCode = result.error?.statusCode;
       final message = switch (statusCode) {
@@ -255,13 +374,13 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
         '(id=$id, statusCode=$statusCode): ${result.error?.message}',
       );
 
-      emit(state.copyWith(isLoading: false, errorMessage: message));
+      emitIfOpen(state.copyWith(isLoading: false, errorMessage: message));
       return;
     }
 
     final current = state.assignments;
     if (current == null) {
-      emit(state.copyWith(isLoading: false, clearError: true));
+      emitIfOpen(state.copyWith(isLoading: false, clearError: true));
       return;
     }
 
@@ -269,7 +388,7 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
         .where((item) => item.assignmentId != id && item.id != id.toString())
         .toList();
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         assignments: PaginatedResponse<AssignmentModel>(
           data: remaining,
@@ -285,11 +404,20 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
   }
 
   Future<void> updateStatus(int id, api.AssignmentStatus status) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
 
-    final result = await _assignmentService.updateStatus(id, status);
+    final result = await _assignmentService.updateStatus(
+      id,
+      status,
+      cancelToken: _mutationRequest.token,
+    );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
+
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           errorMessage:
@@ -302,7 +430,7 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
     final updated = result.data!;
     final current = state.assignments;
     if (current == null) {
-      emit(state.copyWith(isLoading: false, clearError: true));
+      emitIfOpen(state.copyWith(isLoading: false, clearError: true));
       return;
     }
 
@@ -313,7 +441,7 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
       return item;
     }).toList();
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         assignments: PaginatedResponse<AssignmentModel>(
           data: replaced,
@@ -329,11 +457,11 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
   }
 
   void setSearchQuery(String query) {
-    emit(state.copyWith(searchQuery: query));
+    emitIfOpen(state.copyWith(searchQuery: query));
   }
 
   Future<void> setStatusFilter(api.AssignmentStatus? status) async {
-    emit(
+    emitIfOpen(
       state.copyWith(statusFilter: status, currentPage: 1, hasMorePages: false),
     );
     await loadAssignments(page: 1, limit: 20);
@@ -344,7 +472,8 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
     int page = 1,
     int limit = 20,
   }) async {
-    emit(
+    final requestId = _submissionsRequest.begin();
+    emitIfOpen(
       state.copyWith(
         submissionsLoading: true,
         activeSubmissionsAssignmentId: assignmentId,
@@ -353,9 +482,16 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
       ),
     );
 
-    final result = await _assignmentService.getSubmissions(assignmentId);
+    final result = await _assignmentService.getSubmissions(
+      assignmentId,
+      cancelToken: _submissionsRequest.token,
+    );
+    if (!isRequestCurrent(_submissionsRequest, requestId)) {
+      return;
+    }
+
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           submissionsLoading: false,
           errorMessage: result.error?.message ?? 'Failed to load submissions',
@@ -371,7 +507,7 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
     final end = min(start + limit, all.length);
 
     if (start >= all.length) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           submissionsLoading: false,
           submissionsPage: page,
@@ -387,7 +523,7 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
         ? nextPageItems
         : <AssignmentSubmissionModel>[...state.submissions, ...nextPageItems];
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         submissions: mergedItems,
         submissionsPage: page,
@@ -446,21 +582,28 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
   ) async {
     final assignmentId = state.activeSubmissionsAssignmentId;
     if (assignmentId == null) {
-      emit(state.copyWith(errorMessage: 'No assignment selected for grading'));
+      emitIfOpen(
+        state.copyWith(errorMessage: 'No assignment selected for grading'),
+      );
       return;
     }
 
-    emit(state.copyWith(submissionsLoading: true, clearError: true));
+    final requestId = _mutationRequest.begin();
+    emitIfOpen(state.copyWith(submissionsLoading: true, clearError: true));
 
     final result = await _assignmentService.gradeSubmission(
       assignmentId,
       submissionId,
       score,
       feedback: feedback,
+      cancelToken: _mutationRequest.token,
     );
+    if (!isRequestCurrent(_mutationRequest, requestId)) {
+      return;
+    }
 
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           submissionsLoading: false,
           errorMessage: result.error?.message ?? 'Failed to save grade',
@@ -494,7 +637,7 @@ class InstructorAssignmentsCubit extends Cubit<InstructorAssignmentsState> {
       );
     }).toList();
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         submissions: updatedSubmissions,
         submissionsLoading: false,

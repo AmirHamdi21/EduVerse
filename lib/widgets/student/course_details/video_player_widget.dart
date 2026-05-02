@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../../features/courses/bloc/material_viewer/material_viewer_bloc.dart';
 import '../../../features/courses/bloc/material_viewer/material_viewer_event.dart';
+import '../../../generated_l10n/app_localizations.dart';
 import '../../../models/materials/course_material_model.dart';
 
 class VideoPlayerWidget extends StatefulWidget {
@@ -24,16 +29,42 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  YoutubePlayerController? _controller;
-  bool _hasTrackedPlay = false;
-  String? _playerError;
+  static const Duration _playerMountDelay = Duration(milliseconds: 350);
 
-  String? get _videoId => widget.material.youtubeVideoId;
+  bool _hasTrackedView = false;
+  Timer? _mountTimer;
+  bool _shouldMountPlayer = false;
+
+  String? get _youtubeVideoId => widget.material.youtubeVideoId?.trim().isNotEmpty == true
+      ? widget.material.youtubeVideoId!.trim()
+      : null;
+
+  String? get _fallbackUrl {
+    final external = widget.material.externalUrl?.trim();
+    if (external != null && external.isNotEmpty) {
+      return external;
+    }
+
+    final directUrl = widget.material.url?.trim();
+    if (directUrl != null && directUrl.isNotEmpty) {
+      return directUrl;
+    }
+
+    return null;
+  }
+
+  String? get _browserUrl {
+    final videoId = _youtubeVideoId;
+    if (videoId != null) {
+      return 'https://www.youtube.com/watch?v=$videoId';
+    }
+    return _fallbackUrl;
+  }
 
   @override
   void initState() {
     super.initState();
-    _initializeController();
+    _schedulePlayerMount();
   }
 
   @override
@@ -41,48 +72,40 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.material.materialId != widget.material.materialId ||
         oldWidget.enableEmbeddedPlayer != widget.enableEmbeddedPlayer) {
-      _controller?.dispose();
-      _controller = null;
-      _hasTrackedPlay = false;
-      _playerError = null;
-      _initializeController();
+      _hasTrackedView = false;
+      _schedulePlayerMount();
     }
   }
 
-  void _initializeController() {
-    final videoId = _videoId;
-    if (!widget.enableEmbeddedPlayer || videoId == null || videoId.isEmpty) {
+  @override
+  void dispose() {
+    _mountTimer?.cancel();
+    super.dispose();
+  }
+
+  void _schedulePlayerMount() {
+    _mountTimer?.cancel();
+
+    if (!widget.enableEmbeddedPlayer) {
+      _shouldMountPlayer = false;
       return;
     }
 
-    _controller = YoutubePlayerController(
-      initialVideoId: videoId,
-      flags: const YoutubePlayerFlags(
-        autoPlay: false,
-        mute: false,
-        enableCaption: true,
-      ),
-    )..addListener(_onControllerUpdate);
-  }
-
-  void _onControllerUpdate() {
-    final controller = _controller;
-    if (controller == null) return;
-
-    final value = controller.value;
-    if (!_hasTrackedPlay && value.isPlaying) {
-      _hasTrackedPlay = true;
-      _recordView();
-    }
-
-    if (value.hasError && mounted) {
-      setState(() {
-        _playerError = 'Video unavailable — contact instructor';
-      });
-    }
+    _shouldMountPlayer = false;
+    _mountTimer = Timer(_playerMountDelay, () {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _shouldMountPlayer = true);
+    });
   }
 
   void _recordView() {
+    if (_hasTrackedView) {
+      return;
+    }
+    _hasTrackedView = true;
+
     try {
       context.read<MaterialViewerBloc>().add(
         PlayVideo(courseId: widget.courseId, material: widget.material),
@@ -92,15 +115,368 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     }
   }
 
-  void _onEnterFullscreen() {
-    SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
+  Future<void> _openInBrowser() async {
+    final browserUrl = _browserUrl;
+    if (browserUrl == null || browserUrl.isEmpty) {
+      return;
+    }
+    await launchUrl(
+      Uri.parse(browserUrl),
+      mode: LaunchMode.externalApplication,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    late final Widget content;
+
+    if (!widget.enableEmbeddedPlayer) {
+      content = _buildUnavailableState(context, l10n);
+    } else if (!_shouldMountPlayer) {
+      content = _buildPlayerSkeleton();
+    } else {
+      final youtubeVideoId = _youtubeVideoId;
+      if (youtubeVideoId != null) {
+        content = _YoutubeInlinePlayer(
+        key: ValueKey<String>('youtube_${widget.material.materialId}_$youtubeVideoId'),
+        videoId: youtubeVideoId,
+        onReady: _recordView,
+        onOpenInBrowser: _openInBrowser,
+        openLabel: l10n.open,
+        unavailableBuilder: (_) => _buildUnavailableState(context, l10n),
+        );
+      } else {
+        final fallbackUrl = _fallbackUrl;
+        if (fallbackUrl != null) {
+          content = _ExternalVideoWebView(
+        key: ValueKey<String>('external_${widget.material.materialId}_$fallbackUrl'),
+        url: fallbackUrl,
+        onReady: _recordView,
+        unavailableBuilder: (_) => _buildUnavailableState(context, l10n),
+          );
+        } else {
+          content = _buildUnavailableState(context, l10n);
+        }
+      }
+    }
+
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: content,
+    );
+  }
+
+  Widget _buildPlayerSkeleton() {
+    return const ColoredBox(
+      color: Color(0xFF111827),
+      child: Center(
+        child: CircularProgressIndicator(
+          color: Colors.white,
+          strokeWidth: 2.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUnavailableState(BuildContext context, AppLocalizations l10n) {
+    return ColoredBox(
+      color: const Color(0xFF111827),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.ondemand_video_rounded,
+                color: Colors.white,
+                size: 38,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                l10n.studentCourseDetailVideoPreviewUnavailable,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 14),
+              _buildActionChip(
+                icon: Icons.open_in_new_rounded,
+                label: l10n.open,
+                onTap: _openInBrowser,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionChip({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Ink(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.white24),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 18, color: Colors.white),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _YoutubeInlinePlayer extends StatefulWidget {
+  final String videoId;
+  final VoidCallback onReady;
+  final VoidCallback onOpenInBrowser;
+  final String openLabel;
+  final WidgetBuilder unavailableBuilder;
+
+  const _YoutubeInlinePlayer({
+    super.key,
+    required this.videoId,
+    required this.onReady,
+    required this.onOpenInBrowser,
+    required this.openLabel,
+    required this.unavailableBuilder,
+  });
+
+  @override
+  State<_YoutubeInlinePlayer> createState() => _YoutubeInlinePlayerState();
+}
+
+class _YoutubeInlinePlayerState extends State<_YoutubeInlinePlayer> {
+  late final YoutubePlayerController _controller;
+  bool _isReady = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = YoutubePlayerController(
+      initialVideoId: widget.videoId,
+      flags: const YoutubePlayerFlags(
+        autoPlay: false,
+        enableCaption: true,
+        controlsVisibleAtStart: true,
+        hideControls: false,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _openFullscreenPlayer() async {
+    final position = _controller.value.position;
+    final wasPlaying = _controller.value.isPlaying;
+    _controller.pause();
+
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (context) => _YoutubeFullscreenPlayerScreen(
+          videoId: widget.videoId,
+          startAt: position,
+          autoPlay: wasPlaying,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return YoutubePlayerBuilder(
+      player: YoutubePlayer(
+        controller: _controller,
+        showVideoProgressIndicator: true,
+        bottomActions: <Widget>[
+          const CurrentPosition(),
+          const SizedBox(width: 8),
+          ProgressBar(
+            isExpanded: true,
+            colors: const ProgressBarColors(
+              playedColor: Color(0xFF2563EB),
+              handleColor: Color(0xFF60A5FA),
+              bufferedColor: Colors.white54,
+              backgroundColor: Colors.white24,
+            ),
+          ),
+          const RemainingDuration(),
+          const PlaybackSpeedButton(),
+          IconButton(
+            onPressed: _openFullscreenPlayer,
+            icon: const Icon(Icons.fullscreen_rounded, color: Colors.white),
+            tooltip: 'Fullscreen',
+          ),
+        ],
+        progressIndicatorColor: Colors.white,
+        progressColors: const ProgressBarColors(
+          playedColor: Color(0xFF2563EB),
+          handleColor: Color(0xFF60A5FA),
+          bufferedColor: Colors.white54,
+          backgroundColor: Colors.white24,
+        ),
+        onReady: () {
+          if (!mounted) {
+            return;
+          }
+          setState(() => _isReady = true);
+          widget.onReady();
+        },
+      ),
+      builder: (context, player) {
+        if (_controller.value.hasError) {
+          return Stack(
+            fit: StackFit.expand,
+            children: [
+              widget.unavailableBuilder(context),
+              Positioned(
+                bottom: 18,
+                right: 18,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: widget.onOpenInBrowser,
+                    borderRadius: BorderRadius.circular(14),
+                    child: Ink(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.45),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: Colors.white24),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.open_in_new_rounded,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            widget.openLabel,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            player,
+            if (!_isReady)
+              const ColoredBox(
+                color: Colors.black,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2.5,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _YoutubeFullscreenPlayerScreen extends StatefulWidget {
+  final String videoId;
+  final Duration startAt;
+  final bool autoPlay;
+
+  const _YoutubeFullscreenPlayerScreen({
+    required this.videoId,
+    required this.startAt,
+    required this.autoPlay,
+  });
+
+  @override
+  State<_YoutubeFullscreenPlayerScreen> createState() =>
+      _YoutubeFullscreenPlayerScreenState();
+}
+
+class _YoutubeFullscreenPlayerScreenState
+    extends State<_YoutubeFullscreenPlayerScreen> {
+  late final YoutubePlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = YoutubePlayerController(
+      initialVideoId: widget.videoId,
+      flags: YoutubePlayerFlags(
+        autoPlay: widget.autoPlay,
+        enableCaption: true,
+        controlsVisibleAtStart: true,
+        hideControls: false,
+        startAt: widget.startAt.inSeconds,
+      ),
+    );
+    _enterFullscreenMode();
+  }
+
+  Future<void> _enterFullscreenMode() async {
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+    await SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
   }
 
-  void _onExitFullscreen() {
-    SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
+  Future<void> _exitFullscreenMode() async {
+    await SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: SystemUiOverlay.values,
+    );
+    await SystemChrome.setPreferredOrientations(const <DeviceOrientation>[
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
@@ -108,122 +484,178 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   void dispose() {
-    _controller?.removeListener(_onControllerUpdate);
-    _controller?.dispose();
-    _onExitFullscreen();
+    _controller.dispose();
+    _exitFullscreenMode();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final titleStyle = Theme.of(
-      context,
-    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(widget.material.title, style: titleStyle),
-        const SizedBox(height: 12),
-        _buildPlayerBody(context),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.play_arrow_rounded),
-              onPressed: () {
-                _controller?.play();
-                _recordView();
-              },
-              tooltip: 'Play',
-            ),
-            IconButton(
-              icon: const Icon(Icons.pause_rounded),
-              onPressed: _controller == null ? null : _controller!.pause,
-              tooltip: 'Pause',
-            ),
-            IconButton(
-              icon: const Icon(Icons.fullscreen_rounded),
-              onPressed: _controller == null
-                  ? null
-                  : _controller!.toggleFullScreenMode,
-              tooltip: 'Fullscreen',
-            ),
-          ],
-        ),
-        if (_playerError != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 6),
-            child: Text(
-              _playerError!,
-              style: const TextStyle(
-                color: Color(0xFFB42318),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        if (_videoId == null || _videoId!.isEmpty)
-          const Padding(
-            padding: EdgeInsets.only(top: 6),
-            child: Text(
-              'Video unavailable — contact instructor',
-              style: TextStyle(
-                color: Color(0xFFB42318),
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-      ],
-    );
-  }
-
-  Widget _buildPlayerBody(BuildContext context) {
-    if (!widget.enableEmbeddedPlayer) {
-      return _buildPlaceholder(
-        context,
-        'Embedded player disabled in test mode.',
-      );
-    }
-
-    final controller = _controller;
-    if (controller == null || _videoId == null || _videoId!.isEmpty) {
-      return _buildPlaceholder(context, 'Video preview is not available.');
-    }
-
     return YoutubePlayerBuilder(
-      onEnterFullScreen: _onEnterFullscreen,
-      onExitFullScreen: _onExitFullscreen,
       player: YoutubePlayer(
-        controller: controller,
+        controller: _controller,
         showVideoProgressIndicator: true,
-        progressIndicatorColor: const Color(0xFF155DFC),
+        bottomActions: <Widget>[
+          const CurrentPosition(),
+          const SizedBox(width: 8),
+          ProgressBar(
+            isExpanded: true,
+            colors: const ProgressBarColors(
+              playedColor: Color(0xFF2563EB),
+              handleColor: Color(0xFF60A5FA),
+              bufferedColor: Colors.white54,
+              backgroundColor: Colors.white24,
+            ),
+          ),
+          const RemainingDuration(),
+          const PlaybackSpeedButton(),
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: const Icon(Icons.fullscreen_exit_rounded, color: Colors.white),
+            tooltip: 'Exit fullscreen',
+          ),
+        ],
+        progressIndicatorColor: Colors.white,
+        progressColors: const ProgressBarColors(
+          playedColor: Color(0xFF2563EB),
+          handleColor: Color(0xFF60A5FA),
+          bufferedColor: Colors.white54,
+          backgroundColor: Colors.white24,
+        ),
       ),
       builder: (context, player) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(14),
-          child: AspectRatio(aspectRatio: 16 / 9, child: player),
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Stack(
+            children: [
+              Positioned.fill(child: Center(child: player)),
+              Positioned(
+                top: 18,
+                left: 18,
+                child: SafeArea(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).pop(),
+                      borderRadius: BorderRadius.circular(18),
+                      child: Ink(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.45),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: Colors.white24),
+                        ),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
   }
+}
 
-  Widget _buildPlaceholder(BuildContext context, String message) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? const Color(0xFF1F2937)
-            : const Color(0xFFF3F4F6),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: Column(
-        children: [
-          const Icon(Icons.ondemand_video_rounded, size: 36),
-          const SizedBox(height: 10),
-          Text(message, textAlign: TextAlign.center),
-        ],
-      ),
+class _ExternalVideoWebView extends StatefulWidget {
+  final String url;
+  final VoidCallback onReady;
+  final WidgetBuilder unavailableBuilder;
+
+  const _ExternalVideoWebView({
+    super.key,
+    required this.url,
+    required this.onReady,
+    required this.unavailableBuilder,
+  });
+
+  @override
+  State<_ExternalVideoWebView> createState() => _ExternalVideoWebViewState();
+}
+
+class _ExternalVideoWebViewState extends State<_ExternalVideoWebView> {
+  WebViewController? _controller;
+  bool _isLoading = true;
+  bool _hasError = false;
+  bool _hasRecorded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _buildController();
+  }
+
+  void _buildController() {
+    final controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(Colors.black)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (_) {
+            if (!mounted) {
+              return;
+            }
+            setState(() {
+              _isLoading = true;
+              _hasError = false;
+            });
+          },
+          onPageFinished: (_) {
+            if (!_hasRecorded) {
+              _hasRecorded = true;
+              widget.onReady();
+            }
+            if (!mounted) {
+              return;
+            }
+            setState(() {
+              _isLoading = false;
+              _hasError = false;
+            });
+          },
+          onWebResourceError: (_) {
+            if (!mounted) {
+              return;
+            }
+            setState(() {
+              _isLoading = false;
+              _hasError = true;
+            });
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.url));
+
+    _controller = controller;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_controller == null || _hasError) {
+      return widget.unavailableBuilder(context);
+    }
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        WebViewWidget(controller: _controller!),
+        if (_isLoading)
+          const ColoredBox(
+            color: Colors.black,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2.5,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

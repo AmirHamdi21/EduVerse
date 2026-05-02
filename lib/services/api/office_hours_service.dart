@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+
 import 'core_api_client.dart';
 import '../../models/admin/admin_periods_models.dart';
 
@@ -12,6 +14,7 @@ class OfficeHoursService {
     int limit = 10,
     int? instructorId,
     String? dayOfWeek,
+    CancelToken? cancelToken,
   }) async {
     final query = <String, dynamic>{'page': page, 'limit': limit};
     if (instructorId != null) {
@@ -24,6 +27,7 @@ class OfficeHoursService {
     final response = await _client.dio.get(
       '/office-hours/slots',
       queryParameters: query,
+      cancelToken: cancelToken,
     );
 
     return _extractPaginated(
@@ -33,8 +37,13 @@ class OfficeHoursService {
     );
   }
 
-  Future<List<OfficeHourAppointmentModel>> getMyAppointments() async {
-    final response = await _client.dio.get('/office-hours/my-appointments');
+  Future<List<OfficeHourAppointmentModel>> getMyAppointments({
+    CancelToken? cancelToken,
+  }) async {
+    final response = await _client.dio.get(
+      '/office-hours/my-appointments',
+      cancelToken: cancelToken,
+    );
     final data = _extractList(response.data);
 
     return data
@@ -48,6 +57,7 @@ class OfficeHoursService {
     required String appointmentDate,
     String? topic,
     String? notes,
+    CancelToken? cancelToken,
   }) async {
     final payload = <String, dynamic>{
       'slotId': slotId,
@@ -64,6 +74,7 @@ class OfficeHoursService {
     final response = await _client.dio.post(
       '/office-hours/appointments',
       data: payload,
+      cancelToken: cancelToken,
     );
 
     final data = _extractMap(response.data);

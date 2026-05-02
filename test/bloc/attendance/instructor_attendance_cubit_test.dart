@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/attendance/instructor_attendance_cubit.dart';
@@ -47,6 +48,7 @@ class _FakeAttendanceService implements AttendanceService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async => sessionsResult;
 
   @override
@@ -55,6 +57,7 @@ class _FakeAttendanceService implements AttendanceService {
     required String sessionDate,
     required String sessionType,
     int? totalMinutes,
+    CancelToken? cancelToken,
   }) async =>
       createSessionResult ??
       ServiceResult<AttendanceSessionModel>.success(
@@ -69,8 +72,9 @@ class _FakeAttendanceService implements AttendanceService {
 
   @override
   Future<ServiceResult<AttendanceSessionModel>> getSessionDetails(
-    int id,
-  ) async =>
+    int id, {
+    CancelToken? cancelToken,
+  }) async =>
       sessionDetailsResult ??
       ServiceResult<AttendanceSessionModel>.success(
         AttendanceSessionModel.fromJson(<String, dynamic>{
@@ -98,15 +102,20 @@ class _FakeAttendanceService implements AttendanceService {
   Future<ServiceResult<void>> markBatchAttendance({
     required int sessionId,
     required List<Map<String, dynamic>> records,
+    CancelToken? cancelToken,
   }) async => batchResult;
 
   @override
-  Future<ServiceResult<void>> closeSession(int id) async => closeResult;
+  Future<ServiceResult<void>> closeSession(
+    int id, {
+    CancelToken? cancelToken,
+  }) async => closeResult;
 
   @override
   Future<ServiceResult<AiProcessingResultModel>> uploadAiPhoto({
     required int sessionId,
     required File photo,
+    CancelToken? cancelToken,
   }) async => uploadAiPhotoResult;
 
   @override
@@ -114,16 +123,21 @@ class _FakeAttendanceService implements AttendanceService {
     int processingId, {
     Duration timeout = const Duration(seconds: 120),
     Duration interval = const Duration(milliseconds: 2500),
+    CancelToken? cancelToken,
   }) async => pollAiResultResult;
 
   @override
-  Future<ServiceResult<void>> deleteSession(int id) async => deleteResult;
+  Future<ServiceResult<void>> deleteSession(
+    int id, {
+    CancelToken? cancelToken,
+  }) async => deleteResult;
 
   @override
   Future<ServiceResult<AttendanceSessionModel>> updateSession(
     int id,
-    Map<String, dynamic> data,
-  ) async =>
+    Map<String, dynamic> data, {
+    CancelToken? cancelToken,
+  }) async =>
       updateSessionResult ??
       ServiceResult<AttendanceSessionModel>.success(
         AttendanceSessionModel.fromJson(<String, dynamic>{
@@ -177,13 +191,15 @@ class _FakeEnrollmentService implements EnrollmentService {
       ]);
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async =>
-      teachingSectionsResult;
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) async => teachingSectionsResult;
 
   @override
   Future<ServiceResult<List<SectionStudentModel>>> getSectionStudentsLite(
-    dynamic sectionId,
-  ) async =>
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async =>
       sectionStudentsResult ??
       ServiceResult<List<SectionStudentModel>>.success(const []);
 

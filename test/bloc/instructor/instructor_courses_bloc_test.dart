@@ -1,6 +1,4 @@
-@Timeout(Duration(seconds: 30))
-library;
-
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/instructor/instructor_courses_bloc.dart';
@@ -33,14 +31,17 @@ class _FakeEnrollmentService extends EnrollmentService {
   ServiceResult<List<SectionStudentModel>> studentsResult;
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) async {
     return coursesResult;
   }
 
   @override
   Future<ServiceResult<List<SectionStudentModel>>> getSectionStudentsLite(
-    dynamic sectionId,
-  ) async {
+    dynamic sectionId, {
+    CancelToken? cancelToken,
+  }) async {
     return studentsResult;
   }
 }
@@ -65,14 +66,16 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     return assignmentsResult;
   }
 
   @override
   Future<ServiceResult<List<AssignmentSubmissionModel>>> getSubmissions(
-    dynamic assignmentId,
-  ) async {
+    dynamic assignmentId, {
+    CancelToken? cancelToken,
+  }) async {
     return submissionsByAssignment[assignmentId.toString()] ??
         ServiceResult<List<AssignmentSubmissionModel>>.success(
           const <AssignmentSubmissionModel>[],
@@ -93,6 +96,7 @@ class _FakeLabService extends LabService {
     String? search,
     int page = 1,
     int limit = 50,
+    CancelToken? cancelToken,
   }) async {
     return labsResult;
   }
@@ -110,6 +114,7 @@ class _FakeMaterialService extends MaterialService {
     String? materialType,
     int? weekNumber,
     String? search,
+    CancelToken? cancelToken,
   }) async {
     return materials;
   }

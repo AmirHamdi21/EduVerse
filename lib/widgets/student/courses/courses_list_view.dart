@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../bloc/theme/theme_bloc.dart';
 import '../../../bloc/theme/theme_state.dart';
 import '../../../models/core/enrollment_model.dart';
 import 'course_card.dart';
 import 'empty_courses_message.dart';
 
-/// Renders a list of enrolled courses with staggered entry animations.
-///
-/// Accepts [List<CourseEnrollmentModel>] from [CoursesBloc] state and
-/// delegates rendering to individual [CourseCard] widgets.
+/// Renders enrolled courses with responsive tablet handling and staggered entry
+/// animations.
 class CoursesListView extends StatefulWidget {
   final List<CourseEnrollmentModel> enrollments;
 
@@ -42,29 +41,31 @@ class _CoursesListViewState extends State<CoursesListView>
   }
 
   void _startStaggeredAnimations() {
-    _pendingAnimations = [];
+    _pendingAnimations = <Future<void>>[];
     for (int i = 0; i < _animationControllers.length; i++) {
-      final animation = Future.delayed(Duration(milliseconds: i * 120), () {
-        if (mounted && i < _animationControllers.length) {
-          _animationControllers[i].forward();
-        }
-      });
-      _pendingAnimations?.add(animation);
+      final animation = Future<void>.delayed(
+        Duration(milliseconds: i * 120),
+        () {
+          if (mounted && i < _animationControllers.length) {
+            _animationControllers[i].forward();
+          }
+        },
+      );
+      _pendingAnimations!.add(animation);
     }
   }
 
   @override
-  void didUpdateWidget(CoursesListView oldWidget) {
+  void didUpdateWidget(covariant CoursesListView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.enrollments.length != widget.enrollments.length) {
-      _pendingAnimations = null;
       _disposeAnimations();
       _initializeAnimations();
     }
   }
 
   void _disposeAnimations() {
-    for (var controller in _animationControllers) {
+    for (final controller in _animationControllers) {
       controller.dispose();
     }
   }
@@ -86,20 +87,48 @@ class _CoursesListViewState extends State<CoursesListView>
           return EmptyCoursesMessage(isDark: isDark);
         }
 
-        return ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: widget.enrollments.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 16),
-          itemBuilder: (context, index) => CourseCard(
-            enrollment: widget.enrollments[index],
-            animation: Tween<double>(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
-                parent: _animationControllers[index],
-                curve: Curves.easeOut,
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final double width = constraints.maxWidth;
+            final bool useGrid = width >= 960;
+            final int crossAxisCount = width >= 1260 ? 3 : 2;
+
+            if (!useGrid) {
+              return ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: widget.enrollments.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 18),
+                itemBuilder: (context, index) => CourseCard(
+                  enrollment: widget.enrollments[index],
+                  animation: CurvedAnimation(
+                    parent: _animationControllers[index],
+                    curve: Curves.easeOut,
+                  ),
+                ),
+              );
+            }
+
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: widget.enrollments.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                mainAxisSpacing: 18,
+                crossAxisSpacing: 18,
+                childAspectRatio: 0.78,
               ),
-            ),
-          ),
+              itemBuilder: (context, index) => CourseCard(
+                enrollment: widget.enrollments[index],
+                animation: CurvedAnimation(
+                  parent: _animationControllers[index],
+                  curve: Curves.easeOut,
+                ),
+              ),
+            );
+          },
         );
       },
     );

@@ -198,6 +198,55 @@
   "myCoursesHeader": "My Courses",
   "allEnrolledCoursesThisSemester": "All enrolled courses this semester",
   "searchCourseNameOrInstructor": "Search course name or instructor",
+  "studentCourseHeroSubtitle": "Browse, continue, and organize every enrolled course from one focused learning space.",
+  "studentCourseDetailCourseContent": "Course content",
+  "studentCourseDetailPrerequisites": "Prerequisites",
+  "studentCourseDetailHeroFallback": "Stay on top of your materials, staff support, and updates from one polished course space.",
+  "studentCourseDetailItemsLabel": "items",
+  "studentCourseDetailItemsCompleted": "items completed",
+  "studentCourseDetailEnrolledOn": "Enrolled on",
+  "studentCourseDetailOverviewHeading": "Course overview",
+  "studentCourseDetailOverviewFallback": "This course is ready for its next learning step. Explore the content, connect with the teaching team, and keep your progress moving.",
+  "studentCourseDetailInstructorTitle": "Instructor",
+  "studentCourseDetailInstructorSubtitle": "Open the instructor profile and booking screen to review details and reserve office-hour support.",
+  "studentCourseDetailOpenProfileBooking": "Open profile & booking",
+  "studentCourseDetailLoadingInstructor": "Loading instructor...",
+  "studentCourseDetailUnknownInstructor": "Unknown instructor",
+  "studentCourseDetailInstructorLoadingMessage": "Instructor information is still loading.",
+  "studentCourseDetailNoInstructorAssigned": "No instructor is assigned yet.",
+  "studentCourseDetailTeachingAssistantsTitle": "Teaching assistants",
+  "studentCourseDetailTeachingAssistantsSubtitle": "Reach the section support team quickly when you need follow-up help or booking details.",
+  "studentCourseDetailLoadingTeachingAssistants": "Loading teaching assistants...",
+  "studentCourseDetailNoTeachingAssistants": "No teaching assistants are assigned yet.",
+  "studentCourseDetailTeachingAssistantRole": "Teaching assistant",
+  "studentCourseDetailNoTaProfile": "No TA profile is available yet.",
+  "studentCourseDetailProgressTitle": "Course progress",
+  "studentCourseDetailProgressSubtitle": "Track what you have already completed and how much course material is still ahead.",
+  "studentCourseDetailDropped": "Dropped",
+  "studentCourseDetailWaitlisted": "Waitlisted",
+  "studentCourseDetailBeginner": "Beginner",
+  "studentCourseDetailIntermediate": "Intermediate",
+  "studentCourseDetailSearchHint": "Search course content, assignments, labs, or announcements",
+  "studentCourseDetailSearchPromptTitle": "Start a new search",
+  "studentCourseDetailSearchPromptSubtitle": "Type a keyword to find lectures, assignments, labs, or announcements tied to this course.",
+  "studentCourseDetailSearchNoResultsTitle": "No matching results",
+  "studentCourseDetailSearchNoResultsSubtitle": "Try another keyword or open one of the course tabs to browse everything directly.",
+  "studentCourseDetailSearchMaterialsLabel": "Course content",
+  "studentCourseDetailNotesHint": "Create a quick note for this course",
+  "studentCourseDetailNotesAllItems": "All notes",
+  "studentCourseDetailNotesSessionOnly": "Session notes only",
+  "studentCourseDetailNotesSortRecent": "Most recent",
+  "studentCourseDetailNotesSortOldest": "Oldest first",
+  "studentCourseDetailNotesEmptyTitle": "No notes yet",
+  "studentCourseDetailNotesEmptySubtitle": "Capture a quick note for this course and it will stay visible while this page remains open.",
+  "studentCourseDetailDownload": "Download",
+  "studentCourseDetailVideoLessons": "video lessons",
+  "studentCourseDetailUnableToOpenVideo": "Unable to open this video right now.",
+  "studentCourseDetailPlay": "Play",
+  "studentCourseDetailPause": "Pause",
+  "studentCourseDetailOpenInBrowser": "Open in browser",
+  "studentCourseDetailNormalSpeed": "Normal speed",
+  "studentCourseDetailVideoPreviewUnavailable": "Video preview is not available.",
   "filter": "Filter",
   "sort": "Sort",
   "all": "All",
@@ -206,6 +255,7 @@
   "completed": "Completed",
   "missed": "Missed",
   "joinCourse": "Join Course",
+  "studentCourseJoinHint": "Opens available course enrollment options",
   "nextLecture": "Next Lecture",
   "aiLab": "AI Lab",
   "nextAssignment": "Next Assignment",
@@ -1661,6 +1711,85 @@
   "gradeSubmitted": "Grade submitted successfully",
   "editGrade": "Edit Grade",
   "viewDetails": "View Details",
+  "gradingCenterHeroTitle": "Grading Pulse",
+  "gradingCenterHeroSubtitle": "Track the grading queue, open submissions, and update scores without leaving the flow.",
+  "gradingCenterCoursesStat": "Courses",
+  "gradingCenterSubmissionsStat": "Submissions",
+  "gradingCenterSubmissionsCount": "{count, plural, =1{1 submission} other{{count} submissions}}",
+  "@gradingCenterSubmissionsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterCourseFilterLabel": "Course",
+  "gradingCenterStatusFilterLabel": "Status",
+  "gradingCenterAllStates": "All States",
+  "gradingCenterStudentFallback": "Student #{id}",
+  "@gradingCenterStudentFallback": {
+    "placeholders": {
+      "id": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterSubmissionTypeFile": "File",
+  "gradingCenterSubmissionTypeLink": "Link",
+  "gradingCenterSubmissionTypeText": "Text",
+  "gradingCenterAttemptNumber": "Attempt {count}",
+  "@gradingCenterAttemptNumber": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterNotGradedYet": "Not graded yet",
+  "gradingCenterLoadErrorTitle": "Unable to load the grading queue.",
+  "gradingCenterNoCoursesAvailable": "No teaching courses available yet.",
+  "gradingCenterPendingEmptySubtitle": "Everything currently visible in this course has already been graded.",
+  "gradingCenterGradedEmptySubtitle": "No graded submissions match the current course filter yet.",
+  "gradingCenterLateEmptySubtitle": "No late work is showing for the current course filter.",
+  "gradingCenterAllEmptySubtitle": "Once students submit their work, it will appear here for review.",
+  "gradingCenterSubmissionSnapshot": "Submission Snapshot",
+  "gradingCenterStudentLabel": "Student",
+  "gradingCenterCourseLabel": "Course",
+  "gradingCenterStatusLabel": "Status",
+  "gradingCenterSubmittedLabel": "Submitted",
+  "gradingCenterAttemptLabel": "Attempt",
+  "gradingCenterCurrentGradeLabel": "Current Grade",
+  "gradingCenterTextSubmissionTitle": "Text Submission",
+  "gradingCenterLinkSubmissionTitle": "Link Submission",
+  "gradingCenterFileSubmissionTitle": "File Submission",
+  "gradingCenterInvalidGradeRange": "Enter a score between 0 and {maxScore}.",
+  "@gradingCenterInvalidGradeRange": {
+    "placeholders": {
+      "maxScore": {
+        "type": "String"
+      }
+    }
+  },
+  "gradingCenterSaveFailed": "Failed to submit grade.",
+  "gradingCenterCurrentScore": "Current score {value}%",
+  "@gradingCenterCurrentScore": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "gradingCenterLatePenalty": "Late penalty {value}%",
+  "@gradingCenterLatePenalty": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "gradingCenterFeedbackHint": "Share strengths, gaps, and next steps for the student...",
+  "gradingCenterSaving": "Saving...",
+  "gradingCenterOpenLinkError": "Unable to open the link right now.",
   "assignmentDetails": "Assignment Details",
   "assignment": "Assignment",
   "submitted": "Submitted",
@@ -2346,6 +2475,12 @@
   "taAIAssistant": "TA AI Assistant",
   "taCourses": "TA Courses",
   "taCourseDetail": "Course Detail",
+  "taCourseDetailHeroSubtitle": "Stay on top of materials, labs, grading, and students for this teaching section.",
+  "taCourseDetailContentEmpty": "Course materials will appear here once they are published for your section.",
+  "taCourseDetailOtherMaterials": "Other materials",
+  "taCourseDetailOpenLabsWorkspace": "Open labs workspace",
+  "taCourseDetailNoAttendance": "Attendance summaries will appear here after lab sessions are recorded.",
+  "taCourseDetailNoStudents": "No students are currently assigned to this section.",
   "taCourseStudents": "Students",
   "taCourseLabs": "Labs",
   "taCourseAssignments": "Assignments",
@@ -2394,6 +2529,26 @@
   "taCourseLabsTab": "Labs",
   "taCourseGradingTab": "Grading",
   "taCourseDiscussionsTab": "Discussions",
+  "taCoursesShellSubtitle": "Stay on top of your assigned sections, grading queues, labs, and discussion activity from one focused workspace.",
+  "taCoursesAllSpaces": "All support spaces",
+  "taCoursesAvgFill": "Avg fill",
+  "taCoursesCourseActions": "Course actions",
+  "taCoursesSectionFill": "Section fill",
+  "taCoursesEnrolledCount": "{current}/{capacity} enrolled",
+  "@taCoursesEnrolledCount": {
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "capacity": {
+        "type": "int"
+      }
+    }
+  },
+  "taCoursesNoAssignedTitle": "No teaching courses found",
+  "taCoursesNoAssignedSubtitle": "Your assigned courses will appear here once they are available.",
+  "taCoursesNoMatchingTitle": "No courses match these filters",
+  "taCoursesNoMatchingSubtitle": "Try adjusting your search, status tab, or level filter to bring more courses back into view.",
   "mainMenu": "Main Menu",
   "aiTools": "AI Tools",
   "connect": "Connect",
@@ -5198,6 +5353,22 @@
   "coursesShellReauthenticate": "Re-authenticate",
   "coursesShellNoSemesterMatches": "No courses in this semester",
   "coursesShellSearchSemanticsHint": "Search by course code, title, section, semester, or instructor",
+  "studentCourseDropped": "Dropped",
+  "studentCourseOverviewTitle": "Keep your momentum",
+  "studentCourseOverviewSubtitle": "Track your active load, completed work, and overall progress at a glance.",
+  "studentCourseTotalCourses": "Total courses",
+  "studentCourseActiveCourses": "Active now",
+  "studentCourseCompletedCourses": "Completed",
+  "studentCourseAverageProgress": "Average progress",
+  "studentCourseResultsLabel": "courses",
+  "studentCourseOfflineCached": "Offline: showing cached course data.",
+  "studentCourseEmptyDescription": "You are not enrolled in any courses yet. Once registration opens, your course library will appear here.",
+  "studentCourseConnectionErrorTitle": "Connection Error",
+  "studentCourseConnectionErrorDescription": "We couldn't load your courses right now. Check your connection and try again.",
+  "studentCourseAccessRestrictedTitle": "Access Restricted",
+  "studentCourseUnknownInstructor": "Instructor information unavailable",
+  "studentCourseSectionFallback": "Section -",
+  "studentCourseNoSemester": "No semester",
   "adminUseTimeFormat": "Use HH:mm format for times.",
 
   "quizManagement": "Quiz Management",
@@ -5713,6 +5884,9 @@
   "attendanceCalendarSubtitle": "See how this course attendance lands across the month.",
   "attendanceNoSessionsYet": "No attendance sessions yet",
   "attendanceNoSessionsMatchFilters": "No sessions match this view",
+  "instructorCourseDetailHeroSubtitle": "Manage course content, monitor engagement, and keep teaching workflows focused from one polished workspace.",
+  "instructorCourseDetailNoSchedule": "No schedule is available for this section yet.",
+  "instructorCourseDetailNoActivity": "No upcoming activity is available yet.",
   "chatVideoCallTooltip": "Video call",
   "chatVoiceCallTooltip": "Voice call"
 }

@@ -1,7 +1,10 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/common/service_error.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/models/assignments/assignment_model.dart';
 import 'package:edu_verse/models/core/drive_file_model.dart';
 import 'package:edu_verse/models/core/enums/assignment_enums.dart' as api;
@@ -18,7 +21,10 @@ class _FakeAssignmentService extends AssignmentService {
   final AssignmentModel freshAssignment;
 
   @override
-  Future<ServiceResult<AssignmentModel>> getById(dynamic id) async {
+  Future<ServiceResult<AssignmentModel>> getById(
+    dynamic id, {
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<AssignmentModel>.success(freshAssignment);
   }
 }
@@ -30,7 +36,9 @@ class _FakeEnrollmentService extends EnrollmentService {
   final List<TeachingCourseModel> courses;
 
   @override
-  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses() async {
+  Future<ServiceResult<List<TeachingCourseModel>>> getTeachingCourses({
+    CancelToken? cancelToken,
+  }) async {
     return ServiceResult<List<TeachingCourseModel>>.success(courses);
   }
 }
@@ -133,6 +141,13 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
           home: CreateAssignmentScreen(
             assignment: staleAssignment,
             assignmentId: staleAssignment.assignmentId,

@@ -63,24 +63,25 @@ class SharedAttendanceManagerScreen extends StatelessWidget {
     super.key,
     required this.isDark,
     required this.theme,
+    this.embedded = false,
   });
 
   final bool isDark;
   final SharedAttendanceTheme theme;
+  final bool embedded;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: theme.background(isDark),
-      body: Stack(
-        children: <Widget>[
-          _AttendanceBackground(theme: theme, isDark: isDark),
-          SafeArea(
-            child:
-                BlocConsumer<
-                  InstructorAttendanceCubit,
-                  InstructorAttendanceState
-                >(
+    final content = Stack(
+      children: <Widget>[
+        _AttendanceBackground(theme: theme, isDark: isDark),
+        SafeArea(
+          top: !embedded,
+          child:
+              BlocConsumer<
+                InstructorAttendanceCubit,
+                InstructorAttendanceState
+              >(
                   listener: (context, state) {
                     final message = (state.error ?? state.aiError ?? '').trim();
                     if (message.isEmpty) {
@@ -113,12 +114,13 @@ class SharedAttendanceManagerScreen extends StatelessWidget {
 
                         return Column(
                           children: <Widget>[
-                            _TopBar(
-                              isDark: isDark,
-                              theme: theme,
-                              title: theme.title,
-                              onBack: () => context.pop(),
-                            ),
+                            if (!embedded)
+                              _TopBar(
+                                isDark: isDark,
+                                theme: theme,
+                                title: theme.title,
+                                onBack: () => context.pop(),
+                              ),
                             Expanded(
                               child: ListView(
                                 padding: const EdgeInsets.fromLTRB(
@@ -196,9 +198,20 @@ class SharedAttendanceManagerScreen extends StatelessWidget {
                     );
                   },
                 ),
-          ),
-        ],
-      ),
+        ),
+      ],
+    );
+
+    if (embedded) {
+      return Container(
+        color: theme.background(isDark),
+        child: content,
+      );
+    }
+
+    return Scaffold(
+      backgroundColor: theme.background(isDark),
+      body: content,
     );
   }
 

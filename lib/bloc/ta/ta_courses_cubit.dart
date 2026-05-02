@@ -245,8 +245,9 @@ class TACoursesCubit extends Cubit<TACoursesState> {
 
   // ── Sub-tab 5: Assignments ───────────────────────────────────
 
-  /// Loads all assignments for a course.
-  Future<void> fetchCourseAssignments(int courseId) async {
+  /// Loads assignments for a specific course, or all assigned courses when
+  /// [courseId] is null.
+  Future<void> fetchCourseAssignments([int? courseId]) async {
     emit(
       state.copyWith(
         assignmentsData: const TASubTabLoading<List<AssignmentModel>>(),
@@ -254,26 +255,65 @@ class TACoursesCubit extends Cubit<TACoursesState> {
     );
 
     try {
-      final result = await _assignmentService.getAll(
-        courseId: courseId,
-        limit: 100,
-      );
+      if (courseId != null) {
+        final result = await _assignmentService.getAll(
+          courseId: courseId,
+          limit: 100,
+        );
 
-      if (!result.isSuccess || result.data == null) {
+        if (!result.isSuccess || result.data == null) {
+          emit(
+            state.copyWith(
+              assignmentsData: TASubTabError<List<AssignmentModel>>(
+                result.error?.message ?? 'Failed to load assignments',
+              ),
+            ),
+          );
+          return;
+        }
+
         emit(
           state.copyWith(
-            assignmentsData: TASubTabError<List<AssignmentModel>>(
-              result.error?.message ?? 'Failed to load assignments',
+            assignmentsData: TASubTabLoaded<List<AssignmentModel>>(
+              _sortAssignments(result.data!.data),
             ),
           ),
         );
         return;
       }
 
+      final courseIds = _assignedCourseIds();
+      if (courseIds.isEmpty) {
+        emit(
+          state.copyWith(
+            assignmentsData: const TASubTabLoaded<List<AssignmentModel>>(
+              <AssignmentModel>[],
+            ),
+          ),
+        );
+        return;
+      }
+
+      final results = await Future.wait(
+        courseIds.map(
+          (id) => _assignmentService.getAll(courseId: id, limit: 100),
+        ),
+      );
+
+      final merged = <int, AssignmentModel>{};
+      for (final result in results) {
+        if (!result.isSuccess || result.data == null) {
+          continue;
+        }
+        for (final assignment in result.data!.data) {
+          merged[assignment.assignmentId] = assignment;
+        }
+      }
+
       emit(
         state.copyWith(
           assignmentsData: TASubTabLoaded<List<AssignmentModel>>(
-            result.data!.data,
+            _sortAssignments(merged.values.toList(growable: false)),
           ),
         ),
       );
@@ -286,6 +326,33 @@ class TACoursesCubit extends Cubit<TACoursesState> {
         ),
       );
     }
+  }
+
+  List<int> _assignedCourseIds() {
+    final status = state.coursesStatus;
+    if (status is! TASubTabLoaded<List<TeachingCourseModel>>) {
+      return const <int>[];
+    }
+
+    return status.data
+        .map((course) => course.courseId)
+        .where((id) => id > 0)
+        .toSet()
+        .toList(growable: false);
+  }
+
+  List<AssignmentModel> _sortAssignments(List<AssignmentModel> assignments) {
+    final sorted = List<AssignmentModel>.from(assignments);
+    sorted.sort((left, right) {
+      final leftDue = left.dueDate;
+      final rightDue = right.dueDate;
+      final dueCompare = leftDue.compareTo(rightDue);
+      if (dueCompare != 0) {
+        return dueCompare;
+      }
+      return left.title.toLowerCase().compareTo(right.title.toLowerCase());
+    });
+    return sorted;
   }
 
   // ── Sub-tab 6: Pending Grading ───────────────────────────────

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/bloc/route_request_controller.dart';
 import '../../models/attendance/attendance_record_model.dart';
 import '../../models/attendance/attendance_session_model.dart';
 import '../../models/instructor/instructor_course_model.dart';
@@ -10,9 +11,27 @@ import '../../services/api/attendance_service.dart';
 import '../../services/api/enrollment_service.dart';
 import 'instructor_attendance_state.dart';
 
-class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
+class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState>
+    with SafeRouteCubitMixin<InstructorAttendanceState> {
   final AttendanceService _attendanceService;
   final EnrollmentService _enrollmentService;
+  late final RouteRequestController _sectionsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _sessionsRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _sessionMutationRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _rosterRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
+  late final RouteRequestController _attendanceMutationRequest =
+      trackRouteRequest(RouteRequestController());
+  late final RouteRequestController _aiRequest = trackRouteRequest(
+    RouteRequestController(),
+  );
 
   InstructorAttendanceCubit({
     required AttendanceService attendanceService,
@@ -23,12 +42,18 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
          InstructorAttendanceState(newSessionDate: _dateOnly(DateTime.now())),
        );
 
-  Future<void> loadTeachingSections() async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+  Future<void> loadTeachingSections({int? preferredSectionId}) async {
+    final requestId = _sectionsRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
 
-    final result = await _enrollmentService.getTeachingCourses();
+    final result = await _enrollmentService.getTeachingCourses(
+      cancelToken: _sectionsRequest.token,
+    );
+    if (!isRequestCurrent(_sectionsRequest, requestId)) {
+      return;
+    }
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to load teaching sections',
@@ -39,11 +64,11 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
 
     final sections = result.data!;
     final selectedSection = _resolveSelectedSection(
-      state.selectedSectionId,
+      preferredSectionId ?? state.selectedSectionId,
       sections,
     );
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         teachingSections: sections,
@@ -61,7 +86,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
   }
 
   void setUiMode(AttendanceUiMode uiMode) {
-    emit(
+    emitIfOpen(
       state.copyWith(
         uiMode: uiMode,
         view: uiMode == AttendanceUiMode.lecture
@@ -98,11 +123,11 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
   Future<void> selectSectionForSessions(int sectionId) async {
     final section = _resolveSelectedSection(sectionId, state.teachingSections);
     if (section == null) {
-      emit(state.copyWith(error: 'Select a section first'));
+      emitIfOpen(state.copyWith(error: 'Select a section first'));
       return;
     }
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         selectedSectionId: section.sectionId,
         selectedSection: section,
@@ -114,7 +139,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
   }
 
   Future<void> openSection(TeachingCourseModel section, int sectionId) async {
-    emit(
+    emitIfOpen(
       state.copyWith(
         selectedSection: section,
         selectedSectionId: sectionId,
@@ -128,16 +153,21 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
   }
 
   Future<void> loadSessionsForSection(int sectionId) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _sessionsRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
     final result = await _attendanceService.getSessions(
       sectionId: sectionId,
       limit: 30,
       sortBy: 'sessionDate',
       sortOrder: 'DESC',
+      cancelToken: _sessionsRequest.token,
     );
+    if (!isRequestCurrent(_sessionsRequest, requestId)) {
+      return;
+    }
 
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to load sessions',
@@ -146,7 +176,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
       return;
     }
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         sessions: result.data!,
@@ -158,19 +188,24 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
   Future<void> createSession() async {
     final sectionId = state.selectedSectionId;
     if (sectionId == null) {
-      emit(state.copyWith(error: 'Select a section first'));
+      emitIfOpen(state.copyWith(error: 'Select a section first'));
       return;
     }
 
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _sessionMutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
     final result = await _attendanceService.createSession(
       sectionId: sectionId,
       sessionDate: state.newSessionDate,
       sessionType: state.newSessionType,
+      cancelToken: _sessionMutationRequest.token,
     );
+    if (!isRequestCurrent(_sessionMutationRequest, requestId)) {
+      return;
+    }
 
     if (!result.isSuccess || result.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to create session',
@@ -187,14 +222,19 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     required String sessionDate,
     required String sessionType,
   }) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _sessionMutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
     final result = await _attendanceService.updateSession(
       sessionId,
       <String, dynamic>{'sessionDate': sessionDate, 'sessionType': sessionType},
+      cancelToken: _sessionMutationRequest.token,
     );
+    if (!isRequestCurrent(_sessionMutationRequest, requestId)) {
+      return;
+    }
 
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to update session',
@@ -207,15 +247,22 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     if (sectionId != null) {
       await loadSessionsForSection(sectionId);
     } else {
-      emit(state.copyWith(isLoading: false));
+      emitIfOpen(state.copyWith(isLoading: false));
     }
   }
 
   Future<void> deleteSession(int sessionId) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
-    final result = await _attendanceService.deleteSession(sessionId);
+    final requestId = _sessionMutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
+    final result = await _attendanceService.deleteSession(
+      sessionId,
+      cancelToken: _sessionMutationRequest.token,
+    );
+    if (!isRequestCurrent(_sessionMutationRequest, requestId)) {
+      return;
+    }
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to delete session',
@@ -228,20 +275,20 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     if (sectionId != null) {
       await loadSessionsForSection(sectionId);
     } else {
-      emit(state.copyWith(isLoading: false));
+      emitIfOpen(state.copyWith(isLoading: false));
     }
   }
 
   void updateNewSessionDate(String date) {
-    emit(state.copyWith(newSessionDate: date));
+    emitIfOpen(state.copyWith(newSessionDate: date));
   }
 
   void updateNewSessionType(String type) {
-    emit(state.copyWith(newSessionType: type));
+    emitIfOpen(state.copyWith(newSessionType: type));
   }
 
   void backToClasses() {
-    emit(
+    emitIfOpen(
       state.copyWith(
         view: InstructorAttendanceView.classes,
         clearSelectedSection: true,
@@ -265,16 +312,23 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
   }
 
   Future<void> loadRosterData(int sessionId, bool readOnly) async {
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _rosterRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
 
     final previousRowsByUser = <int, RosterRow>{
       if (state.activeSession?.id == sessionId)
         for (final row in state.rosterRows) row.userId: row,
     };
 
-    final sessionResult = await _attendanceService.getSessionDetails(sessionId);
+    final sessionResult = await _attendanceService.getSessionDetails(
+      sessionId,
+      cancelToken: _rosterRequest.token,
+    );
+    if (!isRequestCurrent(_rosterRequest, requestId)) {
+      return;
+    }
     if (!sessionResult.isSuccess || sessionResult.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error:
@@ -294,7 +348,11 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     if (selectedSectionId != null) {
       final sectionStudents = await _enrollmentService.getSectionStudentsLite(
         selectedSectionId,
+        cancelToken: _rosterRequest.token,
       );
+      if (!isRequestCurrent(_rosterRequest, requestId)) {
+        return;
+      }
       if (sectionStudents.isSuccess && sectionStudents.data != null) {
         rows = sectionStudents.data!.map((SectionStudentModel student) {
           final matched = statusByUser[student.userId];
@@ -345,7 +403,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
 
     rows.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         view: InstructorAttendanceView.roster,
@@ -362,7 +420,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
 
   void backToSection() {
     final sectionId = state.selectedSectionId;
-    emit(
+    emitIfOpen(
       state.copyWith(
         view: InstructorAttendanceView.section,
         clearActiveSession: true,
@@ -392,7 +450,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
       return row.copyWith(status: normalized);
     }).toList();
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         rosterRows: nextRows,
         isRosterDirty: nextRows.any((row) => row.isDirty),
@@ -409,7 +467,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     final nextRows = state.rosterRows
         .map((row) => row.copyWith(status: normalized))
         .toList();
-    emit(
+    emitIfOpen(
       state.copyWith(
         rosterRows: nextRows,
         isRosterDirty: nextRows.any((row) => row.isDirty),
@@ -420,7 +478,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
   Future<void> saveBatch() async {
     final session = state.activeSession;
     if (session == null) {
-      emit(state.copyWith(error: 'No active session selected'));
+      emitIfOpen(state.copyWith(error: 'No active session selected'));
       return;
     }
 
@@ -433,14 +491,19 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
         )
         .toList();
 
-    emit(state.copyWith(isLoading: true, clearError: true));
+    final requestId = _attendanceMutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
     final result = await _attendanceService.markBatchAttendance(
       sessionId: session.id,
       records: payload,
+      cancelToken: _attendanceMutationRequest.token,
     );
+    if (!isRequestCurrent(_attendanceMutationRequest, requestId)) {
+      return;
+    }
 
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to save attendance',
@@ -452,7 +515,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     final updatedRows = state.rosterRows
         .map((row) => row.copyWith(initialStatus: row.status))
         .toList();
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         rosterRows: updatedRows,
@@ -464,14 +527,21 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
   Future<void> closeSession() async {
     final session = state.activeSession;
     if (session == null) {
-      emit(state.copyWith(error: 'No active session selected'));
+      emitIfOpen(state.copyWith(error: 'No active session selected'));
       return;
     }
 
-    emit(state.copyWith(isLoading: true, clearError: true));
-    final result = await _attendanceService.closeSession(session.id);
+    final requestId = _sessionMutationRequest.begin();
+    emitIfOpen(state.copyWith(isLoading: true, clearError: true));
+    final result = await _attendanceService.closeSession(
+      session.id,
+      cancelToken: _sessionMutationRequest.token,
+    );
+    if (!isRequestCurrent(_sessionMutationRequest, requestId)) {
+      return;
+    }
     if (!result.isSuccess) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isLoading: false,
           error: result.error?.message ?? 'Failed to close session',
@@ -480,7 +550,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
       return;
     }
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         isLoading: false,
         activeSession: session.copyWith(status: 'completed'),
@@ -490,18 +560,21 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
   }
 
   void setAiFile(File? file) {
-    emit(state.copyWith(aiPhoto: file, clearAiError: true));
+    emitIfOpen(state.copyWith(aiPhoto: file, clearAiError: true));
   }
 
   Future<void> runAiAttendance() async {
     final session = state.activeSession;
     final photo = state.aiPhoto;
     if (session == null || photo == null) {
-      emit(state.copyWith(aiError: 'Choose a photo and open a session first'));
+      emitIfOpen(
+        state.copyWith(aiError: 'Choose a photo and open a session first'),
+      );
       return;
     }
 
-    emit(
+    final requestId = _aiRequest.begin();
+    emitIfOpen(
       state.copyWith(
         isAiLoading: true,
         clearAiError: true,
@@ -512,9 +585,13 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     final upload = await _attendanceService.uploadAiPhoto(
       sessionId: session.id,
       photo: photo,
+      cancelToken: _aiRequest.token,
     );
+    if (!isRequestCurrent(_aiRequest, requestId)) {
+      return;
+    }
     if (!upload.isSuccess || upload.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isAiLoading: false,
           aiError: upload.error?.message ?? 'Failed to upload AI photo',
@@ -525,9 +602,13 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
 
     final poll = await _attendanceService.pollAiResult(
       upload.data!.processingId,
+      cancelToken: _aiRequest.token,
     );
+    if (!isRequestCurrent(_aiRequest, requestId)) {
+      return;
+    }
     if (!poll.isSuccess || poll.data == null) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           isAiLoading: false,
           aiError: poll.error?.message ?? 'AI processing failed',
@@ -538,7 +619,10 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
 
     final result = poll.data!;
     await loadRosterData(session.id, state.isRosterReadOnly);
-    emit(
+    if (!isRequestCurrent(_aiRequest, requestId)) {
+      return;
+    }
+    emitIfOpen(
       state.copyWith(
         isAiLoading: false,
         aiResult: result,
@@ -549,7 +633,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
 
   void applyAiResultsToRoster() {
     if (state.isRosterReadOnly) {
-      emit(
+      emitIfOpen(
         state.copyWith(
           aiError: 'Session is closed - open an active session to apply.',
         ),
@@ -558,7 +642,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
     }
 
     if (state.aiReviewRows.isEmpty) {
-      emit(state.copyWith(aiError: 'No AI results to review yet'));
+      emitIfOpen(state.copyWith(aiError: 'No AI results to review yet'));
       return;
     }
 
@@ -571,7 +655,7 @@ class InstructorAttendanceCubit extends Cubit<InstructorAttendanceState> {
       return row.copyWith(status: suggested);
     }).toList();
 
-    emit(
+    emitIfOpen(
       state.copyWith(
         rosterRows: nextRows,
         isRosterDirty: changed > 0 || nextRows.any((row) => row.isDirty),

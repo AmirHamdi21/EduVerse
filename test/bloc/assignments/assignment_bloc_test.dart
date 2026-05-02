@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:edu_verse/bloc/assignments/assignment_bloc.dart';
@@ -30,6 +31,7 @@ class _FakeAssignmentService extends AssignmentService {
     int? limit,
     String? sortBy,
     String? sortOrder,
+    CancelToken? cancelToken,
   }) async {
     return ServiceResult<PaginatedResponse<AssignmentModel>>.success(
       PaginatedResponse<AssignmentModel>(
@@ -44,8 +46,9 @@ class _FakeAssignmentService extends AssignmentService {
 
   @override
   Future<ServiceResult<AssignmentSubmissionModel>> getMySubmission(
-    dynamic assignmentId,
-  ) async {
+    dynamic assignmentId, {
+    CancelToken? cancelToken,
+  }) async {
     final id = assignmentId is int
         ? assignmentId
         : int.tryParse(assignmentId.toString()) ?? 0;
@@ -65,7 +68,10 @@ class _FakeAssignmentService extends AssignmentService {
   }
 
   @override
-  Future<ServiceResult<AssignmentModel>> getById(dynamic id) async {
+  Future<ServiceResult<AssignmentModel>> getById(
+    dynamic id, {
+    CancelToken? cancelToken,
+  }) async {
     final resolvedId = id is int ? id : int.tryParse(id.toString()) ?? 0;
     final assignment = assignments.firstWhere(
       (item) => item.assignmentId == resolvedId,
