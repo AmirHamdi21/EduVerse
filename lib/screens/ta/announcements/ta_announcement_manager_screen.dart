@@ -10,6 +10,7 @@ import '../../../services/api/communication_service.dart';
 import '../../../services/api/core_api_client.dart';
 import '../../../services/api/enrollment_service.dart';
 import '../../../widgets/instructor/announcements/announcement_barrel.dart';
+import '../../../widgets/ta/shared/ta_colors.dart';
 
 class TAAnnouncementManagerScreen extends StatefulWidget {
   const TAAnnouncementManagerScreen({
@@ -183,6 +184,7 @@ class _TAAnnouncementManagerScreenState
       barrierDismissible: false,
       builder: (context) => AnnouncementFormDialog(
         isDark: isDark,
+        accentColor: TAColors.primary,
         courseOptions: _courseOptions,
         onSave: (announcement) {
           Navigator.pop(context);
@@ -200,6 +202,7 @@ class _TAAnnouncementManagerScreenState
       builder: (context) => AnnouncementFormDialog(
         announcement: announcement,
         isDark: isDark,
+        accentColor: TAColors.primary,
         courseOptions: _courseOptions,
         onSave: (updated) {
           Navigator.pop(context);
@@ -433,7 +436,7 @@ class _TAAnnouncementManagerScreenState
                       _buildEmbeddedHeader(isDark, l10n),
                       _buildSearchBar(isDark, l10n),
                       const SizedBox(height: 16),
-                      _buildFilterChips(isDark),
+                      _buildFilterChips(isDark, l10n),
                       const SizedBox(height: 8),
                       Expanded(child: _buildContent(isDark, l10n)),
                     ],
@@ -461,7 +464,7 @@ class _TAAnnouncementManagerScreenState
                           _buildAppBar(isDark, l10n),
                           _buildSearchBar(isDark, l10n),
                           const SizedBox(height: 16),
-                          _buildFilterChips(isDark),
+                          _buildFilterChips(isDark, l10n),
                           const SizedBox(height: 8),
                           Expanded(child: _buildContent(isDark, l10n)),
                         ],
@@ -506,8 +509,8 @@ class _TAAnnouncementManagerScreenState
           const SizedBox(width: 12),
           FilledButton.icon(
             onPressed: () => _showCreateDialog(isDark),
-            style: FilledButton.styleFrom(
-              backgroundColor: AnnouncementColors.primary,
+              style: FilledButton.styleFrom(
+              backgroundColor: TAColors.primary,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               shape: RoundedRectangleBorder(
@@ -630,16 +633,160 @@ class _TAAnnouncementManagerScreenState
     );
   }
 
-  Widget _buildFilterChips(bool isDark) {
-    return AnnouncementFilterChips(
-      selectedFilter: _selectedFilter,
-      onFilterChanged: (filter) {
-        setState(() => _selectedFilter = filter);
-        HapticFeedback.selectionClick();
-      },
-      isDark: isDark,
-      counts: _filterCounts,
+  Widget _buildFilterChips(bool isDark, AppLocalizations l10n) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          _buildTAFilterChip(
+            isDark: isDark,
+            filter: AnnouncementFilterType.all,
+            icon: Icons.dashboard_rounded,
+            label: l10n.allCourses.split(' ').firstOrNull ?? 'All',
+          ),
+          const SizedBox(width: 10),
+          _buildTAFilterChip(
+            isDark: isDark,
+            filter: AnnouncementFilterType.published,
+            icon: Icons.check_circle_outline_rounded,
+            label: 'Published',
+          ),
+          const SizedBox(width: 10),
+          _buildTAFilterChip(
+            isDark: isDark,
+            filter: AnnouncementFilterType.draft,
+            icon: Icons.edit_note_rounded,
+            label: 'Draft',
+          ),
+        ],
+      ),
     );
+  }
+
+  Widget _buildTAFilterChip({
+    required bool isDark,
+    required AnnouncementFilterType filter,
+    required IconData icon,
+    required String label,
+  }) {
+    final isSelected = _selectedFilter == filter;
+    final count = _filterCounts[filter] ?? 0;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          setState(() => _selectedFilter = filter);
+          HapticFeedback.selectionClick();
+        },
+        borderRadius: BorderRadius.circular(25),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? TAColors.primary
+                : (isDark ? AnnouncementColors.darkCard : Colors.white),
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(
+              color: isSelected
+                  ? TAColors.primary
+                  : (isDark
+                        ? AnnouncementColors.darkBorder.withValues(alpha: 0.5)
+                        : AnnouncementColors.border),
+              width: 1.5,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: TAColors.primary.withValues(alpha: 0.28),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                size: 18,
+                color: isSelected
+                    ? Colors.white
+                    : AnnouncementColors.textSecondaryColor(isDark),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isSelected
+                      ? Colors.white
+                      : AnnouncementColors.textSecondaryColor(isDark),
+                  fontSize: 14,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
+              if (count > 0) ...[
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 2,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? Colors.white.withValues(alpha: 0.2)
+                        : _getTAFilterCountBg(isDark, filter),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    count.toString(),
+                    style: TextStyle(
+                      color: isSelected
+                          ? Colors.white
+                          : _getTAFilterCountText(filter),
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _getTAFilterCountBg(bool isDark, AnnouncementFilterType filter) {
+    switch (filter) {
+      case AnnouncementFilterType.all:
+        return isDark
+            ? TAColors.primary.withValues(alpha: 0.20)
+            : TAColors.primarySurface;
+      case AnnouncementFilterType.published:
+        return isDark
+            ? AnnouncementColors.published.withValues(alpha: 0.20)
+            : AnnouncementColors.publishedLight;
+      case AnnouncementFilterType.draft:
+        return isDark
+            ? AnnouncementColors.draft.withValues(alpha: 0.20)
+            : AnnouncementColors.draftLight;
+    }
+  }
+
+  Color _getTAFilterCountText(AnnouncementFilterType filter) {
+    switch (filter) {
+      case AnnouncementFilterType.all:
+        return TAColors.primary;
+      case AnnouncementFilterType.published:
+        return AnnouncementColors.published;
+      case AnnouncementFilterType.draft:
+        return AnnouncementColors.draft;
+    }
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -672,7 +819,7 @@ class _TAAnnouncementManagerScreenState
 
     return RefreshIndicator(
       onRefresh: _loadAnnouncements,
-      color: AnnouncementColors.primary,
+      color: TAColors.primary,
       child: ListView.builder(
         padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
         physics: const AlwaysScrollableScrollPhysics(
@@ -730,7 +877,7 @@ class _TAAnnouncementManagerScreenState
       ),
       child: FloatingActionButton.extended(
         onPressed: () => _showCreateDialog(isDark),
-        backgroundColor: AnnouncementColors.primary,
+        backgroundColor: TAColors.primary,
         foregroundColor: Colors.white,
         elevation: 4,
         icon: const Icon(Icons.add_rounded),
