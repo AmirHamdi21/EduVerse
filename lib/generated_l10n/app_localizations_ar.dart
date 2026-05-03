@@ -6660,6 +6660,123 @@ class AppLocalizationsAr extends AppLocalizations {
       'ارفع ملفات دعم خاصة بالمعيد لهذا المختبر. يدعم Flutter حالياً الرفع من هنا، لكنه لا يعرض مواد المعيد التي تم رفعها سابقاً حتى الآن.';
 
   @override
+  String get instructorLabDetailErrorTitle => 'تعذر تحميل هذا المختبر';
+
+  @override
+  String get instructorLabDetailHeroSubtitle =>
+      'راجع وصف المختبر، وتابع التسليمات، وادِر الحضور والتعليمات من مساحة عمل واحدة مركزة.';
+
+  @override
+  String get instructorLabDetailSnapshotTitle => 'ملخص المختبر';
+
+  @override
+  String get instructorLabDetailSnapshotSubtitle =>
+      'أبقِ إشارات التدريس الأساسية واضحة أثناء مراجعة إعدادات المختبر ونشاطه الحالي.';
+
+  @override
+  String get instructorLabDetailBriefTitle => 'نبذة ظاهرة للطلاب';
+
+  @override
+  String get instructorLabDetailBriefSubtitle =>
+      'راجع الملخص الذي يراه الطلاب قبل فتح التعليمات الكاملة للمختبر.';
+
+  @override
+  String get instructorLabDetailBriefEmpty =>
+      'لم تتم إضافة وصف لهذا المختبر بعد.';
+
+  @override
+  String get instructorLabDetailWorkflowTitle => 'تدفق التسليم';
+
+  @override
+  String get instructorLabDetailWorkflowSubtitle =>
+      'راجع الدرجات، والظهور، ومتطلبات التسليم دون أن تفقد سياق إعداد المختبر.';
+
+  @override
+  String get instructorLabDetailSubmissionsTitle => 'قائمة التسليمات';
+
+  @override
+  String get instructorLabDetailSubmissionsSubtitle =>
+      'ابحث في أعمال الطلاب، واعزل المحاولات المتأخرة، وانتقل إلى التصحيح بسهولة.';
+
+  @override
+  String get instructorLabDetailSearchStudents => 'ابحث باسم الطالب';
+
+  @override
+  String get instructorLabDetailNoSubmissionsTitle =>
+      'لا توجد تسليمات تطابق هذا العرض';
+
+  @override
+  String get instructorLabDetailNoSubmissionsSubtitle =>
+      'جرّب بحثًا أو فلترًا مختلفًا، أو حدّث قائمة التسليمات.';
+
+  @override
+  String get instructorLabDetailAttendanceTitle => 'لوحة الحضور';
+
+  @override
+  String get instructorLabDetailAttendanceSubtitle =>
+      'تابع من حضر هذه الجلسة وحدّث حالة كل طالب دون مغادرة الصفحة.';
+
+  @override
+  String get instructorLabDetailNoAttendanceTitle => 'لا توجد سجلات حضور بعد';
+
+  @override
+  String get instructorLabDetailNoAttendanceSubtitle =>
+      'سيظهر الحضور هنا بمجرد إنشاء سجلات لهذا المختبر.';
+
+  @override
+  String get instructorLabDetailInstructionsTitle => 'مساحة التعليمات';
+
+  @override
+  String get instructorLabDetailInstructionsSubtitle =>
+      'حافظ على تنظيم التعليمات النصية والملفات الداعمة في مكان واحد لهذا المختبر.';
+
+  @override
+  String get instructorLabDetailInstructionComposerTitle => 'إضافة تعليمات';
+
+  @override
+  String get instructorLabDetailInstructionComposerSubtitle =>
+      'أنشئ تعليمات نصية جديدة أو ارفع ملفًا داعمًا دون مغادرة تدفق المختبر.';
+
+  @override
+  String get instructorLabDetailInstructionHint =>
+      'اكتب تعليمات لهذا المختبر بصيغة تدعم Markdown';
+
+  @override
+  String get instructorLabDetailAddInstruction => 'إضافة تعليمات';
+
+  @override
+  String get instructorLabDetailInstructionOrder => 'الخطوة';
+
+  @override
+  String get instructorLabDetailTextInstruction => 'تعليمات نصية';
+
+  @override
+  String get instructorLabDetailNoInstructionsSubtitle =>
+      'لا توجد تعليمات متاحة لهذا المختبر بعد.';
+
+  @override
+  String get instructorLabDetailSubmissionSnapshot => 'ملخص التسليم';
+
+  @override
+  String get instructorLabDetailSubmittedAt => 'وقت التسليم';
+
+  @override
+  String get instructorLabDetailCurrentScore => 'الدرجة الحالية';
+
+  @override
+  String get instructorLabDetailSubmissionText => 'نص التسليم';
+
+  @override
+  String get instructorLabDetailSubmittedFile => 'الملف المُرسل';
+
+  @override
+  String get instructorLabDetailNoSubmissionContent =>
+      'لم يتم تضمين أي محتوى مع هذه المحاولة.';
+
+  @override
+  String get instructorLabDetailPreview => 'معاينة';
+
+  @override
   String get taLabUpload => 'رفع';
 
   @override
@@ -13897,6 +14014,97 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get assignmentStatusUpdated => 'تم تحديث حالة الواجب.';
+
+  @override
+  String get instructorAssignmentDetailHeroSubtitle =>
+      'تابع قائمة التصحيح، وراجع التعليمات، وأدر تدفق الواجب دون فقدان السياق.';
+
+  @override
+  String get instructorAssignmentDetailSnapshotTitle => 'ملخص الواجب';
+
+  @override
+  String get instructorAssignmentDetailSnapshotSubtitle =>
+      'أبقِ الإشارات الأكاديمية الأساسية واضحة أثناء مراجعة الواجب.';
+
+  @override
+  String get instructorAssignmentDetailBriefTitle => 'نبذة ظاهرة للطلاب';
+
+  @override
+  String get instructorAssignmentDetailBriefSubtitle =>
+      'راجع الملخص الذي يراه الطلاب قبل فتح التعليمات الكاملة.';
+
+  @override
+  String get instructorAssignmentDetailBriefEmpty =>
+      'لم تتم إضافة وصف لهذا الواجب بعد.';
+
+  @override
+  String get instructorAssignmentDetailWorkflowTitle => 'تدفق التسليم';
+
+  @override
+  String get instructorAssignmentDetailWorkflowSubtitle =>
+      'راجع توقيت الإتاحة، وضغط الموعد النهائي، وقواعد التأخير بسرعة.';
+
+  @override
+  String get instructorAssignmentDetailSubmissionsTitle => 'قائمة التسليمات';
+
+  @override
+  String get instructorAssignmentDetailSubmissionsSubtitle =>
+      'ابحث في القائمة الحالية، واعزل الأعمال المتأخرة، وانتقل إلى التصحيح بسهولة.';
+
+  @override
+  String get instructorAssignmentDetailSearchStudents => 'ابحث باسم الطالب';
+
+  @override
+  String get instructorAssignmentDetailNoSubmissionsTitle =>
+      'لا توجد تسليمات تطابق هذا العرض';
+
+  @override
+  String get instructorAssignmentDetailNoSubmissionsSubtitle =>
+      'جرّب بحثًا أو فلترًا مختلفًا، أو حدّث قائمة التسليمات.';
+
+  @override
+  String get instructorAssignmentDetailAttempt => 'المحاولة';
+
+  @override
+  String get instructorAssignmentDetailSubmissionDetailsTitle =>
+      'تفاصيل التسليم';
+
+  @override
+  String get instructorAssignmentDetailSubmissionSnapshot => 'ملخص التسليم';
+
+  @override
+  String get instructorAssignmentDetailSubmittedAt => 'وقت التسليم';
+
+  @override
+  String get instructorAssignmentDetailCurrentScore => 'الدرجة الحالية';
+
+  @override
+  String get instructorAssignmentDetailSubmissionText => 'نص التسليم';
+
+  @override
+  String get instructorAssignmentDetailSubmissionLink => 'رابط التسليم';
+
+  @override
+  String get instructorAssignmentDetailSubmittedFile => 'الملف المُرسل';
+
+  @override
+  String get instructorAssignmentDetailNoSubmissionContent =>
+      'لم يتم تضمين أي محتوى مع هذه المحاولة.';
+
+  @override
+  String get instructorAssignmentDetailOpenLink => 'فتح الرابط';
+
+  @override
+  String get instructorAssignmentDetailActionEditGrade => 'تعديل الدرجة';
+
+  @override
+  String get instructorAssignmentDetailResubmit => 'إعادة التسليم';
+
+  @override
+  String get instructorAssignmentDetailReturned => 'تمت الإعادة';
+
+  @override
+  String get instructorAssignmentDetailPreview => 'معاينة';
 
   @override
   String get assignmentEmptyManagementMessage =>
