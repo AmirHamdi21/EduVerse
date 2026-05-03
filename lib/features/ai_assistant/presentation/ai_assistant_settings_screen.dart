@@ -346,6 +346,7 @@ class _ProviderDropdown extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return DropdownButtonFormField<AiProviderId>(
       initialValue: current,
+      isExpanded: true,
       decoration: InputDecoration(
         labelText: l10n.aiAssistantProviderLabel,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
@@ -354,7 +355,23 @@ class _ProviderDropdown extends StatelessWidget {
           .map(
             (providerId) => DropdownMenuItem<AiProviderId>(
               value: providerId,
-              child: Text(_providerLabel(providerId)),
+              child: Text(
+                _providerLabel(providerId),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          )
+          .toList(growable: false),
+      selectedItemBuilder: (context) => AiProviderId.values
+          .map(
+            (providerId) => Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                _providerLabel(providerId),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           )
           .toList(growable: false),
@@ -390,6 +407,7 @@ class _ModelDropdown extends StatelessWidget {
       initialValue: items.any((model) => model.modelId == currentModelId)
           ? currentModelId
           : items.first.modelId,
+      isExpanded: true,
       decoration: InputDecoration(
         labelText: l10n.aiAssistantModelLabel,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(18)),
@@ -398,7 +416,23 @@ class _ModelDropdown extends StatelessWidget {
           .map(
             (model) => DropdownMenuItem<String>(
               value: model.modelId,
-              child: Text(model.label),
+              child: Text(
+                model.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          )
+          .toList(growable: false),
+      selectedItemBuilder: (context) => items
+          .map(
+            (model) => Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                model.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           )
           .toList(growable: false),
@@ -547,52 +581,245 @@ class _ProviderCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final controller = TextEditingController();
     var useKey = true;
-    final result = await showDialog<_KeyEditorResult>(
+    final result = await showModalBottomSheet<_KeyEditorResult>(
       context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
       builder: (dialogContext) {
+        final isDark = Theme.of(dialogContext).brightness == Brightness.dark;
         return StatefulBuilder(
           builder: (context, setState) {
-            return AlertDialog(
-              title: Text(l10n.aiAssistantExternalKeyDialogTitle),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  TextField(
-                    controller: controller,
-                    minLines: 2,
-                    maxLines: 4,
-                    decoration: InputDecoration(
-                      hintText: l10n.aiAssistantExternalKeyHint,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
+            return SafeArea(
+              top: false,
+              child: AnimatedPadding(
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOut,
+                padding: EdgeInsets.fromLTRB(
+                  12,
+                  0,
+                  12,
+                  MediaQuery.of(dialogContext).viewInsets.bottom + 12,
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF111827) : Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: <BoxShadow>[
+                      BoxShadow(
+                        color: roleTheme.primary.withValues(alpha: 0.14),
+                        blurRadius: 24,
+                        offset: const Offset(0, 14),
+                      ),
+                    ],
+                  ),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Center(
+                            child: Container(
+                              width: 42,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withValues(alpha: 0.35),
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              gradient: roleTheme.headerGradient,
+                              borderRadius: BorderRadius.circular(24),
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                Container(
+                                  width: 46,
+                                  height: 46,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.16),
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: const Icon(
+                                    Icons.key_rounded,
+                                    color: Colors.white,
+                                    size: 22,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        l10n.aiAssistantExternalKeyDialogTitle,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        _providerLabel(providerId),
+                                        style: TextStyle(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.88,
+                                          ),
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            l10n.aiAssistantExternalKeyHint,
+                            style: TextStyle(
+                              color: isDark
+                                  ? Colors.white70
+                                  : const Color(0xFF64748B),
+                              height: 1.45,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.04)
+                                  : const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(22),
+                              border: Border.all(
+                                color: roleTheme.primary.withValues(
+                                  alpha: 0.14,
+                                ),
+                              ),
+                            ),
+                            child: TextField(
+                              controller: controller,
+                              minLines: 3,
+                              maxLines: 5,
+                              decoration: InputDecoration(
+                                hintText: l10n.aiAssistantExternalKeyHint,
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.all(18),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: roleTheme.primary.withValues(alpha: 0.06),
+                              borderRadius: BorderRadius.circular(22),
+                              border: Border.all(
+                                color: roleTheme.primary.withValues(
+                                  alpha: 0.12,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(
+                                        l10n.aiAssistantUseMyKey,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        l10n.aiAssistantUseMyKeySubtitle,
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? Colors.white70
+                                              : const Color(0xFF64748B),
+                                          height: 1.45,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Switch(
+                                  value: useKey,
+                                  onChanged: (value) =>
+                                      setState(() => useKey = value),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: OutlinedButton(
+                                  onPressed: () =>
+                                      Navigator.of(dialogContext).pop(),
+                                  style: OutlinedButton.styleFrom(
+                                    minimumSize: const Size.fromHeight(50),
+                                    side: BorderSide(
+                                      color: roleTheme.primary.withValues(
+                                        alpha: 0.22,
+                                      ),
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18),
+                                    ),
+                                  ),
+                                  child: Text(l10n.cancel),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    gradient: roleTheme.headerGradient,
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  child: FilledButton(
+                                    onPressed: () =>
+                                        Navigator.of(dialogContext).pop(
+                                          _KeyEditorResult(
+                                            keyValue: controller.text.trim(),
+                                            enabled: useKey,
+                                          ),
+                                        ),
+                                    style: FilledButton.styleFrom(
+                                      minimumSize: const Size.fromHeight(50),
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(18),
+                                      ),
+                                    ),
+                                    child: Text(l10n.save),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    value: useKey,
-                    onChanged: (value) => setState(() => useKey = value),
-                    title: Text(l10n.aiAssistantUseMyKey),
-                    subtitle: Text(l10n.aiAssistantUseMyKeySubtitle),
-                  ),
-                ],
+                ),
               ),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(),
-                  child: Text(l10n.cancel),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.of(dialogContext).pop(
-                    _KeyEditorResult(
-                      keyValue: controller.text.trim(),
-                      enabled: useKey,
-                    ),
-                  ),
-                  child: Text(l10n.save),
-                ),
-              ],
             );
           },
         );
