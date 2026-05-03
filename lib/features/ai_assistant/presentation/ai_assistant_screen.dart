@@ -1368,9 +1368,9 @@ class _AiMessageBubble extends StatelessWidget {
       title: message.isUser
           ? l10n.aiAssistantYourMessage
           : l10n.aiAssistantModelMessage,
-      subtitle: message.content.trim().isEmpty
-          ? _messageBody(context)
-          : message.content,
+      subtitle: message.isUser
+          ? (message.content.trim().isEmpty ? _messageBody(context) : null)
+          : null,
       accentColor: roleTheme.primary,
       actions: actions,
     );
