@@ -2313,7 +2313,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get close => 'Close';
 
   @override
-  String get aiAssistantTitle => 'EduVerse AI Assistant';
+  String get aiAssistantTitle => 'AI Assistant';
 
   @override
   String get aiAssistantSubtitle =>
@@ -15164,6 +15164,470 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get instructorCourseDetailNoActivity =>
       'No upcoming activity is available yet.';
+
+  @override
+  String get aiAssistantHistoryTitle => 'Chat history';
+
+  @override
+  String get aiAssistantPinnedChats => 'Pinned chats';
+
+  @override
+  String get aiAssistantRecentChats => 'Recent chats';
+
+  @override
+  String get aiAssistantHistoryActionSubtitle =>
+      'Choose what to do with this conversation.';
+
+  @override
+  String get aiAssistantOpenConversation => 'Open conversation';
+
+  @override
+  String get aiAssistantUnpinConversation => 'Unpin conversation';
+
+  @override
+  String get aiAssistantPinConversation => 'Pin conversation';
+
+  @override
+  String get aiAssistantRenameConversation => 'Rename conversation';
+
+  @override
+  String get aiAssistantExportConversation => 'Export conversation';
+
+  @override
+  String get aiAssistantDeleteConversation => 'Delete conversation';
+
+  @override
+  String get aiAssistantConversationTitleHint => 'Conversation title';
+
+  @override
+  String get aiAssistantUntitledConversation => 'Untitled chat';
+
+  @override
+  String get aiAssistantHistoryPreviewFallback => 'No preview text yet.';
+
+  @override
+  String get aiAssistantHistoryEmptyTitle => 'No saved AI chats yet';
+
+  @override
+  String get aiAssistantHistoryEmptySubtitle =>
+      'Your conversations will appear here once you start chatting with the assistant.';
+
+  @override
+  String get aiAssistantHistoryHeroTitle => 'Conversation hub';
+
+  @override
+  String get aiAssistantHistoryHeroSubtitle =>
+      'Review recent AI chats, jump back into work, or start a new focused assistant session.';
+
+  @override
+  String get aiAssistantHistoryStatTotal => 'Chats';
+
+  @override
+  String get aiAssistantHistoryStatPinned => 'Pinned';
+
+  @override
+  String get aiAssistantHistoryStatProviders => 'Providers';
+
+  @override
+  String get aiAssistantHistoryStatToday => 'Updated today';
+
+  @override
+  String get aiAssistantHistoryViewLabel => 'View';
+
+  @override
+  String get aiAssistantHistoryProviderFilterLabel => 'Provider';
+
+  @override
+  String get aiAssistantHistoryFilterAllChats => 'All chats';
+
+  @override
+  String get aiAssistantHistoryFilterPinnedOnly => 'Pinned only';
+
+  @override
+  String get aiAssistantHistoryFilterRecentOnly => 'Recent only';
+
+  @override
+  String get aiAssistantHistoryAllProviders => 'All providers';
+
+  @override
+  String get aiAssistantHistoryNoMatchesTitle => 'No chats match these filters';
+
+  @override
+  String get aiAssistantHistoryNoMatchesSubtitle =>
+      'Try another view or provider filter to bring matching conversations back into focus.';
+
+  @override
+  String get aiAssistantAgentPickerTitle => 'Start a new assistant chat';
+
+  @override
+  String get aiAssistantAgentPickerSubtitle =>
+      'Choose the kind of AI workspace you want to open first, then continue inside the conversation view.';
+
+  @override
+  String get aiAssistantAgentGeneralTitle => 'General assistant';
+
+  @override
+  String get aiAssistantAgentGeneralSubtitle =>
+      'Ask broad questions, get quick help, or start with an open-ended AI chat.';
+
+  @override
+  String get aiAssistantAgentStudyTitle => 'Study coach';
+
+  @override
+  String get aiAssistantAgentStudySubtitle =>
+      'Focus on explanations, summaries, review plans, and practice support.';
+
+  @override
+  String get aiAssistantAgentDraftingTitle => 'Drafting copilot';
+
+  @override
+  String get aiAssistantAgentDraftingSubtitle =>
+      'Generate clearer writing, announcements, outlines, or polished academic drafts.';
+
+  @override
+  String get aiAssistantAgentGradingTitle => 'Grading helper';
+
+  @override
+  String get aiAssistantAgentGradingSubtitle =>
+      'Jump into feedback, rubric thinking, and evaluation-focused conversations.';
+
+  @override
+  String get aiAssistantChatsLabel => 'chats';
+
+  @override
+  String get aiAssistantOfflineBanner =>
+      'You\'re offline. Retry once the connection comes back.';
+
+  @override
+  String get aiAssistantComposerHint =>
+      'Ask for help, a summary, a draft, or a study explanation...';
+
+  @override
+  String get aiAssistantPromptShortcuts => 'Prompt shortcuts';
+
+  @override
+  String get aiAssistantPromptShortcutsSubtitle =>
+      'Launch a high-signal prompt without typing the full request.';
+
+  @override
+  String get aiAssistantToolsMenuSubtitle =>
+      'Open conversation tools or launch a ready-made AI prompt from one menu.';
+
+  @override
+  String get aiAssistantToolsConversationMode => 'Conversation mode';
+
+  @override
+  String get aiAssistantToolsConversationModeSubtitle =>
+      'Switch the assistant between general help, study support, drafting, and grading.';
+
+  @override
+  String get aiAssistantToolsQuickPrompts => 'Quick prompts';
+
+  @override
+  String get aiAssistantToolsCurrentMode => 'Current mode';
+
+  @override
+  String get aiAssistantStopGenerating => 'Stop generating';
+
+  @override
+  String get aiAssistantSend => 'Send';
+
+  @override
+  String get aiAssistantNewChat => 'New chat';
+
+  @override
+  String get aiAssistantMessagesLabel => 'messages';
+
+  @override
+  String get aiAssistantChooseModelTitle => 'Choose a model';
+
+  @override
+  String get aiAssistantChooseModelSubtitle =>
+      'Pick the provider and model you want this conversation to use next.';
+
+  @override
+  String get aiAssistantProviderReady => 'Ready to use';
+
+  @override
+  String get aiAssistantProviderUnavailable =>
+      'Unavailable until access is configured';
+
+  @override
+  String get aiAssistantFreeTierBadge => 'Free';
+
+  @override
+  String get aiAssistantScopeGeneral => 'General';
+
+  @override
+  String get aiAssistantScopeStudy => 'Study';
+
+  @override
+  String get aiAssistantScopeDrafting => 'Drafting';
+
+  @override
+  String get aiAssistantScopeGrading => 'Grading';
+
+  @override
+  String get aiAssistantStyleConcise => 'Concise';
+
+  @override
+  String get aiAssistantStyleBalanced => 'Balanced';
+
+  @override
+  String get aiAssistantStyleDetailed => 'Detailed';
+
+  @override
+  String get aiAssistantWelcomeTitle => 'Start a smarter conversation';
+
+  @override
+  String get aiAssistantWelcomeSubtitle =>
+      'Use the assistant for explanations, drafting, planning, and role-specific support without leaving the app flow.';
+
+  @override
+  String get aiAssistantGeneratingMessage => 'Generating a response...';
+
+  @override
+  String get aiAssistantCancelledMessage =>
+      'Generation stopped before the reply was completed.';
+
+  @override
+  String get aiAssistantFailedMessage =>
+      'This response could not be completed.';
+
+  @override
+  String get aiAssistantCopyMessage => 'Copy message';
+
+  @override
+  String get aiAssistantRegenerateResponse => 'Regenerate response';
+
+  @override
+  String get aiAssistantRegenerateResponseSubtitle =>
+      'Ask the current model to try this answer again.';
+
+  @override
+  String get aiAssistantEditAndResend => 'Edit and resend';
+
+  @override
+  String get aiAssistantShareResponse => 'Share response';
+
+  @override
+  String get aiAssistantDeleteMessage => 'Delete message';
+
+  @override
+  String get aiAssistantDeleteFromHere => 'Delete from here';
+
+  @override
+  String get aiAssistantYourMessage => 'Your message';
+
+  @override
+  String get aiAssistantModelMessage => 'Assistant response';
+
+  @override
+  String get aiAssistantStatusReady => 'Ready';
+
+  @override
+  String get aiAssistantStatusGenerating => 'Generating';
+
+  @override
+  String get aiAssistantStatusFailed => 'Failed';
+
+  @override
+  String get aiAssistantStatusCancelled => 'Stopped';
+
+  @override
+  String get aiAssistantActionExplain => 'Explain';
+
+  @override
+  String get aiAssistantPromptExplain =>
+      'Explain this concept in a clearer, beginner-friendly way with one example.';
+
+  @override
+  String get aiAssistantActionSummarize => 'Summarize';
+
+  @override
+  String get aiAssistantPromptSummarize =>
+      'Summarize this topic into the key ideas, terms, and takeaways I should remember.';
+
+  @override
+  String get aiAssistantActionStudyPlan => 'Study plan';
+
+  @override
+  String get aiAssistantPromptStudyPlan =>
+      'Build a focused study plan for this topic with milestones, review points, and practice suggestions.';
+
+  @override
+  String get aiAssistantActionPractice => 'Practice';
+
+  @override
+  String get aiAssistantPromptPracticeQuestions =>
+      'Generate practice questions with answers and short explanations for this topic.';
+
+  @override
+  String get aiAssistantActionAnnouncement => 'Announcement draft';
+
+  @override
+  String get aiAssistantPromptAnnouncement =>
+      'Draft a polished course announcement with a clear subject line, main update, and action items.';
+
+  @override
+  String get aiAssistantActionRubric => 'Rubric help';
+
+  @override
+  String get aiAssistantPromptRubric =>
+      'Help me build a grading rubric with clear criteria, point ranges, and short descriptors.';
+
+  @override
+  String get aiAssistantActionFeedback => 'Feedback draft';
+
+  @override
+  String get aiAssistantPromptFeedback =>
+      'Draft balanced student feedback that is specific, constructive, and easy to act on.';
+
+  @override
+  String get aiAssistantActionLesson => 'Lesson ideas';
+
+  @override
+  String get aiAssistantPromptLessonIdeas =>
+      'Suggest lesson or activity ideas for this topic with learning outcomes and engagement options.';
+
+  @override
+  String get aiAssistantActionGradingHelp => 'Grading help';
+
+  @override
+  String get aiAssistantPromptGradingHelp =>
+      'Help me think through grading feedback and highlight strengths, gaps, and next steps.';
+
+  @override
+  String get aiAssistantActionClarify => 'Clarification draft';
+
+  @override
+  String get aiAssistantPromptClarification =>
+      'Draft a clear clarification message for students about a confusing concept or instruction.';
+
+  @override
+  String get aiAssistantActionRecap => 'Recap';
+
+  @override
+  String get aiAssistantPromptRecap =>
+      'Create a short recap of the key points students should leave with after this lesson.';
+
+  @override
+  String get aiAssistantActionOfficeHours => 'Office hours help';
+
+  @override
+  String get aiAssistantPromptOfficeHours =>
+      'Help me prepare concise support guidance for office hours around this topic.';
+
+  @override
+  String get aiAssistantSettingsTitle => 'AI settings';
+
+  @override
+  String get aiAssistantDefaultModelTitle => 'Default provider and model';
+
+  @override
+  String get aiAssistantDefaultModelSubtitle =>
+      'Choose the provider and model the assistant should use by default.';
+
+  @override
+  String get aiAssistantResponseStyleTitle => 'Response style';
+
+  @override
+  String get aiAssistantResponseStyleSubtitle =>
+      'Set the default level of detail for future replies.';
+
+  @override
+  String get aiAssistantProvidersTitle => 'Provider access';
+
+  @override
+  String get aiAssistantProvidersSubtitle =>
+      'Review app access and optionally add your own external key per provider.';
+
+  @override
+  String get aiAssistantLocalDataTitle => 'Local data and sync';
+
+  @override
+  String get aiAssistantLocalDataSubtitle =>
+      'Refresh the model catalog or clear saved AI conversation history on this device.';
+
+  @override
+  String get aiAssistantRefreshModels => 'Refresh model catalog';
+
+  @override
+  String get aiAssistantRefreshModelsSubtitle =>
+      'Reload available models and recover from stale provider listings.';
+
+  @override
+  String get aiAssistantRefresh => 'Refresh';
+
+  @override
+  String get aiAssistantClearHistoryTitle => 'Clear local AI history';
+
+  @override
+  String get aiAssistantClearHistorySubtitle =>
+      'Delete saved AI conversations from this device and start with a fresh chat.';
+
+  @override
+  String get aiAssistantClearHistoryAction => 'Clear history';
+
+  @override
+  String get aiAssistantClearHistoryConfirm =>
+      'This will delete saved AI conversations on this device. You can’t undo it.';
+
+  @override
+  String get aiAssistantProviderLabel => 'Provider';
+
+  @override
+  String get aiAssistantModelLabel => 'Model';
+
+  @override
+  String get aiAssistantAppAccessAvailable => 'App access available';
+
+  @override
+  String get aiAssistantAppAccessUnavailable => 'App access unavailable';
+
+  @override
+  String get aiAssistantPersonalKeyConfigured => 'Personal key configured';
+
+  @override
+  String get aiAssistantPersonalKeyMissing => 'No personal key';
+
+  @override
+  String get aiAssistantReplaceKey => 'Replace key';
+
+  @override
+  String get aiAssistantAddKey => 'Add key';
+
+  @override
+  String get aiAssistantRemoveKey => 'Remove key';
+
+  @override
+  String get aiAssistantExternalKeyDialogTitle => 'Add external API key';
+
+  @override
+  String get aiAssistantExternalKeyHint => 'Paste your provider key here';
+
+  @override
+  String get aiAssistantUseMyKey => 'Use my key';
+
+  @override
+  String get aiAssistantUseMyKeySubtitle =>
+      'Prefer my personal key over the app default for this provider.';
+
+  @override
+  String get aiAssistantCredentialSourceAppDefault => 'App default';
+
+  @override
+  String get aiAssistantCredentialSourceUserKey => 'Your key';
+
+  @override
+  String get aiAssistantCredentialSourceUnavailable => 'Unavailable';
+
+  @override
+  String get aiAssistantProviderHelpTitle => 'How provider access works';
+
+  @override
+  String get aiAssistantProviderHelpBody =>
+      'The app can use built-in provider access when it is available. You can also add your own external API key for a provider and choose to use it instead. Your personal key stays on this device, and the app never shows the built-in key values.';
 
   @override
   String get chatVideoCallTooltip => 'Video call';

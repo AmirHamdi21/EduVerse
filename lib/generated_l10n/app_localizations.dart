@@ -4523,7 +4523,7 @@ abstract class AppLocalizations {
   /// No description provided for @aiAssistantTitle.
   ///
   /// In en, this message translates to:
-  /// **'EduVerse AI Assistant'**
+  /// **'AI Assistant'**
   String get aiAssistantTitle;
 
   /// No description provided for @aiAssistantSubtitle.
@@ -29050,6 +29050,852 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No upcoming activity is available yet.'**
   String get instructorCourseDetailNoActivity;
+
+  /// No description provided for @aiAssistantHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Chat history'**
+  String get aiAssistantHistoryTitle;
+
+  /// No description provided for @aiAssistantPinnedChats.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned chats'**
+  String get aiAssistantPinnedChats;
+
+  /// No description provided for @aiAssistantRecentChats.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent chats'**
+  String get aiAssistantRecentChats;
+
+  /// No description provided for @aiAssistantHistoryActionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose what to do with this conversation.'**
+  String get aiAssistantHistoryActionSubtitle;
+
+  /// No description provided for @aiAssistantOpenConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Open conversation'**
+  String get aiAssistantOpenConversation;
+
+  /// No description provided for @aiAssistantUnpinConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpin conversation'**
+  String get aiAssistantUnpinConversation;
+
+  /// No description provided for @aiAssistantPinConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Pin conversation'**
+  String get aiAssistantPinConversation;
+
+  /// No description provided for @aiAssistantRenameConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Rename conversation'**
+  String get aiAssistantRenameConversation;
+
+  /// No description provided for @aiAssistantExportConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Export conversation'**
+  String get aiAssistantExportConversation;
+
+  /// No description provided for @aiAssistantDeleteConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete conversation'**
+  String get aiAssistantDeleteConversation;
+
+  /// No description provided for @aiAssistantConversationTitleHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversation title'**
+  String get aiAssistantConversationTitleHint;
+
+  /// No description provided for @aiAssistantUntitledConversation.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled chat'**
+  String get aiAssistantUntitledConversation;
+
+  /// No description provided for @aiAssistantHistoryPreviewFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'No preview text yet.'**
+  String get aiAssistantHistoryPreviewFallback;
+
+  /// No description provided for @aiAssistantHistoryEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No saved AI chats yet'**
+  String get aiAssistantHistoryEmptyTitle;
+
+  /// No description provided for @aiAssistantHistoryEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your conversations will appear here once you start chatting with the assistant.'**
+  String get aiAssistantHistoryEmptySubtitle;
+
+  /// No description provided for @aiAssistantHistoryHeroTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversation hub'**
+  String get aiAssistantHistoryHeroTitle;
+
+  /// No description provided for @aiAssistantHistoryHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review recent AI chats, jump back into work, or start a new focused assistant session.'**
+  String get aiAssistantHistoryHeroSubtitle;
+
+  /// No description provided for @aiAssistantHistoryStatTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Chats'**
+  String get aiAssistantHistoryStatTotal;
+
+  /// No description provided for @aiAssistantHistoryStatPinned.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get aiAssistantHistoryStatPinned;
+
+  /// No description provided for @aiAssistantHistoryStatProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'Providers'**
+  String get aiAssistantHistoryStatProviders;
+
+  /// No description provided for @aiAssistantHistoryStatToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated today'**
+  String get aiAssistantHistoryStatToday;
+
+  /// No description provided for @aiAssistantHistoryViewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'View'**
+  String get aiAssistantHistoryViewLabel;
+
+  /// No description provided for @aiAssistantHistoryProviderFilterLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get aiAssistantHistoryProviderFilterLabel;
+
+  /// No description provided for @aiAssistantHistoryFilterAllChats.
+  ///
+  /// In en, this message translates to:
+  /// **'All chats'**
+  String get aiAssistantHistoryFilterAllChats;
+
+  /// No description provided for @aiAssistantHistoryFilterPinnedOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned only'**
+  String get aiAssistantHistoryFilterPinnedOnly;
+
+  /// No description provided for @aiAssistantHistoryFilterRecentOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent only'**
+  String get aiAssistantHistoryFilterRecentOnly;
+
+  /// No description provided for @aiAssistantHistoryAllProviders.
+  ///
+  /// In en, this message translates to:
+  /// **'All providers'**
+  String get aiAssistantHistoryAllProviders;
+
+  /// No description provided for @aiAssistantHistoryNoMatchesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No chats match these filters'**
+  String get aiAssistantHistoryNoMatchesTitle;
+
+  /// No description provided for @aiAssistantHistoryNoMatchesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another view or provider filter to bring matching conversations back into focus.'**
+  String get aiAssistantHistoryNoMatchesSubtitle;
+
+  /// No description provided for @aiAssistantAgentPickerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a new assistant chat'**
+  String get aiAssistantAgentPickerTitle;
+
+  /// No description provided for @aiAssistantAgentPickerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the kind of AI workspace you want to open first, then continue inside the conversation view.'**
+  String get aiAssistantAgentPickerSubtitle;
+
+  /// No description provided for @aiAssistantAgentGeneralTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'General assistant'**
+  String get aiAssistantAgentGeneralTitle;
+
+  /// No description provided for @aiAssistantAgentGeneralSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask broad questions, get quick help, or start with an open-ended AI chat.'**
+  String get aiAssistantAgentGeneralSubtitle;
+
+  /// No description provided for @aiAssistantAgentStudyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Study coach'**
+  String get aiAssistantAgentStudyTitle;
+
+  /// No description provided for @aiAssistantAgentStudySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus on explanations, summaries, review plans, and practice support.'**
+  String get aiAssistantAgentStudySubtitle;
+
+  /// No description provided for @aiAssistantAgentDraftingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafting copilot'**
+  String get aiAssistantAgentDraftingTitle;
+
+  /// No description provided for @aiAssistantAgentDraftingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate clearer writing, announcements, outlines, or polished academic drafts.'**
+  String get aiAssistantAgentDraftingSubtitle;
+
+  /// No description provided for @aiAssistantAgentGradingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading helper'**
+  String get aiAssistantAgentGradingTitle;
+
+  /// No description provided for @aiAssistantAgentGradingSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump into feedback, rubric thinking, and evaluation-focused conversations.'**
+  String get aiAssistantAgentGradingSubtitle;
+
+  /// No description provided for @aiAssistantChatsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'chats'**
+  String get aiAssistantChatsLabel;
+
+  /// No description provided for @aiAssistantOfflineBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re offline. Retry once the connection comes back.'**
+  String get aiAssistantOfflineBanner;
+
+  /// No description provided for @aiAssistantComposerHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask for help, a summary, a draft, or a study explanation...'**
+  String get aiAssistantComposerHint;
+
+  /// No description provided for @aiAssistantPromptShortcuts.
+  ///
+  /// In en, this message translates to:
+  /// **'Prompt shortcuts'**
+  String get aiAssistantPromptShortcuts;
+
+  /// No description provided for @aiAssistantPromptShortcutsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch a high-signal prompt without typing the full request.'**
+  String get aiAssistantPromptShortcutsSubtitle;
+
+  /// No description provided for @aiAssistantToolsMenuSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Open conversation tools or launch a ready-made AI prompt from one menu.'**
+  String get aiAssistantToolsMenuSubtitle;
+
+  /// No description provided for @aiAssistantToolsConversationMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Conversation mode'**
+  String get aiAssistantToolsConversationMode;
+
+  /// No description provided for @aiAssistantToolsConversationModeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch the assistant between general help, study support, drafting, and grading.'**
+  String get aiAssistantToolsConversationModeSubtitle;
+
+  /// No description provided for @aiAssistantToolsQuickPrompts.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick prompts'**
+  String get aiAssistantToolsQuickPrompts;
+
+  /// No description provided for @aiAssistantToolsCurrentMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Current mode'**
+  String get aiAssistantToolsCurrentMode;
+
+  /// No description provided for @aiAssistantStopGenerating.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop generating'**
+  String get aiAssistantStopGenerating;
+
+  /// No description provided for @aiAssistantSend.
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get aiAssistantSend;
+
+  /// No description provided for @aiAssistantNewChat.
+  ///
+  /// In en, this message translates to:
+  /// **'New chat'**
+  String get aiAssistantNewChat;
+
+  /// No description provided for @aiAssistantMessagesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'messages'**
+  String get aiAssistantMessagesLabel;
+
+  /// No description provided for @aiAssistantChooseModelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a model'**
+  String get aiAssistantChooseModelTitle;
+
+  /// No description provided for @aiAssistantChooseModelSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick the provider and model you want this conversation to use next.'**
+  String get aiAssistantChooseModelSubtitle;
+
+  /// No description provided for @aiAssistantProviderReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to use'**
+  String get aiAssistantProviderReady;
+
+  /// No description provided for @aiAssistantProviderUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable until access is configured'**
+  String get aiAssistantProviderUnavailable;
+
+  /// No description provided for @aiAssistantFreeTierBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get aiAssistantFreeTierBadge;
+
+  /// No description provided for @aiAssistantScopeGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'General'**
+  String get aiAssistantScopeGeneral;
+
+  /// No description provided for @aiAssistantScopeStudy.
+  ///
+  /// In en, this message translates to:
+  /// **'Study'**
+  String get aiAssistantScopeStudy;
+
+  /// No description provided for @aiAssistantScopeDrafting.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafting'**
+  String get aiAssistantScopeDrafting;
+
+  /// No description provided for @aiAssistantScopeGrading.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading'**
+  String get aiAssistantScopeGrading;
+
+  /// No description provided for @aiAssistantStyleConcise.
+  ///
+  /// In en, this message translates to:
+  /// **'Concise'**
+  String get aiAssistantStyleConcise;
+
+  /// No description provided for @aiAssistantStyleBalanced.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced'**
+  String get aiAssistantStyleBalanced;
+
+  /// No description provided for @aiAssistantStyleDetailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed'**
+  String get aiAssistantStyleDetailed;
+
+  /// No description provided for @aiAssistantWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Start a smarter conversation'**
+  String get aiAssistantWelcomeTitle;
+
+  /// No description provided for @aiAssistantWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use the assistant for explanations, drafting, planning, and role-specific support without leaving the app flow.'**
+  String get aiAssistantWelcomeSubtitle;
+
+  /// No description provided for @aiAssistantGeneratingMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating a response...'**
+  String get aiAssistantGeneratingMessage;
+
+  /// No description provided for @aiAssistantCancelledMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Generation stopped before the reply was completed.'**
+  String get aiAssistantCancelledMessage;
+
+  /// No description provided for @aiAssistantFailedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This response could not be completed.'**
+  String get aiAssistantFailedMessage;
+
+  /// No description provided for @aiAssistantCopyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy message'**
+  String get aiAssistantCopyMessage;
+
+  /// No description provided for @aiAssistantRegenerateResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerate response'**
+  String get aiAssistantRegenerateResponse;
+
+  /// No description provided for @aiAssistantRegenerateResponseSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ask the current model to try this answer again.'**
+  String get aiAssistantRegenerateResponseSubtitle;
+
+  /// No description provided for @aiAssistantEditAndResend.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit and resend'**
+  String get aiAssistantEditAndResend;
+
+  /// No description provided for @aiAssistantShareResponse.
+  ///
+  /// In en, this message translates to:
+  /// **'Share response'**
+  String get aiAssistantShareResponse;
+
+  /// No description provided for @aiAssistantDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete message'**
+  String get aiAssistantDeleteMessage;
+
+  /// No description provided for @aiAssistantDeleteFromHere.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete from here'**
+  String get aiAssistantDeleteFromHere;
+
+  /// No description provided for @aiAssistantYourMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your message'**
+  String get aiAssistantYourMessage;
+
+  /// No description provided for @aiAssistantModelMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Assistant response'**
+  String get aiAssistantModelMessage;
+
+  /// No description provided for @aiAssistantStatusReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get aiAssistantStatusReady;
+
+  /// No description provided for @aiAssistantStatusGenerating.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating'**
+  String get aiAssistantStatusGenerating;
+
+  /// No description provided for @aiAssistantStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get aiAssistantStatusFailed;
+
+  /// No description provided for @aiAssistantStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Stopped'**
+  String get aiAssistantStatusCancelled;
+
+  /// No description provided for @aiAssistantActionExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain'**
+  String get aiAssistantActionExplain;
+
+  /// No description provided for @aiAssistantPromptExplain.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain this concept in a clearer, beginner-friendly way with one example.'**
+  String get aiAssistantPromptExplain;
+
+  /// No description provided for @aiAssistantActionSummarize.
+  ///
+  /// In en, this message translates to:
+  /// **'Summarize'**
+  String get aiAssistantActionSummarize;
+
+  /// No description provided for @aiAssistantPromptSummarize.
+  ///
+  /// In en, this message translates to:
+  /// **'Summarize this topic into the key ideas, terms, and takeaways I should remember.'**
+  String get aiAssistantPromptSummarize;
+
+  /// No description provided for @aiAssistantActionStudyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Study plan'**
+  String get aiAssistantActionStudyPlan;
+
+  /// No description provided for @aiAssistantPromptStudyPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Build a focused study plan for this topic with milestones, review points, and practice suggestions.'**
+  String get aiAssistantPromptStudyPlan;
+
+  /// No description provided for @aiAssistantActionPractice.
+  ///
+  /// In en, this message translates to:
+  /// **'Practice'**
+  String get aiAssistantActionPractice;
+
+  /// No description provided for @aiAssistantPromptPracticeQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate practice questions with answers and short explanations for this topic.'**
+  String get aiAssistantPromptPracticeQuestions;
+
+  /// No description provided for @aiAssistantActionAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Announcement draft'**
+  String get aiAssistantActionAnnouncement;
+
+  /// No description provided for @aiAssistantPromptAnnouncement.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft a polished course announcement with a clear subject line, main update, and action items.'**
+  String get aiAssistantPromptAnnouncement;
+
+  /// No description provided for @aiAssistantActionRubric.
+  ///
+  /// In en, this message translates to:
+  /// **'Rubric help'**
+  String get aiAssistantActionRubric;
+
+  /// No description provided for @aiAssistantPromptRubric.
+  ///
+  /// In en, this message translates to:
+  /// **'Help me build a grading rubric with clear criteria, point ranges, and short descriptors.'**
+  String get aiAssistantPromptRubric;
+
+  /// No description provided for @aiAssistantActionFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback draft'**
+  String get aiAssistantActionFeedback;
+
+  /// No description provided for @aiAssistantPromptFeedback.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft balanced student feedback that is specific, constructive, and easy to act on.'**
+  String get aiAssistantPromptFeedback;
+
+  /// No description provided for @aiAssistantActionLesson.
+  ///
+  /// In en, this message translates to:
+  /// **'Lesson ideas'**
+  String get aiAssistantActionLesson;
+
+  /// No description provided for @aiAssistantPromptLessonIdeas.
+  ///
+  /// In en, this message translates to:
+  /// **'Suggest lesson or activity ideas for this topic with learning outcomes and engagement options.'**
+  String get aiAssistantPromptLessonIdeas;
+
+  /// No description provided for @aiAssistantActionGradingHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Grading help'**
+  String get aiAssistantActionGradingHelp;
+
+  /// No description provided for @aiAssistantPromptGradingHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Help me think through grading feedback and highlight strengths, gaps, and next steps.'**
+  String get aiAssistantPromptGradingHelp;
+
+  /// No description provided for @aiAssistantActionClarify.
+  ///
+  /// In en, this message translates to:
+  /// **'Clarification draft'**
+  String get aiAssistantActionClarify;
+
+  /// No description provided for @aiAssistantPromptClarification.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft a clear clarification message for students about a confusing concept or instruction.'**
+  String get aiAssistantPromptClarification;
+
+  /// No description provided for @aiAssistantActionRecap.
+  ///
+  /// In en, this message translates to:
+  /// **'Recap'**
+  String get aiAssistantActionRecap;
+
+  /// No description provided for @aiAssistantPromptRecap.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a short recap of the key points students should leave with after this lesson.'**
+  String get aiAssistantPromptRecap;
+
+  /// No description provided for @aiAssistantActionOfficeHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Office hours help'**
+  String get aiAssistantActionOfficeHours;
+
+  /// No description provided for @aiAssistantPromptOfficeHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Help me prepare concise support guidance for office hours around this topic.'**
+  String get aiAssistantPromptOfficeHours;
+
+  /// No description provided for @aiAssistantSettingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'AI settings'**
+  String get aiAssistantSettingsTitle;
+
+  /// No description provided for @aiAssistantDefaultModelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Default provider and model'**
+  String get aiAssistantDefaultModelTitle;
+
+  /// No description provided for @aiAssistantDefaultModelSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose the provider and model the assistant should use by default.'**
+  String get aiAssistantDefaultModelSubtitle;
+
+  /// No description provided for @aiAssistantResponseStyleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Response style'**
+  String get aiAssistantResponseStyleTitle;
+
+  /// No description provided for @aiAssistantResponseStyleSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set the default level of detail for future replies.'**
+  String get aiAssistantResponseStyleSubtitle;
+
+  /// No description provided for @aiAssistantProvidersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider access'**
+  String get aiAssistantProvidersTitle;
+
+  /// No description provided for @aiAssistantProvidersSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review app access and optionally add your own external key per provider.'**
+  String get aiAssistantProvidersSubtitle;
+
+  /// No description provided for @aiAssistantLocalDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Local data and sync'**
+  String get aiAssistantLocalDataTitle;
+
+  /// No description provided for @aiAssistantLocalDataSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh the model catalog or clear saved AI conversation history on this device.'**
+  String get aiAssistantLocalDataSubtitle;
+
+  /// No description provided for @aiAssistantRefreshModels.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh model catalog'**
+  String get aiAssistantRefreshModels;
+
+  /// No description provided for @aiAssistantRefreshModelsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reload available models and recover from stale provider listings.'**
+  String get aiAssistantRefreshModelsSubtitle;
+
+  /// No description provided for @aiAssistantRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get aiAssistantRefresh;
+
+  /// No description provided for @aiAssistantClearHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear local AI history'**
+  String get aiAssistantClearHistoryTitle;
+
+  /// No description provided for @aiAssistantClearHistorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete saved AI conversations from this device and start with a fresh chat.'**
+  String get aiAssistantClearHistorySubtitle;
+
+  /// No description provided for @aiAssistantClearHistoryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear history'**
+  String get aiAssistantClearHistoryAction;
+
+  /// No description provided for @aiAssistantClearHistoryConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This will delete saved AI conversations on this device. You can’t undo it.'**
+  String get aiAssistantClearHistoryConfirm;
+
+  /// No description provided for @aiAssistantProviderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Provider'**
+  String get aiAssistantProviderLabel;
+
+  /// No description provided for @aiAssistantModelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Model'**
+  String get aiAssistantModelLabel;
+
+  /// No description provided for @aiAssistantAppAccessAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'App access available'**
+  String get aiAssistantAppAccessAvailable;
+
+  /// No description provided for @aiAssistantAppAccessUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'App access unavailable'**
+  String get aiAssistantAppAccessUnavailable;
+
+  /// No description provided for @aiAssistantPersonalKeyConfigured.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal key configured'**
+  String get aiAssistantPersonalKeyConfigured;
+
+  /// No description provided for @aiAssistantPersonalKeyMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'No personal key'**
+  String get aiAssistantPersonalKeyMissing;
+
+  /// No description provided for @aiAssistantReplaceKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace key'**
+  String get aiAssistantReplaceKey;
+
+  /// No description provided for @aiAssistantAddKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Add key'**
+  String get aiAssistantAddKey;
+
+  /// No description provided for @aiAssistantRemoveKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove key'**
+  String get aiAssistantRemoveKey;
+
+  /// No description provided for @aiAssistantExternalKeyDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add external API key'**
+  String get aiAssistantExternalKeyDialogTitle;
+
+  /// No description provided for @aiAssistantExternalKeyHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Paste your provider key here'**
+  String get aiAssistantExternalKeyHint;
+
+  /// No description provided for @aiAssistantUseMyKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Use my key'**
+  String get aiAssistantUseMyKey;
+
+  /// No description provided for @aiAssistantUseMyKeySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prefer my personal key over the app default for this provider.'**
+  String get aiAssistantUseMyKeySubtitle;
+
+  /// No description provided for @aiAssistantCredentialSourceAppDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'App default'**
+  String get aiAssistantCredentialSourceAppDefault;
+
+  /// No description provided for @aiAssistantCredentialSourceUserKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Your key'**
+  String get aiAssistantCredentialSourceUserKey;
+
+  /// No description provided for @aiAssistantCredentialSourceUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Unavailable'**
+  String get aiAssistantCredentialSourceUnavailable;
+
+  /// No description provided for @aiAssistantProviderHelpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How provider access works'**
+  String get aiAssistantProviderHelpTitle;
+
+  /// No description provided for @aiAssistantProviderHelpBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The app can use built-in provider access when it is available. You can also add your own external API key for a provider and choose to use it instead. Your personal key stays on this device, and the app never shows the built-in key values.'**
+  String get aiAssistantProviderHelpBody;
 
   /// No description provided for @chatVideoCallTooltip.
   ///

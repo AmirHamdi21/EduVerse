@@ -28,6 +28,7 @@ migrate_working_dir/
 
 # Local environment files
 .env*
+lib/config/ai_provider_keys.local.dart
 
 # Flutter/Dart/Pub related
 **/doc/api/

@@ -46,7 +46,6 @@ import 'package:edu_verse/screens/student/voice_to_text/voice_to_text_screen.dar
 import 'package:edu_verse/screens/student/attendance/attendance_screen.dart';
 import 'package:edu_verse/screens/student/summarizer/summarizer_screen.dart';
 import 'package:edu_verse/screens/student/gamification/gamification_screen.dart';
-import 'package:edu_verse/screens/student/ai_chat/ai_chat_screen.dart';
 import 'package:edu_verse/screens/student/search/overall_search_screen.dart';
 import 'package:edu_verse/screens/student/calendar/calendar_screen.dart';
 import 'package:edu_verse/screens/student/student_registration_screen.dart';
@@ -91,7 +90,6 @@ import 'package:edu_verse/screens/instructor/announcements/announcement_manager_
 import 'package:edu_verse/screens/instructor/attendance/attendance_manager_screen.dart';
 import 'package:edu_verse/screens/instructor/create_assignment_screen.dart';
 import 'package:edu_verse/screens/instructor/reports/reports_analytics_screen.dart';
-import 'package:edu_verse/screens/instructor/ai_teaching/ai_teaching_screen.dart';
 import 'package:edu_verse/screens/instructor/upload_materials/upload_materials_screen.dart';
 import 'package:edu_verse/screens/instructor/calendar/instructor_calendar_screen.dart';
 import 'package:edu_verse/screens/instructor/search/instructor_search_screen.dart';
@@ -108,6 +106,7 @@ import 'package:edu_verse/models/assignments/assignment_model.dart'
 import 'package:edu_verse/models/instructor/instructor_course_model.dart';
 import 'package:edu_verse/models/instructor/teaching_course_model.dart';
 import 'package:edu_verse/models/discussion/discussion_models.dart';
+import 'package:edu_verse/features/ai_assistant/domain/ai_assistant_models.dart';
 // TA, Admin, IT Admin screens (placeholders for development)
 import 'package:edu_verse/screens/ta/ta_dashboard_screen.dart';
 import 'package:edu_verse/screens/ta/courses/ta_courses_list_screen.dart';
@@ -126,7 +125,6 @@ import 'package:edu_verse/screens/ta/search/ta_search_screen.dart';
 import 'package:edu_verse/screens/ta/attendance/ta_attendance_screen.dart';
 import 'package:edu_verse/screens/ta/announcements/ta_announcement_manager_screen.dart';
 import 'package:edu_verse/screens/ta/roster/ta_roster_screen.dart';
-import 'package:edu_verse/screens/ta/ai_assistant/ta_ai_assistant_screen.dart';
 import 'package:edu_verse/screens/ta/discussions/ta_discussions_screen.dart';
 import 'package:edu_verse/screens/ta/discussions/ta_course_discussions_screen.dart';
 import 'package:edu_verse/screens/ta/discussions/ta_discussion_post_detail_screen.dart';
@@ -194,6 +192,7 @@ import 'package:edu_verse/screens/it_admin/it_error_logs_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_database_screen.dart';
 import 'package:edu_verse/screens/it_admin/it_cloud_services_screen.dart';
 import 'package:edu_verse/screens/it_admin/search/it_search_screen.dart';
+import 'package:edu_verse/features/ai_assistant/presentation/ai_assistant_history_screen.dart';
 import 'package:edu_verse/screens/shared/shared_chat_screen.dart';
 import 'package:edu_verse/screens/shared/discussion_screen.dart';
 import 'package:edu_verse/screens/shared/chat/new_conversation_screen.dart';
@@ -513,7 +512,14 @@ class AppRouter {
       ),
       GoRoute(
         path: '/ai-chat',
-        builder: (context, state) => const AiChatScreen(),
+        builder: (context, state) {
+          final user = authRouteNotifier.user;
+          return AiAssistantEntryScreen(
+            role: AiAssistantRole.student,
+            userId: user?.userId ?? 0,
+            userDisplayName: user?.displayName ?? 'Student',
+          );
+        },
       ),
       GoRoute(
         path: '/calendar',
@@ -1020,7 +1026,14 @@ class AppRouter {
       ),
       GoRoute(
         path: '/instructor/ai-teaching',
-        builder: (context, state) => const AITeachingScreen(),
+        builder: (context, state) {
+          final user = authRouteNotifier.user;
+          return AiAssistantEntryScreen(
+            role: AiAssistantRole.instructor,
+            userId: user?.userId ?? 0,
+            userDisplayName: user?.displayName ?? 'Instructor',
+          );
+        },
       ),
       GoRoute(
         path: '/instructor/upload-materials',
@@ -1418,7 +1431,14 @@ class AppRouter {
       ),
       GoRoute(
         path: '/ta/ai-assistant',
-        builder: (context, state) => const TAAIAssistantScreen(),
+        builder: (context, state) {
+          final user = authRouteNotifier.user;
+          return AiAssistantEntryScreen(
+            role: AiAssistantRole.ta,
+            userId: user?.userId ?? 0,
+            userDisplayName: user?.displayName ?? 'Teaching Assistant',
+          );
+        },
       ),
       GoRoute(
         path: '/ta/messages',

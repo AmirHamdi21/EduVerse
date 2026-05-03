@@ -2302,7 +2302,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get close => 'إغلاق';
 
   @override
-  String get aiAssistantTitle => 'مساعد EduVerse الذكي';
+  String get aiAssistantTitle => 'المساعد الذكي';
 
   @override
   String get aiAssistantSubtitle =>
@@ -15106,6 +15106,469 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get instructorCourseDetailNoActivity =>
       'لا توجد أنشطة قادمة متاحة حتى الآن.';
+
+  @override
+  String get aiAssistantHistoryTitle => 'سجل المحادثات';
+
+  @override
+  String get aiAssistantPinnedChats => 'المحادثات المثبتة';
+
+  @override
+  String get aiAssistantRecentChats => 'المحادثات الأخيرة';
+
+  @override
+  String get aiAssistantHistoryActionSubtitle =>
+      'اختر الإجراء المناسب لهذه المحادثة.';
+
+  @override
+  String get aiAssistantOpenConversation => 'فتح المحادثة';
+
+  @override
+  String get aiAssistantUnpinConversation => 'إلغاء التثبيت';
+
+  @override
+  String get aiAssistantPinConversation => 'تثبيت المحادثة';
+
+  @override
+  String get aiAssistantRenameConversation => 'إعادة تسمية المحادثة';
+
+  @override
+  String get aiAssistantExportConversation => 'تصدير المحادثة';
+
+  @override
+  String get aiAssistantDeleteConversation => 'حذف المحادثة';
+
+  @override
+  String get aiAssistantConversationTitleHint => 'عنوان المحادثة';
+
+  @override
+  String get aiAssistantUntitledConversation => 'محادثة بدون عنوان';
+
+  @override
+  String get aiAssistantHistoryPreviewFallback => 'لا يوجد نص معاينة بعد.';
+
+  @override
+  String get aiAssistantHistoryEmptyTitle =>
+      'لا توجد محادثات ذكاء اصطناعي محفوظة بعد';
+
+  @override
+  String get aiAssistantHistoryEmptySubtitle =>
+      'ستظهر محادثاتك هنا بمجرد أن تبدأ التحدث مع المساعد.';
+
+  @override
+  String get aiAssistantHistoryHeroTitle => 'مركز المحادثات';
+
+  @override
+  String get aiAssistantHistoryHeroSubtitle =>
+      'راجع محادثات الذكاء الاصطناعي الأخيرة، وارجع سريعًا إلى عملك، أو ابدأ جلسة جديدة مركزة.';
+
+  @override
+  String get aiAssistantHistoryStatTotal => 'المحادثات';
+
+  @override
+  String get aiAssistantHistoryStatPinned => 'المثبتة';
+
+  @override
+  String get aiAssistantHistoryStatProviders => 'المزوّدون';
+
+  @override
+  String get aiAssistantHistoryStatToday => 'تم تحديثها اليوم';
+
+  @override
+  String get aiAssistantHistoryViewLabel => 'العرض';
+
+  @override
+  String get aiAssistantHistoryProviderFilterLabel => 'المزوّد';
+
+  @override
+  String get aiAssistantHistoryFilterAllChats => 'كل المحادثات';
+
+  @override
+  String get aiAssistantHistoryFilterPinnedOnly => 'المثبتة فقط';
+
+  @override
+  String get aiAssistantHistoryFilterRecentOnly => 'الأخيرة فقط';
+
+  @override
+  String get aiAssistantHistoryAllProviders => 'كل المزوّدين';
+
+  @override
+  String get aiAssistantHistoryNoMatchesTitle =>
+      'لا توجد محادثات تطابق هذه الفلاتر';
+
+  @override
+  String get aiAssistantHistoryNoMatchesSubtitle =>
+      'جرّب عرضًا آخر أو فلتر مزوّد مختلفًا لإظهار المحادثات المناسبة.';
+
+  @override
+  String get aiAssistantAgentPickerTitle => 'ابدأ محادثة جديدة مع المساعد';
+
+  @override
+  String get aiAssistantAgentPickerSubtitle =>
+      'اختر نوع مساحة الذكاء الاصطناعي التي تريد فتحها أولًا، ثم أكمل داخل شاشة المحادثة.';
+
+  @override
+  String get aiAssistantAgentGeneralTitle => 'مساعد عام';
+
+  @override
+  String get aiAssistantAgentGeneralSubtitle =>
+      'اطرح أسئلة عامة، واحصل على مساعدة سريعة، أو ابدأ محادثة مفتوحة مع الذكاء الاصطناعي.';
+
+  @override
+  String get aiAssistantAgentStudyTitle => 'مدرب دراسة';
+
+  @override
+  String get aiAssistantAgentStudySubtitle =>
+      'ركّز على الشروحات والملخصات وخطط المراجعة والدعم التدريبي.';
+
+  @override
+  String get aiAssistantAgentDraftingTitle => 'مساعد الصياغة';
+
+  @override
+  String get aiAssistantAgentDraftingSubtitle =>
+      'أنشئ كتابة أوضح، أو إعلانات، أو مخططات، أو مسودات أكاديمية مصقولة.';
+
+  @override
+  String get aiAssistantAgentGradingTitle => 'مساعد التصحيح';
+
+  @override
+  String get aiAssistantAgentGradingSubtitle =>
+      'ابدأ مباشرة في محادثات تتعلق بالتغذية الراجعة والروبرك والتقييم.';
+
+  @override
+  String get aiAssistantChatsLabel => 'محادثات';
+
+  @override
+  String get aiAssistantOfflineBanner =>
+      'أنت غير متصل الآن. أعد المحاولة عندما يعود الاتصال.';
+
+  @override
+  String get aiAssistantComposerHint =>
+      'اطلب شرحًا أو ملخصًا أو صياغة أو مساعدة دراسية...';
+
+  @override
+  String get aiAssistantPromptShortcuts => 'اختصارات جاهزة';
+
+  @override
+  String get aiAssistantPromptShortcutsSubtitle =>
+      'ابدأ بطلب جاهز عالي الفائدة بدون كتابة الطلب بالكامل.';
+
+  @override
+  String get aiAssistantToolsMenuSubtitle =>
+      'افتح أدوات المحادثة أو شغّل طلبًا جاهزًا من قائمة واحدة.';
+
+  @override
+  String get aiAssistantToolsConversationMode => 'وضع المحادثة';
+
+  @override
+  String get aiAssistantToolsConversationModeSubtitle =>
+      'بدّل المساعد بين المساعدة العامة والدراسة والصياغة والتصحيح.';
+
+  @override
+  String get aiAssistantToolsQuickPrompts => 'طلبات جاهزة';
+
+  @override
+  String get aiAssistantToolsCurrentMode => 'الوضع الحالي';
+
+  @override
+  String get aiAssistantStopGenerating => 'إيقاف التوليد';
+
+  @override
+  String get aiAssistantSend => 'إرسال';
+
+  @override
+  String get aiAssistantNewChat => 'محادثة جديدة';
+
+  @override
+  String get aiAssistantMessagesLabel => 'رسائل';
+
+  @override
+  String get aiAssistantChooseModelTitle => 'اختر نموذجًا';
+
+  @override
+  String get aiAssistantChooseModelSubtitle =>
+      'حدد المزوّد والنموذج الذي تريد استخدامه في هذه المحادثة.';
+
+  @override
+  String get aiAssistantProviderReady => 'جاهز للاستخدام';
+
+  @override
+  String get aiAssistantProviderUnavailable => 'غير متاح حتى يتم إعداد الوصول';
+
+  @override
+  String get aiAssistantFreeTierBadge => 'مجاني';
+
+  @override
+  String get aiAssistantScopeGeneral => 'عام';
+
+  @override
+  String get aiAssistantScopeStudy => 'دراسة';
+
+  @override
+  String get aiAssistantScopeDrafting => 'صياغة';
+
+  @override
+  String get aiAssistantScopeGrading => 'تصحيح';
+
+  @override
+  String get aiAssistantStyleConcise => 'مختصر';
+
+  @override
+  String get aiAssistantStyleBalanced => 'متوازن';
+
+  @override
+  String get aiAssistantStyleDetailed => 'تفصيلي';
+
+  @override
+  String get aiAssistantWelcomeTitle => 'ابدأ محادثة أذكى';
+
+  @override
+  String get aiAssistantWelcomeSubtitle =>
+      'استخدم المساعد للشرح والصياغة والتخطيط والدعم المتخصص حسب الدور بدون مغادرة سير العمل داخل التطبيق.';
+
+  @override
+  String get aiAssistantGeneratingMessage => 'جارٍ توليد الرد...';
+
+  @override
+  String get aiAssistantCancelledMessage => 'تم إيقاف التوليد قبل اكتمال الرد.';
+
+  @override
+  String get aiAssistantFailedMessage => 'تعذر إكمال هذا الرد.';
+
+  @override
+  String get aiAssistantCopyMessage => 'نسخ الرسالة';
+
+  @override
+  String get aiAssistantRegenerateResponse => 'إعادة توليد الرد';
+
+  @override
+  String get aiAssistantRegenerateResponseSubtitle =>
+      'اطلب من النموذج الحالي تجربة إجابة أخرى لهذا الرد.';
+
+  @override
+  String get aiAssistantEditAndResend => 'تعديل ثم إعادة الإرسال';
+
+  @override
+  String get aiAssistantShareResponse => 'مشاركة الرد';
+
+  @override
+  String get aiAssistantDeleteMessage => 'حذف الرسالة';
+
+  @override
+  String get aiAssistantDeleteFromHere => 'الحذف من هنا';
+
+  @override
+  String get aiAssistantYourMessage => 'رسالتك';
+
+  @override
+  String get aiAssistantModelMessage => 'رد المساعد';
+
+  @override
+  String get aiAssistantStatusReady => 'جاهز';
+
+  @override
+  String get aiAssistantStatusGenerating => 'جارٍ التوليد';
+
+  @override
+  String get aiAssistantStatusFailed => 'فشل';
+
+  @override
+  String get aiAssistantStatusCancelled => 'تم الإيقاف';
+
+  @override
+  String get aiAssistantActionExplain => 'اشرح';
+
+  @override
+  String get aiAssistantPromptExplain =>
+      'اشرح هذا المفهوم بطريقة أوضح ومناسبة للمبتدئين مع مثال واحد.';
+
+  @override
+  String get aiAssistantActionSummarize => 'لخّص';
+
+  @override
+  String get aiAssistantPromptSummarize =>
+      'لخّص هذا الموضوع إلى الأفكار الأساسية والمصطلحات وأهم ما يجب تذكره.';
+
+  @override
+  String get aiAssistantActionStudyPlan => 'خطة دراسة';
+
+  @override
+  String get aiAssistantPromptStudyPlan =>
+      'ابنِ خطة دراسة مركزة لهذا الموضوع مع مراحل مراجعة ونقاط متابعة واقتراحات تدريب.';
+
+  @override
+  String get aiAssistantActionPractice => 'تدريب';
+
+  @override
+  String get aiAssistantPromptPracticeQuestions =>
+      'أنشئ أسئلة تدريبية مع الإجابات وشرحًا قصيرًا لهذا الموضوع.';
+
+  @override
+  String get aiAssistantActionAnnouncement => 'صياغة إعلان';
+
+  @override
+  String get aiAssistantPromptAnnouncement =>
+      'اكتب إعلان مقرر مصقولًا مع عنوان واضح وتحديث رئيسي وخطوات مطلوبة.';
+
+  @override
+  String get aiAssistantActionRubric => 'مساعدة في الروبريك';
+
+  @override
+  String get aiAssistantPromptRubric =>
+      'ساعدني في بناء Rubric واضح بمعايير ونطاقات درجات ووصف مختصر لكل مستوى.';
+
+  @override
+  String get aiAssistantActionFeedback => 'صياغة تغذية راجعة';
+
+  @override
+  String get aiAssistantPromptFeedback =>
+      'اكتب تغذية راجعة متوازنة للطالب تكون محددة وبنّاءة وسهلة التطبيق.';
+
+  @override
+  String get aiAssistantActionLesson => 'أفكار درس';
+
+  @override
+  String get aiAssistantPromptLessonIdeas =>
+      'اقترح أفكار درس أو أنشطة لهذا الموضوع مع نواتج تعلم وخيارات تفاعل.';
+
+  @override
+  String get aiAssistantActionGradingHelp => 'مساعدة في التصحيح';
+
+  @override
+  String get aiAssistantPromptGradingHelp =>
+      'ساعدني في التفكير في تغذية راجعة للتصحيح مع إبراز نقاط القوة والثغرات والخطوات التالية.';
+
+  @override
+  String get aiAssistantActionClarify => 'صياغة توضيح';
+
+  @override
+  String get aiAssistantPromptClarification =>
+      'اكتب رسالة توضيح واضحة للطلاب حول مفهوم أو تعليمات تسبب التباسًا.';
+
+  @override
+  String get aiAssistantActionRecap => 'ملخص ختامي';
+
+  @override
+  String get aiAssistantPromptRecap =>
+      'أنشئ ملخصًا قصيرًا لأهم النقاط التي يجب أن يخرج بها الطلاب من هذا الدرس.';
+
+  @override
+  String get aiAssistantActionOfficeHours => 'دعم الساعات المكتبية';
+
+  @override
+  String get aiAssistantPromptOfficeHours =>
+      'ساعدني في إعداد إرشادات دعم مختصرة للساعات المكتبية حول هذا الموضوع.';
+
+  @override
+  String get aiAssistantSettingsTitle => 'إعدادات الذكاء الاصطناعي';
+
+  @override
+  String get aiAssistantDefaultModelTitle => 'المزوّد والنموذج الافتراضي';
+
+  @override
+  String get aiAssistantDefaultModelSubtitle =>
+      'اختر المزوّد والنموذج اللذين يجب أن يستخدمهما المساعد افتراضيًا.';
+
+  @override
+  String get aiAssistantResponseStyleTitle => 'أسلوب الرد';
+
+  @override
+  String get aiAssistantResponseStyleSubtitle =>
+      'حدد مستوى التفاصيل الافتراضي للردود القادمة.';
+
+  @override
+  String get aiAssistantProvidersTitle => 'وصول المزوّدين';
+
+  @override
+  String get aiAssistantProvidersSubtitle =>
+      'راجع وصول التطبيق وأضف مفتاحك الخارجي اختياريًا لكل مزوّد.';
+
+  @override
+  String get aiAssistantLocalDataTitle => 'البيانات المحلية والمزامنة';
+
+  @override
+  String get aiAssistantLocalDataSubtitle =>
+      'حدّث قائمة النماذج أو امسح سجل محادثات الذكاء الاصطناعي المحفوظ على هذا الجهاز.';
+
+  @override
+  String get aiAssistantRefreshModels => 'تحديث قائمة النماذج';
+
+  @override
+  String get aiAssistantRefreshModelsSubtitle =>
+      'أعد تحميل النماذج المتاحة وتعافَ من قوائم المزوّدين القديمة.';
+
+  @override
+  String get aiAssistantRefresh => 'تحديث';
+
+  @override
+  String get aiAssistantClearHistoryTitle => 'مسح سجل الذكاء الاصطناعي المحلي';
+
+  @override
+  String get aiAssistantClearHistorySubtitle =>
+      'احذف محادثات الذكاء الاصطناعي المحفوظة من هذا الجهاز وابدأ بمحادثة جديدة.';
+
+  @override
+  String get aiAssistantClearHistoryAction => 'مسح السجل';
+
+  @override
+  String get aiAssistantClearHistoryConfirm =>
+      'سيؤدي هذا إلى حذف محادثات الذكاء الاصطناعي المحفوظة على هذا الجهاز ولا يمكن التراجع عنه.';
+
+  @override
+  String get aiAssistantProviderLabel => 'المزوّد';
+
+  @override
+  String get aiAssistantModelLabel => 'النموذج';
+
+  @override
+  String get aiAssistantAppAccessAvailable => 'وصول التطبيق متاح';
+
+  @override
+  String get aiAssistantAppAccessUnavailable => 'وصول التطبيق غير متاح';
+
+  @override
+  String get aiAssistantPersonalKeyConfigured => 'تم إعداد مفتاح شخصي';
+
+  @override
+  String get aiAssistantPersonalKeyMissing => 'لا يوجد مفتاح شخصي';
+
+  @override
+  String get aiAssistantReplaceKey => 'استبدال المفتاح';
+
+  @override
+  String get aiAssistantAddKey => 'إضافة مفتاح';
+
+  @override
+  String get aiAssistantRemoveKey => 'إزالة المفتاح';
+
+  @override
+  String get aiAssistantExternalKeyDialogTitle => 'إضافة مفتاح API خارجي';
+
+  @override
+  String get aiAssistantExternalKeyHint => 'ألصق مفتاح المزوّد هنا';
+
+  @override
+  String get aiAssistantUseMyKey => 'استخدم مفتاحي';
+
+  @override
+  String get aiAssistantUseMyKeySubtitle =>
+      'استخدم مفتاحي الشخصي بدل وصول التطبيق الافتراضي لهذا المزوّد.';
+
+  @override
+  String get aiAssistantCredentialSourceAppDefault => 'افتراضي التطبيق';
+
+  @override
+  String get aiAssistantCredentialSourceUserKey => 'مفتاحك';
+
+  @override
+  String get aiAssistantCredentialSourceUnavailable => 'غير متاح';
+
+  @override
+  String get aiAssistantProviderHelpTitle => 'كيف يعمل وصول المزوّدين';
+
+  @override
+  String get aiAssistantProviderHelpBody =>
+      'يمكن للتطبيق استخدام وصول مدمج للمزوّد عندما يكون متاحًا. ويمكنك أيضًا إضافة مفتاح API خارجي خاص بك لأي مزوّد واختيار استخدامه بدلًا من ذلك. يبقى مفتاحك الشخصي على هذا الجهاز فقط، ولا يعرض التطبيق قيم المفاتيح المدمجة.';
 
   @override
   String get chatVideoCallTooltip => 'مكالمة فيديو';
