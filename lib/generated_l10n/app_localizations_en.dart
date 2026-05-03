@@ -6686,6 +6686,124 @@ class AppLocalizationsEn extends AppLocalizations {
       'Upload TA-only support files for this lab. Flutter currently supports uploading here, but it does not list previously uploaded TA materials yet.';
 
   @override
+  String get instructorLabDetailErrorTitle => 'Unable to load this lab';
+
+  @override
+  String get instructorLabDetailHeroSubtitle =>
+      'Review the lab brief, monitor submissions, and keep attendance and instructions moving from one focused workspace.';
+
+  @override
+  String get instructorLabDetailSnapshotTitle => 'Lab Snapshot';
+
+  @override
+  String get instructorLabDetailSnapshotSubtitle =>
+      'Keep the core teaching signals visible while you review the lab configuration and current activity.';
+
+  @override
+  String get instructorLabDetailBriefTitle => 'Learner-facing Brief';
+
+  @override
+  String get instructorLabDetailBriefSubtitle =>
+      'Review the summary students see before opening the complete lab instructions.';
+
+  @override
+  String get instructorLabDetailBriefEmpty =>
+      'No description was added for this lab.';
+
+  @override
+  String get instructorLabDetailWorkflowTitle => 'Submission Workflow';
+
+  @override
+  String get instructorLabDetailWorkflowSubtitle =>
+      'Check scoring, visibility, and submission requirements without losing track of the lab setup.';
+
+  @override
+  String get instructorLabDetailSubmissionsTitle => 'Submission Queue';
+
+  @override
+  String get instructorLabDetailSubmissionsSubtitle =>
+      'Search student work, isolate late attempts, and jump into grading with less friction.';
+
+  @override
+  String get instructorLabDetailSearchStudents => 'Search by student name';
+
+  @override
+  String get instructorLabDetailNoSubmissionsTitle =>
+      'No submissions match this view';
+
+  @override
+  String get instructorLabDetailNoSubmissionsSubtitle =>
+      'Try another search or filter, or refresh the submission queue.';
+
+  @override
+  String get instructorLabDetailAttendanceTitle => 'Attendance Board';
+
+  @override
+  String get instructorLabDetailAttendanceSubtitle =>
+      'Track who attended this lab session and update each learner\'s status without leaving the page.';
+
+  @override
+  String get instructorLabDetailNoAttendanceTitle =>
+      'No attendance records yet';
+
+  @override
+  String get instructorLabDetailNoAttendanceSubtitle =>
+      'Attendance will appear here once records are created for this lab.';
+
+  @override
+  String get instructorLabDetailInstructionsTitle => 'Instruction Workspace';
+
+  @override
+  String get instructorLabDetailInstructionsSubtitle =>
+      'Keep text guidance and supporting files structured in one place for the current lab.';
+
+  @override
+  String get instructorLabDetailInstructionComposerTitle => 'Add Instruction';
+
+  @override
+  String get instructorLabDetailInstructionComposerSubtitle =>
+      'Create a new text instruction or upload a supporting file without leaving the lab workflow.';
+
+  @override
+  String get instructorLabDetailInstructionHint =>
+      'Write a markdown-ready instruction for this lab';
+
+  @override
+  String get instructorLabDetailAddInstruction => 'Add Instruction';
+
+  @override
+  String get instructorLabDetailInstructionOrder => 'Step';
+
+  @override
+  String get instructorLabDetailTextInstruction => 'Text instruction';
+
+  @override
+  String get instructorLabDetailNoInstructionsSubtitle =>
+      'No instructions are available for this lab yet.';
+
+  @override
+  String get instructorLabDetailSubmissionSnapshot => 'Submission Snapshot';
+
+  @override
+  String get instructorLabDetailSubmittedAt => 'Submitted At';
+
+  @override
+  String get instructorLabDetailCurrentScore => 'Current Score';
+
+  @override
+  String get instructorLabDetailSubmissionText => 'Submission Text';
+
+  @override
+  String get instructorLabDetailSubmittedFile => 'Submitted File';
+
+  @override
+  String get instructorLabDetailNoSubmissionContent =>
+      'No submission content was included with this attempt.';
+
+  @override
+  String get instructorLabDetailPreview => 'Preview';
+
+  @override
   String get taLabUpload => 'Upload';
 
   @override
@@ -6971,6 +7089,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Configure grading and submission limits without wasting space.';
 
   @override
+  String get labEditorInstructionSection => 'Instruction Files';
+
+  @override
+  String get labEditorInstructionSectionSubtitle =>
+      'Queue starter files, rubrics, and support assets before or after saving the lab.';
+
+  @override
   String get labEditorTitleHint => 'Enter a clear lab title';
 
   @override
@@ -7054,6 +7179,80 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get labEditorMaxScoreWarning =>
       'Some submissions may still have scores above the new max score. Those scores are not adjusted automatically.';
+
+  @override
+  String get labEditorInstructionFilesTitle => 'Upload instruction files';
+
+  @override
+  String get labEditorInstructionFilesPendingHint =>
+      'Select files now and they will upload right after you save the lab.';
+
+  @override
+  String get labEditorInstructionFilesUploadHint =>
+      'Attach starter files, rubrics, or reference notes for students.';
+
+  @override
+  String get labEditorInstructionSaveFirst =>
+      'Save the lab first to upload this file.';
+
+  @override
+  String get labEditorInstructionMissingFile =>
+      'File no longer exists on disk.';
+
+  @override
+  String get labEditorInstructionDeleteTitle => 'Delete instruction file?';
+
+  @override
+  String get labEditorInstructionDeleteUnavailable =>
+      'This file cannot be deleted yet. Refresh the lab details and try again.';
+
+  @override
+  String get labEditorInstructionPendingCaption =>
+      'This file is queued and will upload after the lab is saved.';
+
+  @override
+  String get labEditorOpenInDrive => 'Open in Drive';
+
+  @override
+  String labEditorInstructionUploadSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Uploaded $count instruction files.',
+      one: 'Uploaded 1 instruction file.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String labEditorInstructionFilesQueued(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count instruction files are queued and will upload when you save.',
+      one: '1 instruction file is queued and will upload when you save.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String labEditorInstructionUploadPartialFailure(int count, Object suffix) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Lab saved, but $count instruction files failed to upload$suffix. Use Retry in the file list.',
+      one:
+          'Lab saved, but 1 instruction file failed to upload$suffix. Use Retry in the file list.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String labEditorInstructionDeleteMessage(Object fileName) {
+    return 'Are you sure you want to delete \"$fileName\"? This action cannot be undone.';
+  }
 
   @override
   String get taPerformanceTitle => 'Student Performance';
@@ -13958,6 +14157,99 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assignmentStatusUpdated => 'Assignment status updated.';
+
+  @override
+  String get instructorAssignmentDetailHeroSubtitle =>
+      'Track the grading queue, review instructions, and manage assignment flow without losing context.';
+
+  @override
+  String get instructorAssignmentDetailSnapshotTitle => 'Assignment Snapshot';
+
+  @override
+  String get instructorAssignmentDetailSnapshotSubtitle =>
+      'Keep the core academic signals visible while you review the assignment.';
+
+  @override
+  String get instructorAssignmentDetailBriefTitle => 'Learner-facing Brief';
+
+  @override
+  String get instructorAssignmentDetailBriefSubtitle =>
+      'Review the summary students see before they open the full instructions.';
+
+  @override
+  String get instructorAssignmentDetailBriefEmpty =>
+      'No description was added for this assignment.';
+
+  @override
+  String get instructorAssignmentDetailWorkflowTitle => 'Submission Workflow';
+
+  @override
+  String get instructorAssignmentDetailWorkflowSubtitle =>
+      'Check the release timing, deadline pressure, and late-policy rules at a glance.';
+
+  @override
+  String get instructorAssignmentDetailSubmissionsTitle => 'Submission Queue';
+
+  @override
+  String get instructorAssignmentDetailSubmissionsSubtitle =>
+      'Search the current queue, isolate late work, and jump into grading with less friction.';
+
+  @override
+  String get instructorAssignmentDetailSearchStudents =>
+      'Search by student name';
+
+  @override
+  String get instructorAssignmentDetailNoSubmissionsTitle =>
+      'No submissions match this view';
+
+  @override
+  String get instructorAssignmentDetailNoSubmissionsSubtitle =>
+      'Try another search or filter, or pull to refresh the assignment queue.';
+
+  @override
+  String get instructorAssignmentDetailAttempt => 'Attempt';
+
+  @override
+  String get instructorAssignmentDetailSubmissionDetailsTitle =>
+      'Submission Details';
+
+  @override
+  String get instructorAssignmentDetailSubmissionSnapshot =>
+      'Submission Snapshot';
+
+  @override
+  String get instructorAssignmentDetailSubmittedAt => 'Submitted At';
+
+  @override
+  String get instructorAssignmentDetailCurrentScore => 'Current Score';
+
+  @override
+  String get instructorAssignmentDetailSubmissionText => 'Submission Text';
+
+  @override
+  String get instructorAssignmentDetailSubmissionLink => 'Submission Link';
+
+  @override
+  String get instructorAssignmentDetailSubmittedFile => 'Submitted File';
+
+  @override
+  String get instructorAssignmentDetailNoSubmissionContent =>
+      'No submission content was included with this attempt.';
+
+  @override
+  String get instructorAssignmentDetailOpenLink => 'Open Link';
+
+  @override
+  String get instructorAssignmentDetailActionEditGrade => 'Edit Grade';
+
+  @override
+  String get instructorAssignmentDetailResubmit => 'Resubmit';
+
+  @override
+  String get instructorAssignmentDetailReturned => 'Returned';
+
+  @override
+  String get instructorAssignmentDetailPreview => 'Preview';
 
   @override
   String get assignmentEmptyManagementMessage =>

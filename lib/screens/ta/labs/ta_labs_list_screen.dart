@@ -1631,12 +1631,21 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
       return;
     }
 
-    final result = await Navigator.of(context).push<Map<String, dynamic>>(
-      MaterialPageRoute<Map<String, dynamic>>(
+    final result = await Navigator.of(context).push<LabModel>(
+      MaterialPageRoute<LabModel>(
         builder: (_) => LabEditorScreen(
           role: LabComposerRole.ta,
           courses: courses,
-          onSave: (data) => context.read<TALabsCubit>().createLab(data),
+          labService: _labService,
+          onSave: (data) async {
+            final result = await context.read<TALabsCubit>().createLabRecord(data);
+            return LabEditorSaveResult(
+              lab: result.data,
+              errorMessage: result.isSuccess
+                  ? null
+                  : (result.error?.message ?? l10n.failed),
+            );
+          },
         ),
       ),
     );
@@ -1647,7 +1656,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(_labSavedMessage(result['status']?.toString())),
+        content: Text(_labSavedMessage(result.status.value)),
         backgroundColor: TAColors.success,
         behavior: SnackBarBehavior.fixed,
       ),
@@ -1674,18 +1683,21 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
       return;
     }
 
-    final result = await Navigator.of(context).push<Map<String, dynamic>>(
-      MaterialPageRoute<Map<String, dynamic>>(
+    final result = await Navigator.of(context).push<LabModel>(
+      MaterialPageRoute<LabModel>(
         builder: (_) => LabEditorScreen(
           role: LabComposerRole.ta,
           courses: courses,
+          labService: _labService,
           existingLab: lab,
           onSave: (data) async {
             final response = await _labService.update(lab.id, data);
-            if (!response.isSuccess) {
-              return response.error?.message ?? l10n.taLabPermissionEditDenied;
-            }
-            return null;
+            return LabEditorSaveResult(
+              lab: response.data,
+              errorMessage: response.isSuccess
+                  ? null
+                  : (response.error?.message ?? l10n.taLabPermissionEditDenied),
+            );
           },
         ),
       ),
@@ -1698,7 +1710,7 @@ class _TALabsListScreenState extends State<TALabsListScreen> {
     context.read<TALabsCubit>().fetchTALabs();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(_labSavedMessage(result['status']?.toString())),
+        content: Text(_labSavedMessage(result.status.value)),
         backgroundColor: TAColors.success,
         behavior: SnackBarBehavior.fixed,
       ),

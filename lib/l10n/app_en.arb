@@ -2603,6 +2603,40 @@
   "instructorLabUploadSuccess": "TA material uploaded",
   "instructorLabMaterialTitle": "TA Materials",
   "instructorLabMaterialSubtitle": "Upload TA-only support files for this lab. Flutter currently supports uploading here, but it does not list previously uploaded TA materials yet.",
+  "instructorLabDetailErrorTitle": "Unable to load this lab",
+  "instructorLabDetailHeroSubtitle": "Review the lab brief, monitor submissions, and keep attendance and instructions moving from one focused workspace.",
+  "instructorLabDetailSnapshotTitle": "Lab Snapshot",
+  "instructorLabDetailSnapshotSubtitle": "Keep the core teaching signals visible while you review the lab configuration and current activity.",
+  "instructorLabDetailBriefTitle": "Learner-facing Brief",
+  "instructorLabDetailBriefSubtitle": "Review the summary students see before opening the complete lab instructions.",
+  "instructorLabDetailBriefEmpty": "No description was added for this lab.",
+  "instructorLabDetailWorkflowTitle": "Submission Workflow",
+  "instructorLabDetailWorkflowSubtitle": "Check scoring, visibility, and submission requirements without losing track of the lab setup.",
+  "instructorLabDetailSubmissionsTitle": "Submission Queue",
+  "instructorLabDetailSubmissionsSubtitle": "Search student work, isolate late attempts, and jump into grading with less friction.",
+  "instructorLabDetailSearchStudents": "Search by student name",
+  "instructorLabDetailNoSubmissionsTitle": "No submissions match this view",
+  "instructorLabDetailNoSubmissionsSubtitle": "Try another search or filter, or refresh the submission queue.",
+  "instructorLabDetailAttendanceTitle": "Attendance Board",
+  "instructorLabDetailAttendanceSubtitle": "Track who attended this lab session and update each learner's status without leaving the page.",
+  "instructorLabDetailNoAttendanceTitle": "No attendance records yet",
+  "instructorLabDetailNoAttendanceSubtitle": "Attendance will appear here once records are created for this lab.",
+  "instructorLabDetailInstructionsTitle": "Instruction Workspace",
+  "instructorLabDetailInstructionsSubtitle": "Keep text guidance and supporting files structured in one place for the current lab.",
+  "instructorLabDetailInstructionComposerTitle": "Add Instruction",
+  "instructorLabDetailInstructionComposerSubtitle": "Create a new text instruction or upload a supporting file without leaving the lab workflow.",
+  "instructorLabDetailInstructionHint": "Write a markdown-ready instruction for this lab",
+  "instructorLabDetailAddInstruction": "Add Instruction",
+  "instructorLabDetailInstructionOrder": "Step",
+  "instructorLabDetailTextInstruction": "Text instruction",
+  "instructorLabDetailNoInstructionsSubtitle": "No instructions are available for this lab yet.",
+  "instructorLabDetailSubmissionSnapshot": "Submission Snapshot",
+  "instructorLabDetailSubmittedAt": "Submitted At",
+  "instructorLabDetailCurrentScore": "Current Score",
+  "instructorLabDetailSubmissionText": "Submission Text",
+  "instructorLabDetailSubmittedFile": "Submitted File",
+  "instructorLabDetailNoSubmissionContent": "No submission content was included with this attempt.",
+  "instructorLabDetailPreview": "Preview",
   
   "taLabUpload": "Upload",
   "taLabAttendance": "Attendance",
@@ -2703,6 +2737,8 @@
   "labEditorScheduleSectionSubtitle": "Control when the lab opens and when it is due.",
   "labEditorRulesSection": "Scoring & Rules",
   "labEditorRulesSectionSubtitle": "Configure grading and submission limits without wasting space.",
+  "labEditorInstructionSection": "Instruction Files",
+  "labEditorInstructionSectionSubtitle": "Queue starter files, rubrics, and support assets before or after saving the lab.",
   "labEditorTitleHint": "Enter a clear lab title",
   "labEditorCourseHint": "Choose the teaching course for this lab",
   "labEditorDescriptionHint": "Summarize the task, expected output, or focus of this lab.",
@@ -2732,6 +2768,46 @@
   },
   "labEditorPastDueWarning": "This lab's due date is already in the past.",
   "labEditorMaxScoreWarning": "Some submissions may still have scores above the new max score. Those scores are not adjusted automatically.",
+  "labEditorInstructionFilesTitle": "Upload instruction files",
+  "labEditorInstructionFilesPendingHint": "Select files now and they will upload right after you save the lab.",
+  "labEditorInstructionFilesUploadHint": "Attach starter files, rubrics, or reference notes for students.",
+  "labEditorInstructionSaveFirst": "Save the lab first to upload this file.",
+  "labEditorInstructionMissingFile": "File no longer exists on disk.",
+  "labEditorInstructionDeleteTitle": "Delete instruction file?",
+  "labEditorInstructionDeleteUnavailable": "This file cannot be deleted yet. Refresh the lab details and try again.",
+  "labEditorInstructionPendingCaption": "This file is queued and will upload after the lab is saved.",
+  "labEditorOpenInDrive": "Open in Drive",
+  "labEditorInstructionUploadSuccess": "{count, plural, one {Uploaded 1 instruction file.} other {Uploaded {count} instruction files.}}",
+  "@labEditorInstructionUploadSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labEditorInstructionFilesQueued": "{count, plural, one {1 instruction file is queued and will upload when you save.} other {{count} instruction files are queued and will upload when you save.}}",
+  "@labEditorInstructionFilesQueued": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labEditorInstructionUploadPartialFailure": "{count, plural, one {Lab saved, but 1 instruction file failed to upload{suffix}. Use Retry in the file list.} other {Lab saved, but {count} instruction files failed to upload{suffix}. Use Retry in the file list.}}",
+  "@labEditorInstructionUploadPartialFailure": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "suffix": {}
+    }
+  },
+  "labEditorInstructionDeleteMessage": "Are you sure you want to delete \"{fileName}\"? This action cannot be undone.",
+  "@labEditorInstructionDeleteMessage": {
+    "placeholders": {
+      "fileName": {}
+    }
+  },
 
   "taPerformanceTitle": "Student Performance",
   "taPerformanceSubtitle": "Monitor lab progress and identify students needing assistance",
@@ -5537,6 +5613,33 @@
   "assignmentArchivedSuccess": "Assignment archived successfully.",
   "assignmentMovedToDraft": "Assignment moved to draft.",
   "assignmentStatusUpdated": "Assignment status updated.",
+  "instructorAssignmentDetailHeroSubtitle": "Track the grading queue, review instructions, and manage assignment flow without losing context.",
+  "instructorAssignmentDetailSnapshotTitle": "Assignment Snapshot",
+  "instructorAssignmentDetailSnapshotSubtitle": "Keep the core academic signals visible while you review the assignment.",
+  "instructorAssignmentDetailBriefTitle": "Learner-facing Brief",
+  "instructorAssignmentDetailBriefSubtitle": "Review the summary students see before they open the full instructions.",
+  "instructorAssignmentDetailBriefEmpty": "No description was added for this assignment.",
+  "instructorAssignmentDetailWorkflowTitle": "Submission Workflow",
+  "instructorAssignmentDetailWorkflowSubtitle": "Check the release timing, deadline pressure, and late-policy rules at a glance.",
+  "instructorAssignmentDetailSubmissionsTitle": "Submission Queue",
+  "instructorAssignmentDetailSubmissionsSubtitle": "Search the current queue, isolate late work, and jump into grading with less friction.",
+  "instructorAssignmentDetailSearchStudents": "Search by student name",
+  "instructorAssignmentDetailNoSubmissionsTitle": "No submissions match this view",
+  "instructorAssignmentDetailNoSubmissionsSubtitle": "Try another search or filter, or pull to refresh the assignment queue.",
+  "instructorAssignmentDetailAttempt": "Attempt",
+  "instructorAssignmentDetailSubmissionDetailsTitle": "Submission Details",
+  "instructorAssignmentDetailSubmissionSnapshot": "Submission Snapshot",
+  "instructorAssignmentDetailSubmittedAt": "Submitted At",
+  "instructorAssignmentDetailCurrentScore": "Current Score",
+  "instructorAssignmentDetailSubmissionText": "Submission Text",
+  "instructorAssignmentDetailSubmissionLink": "Submission Link",
+  "instructorAssignmentDetailSubmittedFile": "Submitted File",
+  "instructorAssignmentDetailNoSubmissionContent": "No submission content was included with this attempt.",
+  "instructorAssignmentDetailOpenLink": "Open Link",
+  "instructorAssignmentDetailActionEditGrade": "Edit Grade",
+  "instructorAssignmentDetailResubmit": "Resubmit",
+  "instructorAssignmentDetailReturned": "Returned",
+  "instructorAssignmentDetailPreview": "Preview",
   "assignmentEmptyManagementMessage": "Assignments for the selected course will appear here once they are created.",
   "assignmentNotConfigured": "Not configured",
   "assignmentNoDueDate": "No due date",

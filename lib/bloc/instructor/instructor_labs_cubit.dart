@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../common/bloc/route_request_controller.dart';
+import '../../common/service_error.dart';
 import '../../models/instructor/teaching_course_model.dart';
 import '../../models/core/enums/lab_enums.dart' as api;
 import '../../models/labs/lab_model.dart';
@@ -181,16 +182,37 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState>
   }
 
   Future<String?> createLab(Map<String, dynamic> data) async {
+    final result = await createLabRecord(data);
+    if (!result.isSuccess) {
+      return result.error?.message ?? 'Failed to create lab';
+    }
+    return null;
+  }
+
+  Future<ServiceResult<LabModel>> createLabRecord(
+    Map<String, dynamic> data,
+  ) async {
     final requestId = _mutationRequest.begin();
     final result = await _labService.create(
       data,
       cancelToken: _mutationRequest.token,
     );
     if (!isRequestCurrent(_mutationRequest, requestId)) {
-      return null;
+      return ServiceResult<LabModel>.failure(
+        const ServiceError(
+          type: ServiceErrorType.server,
+          message: 'Lab save request was interrupted',
+        ),
+      );
     }
     if (!result.isSuccess || result.data == null) {
-      return result.error?.message ?? 'Failed to create lab';
+      return ServiceResult<LabModel>.failure(
+        result.error ??
+            const ServiceError(
+              type: ServiceErrorType.server,
+              message: 'Failed to create lab',
+            ),
+      );
     }
 
     final created = result.data!;
@@ -199,10 +221,21 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState>
       _emitLoaded();
     }
 
-    return null;
+    return ServiceResult<LabModel>.success(created);
   }
 
   Future<String?> updateLab(String labId, Map<String, dynamic> data) async {
+    final result = await updateLabRecord(labId, data);
+    if (!result.isSuccess) {
+      return result.error?.message ?? 'Failed to update lab';
+    }
+    return null;
+  }
+
+  Future<ServiceResult<LabModel>> updateLabRecord(
+    String labId,
+    Map<String, dynamic> data,
+  ) async {
     final id = int.tryParse(labId) ?? labId;
     final requestId = _mutationRequest.begin();
     final result = await _labService.update(
@@ -211,10 +244,21 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState>
       cancelToken: _mutationRequest.token,
     );
     if (!isRequestCurrent(_mutationRequest, requestId)) {
-      return null;
+      return ServiceResult<LabModel>.failure(
+        const ServiceError(
+          type: ServiceErrorType.server,
+          message: 'Lab update request was interrupted',
+        ),
+      );
     }
     if (!result.isSuccess || result.data == null) {
-      return result.error?.message ?? 'Failed to update lab';
+      return ServiceResult<LabModel>.failure(
+        result.error ??
+            const ServiceError(
+              type: ServiceErrorType.server,
+              message: 'Failed to update lab',
+            ),
+      );
     }
 
     final updated = result.data!;
@@ -228,7 +272,7 @@ class InstructorLabsCubit extends Cubit<InstructorLabsState>
         .toList(growable: false);
     _emitLoaded();
 
-    return null;
+    return ServiceResult<LabModel>.success(updated);
   }
 
   Future<String?> deleteLab(String labId) async {

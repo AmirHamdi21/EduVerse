@@ -139,7 +139,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
               key: _scaffoldKey,
               backgroundColor: TAColors.scaffoldColor(isDark),
               drawer: TADrawer(currentRoute: '/ta/assignments', isDark: isDark),
-              floatingActionButton: widget.embedded || _selectedCourseId == null
+              floatingActionButton: widget.embedded
                   ? null
                   : FloatingActionButton.extended(
                       onPressed: () => _openAssignmentEditor(context),
@@ -275,7 +275,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
             child: _buildEmptyAssignmentsState(
               isDark,
               l10n,
-              onCreate: _selectedCourseId == null
+              onCreate: _resolveEditorCourseId(context) == null
                   ? null
                   : () => _openAssignmentEditor(context),
             ),
@@ -608,9 +608,8 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
         break;
       }
     }
-    final selectedCourseValue = courses.any(
-      (course) => course.courseId == _selectedCourseId,
-    )
+    final selectedCourseValue =
+        courses.any((course) => course.courseId == _selectedCourseId)
         ? _selectedCourseId
         : null;
 
@@ -664,10 +663,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
               _buildModernDropdown<_TAAssignmentStateFilter>(
                 isDark: isDark,
                 label: l10n.status,
-                selectedLabel: _statusFilterLabel(
-                  l10n,
-                  _selectedStatusFilter,
-                ),
+                selectedLabel: _statusFilterLabel(l10n, _selectedStatusFilter),
                 value: _selectedStatusFilter,
                 icon: Icons.tune_rounded,
                 menuMaxHeight: r.screenHeight * 0.45,
@@ -723,14 +719,14 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
                         ),
                         ...courses.map((course) {
                           return DropdownMenuItem<int?>(
-                              value: course.courseId,
-                              child: Text(
-                                '${course.course.code} • ${course.course.name}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            );
-                          }),
+                            value: course.courseId,
+                            child: Text(
+                              '${course.course.code} • ${course.course.name}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          );
+                        }),
                       ],
                       onChanged: (value) {
                         setState(() => _selectedCourseId = value);
@@ -1284,7 +1280,7 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     BuildContext context, {
     AssignmentModel? assignment,
   }) async {
-    final courseId = _selectedCourseId ?? assignment?.courseId;
+    final courseId = _resolveEditorCourseId(context, assignment: assignment);
     if (courseId == null) {
       return;
     }
@@ -1303,8 +1299,25 @@ class _TAAssignmentsScreenState extends State<TAAssignmentsScreen> {
     );
 
     if (result == true && mounted) {
-      await cubit.fetchCourseAssignments(courseId);
+      await cubit.fetchCourseAssignments(_selectedCourseId);
     }
+  }
+
+  int? _resolveEditorCourseId(
+    BuildContext context, {
+    AssignmentModel? assignment,
+  }) {
+    final directCourseId = _selectedCourseId ?? assignment?.courseId;
+    if (directCourseId != null) {
+      return directCourseId;
+    }
+
+    final courses = _coursesFromState(context.read<TACoursesCubit>().state);
+    if (courses.isEmpty) {
+      return null;
+    }
+
+    return courses.first.courseId;
   }
 
   Future<void> _showAssignmentActions(

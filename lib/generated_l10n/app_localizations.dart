@@ -12908,6 +12908,210 @@ abstract class AppLocalizations {
   /// **'Upload TA-only support files for this lab. Flutter currently supports uploading here, but it does not list previously uploaded TA materials yet.'**
   String get instructorLabMaterialSubtitle;
 
+  /// No description provided for @instructorLabDetailErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load this lab'**
+  String get instructorLabDetailErrorTitle;
+
+  /// No description provided for @instructorLabDetailHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the lab brief, monitor submissions, and keep attendance and instructions moving from one focused workspace.'**
+  String get instructorLabDetailHeroSubtitle;
+
+  /// No description provided for @instructorLabDetailSnapshotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lab Snapshot'**
+  String get instructorLabDetailSnapshotTitle;
+
+  /// No description provided for @instructorLabDetailSnapshotSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the core teaching signals visible while you review the lab configuration and current activity.'**
+  String get instructorLabDetailSnapshotSubtitle;
+
+  /// No description provided for @instructorLabDetailBriefTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learner-facing Brief'**
+  String get instructorLabDetailBriefTitle;
+
+  /// No description provided for @instructorLabDetailBriefSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the summary students see before opening the complete lab instructions.'**
+  String get instructorLabDetailBriefSubtitle;
+
+  /// No description provided for @instructorLabDetailBriefEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No description was added for this lab.'**
+  String get instructorLabDetailBriefEmpty;
+
+  /// No description provided for @instructorLabDetailWorkflowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Workflow'**
+  String get instructorLabDetailWorkflowTitle;
+
+  /// No description provided for @instructorLabDetailWorkflowSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check scoring, visibility, and submission requirements without losing track of the lab setup.'**
+  String get instructorLabDetailWorkflowSubtitle;
+
+  /// No description provided for @instructorLabDetailSubmissionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Queue'**
+  String get instructorLabDetailSubmissionsTitle;
+
+  /// No description provided for @instructorLabDetailSubmissionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search student work, isolate late attempts, and jump into grading with less friction.'**
+  String get instructorLabDetailSubmissionsSubtitle;
+
+  /// No description provided for @instructorLabDetailSearchStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by student name'**
+  String get instructorLabDetailSearchStudents;
+
+  /// No description provided for @instructorLabDetailNoSubmissionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No submissions match this view'**
+  String get instructorLabDetailNoSubmissionsTitle;
+
+  /// No description provided for @instructorLabDetailNoSubmissionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another search or filter, or refresh the submission queue.'**
+  String get instructorLabDetailNoSubmissionsSubtitle;
+
+  /// No description provided for @instructorLabDetailAttendanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance Board'**
+  String get instructorLabDetailAttendanceTitle;
+
+  /// No description provided for @instructorLabDetailAttendanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track who attended this lab session and update each learner\'s status without leaving the page.'**
+  String get instructorLabDetailAttendanceSubtitle;
+
+  /// No description provided for @instructorLabDetailNoAttendanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No attendance records yet'**
+  String get instructorLabDetailNoAttendanceTitle;
+
+  /// No description provided for @instructorLabDetailNoAttendanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Attendance will appear here once records are created for this lab.'**
+  String get instructorLabDetailNoAttendanceSubtitle;
+
+  /// No description provided for @instructorLabDetailInstructionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Instruction Workspace'**
+  String get instructorLabDetailInstructionsTitle;
+
+  /// No description provided for @instructorLabDetailInstructionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep text guidance and supporting files structured in one place for the current lab.'**
+  String get instructorLabDetailInstructionsSubtitle;
+
+  /// No description provided for @instructorLabDetailInstructionComposerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Instruction'**
+  String get instructorLabDetailInstructionComposerTitle;
+
+  /// No description provided for @instructorLabDetailInstructionComposerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a new text instruction or upload a supporting file without leaving the lab workflow.'**
+  String get instructorLabDetailInstructionComposerSubtitle;
+
+  /// No description provided for @instructorLabDetailInstructionHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a markdown-ready instruction for this lab'**
+  String get instructorLabDetailInstructionHint;
+
+  /// No description provided for @instructorLabDetailAddInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Instruction'**
+  String get instructorLabDetailAddInstruction;
+
+  /// No description provided for @instructorLabDetailInstructionOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Step'**
+  String get instructorLabDetailInstructionOrder;
+
+  /// No description provided for @instructorLabDetailTextInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Text instruction'**
+  String get instructorLabDetailTextInstruction;
+
+  /// No description provided for @instructorLabDetailNoInstructionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No instructions are available for this lab yet.'**
+  String get instructorLabDetailNoInstructionsSubtitle;
+
+  /// No description provided for @instructorLabDetailSubmissionSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Snapshot'**
+  String get instructorLabDetailSubmissionSnapshot;
+
+  /// No description provided for @instructorLabDetailSubmittedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted At'**
+  String get instructorLabDetailSubmittedAt;
+
+  /// No description provided for @instructorLabDetailCurrentScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Score'**
+  String get instructorLabDetailCurrentScore;
+
+  /// No description provided for @instructorLabDetailSubmissionText.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Text'**
+  String get instructorLabDetailSubmissionText;
+
+  /// No description provided for @instructorLabDetailSubmittedFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted File'**
+  String get instructorLabDetailSubmittedFile;
+
+  /// No description provided for @instructorLabDetailNoSubmissionContent.
+  ///
+  /// In en, this message translates to:
+  /// **'No submission content was included with this attempt.'**
+  String get instructorLabDetailNoSubmissionContent;
+
+  /// No description provided for @instructorLabDetailPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get instructorLabDetailPreview;
+
   /// No description provided for @taLabUpload.
   ///
   /// In en, this message translates to:
@@ -13460,6 +13664,18 @@ abstract class AppLocalizations {
   /// **'Configure grading and submission limits without wasting space.'**
   String get labEditorRulesSectionSubtitle;
 
+  /// No description provided for @labEditorInstructionSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Instruction Files'**
+  String get labEditorInstructionSection;
+
+  /// No description provided for @labEditorInstructionSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue starter files, rubrics, and support assets before or after saving the lab.'**
+  String get labEditorInstructionSectionSubtitle;
+
   /// No description provided for @labEditorTitleHint.
   ///
   /// In en, this message translates to:
@@ -13603,6 +13819,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Some submissions may still have scores above the new max score. Those scores are not adjusted automatically.'**
   String get labEditorMaxScoreWarning;
+
+  /// No description provided for @labEditorInstructionFilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload instruction files'**
+  String get labEditorInstructionFilesTitle;
+
+  /// No description provided for @labEditorInstructionFilesPendingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select files now and they will upload right after you save the lab.'**
+  String get labEditorInstructionFilesPendingHint;
+
+  /// No description provided for @labEditorInstructionFilesUploadHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach starter files, rubrics, or reference notes for students.'**
+  String get labEditorInstructionFilesUploadHint;
+
+  /// No description provided for @labEditorInstructionSaveFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Save the lab first to upload this file.'**
+  String get labEditorInstructionSaveFirst;
+
+  /// No description provided for @labEditorInstructionMissingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File no longer exists on disk.'**
+  String get labEditorInstructionMissingFile;
+
+  /// No description provided for @labEditorInstructionDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete instruction file?'**
+  String get labEditorInstructionDeleteTitle;
+
+  /// No description provided for @labEditorInstructionDeleteUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This file cannot be deleted yet. Refresh the lab details and try again.'**
+  String get labEditorInstructionDeleteUnavailable;
+
+  /// No description provided for @labEditorInstructionPendingCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is queued and will upload after the lab is saved.'**
+  String get labEditorInstructionPendingCaption;
+
+  /// No description provided for @labEditorOpenInDrive.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Drive'**
+  String get labEditorOpenInDrive;
+
+  /// No description provided for @labEditorInstructionUploadSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {Uploaded 1 instruction file.} other {Uploaded {count} instruction files.}}'**
+  String labEditorInstructionUploadSuccess(int count);
+
+  /// No description provided for @labEditorInstructionFilesQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {1 instruction file is queued and will upload when you save.} other {{count} instruction files are queued and will upload when you save.}}'**
+  String labEditorInstructionFilesQueued(int count);
+
+  /// No description provided for @labEditorInstructionUploadPartialFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {Lab saved, but 1 instruction file failed to upload{suffix}. Use Retry in the file list.} other {Lab saved, but {count} instruction files failed to upload{suffix}. Use Retry in the file list.}}'**
+  String labEditorInstructionUploadPartialFailure(int count, Object suffix);
+
+  /// No description provided for @labEditorInstructionDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{fileName}\"? This action cannot be undone.'**
+  String labEditorInstructionDeleteMessage(Object fileName);
 
   /// No description provided for @taPerformanceTitle.
   ///
@@ -27004,6 +27298,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Assignment status updated.'**
   String get assignmentStatusUpdated;
+
+  /// No description provided for @instructorAssignmentDetailHeroSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track the grading queue, review instructions, and manage assignment flow without losing context.'**
+  String get instructorAssignmentDetailHeroSubtitle;
+
+  /// No description provided for @instructorAssignmentDetailSnapshotTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assignment Snapshot'**
+  String get instructorAssignmentDetailSnapshotTitle;
+
+  /// No description provided for @instructorAssignmentDetailSnapshotSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep the core academic signals visible while you review the assignment.'**
+  String get instructorAssignmentDetailSnapshotSubtitle;
+
+  /// No description provided for @instructorAssignmentDetailBriefTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learner-facing Brief'**
+  String get instructorAssignmentDetailBriefTitle;
+
+  /// No description provided for @instructorAssignmentDetailBriefSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the summary students see before they open the full instructions.'**
+  String get instructorAssignmentDetailBriefSubtitle;
+
+  /// No description provided for @instructorAssignmentDetailBriefEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No description was added for this assignment.'**
+  String get instructorAssignmentDetailBriefEmpty;
+
+  /// No description provided for @instructorAssignmentDetailWorkflowTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Workflow'**
+  String get instructorAssignmentDetailWorkflowTitle;
+
+  /// No description provided for @instructorAssignmentDetailWorkflowSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Check the release timing, deadline pressure, and late-policy rules at a glance.'**
+  String get instructorAssignmentDetailWorkflowSubtitle;
+
+  /// No description provided for @instructorAssignmentDetailSubmissionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Queue'**
+  String get instructorAssignmentDetailSubmissionsTitle;
+
+  /// No description provided for @instructorAssignmentDetailSubmissionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search the current queue, isolate late work, and jump into grading with less friction.'**
+  String get instructorAssignmentDetailSubmissionsSubtitle;
+
+  /// No description provided for @instructorAssignmentDetailSearchStudents.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by student name'**
+  String get instructorAssignmentDetailSearchStudents;
+
+  /// No description provided for @instructorAssignmentDetailNoSubmissionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No submissions match this view'**
+  String get instructorAssignmentDetailNoSubmissionsTitle;
+
+  /// No description provided for @instructorAssignmentDetailNoSubmissionsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Try another search or filter, or pull to refresh the assignment queue.'**
+  String get instructorAssignmentDetailNoSubmissionsSubtitle;
+
+  /// No description provided for @instructorAssignmentDetailAttempt.
+  ///
+  /// In en, this message translates to:
+  /// **'Attempt'**
+  String get instructorAssignmentDetailAttempt;
+
+  /// No description provided for @instructorAssignmentDetailSubmissionDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Details'**
+  String get instructorAssignmentDetailSubmissionDetailsTitle;
+
+  /// No description provided for @instructorAssignmentDetailSubmissionSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Snapshot'**
+  String get instructorAssignmentDetailSubmissionSnapshot;
+
+  /// No description provided for @instructorAssignmentDetailSubmittedAt.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted At'**
+  String get instructorAssignmentDetailSubmittedAt;
+
+  /// No description provided for @instructorAssignmentDetailCurrentScore.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Score'**
+  String get instructorAssignmentDetailCurrentScore;
+
+  /// No description provided for @instructorAssignmentDetailSubmissionText.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Text'**
+  String get instructorAssignmentDetailSubmissionText;
+
+  /// No description provided for @instructorAssignmentDetailSubmissionLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Submission Link'**
+  String get instructorAssignmentDetailSubmissionLink;
+
+  /// No description provided for @instructorAssignmentDetailSubmittedFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted File'**
+  String get instructorAssignmentDetailSubmittedFile;
+
+  /// No description provided for @instructorAssignmentDetailNoSubmissionContent.
+  ///
+  /// In en, this message translates to:
+  /// **'No submission content was included with this attempt.'**
+  String get instructorAssignmentDetailNoSubmissionContent;
+
+  /// No description provided for @instructorAssignmentDetailOpenLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Link'**
+  String get instructorAssignmentDetailOpenLink;
+
+  /// No description provided for @instructorAssignmentDetailActionEditGrade.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Grade'**
+  String get instructorAssignmentDetailActionEditGrade;
+
+  /// No description provided for @instructorAssignmentDetailResubmit.
+  ///
+  /// In en, this message translates to:
+  /// **'Resubmit'**
+  String get instructorAssignmentDetailResubmit;
+
+  /// No description provided for @instructorAssignmentDetailReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get instructorAssignmentDetailReturned;
+
+  /// No description provided for @instructorAssignmentDetailPreview.
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get instructorAssignmentDetailPreview;
 
   /// No description provided for @assignmentEmptyManagementMessage.
   ///
