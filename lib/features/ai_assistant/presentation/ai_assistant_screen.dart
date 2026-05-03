@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -1264,14 +1265,103 @@ class _AiMessageBubble extends StatelessWidget {
                       ],
                     ),
                   ),
-                Text(
-                  _messageBody(context),
-                  style: TextStyle(
-                    color: textColor,
-                    height: 1.52,
-                    fontSize: 15,
+                if (isUser || !_shouldRenderMarkdown)
+                  Text(
+                    _messageBody(context),
+                    style: TextStyle(
+                      color: textColor,
+                      height: 1.52,
+                      fontSize: 15,
+                    ),
+                  )
+                else
+                  MarkdownBody(
+                    data: _messageBody(context),
+                    selectable: true,
+                    softLineBreak: true,
+                    listItemCrossAxisAlignment:
+                        MarkdownListItemCrossAxisAlignment.start,
+                    styleSheet: MarkdownStyleSheet(
+                      p: TextStyle(
+                        color: textColor,
+                        height: 1.58,
+                        fontSize: 15,
+                      ),
+                      strong: TextStyle(
+                        color: textColor,
+                        height: 1.58,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      em: TextStyle(
+                        color: textColor,
+                        height: 1.58,
+                        fontSize: 15,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      listBullet: TextStyle(
+                        color: roleTheme.primary,
+                        height: 1.55,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      blockquote: TextStyle(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.82)
+                            : const Color(0xFF334155),
+                        height: 1.55,
+                        fontSize: 15,
+                      ),
+                      blockquoteDecoration: BoxDecoration(
+                        color: roleTheme.primary.withValues(alpha: 0.06),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: roleTheme.primary.withValues(alpha: 0.12),
+                        ),
+                      ),
+                      blockquotePadding: const EdgeInsets.all(12),
+                      codeblockDecoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.06)
+                            : const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: roleTheme.primary.withValues(alpha: 0.10),
+                        ),
+                      ),
+                      code: TextStyle(
+                        color: textColor,
+                        fontSize: 14,
+                        fontFamily: 'monospace',
+                      ),
+                      h1: TextStyle(
+                        color: textColor,
+                        fontSize: 20,
+                        height: 1.28,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      h2: TextStyle(
+                        color: textColor,
+                        fontSize: 18,
+                        height: 1.3,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      h3: TextStyle(
+                        color: textColor,
+                        fontSize: 16,
+                        height: 1.35,
+                        fontWeight: FontWeight.w800,
+                      ),
+                      horizontalRuleDecoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(
+                            color: roleTheme.primary.withValues(alpha: 0.14),
+                            width: 1.2,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisSize: MainAxisSize.min,
@@ -1319,6 +1409,18 @@ class _AiMessageBubble extends StatelessWidget {
       return l10n.aiAssistantFailedMessage;
     }
     return message.content.trim();
+  }
+
+  bool get _shouldRenderMarkdown {
+    if (message.isUser) {
+      return false;
+    }
+    final content = message.content;
+    return content.contains('**') ||
+        content.contains('```') ||
+        RegExp(r'(^|\n)\s*[-*]\s+').hasMatch(content) ||
+        RegExp(r'(^|\n)\s*\d+\.\s+').hasMatch(content) ||
+        RegExp(r'(^|\n)\s*#{1,6}\s+').hasMatch(content);
   }
 
   Future<void> _showActions(BuildContext context) async {
@@ -1481,34 +1583,47 @@ class _AssistantLoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ListView(
       padding: const EdgeInsets.all(16),
       children: <Widget>[
         Container(
-          height: 180,
+          height: 126,
           decoration: BoxDecoration(
             gradient: roleTheme.headerGradient,
             borderRadius: BorderRadius.circular(28),
           ),
           child: _LoadingShimmer(
             child: Padding(
-              padding: const EdgeInsets.all(18),
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const <Widget>[
-                  _LoadingBar(width: 220, height: 18),
+                  Row(
+                    children: <Widget>[
+                      _LoadingBar(width: 38, height: 38),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: _LoadingBar(width: double.infinity, height: 16),
+                      ),
+                      SizedBox(width: 10),
+                      _LoadingBar(width: 38, height: 38),
+                      SizedBox(width: 8),
+                      _LoadingBar(width: 38, height: 38),
+                    ],
+                  ),
                   SizedBox(height: 12),
-                  _LoadingBar(width: 300, height: 12),
+                  _LoadingBar(width: 220, height: 12),
                   SizedBox(height: 8),
-                  _LoadingBar(width: 240, height: 12),
+                  _LoadingBar(width: 180, height: 12),
                   Spacer(),
                   Row(
                     children: <Widget>[
-                      _LoadingPill(width: 110),
-                      SizedBox(width: 10),
-                      _LoadingPill(width: 90),
-                      SizedBox(width: 10),
-                      _LoadingPill(width: 120),
+                      _LoadingPill(width: 94),
+                      SizedBox(width: 8),
+                      _LoadingPill(width: 92),
+                      SizedBox(width: 8),
+                      _LoadingPill(width: 88),
                     ],
                   ),
                 ],
@@ -1518,13 +1633,13 @@ class _AssistantLoadingView extends StatelessWidget {
         ),
         const SizedBox(height: 18),
         ...List.generate(
-          4,
+          3,
           (index) => Padding(
             padding: const EdgeInsets.only(bottom: 14),
             child: Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? const Color(0xFF111827) : Colors.white,
                 borderRadius: BorderRadius.circular(26),
                 border: Border.all(
                   color: roleTheme.primary.withValues(alpha: 0.08),

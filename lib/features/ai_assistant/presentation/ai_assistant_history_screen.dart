@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../generated_l10n/app_localizations.dart';
+import '../../../widgets/shared/loading/skeleton_box.dart';
 import '../domain/ai_assistant_models.dart';
 import 'ai_assistant_cubit.dart';
 import 'ai_assistant_role_theme.dart';
@@ -82,6 +83,9 @@ class _AiAssistantHistoryScreenState extends State<AiAssistantHistoryScreen> {
       ),
       body: BlocBuilder<AiAssistantCubit, AiAssistantState>(
         builder: (context, state) {
+          if (state.isBootstrapping) {
+            return _HistoryLoadingView(roleTheme: widget.roleTheme);
+          }
           final filteredEntries = _filteredEntries(state.history);
           final pinnedEntries = filteredEntries
               .where((entry) => entry.isPinned)
@@ -631,7 +635,7 @@ class _HistoryHeroHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
       decoration: BoxDecoration(
         gradient: roleTheme.headerGradient,
         borderRadius: BorderRadius.circular(28),
@@ -684,7 +688,7 @@ class _HistoryHeroHeader extends StatelessWidget {
                           l10n.aiAssistantHistoryHeroTitle,
                           style: const TextStyle(
                             color: Colors.white,
-                            fontSize: 22,
+                            fontSize: 18,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -693,7 +697,7 @@ class _HistoryHeroHeader extends StatelessWidget {
                           l10n.aiAssistantHistoryHeroSubtitle,
                           style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.92),
-                            fontSize: 13,
+                            fontSize: 12,
                             height: 1.35,
                           ),
                         ),
@@ -710,9 +714,9 @@ class _HistoryHeroHeader extends StatelessWidget {
                     crossAxisCount: useFourColumns ? 4 : 2,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                    childAspectRatio: useFourColumns ? 1.35 : 2.4,
+                    mainAxisSpacing: 7,
+                    crossAxisSpacing: 7,
+                    childAspectRatio: useFourColumns ? 1.7 : 2.5,
                     children: <Widget>[
                       _HeroStatTile(
                         icon: Icons.chat_bubble_outline_rounded,
@@ -760,7 +764,7 @@ class _HeroStatTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.fromLTRB(10, 9, 10, 9),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(18),
@@ -770,13 +774,13 @@ class _HeroStatTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(icon, color: Colors.white, size: 12),
-          const SizedBox(height: 6),
+          Icon(icon, color: Colors.white, size: 11),
+          const SizedBox(height: 4),
           Text(
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 14,
+              fontSize: 13,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -944,6 +948,263 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
+class _HistoryLoadingView extends StatelessWidget {
+  const _HistoryLoadingView({required this.roleTheme});
+
+  final AiAssistantRoleTheme roleTheme;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 104),
+      children: <Widget>[
+        Container(
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+          decoration: BoxDecoration(
+            gradient: roleTheme.headerGradient,
+            borderRadius: BorderRadius.circular(28),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  SkeletonBox(
+                    isDark: false,
+                    width: 40,
+                    height: 40,
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SkeletonBox(
+                          isDark: false,
+                          width: 170,
+                          height: 16,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        const SizedBox(height: 8),
+                        SkeletonBox(
+                          isDark: false,
+                          width: double.infinity,
+                          height: 12,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        const SizedBox(height: 8),
+                        SkeletonBox(
+                          isDark: false,
+                          width: 210,
+                          height: 12,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              GridView.count(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                mainAxisSpacing: 7,
+                crossAxisSpacing: 7,
+                childAspectRatio: 2.95,
+                children: List<Widget>.generate(
+                  4,
+                  (_) => Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.12),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        SkeletonBox(
+                          isDark: false,
+                          width: 16,
+                          height: 16,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        const SizedBox(height: 6),
+                        SkeletonBox(
+                          isDark: false,
+                          width: 24,
+                          height: 12,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        const SizedBox(height: 4),
+                        SkeletonBox(
+                          isDark: false,
+                          width: 72,
+                          height: 10,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF111827) : Colors.white,
+            borderRadius: BorderRadius.circular(26),
+            border: Border.all(
+              color: roleTheme.primary.withValues(alpha: 0.10),
+            ),
+          ),
+          child: Column(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Expanded(
+                    child: SkeletonBox(
+                      isDark: isDark,
+                      height: 52,
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SkeletonBox(
+                      isDark: isDark,
+                      height: 52,
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        ...List<Widget>.generate(
+          3,
+          (_) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF111827) : Colors.white,
+                borderRadius: BorderRadius.circular(26),
+                border: Border.all(
+                  color: roleTheme.primary.withValues(alpha: 0.10),
+                ),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: roleTheme.primary.withValues(alpha: 0.06),
+                    blurRadius: 20,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(999),
+                      child: SizedBox(
+                        height: 5,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: roleTheme.headerGradient,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SkeletonBox(
+                          isDark: isDark,
+                          width: 50,
+                          height: 50,
+                          borderRadius: BorderRadius.circular(18),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              SkeletonBox(
+                                isDark: isDark,
+                                width: 150,
+                                height: 16,
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              const SizedBox(height: 10),
+                              SkeletonBox(
+                                isDark: isDark,
+                                width: double.infinity,
+                                height: 12,
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              const SizedBox(height: 8),
+                              SkeletonBox(
+                                isDark: isDark,
+                                width: 190,
+                                height: 12,
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: <Widget>[
+                                  SkeletonBox(
+                                    isDark: isDark,
+                                    width: 68,
+                                    height: 28,
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                  SkeletonBox(
+                                    isDark: isDark,
+                                    width: 120,
+                                    height: 28,
+                                    borderRadius: BorderRadius.circular(999),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        SkeletonBox(
+                          isDark: isDark,
+                          width: 42,
+                          height: 42,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _HistoryTile extends StatelessWidget {
   const _HistoryTile({
     required this.entry,
@@ -987,15 +1248,16 @@ class _HistoryTile extends StatelessWidget {
           ),
           child: Column(
             children: <Widget>[
-              Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 14),
-                  height: 5,
-                  decoration: BoxDecoration(
-                    gradient: roleTheme.headerGradient,
-                    borderRadius: const BorderRadius.vertical(
-                      bottom: Radius.circular(999),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(999),
+                  child: SizedBox(
+                    height: 5,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: roleTheme.headerGradient,
+                      ),
                     ),
                   ),
                 ),
