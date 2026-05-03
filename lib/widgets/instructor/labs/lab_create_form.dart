@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../models/core/enums/lab_enums.dart' as api;
+import '../../../models/core/drive_file_model.dart';
+import '../../../models/core/lab_instruction_model.dart';
 import '../../../models/instructor/teaching_course_model.dart';
 import '../../../models/labs/lab_model.dart';
+import '../../../services/api/lab_service.dart';
 import '../../ta/shared/ta_colors.dart';
 import '../shared/instructor_colors.dart';
+import 'lab_editor_instruction_file_uploader.dart';
 
 enum LabComposerRole { instructor, ta }
 
@@ -14,23 +18,27 @@ class LabCreateForm extends StatefulWidget {
   const LabCreateForm({
     super.key,
     required this.courses,
+    required this.labService,
     required this.onSubmit,
     this.existingLab,
+    this.activeLab,
     this.submitting = false,
     this.role = LabComposerRole.instructor,
   });
 
   final List<TeachingCourseModel> courses;
+  final LabService labService;
   final ValueChanged<Map<String, dynamic>> onSubmit;
   final LabModel? existingLab;
+  final LabModel? activeLab;
   final bool submitting;
   final LabComposerRole role;
 
   @override
-  State<LabCreateForm> createState() => _LabCreateFormState();
+  State<LabCreateForm> createState() => LabCreateFormState();
 }
 
-class _LabCreateFormState extends State<LabCreateForm> {
+class LabCreateFormState extends State<LabCreateForm> {
   static const List<String> _supportedTypes = <String>[
     'pdf',
     'doc',
@@ -45,6 +53,7 @@ class _LabCreateFormState extends State<LabCreateForm> {
   ];
 
   final _formKey = GlobalKey<FormState>();
+  final _uploaderKey = GlobalKey<LabEditorInstructionFileUploaderState>();
 
   late final TextEditingController _titleController;
   late final TextEditingController _descriptionController;
@@ -57,6 +66,8 @@ class _LabCreateFormState extends State<LabCreateForm> {
   DateTime? _availableFrom;
   DateTime? _dueDate;
   api.LabStatus _status = api.LabStatus.draft;
+  List<DriveFileModel> _uploadedInstructionFiles = <DriveFileModel>[];
+  List<LabInstructionModel> _uploadedInstructions = <LabInstructionModel>[];
 
   bool get _isTA => widget.role == LabComposerRole.ta;
 
@@ -113,6 +124,12 @@ class _LabCreateFormState extends State<LabCreateForm> {
     _maxFileSizeController = TextEditingController(
       text: initial?.maxFileSizeMb?.toString() ?? '',
     )..addListener(_refreshView);
+    _uploadedInstructionFiles = List<DriveFileModel>.from(
+      initial?.instructionFiles ?? const <DriveFileModel>[],
+    );
+    _uploadedInstructions = List<LabInstructionModel>.from(
+      initial?.instructions ?? const <LabInstructionModel>[],
+    );
 
     _courseId = initial?.courseId;
     if (_courseId == null && widget.courses.isNotEmpty) {
@@ -124,6 +141,22 @@ class _LabCreateFormState extends State<LabCreateForm> {
     _status = initial?.status == api.LabStatus.published
         ? api.LabStatus.published
         : api.LabStatus.draft;
+  }
+
+  int get _effectiveLabId =>
+      widget.activeLab?.labId ??
+      widget.existingLab?.labId ??
+      int.tryParse(widget.activeLab?.id ?? widget.existingLab?.id ?? '') ??
+      0;
+
+  Future<PendingLabInstructionUploadResult> uploadPendingInstructionFiles(
+    int labId,
+  ) async {
+    final uploaderState = _uploaderKey.currentState;
+    if (uploaderState == null) {
+      return const PendingLabInstructionUploadResult();
+    }
+    return uploaderState.uploadPendingFiles(labId);
   }
 
   @override
@@ -147,6 +180,20 @@ class _LabCreateFormState extends State<LabCreateForm> {
       ..removeListener(_refreshView)
       ..dispose();
     super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant LabCreateForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final nextActiveLab = widget.activeLab;
+    if (nextActiveLab != null && nextActiveLab != oldWidget.activeLab) {
+      _uploadedInstructionFiles = List<DriveFileModel>.from(
+        nextActiveLab.instructionFiles,
+      );
+      _uploadedInstructions = List<LabInstructionModel>.from(
+        nextActiveLab.instructions,
+      );
+    }
   }
 
   @override
@@ -332,6 +379,29 @@ class _LabCreateFormState extends State<LabCreateForm> {
                     ),
                   ],
                 ],
+              ),
+            ),
+            _LabSectionCard(
+              isDark: isDark,
+              accentColor: _primary,
+              title: l10n.labEditorInstructionSection,
+              subtitle: l10n.labEditorInstructionSectionSubtitle,
+              icon: Icons.attach_file_rounded,
+              child: LabEditorInstructionFileUploader(
+                key: _uploaderKey,
+                labId: _effectiveLabId,
+                labService: widget.labService,
+                initialFiles: _uploadedInstructionFiles,
+                initialInstructions: _uploadedInstructions,
+                useTAColors: _isTA,
+                onFilesChanged: (files) {
+                  if (!mounted) {
+                    return;
+                  }
+                  setState(() {
+                    _uploadedInstructionFiles = List<DriveFileModel>.from(files);
+                  });
+                },
               ),
             ),
             const SizedBox(height: 8),

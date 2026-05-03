@@ -7089,6 +7089,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Configure grading and submission limits without wasting space.';
 
   @override
+  String get labEditorInstructionSection => 'Instruction Files';
+
+  @override
+  String get labEditorInstructionSectionSubtitle =>
+      'Queue starter files, rubrics, and support assets before or after saving the lab.';
+
+  @override
   String get labEditorTitleHint => 'Enter a clear lab title';
 
   @override
@@ -7172,6 +7179,80 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get labEditorMaxScoreWarning =>
       'Some submissions may still have scores above the new max score. Those scores are not adjusted automatically.';
+
+  @override
+  String get labEditorInstructionFilesTitle => 'Upload instruction files';
+
+  @override
+  String get labEditorInstructionFilesPendingHint =>
+      'Select files now and they will upload right after you save the lab.';
+
+  @override
+  String get labEditorInstructionFilesUploadHint =>
+      'Attach starter files, rubrics, or reference notes for students.';
+
+  @override
+  String get labEditorInstructionSaveFirst =>
+      'Save the lab first to upload this file.';
+
+  @override
+  String get labEditorInstructionMissingFile =>
+      'File no longer exists on disk.';
+
+  @override
+  String get labEditorInstructionDeleteTitle => 'Delete instruction file?';
+
+  @override
+  String get labEditorInstructionDeleteUnavailable =>
+      'This file cannot be deleted yet. Refresh the lab details and try again.';
+
+  @override
+  String get labEditorInstructionPendingCaption =>
+      'This file is queued and will upload after the lab is saved.';
+
+  @override
+  String get labEditorOpenInDrive => 'Open in Drive';
+
+  @override
+  String labEditorInstructionUploadSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Uploaded $count instruction files.',
+      one: 'Uploaded 1 instruction file.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String labEditorInstructionFilesQueued(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count instruction files are queued and will upload when you save.',
+      one: '1 instruction file is queued and will upload when you save.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String labEditorInstructionUploadPartialFailure(int count, Object suffix) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Lab saved, but $count instruction files failed to upload$suffix. Use Retry in the file list.',
+      one:
+          'Lab saved, but 1 instruction file failed to upload$suffix. Use Retry in the file list.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String labEditorInstructionDeleteMessage(Object fileName) {
+    return 'Are you sure you want to delete \"$fileName\"? This action cannot be undone.';
+  }
 
   @override
   String get taPerformanceTitle => 'Student Performance';

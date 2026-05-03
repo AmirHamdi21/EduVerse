@@ -7063,6 +7063,13 @@ class AppLocalizationsAr extends AppLocalizations {
       'اضبط التقييم وحدود التسليم بشكل منظم وواضح.';
 
   @override
+  String get labEditorInstructionSection => 'ملفات التعليمات';
+
+  @override
+  String get labEditorInstructionSectionSubtitle =>
+      'جهّز ملفات البداية والروبرك والملفات المساندة قبل حفظ المختبر أو بعده.';
+
+  @override
   String get labEditorTitleHint => 'أدخل عنوانًا واضحًا للمختبر';
 
   @override
@@ -7143,6 +7150,79 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get labEditorMaxScoreWarning =>
       'قد تظل بعض التسليمات تحتوي على درجات أعلى من الدرجة القصوى الجديدة. هذه الدرجات لا يتم تعديلها تلقائيًا.';
+
+  @override
+  String get labEditorInstructionFilesTitle => 'رفع ملفات التعليمات';
+
+  @override
+  String get labEditorInstructionFilesPendingHint =>
+      'اختر الملفات الآن وسيتم رفعها مباشرة بعد حفظ المختبر.';
+
+  @override
+  String get labEditorInstructionFilesUploadHint =>
+      'أرفق ملفات البداية أو معايير التقييم أو الملاحظات المرجعية للطلاب.';
+
+  @override
+  String get labEditorInstructionSaveFirst =>
+      'احفظ المختبر أولاً حتى تتمكن من رفع هذا الملف.';
+
+  @override
+  String get labEditorInstructionMissingFile =>
+      'الملف لم يعد موجودًا على الجهاز.';
+
+  @override
+  String get labEditorInstructionDeleteTitle => 'حذف ملف التعليمات؟';
+
+  @override
+  String get labEditorInstructionDeleteUnavailable =>
+      'لا يمكن حذف هذا الملف الآن. حدّث تفاصيل المختبر ثم حاول مرة أخرى.';
+
+  @override
+  String get labEditorInstructionPendingCaption =>
+      'هذا الملف في قائمة الانتظار وسيتم رفعه بعد حفظ المختبر.';
+
+  @override
+  String get labEditorOpenInDrive => 'فتح في درايف';
+
+  @override
+  String labEditorInstructionUploadSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم رفع $count من ملفات التعليمات.',
+      one: 'تم رفع ملف تعليمات واحد.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String labEditorInstructionFilesQueued(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تمت إضافة $count من ملفات التعليمات وسيتم رفعها عند الحفظ.',
+      one: 'تمت إضافة ملف تعليمات واحد وسيتم رفعه عند الحفظ.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String labEditorInstructionUploadPartialFailure(int count, Object suffix) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'تم حفظ المختبر، لكن فشل رفع $count من ملفات التعليمات$suffix. استخدم إعادة المحاولة من قائمة الملفات.',
+      one:
+          'تم حفظ المختبر، لكن فشل رفع ملف تعليمات واحد$suffix. استخدم إعادة المحاولة من قائمة الملفات.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String labEditorInstructionDeleteMessage(Object fileName) {
+    return 'هل أنت متأكد أنك تريد حذف \"$fileName\"؟ لا يمكن التراجع عن هذا الإجراء.';
+  }
 
   @override
   String get taPerformanceTitle => 'أداء الطلاب';

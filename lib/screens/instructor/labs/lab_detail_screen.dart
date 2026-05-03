@@ -3506,22 +3506,24 @@ class _LabDetailViewState extends State<_LabDetailView>
     ];
     final messenger = ScaffoldMessenger.of(context);
 
-    final result = await Navigator.of(context).push<Map<String, dynamic>>(
-      MaterialPageRoute<Map<String, dynamic>>(
+    final result = await Navigator.of(context).push<LabModel>(
+      MaterialPageRoute<LabModel>(
         builder: (_) => LabEditorScreen(
           role: LabComposerRole.instructor,
           courses: courseOptions,
+          labService: widget.labService,
           existingLab: lab,
           onSave: (payload) async {
             final result = await widget.labService.update(
               lab.id.isNotEmpty ? lab.id : lab.labId,
               payload,
             );
-
-            if (!result.isSuccess) {
-              return result.error?.message ?? l10n.taLabPermissionEditDenied;
-            }
-            return null;
+            return LabEditorSaveResult(
+              lab: result.data,
+              errorMessage: result.isSuccess
+                  ? null
+                  : (result.error?.message ?? l10n.taLabPermissionEditDenied),
+            );
           },
         ),
       ),
@@ -3533,7 +3535,7 @@ class _LabDetailViewState extends State<_LabDetailView>
 
     messenger.showSnackBar(
       SnackBar(
-        content: Text(_labSavedMessage(l10n, result['status'])),
+        content: Text(_labSavedMessage(l10n, result.status.value)),
         behavior: SnackBarBehavior.floating,
       ),
     );

@@ -2737,6 +2737,8 @@
   "labEditorScheduleSectionSubtitle": "Control when the lab opens and when it is due.",
   "labEditorRulesSection": "Scoring & Rules",
   "labEditorRulesSectionSubtitle": "Configure grading and submission limits without wasting space.",
+  "labEditorInstructionSection": "Instruction Files",
+  "labEditorInstructionSectionSubtitle": "Queue starter files, rubrics, and support assets before or after saving the lab.",
   "labEditorTitleHint": "Enter a clear lab title",
   "labEditorCourseHint": "Choose the teaching course for this lab",
   "labEditorDescriptionHint": "Summarize the task, expected output, or focus of this lab.",
@@ -2766,6 +2768,46 @@
   },
   "labEditorPastDueWarning": "This lab's due date is already in the past.",
   "labEditorMaxScoreWarning": "Some submissions may still have scores above the new max score. Those scores are not adjusted automatically.",
+  "labEditorInstructionFilesTitle": "Upload instruction files",
+  "labEditorInstructionFilesPendingHint": "Select files now and they will upload right after you save the lab.",
+  "labEditorInstructionFilesUploadHint": "Attach starter files, rubrics, or reference notes for students.",
+  "labEditorInstructionSaveFirst": "Save the lab first to upload this file.",
+  "labEditorInstructionMissingFile": "File no longer exists on disk.",
+  "labEditorInstructionDeleteTitle": "Delete instruction file?",
+  "labEditorInstructionDeleteUnavailable": "This file cannot be deleted yet. Refresh the lab details and try again.",
+  "labEditorInstructionPendingCaption": "This file is queued and will upload after the lab is saved.",
+  "labEditorOpenInDrive": "Open in Drive",
+  "labEditorInstructionUploadSuccess": "{count, plural, one {Uploaded 1 instruction file.} other {Uploaded {count} instruction files.}}",
+  "@labEditorInstructionUploadSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labEditorInstructionFilesQueued": "{count, plural, one {1 instruction file is queued and will upload when you save.} other {{count} instruction files are queued and will upload when you save.}}",
+  "@labEditorInstructionFilesQueued": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labEditorInstructionUploadPartialFailure": "{count, plural, one {Lab saved, but 1 instruction file failed to upload{suffix}. Use Retry in the file list.} other {Lab saved, but {count} instruction files failed to upload{suffix}. Use Retry in the file list.}}",
+  "@labEditorInstructionUploadPartialFailure": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "suffix": {}
+    }
+  },
+  "labEditorInstructionDeleteMessage": "Are you sure you want to delete \"{fileName}\"? This action cannot be undone.",
+  "@labEditorInstructionDeleteMessage": {
+    "placeholders": {
+      "fileName": {}
+    }
+  },
 
   "taPerformanceTitle": "Student Performance",
   "taPerformanceSubtitle": "Monitor lab progress and identify students needing assistance",

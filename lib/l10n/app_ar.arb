@@ -2612,6 +2612,8 @@
   "labEditorScheduleSectionSubtitle": "تحكم في وقت فتح المختبر وموعد استحقاقه.",
   "labEditorRulesSection": "الدرجات والقواعد",
   "labEditorRulesSectionSubtitle": "اضبط التقييم وحدود التسليم بشكل منظم وواضح.",
+  "labEditorInstructionSection": "ملفات التعليمات",
+  "labEditorInstructionSectionSubtitle": "جهّز ملفات البداية والروبرك والملفات المساندة قبل حفظ المختبر أو بعده.",
   "labEditorTitleHint": "أدخل عنوانًا واضحًا للمختبر",
   "labEditorCourseHint": "اختر المقرر الذي يتبع له هذا المختبر",
   "labEditorDescriptionHint": "لخّص المهمة أو المخرجات المتوقعة أو محور هذا المختبر.",
@@ -2641,6 +2643,46 @@
   },
   "labEditorPastDueWarning": "موعد استحقاق هذا المختبر أصبح في الماضي بالفعل.",
   "labEditorMaxScoreWarning": "قد تظل بعض التسليمات تحتوي على درجات أعلى من الدرجة القصوى الجديدة. هذه الدرجات لا يتم تعديلها تلقائيًا.",
+  "labEditorInstructionFilesTitle": "رفع ملفات التعليمات",
+  "labEditorInstructionFilesPendingHint": "اختر الملفات الآن وسيتم رفعها مباشرة بعد حفظ المختبر.",
+  "labEditorInstructionFilesUploadHint": "أرفق ملفات البداية أو معايير التقييم أو الملاحظات المرجعية للطلاب.",
+  "labEditorInstructionSaveFirst": "احفظ المختبر أولاً حتى تتمكن من رفع هذا الملف.",
+  "labEditorInstructionMissingFile": "الملف لم يعد موجودًا على الجهاز.",
+  "labEditorInstructionDeleteTitle": "حذف ملف التعليمات؟",
+  "labEditorInstructionDeleteUnavailable": "لا يمكن حذف هذا الملف الآن. حدّث تفاصيل المختبر ثم حاول مرة أخرى.",
+  "labEditorInstructionPendingCaption": "هذا الملف في قائمة الانتظار وسيتم رفعه بعد حفظ المختبر.",
+  "labEditorOpenInDrive": "فتح في درايف",
+  "labEditorInstructionUploadSuccess": "{count, plural, one {تم رفع ملف تعليمات واحد.} other {تم رفع {count} من ملفات التعليمات.}}",
+  "@labEditorInstructionUploadSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labEditorInstructionFilesQueued": "{count, plural, one {تمت إضافة ملف تعليمات واحد وسيتم رفعه عند الحفظ.} other {تمت إضافة {count} من ملفات التعليمات وسيتم رفعها عند الحفظ.}}",
+  "@labEditorInstructionFilesQueued": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "labEditorInstructionUploadPartialFailure": "{count, plural, one {تم حفظ المختبر، لكن فشل رفع ملف تعليمات واحد{suffix}. استخدم إعادة المحاولة من قائمة الملفات.} other {تم حفظ المختبر، لكن فشل رفع {count} من ملفات التعليمات{suffix}. استخدم إعادة المحاولة من قائمة الملفات.}}",
+  "@labEditorInstructionUploadPartialFailure": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "suffix": {}
+    }
+  },
+  "labEditorInstructionDeleteMessage": "هل أنت متأكد أنك تريد حذف \"{fileName}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+  "@labEditorInstructionDeleteMessage": {
+    "placeholders": {
+      "fileName": {}
+    }
+  },
 
   "taPerformanceTitle": "أداء الطلاب",
   "taPerformanceSubtitle": "مراقبة تقدم المختبر وتحديد الطلاب المحتاجين للمساعدة",

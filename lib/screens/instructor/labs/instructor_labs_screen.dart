@@ -1619,24 +1619,34 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
     LabModel? existingLab,
   }) async {
     final cubit = context.read<InstructorLabsCubit>();
+    final resolvedLabService = LabService(
+      coreApiClient: CoreApiClient(storageService: widget.storageService),
+    );
     final isEdit = existingLab != null;
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context);
-    final result = await Navigator.of(context).push<Map<String, dynamic>>(
-      MaterialPageRoute<Map<String, dynamic>>(
+    final result = await Navigator.of(context).push<LabModel>(
+      MaterialPageRoute<LabModel>(
         builder: (_) => LabEditorScreen(
           role: LabComposerRole.instructor,
           courses: state.teachingCourses,
+          labService: resolvedLabService,
           existingLab: existingLab,
-          onSave: (payload) {
-            return isEdit
-                ? cubit.updateLab(
+          onSave: (payload) async {
+            final result = isEdit
+                ? await cubit.updateLabRecord(
                     existingLab.id.isNotEmpty
                         ? existingLab.id
                         : existingLab.labId.toString(),
                     payload,
                   )
-                : cubit.createLab(payload);
+                : await cubit.createLabRecord(payload);
+            return LabEditorSaveResult(
+              lab: result.data,
+              errorMessage: result.isSuccess
+                  ? null
+                  : (result.error?.message ?? l10n.failed),
+            );
           },
         ),
       ),
@@ -1648,7 +1658,7 @@ class _InstructorLabsViewState extends State<_InstructorLabsView> {
 
     messenger.showSnackBar(
       SnackBar(
-        content: Text(_labSavedMessage(l10n, result['status'])),
+        content: Text(_labSavedMessage(l10n, result.status.value)),
         behavior: SnackBarBehavior.floating,
       ),
     );

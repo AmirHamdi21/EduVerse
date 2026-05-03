@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/service_error.dart';
 import '../../models/core/enums/lab_enums.dart' as api;
 import '../../models/labs/lab_model.dart';
 import '../../services/api/lab_service.dart';
@@ -139,15 +140,31 @@ class TALabsCubit extends Cubit<TALabsState> {
   }
 
   Future<String?> createLab(Map<String, dynamic> data) async {
+    final result = await createLabRecord(data);
+    if (!result.isSuccess) {
+      return result.error?.message ?? 'Failed to create lab';
+    }
+    return null;
+  }
+
+  Future<ServiceResult<LabModel>> createLabRecord(
+    Map<String, dynamic> data,
+  ) async {
     final result = await _labService.create(data);
 
     if (!result.isSuccess || result.data == null) {
-      return result.error?.message ?? 'Failed to create lab';
+      return ServiceResult<LabModel>.failure(
+        result.error ??
+            const ServiceError(
+              type: ServiceErrorType.server,
+              message: 'Failed to create lab',
+            ),
+      );
     }
 
     _cachedLabs = <LabModel>[result.data!, ..._cachedLabs];
     emit(TALabsLoaded(_cachedLabs));
-    return null;
+    return ServiceResult<LabModel>.success(result.data!);
   }
 
   Future<String?> updateLabStatus(dynamic labId, api.LabStatus status) async {

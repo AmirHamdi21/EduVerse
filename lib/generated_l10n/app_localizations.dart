@@ -13664,6 +13664,18 @@ abstract class AppLocalizations {
   /// **'Configure grading and submission limits without wasting space.'**
   String get labEditorRulesSectionSubtitle;
 
+  /// No description provided for @labEditorInstructionSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Instruction Files'**
+  String get labEditorInstructionSection;
+
+  /// No description provided for @labEditorInstructionSectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Queue starter files, rubrics, and support assets before or after saving the lab.'**
+  String get labEditorInstructionSectionSubtitle;
+
   /// No description provided for @labEditorTitleHint.
   ///
   /// In en, this message translates to:
@@ -13807,6 +13819,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Some submissions may still have scores above the new max score. Those scores are not adjusted automatically.'**
   String get labEditorMaxScoreWarning;
+
+  /// No description provided for @labEditorInstructionFilesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload instruction files'**
+  String get labEditorInstructionFilesTitle;
+
+  /// No description provided for @labEditorInstructionFilesPendingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select files now and they will upload right after you save the lab.'**
+  String get labEditorInstructionFilesPendingHint;
+
+  /// No description provided for @labEditorInstructionFilesUploadHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach starter files, rubrics, or reference notes for students.'**
+  String get labEditorInstructionFilesUploadHint;
+
+  /// No description provided for @labEditorInstructionSaveFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Save the lab first to upload this file.'**
+  String get labEditorInstructionSaveFirst;
+
+  /// No description provided for @labEditorInstructionMissingFile.
+  ///
+  /// In en, this message translates to:
+  /// **'File no longer exists on disk.'**
+  String get labEditorInstructionMissingFile;
+
+  /// No description provided for @labEditorInstructionDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete instruction file?'**
+  String get labEditorInstructionDeleteTitle;
+
+  /// No description provided for @labEditorInstructionDeleteUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'This file cannot be deleted yet. Refresh the lab details and try again.'**
+  String get labEditorInstructionDeleteUnavailable;
+
+  /// No description provided for @labEditorInstructionPendingCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'This file is queued and will upload after the lab is saved.'**
+  String get labEditorInstructionPendingCaption;
+
+  /// No description provided for @labEditorOpenInDrive.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Drive'**
+  String get labEditorOpenInDrive;
+
+  /// No description provided for @labEditorInstructionUploadSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {Uploaded 1 instruction file.} other {Uploaded {count} instruction files.}}'**
+  String labEditorInstructionUploadSuccess(int count);
+
+  /// No description provided for @labEditorInstructionFilesQueued.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {1 instruction file is queued and will upload when you save.} other {{count} instruction files are queued and will upload when you save.}}'**
+  String labEditorInstructionFilesQueued(int count);
+
+  /// No description provided for @labEditorInstructionUploadPartialFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one {Lab saved, but 1 instruction file failed to upload{suffix}. Use Retry in the file list.} other {Lab saved, but {count} instruction files failed to upload{suffix}. Use Retry in the file list.}}'**
+  String labEditorInstructionUploadPartialFailure(int count, Object suffix);
+
+  /// No description provided for @labEditorInstructionDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete \"{fileName}\"? This action cannot be undone.'**
+  String labEditorInstructionDeleteMessage(Object fileName);
 
   /// No description provided for @taPerformanceTitle.
   ///
