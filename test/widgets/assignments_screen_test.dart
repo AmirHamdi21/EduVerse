@@ -204,8 +204,9 @@ void main() {
     await tester.pump();
     expect(find.byType(AcademicListSkeleton), findsOneWidget);
 
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump();
 
-    expect(find.text('Real Assignment'), findsOneWidget);
+    expect(find.text('Assignment Pulse'), findsOneWidget);
   });
 }

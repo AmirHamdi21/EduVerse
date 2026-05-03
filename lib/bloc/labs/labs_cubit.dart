@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../common/service_error.dart';
 import '../../models/core/course_model.dart';
 import '../../models/core/enrollment_model.dart';
 import '../../models/core/enums/enrollment_enums.dart';
@@ -56,9 +57,9 @@ class LabsCubit extends Cubit<LabsState> {
       courses,
       preselectedCourseId: preselectedCourseId,
     );
-    final selectedCourse = courses.firstWhere(
-      (course) => course.id == selectedCourseId,
-    );
+    final selectedCourse = selectedCourseId == null
+        ? null
+        : courses.firstWhere((course) => course.id == selectedCourseId);
 
     emit(
       state.copyWith(
@@ -67,6 +68,8 @@ class LabsCubit extends Cubit<LabsState> {
         selectedCourse: selectedCourse,
         isLoading: false,
         clearError: true,
+        clearSelectedCourseId: selectedCourseId == null,
+        clearSelectedCourse: selectedCourse == null,
       ),
     );
 
@@ -74,22 +77,12 @@ class LabsCubit extends Cubit<LabsState> {
   }
 
   Future<void> selectCourse(int? courseId) async {
-    if (courseId == null) {
-      emit(
-        state.copyWith(
-          isLoading: false,
-          labs: const <LabModel>[],
-          clearSelectedCourseId: true,
-          clearSelectedCourse: true,
-        ),
-      );
-      return;
-    }
-
-    final selectedCourse = state.enrolledCourses
-        .where((course) => course.id == courseId)
-        .cast<CourseModel?>()
-        .firstWhere((course) => course != null, orElse: () => null);
+    final selectedCourse = courseId == null
+        ? null
+        : state.enrolledCourses
+              .where((course) => course.id == courseId)
+              .cast<CourseModel?>()
+              .firstWhere((course) => course != null, orElse: () => null);
 
     emit(
       state.copyWith(
@@ -97,10 +90,14 @@ class LabsCubit extends Cubit<LabsState> {
         selectedCourse: selectedCourse,
         isLoading: true,
         clearError: true,
+        clearSelectedCourseId: courseId == null,
+        clearSelectedCourse: selectedCourse == null,
       ),
     );
 
-    final result = await _labService.getAll(courseId: courseId);
+    final result = courseId == null
+        ? await _loadAllCourseLabs()
+        : await _labService.getAll(courseId: courseId);
     if (!result.isSuccess || result.data == null) {
       emit(
         state.copyWith(
@@ -154,7 +151,7 @@ class LabsCubit extends Cubit<LabsState> {
     emit(state.copyWith(clearError: true));
   }
 
-  int _resolveSelectedCourseId(
+  int? _resolveSelectedCourseId(
     List<CourseModel> courses, {
     int? preselectedCourseId,
   }) {
@@ -167,7 +164,37 @@ class LabsCubit extends Cubit<LabsState> {
     if (current != null && courses.any((course) => course.id == current)) {
       return current;
     }
-    return courses.first.id;
+    return null;
+  }
+
+  Future<ServiceResult<List<LabModel>>> _loadAllCourseLabs() async {
+    final futures = state.enrolledCourses.map(
+      (course) => _labService.getAll(courseId: course.id),
+    );
+    final results = await Future.wait(futures);
+
+    for (final result in results) {
+      if (!result.isSuccess || result.data == null) {
+        return ServiceResult<List<LabModel>>.failure(
+          result.error ??
+              const ServiceError(
+                type: ServiceErrorType.server,
+                message: 'Failed to load labs',
+              ),
+        );
+      }
+    }
+
+    final mergedById = <String, LabModel>{};
+    for (final result in results) {
+      for (final lab in result.data!) {
+        mergedById[lab.id] = lab;
+      }
+    }
+
+    return ServiceResult<List<LabModel>>.success(
+      mergedById.values.toList(growable: false),
+    );
   }
 
   List<CourseModel> _extractEnrolledCourses(

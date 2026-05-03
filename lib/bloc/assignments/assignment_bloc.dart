@@ -73,13 +73,22 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
     final detailResult = await _assignmentService.getById(
       event.assignment.assignmentId,
     );
+    if (emit.isDone) {
+      return;
+    }
     if (detailResult.isSuccess && detailResult.data != null) {
-      selectedAssignment = detailResult.data!;
+      selectedAssignment = _mergeAssignmentDetail(
+        base: event.assignment,
+        detail: detailResult.data!,
+      );
     }
 
     final submissionResult = await _assignmentService.getMySubmission(
       selectedAssignment.assignmentId,
     );
+    if (emit.isDone) {
+      return;
+    }
 
     AssignmentSubmissionModel? submission;
     if (submissionResult.isSuccess && submissionResult.data != null) {
@@ -107,6 +116,46 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
         isDetailLoading: false,
         clearError: true,
       ),
+    );
+  }
+
+  AssignmentModel _mergeAssignmentDetail({
+    required AssignmentModel base,
+    required AssignmentModel detail,
+  }) {
+    final mergedInstructionFiles =
+        (detail.instructionFiles?.isNotEmpty ?? false)
+        ? detail.instructionFiles
+        : base.instructionFiles;
+    final mergedAttachments =
+        (detail.attachments?.isNotEmpty ?? false)
+        ? detail.attachments
+        : base.attachments;
+    final mergedInstructionsText =
+        (detail.instructionsText?.trim().isNotEmpty ?? false)
+        ? detail.instructionsText
+        : base.instructionsText;
+    final mergedInstructions =
+        (detail.instructions?.isNotEmpty ?? false)
+        ? detail.instructions
+        : base.instructions;
+    final mergedDescription =
+        (detail.description?.trim().isNotEmpty ?? false)
+        ? detail.description
+        : base.description;
+
+    return detail.copyWith(
+      description: mergedDescription,
+      attachments: mergedAttachments,
+      instructions: mergedInstructions,
+      instructionsText: mergedInstructionsText,
+      instructionFiles: mergedInstructionFiles,
+      courseName: detail.courseName.isNotEmpty ? detail.courseName : base.courseName,
+      courseCode: detail.courseCode.isNotEmpty ? detail.courseCode : base.courseCode,
+      instructorName: detail.instructorName.isNotEmpty
+          ? detail.instructorName
+          : base.instructorName,
+      course: detail.course ?? base.course,
     );
   }
 
@@ -270,6 +319,8 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
         clearError: true,
         selectedCourseId: selectedCourseId,
         selectedCourse: selectedCourse,
+        clearSelectedCourseId: selectedCourseId == null,
+        clearSelectedCourse: selectedCourse == null,
       ),
     );
 
@@ -290,7 +341,16 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
       return;
     }
 
+    final enrolledCourseIds = state.enrolledCourses
+        .map((course) => course.id)
+        .toSet();
+
     final rawAssignments = result.data!.data
+        .where(
+          (assignment) =>
+              enrolledCourseIds.isEmpty ||
+              enrolledCourseIds.contains(assignment.courseId),
+        )
         .where(
           (assignment) =>
               assignment.apiStatus != api.AssignmentStatus.draft &&
@@ -344,9 +404,9 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
         existingCourses,
         requestedCourseId: requestedCourseId,
       );
-      final selectedCourse = existingCourses.firstWhere(
-        (course) => course.id == selectedCourseId,
-      );
+      final selectedCourse = selectedCourseId == null
+          ? null
+          : existingCourses.firstWhere((course) => course.id == selectedCourseId);
       return (selectedCourseId, selectedCourse);
     }
 
@@ -355,9 +415,12 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
     }
 
     if (_enrollmentService == null) {
+      final resolvedCourseId = requestedCourseId != null && requestedCourseId <= 0
+          ? null
+          : (requestedCourseId ?? state.selectedCourseId);
       return (
-        requestedCourseId ?? state.selectedCourseId,
-        state.selectedCourse,
+        resolvedCourseId,
+        resolvedCourseId == null ? null : state.selectedCourse,
       );
     }
 
@@ -395,9 +458,9 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
       courses,
       requestedCourseId: requestedCourseId,
     );
-    final selectedCourse = courses.firstWhere(
-      (course) => course.id == selectedCourseId,
-    );
+    final selectedCourse = selectedCourseId == null
+        ? null
+        : courses.firstWhere((course) => course.id == selectedCourseId);
 
     emit(
       state.copyWith(
@@ -405,6 +468,8 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
         selectedCourseId: selectedCourseId,
         selectedCourse: selectedCourse,
         clearError: true,
+        clearSelectedCourseId: selectedCourseId == null,
+        clearSelectedCourse: selectedCourse == null,
       ),
     );
 
@@ -576,17 +641,24 @@ class AssignmentBloc extends Bloc<AssignmentEvent, AssignmentState> {
     return null;
   }
 
-  int _resolveSelectedCourseId(
+  int? _resolveSelectedCourseId(
     List<CourseModel> courses, {
     int? requestedCourseId,
   }) {
+    if (requestedCourseId != null && requestedCourseId <= 0) {
+      return null;
+    }
+
     if (requestedCourseId != null &&
         courses.any((course) => course.id == requestedCourseId)) {
       return requestedCourseId;
     }
 
     final current = state.selectedCourseId;
-    if (current != null && courses.any((course) => course.id == current)) {
+    if (current == null) {
+      return null;
+    }
+    if (courses.any((course) => course.id == current)) {
       return current;
     }
 
