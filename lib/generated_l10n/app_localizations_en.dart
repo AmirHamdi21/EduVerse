@@ -15634,4 +15634,425 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatVoiceCallTooltip => 'Voice call';
+
+  @override
+  String get questionBankTitle => 'Question Bank';
+
+  @override
+  String get questionBankSubtitle =>
+      'Author reusable questions and assemble exams from approved items.';
+
+  @override
+  String get questionBankTabQuestions => 'Questions';
+
+  @override
+  String get questionBankTabGroups => 'Groups';
+
+  @override
+  String get questionBankTabExams => 'Exams';
+
+  @override
+  String get questionBankApproved => 'Approved';
+
+  @override
+  String get questionBankDrafts => 'Drafts';
+
+  @override
+  String get questionBankGroups => 'Groups';
+
+  @override
+  String get questionBankAttachments => 'Attachments';
+
+  @override
+  String get questionBankWithAttachments => 'With attachments';
+
+  @override
+  String get questionBankWithoutAttachments => 'Without attachments';
+
+  @override
+  String get questionBankSearchHint => 'Search question text';
+
+  @override
+  String get questionBankNewQuestion => 'New question';
+
+  @override
+  String get questionBankNewGroup => 'New group';
+
+  @override
+  String get questionBankCreateExam => 'Generate exam';
+
+  @override
+  String get questionBankNoCourses => 'No teaching courses found';
+
+  @override
+  String get questionBankNoQuestions => 'No questions match these filters';
+
+  @override
+  String get questionBankNoGroups => 'No groups yet';
+
+  @override
+  String get questionBankNoExams => 'No exams yet';
+
+  @override
+  String get questionBankNoDrafts => 'No open drafts';
+
+  @override
+  String get questionBankCourse => 'Course';
+
+  @override
+  String get questionBankChapter => 'Chapter';
+
+  @override
+  String get questionBankType => 'Type';
+
+  @override
+  String get questionBankDifficulty => 'Difficulty';
+
+  @override
+  String get questionBankBloom => 'Bloom level';
+
+  @override
+  String get questionBankStatus => 'Status';
+
+  @override
+  String get questionBankQuestionText => 'Question text';
+
+  @override
+  String get questionBankExpectedAnswer => 'Expected answer';
+
+  @override
+  String get questionBankHint => 'Hint';
+
+  @override
+  String get questionBankOption => 'Option';
+
+  @override
+  String get questionBankCorrect => 'Correct';
+
+  @override
+  String get questionBankBlankKey => 'Blank key';
+
+  @override
+  String get questionBankAcceptableAnswer => 'Acceptable answer';
+
+  @override
+  String get questionBankCaseSensitive => 'Case sensitive';
+
+  @override
+  String get questionBankAddOption => 'Add option';
+
+  @override
+  String get questionBankAddBlank => 'Add blank';
+
+  @override
+  String get questionBankCreateChapter => 'Create chapter';
+
+  @override
+  String get questionBankChapterName => 'Chapter name';
+
+  @override
+  String get questionBankGroupTitle => 'Group title';
+
+  @override
+  String get questionBankSharedPrompt => 'Shared prompt';
+
+  @override
+  String get questionBankSubmitForReview => 'Submit for review';
+
+  @override
+  String get questionBankApprove => 'Approve';
+
+  @override
+  String get questionBankReject => 'Reject';
+
+  @override
+  String get questionBankArchive => 'Archive';
+
+  @override
+  String get questionBankRestore => 'Restore';
+
+  @override
+  String get questionBankExamHub => 'Exam Generator';
+
+  @override
+  String get questionBankSavedExams => 'Saved exams';
+
+  @override
+  String get questionBankExamDrafts => 'Drafts';
+
+  @override
+  String get questionBankRules => 'Rules';
+
+  @override
+  String get questionBankSections => 'Sections';
+
+  @override
+  String get questionBankExamTitle => 'Exam title';
+
+  @override
+  String get questionBankTotalMarks => 'Total marks';
+
+  @override
+  String get questionBankQuestionCount => 'Question count';
+
+  @override
+  String get questionBankWeight => 'Weight';
+
+  @override
+  String get questionBankGenerateDraft => 'Generate draft';
+
+  @override
+  String get questionBankDraftEditor => 'Draft editor';
+
+  @override
+  String get questionBankSaveExam => 'Save exam';
+
+  @override
+  String get questionBankExportWord => 'Export Word';
+
+  @override
+  String get questionBankPublish => 'Publish';
+
+  @override
+  String get questionBankUnpublish => 'Unpublish';
+
+  @override
+  String get questionBankItemMarks => 'Item marks';
+
+  @override
+  String get questionBankAddApprovedQuestion => 'Add approved question';
+
+  @override
+  String get questionBankOnlyCompactSavedExam =>
+      'Saved exam detail currently exposes metadata and lifecycle actions only.';
+
+  @override
+  String get questionBankGeneratedExamFallback => 'Generated exam';
+
+  @override
+  String get questionBankTypeMcq => 'Multiple choice';
+
+  @override
+  String get questionBankTypeTrueFalse => 'True or false';
+
+  @override
+  String get questionBankTypeFillBlanks => 'Fill blanks';
+
+  @override
+  String get questionBankTypeWritten => 'Written';
+
+  @override
+  String get questionBankTypeEssay => 'Essay';
+
+  @override
+  String get questionBankDifficultyEasy => 'Easy';
+
+  @override
+  String get questionBankDifficultyMedium => 'Medium';
+
+  @override
+  String get questionBankDifficultyHard => 'Hard';
+
+  @override
+  String get questionBankBloomRemember => 'Remember';
+
+  @override
+  String get questionBankBloomUnderstand => 'Understand';
+
+  @override
+  String get questionBankBloomApply => 'Apply';
+
+  @override
+  String get questionBankBloomAnalyze => 'Analyze';
+
+  @override
+  String get questionBankBloomEvaluate => 'Evaluate';
+
+  @override
+  String get questionBankBloomCreate => 'Create';
+
+  @override
+  String get questionBankStatusDraft => 'Draft';
+
+  @override
+  String get questionBankStatusPendingReview => 'Pending review';
+
+  @override
+  String get questionBankStatusApproved => 'Approved';
+
+  @override
+  String get questionBankStatusRejected => 'Rejected';
+
+  @override
+  String get questionBankStatusArchived => 'Archived';
+
+  @override
+  String get questionBankExamStatusDraft => 'Draft';
+
+  @override
+  String get questionBankExamStatusPublished => 'Published';
+
+  @override
+  String get questionBankExamStatusUnpublished => 'Unpublished';
+
+  @override
+  String get questionBankExamStatusArchived => 'Archived';
+
+  @override
+  String get questionBankDraftStatusOpen => 'Open';
+
+  @override
+  String get questionBankDraftStatusFinalized => 'Finalized';
+
+  @override
+  String get questionBankDraftStatusExpired => 'Expired';
+
+  @override
+  String get questionBankDraftStatusFailed => 'Failed';
+
+  @override
+  String get questionBankDraftStatusCancelled => 'Cancelled';
+
+  @override
+  String get questionBankMarkModeManual => 'Manual';
+
+  @override
+  String get questionBankMarkModeEqual => 'Equal';
+
+  @override
+  String get questionBankMarkModeWeightNormalized => 'Weight normalized';
+
+  @override
+  String get questionBankBulkCreateTitle => 'Bulk create questions';
+
+  @override
+  String get questionBankBulkCreateInstructions =>
+      'Add one written question per line. Use \"||\" after a question to add an expected answer.';
+
+  @override
+  String get questionBankBulkRows => 'Question rows';
+
+  @override
+  String get questionBankCreateBulkQuestions => 'Create questions';
+
+  @override
+  String get questionBankQuestionDetails => 'Question details';
+
+  @override
+  String get questionBankEditQuestion => 'Edit question';
+
+  @override
+  String get questionBankExplanation => 'Explanation';
+
+  @override
+  String get questionBankOptions => 'Options';
+
+  @override
+  String get questionBankFillBlanks => 'Fill blanks';
+
+  @override
+  String get questionBankGroupDetails => 'Group details';
+
+  @override
+  String get questionBankExamDetails => 'Exam details';
+
+  @override
+  String get questionBankUploadAttachmentImage => 'Upload attachment image';
+
+  @override
+  String get questionBankAddGroupedQuestions => 'Add grouped questions';
+
+  @override
+  String get questionBankSectionedMode => 'Sectioned generation';
+
+  @override
+  String get questionBankSectionTitle => 'Section title';
+
+  @override
+  String get questionBankAddDraftSection => 'Add section';
+
+  @override
+  String get questionBankUnsectionedItems => 'Unsectioned items';
+
+  @override
+  String get questionBankMoveUp => 'Move up';
+
+  @override
+  String get questionBankMoveDown => 'Move down';
+
+  @override
+  String get questionBankReplaceItem => 'Replace item';
+
+  @override
+  String get questionBankOverrideReason => 'Override reason';
+
+  @override
+  String get questionBankDuplicateDraftQuestion =>
+      'This question is already in the draft. Add an override reason to confirm duplication.';
+
+  @override
+  String get questionBankDraftLocked => 'This draft is not editable.';
+
+  @override
+  String get questionBankExportStudentCopy => 'Student copy';
+
+  @override
+  String get questionBankExportAnswerKey => 'Answer key';
+
+  @override
+  String get questionBankUploadPromptImage => 'Upload prompt image';
+
+  @override
+  String get questionBankClearPromptImage => 'Clear prompt image';
+
+  @override
+  String get questionBankPromptImageReady => 'Prompt image ready';
+
+  @override
+  String get questionBankEditAttachment => 'Edit attachment';
+
+  @override
+  String get questionBankAttachmentCaption => 'Attachment caption';
+
+  @override
+  String get questionBankAttachmentAltText => 'Alternative text';
+
+  @override
+  String get questionBankPrimaryAttachment => 'Primary attachment';
+
+  @override
+  String get questionBankGroupedQuestions => 'Grouped questions';
+
+  @override
+  String get questionBankNoGroupedQuestions => 'No grouped questions yet';
+
+  @override
+  String get questionBankEditSection => 'Edit section';
+
+  @override
+  String get questionBankUseWeightUnits => 'Use weight units';
+
+  @override
+  String get questionBankExportSaved => 'Export saved and opened';
+
+  @override
+  String get questionBankGenerationShortages => 'Question shortages';
+
+  @override
+  String get questionBankUploadSharedFile => 'Upload shared image';
+
+  @override
+  String get questionBankClearSharedFile => 'Clear shared file';
+
+  @override
+  String get questionBankSharedFileReady => 'Shared file ready';
+
+  @override
+  String get questionBankUntitledGroup => 'Untitled group';
+
+  @override
+  String get questionBankDefaultSectionName => 'Section 1';
+
+  @override
+  String get invalidRoute => 'Invalid route';
 }

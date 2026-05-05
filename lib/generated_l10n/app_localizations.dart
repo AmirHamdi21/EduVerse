@@ -29908,6 +29908,840 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Voice call'**
   String get chatVoiceCallTooltip;
+
+  /// No description provided for @questionBankTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Question Bank'**
+  String get questionBankTitle;
+
+  /// No description provided for @questionBankSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Author reusable questions and assemble exams from approved items.'**
+  String get questionBankSubtitle;
+
+  /// No description provided for @questionBankTabQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Questions'**
+  String get questionBankTabQuestions;
+
+  /// No description provided for @questionBankTabGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get questionBankTabGroups;
+
+  /// No description provided for @questionBankTabExams.
+  ///
+  /// In en, this message translates to:
+  /// **'Exams'**
+  String get questionBankTabExams;
+
+  /// No description provided for @questionBankApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get questionBankApproved;
+
+  /// No description provided for @questionBankDrafts.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafts'**
+  String get questionBankDrafts;
+
+  /// No description provided for @questionBankGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'Groups'**
+  String get questionBankGroups;
+
+  /// No description provided for @questionBankAttachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachments'**
+  String get questionBankAttachments;
+
+  /// No description provided for @questionBankWithAttachments.
+  ///
+  /// In en, this message translates to:
+  /// **'With attachments'**
+  String get questionBankWithAttachments;
+
+  /// No description provided for @questionBankWithoutAttachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Without attachments'**
+  String get questionBankWithoutAttachments;
+
+  /// No description provided for @questionBankSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search question text'**
+  String get questionBankSearchHint;
+
+  /// No description provided for @questionBankNewQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'New question'**
+  String get questionBankNewQuestion;
+
+  /// No description provided for @questionBankNewGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'New group'**
+  String get questionBankNewGroup;
+
+  /// No description provided for @questionBankCreateExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate exam'**
+  String get questionBankCreateExam;
+
+  /// No description provided for @questionBankNoCourses.
+  ///
+  /// In en, this message translates to:
+  /// **'No teaching courses found'**
+  String get questionBankNoCourses;
+
+  /// No description provided for @questionBankNoQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'No questions match these filters'**
+  String get questionBankNoQuestions;
+
+  /// No description provided for @questionBankNoGroups.
+  ///
+  /// In en, this message translates to:
+  /// **'No groups yet'**
+  String get questionBankNoGroups;
+
+  /// No description provided for @questionBankNoExams.
+  ///
+  /// In en, this message translates to:
+  /// **'No exams yet'**
+  String get questionBankNoExams;
+
+  /// No description provided for @questionBankNoDrafts.
+  ///
+  /// In en, this message translates to:
+  /// **'No open drafts'**
+  String get questionBankNoDrafts;
+
+  /// No description provided for @questionBankCourse.
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get questionBankCourse;
+
+  /// No description provided for @questionBankChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter'**
+  String get questionBankChapter;
+
+  /// No description provided for @questionBankType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get questionBankType;
+
+  /// No description provided for @questionBankDifficulty.
+  ///
+  /// In en, this message translates to:
+  /// **'Difficulty'**
+  String get questionBankDifficulty;
+
+  /// No description provided for @questionBankBloom.
+  ///
+  /// In en, this message translates to:
+  /// **'Bloom level'**
+  String get questionBankBloom;
+
+  /// No description provided for @questionBankStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get questionBankStatus;
+
+  /// No description provided for @questionBankQuestionText.
+  ///
+  /// In en, this message translates to:
+  /// **'Question text'**
+  String get questionBankQuestionText;
+
+  /// No description provided for @questionBankExpectedAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Expected answer'**
+  String get questionBankExpectedAnswer;
+
+  /// No description provided for @questionBankHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Hint'**
+  String get questionBankHint;
+
+  /// No description provided for @questionBankOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Option'**
+  String get questionBankOption;
+
+  /// No description provided for @questionBankCorrect.
+  ///
+  /// In en, this message translates to:
+  /// **'Correct'**
+  String get questionBankCorrect;
+
+  /// No description provided for @questionBankBlankKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Blank key'**
+  String get questionBankBlankKey;
+
+  /// No description provided for @questionBankAcceptableAnswer.
+  ///
+  /// In en, this message translates to:
+  /// **'Acceptable answer'**
+  String get questionBankAcceptableAnswer;
+
+  /// No description provided for @questionBankCaseSensitive.
+  ///
+  /// In en, this message translates to:
+  /// **'Case sensitive'**
+  String get questionBankCaseSensitive;
+
+  /// No description provided for @questionBankAddOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Add option'**
+  String get questionBankAddOption;
+
+  /// No description provided for @questionBankAddBlank.
+  ///
+  /// In en, this message translates to:
+  /// **'Add blank'**
+  String get questionBankAddBlank;
+
+  /// No description provided for @questionBankCreateChapter.
+  ///
+  /// In en, this message translates to:
+  /// **'Create chapter'**
+  String get questionBankCreateChapter;
+
+  /// No description provided for @questionBankChapterName.
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter name'**
+  String get questionBankChapterName;
+
+  /// No description provided for @questionBankGroupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Group title'**
+  String get questionBankGroupTitle;
+
+  /// No description provided for @questionBankSharedPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared prompt'**
+  String get questionBankSharedPrompt;
+
+  /// No description provided for @questionBankSubmitForReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for review'**
+  String get questionBankSubmitForReview;
+
+  /// No description provided for @questionBankApprove.
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get questionBankApprove;
+
+  /// No description provided for @questionBankReject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get questionBankReject;
+
+  /// No description provided for @questionBankArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive'**
+  String get questionBankArchive;
+
+  /// No description provided for @questionBankRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore'**
+  String get questionBankRestore;
+
+  /// No description provided for @questionBankExamHub.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam Generator'**
+  String get questionBankExamHub;
+
+  /// No description provided for @questionBankSavedExams.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved exams'**
+  String get questionBankSavedExams;
+
+  /// No description provided for @questionBankExamDrafts.
+  ///
+  /// In en, this message translates to:
+  /// **'Drafts'**
+  String get questionBankExamDrafts;
+
+  /// No description provided for @questionBankRules.
+  ///
+  /// In en, this message translates to:
+  /// **'Rules'**
+  String get questionBankRules;
+
+  /// No description provided for @questionBankSections.
+  ///
+  /// In en, this message translates to:
+  /// **'Sections'**
+  String get questionBankSections;
+
+  /// No description provided for @questionBankExamTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam title'**
+  String get questionBankExamTitle;
+
+  /// No description provided for @questionBankTotalMarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Total marks'**
+  String get questionBankTotalMarks;
+
+  /// No description provided for @questionBankQuestionCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Question count'**
+  String get questionBankQuestionCount;
+
+  /// No description provided for @questionBankWeight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight'**
+  String get questionBankWeight;
+
+  /// No description provided for @questionBankGenerateDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate draft'**
+  String get questionBankGenerateDraft;
+
+  /// No description provided for @questionBankDraftEditor.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft editor'**
+  String get questionBankDraftEditor;
+
+  /// No description provided for @questionBankSaveExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Save exam'**
+  String get questionBankSaveExam;
+
+  /// No description provided for @questionBankExportWord.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Word'**
+  String get questionBankExportWord;
+
+  /// No description provided for @questionBankPublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Publish'**
+  String get questionBankPublish;
+
+  /// No description provided for @questionBankUnpublish.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpublish'**
+  String get questionBankUnpublish;
+
+  /// No description provided for @questionBankItemMarks.
+  ///
+  /// In en, this message translates to:
+  /// **'Item marks'**
+  String get questionBankItemMarks;
+
+  /// No description provided for @questionBankAddApprovedQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Add approved question'**
+  String get questionBankAddApprovedQuestion;
+
+  /// No description provided for @questionBankOnlyCompactSavedExam.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved exam detail currently exposes metadata and lifecycle actions only.'**
+  String get questionBankOnlyCompactSavedExam;
+
+  /// No description provided for @questionBankGeneratedExamFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated exam'**
+  String get questionBankGeneratedExamFallback;
+
+  /// No description provided for @questionBankTypeMcq.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple choice'**
+  String get questionBankTypeMcq;
+
+  /// No description provided for @questionBankTypeTrueFalse.
+  ///
+  /// In en, this message translates to:
+  /// **'True or false'**
+  String get questionBankTypeTrueFalse;
+
+  /// No description provided for @questionBankTypeFillBlanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill blanks'**
+  String get questionBankTypeFillBlanks;
+
+  /// No description provided for @questionBankTypeWritten.
+  ///
+  /// In en, this message translates to:
+  /// **'Written'**
+  String get questionBankTypeWritten;
+
+  /// No description provided for @questionBankTypeEssay.
+  ///
+  /// In en, this message translates to:
+  /// **'Essay'**
+  String get questionBankTypeEssay;
+
+  /// No description provided for @questionBankDifficultyEasy.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get questionBankDifficultyEasy;
+
+  /// No description provided for @questionBankDifficultyMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get questionBankDifficultyMedium;
+
+  /// No description provided for @questionBankDifficultyHard.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get questionBankDifficultyHard;
+
+  /// No description provided for @questionBankBloomRemember.
+  ///
+  /// In en, this message translates to:
+  /// **'Remember'**
+  String get questionBankBloomRemember;
+
+  /// No description provided for @questionBankBloomUnderstand.
+  ///
+  /// In en, this message translates to:
+  /// **'Understand'**
+  String get questionBankBloomUnderstand;
+
+  /// No description provided for @questionBankBloomApply.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get questionBankBloomApply;
+
+  /// No description provided for @questionBankBloomAnalyze.
+  ///
+  /// In en, this message translates to:
+  /// **'Analyze'**
+  String get questionBankBloomAnalyze;
+
+  /// No description provided for @questionBankBloomEvaluate.
+  ///
+  /// In en, this message translates to:
+  /// **'Evaluate'**
+  String get questionBankBloomEvaluate;
+
+  /// No description provided for @questionBankBloomCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get questionBankBloomCreate;
+
+  /// No description provided for @questionBankStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get questionBankStatusDraft;
+
+  /// No description provided for @questionBankStatusPendingReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending review'**
+  String get questionBankStatusPendingReview;
+
+  /// No description provided for @questionBankStatusApproved.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved'**
+  String get questionBankStatusApproved;
+
+  /// No description provided for @questionBankStatusRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get questionBankStatusRejected;
+
+  /// No description provided for @questionBankStatusArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get questionBankStatusArchived;
+
+  /// No description provided for @questionBankExamStatusDraft.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get questionBankExamStatusDraft;
+
+  /// No description provided for @questionBankExamStatusPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Published'**
+  String get questionBankExamStatusPublished;
+
+  /// No description provided for @questionBankExamStatusUnpublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpublished'**
+  String get questionBankExamStatusUnpublished;
+
+  /// No description provided for @questionBankExamStatusArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get questionBankExamStatusArchived;
+
+  /// No description provided for @questionBankDraftStatusOpen.
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get questionBankDraftStatusOpen;
+
+  /// No description provided for @questionBankDraftStatusFinalized.
+  ///
+  /// In en, this message translates to:
+  /// **'Finalized'**
+  String get questionBankDraftStatusFinalized;
+
+  /// No description provided for @questionBankDraftStatusExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get questionBankDraftStatusExpired;
+
+  /// No description provided for @questionBankDraftStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get questionBankDraftStatusFailed;
+
+  /// No description provided for @questionBankDraftStatusCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get questionBankDraftStatusCancelled;
+
+  /// No description provided for @questionBankMarkModeManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get questionBankMarkModeManual;
+
+  /// No description provided for @questionBankMarkModeEqual.
+  ///
+  /// In en, this message translates to:
+  /// **'Equal'**
+  String get questionBankMarkModeEqual;
+
+  /// No description provided for @questionBankMarkModeWeightNormalized.
+  ///
+  /// In en, this message translates to:
+  /// **'Weight normalized'**
+  String get questionBankMarkModeWeightNormalized;
+
+  /// No description provided for @questionBankBulkCreateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bulk create questions'**
+  String get questionBankBulkCreateTitle;
+
+  /// No description provided for @questionBankBulkCreateInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Add one written question per line. Use \"||\" after a question to add an expected answer.'**
+  String get questionBankBulkCreateInstructions;
+
+  /// No description provided for @questionBankBulkRows.
+  ///
+  /// In en, this message translates to:
+  /// **'Question rows'**
+  String get questionBankBulkRows;
+
+  /// No description provided for @questionBankCreateBulkQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Create questions'**
+  String get questionBankCreateBulkQuestions;
+
+  /// No description provided for @questionBankQuestionDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Question details'**
+  String get questionBankQuestionDetails;
+
+  /// No description provided for @questionBankEditQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit question'**
+  String get questionBankEditQuestion;
+
+  /// No description provided for @questionBankExplanation.
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation'**
+  String get questionBankExplanation;
+
+  /// No description provided for @questionBankOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Options'**
+  String get questionBankOptions;
+
+  /// No description provided for @questionBankFillBlanks.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill blanks'**
+  String get questionBankFillBlanks;
+
+  /// No description provided for @questionBankGroupDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Group details'**
+  String get questionBankGroupDetails;
+
+  /// No description provided for @questionBankExamDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Exam details'**
+  String get questionBankExamDetails;
+
+  /// No description provided for @questionBankUploadAttachmentImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload attachment image'**
+  String get questionBankUploadAttachmentImage;
+
+  /// No description provided for @questionBankAddGroupedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Add grouped questions'**
+  String get questionBankAddGroupedQuestions;
+
+  /// No description provided for @questionBankSectionedMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Sectioned generation'**
+  String get questionBankSectionedMode;
+
+  /// No description provided for @questionBankSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Section title'**
+  String get questionBankSectionTitle;
+
+  /// No description provided for @questionBankAddDraftSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Add section'**
+  String get questionBankAddDraftSection;
+
+  /// No description provided for @questionBankUnsectionedItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsectioned items'**
+  String get questionBankUnsectionedItems;
+
+  /// No description provided for @questionBankMoveUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Move up'**
+  String get questionBankMoveUp;
+
+  /// No description provided for @questionBankMoveDown.
+  ///
+  /// In en, this message translates to:
+  /// **'Move down'**
+  String get questionBankMoveDown;
+
+  /// No description provided for @questionBankReplaceItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Replace item'**
+  String get questionBankReplaceItem;
+
+  /// No description provided for @questionBankOverrideReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Override reason'**
+  String get questionBankOverrideReason;
+
+  /// No description provided for @questionBankDuplicateDraftQuestion.
+  ///
+  /// In en, this message translates to:
+  /// **'This question is already in the draft. Add an override reason to confirm duplication.'**
+  String get questionBankDuplicateDraftQuestion;
+
+  /// No description provided for @questionBankDraftLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'This draft is not editable.'**
+  String get questionBankDraftLocked;
+
+  /// No description provided for @questionBankExportStudentCopy.
+  ///
+  /// In en, this message translates to:
+  /// **'Student copy'**
+  String get questionBankExportStudentCopy;
+
+  /// No description provided for @questionBankExportAnswerKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Answer key'**
+  String get questionBankExportAnswerKey;
+
+  /// No description provided for @questionBankUploadPromptImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload prompt image'**
+  String get questionBankUploadPromptImage;
+
+  /// No description provided for @questionBankClearPromptImage.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear prompt image'**
+  String get questionBankClearPromptImage;
+
+  /// No description provided for @questionBankPromptImageReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Prompt image ready'**
+  String get questionBankPromptImageReady;
+
+  /// No description provided for @questionBankEditAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit attachment'**
+  String get questionBankEditAttachment;
+
+  /// No description provided for @questionBankAttachmentCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'Attachment caption'**
+  String get questionBankAttachmentCaption;
+
+  /// No description provided for @questionBankAttachmentAltText.
+  ///
+  /// In en, this message translates to:
+  /// **'Alternative text'**
+  String get questionBankAttachmentAltText;
+
+  /// No description provided for @questionBankPrimaryAttachment.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary attachment'**
+  String get questionBankPrimaryAttachment;
+
+  /// No description provided for @questionBankGroupedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped questions'**
+  String get questionBankGroupedQuestions;
+
+  /// No description provided for @questionBankNoGroupedQuestions.
+  ///
+  /// In en, this message translates to:
+  /// **'No grouped questions yet'**
+  String get questionBankNoGroupedQuestions;
+
+  /// No description provided for @questionBankEditSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit section'**
+  String get questionBankEditSection;
+
+  /// No description provided for @questionBankUseWeightUnits.
+  ///
+  /// In en, this message translates to:
+  /// **'Use weight units'**
+  String get questionBankUseWeightUnits;
+
+  /// No description provided for @questionBankExportSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Export saved and opened'**
+  String get questionBankExportSaved;
+
+  /// No description provided for @questionBankGenerationShortages.
+  ///
+  /// In en, this message translates to:
+  /// **'Question shortages'**
+  String get questionBankGenerationShortages;
+
+  /// No description provided for @questionBankUploadSharedFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload shared image'**
+  String get questionBankUploadSharedFile;
+
+  /// No description provided for @questionBankClearSharedFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear shared file'**
+  String get questionBankClearSharedFile;
+
+  /// No description provided for @questionBankSharedFileReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Shared file ready'**
+  String get questionBankSharedFileReady;
+
+  /// No description provided for @questionBankUntitledGroup.
+  ///
+  /// In en, this message translates to:
+  /// **'Untitled group'**
+  String get questionBankUntitledGroup;
+
+  /// No description provided for @questionBankDefaultSectionName.
+  ///
+  /// In en, this message translates to:
+  /// **'Section 1'**
+  String get questionBankDefaultSectionName;
+
+  /// No description provided for @invalidRoute.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid route'**
+  String get invalidRoute;
 }
 
 class _AppLocalizationsDelegate

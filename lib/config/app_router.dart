@@ -1,4 +1,5 @@
 import 'package:edu_verse/models/quiz_models.dart';
+import 'package:edu_verse/generated_l10n/app_localizations.dart';
 import 'package:edu_verse/screens/student/ai_quiz_generator_screen.dart';
 import 'package:edu_verse/screens/student/assignments_screen.dart';
 import 'package:edu_verse/screens/student/chat/chat_swipe_settings_screen.dart';
@@ -84,6 +85,16 @@ import 'package:edu_verse/screens/instructor/assignments/instructor_assignment_d
 import 'package:edu_verse/screens/instructor/assignments/submission_grading_screen.dart';
 import 'package:edu_verse/screens/instructor/labs/instructor_labs_screen.dart';
 import 'package:edu_verse/screens/instructor/labs/lab_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/exams/exam_draft_review_screen.dart';
+import 'package:edu_verse/screens/instructor/exams/exam_generator_screen.dart';
+import 'package:edu_verse/screens/instructor/exams/instructor_exams_screen.dart';
+import 'package:edu_verse/screens/instructor/exams/saved_exam_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/bulk_question_create_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/instructor_question_bank_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_editor_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_group_detail_screen.dart';
+import 'package:edu_verse/screens/instructor/question_bank/question_groups_screen.dart';
 import 'package:edu_verse/screens/instructor/course_management/course_management_screen.dart';
 import 'package:edu_verse/screens/instructor/video/instructor_video_player_screen.dart';
 import 'package:edu_verse/screens/instructor/announcements/announcement_manager_screen.dart';
@@ -351,7 +362,7 @@ class AppRouter {
         builder: (context, state) {
           final quizSession = state.extra as QuizSession?;
           if (quizSession == null) {
-            return const Scaffold(
+            return Scaffold(
               body: Center(child: Text('Course not found')),
             );
           }
@@ -363,7 +374,7 @@ class AppRouter {
         builder: (context, state) {
           final quizSession = state.extra as QuizSession?;
           if (quizSession == null) {
-            return const Scaffold(
+            return Scaffold(
               body: Center(child: Text('Course not found')),
             );
           }
@@ -420,7 +431,7 @@ class AppRouter {
         builder: (context, state) {
           final extra = state.extra;
           if (extra is! Map<String, dynamic>) {
-            return const Scaffold(
+            return Scaffold(
               body: Center(child: Text('Instructor not found')),
             );
           }
@@ -431,7 +442,7 @@ class AppRouter {
               : int.tryParse(rawInstructorId?.toString() ?? '');
 
           if (instructorId == null || instructorId <= 0) {
-            return const Scaffold(
+            return Scaffold(
               body: Center(child: Text('Instructor not found')),
             );
           }
@@ -450,15 +461,13 @@ class AppRouter {
 
           final name = (extra['instructorName'] as String?)?.trim();
           final roleText = rawStaffRole?.toString().toLowerCase();
-          final roleLabel = roleText == 'ta'
-              ? 'Teaching Assistant'
-              : 'Instructor';
+          final roleLabel =
+              roleText == 'ta' ? 'Teaching Assistant' : 'Instructor';
 
           return CourseInstructorInfoScreen(
             instructorId: instructorId,
-            instructorName: (name == null || name.isEmpty)
-                ? 'Instructor'
-                : name,
+            instructorName:
+                (name == null || name.isEmpty) ? 'Instructor' : name,
             courseId: courseId,
             sectionId: sectionId,
             staffRoleLabel: roleLabel,
@@ -540,7 +549,7 @@ class AppRouter {
         builder: (context, state) {
           final courseId = int.tryParse(state.pathParameters['courseId'] ?? '');
           if (courseId == null || courseId <= 0) {
-            return const Scaffold(
+            return Scaffold(
               body: Center(child: Text('Invalid course discussions route')),
             );
           }
@@ -573,7 +582,7 @@ class AppRouter {
               courseId <= 0 ||
               threadId == null ||
               threadId <= 0) {
-            return const Scaffold(
+            return Scaffold(
               body: Center(child: Text('Invalid discussion post route')),
             );
           }
@@ -613,7 +622,7 @@ class AppRouter {
         builder: (context, state) {
           final userId = int.tryParse(state.pathParameters['userId'] ?? '');
           if (userId == null || userId <= 0) {
-            return const Scaffold(
+            return Scaffold(
               body: Center(child: Text('Invalid user profile request')),
             );
           }
@@ -627,7 +636,7 @@ class AppRouter {
             state.pathParameters['conversationId'] ?? '',
           );
           if (conversationId == null || conversationId <= 0) {
-            return const Scaffold(
+            return Scaffold(
               body: Center(child: Text('Invalid group profile request')),
             );
           }
@@ -776,8 +785,8 @@ class AppRouter {
           final course = state.extra as InstructorCourseModel?;
           final videoTitle =
               state.uri.queryParameters['title']?.trim().isNotEmpty == true
-              ? state.uri.queryParameters['title']!.trim()
-              : 'Course Video';
+                  ? state.uri.queryParameters['title']!.trim()
+                  : 'Course Video';
 
           return InstructorVideoPlayerScreen(
             videoId: videoId,
@@ -795,6 +804,129 @@ class AppRouter {
         builder: (context, state) => const InstructorAssignmentsScreen(),
       ),
       GoRoute(
+        path: '/instructor/question-bank',
+        builder: (context, state) => InstructorQuestionBankScreen(
+          initialCourseId: _resolveCoursePrefilter(state),
+        ),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/create',
+        builder: (context, state) => QuestionEditorScreen(
+          initialCourseId: _resolveCoursePrefilter(state),
+        ),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/bulk-create',
+        builder: (context, state) => BulkQuestionCreateScreen(
+          initialCourseId: _resolveCoursePrefilter(state),
+        ),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups',
+        builder: (context, state) => QuestionGroupsScreen(
+          initialCourseId: _resolveCoursePrefilter(state),
+        ),
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/groups/:groupId',
+        builder: (context, state) {
+          final groupId = _parsePositiveInt(state.pathParameters['groupId']);
+          if (groupId == null) {
+            return Scaffold(
+              body: Center(
+                child: Text(AppLocalizations.of(context).invalidRoute),
+              ),
+            );
+          }
+          return QuestionGroupDetailScreen(
+            groupId: groupId,
+            initialCourseId: _resolveCoursePrefilter(state),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/:questionId/edit',
+        builder: (context, state) {
+          final questionId =
+              _parsePositiveInt(state.pathParameters['questionId']);
+          if (questionId == null) {
+            return Scaffold(
+              body: Center(
+                child: Text(AppLocalizations.of(context).invalidRoute),
+              ),
+            );
+          }
+          return QuestionEditorScreen(
+            questionId: questionId,
+            initialCourseId: _resolveCoursePrefilter(state),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/instructor/question-bank/:questionId',
+        builder: (context, state) {
+          final questionId =
+              _parsePositiveInt(state.pathParameters['questionId']);
+          if (questionId == null) {
+            return Scaffold(
+              body: Center(
+                child: Text(AppLocalizations.of(context).invalidRoute),
+              ),
+            );
+          }
+          return QuestionDetailScreen(
+            questionId: questionId,
+            initialCourseId: _resolveCoursePrefilter(state),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/instructor/exams',
+        builder: (context, state) => InstructorExamsScreen(
+          initialCourseId: _resolveCoursePrefilter(state),
+        ),
+      ),
+      GoRoute(
+        path: '/instructor/exams/generate',
+        builder: (context, state) => ExamGeneratorScreen(
+          initialCourseId: _resolveCoursePrefilter(state),
+        ),
+      ),
+      GoRoute(
+        path: '/instructor/exams/drafts/:draftId',
+        builder: (context, state) {
+          final draftId = _parsePositiveInt(state.pathParameters['draftId']);
+          if (draftId == null) {
+            return Scaffold(
+              body: Center(
+                child: Text(AppLocalizations.of(context).invalidRoute),
+              ),
+            );
+          }
+          return ExamDraftReviewScreen(
+            draftId: draftId,
+            initialCourseId: _resolveCoursePrefilter(state),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/instructor/exams/:examId',
+        builder: (context, state) {
+          final examId = _parsePositiveInt(state.pathParameters['examId']);
+          if (examId == null) {
+            return Scaffold(
+              body: Center(
+                child: Text(AppLocalizations.of(context).invalidRoute),
+              ),
+            );
+          }
+          return SavedExamDetailScreen(
+            examId: examId,
+            initialCourseId: _resolveCoursePrefilter(state),
+          );
+        },
+      ),
+      GoRoute(
         path: '/instructor/labs',
         builder: (context, state) => const InstructorLabsScreen(),
       ),
@@ -808,9 +940,8 @@ class AppRouter {
             );
           }
 
-          final tabParam = (state.uri.queryParameters['tab'] ?? '')
-              .trim()
-              .toLowerCase();
+          final tabParam =
+              (state.uri.queryParameters['tab'] ?? '').trim().toLowerCase();
           final initialTab = switch (tabParam) {
             'submissions' => 1,
             'attendance' => 2,
@@ -861,9 +992,9 @@ class AppRouter {
           final assignment = extra is assignment_models.AssignmentModel
               ? extra
               : extra is Map<String, dynamic> &&
-                    extra['assignment'] is assignment_models.AssignmentModel
-              ? extra['assignment'] as assignment_models.AssignmentModel
-              : null;
+                      extra['assignment'] is assignment_models.AssignmentModel
+                  ? extra['assignment'] as assignment_models.AssignmentModel
+                  : null;
 
           return InstructorAssignmentDetailScreen(
             assignmentId: assignmentId,
@@ -943,9 +1074,8 @@ class AppRouter {
             );
           }
 
-          final tabParam = (state.uri.queryParameters['tab'] ?? '')
-              .trim()
-              .toLowerCase();
+          final tabParam =
+              (state.uri.queryParameters['tab'] ?? '').trim().toLowerCase();
           final initialTab = switch (tabParam) {
             'submissions' => 1,
             'instructions' => 2,
@@ -957,9 +1087,9 @@ class AppRouter {
           final assignment = extra is assignment_models.AssignmentModel
               ? extra
               : extra is Map<String, dynamic> &&
-                    extra['assignment'] is assignment_models.AssignmentModel
-              ? extra['assignment'] as assignment_models.AssignmentModel
-              : null;
+                      extra['assignment'] is assignment_models.AssignmentModel
+                  ? extra['assignment'] as assignment_models.AssignmentModel
+                  : null;
 
           return InstructorAssignmentDetailScreen(
             assignmentId: assignmentId,
@@ -1222,9 +1352,9 @@ class AppRouter {
           final assignment = extra is assignment_models.AssignmentModel
               ? extra
               : extra is Map<String, dynamic> &&
-                    extra['assignment'] is assignment_models.AssignmentModel
-              ? extra['assignment'] as assignment_models.AssignmentModel
-              : null;
+                      extra['assignment'] is assignment_models.AssignmentModel
+                  ? extra['assignment'] as assignment_models.AssignmentModel
+                  : null;
 
           return TAAssignmentDetailScreen(
             assignmentId: assignmentId,

@@ -15575,4 +15575,425 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get chatVoiceCallTooltip => 'مكالمة صوتية';
+
+  @override
+  String get questionBankTitle => 'بنك الأسئلة';
+
+  @override
+  String get questionBankSubtitle =>
+      'أنشئ أسئلة قابلة لإعادة الاستخدام واجمع الامتحانات من العناصر المعتمدة.';
+
+  @override
+  String get questionBankTabQuestions => 'الأسئلة';
+
+  @override
+  String get questionBankTabGroups => 'المجموعات';
+
+  @override
+  String get questionBankTabExams => 'الامتحانات';
+
+  @override
+  String get questionBankApproved => 'معتمدة';
+
+  @override
+  String get questionBankDrafts => 'مسودات';
+
+  @override
+  String get questionBankGroups => 'مجموعات';
+
+  @override
+  String get questionBankAttachments => 'المرفقات';
+
+  @override
+  String get questionBankWithAttachments => 'بها مرفقات';
+
+  @override
+  String get questionBankWithoutAttachments => 'بدون مرفقات';
+
+  @override
+  String get questionBankSearchHint => 'ابحث في نص السؤال';
+
+  @override
+  String get questionBankNewQuestion => 'سؤال جديد';
+
+  @override
+  String get questionBankNewGroup => 'مجموعة جديدة';
+
+  @override
+  String get questionBankCreateExam => 'توليد امتحان';
+
+  @override
+  String get questionBankNoCourses => 'لا توجد مقررات تدريس';
+
+  @override
+  String get questionBankNoQuestions => 'لا توجد أسئلة تطابق المرشحات';
+
+  @override
+  String get questionBankNoGroups => 'لا توجد مجموعات بعد';
+
+  @override
+  String get questionBankNoExams => 'لا توجد امتحانات بعد';
+
+  @override
+  String get questionBankNoDrafts => 'لا توجد مسودات مفتوحة';
+
+  @override
+  String get questionBankCourse => 'المقرر';
+
+  @override
+  String get questionBankChapter => 'الفصل';
+
+  @override
+  String get questionBankType => 'النوع';
+
+  @override
+  String get questionBankDifficulty => 'الصعوبة';
+
+  @override
+  String get questionBankBloom => 'مستوى بلوم';
+
+  @override
+  String get questionBankStatus => 'الحالة';
+
+  @override
+  String get questionBankQuestionText => 'نص السؤال';
+
+  @override
+  String get questionBankExpectedAnswer => 'الإجابة المتوقعة';
+
+  @override
+  String get questionBankHint => 'تلميح';
+
+  @override
+  String get questionBankOption => 'خيار';
+
+  @override
+  String get questionBankCorrect => 'صحيح';
+
+  @override
+  String get questionBankBlankKey => 'مفتاح الفراغ';
+
+  @override
+  String get questionBankAcceptableAnswer => 'إجابة مقبولة';
+
+  @override
+  String get questionBankCaseSensitive => 'حساس لحالة الأحرف';
+
+  @override
+  String get questionBankAddOption => 'إضافة خيار';
+
+  @override
+  String get questionBankAddBlank => 'إضافة فراغ';
+
+  @override
+  String get questionBankCreateChapter => 'إنشاء فصل';
+
+  @override
+  String get questionBankChapterName => 'اسم الفصل';
+
+  @override
+  String get questionBankGroupTitle => 'عنوان المجموعة';
+
+  @override
+  String get questionBankSharedPrompt => 'النص المشترك';
+
+  @override
+  String get questionBankSubmitForReview => 'إرسال للمراجعة';
+
+  @override
+  String get questionBankApprove => 'اعتماد';
+
+  @override
+  String get questionBankReject => 'رفض';
+
+  @override
+  String get questionBankArchive => 'أرشفة';
+
+  @override
+  String get questionBankRestore => 'استعادة';
+
+  @override
+  String get questionBankExamHub => 'مولد الامتحانات';
+
+  @override
+  String get questionBankSavedExams => 'الامتحانات المحفوظة';
+
+  @override
+  String get questionBankExamDrafts => 'المسودات';
+
+  @override
+  String get questionBankRules => 'القواعد';
+
+  @override
+  String get questionBankSections => 'الأقسام';
+
+  @override
+  String get questionBankExamTitle => 'عنوان الامتحان';
+
+  @override
+  String get questionBankTotalMarks => 'الدرجة الكلية';
+
+  @override
+  String get questionBankQuestionCount => 'عدد الأسئلة';
+
+  @override
+  String get questionBankWeight => 'الوزن';
+
+  @override
+  String get questionBankGenerateDraft => 'توليد مسودة';
+
+  @override
+  String get questionBankDraftEditor => 'محرر المسودة';
+
+  @override
+  String get questionBankSaveExam => 'حفظ الامتحان';
+
+  @override
+  String get questionBankExportWord => 'تصدير Word';
+
+  @override
+  String get questionBankPublish => 'نشر';
+
+  @override
+  String get questionBankUnpublish => 'إلغاء النشر';
+
+  @override
+  String get questionBankItemMarks => 'درجة العنصر';
+
+  @override
+  String get questionBankAddApprovedQuestion => 'إضافة سؤال معتمد';
+
+  @override
+  String get questionBankOnlyCompactSavedExam =>
+      'تفاصيل الامتحان المحفوظ تعرض حاليًا البيانات والإجراءات فقط.';
+
+  @override
+  String get questionBankGeneratedExamFallback => 'امتحان مولد';
+
+  @override
+  String get questionBankTypeMcq => 'اختيار من متعدد';
+
+  @override
+  String get questionBankTypeTrueFalse => 'صح أو خطأ';
+
+  @override
+  String get questionBankTypeFillBlanks => 'إكمال الفراغات';
+
+  @override
+  String get questionBankTypeWritten => 'إجابة مكتوبة';
+
+  @override
+  String get questionBankTypeEssay => 'مقالي';
+
+  @override
+  String get questionBankDifficultyEasy => 'سهل';
+
+  @override
+  String get questionBankDifficultyMedium => 'متوسط';
+
+  @override
+  String get questionBankDifficultyHard => 'صعب';
+
+  @override
+  String get questionBankBloomRemember => 'تذكر';
+
+  @override
+  String get questionBankBloomUnderstand => 'فهم';
+
+  @override
+  String get questionBankBloomApply => 'تطبيق';
+
+  @override
+  String get questionBankBloomAnalyze => 'تحليل';
+
+  @override
+  String get questionBankBloomEvaluate => 'تقييم';
+
+  @override
+  String get questionBankBloomCreate => 'إنشاء';
+
+  @override
+  String get questionBankStatusDraft => 'مسودة';
+
+  @override
+  String get questionBankStatusPendingReview => 'قيد المراجعة';
+
+  @override
+  String get questionBankStatusApproved => 'معتمد';
+
+  @override
+  String get questionBankStatusRejected => 'مرفوض';
+
+  @override
+  String get questionBankStatusArchived => 'مؤرشف';
+
+  @override
+  String get questionBankExamStatusDraft => 'مسودة';
+
+  @override
+  String get questionBankExamStatusPublished => 'منشور';
+
+  @override
+  String get questionBankExamStatusUnpublished => 'غير منشور';
+
+  @override
+  String get questionBankExamStatusArchived => 'مؤرشف';
+
+  @override
+  String get questionBankDraftStatusOpen => 'مفتوحة';
+
+  @override
+  String get questionBankDraftStatusFinalized => 'نهائية';
+
+  @override
+  String get questionBankDraftStatusExpired => 'منتهية';
+
+  @override
+  String get questionBankDraftStatusFailed => 'فشلت';
+
+  @override
+  String get questionBankDraftStatusCancelled => 'ملغاة';
+
+  @override
+  String get questionBankMarkModeManual => 'يدوي';
+
+  @override
+  String get questionBankMarkModeEqual => 'متساوٍ';
+
+  @override
+  String get questionBankMarkModeWeightNormalized => 'تطبيع حسب الوزن';
+
+  @override
+  String get questionBankBulkCreateTitle => 'إنشاء أسئلة متعددة';
+
+  @override
+  String get questionBankBulkCreateInstructions =>
+      'أضف سؤالاً كتابياً واحداً في كل سطر. استخدم \"||\" بعد السؤال لإضافة إجابة متوقعة.';
+
+  @override
+  String get questionBankBulkRows => 'سطور الأسئلة';
+
+  @override
+  String get questionBankCreateBulkQuestions => 'إنشاء الأسئلة';
+
+  @override
+  String get questionBankQuestionDetails => 'تفاصيل السؤال';
+
+  @override
+  String get questionBankEditQuestion => 'تعديل السؤال';
+
+  @override
+  String get questionBankExplanation => 'الشرح';
+
+  @override
+  String get questionBankOptions => 'الاختيارات';
+
+  @override
+  String get questionBankFillBlanks => 'إكمال الفراغات';
+
+  @override
+  String get questionBankGroupDetails => 'تفاصيل المجموعة';
+
+  @override
+  String get questionBankExamDetails => 'تفاصيل الاختبار';
+
+  @override
+  String get questionBankUploadAttachmentImage => 'رفع صورة كمرفق';
+
+  @override
+  String get questionBankAddGroupedQuestions => 'إضافة أسئلة للمجموعة';
+
+  @override
+  String get questionBankSectionedMode => 'توليد مقسم إلى أقسام';
+
+  @override
+  String get questionBankSectionTitle => 'عنوان القسم';
+
+  @override
+  String get questionBankAddDraftSection => 'إضافة قسم';
+
+  @override
+  String get questionBankUnsectionedItems => 'أسئلة بدون قسم';
+
+  @override
+  String get questionBankMoveUp => 'تحريك لأعلى';
+
+  @override
+  String get questionBankMoveDown => 'تحريك لأسفل';
+
+  @override
+  String get questionBankReplaceItem => 'استبدال السؤال';
+
+  @override
+  String get questionBankOverrideReason => 'سبب التجاوز';
+
+  @override
+  String get questionBankDuplicateDraftQuestion =>
+      'هذا السؤال موجود بالفعل في المسودة. أضف سبب تجاوز لتأكيد التكرار.';
+
+  @override
+  String get questionBankDraftLocked => 'هذه المسودة غير قابلة للتعديل.';
+
+  @override
+  String get questionBankExportStudentCopy => 'نسخة الطالب';
+
+  @override
+  String get questionBankExportAnswerKey => 'نموذج الإجابة';
+
+  @override
+  String get questionBankUploadPromptImage => 'رفع صورة للسؤال';
+
+  @override
+  String get questionBankClearPromptImage => 'مسح صورة السؤال';
+
+  @override
+  String get questionBankPromptImageReady => 'صورة السؤال جاهزة';
+
+  @override
+  String get questionBankEditAttachment => 'تعديل المرفق';
+
+  @override
+  String get questionBankAttachmentCaption => 'وصف المرفق';
+
+  @override
+  String get questionBankAttachmentAltText => 'النص البديل';
+
+  @override
+  String get questionBankPrimaryAttachment => 'مرفق أساسي';
+
+  @override
+  String get questionBankGroupedQuestions => 'أسئلة المجموعة';
+
+  @override
+  String get questionBankNoGroupedQuestions => 'لا توجد أسئلة في المجموعة بعد';
+
+  @override
+  String get questionBankEditSection => 'تعديل القسم';
+
+  @override
+  String get questionBankUseWeightUnits => 'استخدام وحدات الوزن';
+
+  @override
+  String get questionBankExportSaved => 'تم حفظ التصدير وفتحه';
+
+  @override
+  String get questionBankGenerationShortages => 'نقص في الأسئلة';
+
+  @override
+  String get questionBankUploadSharedFile => 'رفع صورة مشتركة';
+
+  @override
+  String get questionBankClearSharedFile => 'مسح الملف المشترك';
+
+  @override
+  String get questionBankSharedFileReady => 'الملف المشترك جاهز';
+
+  @override
+  String get questionBankUntitledGroup => 'مجموعة بلا عنوان';
+
+  @override
+  String get questionBankDefaultSectionName => 'القسم 1';
+
+  @override
+  String get invalidRoute => 'مسار غير صالح';
 }

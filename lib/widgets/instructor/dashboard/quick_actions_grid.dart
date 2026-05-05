@@ -88,6 +88,32 @@ class InstructorQuickAccessGrid extends StatelessWidget {
               ),
               _buildQuickAccessItem(
                 context,
+                title: l10n.questionBankTitle,
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF14B8A6), Color(0xFF0F766E)],
+                ),
+                icon: Icons.quiz_outlined,
+                onTap: () {
+                  context.push('/instructor/question-bank');
+                },
+              ),
+              _buildQuickAccessItem(
+                context,
+                title: l10n.questionBankExamHub,
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFFF97316), Color(0xFFEA580C)],
+                ),
+                icon: Icons.fact_check_outlined,
+                onTap: () {
+                  context.push('/instructor/exams');
+                },
+              ),
+              _buildQuickAccessItem(
+                context,
                 title: l10n.uploadMaterial,
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,

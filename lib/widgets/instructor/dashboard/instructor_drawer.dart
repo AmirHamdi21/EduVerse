@@ -316,15 +316,29 @@ class _InstructorDrawerState extends State<InstructorDrawer>
       _MenuItem(
         icon: Icons.science_outlined,
         activeIcon: Icons.science,
-        title: 'Labs',
+        title: l10n.labs,
         route: '/instructor/labs',
         category: 'main',
       ),
       _MenuItem(
         icon: Icons.quiz_outlined,
         activeIcon: Icons.quiz,
-        title: 'Quiz Management',
+        title: l10n.quizManagement,
         route: '/instructor/quiz-management',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.fact_check_outlined,
+        activeIcon: Icons.fact_check,
+        title: l10n.questionBankTitle,
+        route: '/instructor/question-bank',
+        category: 'main',
+      ),
+      _MenuItem(
+        icon: Icons.assignment_turned_in_outlined,
+        activeIcon: Icons.assignment_turned_in,
+        title: l10n.questionBankExamHub,
+        route: '/instructor/exams',
         category: 'main',
       ),
       _MenuItem(
@@ -425,9 +439,8 @@ class _InstructorDrawerState extends State<InstructorDrawer>
   ) {
     final mainItems = items.where((i) => i.category == 'main').toList();
     final aiItems = items.where((i) => i.category == 'ai').toList();
-    final communicationItems = items
-        .where((i) => i.category == 'communication')
-        .toList();
+    final communicationItems =
+        items.where((i) => i.category == 'communication').toList();
     final accountItems = items.where((i) => i.category == 'account').toList();
 
     return ListView(
@@ -436,26 +449,23 @@ class _InstructorDrawerState extends State<InstructorDrawer>
       children: [
         _buildSectionLabel(isDark, 'MAIN MENU'),
         ...mainItems.asMap().entries.map(
-          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-        ),
-
+              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+            ),
         const SizedBox(height: 16),
         _buildSectionLabel(isDark, 'AI TOOLS'),
         ...aiItems.asMap().entries.map(
-          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-        ),
-
+              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+            ),
         const SizedBox(height: 16),
         _buildSectionLabel(isDark, 'CONNECT'),
         ...communicationItems.asMap().entries.map(
-          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-        ),
-
+              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+            ),
         const SizedBox(height: 16),
         _buildSectionLabel(isDark, 'ACCOUNT'),
         ...accountItems.asMap().entries.map(
-          (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
-        ),
+              (e) => _buildNavItem(isDark, e.value, items.indexOf(e.value)),
+            ),
       ],
     );
   }
@@ -507,13 +517,13 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                             ],
                     )
                   : item.isHighlighted
-                  ? LinearGradient(
-                      colors: [
-                        const Color(0xFF3B82F6).withValues(alpha: 0.1),
-                        const Color(0xFF155CFB).withValues(alpha: 0.05),
-                      ],
-                    )
-                  : null,
+                      ? LinearGradient(
+                          colors: [
+                            const Color(0xFF3B82F6).withValues(alpha: 0.1),
+                            const Color(0xFF155CFB).withValues(alpha: 0.05),
+                          ],
+                        )
+                      : null,
               borderRadius: BorderRadius.circular(14),
               border: item.isHighlighted && !isSelected
                   ? Border.all(
@@ -530,24 +540,24 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                   decoration: BoxDecoration(
                     color: isSelected
                         ? (item.isHighlighted
-                              ? Colors.white.withValues(alpha: 0.2)
-                              : const Color(0xFF3B82F6).withValues(alpha: 0.1))
+                            ? Colors.white.withValues(alpha: 0.2)
+                            : const Color(0xFF3B82F6).withValues(alpha: 0.1))
                         : (isDark
-                              ? Colors.white.withValues(alpha: 0.05)
-                              : Colors.black.withValues(alpha: 0.03)),
+                            ? Colors.white.withValues(alpha: 0.05)
+                            : Colors.black.withValues(alpha: 0.03)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     isSelected ? item.activeIcon : item.icon,
                     color: isSelected
                         ? (item.isHighlighted
-                              ? Colors.white
-                              : const Color(0xFF3B82F6))
+                            ? Colors.white
+                            : const Color(0xFF3B82F6))
                         : item.isHighlighted
-                        ? const Color(0xFF3B82F6)
-                        : (isDark
-                              ? const Color(0xFF94A3B8)
-                              : const Color(0xFF64748B)),
+                            ? const Color(0xFF3B82F6)
+                            : (isDark
+                                ? const Color(0xFF94A3B8)
+                                : const Color(0xFF64748B)),
                     size: 20,
                   ),
                 ),
@@ -559,15 +569,16 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                     style: TextStyle(
                       color: isSelected
                           ? (item.isHighlighted
-                                ? Colors.white
-                                : const Color(0xFF3B82F6))
+                              ? Colors.white
+                              : const Color(0xFF3B82F6))
                           : item.isHighlighted
-                          ? const Color(0xFF3B82F6)
-                          : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                              ? const Color(0xFF3B82F6)
+                              : (isDark
+                                  ? Colors.white
+                                  : const Color(0xFF1E293B)),
                       fontSize: 14,
-                      fontWeight: isSelected
-                          ? FontWeight.w600
-                          : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),
                 ),
@@ -589,8 +600,8 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                       style: TextStyle(
                         color: isSelected
                             ? (item.isHighlighted
-                                  ? Colors.white
-                                  : const Color(0xFF3B82F6))
+                                ? Colors.white
+                                : const Color(0xFF3B82F6))
                             : Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -753,8 +764,8 @@ class _InstructorDrawerState extends State<InstructorDrawer>
               color: isActive
                   ? (isDark ? Colors.white : const Color(0xFF3B82F6))
                   : (isDark
-                        ? const Color(0xFF64748B)
-                        : const Color(0xFF94A3B8)),
+                      ? const Color(0xFF64748B)
+                      : const Color(0xFF94A3B8)),
             ),
             const SizedBox(width: 6),
             Text(
@@ -765,8 +776,8 @@ class _InstructorDrawerState extends State<InstructorDrawer>
                 color: isActive
                     ? (isDark ? Colors.white : const Color(0xFF3B82F6))
                     : (isDark
-                          ? const Color(0xFF64748B)
-                          : const Color(0xFF94A3B8)),
+                        ? const Color(0xFF64748B)
+                        : const Color(0xFF94A3B8)),
               ),
             ),
           ],
